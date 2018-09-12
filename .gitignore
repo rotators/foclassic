@@ -1,1 +1,9 @@
+.svn
 .vs
+
+*.sdf
+*.suo
+*.user
+
+/.stuff
+/SDK*

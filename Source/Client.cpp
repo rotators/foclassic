@@ -96,6 +96,7 @@ bool FOClient::Init()
 {
     WriteLog( "Engine initialization...\n" );
 
+    #if USE_STLPORT
     STATIC_ASSERT( sizeof( uint ) == 4 );
     STATIC_ASSERT( sizeof( ushort ) == 2 );
     STATIC_ASSERT( sizeof( uchar ) == 1 );
@@ -103,7 +104,7 @@ bool FOClient::Init()
     STATIC_ASSERT( sizeof( short ) == 2 );
     STATIC_ASSERT( sizeof( char ) == 1 );
     STATIC_ASSERT( sizeof( bool ) == 1 );
-    #if defined ( FO_X86 )
+    # if defined ( FO_X86 )
     STATIC_ASSERT( sizeof( Item::ItemData ) == 120 );
     STATIC_ASSERT( sizeof( GmapLocation ) == 16 );
     STATIC_ASSERT( sizeof( SceneryCl ) == 32 );
@@ -115,6 +116,19 @@ bool FOClient::Init()
     STATIC_ASSERT( sizeof( SpriteInfo ) == 36 );
     STATIC_ASSERT( sizeof( Sprite ) == 112 );
     STATIC_ASSERT( sizeof( ProtoMap::Tile ) == 12 );
+    # endif
+    #else // !USE_STRPORT
+    STATIC_ASSERT( sizeof( char ) == 1 );
+    STATIC_ASSERT( sizeof( short ) == 2 );
+    STATIC_ASSERT( sizeof( int ) == 4 );
+    STATIC_ASSERT( sizeof( int64 ) == 8 );
+    STATIC_ASSERT( sizeof( uchar ) == 1 );
+    STATIC_ASSERT( sizeof( ushort ) == 2 );
+    STATIC_ASSERT( sizeof( uint ) == 4 );
+    STATIC_ASSERT( sizeof( uint64 ) == 8 );
+    STATIC_ASSERT( sizeof( bool ) == 1 );
+    STATIC_ASSERT( sizeof( size_t ) == 4 );
+    STATIC_ASSERT( sizeof( void* ) == 4 );
     #endif
 
     GET_UID0( UID0 );

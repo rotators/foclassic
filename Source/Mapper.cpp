@@ -26,10 +26,25 @@ bool FOMapper::Init()
 {
     WriteLog( "Mapper initialization...\n" );
 
-    #if defined ( FO_X86 )
+    #ifdef USE_STLPORT
+    # if defined ( FO_X86 )
     STATIC_ASSERT( sizeof( SpriteInfo ) == 36 );
     STATIC_ASSERT( sizeof( Sprite ) == 120 );
     STATIC_ASSERT( sizeof( GameOptions ) == 1340 );
+    # endif
+    #else
+    // Check the sizes of base types
+    STATIC_ASSERT( sizeof( char ) == 1 );
+    STATIC_ASSERT( sizeof( short ) == 2 );
+    STATIC_ASSERT( sizeof( int ) == 4 );
+    STATIC_ASSERT( sizeof( int64 ) == 8 );
+    STATIC_ASSERT( sizeof( uchar ) == 1 );
+    STATIC_ASSERT( sizeof( ushort ) == 2 );
+    STATIC_ASSERT( sizeof( uint ) == 4 );
+    STATIC_ASSERT( sizeof( uint64 ) == 8 );
+    STATIC_ASSERT( sizeof( bool ) == 1 );
+    STATIC_ASSERT( sizeof( size_t ) == 4 );
+    STATIC_ASSERT( sizeof( void* ) == 4 );
     #endif
 
     // Register dll script data

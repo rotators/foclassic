@@ -3379,7 +3379,7 @@ bool FOServer::InitReal()
        WriteLog("CScriptString<%u>.\n",sizeof(CScriptString));
        WriteLog("string<%u>.\n",sizeof(string));
      */
-
+    #if USE_STLPORT
     // Check the sizes of struct and classes
     STATIC_ASSERT( sizeof( char ) == 1 );
     STATIC_ASSERT( sizeof( short ) == 2 );
@@ -3391,7 +3391,7 @@ bool FOServer::InitReal()
     STATIC_ASSERT( sizeof( uint64 ) == 8 );
     STATIC_ASSERT( sizeof( bool ) == 1 );
     STATIC_ASSERT( sizeof( size_t ) == sizeof( void* ) );
-    #if defined ( FO_X86 )
+    # if defined ( FO_X86 )
     STATIC_ASSERT( sizeof( size_t ) == 4 );
     STATIC_ASSERT( sizeof( string ) == 24 );
     STATIC_ASSERT( sizeof( IntVec ) == 12 );
@@ -3426,8 +3426,22 @@ bool FOServer::InitReal()
     STATIC_ASSERT( OFFSETOF( Map, RefCounter ) == 794 );
     STATIC_ASSERT( OFFSETOF( ProtoLocation, GeckVisible ) == 76 );
     STATIC_ASSERT( OFFSETOF( Location, RefCounter ) == 290 );
-    #else // FO_X64
+    # else   // FO_X64
     STATIC_ASSERT( sizeof( size_t ) == 8 );
+    # endif
+    #else
+    // Check the sizes of base types
+    STATIC_ASSERT( sizeof( char ) == 1 );
+    STATIC_ASSERT( sizeof( short ) == 2 );
+    STATIC_ASSERT( sizeof( int ) == 4 );
+    STATIC_ASSERT( sizeof( int64 ) == 8 );
+    STATIC_ASSERT( sizeof( uchar ) == 1 );
+    STATIC_ASSERT( sizeof( ushort ) == 2 );
+    STATIC_ASSERT( sizeof( uint ) == 4 );
+    STATIC_ASSERT( sizeof( uint64 ) == 8 );
+    STATIC_ASSERT( sizeof( bool ) == 1 );
+    STATIC_ASSERT( sizeof( size_t ) == 4 );
+    STATIC_ASSERT( sizeof( void* ) == 4 );
     #endif
 
     // Critters parameters

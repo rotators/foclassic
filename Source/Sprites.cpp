@@ -302,8 +302,13 @@ void Sprites::Resize( uint size )
 
 void Sprites::Unvalidate()
 {
+    #ifdef USE_STLPORT
     for( auto it = spritesTree.begin(), end = spritesTree.begin() + spritesTreeSize; it != end; ++it )
         ( *it )->Unvalidate();
+    #else
+    for( SpriteVec::iterator it = spritesTree.begin(), end = spritesTree.begin() + spritesTreeSize; it != end; ++it )
+        ( *it )->Unvalidate();
+    #endif
     spritesTreeSize = 0;
 }
 
