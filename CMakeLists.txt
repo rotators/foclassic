@@ -22,18 +22,25 @@ set( GLEW_DIR   "${FO_DIR}/GL" )
 set( SHA2_DIR   "${FO_DIR}/SHA2" )
 set( ZLIB_DIR   "${FO_DIR}/zlib" )
 
-option( OPTION_USE_STLPORT "Use StlPort" ON )
+option( OPTION_USE_STLPORT            "Use StlPort" ON )
+option( OPTION_USE_VANILLA_CLIENTSAVE "Use vanilla .client saving" ON )
 
 ##
 ## Parse options
 ##
 message( STATUS "Checking options..." )
 if( OPTION_USE_STLPORT )
-	message( STATUS " StlPort ... ${OPTION_USE_STLPORT}" )
+	message( STATUS " StlPort .................. ${OPTION_USE_STLPORT}" )
 	include_directories( BEFORE "Source/StlPort" )
 	add_definitions( -DUSE_STLPORT=1 )
 endif( OPTION_USE_STLPORT )
+
 unset( OPTION_USE_STLPORT CACHE )
+if( OPTION_USE_VANILLA_CLIENTSAVE )
+	message( STATUS " Vanilla .client saving ... ${OPTION_USE_VANILLA_CLIENTSAVE}" )
+	add_definitions( -DUSE_VANILLA_CLIENTSAVE=1 )
+endif( OPTION_USE_VANILLA_CLIENTSAVE )
+unset( OPTION_USE_VANILLA_CLIENTSAVE CACHE )
 
 ##
 ## Find threads

@@ -4271,11 +4271,31 @@ bool FOServer::LoadClientsData()
 
         // Check client save version
         int version = header[ 3 ];
+        #ifdef USE_VANILLA_CLIENTSAVE
         if( !( header[ 0 ] == 'F' && header[ 1 ] == 'O' && header[ 2 ] == 0 && version >= CLIENT_SAVE_V2 ) )
         {
             WriteLog( "Save file<%s> outdated, please run DataPatcher and type 'patchSaves'.\n", client_fname );
             break;
         }
+		#else
+        // ignore all vanilla clients
+        if( header[ 0 ] == 'F' && header[ 1 ] == 'O' && header[ 2 ] == 0 )
+        {
+            WriteLog( "Save file<%s> invalid.\n", client_fname );
+            break;
+        }
+
+        if( header[ 0 ] != ClientSaveSignature[ 0 ] ||
+			header[ 1 ] != ClientSaveSignature[ 1 ] ||
+			header[ 2 ] != ClientSaveSignature[ 2 ] ||
+               version < CLIENT_SAVE_LAST ) )
+        {
+			#pragma MESSAGE("Restore information about DataPatcher")
+            // WriteLog( "Save file<%s> outdated, please run DataPatcher and type 'patchSaves'.\n", client_fname );
+            WriteLog( "Save file<%s> outdated.\n", client_fname );
+            break;
+        }
+        #endif
 
         // Get id and password hash
         uint id;

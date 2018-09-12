@@ -46,10 +46,16 @@
 #define SINGLEPLAYER_SAVE_LAST       ( SINGLEPLAYER_SAVE_V2 )
 
 // Client save
-#define CLIENT_SAVE_V1               ( 1 ) // Corrupted
-#define CLIENT_SAVE_V2               ( 2 )
-#define CLIENT_SAVE_LAST             ( CLIENT_SAVE_V2 )
+#ifdef USE_VANILLA_CLIENTSAVE
+# define CLIENT_SAVE_V1              ( 1 ) // Corrupted
+# define CLIENT_SAVE_V2              ( 2 )
+# define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V2 )
 const char ClientSaveSignature[ 4 ] = { 'F', 'O', 0, CLIENT_SAVE_LAST };
+#else
+# define CLIENT_SAVE_V1              ( 1 )
+# define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V1 )
+const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
+#endif // USE_VANILLA_CLIENTSAVE
 
 // Generic
 #define WORLD_START_TIME             "07:00 30:10:2246 x00"
