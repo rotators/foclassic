@@ -2,7 +2,7 @@
 #define __COMMON__
 
 // For debugging
-// #define DEV_VESRION
+// #define DEV_VERSION
 
 // Some platform specific definitions
 #include "PlatformSpecific.h"
