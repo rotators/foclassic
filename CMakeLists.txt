@@ -22,36 +22,66 @@ set( GLEW_DIR   "${FO_DIR}/GL" )
 set( SHA2_DIR   "${FO_DIR}/SHA2" )
 set( ZLIB_DIR   "${FO_DIR}/zlib" )
 
-option( OPTION_USE_STLPORT            "Use StlPort" ON )
-option( OPTION_USE_VANILLA_CLIENTSAVE "Use vanilla .client saving" ON )
+macro( fo_option name description status )
+	list( APPEND FOPTIONS ${name} )
+	set( FOPTION_TEXT_${name} "${description} ..." )
+	set( FOPTION_VALUE_${name} ${status} )
+endmacro()
 
-##
-## Parse options
-##
-message( STATUS "Checking options..." )
-if( OPTION_USE_STLPORT )
-	message( STATUS " StlPort .................. ${OPTION_USE_STLPORT}" )
-	include_directories( BEFORE "Source/StlPort" )
-	add_definitions( -DUSE_STLPORT=1 )
-endif( OPTION_USE_STLPORT )
+macro( fo_options_apply )
+	message( STATUS "Checking options.." )
+	# prepare fancy table with all options
+	set( max_len 0 )
+	foreach( opt ${FOPTIONS} )
+		string( LENGTH "${FOPTION_TEXT_${opt}}" this_len )
+		if( this_len GREATER max_len )
+			set( max_len ${this_len} )
+		endif()
+	endforeach()
 
-unset( OPTION_USE_STLPORT CACHE )
-if( OPTION_USE_VANILLA_CLIENTSAVE )
-	message( STATUS " Vanilla .client saving ... ${OPTION_USE_VANILLA_CLIENTSAVE}" )
-	add_definitions( -DUSE_VANILLA_CLIENTSAVE=1 )
-endif( OPTION_USE_VANILLA_CLIENTSAVE )
-unset( OPTION_USE_VANILLA_CLIENTSAVE CACHE )
+	# display fancy table with all options and their status
+	foreach( opt ${FOPTIONS} )
+		set( this_text "${FOPTION_TEXT_${opt}}" )
+		string( LENGTH "${this_text}" this_len )
+		while( this_len LESS ${max_len} )
+			set( this_text "${this_text}." )
+			string( LENGTH "${this_text}" this_len )
+		endwhile()
+		message( STATUS " ${this_text} ${FOPTION_VALUE_${opt}}" )
+	endforeach()
+	
+	# cleanup
+	unset( max_len )
+	unset( this_len )
+	unset( this_text )
+	
+	# finally, apply all options
+	message( STATUS "Applying options..." )
+	foreach( opt ${FOPTIONS} )
+		# check if option is enabled
+		if( FOPTION_VALUE_${opt} )
+			# always add a global define if it is
+			add_definitions( "-D${opt}=1" )
 
-##
-## Find threads
-##
-set( THREADS_PREFER_PTHREAD_FLAG ON )
-find_package( Threads REQUIRED )
-include( CheckStructHasMember )
-check_struct_has_member( "struct timespec" "tv_sec" "time.h" HAVE_STRUCT_TIMESPEC )
-if( HAVE_STRUCT_TIMESPEC )
-	add_definitions( -DHAVE_STRUCT_TIMESPEC )
-endif( HAVE_STRUCT_TIMESPEC )
+			# check if option have its own macro/function
+			if( COMMAND "fo_option_${opt}" )
+				# it does, we need to call fo_option_${opt}() now, but cmake doesn't like it
+				# let's create and include external file to workaround that
+				set( invoke "${CMAKE_BINARY_DIR}/invoke/fo_option_${opt}.cmake" )
+				if( NOT EXISTS "${invoke}" )
+					file( WRITE "${invoke}" "fo_option_${opt}()\n" )
+				endif()
+				# call our macro/function
+				include( "${invoke}" )
+			endif()
+		endif()
+	endforeach()
+	message( STATUS "Applying options... OK" )
+	
+	# cleanup
+	unset( opt )
+	unset( invoke )
+endmacro()
 
 if( MSVC )
 	set( COMPILER_DEFINES "" )
@@ -72,6 +102,37 @@ endif()
 link_directories( "Lib" )
 link_directories( "Lib/Dx9/x86/" )
 
+##
+## Source options
+##
+fo_option( USE_STLPORT              "Use StlPort" OFF )
+fo_option( USE_VANILLA_CACHESAVE    "Use vanilla cache saving" OFF )
+fo_option( USE_VANILLA_CLIENTSAVE   "Use vanilla client saving" OFF )
+fo_option( USE_VANILLA_MAPSAVE      "Use vanilla map saving" OFF )
+fo_option( USE_VANILLA_PROFILERSAVE "Use vanilla profiler saving" OFF )
+fo_option( USE_VANILLA_SCRIPTSAVE   "Use vanilla script saving" OFF )
+fo_option( USE_VANILLA_WORLDSAVE    "Use vanilla world saving" OFF )
+
+##
+## Source options macros
+##
+macro( fo_option_USE_STLPORT )
+	include_directories( BEFORE "Source/StlPort" )
+endmacro()
+
+fo_options_apply()
+
+##
+## Find threads
+##
+set( THREADS_PREFER_PTHREAD_FLAG ON )
+find_package( Threads REQUIRED )
+include( CheckStructHasMember )
+check_struct_has_member( "struct timespec" "tv_sec" "time.h" HAVE_STRUCT_TIMESPEC )
+# must be defined for windows pthreads on newer MSVC
+if( HAVE_STRUCT_TIMESPEC )
+	add_definitions( -DHAVE_STRUCT_TIMESPEC )
+endif( HAVE_STRUCT_TIMESPEC )
 ##
 ## Acm
 ##

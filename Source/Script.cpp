@@ -173,7 +173,9 @@ void ProcessStack( CallStack* stack )
     path->StackEnd();
 }
 
+BINARY_SIGNATURE( ProfilerSaveSignature, BINARY_PROFILERSAVE, 1 );
 #endif
+BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_SCRIPTSAVE, ( SERVER_VERSION << 20 ) | ( CLIENT_VERSION << 10 ) | MAPPER_VERSION );
 
 bool LoadLibraryCompiler = false;
 
@@ -596,7 +598,15 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
             continue;
 
         str >> value;
-        if( str.fail() || !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix ) )
+        bool fail = str.fail();
+        if( !fail )
+        {
+            #ifdef FONLINE_SERVER
+            WriteLog( "Load server module<%s>\n", value.c_str() );
+            #endif
+            fail = !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix );
+        }
+        if( fail )
         {
             WriteLog( "Load module fail, name<%s>.\n", value.c_str() );
             errors++;
@@ -745,10 +755,14 @@ void Script::Profiler::Init()
         }
     }
 
+    # ifdef USE_VANILLA_PROFILERSAVE
     uint dummy = 0x10ADB10B; // "Load blob"
     FileWrite( ProfilerFileHandle, &dummy, 4 );
     dummy = 0;               // Version
     FileWrite( ProfilerFileHandle, &dummy, 4 );
+    # else
+    FileWrite( ProfilerFileHandle, ProfilerSaveSignature, sizeof( ProfilerSaveSignature ) );
+    # endif
 }
 
 void Script::Profiler::AddModule( const char* module_name )
@@ -1400,8 +1414,11 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
     ScriptModuleVec& modules = edata->Modules;
 
     // Compute whole version for server, client, mapper
-    uint version = ( SERVER_VERSION << 20 ) | ( CLIENT_VERSION << 10 ) | MAPPER_VERSION;
-
+    #ifdef USE_VANILLA_SCRIPTSAVE
+    uint   version = ( SERVER_VERSION << 20 ) | ( CLIENT_VERSION << 10 ) | MAPPER_VERSION;
+    #else
+    ushort version = BINARY_SIGNATURE_VERSION( ScriptSaveSignature );
+    #endif
     // Get script names
     char fname_real[ MAX_FOPATH ];
     Str::Copy( fname_real, module_name );
@@ -1446,9 +1463,20 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
 
         if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof( uint ) )
         {
+            #ifndef USE_VANILLA_SCRIPTSAVE
+            bool load = true;
+
+            // Load signature
+            uchar signature[ sizeof( ScriptSaveSignature ) ];
+            bool  bin_signature = file_bin.CopyMem( signature, sizeof( signature ) );
+
+            load = ( bin_signature && memcmp( ScriptSaveSignature, signature, sizeof( ScriptSaveSignature ) ) == 0 );
+            #endif
             // Load file dependencies and pragmas
             char   str[ 1024 ];
+            #ifdef USE_VANILLA_SCRIPTSAVE
             uint   bin_version = file_bin.GetBEUInt();
+            #endif
             uint   dependencies_size = file_bin.GetBEUInt();
             StrVec dependencies;
             for( uint i = 0; i < dependencies_size; i++ )
@@ -1483,13 +1511,20 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                     outdated = ( file_dep.IsLoaded() && last_write > last_write_bin );
             }
 
+            #ifdef USE_VANILLA_SCRIPTSAVE
             if( no_all_files || ( !outdated && bin_version == version ) )
             {
                 if( bin_version != version )
                     WriteLogF( _FUNC_, " - Script<%s> compiled in older server version.\n", module_name );
                 if( outdated )
                     WriteLogF( _FUNC_, " - Script<%s> outdated.\n", module_name );
+            #else
+            if( no_all_files || outdated )
+                load = false;
 
+            if( load )
+            {
+                #endif
                 // Delete old
                 for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
                 {
@@ -1696,7 +1731,11 @@ public:
             const StrVec&          dependencies = Preprocessor::GetFileDependencies();
             const StrVec&          pragmas = Preprocessor::GetParsedPragmas();
 
+            #ifdef USE_VANILLA_SCRIPTSAVE
             file_bin.SetBEUInt( version );
+            #else
+            file_bin.SetData( (uchar*) ScriptSaveSignature, sizeof( ScriptSaveSignature ) );
+            #endif
             file_bin.SetBEUInt( (uint) dependencies.size() );
             for( uint i = 0, j = (uint) dependencies.size(); i < j; i++ )
                 file_bin.SetData( (uchar*) dependencies[ i ].c_str(), (uint) dependencies[ i ].length() + 1 );

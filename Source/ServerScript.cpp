@@ -350,6 +350,8 @@ bool FOServer::ReloadClientScripts()
             if( str.fail() )
                 continue;
 
+            WriteLog( "Load client module<%s>\n", value.c_str() );
+
             if( !Script::LoadScript( value.c_str(), NULL, false, "CLIENT_" ) )
             {
                 WriteLogF( _FUNC_, " - Unable to load client script<%s>.\n", value.c_str() );

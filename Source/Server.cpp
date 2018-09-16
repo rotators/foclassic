@@ -73,6 +73,9 @@ Mutex                       FOServer::BestScoresLocker;
 FOServer::SingleplayerSave_ FOServer::SingleplayerSave;
 MutexSynchronizer           FOServer::LogicThreadSync;
 
+BINARY_SIGNATURE( ClientSaveSignature, BINARY_CLIENTSAVE, CLIENT_SAVE_LAST );
+BINARY_SIGNATURE( WorldSaveSignature,  BINARY_WORLDSAVE,  WORLD_SAVE_LAST );
+
 FOServer::FOServer()
 {
     Active = false;
@@ -3241,6 +3244,7 @@ bool FOServer::LoadGameInfoFile( void* f )
         ClientSaveData& csd = SingleplayerSave.CrData;
         csd.Clear();
 
+        #ifdef USE_VANILLA_WORLDSAVE
         if( sp >= SINGLEPLAYER_SAVE_V2 )
         {
             if( !FileRead( f, csd.Name, sizeof( csd.Name ) ) )
@@ -3253,6 +3257,10 @@ bool FOServer::LoadGameInfoFile( void* f )
             for( char* name = csd.Name; *name; name++ )
                 *name = ( ( ( *name >= 'A' && *name <= 'Z' ) || ( *name >= 'a' && *name <= 'z' ) ) ? *name : 'X' );
         }
+        #else
+        if( !FileRead( f, csd.Name, sizeof( csd.Name ) ) )
+            return false;
+        #endif
 
         if( !FileRead( f, &csd.Data, sizeof( csd.Data ) ) )
             return false;
@@ -4259,6 +4267,9 @@ bool FOServer::LoadClientsData()
             break;
         }
 
+        char pass_hash[ PASS_HASH_SIZE ];
+        uint id;
+        #ifdef USE_VANILLA_CLIENTSAVE
         // Header - signature, password and id
         char header[ 4 + PASS_HASH_SIZE + sizeof( uint ) ];
         if( !FileRead( f, header, sizeof( header ) ) )
@@ -4271,37 +4282,58 @@ bool FOServer::LoadClientsData()
 
         // Check client save version
         int version = header[ 3 ];
-        #ifdef USE_VANILLA_CLIENTSAVE
         if( !( header[ 0 ] == 'F' && header[ 1 ] == 'O' && header[ 2 ] == 0 && version >= CLIENT_SAVE_V2 ) )
         {
             WriteLog( "Save file<%s> outdated, please run DataPatcher and type 'patchSaves'.\n", client_fname );
             break;
         }
-		#else
-        // ignore all vanilla clients
-        if( header[ 0 ] == 'F' && header[ 1 ] == 'O' && header[ 2 ] == 0 )
-        {
-            WriteLog( "Save file<%s> invalid.\n", client_fname );
-            break;
-        }
-
-        if( header[ 0 ] != ClientSaveSignature[ 0 ] ||
-			header[ 1 ] != ClientSaveSignature[ 1 ] ||
-			header[ 2 ] != ClientSaveSignature[ 2 ] ||
-               version < CLIENT_SAVE_LAST ) )
-        {
-			#pragma MESSAGE("Restore information about DataPatcher")
-            // WriteLog( "Save file<%s> outdated, please run DataPatcher and type 'patchSaves'.\n", client_fname );
-            WriteLog( "Save file<%s> outdated.\n", client_fname );
-            break;
-        }
-        #endif
 
         // Get id and password hash
-        uint id;
-        char pass_hash[ PASS_HASH_SIZE ];
         memcpy( pass_hash, header + 4, PASS_HASH_SIZE );
         memcpy( &id, header + 4 + PASS_HASH_SIZE, sizeof( uint ) );
+        #else
+        uchar signature[ sizeof( ClientSaveSignature ) ];
+
+        if( !FileRead( f, signature, sizeof( signature ) ) )
+        {
+            WriteLog( "Unable to read signature of client save file<%s>. Skipped.\n", client_fname );
+            FileClose( f );
+            continue;
+        }
+
+        if( !FileRead( f, pass_hash, sizeof( pass_hash ) ) || !FileRead( f, &id, sizeof( uint ) ) )
+        {
+            WriteLog( "Unable to read header of client save file<%s>. Skipped.\n", client_fname );
+            FileClose( f );
+            continue;
+        }
+        FileClose( f );
+
+        // ignore all vanilla clients
+        if( signature[ 0 ] == 'F' && signature[ 1 ] == 'O' && signature[ 2 ] == 0 )
+        {
+            WriteLog( "Client save file<%s> ignored.\n", client_fname );
+            continue;
+        }
+
+        // fast verification of client signature
+        if( memcmp( ClientSaveSignature, signature, sizeof( ClientSaveSignature ) ) != 0 )
+        {
+            // slow verification of client signature, skip version
+            if( !BINARY_SIGNATURE_VALID( ClientSaveSignature, signature ) )
+            {
+                WriteLog( "Invalid signature of client save file<%s>. Skipped.\n", client_fname );
+                continue;
+            }
+            // handle version mismatch
+            ushort version = BINARY_SIGNATURE_VERSION( signature );
+            if( !version || version < CLIENT_SAVE_V1 || version > CLIENT_SAVE_LAST )
+            {
+                WriteLog( "Invalid version<%u> of client save file<%s>. Skipped.\n", version, client_fname );
+                continue;
+            }
+        }
+        #endif
 
         // Check id
         if( !IS_USER_ID( id ) )
@@ -4438,9 +4470,36 @@ bool FOServer::LoadClient( Client* cl )
     }
 
     // Read data
+    #ifdef USE_VANILLA_CLIENTSAVE
     char signature[ 4 ];
     if( !FileRead( f, signature, sizeof( signature ) ) )
         goto label_FileTruncated;
+    #else
+    uchar signature[ sizeof( ClientSaveSignature ) ];
+    if( !FileRead( f, signature, sizeof( signature ) ) )
+    {
+        WriteLog( "Unable to read signature of client save file<%s>.\n", fname );
+        FileClose( f );
+        return false;
+    }
+
+    // ignore all vanilla clients
+    if( signature[ 0 ] == 'F' && signature[ 1 ] == 'O' && signature[ 2 ] == 0 )
+    {
+        WriteLog( "Client save file<%s> ignored.\n", fname );
+        FileClose( f );
+        return false;
+    }
+
+    if( memcmp( ClientSaveSignature, signature, sizeof( ClientSaveSignature ) ) != 0 )
+    {
+        if( !BINARY_SIGNATURE_VALID( ClientSaveSignature, signature ) )
+        {
+            FileClose( f );
+            return false;
+        }
+    }
+    #endif
     if( !FileRead( f, cl->PassHash, sizeof( cl->PassHash ) ) )
         goto label_FileTruncated;
     if( !FileRead( f, &cl->Data, sizeof( cl->Data ) ) )
@@ -4517,9 +4576,14 @@ void FOServer::SaveWorld( const char* fname )
         delete_indexes->Release();
     }
 
+    #ifdef USE_VANILLA_WORLDSAVE
     // Version
     uint version = WORLD_SAVE_LAST;
     AddWorldSaveData( &version, sizeof( version ) );
+    #else
+    AddWorldSaveData( (char*) WorldSaveSignature, sizeof( WorldSaveSignature ) );
+    ushort version = BINARY_SIGNATURE_VERSION( WorldSaveSignature );
+    #endif
 
     // SaveGameInfoFile
     SaveGameInfoFile();
@@ -4548,7 +4612,6 @@ void FOServer::SaveWorld( const char* fname )
     // SaveScriptFunctionsFile
     SaveScriptFunctionsFile();
 
-    // End signature
     AddWorldSaveData( &version, sizeof( version ) );
 
     // SaveClient
@@ -4629,7 +4692,9 @@ bool FOServer::LoadWorld( const char* fname )
     }
 
     // File begin
+    #ifdef USE_VANILLA_WORLDSAVE
     uint version = 0;
+
     FileRead( f, &version, sizeof( version ) );
     if( version != WORLD_SAVE_V1 && version != WORLD_SAVE_V2 && version != WORLD_SAVE_V3 && version != WORLD_SAVE_V4 &&
         version != WORLD_SAVE_V5 && version != WORLD_SAVE_V6 && version != WORLD_SAVE_V7 && version != WORLD_SAVE_V8 &&
@@ -4646,6 +4711,44 @@ bool FOServer::LoadWorld( const char* fname )
         FileClose( f );
         return false;
     }
+    #else
+    uchar  signature[ sizeof( WorldSaveSignature ) ];
+    ushort version = 0;
+    if( !FileRead( f, &signature, sizeof( signature ) ) )
+    {
+        WriteLog( "Unable to read signature of world dump file.\n" );
+        FileClose( f );
+        return false;
+    }
+
+    // ignore vanilla worldsave
+    if( signature[ 1 ] == 0x0F && signature[ 2 ] == 0xAB && signature[ 3 ] == 0x01 )
+    {
+        WriteLog( "World dump file ignored.\n" );
+        FileClose( f );
+        return false;
+    }
+    // fast signature verification
+    if( memcmp( WorldSaveSignature, signature, sizeof( WorldSaveSignature ) ) != 0 )
+    {
+        // slow signature verification
+        if( !BINARY_SIGNATURE_VALID( WorldSaveSignature, signature ) )
+        {
+            WriteLog( "Invalid signature of world dump file.\n" );
+            FileClose( f );
+            return false;
+        }
+        // handle version mismatch
+        ushort sigversion = BINARY_SIGNATURE_VERSION( signature );
+        if( !sigversion || sigversion < WORLD_SAVE_V1 || sigversion > WORLD_SAVE_LAST )
+        {
+            WriteLog( "Unknown version<%u> of world dump file.\n", version );
+            FileClose( f );
+            return false;
+        }
+    }
+    version = BINARY_SIGNATURE_VERSION( signature );
+    #endif
 
     // Main data
     if( !LoadGameInfoFile( f ) )
@@ -4668,10 +4771,15 @@ bool FOServer::LoadWorld( const char* fname )
         return false;
 
     // File end
-    uint version_ = 0;
+    #ifdef USE_VANILLA_WORLDSAVE
+    uint   version_ = 0;
+    #else
+    ushort version_ = 0;
+    #endif
+
     if( !FileRead( f, &version_, sizeof( version_ ) ) || version != version_ )
     {
-        WriteLog( "World dump file truncated.\n" );
+        WriteLog( "World dump file truncated <%u != %u>.\n", version, version_ );
         FileClose( f );
         return false;
     }

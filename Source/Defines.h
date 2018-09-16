@@ -2,17 +2,17 @@
 #define ___DEFINES___
 
 // Bits
-#define BIN__N( x )                           ( x ) | x >> 3 | x >> 6 | x >> 9
-#define BIN__B( x )                           ( x ) & 0xf | ( x ) >> 12 & 0xf0
-#define BIN8( v )                             ( BIN__B( BIN__N( 0x ## v ) ) )
-#define BIN16( bin16, bin8 )                  ( ( BIN8( bin16 ) << 8 ) | ( BIN8( bin8 ) ) )
-#define BIN32( bin32, bin24, bin16, bin8 )    ( ( BIN8( bin32 ) << 24 ) | ( BIN8( bin24 ) << 16 ) | ( BIN8( bin16 ) << 8 ) | ( BIN8( bin8 ) ) )
+#define BIN__N( x )                             ( x ) | x >> 3 | x >> 6 | x >> 9
+#define BIN__B( x )                             ( x ) & 0xf | ( x ) >> 12 & 0xf0
+#define BIN8( v )                               ( BIN__B( BIN__N( 0x ## v ) ) )
+#define BIN16( bin16, bin8 )                    ( ( BIN8( bin16 ) << 8 ) | ( BIN8( bin8 ) ) )
+#define BIN32( bin32, bin24, bin16, bin8 )      ( ( BIN8( bin32 ) << 24 ) | ( BIN8( bin24 ) << 16 ) | ( BIN8( bin16 ) << 8 ) | ( BIN8( bin8 ) ) )
 
 // Flags
-#define FLAG( x, y )                          ( ( ( x ) & ( y ) ) != 0 )
-#define FLAGS( x, y )                         ( ( ( x ) & ( y ) ) == y )
-#define SETFLAG( x, y )                       ( ( x ) = ( x ) | ( y ) )
-#define UNSETFLAG( x, y )                     ( ( x ) = ( ( x ) | ( y ) ) ^ ( y ) )
+#define FLAG( x, y )                            ( ( ( x ) & ( y ) ) != 0 )
+#define FLAGS( x, y )                           ( ( ( x ) & ( y ) ) == y )
+#define SETFLAG( x, y )                         ( ( x ) = ( x ) | ( y ) )
+#define UNSETFLAG( x, y )                       ( ( x ) = ( ( x ) | ( y ) ) ^ ( y ) )
 
 // Limits
 #define MAX_UCHAR                    ( 0xFF )
@@ -22,28 +22,47 @@
 #define MIN_INT                      ( 0x80000000 )
 
 // Other stuff
-#define CLAMP( x, low, high )                 ( ( ( x ) > ( high ) ) ? ( high ) : ( ( ( x ) < ( low ) ) ? ( low ) : ( x ) ) )
-#define CONVERT_GRAMM( x )                    ( ( x ) * 453 )
-#define RAD( deg )                            ( ( deg ) * 3.141592654f / 180.0f )
+#define CLAMP( x, low, high )                   ( ( ( x ) > ( high ) ) ? ( high ) : ( ( ( x ) < ( low ) ) ? ( low ) : ( x ) ) )
+#define CONVERT_GRAMM( x )                      ( ( x ) * 453 )
+#define RAD( deg )                              ( ( deg ) * 3.141592654f / 180.0f )
 
+// Signatures
+#define BINARY_SIGNATURE( name, type, ver )     const unsigned char name[ 6 ] = { 'F', 'O', type, ( ( ver ) >> 8 ) & 0xFF, ( ( ver ) ) & 0xFF, 0 }
+#define BINARY_SIGNATURE_VALID( sig1, sig2 )    ( sig1[ 0 ] == sig2[ 0 ] && sig1[ 1 ] == sig2[ 1 ] && sig1[ 2 ] == sig2[ 2 ] && sig1[ 5 ] == sig2[ 5 ] ) // skip version check
+#define BINARY_SIGNATURE_VERSION( sig )         ( ( sig[ 3 ] << 8 ) | sig[ 4 ] )
+
+#define BINARY_CLIENTSAVE            'C'
+#define BINARY_MAPSAVE               'M'
+#define BINARY_PROFILERSAVE          'P'
+#define BINARY_SCRIPTSAVE            'S'
+#define BINARY_WORLDSAVE             'W'
+#define BINARY_CACHE                 'c'
+
+#ifdef USE_VANILLA_WORLDSAVE
 // World dump versions
-#define WORLD_SAVE_V1                ( 0x01AB0F01 )
-#define WORLD_SAVE_V2                ( 0x01AB0F02 )
-#define WORLD_SAVE_V3                ( 0x01AB0F03 )
-#define WORLD_SAVE_V4                ( 0x01AB0F04 )
-#define WORLD_SAVE_V5                ( 0x01AB0F05 )
-#define WORLD_SAVE_V6                ( 0x01AB0F06 )
-#define WORLD_SAVE_V7                ( 0x01AB0F07 )
-#define WORLD_SAVE_V8                ( 0x01AB0F08 )
-#define WORLD_SAVE_V9                ( 0x01AB0F09 )
-#define WORLD_SAVE_V10               ( 0x01AB0F10 )
-#define WORLD_SAVE_V11               ( 0x01AB0F11 )
-#define WORLD_SAVE_V12               ( 0x01AB0F12 )
-#define WORLD_SAVE_V13               ( 0x01AB0F13 )
-#define WORLD_SAVE_LAST              WORLD_SAVE_V13
-#define SINGLEPLAYER_SAVE_V1         ( 1 )
-#define SINGLEPLAYER_SAVE_V2         ( 2 )
-#define SINGLEPLAYER_SAVE_LAST       ( SINGLEPLAYER_SAVE_V2 )
+# define WORLD_SAVE_V1               ( 0x01AB0F01 )
+# define WORLD_SAVE_V2               ( 0x01AB0F02 )
+# define WORLD_SAVE_V3               ( 0x01AB0F03 )
+# define WORLD_SAVE_V4               ( 0x01AB0F04 )
+# define WORLD_SAVE_V5               ( 0x01AB0F05 )
+# define WORLD_SAVE_V6               ( 0x01AB0F06 )
+# define WORLD_SAVE_V7               ( 0x01AB0F07 )
+# define WORLD_SAVE_V8               ( 0x01AB0F08 )
+# define WORLD_SAVE_V9               ( 0x01AB0F09 )
+# define WORLD_SAVE_V10              ( 0x01AB0F10 )
+# define WORLD_SAVE_V11              ( 0x01AB0F11 )
+# define WORLD_SAVE_V12              ( 0x01AB0F12 )
+# define WORLD_SAVE_V13              ( 0x01AB0F13 )
+# define WORLD_SAVE_LAST             WORLD_SAVE_V13
+# define SINGLEPLAYER_SAVE_V1        ( 1 )
+# define SINGLEPLAYER_SAVE_V2        ( 2 )
+# define SINGLEPLAYER_SAVE_LAST      ( SINGLEPLAYER_SAVE_V2 )
+#else
+# define WORLD_SAVE_V1               ( 1 ) // unreleased
+# define WORLD_SAVE_LAST             WORLD_SAVE_V1
+# define SINGLEPLAYER_SAVE_V1        ( 1 ) // unreleased
+# define SINGLEPLAYER_SAVE_LAST      ( SINGLEPLAYER_SAVE_V1 )
+#endif
 
 // Client save
 #ifdef USE_VANILLA_CLIENTSAVE
@@ -52,9 +71,8 @@
 # define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V2 )
 const char ClientSaveSignature[ 4 ] = { 'F', 'O', 0, CLIENT_SAVE_LAST };
 #else
-# define CLIENT_SAVE_V1              ( 1 )
+# define CLIENT_SAVE_V1              ( 1 ) // unreleased
 # define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V1 )
-const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #endif // USE_VANILLA_CLIENTSAVE
 
 // Generic
@@ -69,8 +87,8 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #define EFFECT_SCRIPT_VALUES         ( 10 )
 #define ABC_SIZE                     ( 26 )
 #define DIRS_COUNT                   ( GameOpt.MapHexagonal ? 6 : 8 )
-#define IS_DIR_CORNER( dir )                  ( ( ( dir ) & 1 ) != 0 ) // 1, 3, 5, 7
-#define UTF8_BUF_SIZE( count )                ( ( count ) * 4 )
+#define IS_DIR_CORNER( dir )                    ( ( ( dir ) & 1 ) != 0 ) // 1, 3, 5, 7
+#define UTF8_BUF_SIZE( count )                  ( ( count ) * 4 )
 
 // Script pragma bindfield sizes
 #define PROTO_ITEM_USER_DATA_SIZE    ( 500 )
@@ -148,7 +166,7 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #define SAY_ENCOUNTER_TB             ( 16 )
 #define SAY_FIX_RESULT               ( 17 )
 #define SAY_DIALOGBOX_TEXT           ( 18 )
-#define SAY_DIALOGBOX_BUTTON( b )             ( 19 + ( b ) ) // Max 20 buttons (0..19)
+#define SAY_DIALOGBOX_BUTTON( b )               ( 19 + ( b ) ) // Max 20 buttons (0..19)
 #define SAY_SAY_TITLE                ( 39 )
 #define SAY_SAY_TEXT                 ( 40 )
 #define SAY_FLASH_WINDOW             ( 41 )
@@ -227,7 +245,7 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #define GM_MAX_GROUP_COUNT           ( GameOpt.GlobalMapMaxGroupCount )
 #define GM_ANSWER_WAIT_TIME          ( 20000 )
 #define GM_LIGHT_TIME                ( 5000 )
-#define GM_ZONE( x )                          ( ( x ) / GM_ZONE_LEN )
+#define GM_ZONE( x )                            ( ( x ) / GM_ZONE_LEN )
 #define GM_ENTRANCES_SEND_TIME       ( 60000 )
 #define GM_TRACE_TIME                ( 1000 )
 
@@ -318,8 +336,8 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #define MAX_CRIT_TYPES               ( 1000 )
 #define NPC_START_ID                 ( 5000001 )
 #define USERS_START_ID               ( 1 )
-#define IS_USER_ID( id )                      ( ( id ) > 0 && ( id ) < NPC_START_ID )
-#define IS_NPC_ID( id )                       ( ( id ) >= NPC_START_ID )
+#define IS_USER_ID( id )                        ( ( id ) > 0 && ( id ) < NPC_START_ID )
+#define IS_NPC_ID( id )                         ( ( id ) >= NPC_START_ID )
 #define MAX_ANSWERS                  ( 100 )
 #define PROCESS_TALK_TICK            ( 1000 )
 #define DIALOGS_LST_NAME             "dialogs.lst"
@@ -409,8 +427,8 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 
 // Parameters
 #define MAX_PARAMS                   ( 1000 )
-#define SKILL_OFFSET( skill )                 ( ( skill ) - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ) )
-#define PERK_OFFSET( perk )                   ( ( perk ) - ( GameOpt.AbsoluteOffsets ? 0 : PERK_BEGIN ) )
+#define SKILL_OFFSET( skill )                   ( ( skill ) - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ) )
+#define PERK_OFFSET( perk )                     ( ( perk ) - ( GameOpt.AbsoluteOffsets ? 0 : PERK_BEGIN ) )
 
 // Stats
 #define ST_STRENGTH                  ( 0 )
@@ -501,7 +519,7 @@ const char ClientSaveSignature[ 4 ] = { 'F', 'O', 'C', CLIENT_SAVE_LAST };
 #define TO_REMOVE_FROM_GAME          ( 240 )
 #define TO_KARMA_VOTING              ( 242 )
 #define TB_BATTLE_TIMEOUT            ( 100000000 )
-#define TB_BATTLE_TIMEOUT_CHECK( to )         ( ( to ) > 10000000 )
+#define TB_BATTLE_TIMEOUT_CHECK( to )           ( ( to ) > 10000000 )
 
 // Kills
 #define KILL_BEGIN                   ( GameOpt.KillBegin )

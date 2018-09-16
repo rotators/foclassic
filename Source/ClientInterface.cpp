@@ -6,6 +6,8 @@
 // ******************************************************************************************************************************
 // ==============================================================================================================================
 
+BINARY_SIGNATURE( WorldSaveSignature, BINARY_WORLDSAVE, WORLD_SAVE_LAST );
+
 bool FOClient::IfaceLoadRect( Rect& comp, const char* name )
 {
     char res[ MAX_FOTEXT ];
@@ -11392,10 +11394,35 @@ void FOClient::SaveLoadCollect()
         uint64 tc, ta, tw;
         FileGetTime( f, tc, ta, tw );
 
+        #ifndef USE_VANILLA_WORLDSAVE
+        uchar signature[ sizeof( WorldSaveSignature ) ];
+        if( !FileRead( f, signature, sizeof( signature ) ) )
+            continue;
+
+        if( memcmp( WorldSaveSignature, signature, sizeof( WorldSaveSignature ) ) != 0 )
+        {
+            if( !BINARY_SIGNATURE_VALID( WorldSaveSignature, signature ) )
+                continue;
+
+            uchar version = BINARY_SIGNATURE_VERSION( signature );
+            if( !version || version < WORLD_SAVE_V1 || version > WORLD_SAVE_LAST )
+                continue;
+        }
+        #endif
+
+        uint pos1 = 4;
+        uint pos2 = 8;
+
+        #ifndef USE_VANILLA_WORLDSAVE
+        pos1 += 2;
+        pos2 += 2;
+        #endif
         // Read save data, offsets see SaveGameInfoFile in Server.cpp
+        #pragma MESSAGE("FULL REWRITE")
+
         // Check singleplayer data
         uint sp;
-        FileSetPointer( f, 4, SEEK_SET );
+        FileSetPointer( f, pos1, SEEK_SET );
         if( !FileRead( f, &sp, sizeof( sp ) ) )
             continue;
         if( sp == 0 )
@@ -11404,30 +11431,33 @@ void FOClient::SaveLoadCollect()
         // Critter name
         uint crname_size = UTF8_BUF_SIZE( MAX_NAME );
         char crname[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        FileSetPointer( f, 8, SEEK_SET );
+        FileSetPointer( f, pos2, SEEK_SET );
+        #ifdef USE_VANILLA_WORLDSAVE
         if( sp >= SINGLEPLAYER_SAVE_V2 )
         {
-            if( !FileRead( f, crname, sizeof( crname ) ) )
-                continue;
-        }
-        else
-        {
-            crname_size = MAX_NAME + 1;
-            if( !FileRead( f, crname, MAX_NAME + 1 ) )
-                continue;
-            for( char* name = crname; *name; name++ )
-                *name = ( ( ( *name >= 'A' && *name <= 'Z' ) || ( *name >= 'a' && *name <= 'z' ) ) ? *name : 'X' );
-        }
-
+        #endif
+        if( !FileRead( f, crname, sizeof( crname ) ) )
+            continue;
+        #ifdef USE_VANILLA_WORLDSAVE
+    }
+    else
+    {
+        crname_size = MAX_NAME + 1;
+        if( !FileRead( f, crname, MAX_NAME + 1 ) )
+            continue;
+        for( char* name = crname; *name; name++ )
+            *name = ( ( ( *name >= 'A' && *name <= 'Z' ) || ( *name >= 'a' && *name <= 'z' ) ) ? *name : 'X' );
+    }
+        #endif
         // Map pid
         ushort map_pid;
-        FileSetPointer( f, 8 + crname_size + 68, SEEK_SET );
+        FileSetPointer( f, pos2 + crname_size + 68, SEEK_SET );
         if( !FileRead( f, &map_pid, sizeof( map_pid ) ) )
             continue;
 
         // Calculate critter time events size
         uint te_size;
-        FileSetPointer( f, 8 + crname_size + 7404 + 6944, SEEK_SET );
+        FileSetPointer( f, pos2 + crname_size + 7404 + 6944, SEEK_SET );
         if( !FileRead( f, &te_size, sizeof( te_size ) ) )
             continue;
         te_size = te_size * 16 + 4;
@@ -11435,7 +11465,7 @@ void FOClient::SaveLoadCollect()
         // Picture data
         uint pic_data_len;
         UCharVec pic_data;
-        FileSetPointer( f, 8 + crname_size + 7404 + 6944 + te_size, SEEK_SET );
+        FileSetPointer( f, pos2 + crname_size + 7404 + 6944 + te_size, SEEK_SET );
         if( !FileRead( f, &pic_data_len, sizeof( pic_data_len ) ) )
             continue;
         if( pic_data_len )
@@ -11447,7 +11477,7 @@ void FOClient::SaveLoadCollect()
 
         // Game time
         ushort year, month, day, hour, minute;
-        FileSetPointer( f, 8 + crname_size + 7404 + 6944 + te_size + 4 + pic_data_len + 2, SEEK_SET );
+        FileSetPointer( f, pos2 + crname_size + 7404 + 6944 + te_size + 4 + pic_data_len + 2, SEEK_SET );
         if( !FileRead( f, &year, sizeof( year ) ) )
             continue;
         if( !FileRead( f, &month, sizeof( month ) ) )

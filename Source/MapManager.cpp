@@ -206,6 +206,8 @@ bool MapManager::LoadLocationsProtos()
             continue;
 
         ProtoLocation& ploc = ProtoLoc[ i ];
+        city_txt.GetStr( app, "name", "UNKNOWN", res );
+        WriteLog( "Load location<%d:%s>\n", i, res );
         if( !LoadLocationProto( city_txt, ploc, i ) )
         {
             errors++;

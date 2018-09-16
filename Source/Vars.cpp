@@ -76,6 +76,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
         ushort temp_id;
         uint   master_id, slave_id;
         int    val;
+        # ifdef USE_VANILLA_WORLDSAVE
         if( version < WORLD_SAVE_V10 )
         {
             uint64 id;
@@ -92,6 +93,12 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
             FileRead( f, &slave_id, sizeof( slave_id ) );
             FileRead( f, &val, sizeof( val ) );
         }
+        # else
+        FileRead( f, &temp_id, sizeof( temp_id ) );
+        FileRead( f, &master_id, sizeof( master_id ) );
+        FileRead( f, &slave_id, sizeof( slave_id ) );
+        FileRead( f, &val, sizeof( val ) );
+        # endif
 
         TemplateVar* tvar = GetTemplateVar( temp_id );
         if( !tvar )

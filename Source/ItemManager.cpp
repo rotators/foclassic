@@ -624,6 +624,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
         FileRead( f, &acc_buf[ 0 ], sizeof( acc_buf ) );
 
         Item::ItemData data;
+        # ifdef USE_VANILLA_WORLDSAVE
         if( version >= WORLD_SAVE_V13 )
         {
             FileRead( f, &data, sizeof( data ) );
@@ -711,6 +712,9 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
                 data.RadioBroadcastRecv = data_old.Radio.BroadcastRecv;
             }
         }
+        # else
+        FileRead( f, &data, sizeof( data ) );
+        # endif
 
         uchar lex_len;
         char  lexems[ 1024 ] = { 0 };
@@ -743,6 +747,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
         if( item->IsRadio() )
             RadioRegister( item, true );
 
+        # ifdef USE_VANILLA_WORLDSAVE
         // Patches
         if( version < WORLD_SAVE_V11 )
         {
@@ -751,6 +756,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
             else if( item->GetProtoId() == 58 /*PID_HOLODISK*/ && FLAG( item->Proto->Flags, ITEM_HOLODISK ) )
                 SETFLAG( item->Data.Flags, ITEM_HOLODISK );
         }
+        # endif
     }
     if( errors )
         return false;
