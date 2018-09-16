@@ -1442,8 +1442,8 @@ void FOServer::Process_CreateClient( Client* cl )
     }
 
     // Begin data encrypting
-    cl->Bin.SetEncryptKey( 1234567890 );
-    cl->Bout.SetEncryptKey( 1234567890 );
+    cl->Bin.SetEncryptKey( 1207892018 );
+    cl->Bout.SetEncryptKey( 1207892018 );
 
     // Name
     char name[ UTF8_BUF_SIZE( MAX_NAME ) ];
@@ -1729,8 +1729,8 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     cl->Bin >> uid[ 4 ];
 
     // Begin data encrypting
-    cl->Bin.SetEncryptKey( uid[ 4 ] + 12345 );
-    cl->Bout.SetEncryptKey( uid[ 4 ] + 12345 );
+    cl->Bin.SetEncryptKey( uid[ 4 ] + 12234 );
+    cl->Bout.SetEncryptKey( uid[ 4 ] + 12234 );
 
     // Login, password hash
     char name[ UTF8_BUF_SIZE( MAX_NAME ) ];

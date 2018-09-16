@@ -3265,8 +3265,8 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     uid4 = uid1;                                                                                                                                                        // UID4
 
     // Begin data encrypting
-    Bout.SetEncryptKey( *UID4 + 12345 );
-    Bin.SetEncryptKey( *UID4 + 12345 );
+    Bout.SetEncryptKey( *UID4 + 12234 );
+    Bin.SetEncryptKey( *UID4 + 12234 );
 
     Bout.Push( name_, sizeof( name_ ) );
     Bout << uid1;
@@ -3328,8 +3328,8 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     Bout << (ushort) FO_PROTOCOL_VERSION;
 
     // Begin data encrypting
-    Bout.SetEncryptKey( 1234567890 );
-    Bin.SetEncryptKey( 1234567890 );
+    Bout.SetEncryptKey( 1207892018 );
+    Bin.SetEncryptKey( 1207892018 );
 
     Bout.Push( Str::FormatBuf( "%s", newcr->GetName() ), UTF8_BUF_SIZE( MAX_NAME ) );
     char pass_hash[ PASS_HASH_SIZE ];
