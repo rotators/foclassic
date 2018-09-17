@@ -5,7 +5,7 @@
 # include "PlatformSpecific.h"
 # include "Defines.h"
 # include "Types.h"
-# include "../ASCompiler/ScriptEngine.h"
+# include "ASCompiler.h"
 # include "AngelScript/scriptstring.h"
 # include <stdio.h>
 # include <strstream>

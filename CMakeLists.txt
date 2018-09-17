@@ -625,8 +625,8 @@ target_link_libraries( Server ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
 ## ASCompiler
 ##
 set( ASCOMPILER_SOURCES
-	ASCompiler/ScriptEngine.h
 	${FO_DIR}/ASCompiler.cpp
+	${FO_DIR}/ASCompiler.h
 	${FO_DIR}/Common.cpp
 	${FO_DIR}/Common.h
 	${FO_DIR}/Crypt.cpp

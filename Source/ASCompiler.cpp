@@ -1,5 +1,5 @@
 #include "Common.h"
-#include "../ASCompiler/ScriptEngine.h"
+#include "ASCompiler.h"
 #include "PlatformSpecific.h"
 #include "ScriptPragmas.h"
 #include "Debugger.h"
