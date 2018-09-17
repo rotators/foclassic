@@ -5,7 +5,9 @@ cmake_minimum_required( VERSION 3.12.2 )
 
 project( FOClassic
 	DESCRIPTION  "FOnline Classic"
-#	HOMEPAGE_URL ""
+	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
+	VERSION 0
+	LANGUAGES C CXX
 )
 
 set( CMAKE_CXX_STANDARD 11 )
@@ -654,6 +656,14 @@ add_executable( ASCompiler ${ASCOMPILER_SOURCES} )
 target_include_directories( ASCompiler PRIVATE "ASCompiler" ${FO_DIR} )
 target_compile_definitions( ASCompiler PRIVATE FONLINE_SCRIPT_COMPILER )
 target_link_libraries( ASCompiler ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+##
+## Prettify executable
+##
+if( MSVC )
+	foreach( target ASCompiler ClientDX ClientGL MapperDX MapperGL Server )
+		target_sources( ${target} PRIVATE Resources/VersionInfo.rc )
+	endforeach()
+endif( MSVC )
 ##
 ## Prettify IDE
 ##
