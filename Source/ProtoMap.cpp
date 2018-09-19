@@ -1423,22 +1423,12 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
 #ifdef FONLINE_SERVER
 bool ProtoMap::LoadCache( FileManager& fm )
 {
-    # ifdef USE_VANILLA_MAPSAVE
-    // Server version
-    uint version = fm.GetBEUInt();
-    if( version != SERVER_VERSION )
-        return false;
-    fm.GetBEUInt();
-    fm.GetBEUInt();
-    fm.GetBEUInt();
-    # else
     uchar signature[ sizeof( MapSaveSignature ) ];
     if( !fm.CopyMem( signature, sizeof( signature ) ) )
         return false;
 
     if( memcmp( MapSaveSignature, signature, sizeof( MapSaveSignature ) ) != 0 )
         return false;
-    # endif
 
     // Header
     if( !fm.CopyMem( &Header, sizeof( Header ) ) )
@@ -1549,17 +1539,8 @@ bool ProtoMap::LoadCache( FileManager& fm )
 
 void ProtoMap::SaveCache( FileManager& fm )
 {
-    # ifdef USE_VANILLA_MAPSAVE
-    // Server version
-    fm.SetBEUInt( SERVER_VERSION );
-    fm.SetBEUInt( 0 );
-    fm.SetBEUInt( 0 );
-    fm.SetBEUInt( 0 );
-    # else
     ushort version = BINARY_SIGNATURE_VERSION( MapSaveSignature );
-    WriteLog( "Save mapb version=%u <0x%0X 0x%0X>\n", version, MapSaveSignature[ 3 ], MapSaveSignature[ 4 ] );
     fm.SetData( (uchar*) MapSaveSignature, sizeof( MapSaveSignature ) );
-    # endif
 
     // Header
     fm.SetData( &Header, sizeof( Header ) );

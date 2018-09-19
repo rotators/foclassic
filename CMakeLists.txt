@@ -6,13 +6,16 @@ cmake_minimum_required( VERSION 3.12.2 )
 project( FOClassic
 	DESCRIPTION  "FOnline Classic"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
-	VERSION 0
+	VERSION 1
 	LANGUAGES C CXX
 )
 
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE )
+
+# globals
+unset( FONLINE_APPS )
 
 # directories
 set( FO_DIR     "Source" )
@@ -51,37 +54,42 @@ macro( fo_options_apply )
 		endwhile()
 		message( STATUS " ${this_text} ${FOPTION_VALUE_${opt}}" )
 	endforeach()
-	
+
 	# cleanup
 	unset( max_len )
 	unset( this_len )
 	unset( this_text )
-	
-	# finally, apply all options
-	message( STATUS "Applying options..." )
-	foreach( opt ${FOPTIONS} )
-		# check if option is enabled
-		if( FOPTION_VALUE_${opt} )
-			# always add a global define if it is
-			add_definitions( "-D${opt}=1" )
 
-			# check if option have its own macro/function
-			if( COMMAND "fo_option_${opt}" )
-				# it does, we need to call fo_option_${opt}() now, but cmake doesn't like it
-				# let's create and include external file to workaround that
-				set( invoke "${CMAKE_BINARY_DIR}/invoke/fo_option_${opt}.cmake" )
-				if( NOT EXISTS "${invoke}" )
-					file( WRITE "${invoke}" "fo_option_${opt}()\n" )
+	# check if there's anything to do
+	list( LENGTH FOPTIONS optlen )
+	if( ${optlen} )
+		# finally, apply all options
+		message( STATUS "Applying options..." )
+		foreach( opt ${FOPTIONS} )
+			# check if option is enabled
+			if( FOPTION_VALUE_${opt} )
+				# always add a global define if it is
+				add_definitions( "-D${opt}=1" )
+
+				# check if option have its own macro/function
+				if( COMMAND "fo_option_${opt}" )
+					# it does, we need to call fo_option_${opt}() now, but cmake doesn't like it
+					# let's create and include external file to workaround that
+					set( invoke "${CMAKE_BINARY_DIR}/invoke/fo_option_${opt}.cmake" )
+					if( NOT EXISTS "${invoke}" )
+						file( WRITE "${invoke}" "fo_option_${opt}()\n" )
+					endif()
+					# call our macro/function
+					include( "${invoke}" )
 				endif()
-				# call our macro/function
-				include( "${invoke}" )
 			endif()
-		endif()
-	endforeach()
-	message( STATUS "Applying options... OK" )
-	
+		endforeach()
+		message( STATUS "Applying options... OK" )
+	endif()
+
 	# cleanup
 	unset( opt )
+	unset( optlen )
 	unset( invoke )
 endmacro()
 
@@ -107,20 +115,14 @@ link_directories( "Lib/Dx9/x86/" )
 ##
 ## Source options
 ##
-fo_option( USE_STLPORT              "Use StlPort" OFF )
-fo_option( USE_VANILLA_CACHESAVE    "Use vanilla cache saving" OFF )
-fo_option( USE_VANILLA_CLIENTSAVE   "Use vanilla client saving" OFF )
-fo_option( USE_VANILLA_MAPSAVE      "Use vanilla map saving" OFF )
-fo_option( USE_VANILLA_PROFILERSAVE "Use vanilla profiler saving" OFF )
-fo_option( USE_VANILLA_SCRIPTSAVE   "Use vanilla script saving" OFF )
-fo_option( USE_VANILLA_WORLDSAVE    "Use vanilla world saving" OFF )
+#fo_option( USE_THING "Use Thing" ON )
 
 ##
 ## Source options macros
 ##
-macro( fo_option_USE_STLPORT )
-	include_directories( BEFORE "Source/StlPort" )
-endmacro()
+#macro( fo_option_USE_OPTION )
+	#do_fancy_thing()
+#endmacro()
 
 fo_options_apply()
 
@@ -420,6 +422,7 @@ add_executable( ClientDX WIN32 ${CLIENT_DX_SOURCES} )
 target_compile_definitions( ClientDX PRIVATE FO_D3D FONLINE_CLIENT )
 target_include_directories( ClientDX PRIVATE ${FO_DIR} ${FO_DIR}/Dx9 )
 target_link_libraries( ClientDX Acm ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+list( APPEND FONLINE_APPS ClientDX )
 ##
 ## ClientGL
 ##
@@ -430,6 +433,7 @@ add_executable( ClientGL WIN32 ${CLIENT_GL_SOURCES} )
 target_compile_definitions( ClientGL PRIVATE FONLINE_CLIENT )
 target_include_directories( ClientGL PRIVATE ${FO_DIR} )
 target_link_libraries( ClientGL Acm ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib )
+list( APPEND FONLINE_APPS ClientGL )
 ##
 ## Mapper
 ##
@@ -520,6 +524,7 @@ add_executable( MapperDX WIN32 ${MAPPER_DX_SOURCES} )
 target_compile_definitions( MapperDX PRIVATE FO_D3D FONLINE_MAPPER )
 target_include_directories( MapperDX PRIVATE ${FO_DIR} ${FO_DIR}/Dx9 )
 target_link_libraries( MapperDX ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+list( APPEND FONLINE_APPS MapperDX )
 ##
 ## MapperGL
 ##
@@ -530,6 +535,7 @@ add_executable( MapperGL WIN32 ${MAPPER_GL_SOURCES} )
 target_compile_definitions( MapperGL PRIVATE FONLINE_MAPPER )
 target_include_directories( MapperGL PRIVATE ${FO_DIR} )
 target_link_libraries( MapperGL ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib )
+list( APPEND FONLINE_APPS MapperGL )
 ##
 ## Server
 ##
@@ -621,6 +627,7 @@ add_executable( Server WIN32 ${SERVER_SOURCES} )
 target_compile_definitions( Server PRIVATE FONLINE_SERVER )
 target_include_directories( Server PRIVATE ${FO_DIR} )
 target_link_libraries( Server ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+list( APPEND FONLINE_APPS Server )
 ##
 ## ASCompiler
 ##
@@ -656,11 +663,18 @@ add_executable( ASCompiler ${ASCOMPILER_SOURCES} )
 target_include_directories( ASCompiler PRIVATE "ASCompiler" ${FO_DIR} )
 target_compile_definitions( ASCompiler PRIVATE FONLINE_SCRIPT_COMPILER )
 target_link_libraries( ASCompiler ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+list( APPEND FONLINE_APPS ASCompiler )
 ##
-## Prettify executable
+## Version spread
+##
+foreach( target ${FONLINE_APPS} )
+	target_compile_definitions( ${target} PRIVATE FONLINE_VERSION=${PROJECT_VERSION} )
+endforeach()
+##
+## Prettify executables
 ##
 if( MSVC )
-	foreach( target ASCompiler ClientDX ClientGL MapperDX MapperGL Server )
+	foreach( target ${FONLINE_APPS} )
 		target_sources( ${target} PRIVATE Resources/VersionInfo.rc )
 	endforeach()
 endif( MSVC )

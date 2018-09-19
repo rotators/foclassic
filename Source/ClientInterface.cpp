@@ -11394,7 +11394,6 @@ void FOClient::SaveLoadCollect()
         uint64 tc, ta, tw;
         FileGetTime( f, tc, ta, tw );
 
-        #ifndef USE_VANILLA_WORLDSAVE
         uchar signature[ sizeof( WorldSaveSignature ) ];
         if( !FileRead( f, signature, sizeof( signature ) ) )
             continue;
@@ -11408,17 +11407,11 @@ void FOClient::SaveLoadCollect()
             if( !version || version < WORLD_SAVE_V1 || version > WORLD_SAVE_LAST )
                 continue;
         }
-        #endif
 
-        uint pos1 = 4;
-        uint pos2 = 8;
-
-        #ifndef USE_VANILLA_WORLDSAVE
-        pos1 += 2;
-        pos2 += 2;
-        #endif
         // Read save data, offsets see SaveGameInfoFile in Server.cpp
         #pragma MESSAGE("FULL REWRITE")
+        uint pos1 = 6;
+        uint pos2 = 10;
 
         // Check singleplayer data
         uint sp;
@@ -11432,23 +11425,8 @@ void FOClient::SaveLoadCollect()
         uint crname_size = UTF8_BUF_SIZE( MAX_NAME );
         char crname[ UTF8_BUF_SIZE( MAX_NAME ) ];
         FileSetPointer( f, pos2, SEEK_SET );
-        #ifdef USE_VANILLA_WORLDSAVE
-        if( sp >= SINGLEPLAYER_SAVE_V2 )
-        {
-        #endif
         if( !FileRead( f, crname, sizeof( crname ) ) )
             continue;
-        #ifdef USE_VANILLA_WORLDSAVE
-    }
-    else
-    {
-        crname_size = MAX_NAME + 1;
-        if( !FileRead( f, crname, MAX_NAME + 1 ) )
-            continue;
-        for( char* name = crname; *name; name++ )
-            *name = ( ( ( *name >= 'A' && *name <= 'Z' ) || ( *name >= 'a' && *name <= 'z' ) ) ? *name : 'X' );
-    }
-        #endif
         // Map pid
         ushort map_pid;
         FileSetPointer( f, pos2 + crname_size + 68, SEEK_SET );

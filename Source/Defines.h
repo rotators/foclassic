@@ -38,42 +38,15 @@
 #define BINARY_WORLDSAVE             'W'
 #define BINARY_CACHE                 'c'
 
-#ifdef USE_VANILLA_WORLDSAVE
 // World dump versions
-# define WORLD_SAVE_V1               ( 0x01AB0F01 )
-# define WORLD_SAVE_V2               ( 0x01AB0F02 )
-# define WORLD_SAVE_V3               ( 0x01AB0F03 )
-# define WORLD_SAVE_V4               ( 0x01AB0F04 )
-# define WORLD_SAVE_V5               ( 0x01AB0F05 )
-# define WORLD_SAVE_V6               ( 0x01AB0F06 )
-# define WORLD_SAVE_V7               ( 0x01AB0F07 )
-# define WORLD_SAVE_V8               ( 0x01AB0F08 )
-# define WORLD_SAVE_V9               ( 0x01AB0F09 )
-# define WORLD_SAVE_V10              ( 0x01AB0F10 )
-# define WORLD_SAVE_V11              ( 0x01AB0F11 )
-# define WORLD_SAVE_V12              ( 0x01AB0F12 )
-# define WORLD_SAVE_V13              ( 0x01AB0F13 )
-# define WORLD_SAVE_LAST             WORLD_SAVE_V13
-# define SINGLEPLAYER_SAVE_V1        ( 1 )
-# define SINGLEPLAYER_SAVE_V2        ( 2 )
-# define SINGLEPLAYER_SAVE_LAST      ( SINGLEPLAYER_SAVE_V2 )
-#else
-# define WORLD_SAVE_V1               ( 1 ) // unreleased
-# define WORLD_SAVE_LAST             WORLD_SAVE_V1
-# define SINGLEPLAYER_SAVE_V1        ( 1 ) // unreleased
-# define SINGLEPLAYER_SAVE_LAST      ( SINGLEPLAYER_SAVE_V1 )
-#endif
+#define WORLD_SAVE_V1                ( 1 ) // unreleased
+#define WORLD_SAVE_LAST              WORLD_SAVE_V1
+#define SINGLEPLAYER_SAVE_V1         ( 1 ) // unreleased
+#define SINGLEPLAYER_SAVE_LAST       ( SINGLEPLAYER_SAVE_V1 )
 
 // Client save
-#ifdef USE_VANILLA_CLIENTSAVE
-# define CLIENT_SAVE_V1              ( 1 ) // Corrupted
-# define CLIENT_SAVE_V2              ( 2 )
-# define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V2 )
-const char ClientSaveSignature[ 4 ] = { 'F', 'O', 0, CLIENT_SAVE_LAST };
-#else
-# define CLIENT_SAVE_V1              ( 1 ) // unreleased
-# define CLIENT_SAVE_LAST            ( CLIENT_SAVE_V1 )
-#endif // USE_VANILLA_CLIENTSAVE
+#define CLIENT_SAVE_V1               ( 1 ) // unreleased
+#define CLIENT_SAVE_LAST             ( CLIENT_SAVE_V1 )
 
 // Generic
 #define WORLD_START_TIME             "07:00 30:10:2246 x00"

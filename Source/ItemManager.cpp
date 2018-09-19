@@ -624,97 +624,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
         FileRead( f, &acc_buf[ 0 ], sizeof( acc_buf ) );
 
         Item::ItemData data;
-        # ifdef USE_VANILLA_WORLDSAVE
-        if( version >= WORLD_SAVE_V13 )
-        {
-            FileRead( f, &data, sizeof( data ) );
-        }
-        else
-        {
-            struct // 8
-            {
-                union
-                {
-                    struct
-                    {
-                        uchar  BrokenFlags;
-                        uchar  BrokenCount;
-                        ushort Deterioration;
-                        ushort AmmoPid;
-                        ushort AmmoCount;
-                    } TechInfo;
-                    struct
-                    {
-                        uint   DoorId;
-                        ushort Condition;
-                        ushort Complexity;
-                    } Locker;
-                    struct
-                    {
-                        uint   DoorId;
-                        ushort Fuel;
-                        ushort Deterioration;
-                    } Car;
-                    struct
-                    {
-                        uint Number;
-                    } Holodisk;
-                    struct
-                    {
-                        ushort Channel;
-                        ushort Flags;
-                        uchar  BroadcastSend;
-                        uchar  BroadcastRecv;
-                    } Radio;
-                };
-            } data_old;
-            STATIC_ASSERT( sizeof( data_old ) == 8 );
-            memzero( &data, sizeof( data ) );
-            FileRead( f, &data, 84 );
-            FileRead( f, &data_old, 8 );
-            ProtoItem* proto = GetProtoItem( pid );
-            if( proto && proto->Deteriorable )
-            {
-                data.BrokenFlags = data_old.TechInfo.BrokenFlags;
-                data.BrokenCount = data_old.TechInfo.BrokenCount;
-                data.Deterioration = data_old.TechInfo.Deterioration;
-            }
-            if( proto && proto->Type == ITEM_TYPE_WEAPON )
-            {
-                data.AmmoPid = data_old.TechInfo.AmmoPid;
-                data.AmmoCount = data_old.TechInfo.AmmoCount;
-            }
-            if( proto && ( proto->Type == ITEM_TYPE_DOOR || proto->Type == ITEM_TYPE_CONTAINER ) )
-            {
-                data.LockerId = data_old.Locker.DoorId;
-                data.LockerCondition = data_old.Locker.Condition;
-                data.LockerComplexity = data_old.Locker.Complexity;
-            }
-            if( proto && proto->Type == ITEM_TYPE_KEY )
-            {
-                data.LockerId = data_old.Locker.DoorId;
-            }
-            if( proto && proto->Type == ITEM_TYPE_CAR )
-            {
-                data.LockerId = data_old.Car.DoorId;
-                data.Charge = data_old.Car.Fuel;
-                data.Deterioration = data_old.Car.Deterioration;
-            }
-            if( FLAG( data.Flags, ITEM_HOLODISK ) )
-            {
-                data.HolodiskNumber = data_old.Holodisk.Number;
-            }
-            if( FLAG( data.Flags, ITEM_RADIO ) )
-            {
-                data.RadioChannel = data_old.Radio.Channel;
-                data.RadioFlags = data_old.Radio.Flags;
-                data.RadioBroadcastSend = data_old.Radio.BroadcastSend;
-                data.RadioBroadcastRecv = data_old.Radio.BroadcastRecv;
-            }
-        }
-        # else
         FileRead( f, &data, sizeof( data ) );
-        # endif
 
         uchar lex_len;
         char  lexems[ 1024 ] = { 0 };
@@ -746,17 +656,6 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
         // Radio collection
         if( item->IsRadio() )
             RadioRegister( item, true );
-
-        # ifdef USE_VANILLA_WORLDSAVE
-        // Patches
-        if( version < WORLD_SAVE_V11 )
-        {
-            if( item->GetProtoId() == 100 /*PID_RADIO*/ && FLAG( item->Proto->Flags, ITEM_RADIO ) )
-                SETFLAG( item->Data.Flags, ITEM_RADIO );
-            else if( item->GetProtoId() == 58 /*PID_HOLODISK*/ && FLAG( item->Proto->Flags, ITEM_HOLODISK ) )
-                SETFLAG( item->Data.Flags, ITEM_HOLODISK );
-        }
-        # endif
     }
     if( errors )
         return false;

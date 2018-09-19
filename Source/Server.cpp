@@ -3244,23 +3244,8 @@ bool FOServer::LoadGameInfoFile( void* f )
         ClientSaveData& csd = SingleplayerSave.CrData;
         csd.Clear();
 
-        #ifdef USE_VANILLA_WORLDSAVE
-        if( sp >= SINGLEPLAYER_SAVE_V2 )
-        {
-            if( !FileRead( f, csd.Name, sizeof( csd.Name ) ) )
-                return false;
-        }
-        else
-        {
-            if( !FileRead( f, csd.Name, MAX_NAME + 1 ) )
-                return false;
-            for( char* name = csd.Name; *name; name++ )
-                *name = ( ( ( *name >= 'A' && *name <= 'Z' ) || ( *name >= 'a' && *name <= 'z' ) ) ? *name : 'X' );
-        }
-        #else
         if( !FileRead( f, csd.Name, sizeof( csd.Name ) ) )
             return false;
-        #endif
 
         if( !FileRead( f, &csd.Data, sizeof( csd.Data ) ) )
             return false;
@@ -3372,72 +3357,20 @@ bool FOServer::InitReal()
     cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
 
     WriteLog( "***   Starting initialization   ****\n" );
-    /*
-       WriteLog("FOServer<%u>.\n",sizeof(FOServer));
-       WriteLog("MapMngr<%u>.\n",sizeof(CMapMngr));
-       WriteLog("ItemMngr<%u>.\n",sizeof(ItemManager));
-       WriteLog("VarMngr<%u>.\n",sizeof(CVarMngr));
-       WriteLog("MrFixit<%u>.\n",sizeof(CraftManager));
-       WriteLog("Client<%u>.\n",sizeof(Client));
-       WriteLog("Npc<%u>.\n",sizeof(Npc));
-       WriteLog("Location<%u>.\n",sizeof(Location));
-       WriteLog("Map<%u>.\n",sizeof(Map));
-       WriteLog("Item<%u>.\n",sizeof(Item));
-       WriteLog("Item::ItemData<%u>.\n",sizeof(Item::ItemData));
-       WriteLog("CScriptString<%u>.\n",sizeof(CScriptString));
-       WriteLog("string<%u>.\n",sizeof(string));
-     */
-    #if USE_STLPORT
-    // Check the sizes of struct and classes
-    STATIC_ASSERT( sizeof( char ) == 1 );
-    STATIC_ASSERT( sizeof( short ) == 2 );
-    STATIC_ASSERT( sizeof( int ) == 4 );
-    STATIC_ASSERT( sizeof( int64 ) == 8 );
-    STATIC_ASSERT( sizeof( uchar ) == 1 );
-    STATIC_ASSERT( sizeof( ushort ) == 2 );
-    STATIC_ASSERT( sizeof( uint ) == 4 );
-    STATIC_ASSERT( sizeof( uint64 ) == 8 );
-    STATIC_ASSERT( sizeof( bool ) == 1 );
-    STATIC_ASSERT( sizeof( size_t ) == sizeof( void* ) );
-    # if defined ( FO_X86 )
-    STATIC_ASSERT( sizeof( size_t ) == 4 );
-    STATIC_ASSERT( sizeof( string ) == 24 );
-    STATIC_ASSERT( sizeof( IntVec ) == 12 );
-    STATIC_ASSERT( sizeof( IntMap ) == 24 );
-    STATIC_ASSERT( sizeof( IntSet ) == 24 );
-    STATIC_ASSERT( sizeof( IntPair ) == 8 );
-    STATIC_ASSERT( sizeof( ProtoItem ) == 908 );
-    STATIC_ASSERT( sizeof( Item::ItemData ) == 120 );
-    STATIC_ASSERT( sizeof( SceneryCl ) == 32 );
-    STATIC_ASSERT( sizeof( NpcBagItem ) == 16 );
-    STATIC_ASSERT( sizeof( CritData ) == 7404 );
-    STATIC_ASSERT( sizeof( CritDataExt ) == 6944 );
-    STATIC_ASSERT( sizeof( GameVar ) == 28 );
-    STATIC_ASSERT( sizeof( Mutex ) == 44 );
-    STATIC_ASSERT( sizeof( MutexSpinlock ) == 4 );
-    STATIC_ASSERT( sizeof( GameOptions ) == 1340 );
-    STATIC_ASSERT( sizeof( ScriptArray ) == 28 );
-    STATIC_ASSERT( sizeof( ProtoMap::Tile ) == 12 );
-    STATIC_ASSERT( PROTO_ITEM_USER_DATA_SIZE == 500 );
-    STATIC_ASSERT( OFFSETOF( Item, IsNotValid ) == 146 );
-    STATIC_ASSERT( OFFSETOF( Critter::CrTimeEvent, Identifier ) == 12 );
-    STATIC_ASSERT( OFFSETOF( Critter, RefCounter ) == 9388 );
-    STATIC_ASSERT( OFFSETOF( Client, LanguageMsg ) == 9548 );
-    STATIC_ASSERT( OFFSETOF( Npc, Reserved ) == 9408 );
-    STATIC_ASSERT( OFFSETOF( GameVar, RefCount ) == 22 );
-    STATIC_ASSERT( OFFSETOF( TemplateVar, Flags ) == 68 );
-    STATIC_ASSERT( OFFSETOF( AIDataPlane, RefCounter ) == 88 );
-    STATIC_ASSERT( OFFSETOF( GlobalMapGroup, EncounterForce ) == 64 );
-    STATIC_ASSERT( OFFSETOF( ProtoMap::MapEntire, Dir ) == 8 );
-    STATIC_ASSERT( OFFSETOF( SceneryCl, PicMapHash ) == 24 );
-    STATIC_ASSERT( OFFSETOF( ProtoMap, HexFlags ) == 304 );
-    STATIC_ASSERT( OFFSETOF( Map, RefCounter ) == 794 );
-    STATIC_ASSERT( OFFSETOF( ProtoLocation, GeckVisible ) == 76 );
-    STATIC_ASSERT( OFFSETOF( Location, RefCounter ) == 290 );
-    # else   // FO_X64
-    STATIC_ASSERT( sizeof( size_t ) == 8 );
-    # endif
-    #else
+
+    WriteLog( "STATIC_ASSERT\n" );
+    WriteLog( "sizeof( char ) == %u\n", sizeof( char ) );
+    WriteLog( "sizeof( short ) == %u\n", sizeof( short ) );
+    WriteLog( "sizeof( int ) == %u\n", sizeof( int ) );
+    WriteLog( "sizeof( int64 ) == %u\n", sizeof( int64 ) );
+    WriteLog( "sizeof( uchar ) == %u\n", sizeof( uchar ) );
+    WriteLog( "sizeof( ushort ) == %u\n", sizeof( ushort ) );
+    WriteLog( "sizeof( uint ) == %u\n", sizeof( uint ) );
+    WriteLog( "sizeof( uint64 ) == %u\n", sizeof( uint64 ) );
+    WriteLog( "sizeof( bool ) == %u\n", sizeof( bool ) );
+    WriteLog( "sizeof( size_t ) == %u\n", sizeof( size_t ) );
+    WriteLog( "sizeof( void* ) == %u\n", sizeof( void* ) );
+
     // Check the sizes of base types
     STATIC_ASSERT( sizeof( char ) == 1 );
     STATIC_ASSERT( sizeof( short ) == 2 );
@@ -3450,7 +3383,6 @@ bool FOServer::InitReal()
     STATIC_ASSERT( sizeof( bool ) == 1 );
     STATIC_ASSERT( sizeof( size_t ) == 4 );
     STATIC_ASSERT( sizeof( void* ) == 4 );
-    #endif
 
     // Critters parameters
     Critter::ParamsSendMsgLen = sizeof( Critter::ParamsSendCount );
@@ -4267,33 +4199,8 @@ bool FOServer::LoadClientsData()
             break;
         }
 
-        char pass_hash[ PASS_HASH_SIZE ];
-        uint id;
-        #ifdef USE_VANILLA_CLIENTSAVE
-        // Header - signature, password and id
-        char header[ 4 + PASS_HASH_SIZE + sizeof( uint ) ];
-        if( !FileRead( f, header, sizeof( header ) ) )
-        {
-            WriteLog( "Unable to read header of client save file<%s>. Skipped.\n", client_fname );
-            FileClose( f );
-            continue;
-        }
-        FileClose( f );
 
-        // Check client save version
-        int version = header[ 3 ];
-        if( !( header[ 0 ] == 'F' && header[ 1 ] == 'O' && header[ 2 ] == 0 && version >= CLIENT_SAVE_V2 ) )
-        {
-            WriteLog( "Save file<%s> outdated, please run DataPatcher and type 'patchSaves'.\n", client_fname );
-            break;
-        }
-
-        // Get id and password hash
-        memcpy( pass_hash, header + 4, PASS_HASH_SIZE );
-        memcpy( &id, header + 4 + PASS_HASH_SIZE, sizeof( uint ) );
-        #else
         uchar signature[ sizeof( ClientSaveSignature ) ];
-
         if( !FileRead( f, signature, sizeof( signature ) ) )
         {
             WriteLog( "Unable to read signature of client save file<%s>. Skipped.\n", client_fname );
@@ -4301,6 +4208,8 @@ bool FOServer::LoadClientsData()
             continue;
         }
 
+        char pass_hash[ PASS_HASH_SIZE ];
+        uint id;
         if( !FileRead( f, pass_hash, sizeof( pass_hash ) ) || !FileRead( f, &id, sizeof( uint ) ) )
         {
             WriteLog( "Unable to read header of client save file<%s>. Skipped.\n", client_fname );
@@ -4333,7 +4242,6 @@ bool FOServer::LoadClientsData()
                 continue;
             }
         }
-        #endif
 
         // Check id
         if( !IS_USER_ID( id ) )
@@ -4470,11 +4378,6 @@ bool FOServer::LoadClient( Client* cl )
     }
 
     // Read data
-    #ifdef USE_VANILLA_CLIENTSAVE
-    char signature[ 4 ];
-    if( !FileRead( f, signature, sizeof( signature ) ) )
-        goto label_FileTruncated;
-    #else
     uchar signature[ sizeof( ClientSaveSignature ) ];
     if( !FileRead( f, signature, sizeof( signature ) ) )
     {
@@ -4499,7 +4402,7 @@ bool FOServer::LoadClient( Client* cl )
             return false;
         }
     }
-    #endif
+
     if( !FileRead( f, cl->PassHash, sizeof( cl->PassHash ) ) )
         goto label_FileTruncated;
     if( !FileRead( f, &cl->Data, sizeof( cl->Data ) ) )
@@ -4576,14 +4479,7 @@ void FOServer::SaveWorld( const char* fname )
         delete_indexes->Release();
     }
 
-    #ifdef USE_VANILLA_WORLDSAVE
-    // Version
-    uint version = WORLD_SAVE_LAST;
-    AddWorldSaveData( &version, sizeof( version ) );
-    #else
     AddWorldSaveData( (char*) WorldSaveSignature, sizeof( WorldSaveSignature ) );
-    ushort version = BINARY_SIGNATURE_VERSION( WorldSaveSignature );
-    #endif
 
     // SaveGameInfoFile
     SaveGameInfoFile();
@@ -4612,6 +4508,7 @@ void FOServer::SaveWorld( const char* fname )
     // SaveScriptFunctionsFile
     SaveScriptFunctionsFile();
 
+    ushort version = BINARY_SIGNATURE_VERSION( WorldSaveSignature );
     AddWorldSaveData( &version, sizeof( version ) );
 
     // SaveClient
@@ -4692,26 +4589,6 @@ bool FOServer::LoadWorld( const char* fname )
     }
 
     // File begin
-    #ifdef USE_VANILLA_WORLDSAVE
-    uint version = 0;
-
-    FileRead( f, &version, sizeof( version ) );
-    if( version != WORLD_SAVE_V1 && version != WORLD_SAVE_V2 && version != WORLD_SAVE_V3 && version != WORLD_SAVE_V4 &&
-        version != WORLD_SAVE_V5 && version != WORLD_SAVE_V6 && version != WORLD_SAVE_V7 && version != WORLD_SAVE_V8 &&
-        version != WORLD_SAVE_V9 && version != WORLD_SAVE_V10 && version != WORLD_SAVE_V11 && version != WORLD_SAVE_V12 &&
-        version != WORLD_SAVE_V13 )
-    {
-        WriteLog( "Unknown version<%u> of world dump file.\n", version );
-        FileClose( f );
-        return false;
-    }
-    if( version < WORLD_SAVE_V9 )
-    {
-        WriteLog( "Version of save file is not supported.\n" );
-        FileClose( f );
-        return false;
-    }
-    #else
     uchar  signature[ sizeof( WorldSaveSignature ) ];
     ushort version = 0;
     if( !FileRead( f, &signature, sizeof( signature ) ) )
@@ -4748,7 +4625,6 @@ bool FOServer::LoadWorld( const char* fname )
         }
     }
     version = BINARY_SIGNATURE_VERSION( signature );
-    #endif
 
     // Main data
     if( !LoadGameInfoFile( f ) )
@@ -4771,11 +4647,7 @@ bool FOServer::LoadWorld( const char* fname )
         return false;
 
     // File end
-    #ifdef USE_VANILLA_WORLDSAVE
-    uint   version_ = 0;
-    #else
     ushort version_ = 0;
-    #endif
 
     if( !FileRead( f, &version_, sizeof( version_ ) ) || version != version_ )
     {
