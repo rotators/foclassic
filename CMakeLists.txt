@@ -672,3 +672,6 @@ set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 set_target_properties( ${ANGELSCRIPT_ALL_LIBS} PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( Acm DatFile GLEW SHA2 Zlib PROPERTIES FOLDER "Libs" )
+source_group( " "     REGULAR_EXPRESSION "${FO_DIR}\/[A-Za-z0-9]+\.([Cc][Pp][Pp]|[Hh])$" )
+source_group( "CMake" "CMakeLists.txt" ) # not working :/
+source_group( "Resources" "Resources/VersionInfo.rc" )
