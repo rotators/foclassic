@@ -1,7 +1,5 @@
 # BinaryFiles
 
-* (signature)[#SIGNATURE]
-
 ## SIGNATURE
 All binary files created by engine share same signature which contains information about their type and version.
 
@@ -22,7 +20,7 @@ All binary files created by engine share same signature which contains informati
 ```
 
 ### Validating signature
-* S
+* Add signature template with current version.
 ```cpp
 #define FILE_FORMAT_V1  (1)
 #define FILE_FORMAT_V2  (2)
@@ -30,7 +28,7 @@ All binary files created by engine share same signature which contains informati
 #define FILE_FORMAT_LAST FILE_FORMAT_V10
 BINARY_SIGNATURE( EngineSignature, BINARY_TYPE, FILE_FORMAT_LAST );
 ```
-* Read and store first N bytes of the file; if it fails, processing **must** be stopped
+* Open file and store first N bytes; if it fails, processing **must** be stopped
 ```cpp
 unsigned char file_signature[sizeof( EngineSignature )];
 if( !ReadFile( file, file_signature, sizeof( file_signature )))
@@ -59,6 +57,7 @@ if( memcmp( EngineSignature, file_signature, sizeof( file_signature )) != 0 )
 As stated above, engine saves binary files with global version, or format version.
 * Global version, also know as *application* version, is used for files which can be easily recreated during initialization.
 * Format version is used for all other scenarios.
+
 In some cases, additional version check is performed by adding version number at the end of file to make sure it's saved correctly.
 
 |                     | Format             | Global             | EOF                |
