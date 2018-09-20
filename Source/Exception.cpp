@@ -1,29 +1,15 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Exception.h"
 
-char DumpMessRus[] =
-{
-    "Пожалуйста вышлите этот файл '%s' на e-mail 'support@fonline.ru'."
-    "Тема письма должна содержать слово 'dump'. В письме укажите при "
-    "каких обстоятельствах произошел сбой. Спасибо."
-};
-
-char DumpMessEng[] =
+char DumpMess[] =
 {
     "Please send this file '%s' on e-mail 'support@fonline.ru'."
     "The theme of the letter should contain a word 'dump'. In the letter specify "
     "under what circumstances there was a failure. Thanks."
 };
 
-char* DumpMess = DumpMessEng;
-
-void SetExceptionsRussianText()
-{
-    DumpMess = DumpMessRus;
-}
-
 char AppName[ 128 ] = { 0 };
-char AppVer[ 128 ] = { 0 };
 char ManualDumpAppendix[ 128 ] = { 0 };
 
 #ifdef FO_WINDOWS
@@ -56,11 +42,10 @@ typedef struct _IMAGEHLP_MODULE64_V2
     CHAR     LoadedImageName[ 256 ]; // symbol file name
 } IMAGEHLP_MODULE64_V2;
 
-void CatchExceptions( const char* app_name, unsigned int app_ver )
+void CatchExceptions( const char* app_name )
 {
     if( app_name )
         Str::Copy( AppName, app_name );
-    Str::Format( AppVer, "%04X", app_ver );
 
     if( app_name )
     # ifndef EXCEPTION_MINIDUMP
@@ -91,7 +76,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
     # endif
     Str::Format( dump_path, "%s%s_%s_%s_%04d.%02d.%02d_%02d-%02d-%02d.txt",
-                 dump_path_dir, dump_str, AppName, AppVer, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
+                 dump_path_dir, dump_str, AppName, FOCLASSIC_VERSION, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 
     FILE* f = fopen( dump_path, "wt" );
     if( f )
@@ -99,7 +84,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         // Generic info
         fprintf( f, "Application\n" );
         fprintf( f, "\tName        %s\n", AppName );
-        fprintf( f, "\tVersion     %s\n",  AppVer );
+        fprintf( f, "\tVersion     %s\n",  FOCLASSIC_VERSION );
         OSVERSIONINFOA ver;
         memset( &ver, 0, sizeof( OSVERSIONINFOA ) );
         ver.dwOSVersionInfoSize = sizeof( ver );
@@ -465,7 +450,7 @@ LONG WINAPI TopLevelFilterMiniDump( EXCEPTION_POINTERS* except )
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
     # endif
     Str::Format( dump_path, "%s%s_%s_%s_%04d.%02d.%02d_%02d-%02d-%02d.txt",
-                 dump_path_dir, dump_str, AppName, AppVer, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
+                 dump_path_dir, dump_str, AppName, FOCLASSIC_VERSION, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 
     HANDLE f = CreateFile( dump_path, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
     if( f != INVALID_HANDLE_VALUE )
@@ -525,11 +510,10 @@ bool sigactionsSetted = false;
 struct sigaction oldSIGSEGV;
 struct sigaction oldSIGFPE;
 
-void CatchExceptions( const char* app_name, unsigned int app_ver )
+void CatchExceptions( const char* app_name )
 {
     if( app_name )
         Str::Copy( AppName, app_name );
-    Str::Format( AppVer, "%04X", app_ver );
 
     if( app_name && !sigactionsSetted )
     {
@@ -592,7 +576,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
     # endif
     Str::Format( dump_path, "%s%s_%s_%s_%04d.%02d.%02d_%02d-%02d-%02d.txt",
-                 dump_path_dir, dump_str, AppName, AppVer, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
+                 dump_path_dir, dump_str, AppName, FOCLASSIC_VERSION, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 
     FILE* f = fopen( dump_path, "wt" );
     if( f )
@@ -600,7 +584,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
         // Generic info
         fprintf( f, "Application\n" );
         fprintf( f, "\tName        %s\n", AppName );
-        fprintf( f, "\tVersion     %s\n",  AppVer );
+        fprintf( f, "\tVersion     %s\n",  FOCLASSIC_VERSION );
         struct utsname ver;
         uname( &ver );
         fprintf( f, "\tOS          %s / %s / %s\n", ver.sysname, ver.release, ver.version );
@@ -659,7 +643,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
     }
 
     // if( siginfo )
-    //    MessageBox( NULL, mess, "FOnline Error", MB_OK );
+    //    MessageBox( NULL, mess, "FOClassic Error", MB_OK );
 
     if( siginfo )
         ExitProcess( 1 );

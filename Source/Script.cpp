@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Script.h"
 #include "Text.h"
 #include "FileManager.h"
@@ -175,7 +176,7 @@ void ProcessStack( CallStack* stack )
 
 BINARY_SIGNATURE( ProfilerSaveSignature, BINARY_PROFILERSAVE, 1 );
 #endif
-BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_SCRIPTSAVE, ( SERVER_VERSION << 20 ) | ( CLIENT_VERSION << 10 ) | MAPPER_VERSION );
+BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_SCRIPTSAVE, FOCLASSIC_VERSION );
 
 bool LoadLibraryCompiler = false;
 

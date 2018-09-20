@@ -6,13 +6,25 @@ cmake_minimum_required( VERSION 3.12.2 )
 project( FOClassic
 	DESCRIPTION  "FOnline Classic"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
-	VERSION 1
+	VERSION 1.1
 	LANGUAGES C CXX
 )
+
+if( PROJECT_VERSION_MAJOR EQUAL 1 )
+	set( PROJECT_VERSION_CODENAME "2077" )
+elseif( PROJECT_VERSION_MAJOR EQUAL 2 )
+	set( PROJECT_VERSION_CODENAME "V13" )
+elseif( PROJECT_VERSION_MAJOR EQUAL 3 )
+	set( PROJECT_VERSION_CODENAME "V15" )
+else()
+	set( PROJECT_VERSION_CODENAME "Shady Sands" )
+endif()
 
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE )
+
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 
 # globals
 unset( FONLINE_APPS )
@@ -26,72 +38,6 @@ set( DAT_DIR    "${FO_DIR}/DatFile" )
 set( GLEW_DIR   "${FO_DIR}/GL" )
 set( SHA2_DIR   "${FO_DIR}/SHA2" )
 set( ZLIB_DIR   "${FO_DIR}/zlib" )
-
-macro( fo_option name description status )
-	list( APPEND FOPTIONS ${name} )
-	set( FOPTION_TEXT_${name} "${description} ..." )
-	set( FOPTION_VALUE_${name} ${status} )
-endmacro()
-
-macro( fo_options_apply )
-	message( STATUS "Checking options.." )
-	# prepare fancy table with all options
-	set( max_len 0 )
-	foreach( opt ${FOPTIONS} )
-		string( LENGTH "${FOPTION_TEXT_${opt}}" this_len )
-		if( this_len GREATER max_len )
-			set( max_len ${this_len} )
-		endif()
-	endforeach()
-
-	# display fancy table with all options and their status
-	foreach( opt ${FOPTIONS} )
-		set( this_text "${FOPTION_TEXT_${opt}}" )
-		string( LENGTH "${this_text}" this_len )
-		while( this_len LESS ${max_len} )
-			set( this_text "${this_text}." )
-			string( LENGTH "${this_text}" this_len )
-		endwhile()
-		message( STATUS " ${this_text} ${FOPTION_VALUE_${opt}}" )
-	endforeach()
-
-	# cleanup
-	unset( max_len )
-	unset( this_len )
-	unset( this_text )
-
-	# check if there's anything to do
-	list( LENGTH FOPTIONS optlen )
-	if( ${optlen} )
-		# finally, apply all options
-		message( STATUS "Applying options..." )
-		foreach( opt ${FOPTIONS} )
-			# check if option is enabled
-			if( FOPTION_VALUE_${opt} )
-				# always add a global define if it is
-				add_definitions( "-D${opt}=1" )
-
-				# check if option have its own macro/function
-				if( COMMAND "fo_option_${opt}" )
-					# it does, we need to call fo_option_${opt}() now, but cmake doesn't like it
-					# let's create and include external file to workaround that
-					set( invoke "${CMAKE_BINARY_DIR}/invoke/fo_option_${opt}.cmake" )
-					if( NOT EXISTS "${invoke}" )
-						file( WRITE "${invoke}" "fo_option_${opt}()\n" )
-					endif()
-					# call our macro/function
-					include( "${invoke}" )
-				endif()
-			endif()
-		endforeach()
-		message( STATUS "Applying options... OK" )
-	endif()
-
-	# cleanup
-	unset( opt )
-	unset( optlen )
-	unset( invoke )
-endmacro()
 
 if( MSVC )
 	set( COMPILER_DEFINES "" )
@@ -115,17 +61,8 @@ link_directories( "Lib/Dx9/x86/" )
 ##
 ## Source options
 ##
-#fo_option( USE_THING "Use Thing" ON )
-
-##
-## Source options macros
-##
-#macro( fo_option_USE_OPTION )
-	#do_fancy_thing()
-#endmacro()
-
-fo_options_apply()
-
+include(SourceOptions)
+source_options()
 ##
 ## Find threads
 ##
@@ -665,10 +602,24 @@ target_compile_definitions( ASCompiler PRIVATE FONLINE_SCRIPT_COMPILER )
 target_link_libraries( ASCompiler ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
 list( APPEND FONLINE_APPS ASCompiler )
 ##
-## Version spread
+## Finalize
 ##
+configure_file( "CMake.h.in" "include/CMake.h" @ONLY NEWLINE_STYLE LF )
+include_directories( "${CMAKE_CURRENT_BINARY_DIR}/include" )
 foreach( target ${FONLINE_APPS} )
-	target_compile_definitions( ${target} PRIVATE FONLINE_VERSION=${PROJECT_VERSION} )
+	target_sources( ${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/CMake.h" )
+endforeach()
+
+include(WriteCompilerDetectionHeader)
+write_compiler_detection_header(
+	FILE "${CMAKE_CURRENT_BINARY_DIR}/include/CMake.CompilerFeatures.h"
+	PREFIX FOCLASSIC_COMPILER
+	COMPILERS GNU MSVC
+	FEATURES
+		cxx_constexpr
+)
+foreach( target ${FONLINE_APPS} )
+	target_sources( ${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/CMake.CompilerFeatures.h" )
 endforeach()
 ##
 ## Prettify executables
@@ -687,5 +638,11 @@ set_target_properties( ${ANGELSCRIPT_ALL_LIBS} PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( Acm DatFile GLEW SHA2 Zlib PROPERTIES FOLDER "Libs" )
 source_group( " "     REGULAR_EXPRESSION "${FO_DIR}\/[A-Za-z0-9]+\.([Cc][Pp][Pp]|[Hh])$" )
-source_group( "CMake" "CMakeLists.txt" ) # not working :/
-source_group( "Resources" "Resources/VersionInfo.rc" )
+source_group( "Misc"
+	FILES
+		"${CMAKE_CURRENT_BINARY_DIR}/include/CMake.h"
+		"${CMAKE_CURRENT_BINARY_DIR}/include/CMake.CompilerFeatures.h" 
+		"Resources/VersionInfo.rc"
+	REGULAR_EXPRESSION
+		"[Cc][Mm]ake[Ll]ists\.txt"
+)

@@ -19,7 +19,11 @@ int main( int argc, char** argv )
     Thread::SetCurrentName( "GUI" );
 
     // Exceptions
-    CatchExceptions( "FOnlineMapper", MAPPER_VERSION );
+    #if defined ( FO_D3D )
+    CatchExceptions( "MapperDX" );
+    #else
+    CatchExceptions( "MapperGL" );
+    #endif
 
     // Make command line
     SetCommandLine( argc, argv );

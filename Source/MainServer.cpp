@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Server.h"
 #include "Exception.h"
 #include "Version.h"
@@ -80,7 +81,7 @@ int main( int argc, char** argv )
     # endif
 
     // Exceptions catcher
-    CatchExceptions( "FOnlineServer", SERVER_VERSION );
+    CatchExceptions( "Server" );
 
     // Timer
     Timer::Init();
@@ -157,7 +158,7 @@ int main( int argc, char** argv )
         LogToBuffer( true );
     }
 
-    WriteLog( "FOnline server, version %04X-%02X.\n", SERVER_VERSION, FO_PROTOCOL_VERSION & 0xFF );
+    WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
 
     FOQuit = true;
     Script::SetLogDebugInfo( true );
@@ -805,7 +806,7 @@ VOID WINAPI FOServiceStart( DWORD argc, LPTSTR* argv )
 {
     Thread::SetCurrentName( "Service" );
     LogToFile( "FOnlineServer.log" );
-    WriteLog( "FOnline server service, version %04X-%02X.\n", SERVER_VERSION, FO_PROTOCOL_VERSION & 0xFF );
+    WriteLog( "FOnline server service, version %u.\n", FOCLASSIC_VERSION );
 
     FOServiceStatusHandle = RegisterServiceCtrlHandler( "FOnlineServer", FOServiceCtrlHandler );
     if( !FOServiceStatusHandle )
@@ -918,7 +919,7 @@ int main( int argc, char** argv )
     close( STDERR_FILENO );
 
     // Stuff
-    setlocale( LC_ALL, "Russian" );
+    setlocale( LC_ALL, "en-US" );
     RestoreMainDirectory();
 
     // Threading
@@ -930,7 +931,7 @@ int main( int argc, char** argv )
     # endif
 
     // Exceptions catcher
-    CatchExceptions( "FOnlineServer", SERVER_VERSION );
+    CatchExceptions( "Server" );
 
     // Timer
     Timer::Init();
@@ -955,7 +956,7 @@ int main( int argc, char** argv )
     LogToFile( "./FOnlineServerDaemon.log" );
 
     // Log version
-    WriteLog( "FOnline server daemon, version %04X-%02X.\n", SERVER_VERSION, FO_PROTOCOL_VERSION & 0xFF );
+    WriteLog( "FOClassic server daemon, version %u.\n", FOCLASSIC_VERSION );
     if( CommandLineArgCount > 1 )
         WriteLog( "Command line<%s>.\n", CommandLine );
 

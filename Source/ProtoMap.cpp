@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "ProtoMap.h"
 #include "ItemManager.h"
 #include "Crypt.h"
@@ -28,7 +29,7 @@
 #define FO_MAP_VERSION_TEXT3    ( 3 )
 #define FO_MAP_VERSION_TEXT4    ( 4 )
 
-BINARY_SIGNATURE( MapSaveSignature, BINARY_MAPSAVE, SERVER_VERSION );
+BINARY_SIGNATURE( MapSaveSignature, BINARY_MAPSAVE, FOCLASSIC_VERSION );
 
 #define APP_HEADER              "Header"
 #define APP_TILES               "Tiles"

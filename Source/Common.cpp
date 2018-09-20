@@ -446,7 +446,7 @@ void RestoreMainDirectory()
 void ShowMessage( const char* message )
 {
     #ifdef FO_WINDOWS
-    MessageBox( NULL, message, "FOnline", MB_OK );
+    MessageBox( NULL, message, "FOClassic", MB_OK );
     #else
     // Todo: Linux
     #endif
@@ -829,11 +829,8 @@ void GetClientOptions()
     # endif
 
     // Language
-    cfg.GetStr( CLIENT_CONFIG_APP, "Language", "russ", buf );
+    cfg.GetStr( CLIENT_CONFIG_APP, "Language", "engl", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "Language" );
-    Str::Lower( buf );
-    if( Str::Compare( buf, "russ" ) )
-        SetExceptionsRussianText();
 
     // Int / Bool
     GameOpt.OpenGLDebug = cfg.GetInt( CLIENT_CONFIG_APP, "OpenGLDebug", false ) != 0;

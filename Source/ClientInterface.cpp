@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Client.h"
 #include "Version.h"
 
@@ -2101,9 +2102,9 @@ void FOClient::ConsoleDraw()
         }
 
         SprMngr.DrawStr( Rect( 10, 10, MODE_WIDTH, MODE_HEIGHT ), Str::FormatBuf(
-                             "|0xFFBBBBBB FOnline %s\n"
+                             "|0xFFBBBBBB FOClassic%s\n"
                              "by Gamers for Gamers\n"
-                             "version %04X-%02X beta\n\n"
+                             "version %u\n\n"
                              "Traffic, bytes:\n"
                              "Send: %u\n"
                              "Receive: %u\n"
@@ -2116,8 +2117,8 @@ void FOClient::ConsoleDraw()
                              // "sleep: %d\n"
                              "Sound: %d\n"
                              "Music: %d\n",
-                             Singleplayer ? "Singleplayer" : "",
-                             CLIENT_VERSION, FO_PROTOCOL_VERSION & 0xFF,
+                             Singleplayer ? " Singleplayer" : "",
+                             FOCLASSIC_VERSION,
                              BytesSend, BytesReceive, BytesReceive + BytesSend, /*BytesRealReceive,*/
                              GameOpt.FPS, !GameOpt.VSync ? abs( GameOpt.FixedFPS ) : 0, !GameOpt.VSync && GameOpt.FixedFPS < 0 ? ", sleep" : "",
                              GameOpt.Ping, SndMngr.GetSoundVolume(), SndMngr.GetMusicVolume()

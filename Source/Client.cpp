@@ -116,7 +116,7 @@ bool FOClient::Init()
     if( !Singleplayer )
     {
         # ifdef FO_WINDOWS
-        HANDLE h = CreateEvent( NULL, FALSE, FALSE, "_fosync_" );
+        HANDLE h = CreateEvent( NULL, FALSE, FALSE, "_fcsync_" ); // last change 20.09.2018
         if( !h || h == INVALID_HANDLE_VALUE || GetLastError() == ERROR_ALREADY_EXISTS )
             memset( MulWndArray, 1, sizeof( MulWndArray ) );
         # else
@@ -490,7 +490,7 @@ bool FOClient::Init()
 
     // Disable dumps if multiple window detected
     if( MulWndArray[ 11 ] )
-        CatchExceptions( NULL, 0 );
+        CatchExceptions( NULL );
 
     return true;
 }

@@ -229,7 +229,7 @@ int main( int argc, char* argv[] )
     // Show usage
     if( argc < 2 )
     {
-        printf( "FOnline AngleScript compiler. Usage:\n"
+        printf( "FOClassic AngelScript compiler. Usage:\n"
                 "ASCompiler script_name.fos\n"
                 " [-client] (compile client scripts)\n"
                 " [-mapper] (compile mapper scripts)\n"

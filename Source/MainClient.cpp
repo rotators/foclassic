@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Client.h"
 #include "Exception.h"
 #include "Version.h"
@@ -26,15 +27,20 @@ int main( int argc, char** argv )
     signal( SIGPIPE, SIG_IGN );
     #endif
 
-    // Exception
-    CatchExceptions( "FOnline", CLIENT_VERSION );
+    // Exceptions
+    #if defined ( FO_D3D )
+    CatchExceptions( "ClientDX" );
+    #else
+    CatchExceptions( "ClientGL" );
+    #endif
+
 
     // Make command line
     SetCommandLine( argc, argv );
 
     // Stuff
     Timer::Init();
-    LogToFile( "FOnline.log" );
+    LogToFile( "FOClassic.log" );
 
     // Singleplayer mode initialization
     #ifdef FO_WINDOWS
@@ -79,7 +85,7 @@ int main( int argc, char** argv )
         char      server_path[ MAX_FOPATH ] = { 0 };
         char      server_cmdline[ MAX_FOPATH ] = { 0 };
         cfg.LoadFile( GetConfigFileName(), PT_ROOT );
-        cfg.GetStr( CLIENT_CONFIG_APP, "ServerAppName", "FOserv.exe", server_exe );
+        cfg.GetStr( CLIENT_CONFIG_APP, "ServerAppName", "Server.exe", server_exe );
         cfg.GetStr( CLIENT_CONFIG_APP, "ServerPath", "..\\server\\", server_path );
         cfg.GetStr( CLIENT_CONFIG_APP, "ServerCommandLine", "", server_cmdline );
 
@@ -107,10 +113,10 @@ int main( int argc, char** argv )
     // Check for already runned window
     #ifndef DEV_VERSION
     # ifdef FO_WINDOWS
-    HANDLE h = CreateEvent( NULL, FALSE, FALSE, "fonline_instance" );
+    HANDLE h = CreateEvent( NULL, FALSE, FALSE, "foclassic_instance" ); // last change 20.09.2018
     if( !h || h == INVALID_HANDLE_VALUE || GetLastError() == ERROR_ALREADY_EXISTS )
     {
-        ShowMessage( "FOnline engine instance is already running." );
+        ShowMessage( "FOClassic engine instance is already running." );
         return 0;
     }
     # else
@@ -125,13 +131,13 @@ int main( int argc, char** argv )
     MainWindow = new FOWindow();
 
     // Start message
-    WriteLog( "Starting FOnline (version %04X-%02X)...\n", CLIENT_VERSION, FO_PROTOCOL_VERSION & 0xFF );
+    WriteLog( "Starting FOClassic (version %u)...\n", FOCLASSIC_VERSION );
 
     // Create engine
     FOEngine = new FOClient();
     if( !FOEngine || !FOEngine->Init() )
     {
-        WriteLog( "FOnline engine initialization fail.\n" );
+        WriteLog( "FOClassic engine initialization fail.\n" );
         GameOpt.Quit = true;
         return -1;
     }
@@ -153,7 +159,7 @@ int main( int argc, char** argv )
     if( Singleplayer )
         SingleplayerData.Finish();
     #endif
-    WriteLog( "FOnline finished.\n" );
+    WriteLog( "FOClassic finished.\n" );
     LogFinish();
     Timer::Finish();
 

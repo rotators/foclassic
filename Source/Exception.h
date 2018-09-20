@@ -4,8 +4,7 @@
 // Uncomment for use minidumps (dmp) instead readable dumps (txt)
 // #define EXCEPTION_MINIDUMP
 
-void CatchExceptions( const char* app_name, unsigned int app_ver );
-void SetExceptionsRussianText();
+void CatchExceptions( const char* app_name );
 void CreateDump( const char* appendix );
 
 #endif // ___EXCEPTION___
