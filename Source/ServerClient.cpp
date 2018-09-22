@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Server.h"
 
 void FOServer::ProcessCritter( Critter* cr )
@@ -1433,7 +1434,7 @@ void FOServer::Process_CreateClient( Client* cl )
     // Protocol version
     ushort proto_ver = 0;
     cl->Bin >> proto_ver;
-    if( proto_ver != FO_PROTOCOL_VERSION )
+    if( proto_ver != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
         cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
@@ -1722,7 +1723,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     // Net protocol
     ushort proto_ver = 0;
     cl->Bin >> proto_ver;
-    if( proto_ver != FO_PROTOCOL_VERSION )
+    if( proto_ver != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
         cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );

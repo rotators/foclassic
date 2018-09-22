@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "CMake.h"
 #include "Client.h"
 #include "Access.h"
 #include "Defence.h"
@@ -3236,7 +3237,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
 
     uint uid1 = *UID1;
     Bout << NETMSG_LOGIN;
-    Bout << (ushort) FO_PROTOCOL_VERSION;
+    Bout << (ushort) FOCLASSIC_VERSION;
     uint uid4 = *UID4;
     Bout << uid4;
     uid4 = uid1;                                                                                                                                                        // UID4
@@ -3302,7 +3303,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     Bout << NETMSG_CREATE_CLIENT;
     Bout << msg_len;
 
-    Bout << (ushort) FO_PROTOCOL_VERSION;
+    Bout << (ushort) FOCLASSIC_VERSION;
 
     // Begin data encrypting
     Bout.SetEncryptKey( 1207892018 );
