@@ -1,6 +1,11 @@
 ##
 ## https://cmake.org/cmake/help/v3.12/
 ##
+
+# disable in-source builds
+set( CMAKE_DISABLE_SOURCE_CHANGES ON )
+set( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
+
 cmake_minimum_required( VERSION 3.12.2 )
 
 project( FOClassic

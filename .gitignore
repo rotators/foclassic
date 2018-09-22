@@ -7,3 +7,6 @@
 
 /.stuff
 /SDK*
+
+/CMakeCache.txt
+/CMakeFiles
