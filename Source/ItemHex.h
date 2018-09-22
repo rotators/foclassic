@@ -15,7 +15,7 @@ class ItemHex: public Item
 public:
     ItemHex( uint id, ProtoItem* proto, Item::ItemData* data, int hx, int hy, int dir, short scr_x, short scr_y, int* hex_scr_x, int* hex_scr_y, int cut );
     // ~ItemHex() Destructor not been called because Item not have virtual destructor
-    bool operator==( const ushort& _right ) { return ( GetProtoId() == _right ); }
+    bool operator==( const ushort& _right ) { return GetProtoId() == _right;  }
 
 public:
     uint              SprId;
@@ -69,7 +69,7 @@ private:
 public:
     void Finish();
     bool IsFinishing() { return finishing; }
-    bool IsFinish()    { return ( finishing && Timer::GameTick() > finishingTime ); }
+    bool IsFinish()    { return finishing && Timer::GameTick() > finishingTime;  }
     void StopFinishing();
 
     // Process

@@ -72,7 +72,7 @@ public:
     int  GetCurMode() { return CurMode; };
     void SetCurCastling( int cur1, int cur2 );
     void SetLastCurMode();
-    bool IsCurMode( int check_cur ) { return ( check_cur == CurMode ); }
+    bool IsCurMode( int check_cur ) { return check_cur == CurMode;  }
     void SetCurPos( int x, int y );
 
     void ParseKeyboard();
@@ -259,7 +259,7 @@ public:
     PCharPairVec IntellectSymbols;
 
     void ParseIntellectWords( char* words, PCharPairVec& text );
-    auto FindIntellectWord( const char* word, PCharPairVec & text, Randomizer & rnd )->PCharPairVec::iterator;
+    auto FindIntellectWord( const char* word, PCharPairVec& text, Randomizer& rnd )->PCharPairVec::iterator;
     void FmtTextIntellect( char* str, ushort intellect );
 
     #define SMTH_NONE                 ( 0 )
@@ -312,17 +312,17 @@ public:
     struct ActionEvent
     {
         uint Type;
-        uint Param[ 6 ];
-        bool operator==( const ActionEvent& r ) { return Type == r.Type && Param[ 0 ] == r.Param[ 0 ] && Param[ 1 ] == r.Param[ 1 ] && Param[ 2 ] == r.Param[ 2 ] && Param[ 3 ] == r.Param[ 3 ] && Param[ 4 ] == r.Param[ 4 ] && Param[ 4 ] == r.Param[ 5 ]; }
+        uint Param[6];
+        bool operator==( const ActionEvent& r ) { return Type == r.Type && Param[0] == r.Param[0] && Param[1] == r.Param[1] && Param[2] == r.Param[2] && Param[3] == r.Param[3] && Param[4] == r.Param[4] && Param[4] == r.Param[5]; }
         ActionEvent() {}
-        ActionEvent( uint type, uint param0, uint param1, uint param2, uint param3, uint param4, uint param5 ): Type( type )
+        ActionEvent( uint type, uint param0, uint param1, uint param2, uint param3, uint param4, uint param5 ) : Type( type )
         {
-            Param[ 0 ] = param0;
-            Param[ 1 ] = param1;
-            Param[ 2 ] = param2;
-            Param[ 3 ] = param3;
-            Param[ 4 ] = param4;
-            Param[ 5 ] = param5;
+            Param[0] = param0;
+            Param[1] = param1;
+            Param[2] = param2;
+            Param[3] = param3;
+            Param[4] = param4;
+            Param[5] = param5;
         }
         ActionEvent( const ActionEvent& r ) { memcpy( this, &r, sizeof( ActionEvent ) ); }
     };
@@ -366,8 +366,8 @@ public:
         struct StreamStates
         {
             static const uint COUNT = 10;
-            ogg_stream_state  Streams[ COUNT ];
-            bool              StreamsState[ COUNT ];
+            ogg_stream_state  Streams[COUNT];
+            bool              StreamsState[COUNT];
             int               MainIndex;
         } SS;
         FileManager  RawData;
@@ -385,7 +385,7 @@ public:
     int  VideoDecodePacket();
     void RenderVideo();
     bool IsVideoPlayed()  { return !ShowVideos.empty(); }
-    bool IsCanStopVideo() { return ShowVideos.size() && ShowVideos[ 0 ].CanStop; }
+    bool IsCanStopVideo() { return ShowVideos.size() && ShowVideos[0].CanStop; }
     void AddVideo( const char* video_name, bool can_stop, bool clear_sequence );
     void PlayVideo();
     void NextVideo();
@@ -403,7 +403,7 @@ public:
         uint       LastTick;
         int        ResType;
 
-        IfaceAnim( AnyFrames* frm, int res_type ): Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::GameTick() ), ResType( res_type ) {}
+        IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::GameTick() ), ResType( res_type ) {}
     };
     typedef vector< IfaceAnim* > IfaceAnimVec;
 
@@ -434,7 +434,7 @@ public:
         uint Time;
         uint StartColor;
         uint EndColor;
-        ScreenEffect( uint begin_tick, uint time, uint col, uint end_col ): BeginTick( begin_tick ), Time( time ), StartColor( col ), EndColor( end_col ) {}
+        ScreenEffect( uint begin_tick, uint time, uint col, uint end_col ) : BeginTick( begin_tick ), Time( time ), StartColor( col ), EndColor( end_col ) {}
     };
     typedef vector< ScreenEffect > ScreenEffectVec;
 
@@ -724,7 +724,7 @@ public:
     #define INVF_RAD_CHANNEL    ( 1 )
 
     AnyFrames* InvPWMain, * InvPBOkDw, * InvPBOkUp, * InvPBScrUpDw, * InvPBScrUpUp,
-    * InvPBScrUpOff, * InvPBScrDwDw, * InvPBScrDwUp, * InvPBScrDwOff;
+             * InvPBScrUpOff, * InvPBScrDwDw, * InvPBScrDwUp, * InvPBScrDwOff;
     uint       InvHoldId;
     string     InvItemInfo;
     int        InvItemInfoScroll, InvItemInfoMaxScroll;
@@ -756,7 +756,7 @@ public:
 /* Use                                                                  */
 /************************************************************************/
     AnyFrames*   UseWMainPicNone, * UseBCancelPicDown, * UseBScrUpPicDown, * UseBScrDownPicDown,
-    * UseBScrUpPicUp, * UseBScrDownPicUp, * UseBScrUpPicOff, * UseBScrDownPicOff;
+             * UseBScrUpPicUp, * UseBScrDownPicUp, * UseBScrUpPicOff, * UseBScrDownPicOff;
     int          UseX, UseY, UseVectX, UseVectY;
     int          UseScroll, UseHeightItem;
     Rect         UseWMain, UseWChosen, UseWInv, UseBScrUp, UseBScrDown, UseBCancel;
@@ -799,9 +799,9 @@ public:
 /* Main iface                                                           */
 /************************************************************************/
     AnyFrames* IntMainPic, * IntPWAddMess, * IntPBAddMessDn, * IntPBMessFilter1Dn, * IntPBMessFilter2Dn, * IntPBMessFilter3Dn,
-    * IntPBScrUpDn, * IntPBScrDnDn, * IntPBSlotsDn,
-    * IntPBInvDn, * IntPBMenuDn, * IntPBSkillDn, * IntPBMapDn, * IntPBChaDn, * IntPBPipDn, * IntPBFixDn,
-    * IntDiodeG, * IntDiodeY, * IntDiodeR, * IntBreakTimePic, * IntWApCostPicNone;
+             * IntPBScrUpDn, * IntPBScrDnDn, * IntPBSlotsDn,
+             * IntPBInvDn, * IntPBMenuDn, * IntPBSkillDn, * IntPBMapDn, * IntPBChaDn, * IntPBPipDn, * IntPBFixDn,
+             * IntDiodeG, * IntDiodeY, * IntDiodeR, * IntBreakTimePic, * IntWApCostPicNone;
 
     int        IntX, IntY;
     bool       IntVisible, IntAddMess;
@@ -834,14 +834,14 @@ public:
 /* LMenu                                                                */
 /************************************************************************/
     AnyFrames* LmenuPTalkOff, * LmenuPTalkOn, * LmenuPLookOff, * LmenuPLookOn, * LmenuPBreakOff, * LmenuPBreakOn,
-    * LmenuPUseOff, * LmenuPUseOn, * LmenuPGMFollowOff, * LmenuPGMFollowOn,
-    * LmenuPRotateOn, * LmenuPRotateOff, * LmenuPDropOn, * LmenuPDropOff, * LmenuPUnloadOn, * LmenuPUnloadOff,
-    * LmenuPSortUpOn, * LmenuPSortUpOff, * LmenuPSortDownOn, * LmenuPSortDownOff,
-    * LmenuPPickItemOn, * LmenuPPickItemOff, * LmenuPPushOn, * LmenuPPushOff,
-    * LmenuPBagOn, * LmenuPBagOff, * LmenuPSkillOn, * LmenuPSkillOff,
-    * LmenuPBarterOpenOn, * LmenuPBarterOpenOff, * LmenuPBarterHideOn, * LmenuPBarterHideOff,
-    * LmenuPGmapKickOff, * LmenuPGmapKickOn, * LmenuPGmapRuleOff, * LmenuPGmapRuleOn,
-    * LmenuPVoteUpOff, * LmenuPVoteUpOn, * LmenuPVoteDownOff, * LmenuPVoteDownOn;
+             * LmenuPUseOff, * LmenuPUseOn, * LmenuPGMFollowOff, * LmenuPGMFollowOn,
+             * LmenuPRotateOn, * LmenuPRotateOff, * LmenuPDropOn, * LmenuPDropOff, * LmenuPUnloadOn, * LmenuPUnloadOff,
+             * LmenuPSortUpOn, * LmenuPSortUpOff, * LmenuPSortDownOn, * LmenuPSortDownOff,
+             * LmenuPPickItemOn, * LmenuPPickItemOff, * LmenuPPushOn, * LmenuPPushOff,
+             * LmenuPBagOn, * LmenuPBagOff, * LmenuPSkillOn, * LmenuPSkillOff,
+             * LmenuPBarterOpenOn, * LmenuPBarterOpenOff, * LmenuPBarterHideOn, * LmenuPBarterHideOff,
+             * LmenuPGmapKickOff, * LmenuPGmapKickOn, * LmenuPGmapRuleOff, * LmenuPGmapRuleOn,
+             * LmenuPVoteUpOff, * LmenuPVoteUpOn, * LmenuPVoteDownOff, * LmenuPVoteDownOn;
 
     bool      LMenuActive;
     bool      LMenuTryActivated;
@@ -898,7 +898,7 @@ public:
         string Text;
         int    AnswerNum;      // -1 prev page, -2 next page
 
-        Answer( uint page, Rect pos, string text, uint answer_num ): Page( page ), Position( pos ), Text( text ), AnswerNum( answer_num ) {}
+        Answer( uint page, Rect pos, string text, uint answer_num ) : Page( page ), Position( pos ), Text( text ), AnswerNum( answer_num ) {}
     };
     vector< Answer > DlgAllAnswers, DlgAnswers;
 
@@ -910,8 +910,8 @@ public:
 
     // Barter
     AnyFrames* BarterPMain, * BarterPBOfferDn, * BarterPBTalkDn,
-    * BarterPBC1ScrUpDn, * BarterPBC2ScrUpDn, * BarterPBC1oScrUpDn, * BarterPBC2oScrUpDn,
-    * BarterPBC1ScrDnDn, * BarterPBC2ScrDnDn, * BarterPBC1oScrDnDn, * BarterPBC2oScrDnDn;
+             * BarterPBC1ScrUpDn, * BarterPBC2ScrUpDn, * BarterPBC1oScrUpDn, * BarterPBC2oScrUpDn,
+             * BarterPBC1ScrDnDn, * BarterPBC2ScrDnDn, * BarterPBC1oScrDnDn, * BarterPBC2oScrDnDn;
     Rect BarterWMain, BarterBOffer, BarterBOfferText, BarterBTalk, BarterBTalkText, BarterWCont1Pic, BarterWCont2Pic,
          BarterWCont1, BarterWCont2, BarterWCont1o, BarterWCont2o,
          BarterBCont1ScrUp, BarterBCont2ScrUp, BarterBCont1oScrUp, BarterBCont2oScrUp,
@@ -967,7 +967,7 @@ public:
 /************************************************************************/
     uint         GmapTilesX, GmapTilesY;
     AnimVec      GmapPic;
-    char         GmapTilesPic[ MAX_FOPATH ];
+    char         GmapTilesPic[MAX_FOPATH];
 
     uint         GmapWDayTimeAnim;
     AnyFrames*   GmapPBTownDw, * GmapWMainPic, * GmapPGr, * GmapPTarg, * GmapPStay, * GmapPStayDn, * GmapPStayMask, * GmapLocPic;
@@ -997,7 +997,7 @@ public:
     int        GmapTownCurButton;
     uint       GmapNextShowEntrancesTick;
     uint       GmapShowEntrancesLocId;
-    bool       GmapShowEntrances[ 0x100 ];
+    bool       GmapShowEntrances[0x100];
 
     // Mask
     C2BitMask GmapFog;
@@ -1012,7 +1012,7 @@ public:
         ushort LocWy;
         ushort Radius;
         uint   Color;
-        bool operator==( const uint& _right ) { return ( this->LocId == _right ); }
+        bool operator==( const uint& _right ) { return this->LocId == _right;  }
     };
     typedef vector< GmapLocation > GmapLocationVec;
     GmapLocationVec GmapLoc;
@@ -1055,23 +1055,23 @@ public:
     uint  GmapGetMouseTabLocId();
     void  GmapFreeResources();
 
-    #define GMAP_CHECK_MAPSCR                                                \
-        do {                                                                 \
-            if( GmapOffsetX > GmapWMap[ 0 ] )                                \
-                GmapOffsetX = GmapWMap[ 0 ];                                 \
-            if( GmapOffsetY > GmapWMap[ 1 ] )                                \
-                GmapOffsetY = GmapWMap[ 1 ];                                 \
-            if( GmapOffsetX < GmapWMap[ 2 ] - (int) ( GM_MAXX / GmapZoom ) ) \
-                GmapOffsetX = GmapWMap[ 2 ] - (int) ( GM_MAXX / GmapZoom );  \
-            if( GmapOffsetY < GmapWMap[ 3 ] - (int) ( GM_MAXY / GmapZoom ) ) \
-                GmapOffsetY = GmapWMap[ 3 ] - (int) ( GM_MAXY / GmapZoom );  \
+    #define GMAP_CHECK_MAPSCR                                             \
+        do {                                                              \
+            if( GmapOffsetX > GmapWMap[0] )                               \
+                GmapOffsetX = GmapWMap[0];                                \
+            if( GmapOffsetY > GmapWMap[1] )                               \
+                GmapOffsetY = GmapWMap[1];                                \
+            if( GmapOffsetX < GmapWMap[2] - (int)( GM_MAXX / GmapZoom ) ) \
+                GmapOffsetX = GmapWMap[2] - (int)( GM_MAXX / GmapZoom );  \
+            if( GmapOffsetY < GmapWMap[3] - (int)( GM_MAXY / GmapZoom ) ) \
+                GmapOffsetY = GmapWMap[3] - (int)( GM_MAXY / GmapZoom );  \
         } while( 0 )
 
 /************************************************************************/
 /* Skillbox                                                             */
 /************************************************************************/
     AnyFrames*   SboxPMain, * SboxPBCancelDn, * SboxPBSneakDn, * SboxPBLockPickDn, * SboxPBStealDn,
-    * SboxPBTrapsDn, * SboxPBFirstaidDn, * SboxPBDoctorDn, * SboxPBScienceDn, * SboxPBRepairDn;
+             * SboxPBTrapsDn, * SboxPBFirstaidDn, * SboxPBDoctorDn, * SboxPBScienceDn, * SboxPBRepairDn;
     Rect         SboxWMain, SboxWMainText, SboxBCancel, SboxBCancelText, SboxBSneak, SboxBLockpick, SboxBSteal,
                  SboxBTrap, SboxBFirstAid, SboxBDoctor, SboxBScience, SboxBRepair;
     Rect         SboxTSneak, SboxTLockpick, SboxTSteal, SboxTTrap, SboxTFirstAid,
@@ -1091,7 +1091,7 @@ public:
 /* Menu Options                                                         */
 /************************************************************************/
     AnyFrames* MoptMainPic, * MoptSingleplayerMainPic, * MoptSaveGamePicDown, * MoptLoadGamePicDown,
-    * MoptOptionsPicDown, * MoptExitPicDown, * MoptResumePicDown;
+             * MoptOptionsPicDown, * MoptExitPicDown, * MoptResumePicDown;
     Rect       MoptMain, MoptSaveGame, MoptLoadGame, MoptOptions, MoptExit, MoptResume;
     int        MoptX, MoptY;
 
@@ -1118,7 +1118,7 @@ public:
     #define CHA_SWITCH_KILLS    ( 2 )
 
     AnyFrames* ChaPBSwitchPerks, * ChaPBSwitchKarma, * ChaPBSwitchKills, * ChaPBSwitchMask,
-    * ChaPBSwitchScrUpUp, * ChaPBSwitchScrUpDn, * ChaPBSwitchScrDnUp, * ChaPBSwitchScrDnDn;
+             * ChaPBSwitchScrUpUp, * ChaPBSwitchScrUpDn, * ChaPBSwitchScrDnUp, * ChaPBSwitchScrDnDn;
     Rect       ChaBSwitch, ChaTSwitch, ChaBSwitchScrUp, ChaBSwitchScrDn;
 
     struct SwitchElement
@@ -1127,15 +1127,15 @@ public:
         uint   DescStrNum;
         ushort PictureId;
         uint   DrawFlags;
-        char   Addon[ 64 ];
+        char   Addon[64];
 
-        SwitchElement( uint name, uint desc, ushort pic, uint flags ): NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof( Addon ) ); }
-        SwitchElement( const char* add, uint flags ): NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof( Addon ) ); }
+        SwitchElement( uint name, uint desc, ushort pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof( Addon ) ); }
+        SwitchElement( const char* add, uint flags ) : NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof( Addon ) ); }
     };
     typedef vector< SwitchElement > SwitchElementVec;
 
-    SwitchElementVec ChaSwitchText[ 3 ];
-    int              ChaSwitchScroll[ 3 ];
+    SwitchElementVec ChaSwitchText[3];
+    int              ChaSwitchScroll[3];
     void ChaPrepareSwitch();
 
     // Pics
@@ -1152,7 +1152,7 @@ public:
     // Skills
     Rect   ChaWSkillText, ChaWSkillName, ChaWSkillValue;
     int    ChaWSkillNextX, ChaWSkillNextY;
-    ushort ChaSkillUp[ MAX_PARAMS ];
+    ushort ChaSkillUp[MAX_PARAMS];
     Rect   ChaWUnspentSP, ChaWUnspentSPText;
     int    ChaUnspentSkillPoints;
 
@@ -1175,8 +1175,8 @@ public:
 
     // Tip
     Rect ChaWName, ChaWDesc, ChaWPic;
-    char ChaName[ MAX_FOTEXT ];
-    char ChaDesc[ MAX_FOTEXT ];
+    char ChaName[MAX_FOTEXT];
+    char ChaDesc[MAX_FOTEXT];
     int  ChaSkilldexPic;
 
     // Buttons
@@ -1291,7 +1291,7 @@ public:
     int        PipX, PipY;
     int        PipVectX, PipVectY;
     Rect       PipWMain, PipWMonitor, PipBStatus /*,PipBGames*/, PipBAutomaps, PipBArchives, PipBClose, PipWTime;
-    int        PipScroll[ PIP__ARCHIVES_INFO + 1 ];
+    int        PipScroll[PIP__ARCHIVES_INFO + 1];
 
     void PipDraw();
     void PipLMouseDown();
@@ -1304,11 +1304,11 @@ public:
     uint         QuestNumTab;
     ushort       QuestNumQuest;
     // HoloInfo
-    uint         HoloInfo[ MAX_HOLO_INFO ];
+    uint         HoloInfo[MAX_HOLO_INFO];
     uint         PipInfoNum;
     // Scores
     uint         ScoresNextUploadTick;
-    char         BestScores[ SCORES_MAX ][ SCORE_NAME_LEN ];
+    char         BestScores[SCORES_MAX][SCORE_NAME_LEN];
     // Automaps
     struct Automap
     {
@@ -1319,7 +1319,7 @@ public:
         StrVec    MapNames;
         size_t    CurMap;
 
-        Automap(): LocId( 0 ), LocPid( 0 ), CurMap( 0 ) {}
+        Automap() : LocId( 0 ), LocPid( 0 ), CurMap( 0 ) {}
         bool operator==( const uint id ) const { return LocId == id; }
     };
     typedef vector< Automap > AutomapVec;
@@ -1355,10 +1355,10 @@ public:
 /* PickUp                                                               */
 /************************************************************************/
     AnyFrames* PupPMain, * PupPTakeAllOn, * PupPBOkOn,
-    * PupPBScrUpOn1, * PupPBScrUpOff1, * PupPBScrDwOn1, * PupPBScrDwOff1,
-    * PupPBScrUpOn2, * PupPBScrUpOff2, * PupPBScrDwOn2, * PupPBScrDwOff2,
-    * PupBNextCritLeftPicUp, * PupBNextCritLeftPicDown,
-    * PupBNextCritRightPicUp, * PupBNextCritRightPicDown;
+             * PupPBScrUpOn1, * PupPBScrUpOff1, * PupPBScrDwOn1, * PupPBScrDwOff1,
+             * PupPBScrUpOn2, * PupPBScrUpOff2, * PupPBScrDwOn2, * PupPBScrDwOff2,
+             * PupBNextCritLeftPicUp, * PupBNextCritLeftPicDown,
+             * PupBNextCritRightPicUp, * PupBNextCritRightPicDown;
     uint   PupHoldId;
     int    PupScroll1, PupScroll2, PupScrollCrit;
     int    PupX, PupY;
@@ -1398,8 +1398,8 @@ public:
     #define DIALOGBOX_ENCOUNTER_TB     ( 5 )
     #define DIALOGBOX_MANUAL           ( 6 )
     uint   DlgboxWait;
-    char   DlgboxText[ MAX_FOTEXT ];
-    string DlgboxButtonText[ MAX_DLGBOX_BUTTONS ];
+    char   DlgboxText[MAX_FOTEXT];
+    string DlgboxButtonText[MAX_DLGBOX_BUTTONS];
     uint   DlgboxButtonsCount;
     uint   DlgboxSelectedButton;
     // For follow
@@ -1422,7 +1422,7 @@ public:
     uint       ElevatorIndicatorAnim;
     Rect       ElevatorMain, ElevatorExt, ElevatorIndicator;
     uint       ElevatorButtonsCount;
-    Rect       ElevatorButtons[ MAX_DLGBOX_BUTTONS ];
+    Rect       ElevatorButtons[MAX_DLGBOX_BUTTONS];
     uint       ElevatorType, ElevatorLevelsCount, ElevatorStartLevel, ElevatorCurrentLevel;
     int        ElevatorX, ElevatorY, ElevatorVectX, ElevatorVectY;
     int        ElevatorSelectedButton;
@@ -1471,7 +1471,7 @@ public:
     #define MAX_SPLIT_VALUE            ( 100000 )
 
     AnyFrames* SplitMainPic, * SplitPBUpDn, * SplitPBDnDn, * SplitPBAllDn, * SplitPBDoneDn,
-    * SplitPBCancelDn, * SplitItemPic;
+             * SplitPBCancelDn, * SplitItemPic;
     uint       SplitItemColor;
     int        SplitX, SplitY;
     int        SplitVectX, SplitVectY;
@@ -1497,7 +1497,7 @@ public:
     #define TIMER_MAX_VALUE            ( 599 )
 
     AnyFrames* TimerMainPic, * TimerBUpPicDown, * TimerBDownPicDown, * TimerBDonePicDown,
-    * TimerBCancelPicDown, * TimerItemPic;
+             * TimerBCancelPicDown, * TimerItemPic;
     uint       TimerItemColor;
     int        TimerX, TimerY;
     int        TimerVectX, TimerVectY;
@@ -1574,12 +1574,12 @@ public:
         string     Text;
         AnyFrames* Anim;
 
-        FixDrawComponent( Rect& r, string& text ): IsText( true ), Anim( NULL )
+        FixDrawComponent( Rect& r, string& text ) : IsText( true ), Anim( NULL )
         {
             Place = r;
             Text = text;
         }
-        FixDrawComponent( Rect& r, AnyFrames* anim ): IsText( false ), Anim( anim ) { Place = r; }
+        FixDrawComponent( Rect& r, AnyFrames* anim ) : IsText( false ), Anim( anim ) { Place = r; }
     };
     typedef vector< FixDrawComponent* > FixDrawComponentVec;
     #define FIX_DRAW_PIC_WIDTH         ( 40 )
@@ -1634,7 +1634,7 @@ public:
     #define SAVE_LOAD_IMAGE_HEIGHT     ( 300 )
 
     AnyFrames* SaveLoadMainPic, * SaveLoadScrUpPicDown, * SaveLoadScrDownPicDown,
-    * SaveLoadDonePicDown, * SaveLoadBackPicDown;
+             * SaveLoadDonePicDown, * SaveLoadBackPicDown;
     Rect       SaveLoadMain, SaveLoadText, SaveLoadScrUp, SaveLoadScrDown, SaveLoadSlots, SaveLoadPic,
                SaveLoadInfo, SaveLoadDone, SaveLoadDoneText, SaveLoadBack, SaveLoadBackText;
     int        SaveLoadX, SaveLoadY, SaveLoadCX, SaveLoadCY, SaveLoadVectX, SaveLoadVectY;
@@ -1678,7 +1678,7 @@ public:
 /* Cursor                                                               */
 /************************************************************************/
     AnyFrames* CurPDef, * CurPMove, * CurPMoveBlock, * CurPHand, * CurPUseItem, * CurPUseSkill, * CurPWait,
-    * CurPScrRt, * CurPScrLt, * CurPScrUp, * CurPScrDw, * CurPScrRU, * CurPScrLU, * CurPScrRD, * CurPScrLD;
+             * CurPScrRt, * CurPScrLt, * CurPScrUp, * CurPScrDw, * CurPScrRU, * CurPScrLU, * CurPScrRD, * CurPScrLD;
 
     void CurDraw();
 
@@ -1727,7 +1727,7 @@ public:
         string Mess;
         string Time;
 
-        MessBoxMessage( int type, const char* mess, const char* time ): Type( type ), Mess( mess ), Time( time ) {}
+        MessBoxMessage( int type, const char* mess, const char* time ) : Type( type ), Mess( mess ), Time( time ) {}
         MessBoxMessage( const MessBoxMessage& r )
         {
             Type = r.Type;

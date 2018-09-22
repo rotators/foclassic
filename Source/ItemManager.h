@@ -13,14 +13,14 @@ class ItemManager
 {
 private:
     bool         isActive;
-    ProtoItem    allProto[ MAX_ITEM_PROTOTYPES ]; // All
-    ProtoItemVec typeProto[ ITEM_MAX_TYPES ];     // By type
-    uint         protoHash[ ITEM_MAX_TYPES ];     // Hash types protos
-    char*        protoScript[ MAX_ITEM_PROTOTYPES ];
+    ProtoItem    allProto[MAX_ITEM_PROTOTYPES];   // All
+    ProtoItemVec typeProto[ITEM_MAX_TYPES];       // By type
+    uint         protoHash[ITEM_MAX_TYPES];       // Hash types protos
+    char*        protoScript[MAX_ITEM_PROTOTYPES];
 
 public:
-    ProtoItemVec& GetProtos( int type )     { return typeProto[ type ]; }
-    uint          GetProtosHash( int type ) { return protoHash[ type ]; }
+    ProtoItemVec& GetProtos( int type )     { return typeProto[type]; }
+    uint          GetProtosHash( int type ) { return protoHash[type]; }
 
     bool Init();
     bool IsInit() { return isActive; }
@@ -55,7 +55,7 @@ private:
     Mutex      itemLocker;
 
 public:
-    void SaveAllItemsFile( void ( * save_func )( void*, size_t ) );
+    void SaveAllItemsFile( void ( *save_func )( void*, size_t ) );
     bool LoadAllItemsFile( void* f, int version );
     bool CheckProtoFunctions();
     void RunInitScriptItems();
@@ -102,7 +102,7 @@ public:
 
     // Items statistics
 private:
-    int64         itemCount[ MAX_ITEM_PROTOTYPES ];
+    int64         itemCount[MAX_ITEM_PROTOTYPES];
     MutexSpinlock itemCountLocker;
 
 public:
@@ -111,7 +111,7 @@ public:
     int64  GetItemStatistics( ushort pid );
     string GetItemsStatistics();
 
-    ItemManager(): isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( ItemManager ) ); };
+    ItemManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( ItemManager ) ); };
 };
 
 extern ItemManager ItemMngr;

@@ -1,12 +1,12 @@
 #include "StdAfx.h"
 #include <strstream>
 
-static uchar  KeysMap[ 0x10000 ] = { 0 };
-static ushort KeysMapRevert[ 0x100 ] = { 0 };
-static uchar  KeysMapUser[ 0x100 ] = { 0 };
+static uchar  KeysMap[0x10000] = { 0 };
+static ushort KeysMapRevert[0x100] = { 0 };
+static uchar  KeysMapUser[0x100] = { 0 };
 #define MAKE_KEY_CODE( name, index, code ) \
     const uchar name = index;              \
-    struct name ## _INIT { name ## _INIT() { KeysMap[ code ] = index; KeysMapRevert[ index ] = code; } } name ## _INIT_;
+    struct name ## _INIT { name ## _INIT() { KeysMap[code] = index; KeysMapRevert[index] = code; } } name ## _INIT_;
 
 #include "Keyboard.h"
 #include "SpriteManager.h"
@@ -16,7 +16,7 @@ namespace Keyb
     bool ShiftDwn = false;
     bool CtrlDwn = false;
     bool AltDwn = false;
-    bool KeyPressed[ 0x100 ] = { 0 };
+    bool KeyPressed[0x100] = { 0 };
 
     void GetCharInternal( uchar dik, const char* dik_text, char* str, uint* position, uint max, int flags );
     bool IsInvalidChar( const char* str, uint flags );
@@ -26,7 +26,7 @@ void Keyb::InitKeyb()
 {
     // User keys mapping
     for( uint i = 0; i < 0x100; i++ )
-        KeysMapUser[ i ] = i;
+        KeysMapUser[i] = i;
     istrstream str( GameOpt.KeyboardRemap.c_str() );
     while( !str.eof() )
     {
@@ -36,7 +36,7 @@ void Keyb::InitKeyb()
             break;
         from &= 0xFF;
         to &= 0xFF;
-        KeysMapUser[ from ] = to;
+        KeysMapUser[from] = to;
     }
 }
 
@@ -89,7 +89,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         if( pos < str_len )
         {
             pos++;
-            while( pos < str_len && ( str[ pos ] & 0xC0 ) == 0x80 )
+            while( pos < str_len && ( str[pos] & 0xC0 ) == 0x80 )
                 pos++;
         }
     }
@@ -98,7 +98,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         if( pos > 0 )
         {
             pos--;
-            while( pos && ( str[ pos ] & 0xC0 ) == 0x80 )
+            while( pos && ( str[pos] & 0xC0 ) == 0x80 )
                 pos--;
         }
     }
@@ -108,12 +108,12 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         {
             uint letter_len = 1;
             pos--;
-            while( pos && ( str[ pos ] & 0xC0 ) == 0x80 )
+            while( pos && ( str[pos] & 0xC0 ) == 0x80 )
                 pos--, letter_len++;
 
-            for( uint i = pos; str[ i + letter_len ]; i++ )
-                str[ i ] = str[ i + letter_len ];
-            str[ str_len - letter_len ] = '\0';
+            for( uint i = pos; str[i + letter_len]; i++ )
+                str[i] = str[i + letter_len];
+            str[str_len - letter_len] = '\0';
         }
     }
     else if( dik == DIK_DELETE && !ctrl_shift )
@@ -122,12 +122,12 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         {
             uint letter_len = 1;
             uint pos_ = pos + 1;
-            while( pos_ < str_len && ( str[ pos_ ] & 0xC0 ) == 0x80 )
+            while( pos_ < str_len && ( str[pos_] & 0xC0 ) == 0x80 )
                 pos_++, letter_len++;
 
-            for( uint i = pos; str[ i + letter_len ]; i++ )
-                str[ i ] = str[ i + letter_len ];
-            str[ str_len - letter_len ] = '\0';
+            for( uint i = pos; str[i + letter_len]; i++ )
+                str[i] = str[i + letter_len];
+            str[str_len - letter_len] = '\0';
         }
     }
     else if( dik == DIK_HOME && !ctrl_shift )
@@ -168,13 +168,13 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
             while( erase_len_utf8 )
             {
                 text_pos--;
-                while( text_pos && ( text[ text_pos ] & 0xC0 ) == 0x80 )
+                while( text_pos && ( text[text_pos] & 0xC0 ) == 0x80 )
                     text_pos--;
                 erase_len_utf8--;
             }
-            text[ text_pos ] = '\0';
+            text[text_pos] = '\0';
 
-            Str::Insert( &str[ pos ], text );
+            Str::Insert( &str[pos], text );
             pos += Str::Length( text );
         }
         delete[] text;
@@ -192,7 +192,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         if( IsInvalidChar( dik_text, flags ) )
             return;
 
-        Str::Insert( &str[ pos ], dik_text );
+        Str::Insert( &str[pos], dik_text );
         pos += dik_text_len;
     }
 }
@@ -243,10 +243,10 @@ bool Keyb::IsInvalidChar( const char* str, uint flags )
 
 uchar Keyb::MapKey( ushort code )
 {
-    return KeysMapUser[ KeysMap[ code ] ];
+    return KeysMapUser[KeysMap[code]];
 }
 
 ushort Keyb::UnmapKey( uchar key )
 {
-    return KeysMapRevert[ key ];
+    return KeysMapRevert[key];
 }

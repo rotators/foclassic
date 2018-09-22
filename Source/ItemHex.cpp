@@ -160,7 +160,7 @@ void ItemHex::Process()
             effCurY += effSy * EFFECT_0_SPEED_MUL;
             SetAnimOffs();
             effLastTick = Timer::GameTick();
-            if( DistSqrt( (int) effCurX, (int) effCurY, effStartX, effStartY ) >= effDist )
+            if( DistSqrt( (int)effCurX, (int)effCurY, effStartX, effStartY ) >= effDist )
                 Finish();
         }
     }
@@ -201,13 +201,13 @@ void ItemHex::SetEffect( float sx, float sy, uint dist )
 
 UShortPair ItemHex::GetEffectStep()
 {
-    uint dist = DistSqrt( (int) effCurX, (int) effCurY, effStartX, effStartY );
+    uint dist = DistSqrt( (int)effCurX, (int)effCurY, effStartX, effStartY );
     if( dist > effDist )
         dist = effDist;
     int proc = Procent( effDist, dist );
     if( proc > 99 )
         proc = 99;
-    return EffSteps[ EffSteps.size() * proc / 100 ];
+    return EffSteps[EffSteps.size() * proc / 100];
 }
 
 void ItemHex::SetFade( bool fade_up )
@@ -347,20 +347,20 @@ void ItemHex::SetAnimOffs()
     ScrY = GetOffsetY();
     for( int i = 1; i <= curSpr; i++ )
     {
-        ScrX += Anim->NextX[ i ];
-        ScrY += Anim->NextY[ i ];
+        ScrX += Anim->NextX[i];
+        ScrY += Anim->NextY[i];
     }
     if( IsDynamicEffect() )
     {
-        ScrX += (int) EffOffsX;
-        ScrY += (int) EffOffsY;
+        ScrX += (int)EffOffsX;
+        ScrY += (int)EffOffsY;
     }
 }
 
 void ItemHex::SetStayAnim()
 {
     if( IsShowAnimExt() )
-        SetAnim( Data.AnimStay[ 0 ], Data.AnimStay[ 1 ] );
+        SetAnim( Data.AnimStay[0], Data.AnimStay[1] );
     else
         SetAnim( 0, Anim->CntFrm - 1 );
 }
@@ -368,7 +368,7 @@ void ItemHex::SetStayAnim()
 void ItemHex::SetShowAnim()
 {
     if( IsShowAnimExt() )
-        SetAnim( Data.AnimShow[ 0 ], Data.AnimShow[ 1 ] );
+        SetAnim( Data.AnimShow[0], Data.AnimShow[1] );
     else
         SetAnim( 0, Anim->CntFrm - 1 );
 }
@@ -377,9 +377,9 @@ void ItemHex::SetHideAnim()
 {
     if( IsShowAnimExt() )
     {
-        SetAnim( Data.AnimHide[ 0 ], Data.AnimHide[ 1 ] );
-        animBegSpr = ( Data.AnimHide[ 1 ] );
-        animEndSpr = ( Data.AnimHide[ 1 ] );
+        SetAnim( Data.AnimHide[0], Data.AnimHide[1] );
+        animBegSpr = ( Data.AnimHide[1] );
+        animEndSpr = ( Data.AnimHide[1] );
     }
     else
     {

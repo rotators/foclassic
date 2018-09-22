@@ -11,7 +11,7 @@ BufferManager::BufferManager()
     bufLen = NET_BUFFER_SIZE;
     bufEndPos = 0;
     bufReadPos = 0;
-    bufData = new char[ bufLen ];
+    bufData = new char[bufLen];
     encryptActive = false;
     isError = false;
 }
@@ -22,21 +22,21 @@ BufferManager::BufferManager( uint alen )
     bufLen = alen;
     bufEndPos = 0;
     bufReadPos = 0;
-    bufData = new char[ bufLen ];
+    bufData = new char[bufLen];
     encryptActive = false;
     isError = false;
 }
 
 BufferManager& BufferManager::operator=( const BufferManager& r )
 {
-    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int) bufLen );
+    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int)bufLen );
     MEMORY_PROCESS( MEMORY_NET_BUFFER, r.bufLen );
     isError = r.isError;
     bufLen = r.bufLen;
     bufEndPos = r.bufEndPos;
     bufReadPos = r.bufReadPos;
     SAFEDELA( bufData );
-    bufData = new char[ bufLen ];
+    bufData = new char[bufLen];
     memcpy( bufData, r.bufData, bufLen );
     encryptActive = r.encryptActive;
     encryptKeyPos = r.encryptKeyPos;
@@ -46,7 +46,7 @@ BufferManager& BufferManager::operator=( const BufferManager& r )
 
 BufferManager::~BufferManager()
 {
-    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int) ( bufLen + sizeof( BufferManager ) ) );
+    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int)( bufLen + sizeof( BufferManager ) ) );
     SAFEDELA( bufData );
 }
 
@@ -60,7 +60,7 @@ void BufferManager::SetEncryptKey( uint seed )
 
     Randomizer rnd( seed );
     for( int i = 0; i < CRYPT_KEYS_COUNT; i++ )
-        encryptKeys[ i ] = ( rnd.Random( 0x1000, 0xFFFF ) | rnd.Random( 0x1000, 0xFFFF ) );
+        encryptKeys[i] = ( rnd.Random( 0x1000, 0xFFFF ) | rnd.Random( 0x1000, 0xFFFF ) );
     encryptKeyPos = 0;
     encryptActive = true;
 }
@@ -88,7 +88,7 @@ void BufferManager::Refresh()
     if( bufReadPos )
     {
         for( uint i = bufReadPos; i < bufEndPos; i++ )
-            bufData[ i - bufReadPos ] = bufData[ i ];
+            bufData[i - bufReadPos] = bufData[i];
         bufEndPos -= bufReadPos;
         bufReadPos = 0;
     }
@@ -100,11 +100,11 @@ void BufferManager::Reset()
     bufReadPos = 0;
     if( bufLen > NET_BUFFER_SIZE )
     {
-        MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int) bufLen );
+        MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int)bufLen );
         MEMORY_PROCESS( MEMORY_NET_BUFFER, NET_BUFFER_SIZE );
         bufLen = NET_BUFFER_SIZE;
         SAFEDELA( bufData );
-        bufData = new char[ bufLen ];
+        bufData = new char[bufLen];
     }
 }
 
@@ -119,11 +119,11 @@ void BufferManager::GrowBuf( uint len )
 {
     if( bufEndPos + len < bufLen )
         return;
-    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int) bufLen );
+    MEMORY_PROCESS( MEMORY_NET_BUFFER, -(int)bufLen );
     while( bufEndPos + len >= bufLen )
         bufLen <<= 1;
     MEMORY_PROCESS( MEMORY_NET_BUFFER, bufLen );
-    char* new_buf = new char[ bufLen ];
+    char* new_buf = new char[bufLen];
     memcpy( new_buf, bufData, bufEndPos );
     SAFEDELA( bufData );
     bufData = new_buf;
@@ -175,7 +175,7 @@ void BufferManager::Cut( uint len )
     }
     char* buf = bufData + bufReadPos;
     for( uint i = 0; i + bufReadPos + len < bufEndPos; i++ )
-        buf[ i ] = buf[ i + len ];
+        buf[i] = buf[i + len];
     bufEndPos -= len;
 }
 
@@ -188,7 +188,7 @@ void BufferManager::CopyBuf( const char* from, char* to, const char* mask, uint 
                 *to = ( *from & *mask ) ^ crypt_key;
         else
             for( uint i = 0, j = sizeof( size_t ); i < len; i += j, to += j, from += j, mask += j )
-                *(size_t*) to = ( *(size_t*) from & *(size_t*) mask ) ^ crypt_key;
+                *(size_t*)to = ( *(size_t*)from & *(size_t*)mask ) ^ crypt_key;
     }
     else
     {
@@ -197,7 +197,7 @@ void BufferManager::CopyBuf( const char* from, char* to, const char* mask, uint 
                 *to = *from ^ crypt_key;
         else
             for( uint i = 0, j = sizeof( size_t ); i < len; i += j, to += j, from += j )
-                *(size_t*) to = *(size_t*) from ^ crypt_key;
+                *(size_t*)to = *(size_t*)from ^ crypt_key;
     }
 }
 
@@ -207,7 +207,7 @@ BufferManager& BufferManager::operator<<( uint i )
         return *this;
     if( bufEndPos + 4 >= bufLen )
         GrowBuf( 4 );
-    *(uint*) ( bufData + bufEndPos ) = i ^ EncryptKey( 4 );
+    *(uint*)( bufData + bufEndPos ) = i ^ EncryptKey( 4 );
     bufEndPos += 4;
     return *this;
 }
@@ -222,7 +222,7 @@ BufferManager& BufferManager::operator>>( uint& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(uint*) ( bufData + bufReadPos ) ^ EncryptKey( 4 );
+    i = *(uint*)( bufData + bufReadPos ) ^ EncryptKey( 4 );
     bufReadPos += 4;
     return *this;
 }
@@ -233,7 +233,7 @@ BufferManager& BufferManager::operator<<( int i )
         return *this;
     if( bufEndPos + 4 >= bufLen )
         GrowBuf( 4 );
-    *(int*) ( bufData + bufEndPos ) = i ^ EncryptKey( 4 );
+    *(int*)( bufData + bufEndPos ) = i ^ EncryptKey( 4 );
     bufEndPos += 4;
     return *this;
 }
@@ -248,7 +248,7 @@ BufferManager& BufferManager::operator>>( int& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(int*) ( bufData + bufReadPos ) ^ EncryptKey( 4 );
+    i = *(int*)( bufData + bufReadPos ) ^ EncryptKey( 4 );
     bufReadPos += 4;
     return *this;
 }
@@ -259,7 +259,7 @@ BufferManager& BufferManager::operator<<( ushort i )
         return *this;
     if( bufEndPos + 2 >= bufLen )
         GrowBuf( 2 );
-    *(ushort*) ( bufData + bufEndPos ) = i ^ EncryptKey( 2 );
+    *(ushort*)( bufData + bufEndPos ) = i ^ EncryptKey( 2 );
     bufEndPos += 2;
     return *this;
 }
@@ -274,7 +274,7 @@ BufferManager& BufferManager::operator>>( ushort& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(ushort*) ( bufData + bufReadPos ) ^ EncryptKey( 2 );
+    i = *(ushort*)( bufData + bufReadPos ) ^ EncryptKey( 2 );
     bufReadPos += 2;
     return *this;
 }
@@ -285,7 +285,7 @@ BufferManager& BufferManager::operator<<( short i )
         return *this;
     if( bufEndPos + 2 >= bufLen )
         GrowBuf( 2 );
-    *(short*) ( bufData + bufEndPos ) = i ^ EncryptKey( 2 );
+    *(short*)( bufData + bufEndPos ) = i ^ EncryptKey( 2 );
     bufEndPos += 2;
     return *this;
 }
@@ -300,7 +300,7 @@ BufferManager& BufferManager::operator>>( short& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(short*) ( bufData + bufReadPos ) ^ EncryptKey( 2 );
+    i = *(short*)( bufData + bufReadPos ) ^ EncryptKey( 2 );
     bufReadPos += 2;
     return *this;
 }
@@ -311,7 +311,7 @@ BufferManager& BufferManager::operator<<( uchar i )
         return *this;
     if( bufEndPos + 1 >= bufLen )
         GrowBuf( 1 );
-    *(uchar*) ( bufData + bufEndPos ) = i ^ EncryptKey( 1 );
+    *(uchar*)( bufData + bufEndPos ) = i ^ EncryptKey( 1 );
     bufEndPos += 1;
     return *this;
 }
@@ -326,7 +326,7 @@ BufferManager& BufferManager::operator>>( uchar& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(uchar*) ( bufData + bufReadPos ) ^ EncryptKey( 1 );
+    i = *(uchar*)( bufData + bufReadPos ) ^ EncryptKey( 1 );
     bufReadPos += 1;
     return *this;
 }
@@ -337,7 +337,7 @@ BufferManager& BufferManager::operator<<( char i )
         return *this;
     if( bufEndPos + 1 >= bufLen )
         GrowBuf( 1 );
-    *(char*) ( bufData + bufEndPos ) = i ^ EncryptKey( 1 );
+    *(char*)( bufData + bufEndPos ) = i ^ EncryptKey( 1 );
     bufEndPos += 1;
     return *this;
 }
@@ -352,7 +352,7 @@ BufferManager& BufferManager::operator>>( char& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(char*) ( bufData + bufReadPos ) ^ EncryptKey( 1 );
+    i = *(char*)( bufData + bufReadPos ) ^ EncryptKey( 1 );
     bufReadPos += 1;
     return *this;
 }
@@ -363,7 +363,7 @@ BufferManager& BufferManager::operator<<( bool i )
         return *this;
     if( bufEndPos + 1 >= bufLen )
         GrowBuf( 1 );
-    *(uchar*) ( bufData + bufEndPos ) = ( i ? 1 : 0 ) ^ ( EncryptKey( 1 ) & 0xFF );
+    *(uchar*)( bufData + bufEndPos ) = ( i ? 1 : 0 ) ^ ( EncryptKey( 1 ) & 0xFF );
     bufEndPos += 1;
     return *this;
 }
@@ -378,7 +378,7 @@ BufferManager& BufferManager::operator>>( bool& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = ( ( *(uchar*) ( bufData + bufReadPos ) ^ ( EncryptKey( 1 ) & 0xFF ) ) ? true : false );
+    i = ( ( *(uchar*)( bufData + bufReadPos ) ^ ( EncryptKey( 1 ) & 0xFF ) ) ? true : false );
     bufReadPos += 1;
     return *this;
 }
@@ -388,7 +388,7 @@ bool BufferManager::NeedProcess()
 {
     if( bufReadPos + sizeof( uint ) > bufEndPos )
         return false;
-    uint msg = *(uint*) ( bufData + bufReadPos ) ^ EncryptKey( 0 );
+    uint msg = *(uint*)( bufData + bufReadPos ) ^ EncryptKey( 0 );
 
     // Known size
     switch( msg )
@@ -396,137 +396,137 @@ bool BufferManager::NeedProcess()
     case 0xFFFFFFFF:
         return true;                                                                 // Ping
     case NETMSG_LOGIN:
-        return ( NETMSG_LOGIN_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_LOGIN_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_LOGIN_SUCCESS:
-        return ( NETMSG_LOGIN_SUCCESS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_LOGIN_SUCCESS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_REGISTER_SUCCESS:
-        return ( NETMSG_REGISTER_SUCCESS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_REGISTER_SUCCESS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PING:
-        return ( NETMSG_PING_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PING_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_REMOVE_CRITTER:
-        return ( NETMSG_REMOVE_CRITTER_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_REMOVE_CRITTER_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_MSG:
-        return ( NETMSG_MSG_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_MSG_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_MAP_TEXT_MSG:
-        return ( NETMSG_MAP_TEXT_MSG_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_MAP_TEXT_MSG_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_DIR:
-        return ( NETMSG_DIR_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_DIR_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_DIR:
-        return ( NETMSG_CRITTER_DIR_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_DIR_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_MOVE_WALK:
-        return ( NETMSG_SEND_MOVE_WALK_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_MOVE_WALK_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_MOVE_RUN:
-        return ( NETMSG_SEND_MOVE_RUN_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_MOVE_RUN_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_MOVE:
-        return ( NETMSG_CRITTER_MOVE_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_MOVE_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_XY:
-        return ( NETMSG_CRITTER_XY_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_XY_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_ALL_PARAMS:
-        return ( NETMSG_ALL_PARAMS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_ALL_PARAMS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PARAM:
-        return ( NETMSG_PARAM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PARAM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_PARAM:
-        return ( NETMSG_CRITTER_PARAM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_PARAM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_CRAFT:
-        return ( NETMSG_SEND_CRAFT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_CRAFT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRAFT_RESULT:
-        return ( NETMSG_CRAFT_RESULT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRAFT_RESULT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CLEAR_ITEMS:
-        return ( NETMSG_CLEAR_ITEMS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CLEAR_ITEMS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_ADD_ITEM:
-        return ( NETMSG_ADD_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_ADD_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_REMOVE_ITEM:
-        return ( NETMSG_REMOVE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_REMOVE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_SORT_VALUE_ITEM:
-        return ( NETMSG_SEND_SORT_VALUE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_SORT_VALUE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_ADD_ITEM_ON_MAP:
-        return ( NETMSG_ADD_ITEM_ON_MAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_ADD_ITEM_ON_MAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CHANGE_ITEM_ON_MAP:
-        return ( NETMSG_CHANGE_ITEM_ON_MAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CHANGE_ITEM_ON_MAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_ERASE_ITEM_FROM_MAP:
-        return ( NETMSG_ERASE_ITEM_FROM_MAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_ERASE_ITEM_FROM_MAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_ANIMATE_ITEM:
-        return ( NETMSG_ANIMATE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_ANIMATE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_RATE_ITEM:
-        return ( NETMSG_SEND_RATE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_RATE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_CHANGE_ITEM:
-        return ( NETMSG_SEND_CHANGE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_CHANGE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_PICK_ITEM:
-        return ( NETMSG_SEND_PICK_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_PICK_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_ITEM_CONT:
-        return ( NETMSG_SEND_ITEM_CONT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_ITEM_CONT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_USE_ITEM:
-        return ( NETMSG_SEND_USE_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_USE_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_USE_SKILL:
-        return ( NETMSG_SEND_USE_SKILL_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_USE_SKILL_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_PICK_CRITTER:
-        return ( NETMSG_SEND_PICK_CRITTER_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_PICK_CRITTER_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SOME_ITEM:
-        return ( NETMSG_SOME_ITEM_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SOME_ITEM_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_ACTION:
-        return ( NETMSG_CRITTER_ACTION_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_ACTION_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_KNOCKOUT:
-        return ( NETMSG_CRITTER_KNOCKOUT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_KNOCKOUT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_ITEM_DATA:
-        return ( NETMSG_CRITTER_ITEM_DATA_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_ITEM_DATA_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_ANIMATE:
-        return ( NETMSG_CRITTER_ANIMATE_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_ANIMATE_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_CRITTER_SET_ANIMS:
-        return ( NETMSG_CRITTER_SET_ANIMS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_CRITTER_SET_ANIMS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_EFFECT:
-        return ( NETMSG_EFFECT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_EFFECT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_FLY_EFFECT:
-        return ( NETMSG_FLY_EFFECT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_FLY_EFFECT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PLAY_SOUND:
-        return ( NETMSG_PLAY_SOUND_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PLAY_SOUND_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PLAY_SOUND_TYPE:
-        return ( NETMSG_PLAY_SOUND_TYPE_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PLAY_SOUND_TYPE_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_KARMA_VOTING:
-        return ( NETMSG_SEND_KARMA_VOTING_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_KARMA_VOTING_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_TALK_NPC:
-        return ( NETMSG_SEND_TALK_NPC_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_TALK_NPC_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_SAY_NPC:
-        return ( NETMSG_SEND_SAY_NPC_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_SAY_NPC_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PLAYERS_BARTER:
-        return ( NETMSG_PLAYERS_BARTER_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PLAYERS_BARTER_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_PLAYERS_BARTER_SET_HIDE:
-        return ( NETMSG_PLAYERS_BARTER_SET_HIDE_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_PLAYERS_BARTER_SET_HIDE_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_GET_INFO:
-        return ( NETMSG_SEND_GET_TIME_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_GET_TIME_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_GAME_INFO:
-        return ( NETMSG_GAME_INFO_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_GAME_INFO_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_COMBAT:
-        return ( NETMSG_SEND_COMBAT_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_COMBAT_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_LOADMAP:
-        return ( NETMSG_LOADMAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_LOADMAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_GIVE_MAP:
-        return ( NETMSG_SEND_GIVE_MAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_GIVE_MAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_LOAD_MAP_OK:
-        return ( NETMSG_SEND_LOAD_MAP_OK_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_LOAD_MAP_OK_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SHOW_SCREEN:
-        return ( NETMSG_SHOW_SCREEN_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SHOW_SCREEN_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_SCREEN_ANSWER:
-        return ( NETMSG_SEND_SCREEN_ANSWER_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_SCREEN_ANSWER_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_DROP_TIMERS:
-        return ( NETMSG_DROP_TIMERS_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_DROP_TIMERS_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_REFRESH_ME:
-        return ( NETMSG_SEND_REFRESH_ME_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_REFRESH_ME_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_VIEW_MAP:
-        return ( NETMSG_VIEW_MAP_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_VIEW_MAP_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_GIVE_GLOBAL_INFO:
-        return ( NETMSG_SEND_GIVE_GLOBAL_INFO_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_GIVE_GLOBAL_INFO_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_RULE_GLOBAL:
-        return ( NETMSG_SEND_RULE_GLOBAL_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_RULE_GLOBAL_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_FOLLOW:
-        return ( NETMSG_FOLLOW_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_FOLLOW_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_QUEST:
-        return ( NETMSG_QUEST_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_QUEST_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_GET_USER_HOLO_STR:
-        return ( NETMSG_SEND_GET_USER_HOLO_STR_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_GET_USER_HOLO_STR_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SEND_GET_SCORES:
-        return ( NETMSG_SEND_GET_SCORES_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SEND_GET_SCORES_SIZE + bufReadPos <= bufEndPos;
     case NETMSG_SCORES:
-        return ( NETMSG_SCORES_SIZE + bufReadPos <= bufEndPos );
+        return NETMSG_SCORES_SIZE + bufReadPos <= bufEndPos;
     default:
         break;
     }
@@ -536,7 +536,7 @@ bool BufferManager::NeedProcess()
         return false;
 
     EncryptKey( sizeof( uint ) );
-    uint msg_len = *(uint*) ( bufData + bufReadPos + sizeof( uint ) ) ^ EncryptKey( -(int) sizeof( uint ) );
+    uint msg_len = *(uint*)( bufData + bufReadPos + sizeof( uint ) ) ^ EncryptKey( -(int)sizeof( uint ) );
 
     switch( msg )
     {
@@ -576,7 +576,7 @@ bool BufferManager::NeedProcess()
     case NETMSG_SEND_SET_USER_HOLO_STR:
     case NETMSG_USER_HOLO_STR:
     case NETMSG_AUTOMAPS_INFO:
-        return ( msg_len + bufReadPos <= bufEndPos );
+        return msg_len + bufReadPos <= bufEndPos;
     default:
         // Unknown message
         # ifdef FONLINE_CLIENT
@@ -596,7 +596,7 @@ bool BufferManager::NeedProcess()
 void BufferManager::SkipMsg( uint msg )
 {
     bufReadPos -= sizeof( msg );
-    EncryptKey( -(int) sizeof( msg ) );
+    EncryptKey( -(int)sizeof( msg ) );
 
     // Known size
     uint size = 0;
@@ -843,7 +843,7 @@ void BufferManager::SkipMsg( uint msg )
     {
         // Changeable size
         EncryptKey( sizeof( msg ) );
-        uint msg_len = *(uint*) ( bufData + bufReadPos + sizeof( msg ) ) ^ EncryptKey( -(int) sizeof( msg ) );
+        uint msg_len = *(uint*)( bufData + bufReadPos + sizeof( msg ) ) ^ EncryptKey( -(int)sizeof( msg ) );
         size = msg_len;
     }
     break;
@@ -866,7 +866,7 @@ void BufferManager::SeekValidMsg()
             return;
         }
 
-        uint msg = *(uint*) ( bufData + bufReadPos ) ^ EncryptKey( 0 );
+        uint msg = *(uint*)( bufData + bufReadPos ) ^ EncryptKey( 0 );
         if( IsValidMsg( msg ) )
             return;
 

@@ -11,7 +11,7 @@ IniParser::IniParser()
 {
     bufPtr = NULL;
     bufLen = 0;
-    lastApp[ 0 ] = 0;
+    lastApp[0] = 0;
     lastAppPos = 0;
 }
 
@@ -33,7 +33,7 @@ bool IniParser::LoadFile( const char* fname, int path_type )
     if( !fm.LoadFile( fname, path_type ) )
         return false;
 
-    bufPtr = (char*) fm.ReleaseBuffer();
+    bufPtr = (char*)fm.ReleaseBuffer();
     Str::Replacement( bufPtr, '\r', ' ' );
     bufLen = Str::Length( bufPtr );
     return true;
@@ -43,12 +43,12 @@ bool IniParser::LoadFilePtr( const char* buf, uint len )
 {
     UnloadFile();
 
-    bufPtr = new char[ len + 1 ];
+    bufPtr = new char[len + 1];
     if( !bufPtr )
         return false;
 
     memcpy( bufPtr, buf, len );
-    bufPtr[ len ] = 0;
+    bufPtr[len] = 0;
     Str::Replacement( bufPtr, '\r', ' ' );
     bufLen = Str::Length( bufPtr );
     return true;
@@ -59,20 +59,20 @@ bool IniParser::AppendToBegin( const char* fname, int path_type )
     FileManager fm;
     if( !fm.LoadFile( fname, path_type ) )
         return false;
-    char* buf = (char*) fm.ReleaseBuffer();
+    char* buf = (char*)fm.ReleaseBuffer();
     Str::Replacement( buf, '\r', ' ' );
     uint  len = Str::Length( buf );
 
-    char* grow_buf = new char[ bufLen + len + 1 ];
+    char* grow_buf = new char[bufLen + len + 1];
     memcpy( grow_buf, buf, len );
     memcpy( grow_buf + len, bufPtr, bufLen );
-    grow_buf[ bufLen + len ] = 0;
+    grow_buf[bufLen + len] = 0;
 
     SAFEDELA( bufPtr );
     SAFEDELA( buf );
     bufPtr = grow_buf;
     bufLen += len;
-    lastApp[ 0 ] = 0;
+    lastApp[0] = 0;
     lastAppPos = 0;
     return true;
 }
@@ -82,38 +82,38 @@ bool IniParser::AppendToEnd( const char* fname, int path_type )
     FileManager fm;
     if( !fm.LoadFile( fname, path_type ) )
         return false;
-    char* buf = (char*) fm.ReleaseBuffer();
+    char* buf = (char*)fm.ReleaseBuffer();
     Str::Replacement( buf, '\r', ' ' );
     uint  len = Str::Length( buf );
 
-    char* grow_buf = new char[ bufLen + len + 1 ];
+    char* grow_buf = new char[bufLen + len + 1];
     memcpy( grow_buf, bufPtr, bufLen );
     memcpy( grow_buf + bufLen, buf, len );
-    grow_buf[ bufLen + len ] = 0;
+    grow_buf[bufLen + len] = 0;
 
     SAFEDELA( bufPtr );
     SAFEDELA( buf );
     bufPtr = grow_buf;
     bufLen += len;
-    lastApp[ 0 ] = 0;
+    lastApp[0] = 0;
     lastAppPos = 0;
     return true;
 }
 
 bool IniParser::AppendPtrToBegin( const char* buf, uint len )
 {
-    char* grow_buf = new char[ bufLen + len + 1 ];
+    char* grow_buf = new char[bufLen + len + 1];
     memcpy( grow_buf, buf, len );
-    grow_buf[ len ] = 0;
+    grow_buf[len] = 0;
     Str::Replacement( grow_buf, '\r', ' ' );
     len = Str::Length( grow_buf );
     memcpy( grow_buf + len, bufPtr, bufLen );
-    grow_buf[ bufLen + len ] = 0;
+    grow_buf[bufLen + len] = 0;
 
     SAFEDELA( bufPtr );
     bufPtr = grow_buf;
     bufLen += len;
-    lastApp[ 0 ] = 0;
+    lastApp[0] = 0;
     lastAppPos = 0;
     return true;
 }
@@ -129,7 +129,7 @@ void IniParser::UnloadFile()
 {
     SAFEDELA( bufPtr );
     bufLen = 0;
-    lastApp[ 0 ] = 0;
+    lastApp[0] = 0;
     lastAppPos = 0;
 }
 
@@ -141,7 +141,7 @@ char* IniParser::GetBuffer()
 void IniParser::GotoEol( uint& iter )
 {
     for( ; iter < bufLen; ++iter )
-        if( bufPtr[ iter ] == '\n' )
+        if( bufPtr[iter] == '\n' )
             return;
 }
 
@@ -151,23 +151,23 @@ bool IniParser::GotoApp( const char* app_name, uint& iter )
     for( ; iter < bufLen; ++iter )
     {
         // Skip white spaces and tabs
-        while( iter < bufLen && ( bufPtr[ iter ] == ' ' || bufPtr[ iter ] == '\t' ) )
+        while( iter < bufLen && ( bufPtr[iter] == ' ' || bufPtr[iter] == '\t' ) )
             ++iter;
         if( iter >= bufLen )
             break;
 
-        if( bufPtr[ iter ] == STR_PRIVATE_APP_BEGIN )
+        if( bufPtr[iter] == STR_PRIVATE_APP_BEGIN )
         {
             ++iter;
-            for( j = 0; app_name[ j ]; ++iter, ++j )
+            for( j = 0; app_name[j]; ++iter, ++j )
             {
                 if( iter >= bufLen )
                     return false;
-                if( app_name[ j ] != bufPtr[ iter ] )
+                if( app_name[j] != bufPtr[iter] )
                     goto label_NextLine;
             }
 
-            if( bufPtr[ iter ] != STR_PRIVATE_APP_END )
+            if( bufPtr[iter] != STR_PRIVATE_APP_END )
                 goto label_NextLine;
 
             GotoEol( iter );
@@ -189,36 +189,36 @@ bool IniParser::GotoKey( const char* key_name, uint& iter )
     uint j;
     for( ; iter < bufLen; ++iter )
     {
-        if( bufPtr[ iter ] == STR_PRIVATE_APP_BEGIN )
+        if( bufPtr[iter] == STR_PRIVATE_APP_BEGIN )
             return false;
 
         // Skip white spaces and tabs
-        while( iter < bufLen && ( bufPtr[ iter ] == ' ' || bufPtr[ iter ] == '\t' ) )
+        while( iter < bufLen && ( bufPtr[iter] == ' ' || bufPtr[iter] == '\t' ) )
             ++iter;
         if( iter >= bufLen )
             break;
 
         // Compare first character
-        if( bufPtr[ iter ] == key_name[ 0 ] )
+        if( bufPtr[iter] == key_name[0] )
         {
             // Compare others
             ++iter;
-            for( j = 1; key_name[ j ]; ++iter, ++j )
+            for( j = 1; key_name[j]; ++iter, ++j )
             {
                 if( iter >= bufLen )
                     return false;
-                if( key_name[ j ] != bufPtr[ iter ] )
+                if( key_name[j] != bufPtr[iter] )
                     goto label_NextLine;
             }
 
             // Skip white spaces and tabs
-            while( iter < bufLen && ( bufPtr[ iter ] == ' ' || bufPtr[ iter ] == '\t' ) )
+            while( iter < bufLen && ( bufPtr[iter] == ' ' || bufPtr[iter] == '\t' ) )
                 ++iter;
             if( iter >= bufLen )
                 break;
 
             // Check for '='
-            if( bufPtr[ iter ] != STR_PRIVATE_KEY_CHAR )
+            if( bufPtr[iter] != STR_PRIVATE_KEY_CHAR )
                 goto label_NextLine;
             ++iter;
 
@@ -235,7 +235,7 @@ label_NextLine:
 bool IniParser::GetPos( const char* app_name, const char* key_name, uint& iter )
 {
     // Check
-    if( !key_name || !key_name[ 0 ] )
+    if( !key_name || !key_name[0] )
         return false;
 
     // Find
@@ -267,17 +267,17 @@ int IniParser::GetInt( const char* app_name, const char* key_name, int def_val )
 
     // Read number
     uint j;
-    char num[ 64 ];
+    char num[64];
     for( j = 0; iter < bufLen; ++iter, ++j )
     {
-        if( j >= 63 || bufPtr[ iter ] == '\n' || bufPtr[ iter ] == '#' || bufPtr[ iter ] == ';' )
+        if( j >= 63 || bufPtr[iter] == '\n' || bufPtr[iter] == '#' || bufPtr[iter] == ';' )
             break;
-        num[ j ] = bufPtr[ iter ];
+        num[j] = bufPtr[iter];
     }
 
     if( !j )
         return def_val;
-    num[ j ] = 0;
+    num[j] = 0;
     Str::EraseFrontBackSpecificChars( num );
     if( Str::CompareCase( num, "true" ) )
         return 1;
@@ -306,53 +306,53 @@ bool IniParser::GetStr( const char* app_name, const char* key_name, const char* 
         goto label_DefVal;
 
     // Skip white spaces and tabs
-    while( iter < bufLen && ( bufPtr[ iter ] == ' ' || bufPtr[ iter ] == '\t' ) )
+    while( iter < bufLen && ( bufPtr[iter] == ' ' || bufPtr[iter] == '\t' ) )
         ++iter;
     if( iter >= bufLen )
         goto label_DefVal;
 
     // Read string
-    for( ; iter < bufLen && bufPtr[ iter ]; ++iter )
+    for( ; iter < bufLen && bufPtr[iter]; ++iter )
     {
         if( end )
         {
-            if( bufPtr[ iter ] == end )
+            if( bufPtr[iter] == end )
                 break;
 
-            if( bufPtr[ iter ] == '\n' )
+            if( bufPtr[iter] == '\n' )
             {
-                if( j && ret_buf[ j - 1 ] != ' ' )
-                    ret_buf[ j++ ] = ' ';
+                if( j && ret_buf[j - 1] != ' ' )
+                    ret_buf[j++] = ' ';
                 continue;
             }
-            if( bufPtr[ iter ] == ';' || bufPtr[ iter ] == '#' )
+            if( bufPtr[iter] == ';' || bufPtr[iter] == '#' )
             {
-                if( j && ret_buf[ j - 1 ] != ' ' )
-                    ret_buf[ j++ ] = ' ';
+                if( j && ret_buf[j - 1] != ' ' )
+                    ret_buf[j++] = ' ';
                 GotoEol( iter );
                 continue;
             }
         }
         else
         {
-            if( !bufPtr[ iter ] || bufPtr[ iter ] == '\n' || bufPtr[ iter ] == '#' || bufPtr[ iter ] == ';' )
+            if( !bufPtr[iter] || bufPtr[iter] == '\n' || bufPtr[iter] == '#' || bufPtr[iter] == ';' )
                 break;
         }
 
-        ret_buf[ j ] = bufPtr[ iter ];
+        ret_buf[j] = bufPtr[iter];
         j++;
     }
 
     // Erase white spaces and tabs from end
     for( ; j; j-- )
-        if( ret_buf[ j - 1 ] != ' ' && ret_buf[ j - 1 ] != '\t' )
+        if( ret_buf[j - 1] != ' ' && ret_buf[j - 1] != '\t' )
             break;
 
-    ret_buf[ j ] = 0;
+    ret_buf[j] = 0;
     return true;
 
 label_DefVal:
-    ret_buf[ 0 ] = 0;
+    ret_buf[0] = 0;
     if( def_val )
         Str::Copy( ret_buf, MAX_FOTEXT, def_val );
     return false;
@@ -372,64 +372,64 @@ void IniParser::SetStr( const char* app_name, const char* key_name, const char* 
     if( GetPos( app_name, key_name, iter ) )
     {
         // Refresh founded field
-        while( iter < bufLen && ( bufPtr[ iter ] == ' ' || bufPtr[ iter ] == '\t' ) )
+        while( iter < bufLen && ( bufPtr[iter] == ' ' || bufPtr[iter] == '\t' ) )
             ++iter;
 
         uint        start = iter;
         uint        count = 0;
-        const char* end_str = Str::Substring( &bufPtr[ start ], "\n" );
+        const char* end_str = Str::Substring( &bufPtr[start], "\n" );
         if( !end_str )
-            end_str = &bufPtr[ bufLen ];
+            end_str = &bufPtr[bufLen];
 
-        const char* comment = Str::Substring( &bufPtr[ start ], "#" );
+        const char* comment = Str::Substring( &bufPtr[start], "#" );
         if( comment && comment < end_str )
             end_str = comment;
-        comment = Str::Substring( &bufPtr[ start ], ";" );
+        comment = Str::Substring( &bufPtr[start], ";" );
         if( comment && comment < end_str )
             end_str = comment;
 
-        count = (uint) end_str - ( uint ) & bufPtr[ start ];
+        count = (uint)end_str - ( uint ) & bufPtr[start];
 
         uint val_len = Str::Length( val );
         if( val_len > count )
         {
-            char* grow_buf = new char[ bufLen + val_len - count + 1 ];
+            char* grow_buf = new char[bufLen + val_len - count + 1];
             memcpy( grow_buf, bufPtr, bufLen );
-            grow_buf[ bufLen ] = 0;
+            grow_buf[bufLen] = 0;
             delete[] bufPtr;
             bufPtr = grow_buf;
         }
 
         if( count )
-            Str::EraseInterval( &bufPtr[ start ], count );
-        Str::Insert( &bufPtr[ start ], val );
+            Str::EraseInterval( &bufPtr[start], count );
+        Str::Insert( &bufPtr[start], val );
         bufLen = bufLen + val_len - count;
     }
     else
     {
         // Write new field
         bool new_line = false;
-        if( bufPtr[ bufLen - 1 ] != '\n' )
+        if( bufPtr[bufLen - 1] != '\n' )
             new_line = true;
 
         uint  key_name_len = Str::Length( key_name );
         uint  val_len = Str::Length( val );
         uint  new_len = bufLen + ( new_line ? 1 : 0 ) + key_name_len + 3 + val_len + 1; // {[\n]key_name = val\n}
-        char* new_buf = new char[ new_len + 1 ];
+        char* new_buf = new char[new_len + 1];
         memcpy( new_buf, bufPtr, bufLen );
 
         uint pos = bufLen;
         if( new_line )
-            new_buf[ pos++ ] = '\n';
-        memcpy( &new_buf[ pos ], key_name, key_name_len );
+            new_buf[pos++] = '\n';
+        memcpy( &new_buf[pos], key_name, key_name_len );
         pos += key_name_len;
-        new_buf[ pos++ ] = ' ';
-        new_buf[ pos++ ] = '=';
-        new_buf[ pos++ ] = ' ';
-        memcpy( &new_buf[ pos ], val, val_len );
+        new_buf[pos++] = ' ';
+        new_buf[pos++] = '=';
+        new_buf[pos++] = ' ';
+        memcpy( &new_buf[pos], val, val_len );
         pos += val_len;
-        new_buf[ pos++ ] = '\n';
-        new_buf[ pos ] = 0;
+        new_buf[pos++] = '\n';
+        new_buf[pos] = 0;
 
         delete[] bufPtr;
         bufPtr = new_buf;
@@ -478,16 +478,16 @@ char* IniParser::GetApp( const char* app_name )
 
     uint i = iter, len = 0;
     for( ; i < bufLen; i++, len++ )
-        if( i > 0 && bufPtr[ i - 1 ] == '\n' && bufPtr[ i ] == STR_PRIVATE_APP_BEGIN )
+        if( i > 0 && bufPtr[i - 1] == '\n' && bufPtr[i] == STR_PRIVATE_APP_BEGIN )
             break;
     for( ; len; i--, len-- )
-        if( i > 0 && bufPtr[ i - 1 ] != '\n' )
+        if( i > 0 && bufPtr[i - 1] != '\n' )
             break;
 
-    char* ret_buf = new char[ len + 1 ];
+    char* ret_buf = new char[len + 1];
     if( len )
-        memcpy( ret_buf, &bufPtr[ iter ], len );
-    ret_buf[ len ] = 0;
+        memcpy( ret_buf, &bufPtr[iter], len );
+    ret_buf[len] = 0;
     return ret_buf;
 }
 
@@ -504,14 +504,14 @@ void IniParser::GetAppLines( StrVec& lines )
         return;
     uint i = lastAppPos, len = 0;
     for( ; i < bufLen; i++, len++ )
-        if( i > 0 && bufPtr[ i - 1 ] == '\n' && bufPtr[ i ] == STR_PRIVATE_APP_BEGIN )
+        if( i > 0 && bufPtr[i - 1] == '\n' && bufPtr[i] == STR_PRIVATE_APP_BEGIN )
             break;
     for( ; len; i--, len-- )
-        if( i > 0 && bufPtr[ i - 1 ] != '\n' )
+        if( i > 0 && bufPtr[i - 1] != '\n' )
             break;
 
-    istrstream str( &bufPtr[ lastAppPos ], len );
-    char       line[ MAX_FOTEXT ];
+    istrstream str( &bufPtr[lastAppPos], len );
+    char       line[MAX_FOTEXT];
     while( !str.eof() )
     {
         str.getline( line, sizeof( line ), '\n' );
@@ -525,16 +525,16 @@ void IniParser::CacheApps()
         return;
 
     istrstream str( bufPtr, bufLen );
-    char       line[ MAX_FOTEXT ];
+    char       line[MAX_FOTEXT];
     while( !str.eof() )
     {
         str.getline( line, sizeof( line ), '\n' );
-        if( line[ 0 ] == STR_PRIVATE_APP_BEGIN )
+        if( line[0] == STR_PRIVATE_APP_BEGIN )
         {
             char* end = Str::Substring( line + 1, "]" );
             if( end )
             {
-                int len = (int) ( end - line - 1 );
+                int len = (int)( end - line - 1 );
                 if( len > 0 )
                 {
                     string app;
@@ -557,7 +557,7 @@ void IniParser::CacheKeys()
         return;
 
     istrstream str( bufPtr, bufLen );
-    char       line[ MAX_FOTEXT ];
+    char       line[MAX_FOTEXT];
     while( !str.eof() )
     {
         str.getline( line, sizeof( line ), '\n' );

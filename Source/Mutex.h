@@ -23,7 +23,7 @@ class Mutex
 private:
     CRITICAL_SECTION mutexCS;
     # ifndef FO_MACOSX
-    int              dummyData[ 5 ];
+    int              dummyData[5];
     # endif
     Mutex( const Mutex& ) {}
     void operator=( const Mutex& ) {}
@@ -67,7 +67,7 @@ class Mutex
 private:
     pthread_mutex_t mutexCS;
     # ifndef FO_MACOSX
-    int             dummyData[ 5 ];
+    int             dummyData[5];
     # endif
     Mutex( const Mutex& ) {}
     void operator=( const Mutex& ) {}
@@ -151,7 +151,7 @@ private:
     MutexCode& operator=( const MutexCode& ) { return *this; }
 
 public:
-    MutexCode(): mcCounter( 0 ) {}
+    MutexCode() : mcCounter( 0 ) {}
     void LockCode()
     {
         mcLocker.Lock();
@@ -180,7 +180,7 @@ private:
     MutexSynchronizer& operator=( const MutexSynchronizer& ) { return *this; }
 
 public:
-    MutexSynchronizer(): msCounter( 0 ) {}
+    MutexSynchronizer() : msCounter( 0 ) {}
     void Synchronize( long count )
     {
         InterlockedIncrement( &msCounter );
@@ -210,7 +210,7 @@ private:
     MutexSpinlock& operator=( const MutexSpinlock& ) { return *this; }
 
 public:
-    MutexSpinlock(): spinCounter( 0 ) {}
+    MutexSpinlock() : spinCounter( 0 ) {}
     void Lock()    { while( InterlockedCompareExchange( &spinCounter, 1, 0 ) ) /*Wait*/; }
     bool TryLock() { return InterlockedCompareExchange( &spinCounter, 1, 0 ) == 0; }
     void Unlock()  { InterlockedExchange( &spinCounter, 0 ); }
@@ -226,7 +226,7 @@ private:
     MutexLocker& operator=( const MutexLocker& ) { return *this; }
 
 public:
-    MutexLocker( T& mutex ): pMutex( mutex ) { pMutex.Lock(); }
+    MutexLocker( T& mutex ) : pMutex( mutex ) { pMutex.Lock(); }
     ~MutexLocker() { pMutex.Unlock(); }
 };
 

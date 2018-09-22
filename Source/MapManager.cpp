@@ -24,7 +24,7 @@ bool GlobalMapGroup::IsMoving()
 
 uint GlobalMapGroup::GetSize()
 {
-    return (uint) CritMove.size();
+    return (uint)CritMove.size();
 }
 
 void GlobalMapGroup::Stop()
@@ -110,7 +110,7 @@ void GlobalMapGroup::Clear()
 /* MapMngr                                                              */
 /************************************************************************/
 
-MapManager::MapManager(): lastMapId( 0 ), lastLocId( 0 ), runGarbager( true )
+MapManager::MapManager() : lastMapId( 0 ), lastLocId( 0 ), runGarbager( true )
 {
     MEMORY_PROCESS( MEMORY_STATIC, sizeof( MapManager ) );
     MEMORY_PROCESS( MEMORY_STATIC, ( FPATH_MAX_PATH * 2 + 2 ) * ( FPATH_MAX_PATH * 2 + 2 ) ); // Grid, see below
@@ -134,7 +134,7 @@ bool MapManager::Init()
 
     pathNumCur = 0;
     for( int i = 1; i < FPATH_DATA_SIZE; i++ )
-        pathesPool[ i ].reserve( 100 );
+        pathesPool[i].reserve( 100 );
 
     WriteLog( "Map manager initialization complete.\n" );
     return true;
@@ -154,7 +154,7 @@ void MapManager::Finish()
     allMaps.clear();
 
     for( int i = 0; i < MAX_PROTO_MAPS; i++ )
-        ProtoMaps[ i ].Clear();
+        ProtoMaps[i].Clear();
 
     WriteLog( "Map manager finish complete.\n" );
 }
@@ -197,15 +197,15 @@ bool MapManager::LoadLocationsProtos()
 
     int  errors = 0;
     uint loaded = 0;
-    char res[ MAX_FOTEXT ];
+    char res[MAX_FOTEXT];
     for( int i = 1; i < MAX_PROTO_LOCATIONS; i++ )
     {
-        ProtoLoc[ i ].IsInit = false;
+        ProtoLoc[i].IsInit = false;
         const char* app = Str::FormatBuf( "Area %u", i );
         if( !city_txt.IsCachedApp( app ) || !city_txt.GetStr( app, "map_0", "error", res ) )
             continue;
 
-        ProtoLocation& ploc = ProtoLoc[ i ];
+        ProtoLocation& ploc = ProtoLoc[i];
         city_txt.GetStr( app, "name", "UNKNOWN", res );
         WriteLog( "Load location<%d:%s>\n", i, res );
         if( !LoadLocationProto( city_txt, ploc, i ) )
@@ -230,9 +230,9 @@ bool MapManager::LoadLocationsProtos()
 
 bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid )
 {
-    char key1[ MAX_FOTEXT ];
-    char key2[ MAX_FOTEXT ];
-    char res[ MAX_FOTEXT ];
+    char key1[MAX_FOTEXT];
+    char key2[MAX_FOTEXT];
+    char res[MAX_FOTEXT];
     Str::Format( key1, "Area %u", pid );
 
     ploc.IsInit = false;
@@ -252,7 +252,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
         if( !city_txt.GetStr( key1, key2, "", res ) )
             break;
 
-        char   map_name[ MAX_FOPATH ];
+        char   map_name[MAX_FOPATH];
         ushort map_pid = 0;
         if( sscanf( res, "%s%hu", map_name, &map_pid ) != 2 )
         {
@@ -260,7 +260,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
             return false;
         }
 
-        if( !map_name[ 0 ] || !map_pid || map_pid >= MAX_PROTO_MAPS )
+        if( !map_name[0] || !map_pid || map_pid >= MAX_PROTO_MAPS )
         {
             WriteLogF( _FUNC_, " - Invalid data in location<%s>, map index<%u>.\n", ploc.Name.c_str(), cur_map );
             return false;
@@ -268,15 +268,15 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
 
         size_t len = Str::Length( map_name );
         bool   is_automap = false;
-        if( map_name[ len - 1 ] == '*' )
+        if( map_name[len - 1] == '*' )
         {
             if( len == 1 )
                 break;
             is_automap = true;
-            map_name[ len - 1 ] = 0;
+            map_name[len - 1] = 0;
         }
 
-        ProtoMap& pmap = ProtoMaps[ map_pid ];
+        ProtoMap& pmap = ProtoMaps[map_pid];
         if( pmap.IsInit() && !Str::CompareCase( pmap.GetName(), map_name ) )
         {
             WriteLogF( _FUNC_, " - Pid<%u> for map<%s> in location<%s>, already in use.\n", map_pid, map_name, ploc.Name.c_str() );
@@ -304,12 +304,12 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
     // Entrance
     ploc.Entrance.clear();
     city_txt.GetStr( key1, "entrance", "1", res );
-    if( res[ 0 ] == '$' )
+    if( res[0] == '$' )
     {
-        Str::ParseLine< UIntPairVec, UIntPair ( * )( const char* ) >( &res[ 1 ], ',', ploc.Entrance, EntranceParser );
-        for( uint k = 0, l = (uint) ploc.Entrance.size(); k < l; k++ )
+        Str::ParseLine< UIntPairVec, UIntPair ( * )( const char* ) >( &res[1], ',', ploc.Entrance, EntranceParser );
+        for( uint k = 0, l = (uint)ploc.Entrance.size(); k < l; k++ )
         {
-            uint map_num = ploc.Entrance[ k ].first;
+            uint map_num = ploc.Entrance[k].first;
             if( map_num > cur_map )
             {
                 WriteLogF( _FUNC_, " - Invalid map number<%u>, entrance<%s>, location<%s>.\n", map_num, res, ploc.Name.c_str() );
@@ -320,7 +320,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
     else
     {
         int val = atoi( res );
-        if( val <= 0 || val > (int) cur_map )
+        if( val <= 0 || val > (int)cur_map )
         {
             WriteLogF( _FUNC_, " - Invalid entrance value<%d>, location<%s>.\n", val, ploc.Name.c_str() );
             return false;
@@ -329,11 +329,11 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
             ploc.Entrance.push_back( PAIR( k, 0 ) );
     }
 
-    for( uint k = 0, l = (uint) ploc.Entrance.size(); k < l; k++ )
+    for( uint k = 0, l = (uint)ploc.Entrance.size(); k < l; k++ )
     {
-        uint map_num = ploc.Entrance[ k ].first;
-        uint entire = ploc.Entrance[ k ].second;
-        if( !GetProtoMap( ploc.ProtoMapPids[ map_num ] )->CountEntire( entire ) )
+        uint map_num = ploc.Entrance[k].first;
+        uint entire = ploc.Entrance[k].second;
+        if( !GetProtoMap( ploc.ProtoMapPids[map_num] )->CountEntire( entire ) )
         {
             WriteLogF( _FUNC_, " - Entire<%u> not found on map<%u>, location<%s>.\n", entire, map_num, ploc.Name.c_str() );
             return false;
@@ -343,7 +343,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
     // Entrance function
     ploc.ScriptBindId = 0;
     city_txt.GetStr( key1, "entrance_script", "", res );
-    if( res[ 0 ] )
+    if( res[0] )
     {
         int bind_id = Script::Bind( res, "bool %s(Location&,Critter@[]&,uint8)", false );
         if( bind_id <= 0 )
@@ -365,9 +365,9 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
     return true;
 }
 
-void MapManager::SaveAllLocationsAndMapsFile( void ( * save_func )( void*, size_t ) )
+void MapManager::SaveAllLocationsAndMapsFile( void ( *save_func )( void*, size_t ) )
 {
-    uint count = (uint) allLocations.size();
+    uint count = (uint)allLocations.size();
     save_func( &count, sizeof( count ) );
 
     for( auto it = allLocations.begin(), end = allLocations.end(); it != end; ++it )
@@ -376,7 +376,7 @@ void MapManager::SaveAllLocationsAndMapsFile( void ( * save_func )( void*, size_
         save_func( &loc->Data, sizeof( loc->Data ) );
 
         MapVec& maps = loc->GetMapsNoLock();
-        uint    map_count = (uint) maps.size();
+        uint    map_count = (uint)maps.size();
         save_func( &map_count, sizeof( map_count ) );
         for( auto it_ = maps.begin(), end_ = maps.end(); it_ != end_; ++it_ )
         {
@@ -415,9 +415,9 @@ bool MapManager::LoadAllLocationsAndMapsFile( void* f )
         vector< Map::MapData > map_data( map_count );
         for( uint j = 0; j < map_count; j++ )
         {
-            FileRead( f, &map_data[ j ], sizeof( map_data[ j ] ) );
-            if( map_data[ j ].MapId > lastMapId )
-                lastMapId = map_data[ j ].MapId;
+            FileRead( f, &map_data[j], sizeof( map_data[j] ) );
+            if( map_data[j].MapId > lastMapId )
+                lastMapId = map_data[j].MapId;
         }
 
         // Check pids
@@ -429,9 +429,9 @@ bool MapManager::LoadAllLocationsAndMapsFile( void* f )
         bool map_fail = false;
         for( uint j = 0; j < map_count; j++ )
         {
-            if( !IsInitProtoMap( map_data[ j ].MapPid ) )
+            if( !IsInitProtoMap( map_data[j].MapPid ) )
             {
-                WriteLog( "Proto map<%u> of proto location<%u> is not init. Skip location.\n", map_data[ j ].MapPid, data.LocPid );
+                WriteLog( "Proto map<%u> of proto location<%u> is not init. Skip location.\n", map_data[j].MapPid, data.LocPid );
                 map_fail = true;
             }
         }
@@ -449,13 +449,13 @@ bool MapManager::LoadAllLocationsAndMapsFile( void* f )
 
         for( uint j = 0; j < map_count; j++ )
         {
-            Map* map = CreateMap( map_data[ j ].MapPid, loc, map_data[ j ].MapId );
+            Map* map = CreateMap( map_data[j].MapPid, loc, map_data[j].MapId );
             if( !map )
             {
-                WriteLog( "Can't create map, map pid<%u>, location pid<%u>.\n", map_data[ j ].MapPid, data.LocPid );
+                WriteLog( "Can't create map, map pid<%u>, location pid<%u>.\n", map_data[j].MapPid, data.LocPid );
                 return false;
             }
-            map->Data = map_data[ j ];
+            map->Data = map_data[j];
         }
 
         locaded++;
@@ -470,7 +470,7 @@ string MapManager::GetLocationsMapsStatistics()
     SCOPE_LOCK( mapLocker );
 
     static string result;
-    char          str[ MAX_FOTEXT ];
+    char          str[MAX_FOTEXT];
     Str::Format( str, "Locations count: %u\n", allLocations.size() );
     result = str;
     Str::Format( str, "Maps count: %u\n", allMaps.size() );
@@ -524,7 +524,7 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
     }
 
     int  count_gen = 0;
-    char line[ 2048 ];
+    char line[2048];
     while( fm.GetLine( line, 2048 ) )
     {
         istrstream str( line );
@@ -578,14 +578,14 @@ bool MapManager::IsInitProtoLocation( ushort pid_loc )
 {
     if( !pid_loc || pid_loc >= MAX_PROTO_LOCATIONS )
         return false;
-    return ProtoLoc[ pid_loc ].IsInit;
+    return ProtoLoc[pid_loc].IsInit;
 }
 
 ProtoLocation* MapManager::GetProtoLocation( ushort loc_pid )
 {
     if( !IsInitProtoLocation( loc_pid ) )
         return NULL;
-    return &ProtoLoc[ loc_pid ];
+    return &ProtoLoc[loc_pid];
 }
 
 Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint loc_id )
@@ -603,7 +603,7 @@ Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint
     }
 
     Location* loc = new Location();
-    if( !loc || !loc->Init( &ProtoLoc[ pid_loc ], wx, wy ) )
+    if( !loc || !loc->Init( &ProtoLoc[pid_loc], wx, wy ) )
     {
         WriteLogF( _FUNC_, " - Location init fail, pid<%u>.\n", pid_loc );
         loc->Release();
@@ -619,7 +619,7 @@ Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint
 
         for( uint i = 0; i < loc->Proto->ProtoMapPids.size(); ++i )
         {
-            ushort map_pid = loc->Proto->ProtoMapPids[ i ];
+            ushort map_pid = loc->Proto->ProtoMapPids[i];
 
             Map*   map = CreateMap( map_pid, loc, 0 );
             if( !map )
@@ -671,7 +671,7 @@ bool MapManager::IsInitProtoMap( ushort pid_map )
 {
     if( pid_map >= MAX_PROTO_MAPS )
         return false;
-    return ProtoMaps[ pid_map ].IsInit();
+    return ProtoMaps[pid_map].IsInit();
 }
 
 Map* MapManager::CreateMap( ushort pid_map, Location* loc_map, uint map_id )
@@ -686,7 +686,7 @@ Map* MapManager::CreateMap( ushort pid_map, Location* loc_map, uint map_id )
     }
 
     Map* map = new Map();
-    if( !map || !map->Init( &ProtoMaps[ pid_map ], loc_map ) )
+    if( !map || !map->Init( &ProtoMaps[pid_map], loc_map ) )
     {
         WriteLogF( _FUNC_, " - Map init fail, pid<%u>.\n", pid_map );
         delete map;
@@ -786,7 +786,7 @@ void MapManager::GetMaps( MapVec& maps, bool lock )
 uint MapManager::GetMapsCount()
 {
     SCOPE_LOCK( mapLocker );
-    uint count = (uint) allMaps.size();
+    uint count = (uint)allMaps.size();
     return count;
 }
 
@@ -794,7 +794,7 @@ ProtoMap* MapManager::GetProtoMap( ushort pid_map )
 {
     if( !IsInitProtoMap( pid_map ) )
         return NULL;
-    return &ProtoMaps[ pid_map ];
+    return &ProtoMaps[pid_map];
 }
 
 bool MapManager::IsProtoMapNoLogOut( ushort pid_map )
@@ -895,7 +895,7 @@ void MapManager::GetLocations( LocVec& locs, bool lock )
 uint MapManager::GetLocationsCount()
 {
     SCOPE_LOCK( mapLocker );
-    uint count = (uint) allLocations.size();
+    uint count = (uint)allLocations.size();
     return count;
 }
 
@@ -972,7 +972,7 @@ void MapManager::GM_GroupMove( GlobalMapGroup* group )
         if( group->EncounterForce )
         {
             group->SyncLockGroup();
-            GM_GlobalInvite( group, rule->Data.Params[ MODE_DEFAULT_COMBAT ] );
+            GM_GlobalInvite( group, rule->Data.Params[MODE_DEFAULT_COMBAT] );
             return;
         }
 
@@ -1003,7 +1003,7 @@ void MapManager::GM_GroupMove( GlobalMapGroup* group )
 
             group->SyncLockGroup();
 
-            if( rule->IsPlayer() && ( (Client*) rule )->IsOffline() )
+            if( rule->IsPlayer() && ( (Client*)rule )->IsOffline() )
             {
                 group->Stop();
                 GM_GlobalProcess( rule, group, GLOBAL_PROCESS_STOPPED );
@@ -1037,7 +1037,7 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
     float    base_speed = group->Speed;
     bool     global_process = true;
 
-    if( cr->FuncId[ CRITTER_EVENT_GLOBAL_PROCESS ] > 0 )
+    if( cr->FuncId[CRITTER_EVENT_GLOBAL_PROCESS] > 0 )
     {
         if( cr->EventGlobalProcess( type, group->GetCar(), cur_wx, cur_wy, to_wx, to_wy, speed, encounter_descriptor, wait_for_answer ) )
         {
@@ -1083,8 +1083,8 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
     }
 
     // Check ranges
-    float max_wx = (float) GM_MAXX;
-    float max_wy = (float) GM_MAXY;
+    float max_wx = (float)GM_MAXX;
+    float max_wy = (float)GM_MAXY;
     if( cur_wx < 0.0f )
         cur_wx = 0.0f;
     if( cur_wy < 0.0f )
@@ -1115,8 +1115,8 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
         group->CurY = cur_wy;
         group->Speed = speed;
 
-        int cur_wxi = (int) cur_wx;
-        int cur_wyi = (int) cur_wy;
+        int cur_wxi = (int)cur_wx;
+        int cur_wyi = (int)cur_wy;
         for( auto it = group->CritMove.begin(), end = group->CritMove.end(); it != end; ++it )
         {
             Critter* cr = *it;
@@ -1154,7 +1154,7 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
         group->EncounterDescriptor = encounter_descriptor;
         if( type == GLOBAL_PROCESS_ENTER )
         {
-            GM_GlobalInvite( group, rule->Data.Params[ MODE_DEFAULT_COMBAT ] );
+            GM_GlobalInvite( group, rule->Data.Params[MODE_DEFAULT_COMBAT] );
         }
         else
         {
@@ -1186,7 +1186,7 @@ void MapManager::GM_GlobalInvite( GlobalMapGroup* group, int combat_mode )
     Critter* rule = group->Rule;
     bool     global_invite = true;
 
-    if( rule->FuncId[ CRITTER_EVENT_GLOBAL_INVITE ] > 0 )
+    if( rule->FuncId[CRITTER_EVENT_GLOBAL_INVITE] > 0 )
     {
         if( rule->EventGlobalInvite( group->GetCar(), encounter_descriptor, combat_mode, map_id, hx, hy, dir ) )
         {
@@ -1234,7 +1234,7 @@ bool MapManager::GM_CheckEntrance( Location* loc, ScriptArray* arr, uchar entran
     if( !loc->Proto->ScriptBindId )
         return true;
 
-    if( Script::PrepareContext( loc->Proto->ScriptBindId, _FUNC_, ( *(Critter**) arr->At( 0 ) )->GetInfo() ) )
+    if( Script::PrepareContext( loc->Proto->ScriptBindId, _FUNC_, ( *(Critter**)arr->At( 0 ) )->GetInfo() ) )
     {
         Script::SetArgObject( loc );
         Script::SetArgObject( arr );
@@ -1256,8 +1256,8 @@ ScriptArray* MapManager::GM_CreateGroupArray( GlobalMapGroup* group )
 
     group->SyncLockGroup();
 
-    arr->Resize( (asUINT) group->CritMove.size() );
-    Critter** p_ = (Critter**) arr->At( 0 );
+    arr->Resize( (asUINT)group->CritMove.size() );
+    Critter** p_ = (Critter**)arr->At( 0 );
     *p_ = group->Rule;
     group->Rule->AddRef();
     int ind = 1;
@@ -1266,7 +1266,7 @@ ScriptArray* MapManager::GM_CreateGroupArray( GlobalMapGroup* group )
         Critter* cr = *it;
         if( cr == group->Rule )
             continue;
-        Critter** p = (Critter**) arr->At( ind );
+        Critter** p = (Critter**)arr->At( ind );
         if( !p )
         {
             WriteLogF( _FUNC_, " - Critical bug, rule critter<%s>, not valid<%d>.\n", group->Rule->GetInfo(), group->Rule->IsNotValid );
@@ -1293,8 +1293,8 @@ void MapManager::GM_GroupStartMove( Critter* cr )
     cr->GroupMove = cr->GroupSelf;
     GlobalMapGroup* group = cr->GroupMove;
     group->Clear();
-    group->CurX = (float) cr->Data.WorldX;
-    group->CurY = (float) cr->Data.WorldY;
+    group->CurX = (float)cr->Data.WorldX;
+    group->CurY = (float)cr->Data.WorldY;
     group->ToX = group->CurX;
     group->ToY = group->CurY;
     group->Speed = 0.0f;
@@ -1339,8 +1339,8 @@ void MapManager::GM_AddCritToGroup( Critter* cr, uint rule_id )
     group->SyncLockGroup();
 
     UNSETFLAG( cr->Flags, FCRIT_RULEGROUP );
-    cr->Data.WorldX = (uint) group->CurX;
-    cr->Data.WorldY = (uint) group->CurY;
+    cr->Data.WorldX = (uint)group->CurX;
+    cr->Data.WorldY = (uint)group->CurY;
     cr->Data.HexX = ( rule_id >> 16 ) & 0xFFFF;
     cr->Data.HexY = rule_id & 0xFFFF;
 
@@ -1499,8 +1499,8 @@ bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, us
     CrVec transit_cr = group->CritMove;
 
     // Transit rule
-    rule->Data.WorldX = (uint) rule->GroupSelf->CurX;
-    rule->Data.WorldY = (uint) rule->GroupSelf->CurY;
+    rule->Data.WorldX = (uint)rule->GroupSelf->CurX;
+    rule->Data.WorldY = (uint)rule->GroupSelf->CurY;
     if( car )
         map->SetCritterCar( car_hx, car_hy, car_owner, car );
     if( !Transit( rule, map, hx, hy, dir, car ? 3 : 2, true ) )
@@ -1513,8 +1513,8 @@ bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, us
         if( cr == rule )
             continue;
 
-        cr->Data.WorldX = (uint) group->CurX;
-        cr->Data.WorldY = (uint) group->CurY;
+        cr->Data.WorldX = (uint)group->CurX;
+        cr->Data.WorldY = (uint)group->CurY;
 
         if( !Transit( cr, map, hx, hy, dir, car ? 3 : 2, true ) )
         {
@@ -1533,7 +1533,7 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
         return false;
     if( !rule->GroupMove )
         return false;
-    if( rule->IsPlayer() && ( (Client*) rule )->IsOffline() )
+    if( rule->IsPlayer() && ( (Client*)rule )->IsOffline() )
         return false;                                                      // Offline on encounter
     if( !loc_id )
         return false;
@@ -1544,7 +1544,7 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
         return false;
     }
 
-    if( !force && rule->IsPlayer() && !( (Client*) rule )->CheckKnownLocById( loc_id ) )
+    if( !force && rule->IsPlayer() && !( (Client*)rule )->CheckKnownLocById( loc_id ) )
     {
         WriteLogF( _FUNC_, " - Critter<%s> is not known location.\n", rule->GetInfo() );
         return false;
@@ -1554,13 +1554,13 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
     if( !loc )
     {
         if( rule->IsPlayer() )
-            ( (Client*) rule )->EraseKnownLoc( loc_id );
+            ( (Client*)rule )->EraseKnownLoc( loc_id );
         rule->Send_GlobalInfo( GM_INFO_LOCATIONS );
         rule->Send_TextMsg( rule, STR_GLOBAL_LOCATION_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
         return false;
     }
 
-    if( !force && DistSqrt( (uint) rule->GroupSelf->CurX, (uint) rule->GroupSelf->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
+    if( !force && DistSqrt( (uint)rule->GroupSelf->CurX, (uint)rule->GroupSelf->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
     {
         if( rule->IsPlayer() )
             rule->Send_GlobalLocation( loc, true );
@@ -1577,7 +1577,7 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
     if( !loc->GetMapsCount() )
     {
         if( rule->IsPlayer() )
-            ( (Client*) rule )->EraseKnownLoc( loc_id );
+            ( (Client*)rule )->EraseKnownLoc( loc_id );
         WriteLogF( _FUNC_, " - Location is empty, critter<%s>.\n", rule->GetInfo() );
         return false;
     }
@@ -1610,14 +1610,14 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
     if( !result )
         return false;  // Group is not allowed to enter
 
-    uint count = loc->Proto->Entrance[ entrance ].first;
-    uint entire = loc->Proto->Entrance[ entrance ].second;
+    uint count = loc->Proto->Entrance[entrance].first;
+    uint entire = loc->Proto->Entrance[entrance].second;
 
     Map* map = loc->GetMap( count );
     if( !map )
     {
         if( rule->IsPlayer() )
-            ( (Client*) rule )->EraseKnownLoc( loc_id );
+            ( (Client*)rule )->EraseKnownLoc( loc_id );
         WriteLogF( _FUNC_, " - Map not found in location, critter<%s>.\n", rule->GetInfo() );
         return false;
     }
@@ -1627,7 +1627,7 @@ bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool
 
 void MapManager::GM_GroupSetMove( GlobalMapGroup* group, float to_x, float to_y, float speed )
 {
-    int dist = DistSqrt( (int) to_x, (int) to_y, (int) group->CurX, (int) group->CurY );
+    int dist = DistSqrt( (int)to_x, (int)to_y, (int)group->CurX, (int)group->CurY );
 
     if( speed <= 0.0f || !dist )
     {
@@ -1731,7 +1731,7 @@ void MapManager::TraceBullet( TraceData& trace )
                     trace.IsCritterFounded = true;
                     break;
                 }
-                if( trace.IsCheckTeam && cr->Data.Params[ ST_TEAM_ID ] == (int) trace.BaseCrTeamId )
+                if( trace.IsCheckTeam && cr->Data.Params[ST_TEAM_ID] == (int)trace.BaseCrTeamId )
                 {
                     trace.IsTeammateFounded = true;
                     break;
@@ -1758,13 +1758,13 @@ void MapManager::TraceBullet( TraceData& trace )
 int THREAD           MapGridOffsX = 0;
 int THREAD           MapGridOffsY = 0;
 static THREAD short* Grid = NULL;
-#define GRID( x, y )    Grid[ ( ( FPATH_MAX_PATH + 1 ) + ( y ) - MapGridOffsY ) * ( FPATH_MAX_PATH * 2 + 2 ) + ( ( FPATH_MAX_PATH + 1 ) + ( x ) - MapGridOffsX ) ]
+#define GRID( x, y )    Grid[( ( FPATH_MAX_PATH + 1 ) + ( y ) - MapGridOffsY ) * ( FPATH_MAX_PATH * 2 + 2 ) + ( ( FPATH_MAX_PATH + 1 ) + ( x ) - MapGridOffsX )]
 int MapManager::FindPath( PathFindData& pfd )
 {
     // Allocate temporary grid
     if( !Grid )
     {
-        Grid = new short[ ( FPATH_MAX_PATH * 2 + 2 ) * ( FPATH_MAX_PATH * 2 + 2 ) ];
+        Grid = new short[( FPATH_MAX_PATH * 2 + 2 ) * ( FPATH_MAX_PATH * 2 + 2 )];
         if( !Grid )
             return FPATH_ALLOC_FAIL;
     }
@@ -1865,8 +1865,8 @@ int MapManager::FindPath( PathFindData& pfd )
     {
         for( int i = 0; i < p_togo; i++, p++ )
         {
-            cx = coords[ p ].first;
-            cy = coords[ p ].second;
+            cx = coords[p].first;
+            cy = coords[p].second;
             numindex = GRID( cx, cy );
 
             if( CheckDist( cx, cy, to_hx, to_hy, cut ) )
@@ -1879,8 +1879,8 @@ int MapManager::FindPath( PathFindData& pfd )
 
             for( int j = 0; j < dirs_count; j++ )
             {
-                short nx = (short) cx + sx[ j ];
-                short ny = (short) cy + sy[ j ];
+                short nx = (short)cx + sx[j];
+                short ny = (short)cy + sy[j];
                 if( nx < 0 || ny < 0 || nx >= maxhx || ny >= maxhy )
                     continue;
 
@@ -1972,7 +1972,7 @@ int MapManager::FindPath( PathFindData& pfd )
         }
 
         // Add gag and critters hexes
-        p_togo = (int) coords.size() - p;
+        p_togo = (int)coords.size() - p;
         if( !p_togo )
         {
             if( gag_coords.size() )
@@ -2000,7 +2000,7 @@ int MapManager::FindPath( PathFindData& pfd )
 label_FindOk:
     if( ++pathNumCur >= FPATH_DATA_SIZE )
         pathNumCur = 1;
-    PathStepVec& path = pathesPool[ pathNumCur ];
+    PathStepVec& path = pathesPool[pathNumCur];
     path.resize( numindex - 1 );
 
     // Smooth data
@@ -2046,7 +2046,7 @@ label_FindOk:
         }
 
         numindex--;
-        PathStep& ps = path[ numindex - 1 ];
+        PathStep& ps = path[numindex - 1];
         ps.HexX = cx;
         ps.HexY = cy;
         int dir = FindPathGrid( cx, cy, numindex, smooth_switcher );
@@ -2060,9 +2060,9 @@ label_FindOk:
     // Check for closed door and critter
     if( check_cr || check_gag_items )
     {
-        for( int i = 0, j = (int) path.size(); i < j; i++ )
+        for( int i = 0, j = (int)path.size(); i < j; i++ )
         {
-            PathStep& ps = path[ i ];
+            PathStep& ps = path[i];
             if( map->IsHexPassed( ps.HexX, ps.HexY ) )
                 continue;
 
@@ -2097,16 +2097,16 @@ label_FindOk:
         bool   trace_ok = false;
 
         trace_seq.resize( path.size() + 4 );
-        for( int i = 0, j = (int) path.size(); i < j; i++ )
+        for( int i = 0, j = (int)path.size(); i < j; i++ )
         {
-            PathStep& ps = path[ i ];
+            PathStep& ps = path[i];
             if( map->IsHexGag( ps.HexX, ps.HexY ) )
             {
-                trace_seq[ i + 2 - 2 ] += 1;
-                trace_seq[ i + 2 - 1 ] += 2;
-                trace_seq[ i + 2 - 0 ] += 3;
-                trace_seq[ i + 2 + 1 ] += 2;
-                trace_seq[ i + 2 + 2 ] += 1;
+                trace_seq[i + 2 - 2] += 1;
+                trace_seq[i + 2 - 1] += 2;
+                trace_seq[i + 2 - 0] += 3;
+                trace_seq[i + 2 + 1] += 2;
+                trace_seq[i + 2 + 2] += 1;
             }
         }
 
@@ -2117,14 +2117,14 @@ label_FindOk:
         trace_.FindCr = pfd.TraceCr;
         for( int k = 0; k < 5; k++ )
         {
-            for( int i = 0, j = (int) path.size(); i < j; i++ )
+            for( int i = 0, j = (int)path.size(); i < j; i++ )
             {
-                if( k < 4 && trace_seq[ i + 2 ] != k )
+                if( k < 4 && trace_seq[i + 2] != k )
                     continue;
-                if( k == 4 && trace_seq[ i + 2 ] < 4 )
+                if( k == 4 && trace_seq[i + 2] < 4 )
                     continue;
 
-                PathStep& ps = path[ i ];
+                PathStep& ps = path[i];
 
                 if( !CheckDist( ps.HexX, ps.HexY, targ_hx, targ_hy, trace ) )
                     continue;
@@ -2160,7 +2160,7 @@ label_TraceOk:
     pfd.PathNum = pathNumCur;
 
     // New X,Y
-    PathStep& ps = path[ path.size() - 1 ];
+    PathStep& ps = path[path.size() - 1];
     pfd.NewToX = ps.HexX;
     pfd.NewToY = ps.HexY;
     return FPATH_OK;
@@ -2475,9 +2475,9 @@ int MapManager::FindPathGrid( ushort& hx, ushort& hy, int index, bool smooth_swi
 void MapManager::PathSetMoveParams( PathStepVec& path, bool is_run )
 {
     uint move_params = 0;                             // Base parameters
-    for( int i = (int) path.size() - 1; i >= 0; i-- ) // From end to beginning
+    for( int i = (int)path.size() - 1; i >= 0; i-- )  // From end to beginning
     {
-        PathStep& ps = path[ i ];
+        PathStep& ps = path[i];
 
         // Walk flags
         if( is_run )
@@ -2516,7 +2516,7 @@ bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, 
         return false;
     if( loc->IsVisible() && cr->IsPlayer() )
     {
-        ( (Client*) cr )->AddKnownLoc( loc->GetId() );
+        ( (Client*)cr )->AddKnownLoc( loc->GetId() );
         if( loc->IsAutomaps() )
             cr->Send_AutomapsInfo( NULL, loc );
     }

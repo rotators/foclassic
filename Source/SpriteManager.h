@@ -28,7 +28,7 @@
 #define ANIM_FRM_ANIM_PIX            ( 0x200 )
 
 // Colors
-#define COLOR_CHANGE_ALPHA( v, a )    ( ( ( ( v ) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint) ( a ) & 0xFF ) << 24 )
+#define COLOR_CHANGE_ALPHA( v, a )    ( ( ( ( v ) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)( a ) & 0xFF ) << 24 )
 #define COLOR_IFACE_FIX              COLOR_XRGB( 103, 95, 86 )
 #define COLOR_IFACE                  SpriteManager::PackColor( ( ( COLOR_IFACE_FIX >> 16 ) & 0xFF ) + GameOpt.Light, ( ( COLOR_IFACE_FIX >> 8 ) & 0xFF ) + GameOpt.Light, ( COLOR_IFACE_FIX & 0xFF ) + GameOpt.Light )
 #define COLOR_IFACE_A( a )            ( ( COLOR_IFACE ^ 0xFF000000 ) | ( ( a ) << 24 ) )
@@ -115,7 +115,7 @@ struct Surface
     uint     BusyH;                   // Height point position
     uint     FreeX, FreeY;            // Busy positions on current surface
 
-    Surface(): Type( 0 ), TextureOwner( NULL ), Width( 0 ), Height( 0 ), BusyH( 0 ), FreeX( 0 ), FreeY( 0 ) {}
+    Surface() : Type( 0 ), TextureOwner( NULL ), Width( 0 ), Height( 0 ), BusyH( 0 ), FreeX( 0 ), FreeY( 0 ) {}
     ~Surface() { SAFEDEL( TextureOwner ); }
 };
 typedef vector< Surface* > SurfaceVec;
@@ -127,7 +127,7 @@ struct Vertex
     uint  diffuse;
     float tu, tv;
     float tu2, tv2;
-    Vertex(): x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ), diffuse( 0 ) {}
+    Vertex() : x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ), diffuse( 0 ) {}
     # define D3DFVF_MYVERTEX         ( D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2 )
     #else
     float x, y;
@@ -135,7 +135,7 @@ struct Vertex
     float tu, tv;
     float tu2, tv2;
     float padding;
-    Vertex(): x( 0 ), y( 0 ), diffuse( 0 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ) {}
+    Vertex() : x( 0 ), y( 0 ), diffuse( 0 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ) {}
     #endif
 };
 typedef vector< Vertex > VertexVec;
@@ -145,7 +145,7 @@ struct MYVERTEX_PRIMITIVE
     float x, y, z, rhw;
     uint  Diffuse;
 
-    MYVERTEX_PRIMITIVE(): x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), Diffuse( 0 ) {}
+    MYVERTEX_PRIMITIVE() : x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), Diffuse( 0 ) {}
 };
 #define D3DFVF_MYVERTEX_PRIMITIVE    ( D3DFVF_XYZRHW | D3DFVF_DIFFUSE )
 
@@ -159,7 +159,7 @@ struct SpriteInfo
     short        OffsY;
     Effect*      DrawEffect;
     Animation3d* Anim3d;
-    SpriteInfo(): Surf( NULL ), Width( 0 ), Height( 0 ), OffsX( 0 ), OffsY( 0 ), DrawEffect( NULL ), Anim3d( NULL ) {}
+    SpriteInfo() : Surf( NULL ), Width( 0 ), Height( 0 ), OffsX( 0 ), OffsY( 0 ), DrawEffect( NULL ), Anim3d( NULL ) {}
 };
 typedef vector< SpriteInfo* > SprInfoVec;
 
@@ -171,7 +171,7 @@ struct DipData
     #ifndef FO_D3D
     RectF    SpriteBorder;
     #endif
-    DipData( Texture* tex, Effect* effect ): SourceTexture( tex ), SourceEffect( effect ), SpritesCount( 1 ) {}
+    DipData( Texture* tex, Effect* effect ) : SourceTexture( tex ), SourceEffect( effect ), SpritesCount( 1 ) {}
 };
 typedef vector< DipData > DipDataVec;
 
@@ -185,14 +185,14 @@ struct AnyFrames
     uint   Anim1;
     uint   Anim2;
 
-    uint  GetSprId( uint num_frm ) { return Ind[ num_frm % CntFrm ]; }
-    short GetNextX( uint num_frm ) { return NextX[ num_frm % CntFrm ]; }
-    short GetNextY( uint num_frm ) { return NextY[ num_frm % CntFrm ]; }
+    uint  GetSprId( uint num_frm ) { return Ind[num_frm % CntFrm]; }
+    short GetNextX( uint num_frm ) { return NextX[num_frm % CntFrm]; }
+    short GetNextY( uint num_frm ) { return NextY[num_frm % CntFrm]; }
     uint  GetCnt()                 { return CntFrm; }
-    uint  GetCurSprId()            { return CntFrm > 1 ? Ind[ ( ( Timer::GameTick() % Ticks ) * 100 / Ticks ) * CntFrm / 100 ] : Ind[ 0 ]; }
+    uint  GetCurSprId()            { return CntFrm > 1 ? Ind[( ( Timer::GameTick() % Ticks ) * 100 / Ticks ) * CntFrm / 100] : Ind[0]; }
     uint  GetCurSprIndex()         { return CntFrm > 1 ? ( ( Timer::GameTick() % Ticks ) * 100 / Ticks ) * CntFrm / 100 : 0; }
 
-    AnyFrames(): Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 ) {};
+    AnyFrames() : Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 ) {};
     ~AnyFrames()
     {
         SAFEDELA( Ind );
@@ -211,8 +211,8 @@ struct PrepPoint
     short* PointOffsY;
     uint   PointColor;
 
-    PrepPoint(): PointX( 0 ), PointY( 0 ), PointColor( 0 ), PointOffsX( NULL ), PointOffsY( NULL ) {}
-    PrepPoint( short x, short y, uint color, short* ox = NULL, short* oy = NULL ): PointX( x ), PointY( y ), PointColor( color ), PointOffsX( ox ), PointOffsY( oy ) {}
+    PrepPoint() : PointX( 0 ), PointY( 0 ), PointColor( 0 ), PointOffsX( NULL ), PointOffsY( NULL ) {}
+    PrepPoint( short x, short y, uint color, short* ox = NULL, short* oy = NULL ) : PointX( x ), PointY( y ), PointColor( color ), PointOffsX( ox ), PointOffsY( oy ) {}
 };
 typedef vector< PrepPoint > PointVec;
 typedef vector< PointVec >  PointVecVec;
@@ -249,7 +249,7 @@ private:
     #ifdef FO_D3D
     LPDIRECT3D9      direct3D;
     #else
-    float            projectionMatrix[ 16 ];
+    float            projectionMatrix[16];
     #endif
     Device_          d3dDevice;
     PresentParams_   presentParams;
@@ -351,7 +351,7 @@ public:
     void        SetSpritesColor( uint c ) { baseColor = c; }
     uint        GetSpritesColor()         { return baseColor; }
     SprInfoVec& GetSpritesInfo()          { return sprData; }
-    SpriteInfo* GetSpriteInfo( uint id )  { return sprData[ id ]; }
+    SpriteInfo* GetSpriteInfo( uint id )  { return sprData[id]; }
     void        GetDrawRect( Sprite* prep, Rect& rect );
     uint        GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_zoom = true );
     bool        IsPixNoTransp( uint spr_id, int offs_x, int offs_y, bool with_zoom = true );

@@ -11,10 +11,10 @@ namespace Str
 {
     void Copy( char* to, uint size, const char* from );
     template< int Size >
-    inline void Copy( char(&to)[ Size ], const char* from ) { return Copy( to, Size, from ); }
+    inline void Copy( char(&to)[Size], const char* from ) { return Copy( to, Size, from ); }
     void        Append( char* to, uint size, const char* from );
     template< int Size >
-    inline void Append( char(&to)[ Size ], const char* from ) { return Append( to, Size, from ); }
+    inline void Append( char(&to)[Size], const char* from ) { return Append( to, Size, from ); }
 
     char* Duplicate( const char* str );
 
@@ -82,16 +82,16 @@ namespace Str
     void ParseLine( const char* str, char divider, Cont& result, Func f )
     {
         result.clear();
-        char buf[ MAX_FOTEXT ];
+        char buf[MAX_FOTEXT];
         for( uint buf_pos = 0; ; str++ )
         {
             if( *str == divider || *str == 0 || buf_pos >= sizeof( buf ) - 1 )
             {
                 if( buf_pos )
                 {
-                    buf[ buf_pos ] = 0;
+                    buf[buf_pos] = 0;
                     EraseFrontBackSpecificChars( buf );
-                    if( buf[ 0 ] )
+                    if( buf[0] )
                         result.push_back( typename Cont::value_type( f( buf ) ) );
                     buf_pos = 0;
                 }
@@ -101,7 +101,7 @@ namespace Str
             }
             else
             {
-                buf[ buf_pos ] = *str;
+                buf[buf_pos] = *str;
                 buf_pos++;
             }
         }

@@ -64,7 +64,7 @@
 #define CRITTER_EVENT_TURN_BASED_PROCESS         ( 42 )
 #define CRITTER_EVENT_SMTH_TURN_BASED_PROCESS    ( 43 )
 #define CRITTER_EVENT_MAX                        ( 44 )
-extern const char* CritterEventFuncName[ CRITTER_EVENT_MAX ];
+extern const char* CritterEventFuncName[CRITTER_EVENT_MAX];
 
 // Plane results
 #define PLANE_RUN_GLOBAL                         ( 0 )
@@ -118,30 +118,30 @@ public:
     uint             PrevHexTick;
     ushort           PrevHexX, PrevHexY;
     int              LockMapTransfers;
-    Critter*         ThisPtr[ MAX_PARAMETERS_ARRAYS ];
+    Critter*         ThisPtr[MAX_PARAMETERS_ARRAYS];
     uint             AllowedToDownloadMap;
 
-    static bool      ParamsRegEnabled[ MAX_PARAMS ];
+    static bool      ParamsRegEnabled[MAX_PARAMS];
     static uint      ParamsSendMsgLen;
     static ushort    ParamsSendCount;
     static UShortVec ParamsSend;
-    static bool      ParamsSendEnabled[ MAX_PARAMS ];
-    static int       ParamsSendScript[ MAX_PARAMS ];
-    static int       ParamsChangeScript[ MAX_PARAMS ];
-    static int       ParamsGetScript[ MAX_PARAMS ];
-    static int       ParamsDialogGetScript[ MAX_PARAMS ];
-    static bool      SlotDataSendEnabled[ 0x100 ];
-    static int       SlotDataSendScript[ 0x100 ];
-    static uint      ParamsChosenSendMask[ MAX_PARAMS ];
-    static uint      ParametersMin[ MAX_PARAMETERS_ARRAYS ];
-    static uint      ParametersMax[ MAX_PARAMETERS_ARRAYS ];
-    static bool      ParametersOffset[ MAX_PARAMETERS_ARRAYS ];
-    bool             ParamsIsChanged[ MAX_PARAMS ];
+    static bool      ParamsSendEnabled[MAX_PARAMS];
+    static int       ParamsSendScript[MAX_PARAMS];
+    static int       ParamsChangeScript[MAX_PARAMS];
+    static int       ParamsGetScript[MAX_PARAMS];
+    static int       ParamsDialogGetScript[MAX_PARAMS];
+    static bool      SlotDataSendEnabled[0x100];
+    static int       SlotDataSendScript[0x100];
+    static uint      ParamsChosenSendMask[MAX_PARAMS];
+    static uint      ParametersMin[MAX_PARAMETERS_ARRAYS];
+    static uint      ParametersMax[MAX_PARAMETERS_ARRAYS];
+    static bool      ParametersOffset[MAX_PARAMETERS_ARRAYS];
+    bool             ParamsIsChanged[MAX_PARAMS];
     IntVec           ParamsChanged;
     int              ParamLocked;
-    static bool      SlotEnabled[ 0x100 ];
-    static Item*     SlotEnabledCacheData[ 0x100 ];
-    static Item*     SlotEnabledCacheDataExt[ 0x100 ];
+    static bool      SlotEnabled[0x100];
+    static Item*     SlotEnabledCacheData[0x100];
+    static Item*     SlotEnabledCacheDataExt[0x100];
 
     CritDataExt* GetDataExt();
     void         SetMaps( uint map_id, ushort map_pid )
@@ -150,7 +150,7 @@ public:
         Data.MapPid = map_pid;
     }
     void SetLexems( const char* lexems );
-    bool IsLexems() { return Data.Lexems[ 0 ] != 0; }
+    bool IsLexems() { return Data.Lexems[0] != 0; }
 
     int  RunParamsSendScript( int bind_id, uint param_index, Critter* from_cr, Critter* to_cr );
     bool RunSlotDataSendScript( int bind_id, uchar slot, Item* item, Critter* from_cr, Critter* to_cr );
@@ -229,7 +229,7 @@ public:
     uint        CountItemPid( ushort item_pid );
     void        TakeDefaultItem( uchar slot );
     bool        MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count );
-    uint        RealCountItems() { return (uint) invItems.size(); }
+    uint        RealCountItems() { return (uint)invItems.size(); }
     uint        CountItems();
     ItemPtrVec& GetInventory()
     {
@@ -243,7 +243,7 @@ protected:
     bool PrepareScriptFunc( int num_scr_func );
 
 public:
-    int FuncId[ CRITTER_EVENT_MAX ];
+    int FuncId[CRITTER_EVENT_MAX];
     bool ParseScript( const char* script, bool first_time );
     uint GetScriptId() { return Data.ScriptId; }
 
@@ -313,7 +313,7 @@ private:
     uint waitEndTick;
 
 public:
-    bool IsFree() { return ( Timer::GameTick() - startBreakTime >= breakTime ); }
+    bool IsFree() { return Timer::GameTick() - startBreakTime >= breakTime;  }
     bool IsBusy() { return !IsFree(); }
     void SetBreakTime( uint ms )
     {
@@ -428,24 +428,24 @@ public:
     uint        GetTimeRun();
     uint        GetItemsWeight();
     uint        GetItemsVolume();
-    bool        IsOverweight() { return (int) GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ); }
+    bool        IsOverweight() { return (int)GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ); }
     int         GetFreeWeight();
     int         GetFreeVolume();
     int         GetParam( uint index );
     void        ChangeParam( uint index );
     void        ProcessChangedParams();
-    uint        GetFollowCrId() { return Data.Params[ ST_FOLLOW_CRIT ]; }
+    uint        GetFollowCrId() { return Data.Params[ST_FOLLOW_CRIT]; }
     void        SetFollowCrId( uint crid )
     {
         ChangeParam( ST_FOLLOW_CRIT );
-        Data.Params[ ST_FOLLOW_CRIT ] = crid;
+        Data.Params[ST_FOLLOW_CRIT] = crid;
     }
-    bool IsRawParam( uint index )  { return Data.Params[ index ] != 0; }
-    int  GetRawParam( uint index ) { return Data.Params[ index ]; }
-    bool IsDmgLeg()                { return Data.Params[ DAMAGE_RIGHT_LEG ] != 0 || Data.Params[ DAMAGE_LEFT_LEG ] != 0; }
-    bool IsDmgTwoLeg()             { return Data.Params[ DAMAGE_RIGHT_LEG ] != 0 && Data.Params[ DAMAGE_LEFT_LEG ] != 0; }
-    bool IsDmgArm()                { return Data.Params[ DAMAGE_RIGHT_ARM ] != 0 || Data.Params[ DAMAGE_LEFT_ARM ] != 0; }
-    bool IsDmgTwoArm()             { return Data.Params[ DAMAGE_RIGHT_ARM ] != 0 && Data.Params[ DAMAGE_LEFT_ARM ] != 0; }
+    bool IsRawParam( uint index )  { return Data.Params[index] != 0; }
+    int  GetRawParam( uint index ) { return Data.Params[index]; }
+    bool IsDmgLeg()                { return Data.Params[DAMAGE_RIGHT_LEG] != 0 || Data.Params[DAMAGE_LEFT_LEG] != 0; }
+    bool IsDmgTwoLeg()             { return Data.Params[DAMAGE_RIGHT_LEG] != 0 && Data.Params[DAMAGE_LEFT_LEG] != 0; }
+    bool IsDmgArm()                { return Data.Params[DAMAGE_RIGHT_ARM] != 0 || Data.Params[DAMAGE_LEFT_ARM] != 0; }
+    bool IsDmgTwoArm()             { return Data.Params[DAMAGE_RIGHT_ARM] != 0 && Data.Params[DAMAGE_LEFT_ARM] != 0; }
     void SendMessage( int num, int val, int to );
     int  GetLook();
     uint GetTalkDistance( Critter* talker );
@@ -456,18 +456,18 @@ public:
     bool IsDead()     { return Data.Cond == COND_DEAD; }
     bool IsKnockout() { return Data.Cond == COND_KNOCKOUT; }
     bool CheckFind( int find_type );
-    int  GetRealAp() { return Data.Params[ ST_CURRENT_AP ]; }
+    int  GetRealAp() { return Data.Params[ST_CURRENT_AP]; }
     int  GetAllAp()  { return GetParam( ST_CURRENT_AP ) + GetParam( ST_MOVE_AP ); }
     void SubAp( int val )
     {
         ChangeParam( ST_CURRENT_AP );
-        Data.Params[ ST_CURRENT_AP ] -= val * AP_DIVIDER;
+        Data.Params[ST_CURRENT_AP] -= val * AP_DIVIDER;
         ApRegenerationTick = 0;
     }
     void SubMoveAp( int val )
     {
         ChangeParam( ST_CURRENT_AP );
-        Data.Params[ ST_MOVE_AP ] -= val;
+        Data.Params[ST_MOVE_AP] -= val;
     }
 
     // Turn based
@@ -554,11 +554,11 @@ public:
 class Client: public Critter
 {
 public:
-    char          Name[ UTF8_BUF_SIZE( MAX_NAME ) ]; // Saved
-    char          PassHash[ PASS_HASH_SIZE ];        // Saved
+    char          Name[UTF8_BUF_SIZE( MAX_NAME )];   // Saved
+    char          PassHash[PASS_HASH_SIZE];          // Saved
     uchar         Access;
     uint          LanguageMsg;
-    uint          UID[ 5 ];
+    uint          UID[5];
     SOCKET        Sock;
     sockaddr_in   From;
     BufferManager Bin, Bout;
@@ -571,7 +571,7 @@ public:
     bool          ZstrmInit;
     uint          ConnectTime;
     uint          LastSendedMapTick;
-    char          LastSay[ UTF8_BUF_SIZE( MAX_CHAT_MESSAGE ) ];
+    char          LastSay[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
     uint          LastSayEqualCount;
     uint          RadioMessageSended;
 
@@ -589,7 +589,7 @@ public:
     # define BIN_END( cl_ )       cl_->Bin.Unlock()
     # define BOUT_BEGIN( cl_ )    cl_->Bout.Lock()
     # if defined ( LIBEVENT_TIMEOUTS_WORKAROUND )
-    typedef void ( *SendCallback )( bufferevent*, void* );
+    typedef void ( * SendCallback )( bufferevent*, void* );
     static SendCallback SendData;
     #  define BOUT_END( cl_ )                                                 \
         cl_->Bout.Unlock();                                                   \
@@ -623,7 +623,7 @@ public:
     # define WSAOP_FREE      ( 0 )
     # define WSAOP_SEND      ( 1 )
     # define WSAOP_RECV      ( 2 )
-    typedef void ( *SendCallback )( NetIOArg* );
+    typedef void ( * SendCallback )( NetIOArg* );
     static SendCallback SendData;
     # define BIN_BEGIN( cl_ )     cl_->Bin.Lock()
     # define BIN_END( cl_ )       cl_->Bin.Unlock()
@@ -743,7 +743,7 @@ public:
         uint Pid;
         uint Count;
         bool operator==( uint id ) { return Id == id; }
-        BarterItem( uint id, uint pid, uint count ): Id( id ), Pid( pid ), Count( count ) {}
+        BarterItem( uint id, uint pid, uint count ) : Id( id ), Pid( pid ), Count( count ) {}
     };
     typedef vector< BarterItem > BarterItemVec;
     BarterItemVec BarterItems;
@@ -797,7 +797,7 @@ public:
         AIDataPlane* p = GetCurPlane();
         return p ? p->Type == plane_type : false;
     }
-    AIDataPlane*    GetCurPlane() { return aiPlanes.size() ? aiPlanes[ 0 ]->GetCurPlane() : NULL; }
+    AIDataPlane*    GetCurPlane() { return aiPlanes.size() ? aiPlanes[0]->GetCurPlane() : NULL; }
     AIDataPlaneVec& GetPlanes()   { return aiPlanes; }
     void            DropPlanes();
     void            SetBestCurPlane();

@@ -14,7 +14,7 @@ struct Quest
     bool   isInfo;
 
     bool operator==( const ushort& _num ) { return _num == num; }
-    Quest( uint _num, string _info ): num( _num ), info( _info ), isInfo( false ) {}
+    Quest( uint _num, string _info ) : num( _num ), info( _info ), isInfo( false ) {}
 };
 typedef vector< Quest > QuestVec;
 
@@ -29,16 +29,16 @@ private:
     {
         text = "";
 
-        char str[ 128 ];
+        char str[128];
         for( uint i = 0; i < quests.size(); ++i )
         {
             Str::Format( str, msg->GetStr( STR_QUEST_NUMBER ), i + 1 );
 
             text += str;
-            text += quests[ i ].info;
+            text += quests[i].info;
             text += "\n";
             text += msg->GetStr( STR_QUEST_PROCESS );
-            text += quests[ i ].str;
+            text += quests[i].str;
             text += "\n\n";
         }
     }
@@ -48,7 +48,7 @@ public:
     Quest* AddQuest( ushort num, string info )
     {
         quests.push_back( Quest( num, info ) );
-        return &quests[ quests.size() - 1 ];
+        return &quests[quests.size() - 1];
         ReparseText();
     }
     void RefreshQuest( ushort num, string str )
@@ -71,7 +71,7 @@ public:
     }
     QuestVec*   GetQuests() { return &quests; }
     const char* GetText()   { return text.c_str(); }
-    QuestTab( FOMsg* _msg ): msg( _msg ) {}
+    QuestTab( FOMsg* _msg ) : msg( _msg ) {}
 };
 typedef map< string, QuestTab, less< string > > QuestTabMap;
 

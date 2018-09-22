@@ -7,7 +7,7 @@
 /* Base                                                                 */
 /************************************************************************/
 
-#define MAKE_NETMSG_HEADER( number )    ( (uint) ( ( 0xDEAD << 17 ) | ( number << 8 ) | ( 0xAA ) ) )
+#define MAKE_NETMSG_HEADER( number )    ( (uint)( ( 0xDEAD << 17 ) | ( number << 8 ) | ( 0xAA ) ) )
 #define PING_CLIENT_LIFE_TIME                 ( 15000 )  // Time to ping client life
 
 // Special message
@@ -94,14 +94,14 @@
    //  uint hash
    //////////////////////////////////////////////////////////////////////////
 
-   #define NETMSG_SEND_GET_UPDATE_FILE MAKE_NETMSG_HEADER(8)
-   #define NETMSG_SEND_GET_UPDATE_FILE_SIZE (sizeof(uint)+sizeof(uint))
+ #define NETMSG_SEND_GET_UPDATE_FILE MAKE_NETMSG_HEADER(8)
+ #define NETMSG_SEND_GET_UPDATE_FILE_SIZE (sizeof(uint)+sizeof(uint))
    //////////////////////////////////////////////////////////////////////////
    // Request to updated file
    // uint file_number
    //////////////////////////////////////////////////////////////////////////
 
-   #define NETMSG_UPDATE_FILE          MAKE_NETMSG_HEADER(9)
+ #define NETMSG_UPDATE_FILE          MAKE_NETMSG_HEADER(9)
    //////////////////////////////////////////////////////////////////////////
    // Portion of data
    // uint msg_len
@@ -109,8 +109,8 @@
    // uchar portion[portion_len]
    //////////////////////////////////////////////////////////////////////////
 
-   #define NETMSG_HELLO                MAKE_NETMSG_HEADER(10)
-   #define NETMSG_HELLO_SIZE           (sizeof(uint))
+ #define NETMSG_HELLO                MAKE_NETMSG_HEADER(10)
+ #define NETMSG_HELLO_SIZE           (sizeof(uint))
    //////////////////////////////////////////////////////////////////////////
    // First message after connection
    //////////////////////////////////////////////////////////////////////////

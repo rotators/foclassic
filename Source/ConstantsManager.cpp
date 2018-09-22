@@ -18,7 +18,7 @@ struct ConstCollection
     bool       Init;
     UIntStrMap ValueName;
     StrUIntMap NameValue;
-    ConstCollection(): Init( false ) {}
+    ConstCollection() : Init( false ) {}
 };
 vector< ConstCollection > ConstCollections;
 
@@ -29,11 +29,11 @@ void ConstantsManager::Initialize( int path_type, const char* path /* = NULL */ 
     {
         if( path )
         {
-            AddCollection( i, Str::FormatBuf( "%s%s", path, CollectionFiles[ i ] ), path_type );
+            AddCollection( i, Str::FormatBuf( "%s%s", path, CollectionFiles[i] ), path_type );
         }
         else
         {
-            AddCollection( i, CollectionFiles[ i ], path_type );
+            AddCollection( i, CollectionFiles[i], path_type );
         }
     }
 }
@@ -44,28 +44,28 @@ bool ConstantsManager::AddCollection( int collection, const char* fname, int pat
     if( !fm.LoadFile( fname, path_type ) )
         return false;
 
-    if( collection >= (int) ConstCollections.size() )
+    if( collection >= (int)ConstCollections.size() )
         ConstCollections.resize( collection + 1 );
-    UIntStrMap& value_name = ConstCollections[ collection ].ValueName;
-    StrUIntMap& name_value = ConstCollections[ collection ].NameValue;
+    UIntStrMap& value_name = ConstCollections[collection].ValueName;
+    StrUIntMap& name_value = ConstCollections[collection].NameValue;
 
-    ConstCollections[ collection ].Init = true;
+    ConstCollections[collection].Init = true;
     value_name.clear();
     name_value.clear();
 
     bool   revert = false;
-    char   line[ MAX_FOTEXT ];
+    char   line[MAX_FOTEXT];
     string name;
     int    offset = 0;
     int    num;
     while( fm.GetLine( line, MAX_FOTEXT ) )
     {
-        if( line[ 0 ] == '*' )
+        if( line[0] == '*' )
         {
-            if( line[ 1 ] == '*' )
+            if( line[1] == '*' )
                 revert = !revert;
             else
-                offset = atoi( &line[ 1 ] );
+                offset = atoi( &line[1] );
         }
         else
         {
@@ -97,8 +97,8 @@ bool ConstantsManager::AddCollection( int collection, const char* fname, int pat
 
 void ConstantsManager::AddConstant( int collection, const char* str, int value )
 {
-    ConstCollections[ collection ].ValueName.insert( PAIR( value, str ) );
-    ConstCollections[ collection ].NameValue.insert( PAIR( str, value ) );
+    ConstCollections[collection].ValueName.insert( PAIR( value, str ) );
+    ConstCollections[collection].NameValue.insert( PAIR( str, value ) );
     Str::AddNameHash( str );
 }
 
@@ -106,7 +106,7 @@ StrVec ConstantsManager::GetCollection( int collection )
 {
     UIntVec val_added;
     StrVec  result;
-    for( auto it = ConstCollections[ collection ].ValueName.begin(), end = ConstCollections[ collection ].ValueName.end(); it != end; ++it )
+    for( auto it = ConstCollections[collection].ValueName.begin(), end = ConstCollections[collection].ValueName.end(); it != end; ++it )
     {
         if( collection == CONSTANTS_DEFINE || std::find( val_added.begin(), val_added.end(), ( *it ).first ) == val_added.end() )
         {
@@ -119,21 +119,21 @@ StrVec ConstantsManager::GetCollection( int collection )
 
 bool ConstantsManager::IsCollectionInit( int collection )
 {
-    return collection >= 0 && collection < (int) ConstCollections.size() && ConstCollections[ collection ].Init;
+    return collection >= 0 && collection < (int)ConstCollections.size() && ConstCollections[collection].Init;
 }
 
 int ConstantsManager::GetValue( int collection, const char* str )
 {
-    auto it = ConstCollections[ collection ].NameValue.find( str );
-    if( it == ConstCollections[ collection ].NameValue.end() )
+    auto it = ConstCollections[collection].NameValue.find( str );
+    if( it == ConstCollections[collection].NameValue.end() )
         return -1;
     return ( *it ).second;
 }
 
 const char* ConstantsManager::GetName( int collection, int value )
 {
-    auto it = ConstCollections[ collection ].ValueName.find( value );
-    if( it == ConstCollections[ collection ].ValueName.end() )
+    auto it = ConstCollections[collection].ValueName.find( value );
+    if( it == ConstCollections[collection].ValueName.end() )
         return NULL;
     return ( *it ).second.c_str();
 }
@@ -168,8 +168,8 @@ int ConstantsManager::GetDefineValue( const char* str )
     else if( Str::CompareCase( str, "false" ) )
         return 0;
 
-    auto it = ConstCollections[ CONSTANTS_DEFINE ].NameValue.find( str );
-    if( it == ConstCollections[ CONSTANTS_DEFINE ].NameValue.end() )
+    auto it = ConstCollections[CONSTANTS_DEFINE].NameValue.find( str );
+    if( it == ConstCollections[CONSTANTS_DEFINE].NameValue.end() )
     {
         WriteLogF( _FUNC_, " - Define<%s> not found, taked zero by default.\n", str );
         return 0;

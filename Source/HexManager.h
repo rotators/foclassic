@@ -11,8 +11,8 @@
 
 #define MAX_FIND_PATH    ( 600 )
 #define TILE_ALPHA       ( 0xFF )
-#define VIEW_WIDTH       ( (int) ( ( MODE_WIDTH / GameOpt.MapHexWidth + ( ( MODE_WIDTH % GameOpt.MapHexWidth ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
-#define VIEW_HEIGHT      ( (int) ( ( MODE_HEIGHT / GameOpt.MapHexLineHeight + ( ( MODE_HEIGHT % GameOpt.MapHexLineHeight ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define VIEW_WIDTH       ( (int)( ( MODE_WIDTH / GameOpt.MapHexWidth + ( ( MODE_WIDTH % GameOpt.MapHexWidth ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define VIEW_HEIGHT      ( (int)( ( MODE_HEIGHT / GameOpt.MapHexLineHeight + ( ( MODE_HEIGHT % GameOpt.MapHexLineHeight ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
 #define SCROLL_OX        ( GameOpt.MapHexWidth )
 #define SCROLL_OY        ( GameOpt.MapHexLineHeight * 2 )
 #define HEX_W            ( GameOpt.MapHexWidth )
@@ -37,7 +37,7 @@ struct ViewField
     int   ScrX, ScrY;
     float ScrXf, ScrYf;
 
-    ViewField(): HexX( 0 ), HexY( 0 ), ScrX( 0 ), ScrY( 0 ), ScrXf( 0.0f ), ScrYf( 0.0f ) {};
+    ViewField() : HexX( 0 ), HexY( 0 ), ScrX( 0 ), ScrY( 0 ), ScrXf( 0.0f ), ScrYf( 0.0f ) {};
 };
 
 /************************************************************************/
@@ -53,7 +53,7 @@ struct LightSource
     uchar  Flags;
     int    Intensity;
 
-    LightSource( ushort hx, ushort hy, uint color, uchar distance, int inten, uchar flags ): HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
+    LightSource( ushort hx, ushort hy, uint color, uchar distance, int inten, uchar flags ) : HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
 };
 typedef vector< LightSource > LightSourceVec;
 
@@ -90,7 +90,7 @@ struct Field
     bool       IsNotRaked;
     uchar      Corner;
     bool       IsNoLight;
-    uchar      LightValues[ 3 ];
+    uchar      LightValues[3];
     bool       IsMultihex;
 
     void Clear();
@@ -113,8 +113,8 @@ struct Drop
     short GroundOffsY;
     short DropCnt;
 
-    Drop(): CurSprId( 0 ), OffsX( 0 ), OffsY( 0 ), DropCnt( 0 ), GroundOffsY( 0 ) {};
-    Drop( ushort id, short x, short y, short ground_y ): CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
+    Drop() : CurSprId( 0 ), OffsX( 0 ), OffsY( 0 ), DropCnt( 0 ), GroundOffsY( 0 ) {};
+    Drop( ushort id, short x, short y, short ground_y ) : CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
 };
 typedef vector< Drop* > DropVec;
 
@@ -134,14 +134,14 @@ private:
     AnyFrames* picHexMask;
     bool       isShowTrack;
     bool       isShowHex;
-    AnyFrames* picHex[ 3 ];
+    AnyFrames* picHex[3];
     string     curDataPrefix;
 
 public:
     bool   ResizeField( ushort w, ushort h );
-    Field& GetField( ushort hx, ushort hy )     { return hexField[ hy * maxHexX + hx ]; }
-    bool&  GetHexToDraw( ushort hx, ushort hy ) { return hexToDraw[ hy * maxHexX + hx ]; }
-    char&  GetHexTrack( ushort hx, ushort hy )  { return hexTrack[ hy * maxHexX + hx ]; }
+    Field& GetField( ushort hx, ushort hy )     { return hexField[hy * maxHexX + hx]; }
+    bool&  GetHexToDraw( ushort hx, ushort hy ) { return hexToDraw[hy * maxHexX + hx]; }
+    char&  GetHexTrack( ushort hx, ushort hy )  { return hexTrack[hy * maxHexX + hx]; }
     ushort GetMaxHexX()                         { return maxHexX; }
     ushort GetMaxHexY()                         { return maxHexY; }
     void   ClearHexToDraw()                     { memzero( hexToDraw, maxHexX * maxHexY * sizeof( bool ) ); }
@@ -158,14 +158,14 @@ public:
     void FindSetCenter( int cx, int cy );
 
 private:
-    void FindSetCenterDir( ushort & hx, ushort & hy, int dirs[ 2 ], int steps );
+    void FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int steps );
 
     // Map load
 private:
     ushort curPidMap;
     int    curMapTime;
-    int    dayTime[ 4 ];
-    uchar  dayColor[ 12 ];
+    int    dayTime[4];
+    uchar  dayColor[12];
     uint   curHashTiles;
     uint   curHashWalls;
     uint   curHashScen;
@@ -235,7 +235,7 @@ public:
     void ScrollToHex( int hx, int hy, double speed, bool can_stop );
 
 private:
-    bool ScrollCheckPos( int(&positions)[ 4 ], int dir1, int dir2 );
+    bool ScrollCheckPos( int(&positions)[4], int dir1, int dir2 );
     bool ScrollCheck( int xmod, int ymod );
 
 public:
@@ -284,10 +284,10 @@ private:
     void ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item );
 
 public:
-    bool AddItem( uint id, ushort pid, ushort hx, ushort hy, bool is_added, Item::ItemData* data );
-    void ChangeItem( uint id, const Item::ItemData& data );
-    void FinishItem( uint id, bool is_deleted );
-    auto DeleteItem( ItemHex * item, bool with_delete = true )->ItemHexVec::iterator;
+    bool        AddItem( uint id, ushort pid, ushort hx, ushort hy, bool is_added, Item::ItemData* data );
+    void        ChangeItem( uint id, const Item::ItemData& data );
+    void        FinishItem( uint id, bool is_deleted );
+    auto        DeleteItem( ItemHex* item, bool with_delete = true )->ItemHexVec::iterator;
     void        PushItem( ItemHex* item );
     ItemHex*    GetItem( ushort hx, ushort hy, ushort pid );
     ItemHex*    GetItemById( ushort hx, ushort hy, uint id );
@@ -319,7 +319,7 @@ private:
 
 public:
     void            ClearHexLight()                     { memzero( hexLight, maxHexX * maxHexY * sizeof( uchar ) * 3 ); }
-    uchar*          GetLightHex( ushort hx, ushort hy ) { return &hexLight[ hy * maxHexX * 3 + hx * 3 ]; }
+    uchar*          GetLightHex( ushort hx, ushort hy ) { return &hexLight[hy * maxHexX * 3 + hx * 3]; }
     void            RebuildLight()                      { requestRebuildLight = true; }
     LightSourceVec& GetLights()                         { return lightSources; }
 

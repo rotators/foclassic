@@ -10,14 +10,14 @@
 
 // Assimp functions
 const aiScene* ( *Ptr_aiImportFileFromMemory )( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );
-void           ( * Ptr_aiReleaseImport )( const aiScene* pScene );
-const char*    ( *Ptr_aiGetErrorString )( );
-void           ( * Ptr_aiEnableVerboseLogging )( aiBool d );
-aiLogStream    ( * Ptr_aiGetPredefinedLogStream )( aiDefaultLogStream pStreams, const char* file );
-void           ( * Ptr_aiAttachLogStream )( const aiLogStream* stream );
-unsigned int   ( * Ptr_aiGetMaterialTextureCount )( const aiMaterial* pMat, aiTextureType type );
-aiReturn       ( * Ptr_aiGetMaterialTexture )( const aiMaterial* mat, aiTextureType type, unsigned int  index, aiString* path, aiTextureMapping* mapping, unsigned int* uvindex, float* blend, aiTextureOp* op, aiTextureMapMode* mapmode, unsigned int* flags );
-aiReturn       ( * Ptr_aiGetMaterialFloatArray )( const aiMaterial* pMat, const char* pKey, unsigned int type, unsigned int index, float* pOut, unsigned int* pMax );
+void         ( * Ptr_aiReleaseImport )( const aiScene* pScene );
+const char*  ( * Ptr_aiGetErrorString )();
+void         ( * Ptr_aiEnableVerboseLogging )( aiBool d );
+aiLogStream  ( * Ptr_aiGetPredefinedLogStream )( aiDefaultLogStream pStreams, const char* file );
+void         ( * Ptr_aiAttachLogStream )( const aiLogStream* stream );
+unsigned int ( * Ptr_aiGetMaterialTextureCount )( const aiMaterial* pMat, aiTextureType type );
+aiReturn     ( * Ptr_aiGetMaterialTexture )( const aiMaterial* mat, aiTextureType type, unsigned int  index, aiString* path, aiTextureMapping* mapping, unsigned int* uvindex, float* blend, aiTextureOp* op, aiTextureMapMode* mapmode, unsigned int* flags );
+aiReturn     ( * Ptr_aiGetMaterialFloatArray )( const aiMaterial* pMat, const char* pKey, unsigned int type, unsigned int index, float* pOut, unsigned int* pMax );
 
 /************************************************************************/
 /* Models                                                               */
@@ -103,8 +103,8 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
     }
 
     // Add to already processed
-    for( uint i = 0, j = (uint) processedFiles.size(); i < j; i++ )
-        if( Str::CompareCase( processedFiles[ i ], fname ) )
+    for( uint i = 0, j = (uint)processedFiles.size(); i < j; i++ )
+        if( Str::CompareCase( processedFiles[i], fname ) )
             return NULL;
     processedFiles.push_back( Str::Duplicate( fname ) );
 
@@ -117,15 +117,15 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
     }
 
     // Load scene
-    aiScene* scene = (aiScene*) Ptr_aiImportFileFromMemory( (const char*) fm.GetBuf(), fm.GetFsize(),
-                                                            aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_GenUVCoords |
-                                                            aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
-                                                            aiProcess_SortByPType | aiProcess_SplitLargeMeshes | aiProcess_LimitBoneWeights |
-                                                            aiProcess_ImproveCacheLocality
-                                                            #ifdef FO_D3D
-                                                            | aiProcess_ConvertToLeftHanded
-                                                            #endif
-                                                            , "" );
+    aiScene* scene = (aiScene*)Ptr_aiImportFileFromMemory( (const char*)fm.GetBuf(), fm.GetFsize(),
+                                                           aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_GenUVCoords |
+                                                           aiProcess_Triangulate | aiProcess_JoinIdenticalVertices |
+                                                           aiProcess_SortByPType | aiProcess_SplitLargeMeshes | aiProcess_LimitBoneWeights |
+                                                           aiProcess_ImproveCacheLocality
+                                                           #ifdef FO_D3D
+                                                           | aiProcess_ConvertToLeftHanded
+                                                           #endif
+                                                           , "" );
     if( !scene )
     {
         WriteLogF( _FUNC_, " - Can't load 3d file, name<%s>, error<%s>.\n", fname, Ptr_aiGetErrorString() );
@@ -157,39 +157,39 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
     VectorVec     tv;
     for( unsigned int i = 0; i < scene->mNumAnimations; i++ )
     {
-        aiAnimation* anim = scene->mAnimations[ i ];
+        aiAnimation* anim = scene->mAnimations[i];
         AnimSet*     anim_set = new AnimSet();
 
         for( unsigned int j = 0; j < anim->mNumChannels; j++ )
         {
-            aiNodeAnim* na = anim->mChannels[ j ];
+            aiNodeAnim* na = anim->mChannels[j];
 
             st.resize( na->mNumScalingKeys );
             sv.resize( na->mNumScalingKeys );
             for( unsigned int k = 0; k < na->mNumScalingKeys; k++ )
             {
-                st[ k ] = (float) na->mScalingKeys[ k ].mTime;
-                sv[ k ] = na->mScalingKeys[ k ].mValue;
+                st[k] = (float)na->mScalingKeys[k].mTime;
+                sv[k] = na->mScalingKeys[k].mValue;
             }
             rt.resize( na->mNumRotationKeys );
             rv.resize( na->mNumRotationKeys );
             for( unsigned int k = 0; k < na->mNumRotationKeys; k++ )
             {
-                rt[ k ] = (float) na->mRotationKeys[ k ].mTime;
-                rv[ k ] = na->mRotationKeys[ k ].mValue;
+                rt[k] = (float)na->mRotationKeys[k].mTime;
+                rv[k] = na->mRotationKeys[k].mValue;
             }
             tt.resize( na->mNumPositionKeys );
             tv.resize( na->mNumPositionKeys );
             for( unsigned int k = 0; k < na->mNumPositionKeys; k++ )
             {
-                tt[ k ] = (float) na->mPositionKeys[ k ].mTime;
-                tv[ k ] = na->mPositionKeys[ k ].mValue;
+                tt[k] = (float)na->mPositionKeys[k].mTime;
+                tv[k] = na->mPositionKeys[k].mValue;
             }
 
             anim_set->AddOutput( na->mNodeName.data, st, sv, rt, rv, tt, tv );
         }
 
-        anim_set->SetData( anim->mName.data, (float) anim->mDuration, (float) anim->mTicksPerSecond );
+        anim_set->SetData( anim->mName.data, (float)anim->mDuration, (float)anim->mTicksPerSecond );
         loadedAnimations.push_back( anim_set );
         loadedAnimationsFNames.push_back( Str::Duplicate( fname ) );
     }
@@ -222,7 +222,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         vector< D3DXMATERIAL > materials;
         for( unsigned int m = 0; m < node->mNumMeshes; m++ )
         {
-            aiMesh* mesh = scene->mMeshes[ node->mMeshes[ m ] ];
+            aiMesh* mesh = scene->mMeshes[node->mMeshes[m]];
 
             // Faces and vertices
             faces_count += mesh->mNumFaces;
@@ -231,11 +231,11 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
             // Shared bones
             for( unsigned int i = 0; i < mesh->mNumBones; i++ )
             {
-                aiBone* bone = mesh->mBones[ i ];
+                aiBone* bone = mesh->mBones[i];
                 bool    bone_aviable = false;
-                for( uint b = 0, bb = (uint) all_bones.size(); b < bb; b++ )
+                for( uint b = 0, bb = (uint)all_bones.size(); b < bb; b++ )
                 {
-                    if( Str::Compare( all_bones[ b ]->mName.data, bone->mName.data ) )
+                    if( Str::Compare( all_bones[b]->mName.data, bone->mName.data ) )
                     {
                         bone_aviable = true;
                         break;
@@ -248,7 +248,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
             // Material
             D3DXMATERIAL material;
             memzero( &material, sizeof( material ) );
-            aiMaterial*  mtrl = scene->mMaterials[ mesh->mMaterialIndex ];
+            aiMaterial*  mtrl = scene->mMaterials[mesh->mMaterialIndex];
             aiString     path;
             if( Ptr_aiGetMaterialTextureCount( mtrl, aiTextureType_DIFFUSE ) )
             {
@@ -256,10 +256,10 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
                 material.pTextureFilename = Str::Duplicate( path.data );
             }
 
-            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_DIFFUSE, (float*) &material.MatD3D.Diffuse, NULL );
-            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_AMBIENT, (float*) &material.MatD3D.Ambient, NULL );
-            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_SPECULAR, (float*) &material.MatD3D.Specular, NULL );
-            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_EMISSIVE, (float*) &material.MatD3D.Emissive, NULL );
+            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_DIFFUSE, (float*)&material.MatD3D.Diffuse, NULL );
+            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_AMBIENT, (float*)&material.MatD3D.Ambient, NULL );
+            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_SPECULAR, (float*)&material.MatD3D.Specular, NULL );
+            Ptr_aiGetMaterialFloatArray( mtrl, AI_MATKEY_COLOR_EMISSIVE, (float*)&material.MatD3D.Emissive, NULL );
             material.MatD3D.Diffuse.a = 1.0f;
             material.MatD3D.Ambient.a = 1.0f;
             material.MatD3D.Specular.a = 1.0f;
@@ -299,56 +299,56 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         int    vsize = 56;
         WORD*  ib;
         DWORD* att;
-        D3D_HR( dxmesh.pMesh->LockVertexBuffer( 0, (void**) &vb ) );
-        D3D_HR( dxmesh.pMesh->LockIndexBuffer( 0, (void**) &ib ) );
+        D3D_HR( dxmesh.pMesh->LockVertexBuffer( 0, (void**)&vb ) );
+        D3D_HR( dxmesh.pMesh->LockIndexBuffer( 0, (void**)&ib ) );
         D3D_HR( dxmesh.pMesh->LockAttributeBuffer( 0, &att ) );
 
         uint cur_vertices = 0;
         uint cur_faces = 0;
         for( unsigned int m = 0; m < node->mNumMeshes; m++ )
         {
-            aiMesh* mesh = scene->mMeshes[ node->mMeshes[ m ] ];
+            aiMesh* mesh = scene->mMeshes[node->mMeshes[m]];
 
             for( unsigned int i = 0; i < mesh->mNumVertices; i++ )
             {
                 Vertex& v = *vb;
-                vb = (Vertex*) ( ( (char*) vb ) + vsize );
+                vb = (Vertex*)( ( (char*)vb ) + vsize );
                 memzero( &v, vsize );
 
                 // Vertices data
-                v.x = mesh->mVertices[ i ].x;
-                v.y = mesh->mVertices[ i ].y;
-                v.z = mesh->mVertices[ i ].z;
+                v.x = mesh->mVertices[i].x;
+                v.y = mesh->mVertices[i].y;
+                v.z = mesh->mVertices[i].z;
 
-                if( mesh->mTextureCoords && mesh->mTextureCoords[ 0 ] )
+                if( mesh->mTextureCoords && mesh->mTextureCoords[0] )
                 {
-                    v.u = mesh->mTextureCoords[ 0 ][ i ].x;
-                    v.v = mesh->mTextureCoords[ 0 ][ i ].y;
+                    v.u = mesh->mTextureCoords[0][i].x;
+                    v.v = mesh->mTextureCoords[0][i].y;
                 }
                 if( mesh->mNormals )
                 {
-                    v.nx = mesh->mNormals[ i ].x;
-                    v.ny = mesh->mNormals[ i ].y;
-                    v.nz = mesh->mNormals[ i ].z;
+                    v.nx = mesh->mNormals[i].x;
+                    v.ny = mesh->mNormals[i].y;
+                    v.nz = mesh->mNormals[i].z;
                 }
                 if( false && mesh->mTangents )
                 {
-                    v.tx = mesh->mTangents[ i ].x;
-                    v.ty = mesh->mTangents[ i ].y;
-                    v.tz = mesh->mTangents[ i ].z;
-                    v.bx = mesh->mBitangents[ i ].x;
-                    v.by = mesh->mBitangents[ i ].y;
-                    v.bz = mesh->mBitangents[ i ].z;
+                    v.tx = mesh->mTangents[i].x;
+                    v.ty = mesh->mTangents[i].y;
+                    v.tz = mesh->mTangents[i].z;
+                    v.bx = mesh->mBitangents[i].x;
+                    v.by = mesh->mBitangents[i].y;
+                    v.bz = mesh->mBitangents[i].z;
                 }
             }
 
             // Indices
             for( unsigned int i = 0; i < mesh->mNumFaces; i++ )
             {
-                aiFace& face = mesh->mFaces[ i ];
+                aiFace& face = mesh->mFaces[i];
                 for( unsigned int j = 0; j < face.mNumIndices; j++ )
                 {
-                    *ib = face.mIndices[ j ] + cur_vertices;
+                    *ib = face.mIndices[j] + cur_vertices;
                     ib++;
                 }
 
@@ -362,18 +362,18 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         // Skin info
         if( all_bones.size() )
         {
-            D3D_HR( D3DXCreateSkinInfo( vertices_count, declaration, (uint) all_bones.size(), &skin_info ) );
+            D3D_HR( D3DXCreateSkinInfo( vertices_count, declaration, (uint)all_bones.size(), &skin_info ) );
 
             vector< vector< DWORD > > vertices( all_bones.size() );
             vector< FloatVec >        weights( all_bones.size() );
 
-            for( uint b = 0, bb = (uint) all_bones.size(); b < bb; b++ )
+            for( uint b = 0, bb = (uint)all_bones.size(); b < bb; b++ )
             {
-                aiBone* bone = all_bones[ b ];
+                aiBone* bone = all_bones[b];
 
                 // Bone options
                 skin_info->SetBoneName( b, bone->mName.data );
-                skin_info->SetBoneOffsetMatrix( b, (D3DXMATRIX*) &bone->mOffsetMatrix );
+                skin_info->SetBoneOffsetMatrix( b, (D3DXMATRIX*)&bone->mOffsetMatrix );
 
                 // Reserve memory
                 vertices.reserve( vertices_count );
@@ -383,17 +383,17 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
             cur_vertices = 0;
             for( unsigned int m = 0; m < node->mNumMeshes; m++ )
             {
-                aiMesh* mesh = scene->mMeshes[ node->mMeshes[ m ] ];
+                aiMesh* mesh = scene->mMeshes[node->mMeshes[m]];
 
                 for( unsigned int i = 0; i < mesh->mNumBones; i++ )
                 {
-                    aiBone* bone = mesh->mBones[ i ];
+                    aiBone* bone = mesh->mBones[i];
 
                     // Get bone id
                     uint bone_id = 0;
-                    for( uint b = 0, bb = (uint) all_bones.size(); b < bb; b++ )
+                    for( uint b = 0, bb = (uint)all_bones.size(); b < bb; b++ )
                     {
-                        if( Str::Compare( all_bones[ b ]->mName.data, bone->mName.data ) )
+                        if( Str::Compare( all_bones[b]->mName.data, bone->mName.data ) )
                         {
                             bone_id = b;
                             break;
@@ -405,9 +405,9 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
                     {
                         for( unsigned int j = 0; j < bone->mNumWeights; j++ )
                         {
-                            aiVertexWeight& vw = bone->mWeights[ j ];
-                            vertices[ bone_id ].push_back( vw.mVertexId + cur_vertices );
-                            weights[ bone_id ].push_back( vw.mWeight );
+                            aiVertexWeight& vw = bone->mWeights[j];
+                            vertices[bone_id].push_back( vw.mVertexId + cur_vertices );
+                            weights[bone_id].push_back( vw.mWeight );
                         }
                     }
                 }
@@ -416,10 +416,10 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
             }
 
             // Set influences
-            for( uint b = 0, bb = (uint) all_bones.size(); b < bb; b++ )
+            for( uint b = 0, bb = (uint)all_bones.size(); b < bb; b++ )
             {
-                if( vertices[ b ].size() )
-                    skin_info->SetBoneInfluence( b, (uint) vertices[ b ].size(), &vertices[ b ][ 0 ], &weights[ b ][ 0 ] );
+                if( vertices[b].size() )
+                    skin_info->SetBoneInfluence( b, (uint)vertices[b].size(), &vertices[b][0], &weights[b][0] );
             }
         }
 
@@ -432,8 +432,8 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 
         // Adjacency data - holds information about triangle adjacency, required by the ID3DMESH object
         uint faces = dxmesh.pMesh->GetNumFaces();
-        mesh_container->Adjacency = new uint[ faces * 3 ];
-        dxmesh.pMesh->GenerateAdjacency( 0.0000125f, (DWORD*) mesh_container->Adjacency );
+        mesh_container->Adjacency = new uint[faces * 3];
+        dxmesh.pMesh->GenerateAdjacency( 0.0000125f, (DWORD*)mesh_container->Adjacency );
 
         // Changed 24/09/07 - can just assign pointer and add a ref rather than need to clone
         mesh_container->InitMesh = dxmesh.pMesh;
@@ -441,34 +441,34 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 
         // Create material and texture arrays. Note that I always want to have at least one
         mesh_container->NumMaterials = max( materials.size(), 1 );
-        mesh_container->Materials = new Material_[ mesh_container->NumMaterials ];
-        mesh_container->TextureNames = new char*[ mesh_container->NumMaterials ];
-        mesh_container->Effects = new EffectInstance[ mesh_container->NumMaterials ];
+        mesh_container->Materials = new Material_[mesh_container->NumMaterials];
+        mesh_container->TextureNames = new char*[mesh_container->NumMaterials];
+        mesh_container->Effects = new EffectInstance[mesh_container->NumMaterials];
 
         if( materials.size() > 0 )
         {
             // Load all the textures and copy the materials over
             for( uint i = 0; i < materials.size(); i++ )
             {
-                if( materials[ i ].pTextureFilename )
-                    mesh_container->TextureNames[ i ] = Str::Duplicate( materials[ i ].pTextureFilename );
+                if( materials[i].pTextureFilename )
+                    mesh_container->TextureNames[i] = Str::Duplicate( materials[i].pTextureFilename );
                 else
-                    mesh_container->TextureNames[ i ] = NULL;
-                mesh_container->Materials[ i ] = materials[ i ].MatD3D;
-                memzero( &mesh_container->Effects[ i ], sizeof( EffectInstance ) );
+                    mesh_container->TextureNames[i] = NULL;
+                mesh_container->Materials[i] = materials[i].MatD3D;
+                memzero( &mesh_container->Effects[i], sizeof( EffectInstance ) );
             }
         }
         else
         {
             // Make a default material in the case where the mesh did not provide one
-            memzero( &mesh_container->Materials[ 0 ], sizeof( Material_ ) );
-            mesh_container->Materials[ 0 ].Diffuse.a = 1.0f;
-            mesh_container->Materials[ 0 ].Diffuse.r = 0.5f;
-            mesh_container->Materials[ 0 ].Diffuse.g = 0.5f;
-            mesh_container->Materials[ 0 ].Diffuse.b = 0.5f;
-            mesh_container->Materials[ 0 ].Specular = mesh_container->Materials[ 0 ].Diffuse;
-            mesh_container->TextureNames[ 0 ] = NULL;
-            memzero( &mesh_container->Effects[ 0 ], sizeof( EffectInstance ) );
+            memzero( &mesh_container->Materials[0], sizeof( Material_ ) );
+            mesh_container->Materials[0].Diffuse.a = 1.0f;
+            mesh_container->Materials[0].Diffuse.r = 0.5f;
+            mesh_container->Materials[0].Diffuse.g = 0.5f;
+            mesh_container->Materials[0].Diffuse.b = 0.5f;
+            mesh_container->Materials[0].Specular = mesh_container->Materials[0].Diffuse;
+            mesh_container->TextureNames[0] = NULL;
+            memzero( &mesh_container->Effects[0], sizeof( EffectInstance ) );
         }
 
         // If there is skin data associated with the mesh copy it over
@@ -480,15 +480,15 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 
             // Need an array of offset matrices to move the vertices from the figure space to the bone's space
             UINT numBones = skin_info->GetNumBones();
-            mesh_container->BoneOffsets = new Matrix[ numBones ];
+            mesh_container->BoneOffsets = new Matrix[numBones];
 
             // Create the arrays for the bones and the frame matrices
-            mesh_container->FrameCombinedMatrixPointer = new Matrix*[ numBones ];
+            mesh_container->FrameCombinedMatrixPointer = new Matrix*[numBones];
             memzero( mesh_container->FrameCombinedMatrixPointer, sizeof( Matrix* ) * numBones );
 
             // get each of the bone offset matrices so that we don't need to get them later
             for( UINT i = 0; i < numBones; i++ )
-                mesh_container->BoneOffsets[ i ] = *( (Matrix*) mesh_container->Skin->GetBoneOffsetMatrix( i ) );
+                mesh_container->BoneOffsets[i] = *( (Matrix*)mesh_container->Skin->GetBoneOffsetMatrix( i ) );
         }
         else
         {
@@ -510,7 +510,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
     Frame* frame_last = NULL;
     for( unsigned int i = 0; i < node->mNumChildren; i++ )
     {
-        aiNode* node_child = node->mChildren[ i ];
+        aiNode* node_child = node->mChildren[i];
         Frame*  frame_child = FillNode( device, node_child, scene );
         if( !i )
             frame->FirstChild = frame_child;
@@ -533,8 +533,8 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
 
     for( uint m = 0; m < node->mNumMeshes; m++ )
     {
-        aiMesh*     aimesh = scene->mMeshes[ node->mMeshes[ m ] ];
-        MeshSubset& ms = frame->Mesh[ m ];
+        aiMesh*     aimesh = scene->mMeshes[node->mMeshes[m]];
+        MeshSubset& ms = frame->Mesh[m];
 
         // Vertices
         ms.Vertices.resize( aimesh->mNumVertices );
@@ -547,22 +547,22 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
         bool has_tex_coords2 = aimesh->HasTextureCoords( 2 );
         for( uint i = 0; i < aimesh->mNumVertices; i++ )
         {
-            Vertex3D& v = ms.Vertices[ i ];
+            Vertex3D& v = ms.Vertices[i];
             memzero( &v, sizeof( v ) );
-            v.Position = aimesh->mVertices[ i ];
+            v.Position = aimesh->mVertices[i];
             v.PositionW = 1.0f;
-            v.Normal = aimesh->mNormals[ i ];
+            v.Normal = aimesh->mNormals[i];
             if( has_tangents_and_bitangents )
             {
-                v.Tangent = aimesh->mTangents[ i ];
-                v.Bitangent = aimesh->mBitangents[ i ];
+                v.Tangent = aimesh->mTangents[i];
+                v.Bitangent = aimesh->mBitangents[i];
             }
             if( has_color0 )
             {
-                v.Color[ 2 ] = aimesh->mColors[ 0 ][ i ].r;
-                v.Color[ 1 ] = aimesh->mColors[ 0 ][ i ].g;
-                v.Color[ 0 ] = aimesh->mColors[ 0 ][ i ].b;
-                v.Color[ 3 ] = aimesh->mColors[ 0 ][ i ].a;
+                v.Color[2] = aimesh->mColors[0][i].r;
+                v.Color[1] = aimesh->mColors[0][i].g;
+                v.Color[0] = aimesh->mColors[0][i].b;
+                v.Color[3] = aimesh->mColors[0][i].a;
             }
             /*if( has_color1 )
                {
@@ -573,23 +573,23 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
                }*/
             if( has_tex_coords0 )
             {
-                v.TexCoord[ 0 ] = aimesh->mTextureCoords[ 0 ][ i ].x;
-                v.TexCoord[ 1 ] = aimesh->mTextureCoords[ 0 ][ i ].y;
+                v.TexCoord[0] = aimesh->mTextureCoords[0][i].x;
+                v.TexCoord[1] = aimesh->mTextureCoords[0][i].y;
             }
             if( has_tex_coords1 )
             {
-                v.TexCoord2[ 0 ] = aimesh->mTextureCoords[ 1 ][ i ].x;
-                v.TexCoord2[ 1 ] = aimesh->mTextureCoords[ 1 ][ i ].y;
+                v.TexCoord2[0] = aimesh->mTextureCoords[1][i].x;
+                v.TexCoord2[1] = aimesh->mTextureCoords[1][i].y;
             }
             if( has_tex_coords2 )
             {
-                v.TexCoord3[ 0 ] = aimesh->mTextureCoords[ 2 ][ i ].x;
-                v.TexCoord3[ 1 ] = aimesh->mTextureCoords[ 2 ][ i ].y;
+                v.TexCoord3[0] = aimesh->mTextureCoords[2][i].x;
+                v.TexCoord3[1] = aimesh->mTextureCoords[2][i].y;
             }
-            v.BlendIndices[ 0 ] = -1.0f;
-            v.BlendIndices[ 1 ] = -1.0f;
-            v.BlendIndices[ 2 ] = -1.0f;
-            v.BlendIndices[ 3 ] = -1.0f;
+            v.BlendIndices[0] = -1.0f;
+            v.BlendIndices[1] = -1.0f;
+            v.BlendIndices[2] = -1.0f;
+            v.BlendIndices[3] = -1.0f;
         }
 
         // Faces
@@ -597,14 +597,14 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
         ms.Indicies.resize( ms.FacesCount * 3 );
         for( uint i = 0; i < aimesh->mNumFaces; i++ )
         {
-            aiFace& face = aimesh->mFaces[ i ];
-            ms.Indicies[ i * 3 + 0 ] = face.mIndices[ 0 ];
-            ms.Indicies[ i * 3 + 1 ] = face.mIndices[ 1 ];
-            ms.Indicies[ i * 3 + 2 ] = face.mIndices[ 2 ];
+            aiFace& face = aimesh->mFaces[i];
+            ms.Indicies[i * 3 + 0] = face.mIndices[0];
+            ms.Indicies[i * 3 + 1] = face.mIndices[1];
+            ms.Indicies[i * 3 + 2] = face.mIndices[2];
         }
 
         // Material
-        aiMaterial* material = scene->mMaterials[ aimesh->mMaterialIndex ];
+        aiMaterial* material = scene->mMaterials[aimesh->mMaterialIndex];
         aiString    path;
         if( Ptr_aiGetMaterialTextureCount( material, aiTextureType_DIFFUSE ) )
         {
@@ -615,10 +615,10 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
         Ptr_aiGetMaterialFloatArray( material, AI_MATKEY_COLOR_AMBIENT, ms.AmbientColor, NULL );
         Ptr_aiGetMaterialFloatArray( material, AI_MATKEY_COLOR_SPECULAR, ms.SpecularColor, NULL );
         Ptr_aiGetMaterialFloatArray( material, AI_MATKEY_COLOR_EMISSIVE, ms.EmissiveColor, NULL );
-        ms.DiffuseColor[ 3 ] = 1.0f;
-        ms.AmbientColor[ 3 ] = 1.0f;
-        ms.SpecularColor[ 3 ] = 1.0f;
-        ms.EmissiveColor[ 3 ] = 1.0f;
+        ms.DiffuseColor[3] = 1.0f;
+        ms.AmbientColor[3] = 1.0f;
+        ms.SpecularColor[3] = 1.0f;
+        ms.EmissiveColor[3] = 1.0f;
 
         // Effect
         ms.DrawEffect.EffectFilename = NULL;
@@ -629,7 +629,7 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
     }
 
     for( uint i = 0; i < node->mNumChildren; i++ )
-        frame->Children[ i ] = FillNode( scene, node->mChildren[ i ] );
+        frame->Children[i] = FillNode( scene, node->mChildren[i] );
     return frame;
 }
 
@@ -637,8 +637,8 @@ void GraphicLoader::FixFrame( Frame* root_frame, Frame* frame, aiScene* scene, a
 {
     for( uint m = 0; m < node->mNumMeshes; m++ )
     {
-        aiMesh*     aimesh = scene->mMeshes[ node->mMeshes[ m ] ];
-        MeshSubset& mesh = frame->Mesh[ m ];
+        aiMesh*     aimesh = scene->mMeshes[node->mMeshes[m]];
+        MeshSubset& mesh = frame->Mesh[m];
 
         // Bones
         mesh.BoneInfluences = 0;
@@ -646,32 +646,32 @@ void GraphicLoader::FixFrame( Frame* root_frame, Frame* frame, aiScene* scene, a
         mesh.FrameCombinedMatrixPointer.resize( aimesh->mNumBones );
         for( uint i = 0; i < aimesh->mNumBones; i++ )
         {
-            aiBone* bone = aimesh->mBones[ i ];
+            aiBone* bone = aimesh->mBones[i];
 
             // Matrices
-            mesh.BoneOffsets[ i ] = bone->mOffsetMatrix;
+            mesh.BoneOffsets[i] = bone->mOffsetMatrix;
             Frame* bone_frame = root_frame->Find( bone->mName.data );
             if( bone_frame )
-                mesh.FrameCombinedMatrixPointer[ i ] = &bone_frame->CombinedTransformationMatrix;
+                mesh.FrameCombinedMatrixPointer[i] = &bone_frame->CombinedTransformationMatrix;
             else
-                mesh.FrameCombinedMatrixPointer[ i ] = NULL;
+                mesh.FrameCombinedMatrixPointer[i] = NULL;
 
             // Blend data
             for( uint j = 0; j < bone->mNumWeights; j++ )
             {
-                aiVertexWeight& vw = bone->mWeights[ j ];
-                Vertex3D&       v = mesh.Vertices[ vw.mVertexId ];
+                aiVertexWeight& vw = bone->mWeights[j];
+                Vertex3D&       v = mesh.Vertices[vw.mVertexId];
                 uint            index;
-                if( v.BlendIndices[ 0 ] < 0.0f )
+                if( v.BlendIndices[0] < 0.0f )
                     index = 0;
-                else if( v.BlendIndices[ 1 ] < 0.0f )
+                else if( v.BlendIndices[1] < 0.0f )
                     index = 1;
-                else if( v.BlendIndices[ 2 ] < 0.0f )
+                else if( v.BlendIndices[2] < 0.0f )
                     index = 2;
                 else
                     index = 3;
-                v.BlendWeights[ index ] = vw.mWeight;
-                v.BlendIndices[ index ] = (float) i;
+                v.BlendWeights[index] = vw.mWeight;
+                v.BlendIndices[index] = (float)i;
                 if( mesh.BoneInfluences <= index )
                     mesh.BoneInfluences = index + 1;
             }
@@ -680,39 +680,39 @@ void GraphicLoader::FixFrame( Frame* root_frame, Frame* frame, aiScene* scene, a
         // Drop not filled indices
         for( uint i = 0; i < aimesh->mNumVertices; i++ )
         {
-            Vertex3D& v = mesh.Vertices[ i ];
-            if( v.BlendIndices[ 0 ] < 0.0f )
-                v.BlendIndices[ 0 ] = 0.0f;
-            if( v.BlendIndices[ 1 ] < 0.0f )
-                v.BlendIndices[ 1 ] = 0.0f;
-            if( v.BlendIndices[ 2 ] < 0.0f )
-                v.BlendIndices[ 2 ] = 0.0f;
-            if( v.BlendIndices[ 3 ] < 0.0f )
-                v.BlendIndices[ 3 ] = 0.0f;
+            Vertex3D& v = mesh.Vertices[i];
+            if( v.BlendIndices[0] < 0.0f )
+                v.BlendIndices[0] = 0.0f;
+            if( v.BlendIndices[1] < 0.0f )
+                v.BlendIndices[1] = 0.0f;
+            if( v.BlendIndices[2] < 0.0f )
+                v.BlendIndices[2] = 0.0f;
+            if( v.BlendIndices[3] < 0.0f )
+                v.BlendIndices[3] = 0.0f;
         }
 
         // OGL buffers
         GL( glGenBuffers( 1, &mesh.VBO ) );
         GL( glBindBuffer( GL_ARRAY_BUFFER, mesh.VBO ) );
-        GL( glBufferData( GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof( Vertex3D ), &mesh.Vertices[ 0 ], GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof( Vertex3D ), &mesh.Vertices[0], GL_STATIC_DRAW ) );
         GL( glGenBuffers( 1, &mesh.IBO ) );
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, mesh.IBO ) );
-        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, mesh.Indicies.size() * sizeof( short ), &mesh.Indicies[ 0 ], GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, mesh.Indicies.size() * sizeof( short ), &mesh.Indicies[0], GL_STATIC_DRAW ) );
         mesh.VAO = 0;
         if( GLEW_ARB_vertex_array_object && ( GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object ) )
         {
             GL( glGenVertexArrays( 1, &mesh.VAO ) );
             GL( glBindVertexArray( mesh.VAO ) );
-            GL( glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, Position ) ) );
-            GL( glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, Normal ) ) );
-            GL( glVertexAttribPointer( 2, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, Color ) ) );
-            GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, TexCoord ) ) );
-            GL( glVertexAttribPointer( 4, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, TexCoord2 ) ) );
-            GL( glVertexAttribPointer( 5, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, TexCoord3 ) ) );
-            GL( glVertexAttribPointer( 6, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, Tangent ) ) );
-            GL( glVertexAttribPointer( 7, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, Bitangent ) ) );
-            GL( glVertexAttribPointer( 8, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, BlendWeights ) ) );
-            GL( glVertexAttribPointer( 9, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*) OFFSETOF( Vertex3D, BlendIndices ) ) );
+            GL( glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Position ) ) );
+            GL( glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Normal ) ) );
+            GL( glVertexAttribPointer( 2, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Color ) ) );
+            GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord ) ) );
+            GL( glVertexAttribPointer( 4, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord2 ) ) );
+            GL( glVertexAttribPointer( 5, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord3 ) ) );
+            GL( glVertexAttribPointer( 6, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Tangent ) ) );
+            GL( glVertexAttribPointer( 7, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Bitangent ) ) );
+            GL( glVertexAttribPointer( 8, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, BlendWeights ) ) );
+            GL( glVertexAttribPointer( 9, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, BlendIndices ) ) );
             for( uint i = 0; i <= 9; i++ )
                 GL( glEnableVertexAttribArray( i ) );
             GL( glBindVertexArray( 0 ) );
@@ -720,24 +720,24 @@ void GraphicLoader::FixFrame( Frame* root_frame, Frame* frame, aiScene* scene, a
     }
 
     for( uint i = 0; i < node->mNumChildren; i++ )
-        FixFrame( root_frame, frame->Children[ i ], scene, node->mChildren[ i ] );
+        FixFrame( root_frame, frame->Children[i], scene, node->mChildren[i] );
 }
 #endif
 
 AnimSet* GraphicLoader::LoadAnimation( Device_ device, const char* anim_fname, const char* anim_name )
 {
     // Find in already loaded
-    for( uint i = 0, j = (uint) loadedAnimations.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)loadedAnimations.size(); i < j; i++ )
     {
-        AnimSet* anim = (AnimSet*) loadedAnimations[ i ];
-        if( Str::CompareCase( loadedAnimationsFNames[ i ], anim_fname ) &&
+        AnimSet* anim = (AnimSet*)loadedAnimations[i];
+        if( Str::CompareCase( loadedAnimationsFNames[i], anim_fname ) &&
             Str::CompareCase( anim->GetName(), anim_name ) )
             return anim;
     }
 
     // Check maybe file already processed and nothing founded
-    for( uint i = 0, j = (uint) processedFiles.size(); i < j; i++ )
-        if( Str::CompareCase( processedFiles[ i ], anim_fname ) )
+    for( uint i = 0, j = (uint)processedFiles.size(); i < j; i++ )
+        if( Str::CompareCase( processedFiles[i], anim_fname ) )
             return NULL;
 
     // File not processed, load and recheck animations
@@ -763,7 +763,7 @@ void GraphicLoader::Free( Frame* frame )
             if( mesh_container->TextureNames )
             {
                 for( uint i = 0; i < mesh_container->NumMaterials; i++ )
-                    SAFEDELA( mesh_container->TextureNames[ i ] );
+                    SAFEDELA( mesh_container->TextureNames[i] );
             }
             SAFEDELA( mesh_container->TextureNames );
             // Delete effect
@@ -771,9 +771,9 @@ void GraphicLoader::Free( Frame* frame )
             {
                 for( uint i = 0; i < mesh_container->NumMaterials; i++ )
                 {
-                    for( uint j = 0; j < mesh_container->Effects[ i ].DefaultsCount; j++ )
-                        SAFEDELA( mesh_container->Effects[ i ].Defaults[ j ].Data );
-                    SAFEDELA( mesh_container->Effects[ i ].Defaults );
+                    for( uint j = 0; j < mesh_container->Effects[i].DefaultsCount; j++ )
+                        SAFEDELA( mesh_container->Effects[i].Defaults[j].Data );
+                    SAFEDELA( mesh_container->Effects[i].Defaults );
                 }
             }
             SAFEDEL( mesh_container->Effects );
@@ -823,8 +823,8 @@ bool GraphicLoader::IsExtensionSupported( const char* ext )
         "q3s", "mesh", "xml", "irrmesh", "irr", "nff", "nff", "off", "raw", "ter", "mdl", "hmp", "ndo"
     };
 
-    for( int i = 0, j = sizeof( arr ) / sizeof( arr[ 0 ] ); i < j; i++ )
-        if( Str::CompareCase( ext, arr[ i ] ) )
+    for( int i = 0, j = sizeof( arr ) / sizeof( arr[0] ); i < j; i++ )
+        if( Str::CompareCase( ext, arr[i] ) )
             return true;
     return false;
 }
@@ -836,7 +836,7 @@ TextureVec GraphicLoader::loadedTextures;
 
 Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, const char* model_path )
 {
-    if( !texture_name || !texture_name[ 0 ] )
+    if( !texture_name || !texture_name[0] )
         return NULL;
 
     // Try find already loaded texture
@@ -852,7 +852,7 @@ Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, c
     if( !fm.LoadFile( texture_name, PT_TEXTURES ) && model_path )
     {
         // After try load from file folder
-        char path[ MAX_FOPATH ];
+        char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, texture_name );
         fm.LoadFile( path, PT_DATA );
@@ -899,7 +899,7 @@ Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, c
 
     // Copy data
     uint   size = ilGetInteger( IL_IMAGE_SIZE_OF_DATA );
-    uchar* data = new uchar[ size ];
+    uchar* data = new uchar[size];
     memcpy( data, ilGetData(), size );
 
     // Delete image
@@ -911,10 +911,10 @@ Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, c
     texture->Size = size;
     texture->Width = w;
     texture->Height = h;
-    texture->SizeData[ 0 ] = (float) w;
-    texture->SizeData[ 1 ] = (float) h;
-    texture->SizeData[ 2 ] = 1.0f / texture->SizeData[ 0 ];
-    texture->SizeData[ 3 ] = 1.0f / texture->SizeData[ 1 ];
+    texture->SizeData[0] = (float)w;
+    texture->SizeData[1] = (float)h;
+    texture->SizeData[2] = 1.0f / texture->SizeData[0];
+    texture->SizeData[3] = 1.0f / texture->SizeData[1];
     GL( glGenTextures( 1, &texture->Id ) );
     GL( glBindTexture( GL_TEXTURE_2D, texture->Id ) );
     GL( glPixelStorei( GL_UNPACK_ALIGNMENT, 1 ) );
@@ -972,7 +972,7 @@ public:
         if( !fm.LoadFile( pFileName, PT_EFFECTS ) )
         {
             if( !RootPath ) return S_FALSE;
-            char path[ MAX_FOPATH ];
+            char path[MAX_FOPATH];
             FileManager::ExtractPath( RootPath, path );
             Str::Append( path, pFileName );
             if( !fm.LoadFile( path, PT_DATA ) ) return S_FALSE;
@@ -995,7 +995,7 @@ EffectVec GraphicLoader::loadedEffects;
 Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool use_in_2d, const char* defines /* = NULL */, const char* model_path /* = NULL */, EffectDefault* defaults /* = NULL */, uint defaults_count /* = 0 */ )
 {
     // Erase extension
-    char fname[ MAX_FOPATH ];
+    char fname[MAX_FOPATH];
     Str::Copy( fname, effect_name );
     FileManager::EraseExtension( fname );
 
@@ -1004,7 +1004,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         defaults = NULL;
 
     // Try find already loaded effect
-    char loaded_fname[ MAX_FOPATH ];
+    char loaded_fname[MAX_FOPATH];
     Str::Copy( loaded_fname, fname );
     for( auto it = loadedEffects.begin(), end = loadedEffects.end(); it != end; ++it )
     {
@@ -1022,7 +1022,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     if( !fm.LoadFile( fname, PT_EFFECTS ) && model_path )
     {
         // After try load from file folder
-        char path[ MAX_FOPATH ];
+        char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, fname );
         fm.LoadFile( path, PT_DATA );
@@ -1031,7 +1031,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         return NULL;
 
     // Find already compiled effect in cache
-    char        cache_name[ MAX_FOPATH ];
+    char        cache_name[MAX_FOPATH];
     Str::Format( cache_name, "%s.fxc", fname );
     FileManager fm_cache;
     if( fm_cache.LoadFile( cache_name, PT_CACHE ) )
@@ -1046,7 +1046,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     // Load and cache effect
     if( !fm_cache.IsLoaded() )
     {
-        char*                buf = (char*) fm.GetBuf();
+        char*                buf = (char*)fm.GetBuf();
         uint                 size = fm.GetFsize();
 
         LPD3DXEFFECTCOMPILER ef_comp = NULL;
@@ -1055,7 +1055,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         LPD3DXBUFFER         errors31 = NULL;
         HRESULT              hr = 0, hr31 = 0;
 
-        includeParser.RootPath = (char*) model_path;
+        includeParser.RootPath = (char*)model_path;
         hr = D3DXCreateEffectCompiler( buf, size, NULL, &includeParser, 0, &ef_comp, &errors );
         if( FAILED( hr ) )
             hr31 = D3DXCreateEffectCompiler( buf, size, NULL, &includeParser, D3DXSHADER_USE_LEGACY_D3DX9_31_DLL, &ef_comp, &errors31 );
@@ -1157,19 +1157,19 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     effect->IsTextures = false;
     for( int i = 0; i < EFFECT_TEXTURES; i++ )
     {
-        char tex_name[ 32 ];
+        char tex_name[32];
         Str::Format( tex_name, "Texture%d", i );
-        effect->Textures[ i ] = dxeffect->GetParameterByName( NULL, tex_name );
-        if( effect->Textures[ i ] )
+        effect->Textures[i] = dxeffect->GetParameterByName( NULL, tex_name );
+        if( effect->Textures[i] )
             effect->IsTextures = true;
     }
     effect->IsScriptValues = false;
     for( int i = 0; i < EFFECT_SCRIPT_VALUES; i++ )
     {
-        char val_name[ 32 ];
+        char val_name[32];
         Str::Format( val_name, "EffectValue%d", i );
-        effect->ScriptValues[ i ] = dxeffect->GetParameterByName( NULL, val_name );
-        if( effect->ScriptValues[ i ] )
+        effect->ScriptValues[i] = dxeffect->GetParameterByName( NULL, val_name );
+        if( effect->ScriptValues[i] )
             effect->IsScriptValues = true;
     }
     effect->AnimPosProc = dxeffect->GetParameterByName( NULL, "AnimPosProc" );
@@ -1184,7 +1184,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         bool block_begin = false;
         for( uint d = 0; d < defaults_count; d++ )
         {
-            EffectDefault& def = defaults[ d ];
+            EffectDefault& def = defaults[d];
             EffectValue_   param = dxeffect->GetParameterByName( NULL, def.Name );
             if( !param )
                 continue;
@@ -1198,13 +1198,13 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             switch( def.Type )
             {
             case EffectDefault::String:             // pValue points to a null terminated ASCII string
-                dxeffect->SetString( param, (LPCSTR) def.Data );
+                dxeffect->SetString( param, (LPCSTR)def.Data );
                 break;
             case EffectDefault::Floats:             // pValue points to an array of floats - number of floats is NumBytes / sizeof(float)
-                dxeffect->SetFloatArray( param, (float*) def.Data, def.Size / sizeof( float ) );
+                dxeffect->SetFloatArray( param, (float*)def.Data, def.Size / sizeof( float ) );
                 break;
             case EffectDefault::Dword:              // pValue points to a uint
-                dxeffect->SetInt( param, *(uint*) def.Data );
+                dxeffect->SetInt( param, *(uint*)def.Data );
                 break;
             default:
                 break;
@@ -1229,7 +1229,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     if( !file.LoadFile( fname, PT_EFFECTS ) && model_path )
     {
         // Try load from model folder
-        char path[ MAX_FOPATH ];
+        char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, fname );
         file.LoadFile( path, PT_DATA );
@@ -1241,14 +1241,14 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     }
 
     // Make effect binary file name
-    char binary_fname[ MAX_FOPATH ] = { 0 };
+    char binary_fname[MAX_FOPATH] = { 0 };
     if( GLEW_ARB_get_program_binary )
     {
         Str::Copy( binary_fname, fname );
         FileManager::EraseExtension( binary_fname );
         if( defines )
         {
-            char binary_fname_defines[ MAX_FOPATH ];
+            char binary_fname_defines[MAX_FOPATH];
             Str::Copy( binary_fname_defines, defines );
             Str::Replacement( binary_fname_defines, '\t', ' ' );       // Tabs to spaces
             Str::Replacement( binary_fname_defines, ' ', ' ', ' ' );   // Multiple spaces to single
@@ -1311,7 +1311,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     // Load from text
     if( !file_binary.IsLoaded() )
     {
-        char* str = (char*) file.GetBuf();
+        char* str = (char*)file.GetBuf();
 
         // Get version
         char* ver = Str::Substring( str, "#version" );
@@ -1330,9 +1330,9 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         GL( vs = glCreateShader( GL_VERTEX_SHADER ) );
         GL( fs = glCreateShader( GL_FRAGMENT_SHADER ) );
         const char* vs_str[] = { ver ? ver : "", "\n", "#define VERTEX_SHADER\n", defines ? defines : "", "\n", str };
-        GL( glShaderSource( vs, 6, (const GLchar**) vs_str, NULL ) );
+        GL( glShaderSource( vs, 6, (const GLchar**)vs_str, NULL ) );
         const char* fs_str[] = { ver ? ver : "", "\n", "#define FRAGMENT_SHADER\n", defines ? defines : "", "\n", str };
-        GL( glShaderSource( fs, 6, (const GLchar**) fs_str, NULL ) );
+        GL( glShaderSource( fs, 6, (const GLchar**)fs_str, NULL ) );
 
         // Info parser
         struct ShaderInfo
@@ -1343,7 +1343,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
                 GL( glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &len ) );
                 if( len > 0 )
                 {
-                    GLchar* str = new GLchar[ len ];
+                    GLchar* str = new GLchar[len];
                     int     chars = 0;
                     glGetShaderInfoLog( shader, len, &chars, str );
                     WriteLog( "%s output:\n%s", shader_name, str );
@@ -1356,7 +1356,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
                 GL( glGetProgramiv( program, GL_INFO_LOG_LENGTH, &len ) );
                 if( len > 0 )
                 {
-                    GLchar* str = new GLchar[ len ];
+                    GLchar* str = new GLchar[len];
                     int     chars = 0;
                     glGetProgramInfoLog( program, len, &chars, str );
                     WriteLog( "Program info output:\n%s", str );
@@ -1443,12 +1443,12 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             GLenum   format;
             UCharVec buf;
             buf.resize( buf_size );
-            GL( glGetProgramBinary( program, buf_size, &length, &format, &buf[ 0 ] ) );
+            GL( glGetProgramBinary( program, buf_size, &length, &format, &buf[0] ) );
             Str::Append( fname, "b" );
             file_binary.SetBEUInt( SHADER_PROGRAM_BINARY_VERSION );
             file_binary.SetBEUInt( format );
             file_binary.SetBEUInt( length );
-            file_binary.SetData( &buf[ 0 ], length );
+            file_binary.SetData( &buf[0], length );
             if( !file_binary.SaveOutBufToFile( binary_fname, PT_CACHE ) )
                 WriteLogF( _FUNC_, " - Can't save effect<%s> in binary<%s>.\n", fname, binary_fname );
         }
@@ -1466,7 +1466,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     GLint passes;
     GL( passes = effect->SpriteBorder = glGetUniformLocation( program, "Passes" ) );
     if( passes != -1 )
-        glGetUniformiv( program, passes, (GLint*) &effect->Passes );
+        glGetUniformiv( program, passes, (GLint*)&effect->Passes );
 
     // Bind data
     GL( effect->ProjectionMatrix = glGetUniformLocation( program, "ProjectionMatrix" ) );
@@ -1512,23 +1512,23 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     effect->IsTextures = false;
     for( int i = 0; i < EFFECT_TEXTURES; i++ )
     {
-        char tex_name[ 32 ];
+        char tex_name[32];
         Str::Format( tex_name, "Texture%d", i );
-        GL( effect->Textures[ i ] = glGetUniformLocation( program, tex_name ) );
-        if( effect->Textures[ i ] != -1 )
+        GL( effect->Textures[i] = glGetUniformLocation( program, tex_name ) );
+        if( effect->Textures[i] != -1 )
         {
             effect->IsTextures = true;
             Str::Format( tex_name, "Texture%dSize", i );
-            GL( effect->TexturesSize[ i ] = glGetUniformLocation( program, tex_name ) );
+            GL( effect->TexturesSize[i] = glGetUniformLocation( program, tex_name ) );
         }
     }
     effect->IsScriptValues = false;
     for( int i = 0; i < EFFECT_SCRIPT_VALUES; i++ )
     {
-        char val_name[ 32 ];
+        char val_name[32];
         Str::Format( val_name, "EffectValue%d", i );
-        GL( effect->ScriptValues[ i ] = glGetUniformLocation( program, val_name ) );
-        if( effect->ScriptValues[ i ] != -1 )
+        GL( effect->ScriptValues[i] = glGetUniformLocation( program, val_name ) );
+        if( effect->ScriptValues[i] != -1 )
             effect->IsScriptValues = true;
     }
     GL( effect->AnimPosProc = glGetUniformLocation( program, "AnimPosProc" ) );
@@ -1544,7 +1544,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         bool something_binded = false;
         for( uint d = 0; d < defaults_count; d++ )
         {
-            EffectDefault& def = defaults[ d ];
+            EffectDefault& def = defaults[d];
 
             GLint          location = -1;
             GL( location = glGetUniformLocation( program, def.Name ) );
@@ -1556,11 +1556,11 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             case EffectDefault::String:
                 break;
             case EffectDefault::Floats:
-                GL( glUniform1fv( location, def.Size / sizeof( GLfloat ), (GLfloat*) def.Data ) );
+                GL( glUniform1fv( location, def.Size / sizeof( GLfloat ), (GLfloat*)def.Data ) );
                 something_binded = true;
                 break;
             case EffectDefault::Dword:
-                GL( glUniform1i( location, *(GLint*) def.Data ) );
+                GL( glUniform1i( location, *(GLint*)def.Data ) );
                 something_binded = true;
                 break;
             default:
@@ -1589,7 +1589,7 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
             double tick = Timer::AccurateTick();
             if( IS_EFFECT_VALUE( effect->Time ) )
             {
-                effect->TimeCurrent += (float) ( tick - effect->TimeLastTick );
+                effect->TimeCurrent += (float)( tick - effect->TimeLastTick );
                 effect->TimeLastTick = tick;
                 if( effect->TimeCurrent >= 120.0f )
                     effect->TimeCurrent = fmod( effect->TimeCurrent, 120.0f );
@@ -1600,7 +1600,7 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
             {
                 if( !Timer::IsGamePaused() )
                 {
-                    effect->TimeGameCurrent += (float) ( tick - effect->TimeGameLastTick ) / 1000.0f;
+                    effect->TimeGameCurrent += (float)( tick - effect->TimeGameLastTick ) / 1000.0f;
                     effect->TimeGameLastTick = tick;
                     if( effect->TimeGameCurrent >= 120.0f )
                         effect->TimeGameCurrent = fmod( effect->TimeGameCurrent, 120.0f );
@@ -1617,31 +1617,31 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
         if( effect->IsRandomEffect )
         {
             if( IS_EFFECT_VALUE( effect->Random1Effect ) )
-                SET_EFFECT_VALUE( effect, effect->Random1Effect, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random1Effect, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random2Effect ) )
-                SET_EFFECT_VALUE( effect, effect->Random2Effect, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random2Effect, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random3Effect ) )
-                SET_EFFECT_VALUE( effect, effect->Random3Effect, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random3Effect, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random4Effect ) )
-                SET_EFFECT_VALUE( effect, effect->Random4Effect, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random4Effect, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
         }
 
         if( effect->IsTextures )
         {
             for( int i = 0; i < EFFECT_TEXTURES; i++ )
             {
-                if( IS_EFFECT_VALUE( effect->Textures[ i ] ) )
+                if( IS_EFFECT_VALUE( effect->Textures[i] ) )
                 {
                     #ifdef FO_D3D
-                    effect->DXInstance->SetTexture( effect->Textures[ i ], textures && textures[ i ] ? textures[ i ]->Instance : NULL );
+                    effect->DXInstance->SetTexture( effect->Textures[i], textures && textures[i] ? textures[i]->Instance : NULL );
                     #else
-                    GLuint id = ( textures && textures[ i ] ? textures[ i ]->Id : 0 );
+                    GLuint id = ( textures && textures[i] ? textures[i]->Id : 0 );
                     GL( glActiveTexture( GL_TEXTURE2 + i ) );
                     GL( glBindTexture( GL_TEXTURE_2D, id ) );
                     GL( glActiveTexture( GL_TEXTURE0 ) );
-                    GL( glUniform1i( effect->Textures[ i ], 2 + i ) );
-                    if( effect->TexturesSize[ i ] != -1 && textures && textures[ i ] )
-                        GL( glUniform4fv( effect->TexturesSize[ i ], 1, textures[ i ]->SizeData ) );
+                    GL( glUniform1i( effect->Textures[i], 2 + i ) );
+                    if( effect->TexturesSize[i] != -1 && textures && textures[i] )
+                        GL( glUniform4fv( effect->TexturesSize[i], 1, textures[i]->SizeData ) );
                     #endif
                 }
             }
@@ -1650,8 +1650,8 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
         if( effect->IsScriptValues )
         {
             for( int i = 0; i < EFFECT_SCRIPT_VALUES; i++ )
-                if( IS_EFFECT_VALUE( effect->ScriptValues[ i ] ) )
-                    SET_EFFECT_VALUE( effect, effect->ScriptValues[ i ], GameOpt.EffectValues[ i ] );
+                if( IS_EFFECT_VALUE( effect->ScriptValues[i] ) )
+                    SET_EFFECT_VALUE( effect, effect->ScriptValues[i], GameOpt.EffectValues[i] );
         }
 
         if( effect->IsAnimPos )
@@ -1666,18 +1666,18 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
     else
     {
         if( IS_EFFECT_VALUE( effect->PassIndex ) )
-            SET_EFFECT_VALUE( effect, effect->Random1Pass, (float) pass );
+            SET_EFFECT_VALUE( effect, effect->Random1Pass, (float)pass );
 
         if( effect->IsRandomPass )
         {
             if( IS_EFFECT_VALUE( effect->Random1Pass ) )
-                SET_EFFECT_VALUE( effect, effect->Random1Pass, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random1Pass, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random2Pass ) )
-                SET_EFFECT_VALUE( effect, effect->Random2Pass, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random2Pass, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random3Pass ) )
-                SET_EFFECT_VALUE( effect, effect->Random3Pass, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random3Pass, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
             if( IS_EFFECT_VALUE( effect->Random4Pass ) )
-                SET_EFFECT_VALUE( effect, effect->Random4Pass, (float) ( (double) Random( 0, 2000000000 ) / 2000000000.0 ) );
+                SET_EFFECT_VALUE( effect, effect->Random4Pass, (float)( (double)Random( 0, 2000000000 ) / 2000000000.0 ) );
         }
     }
 }

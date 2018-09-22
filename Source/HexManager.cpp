@@ -142,26 +142,26 @@ HexManager::HexManager()
     cursorXPic = NULL;
     cursorX = 0;
     cursorY = 0;
-    memzero( (void*) &AutoScroll, sizeof( AutoScroll ) );
+    memzero( (void*)&AutoScroll, sizeof( AutoScroll ) );
     requestRebuildLight = false;
     lightPointsCount = 0;
     SpritesCanDrawMap = false;
-    dayTime[ 0 ] = 300;
-    dayTime[ 1 ] = 600;
-    dayTime[ 2 ] = 1140;
-    dayTime[ 3 ] = 1380;
-    dayColor[ 0 ] = 18;
-    dayColor[ 1 ] = 128;
-    dayColor[ 2 ] = 103;
-    dayColor[ 3 ] = 51;
-    dayColor[ 4 ] = 18;
-    dayColor[ 5 ] = 128;
-    dayColor[ 6 ] = 95;
-    dayColor[ 7 ] = 40;
-    dayColor[ 8 ] = 53;
-    dayColor[ 9 ] = 128;
-    dayColor[ 10 ] = 86;
-    dayColor[ 11 ] = 29;
+    dayTime[0] = 300;
+    dayTime[1] = 600;
+    dayTime[2] = 1140;
+    dayTime[3] = 1380;
+    dayColor[0] = 18;
+    dayColor[1] = 128;
+    dayColor[2] = 103;
+    dayColor[3] = 51;
+    dayColor[4] = 18;
+    dayColor[5] = 128;
+    dayColor[6] = 95;
+    dayColor[7] = 40;
+    dayColor[8] = 53;
+    dayColor[9] = 128;
+    dayColor[10] = 86;
+    dayColor[11] = 29;
     picRainFallName = "art/misc/rain_fall.fofrm";
     picRainDropName = "art/misc/rain_drop.fofrm";
     picRainFall = NULL;
@@ -198,7 +198,7 @@ bool HexManager::Init()
     cursorX = 0;
     cursorY = 0;
     chosenId = 0;
-    memzero( (void*) &AutoScroll, sizeof( AutoScroll ) );
+    memzero( (void*)&AutoScroll, sizeof( AutoScroll ) );
     maxHexX = 0;
     maxHexY = 0;
 
@@ -223,8 +223,8 @@ void HexManager::Finish()
         SAFEDEL( *it );
     rainData.clear();
 
-    for( uint i = 0, j = (uint) hexItems.size(); i < j; i++ )
-        hexItems[ i ]->Release();
+    for( uint i = 0, j = (uint)hexItems.size(); i < j; i++ )
+        hexItems[i]->Release();
     hexItems.clear();
 
     for( int hx = 0; hx < maxHexX; hx++ )
@@ -243,9 +243,9 @@ void HexManager::ReloadSprites()
     curDataPrefix = GameOpt.MapDataPrefix.c_std_str();
 
     // Must be valid
-    picHex[ 0 ] = SprMngr.LoadAnimation( ( curDataPrefix + "hex1.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picHex[ 1 ] = SprMngr.LoadAnimation( ( curDataPrefix + "hex2.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picHex[ 2 ] = SprMngr.LoadAnimation( ( curDataPrefix + "hex3.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
+    picHex[0] = SprMngr.LoadAnimation( ( curDataPrefix + "hex1.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
+    picHex[1] = SprMngr.LoadAnimation( ( curDataPrefix + "hex2.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
+    picHex[2] = SprMngr.LoadAnimation( ( curDataPrefix + "hex3.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
     cursorPrePic = SprMngr.LoadAnimation( ( curDataPrefix + "move_pre.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
     cursorPostPic = SprMngr.LoadAnimation( ( curDataPrefix + "move_post.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
     cursorXPic = SprMngr.LoadAnimation( ( curDataPrefix + "move_x.png" ).c_str(), PT_DATA, ANIM_USE_DUMMY );
@@ -413,7 +413,7 @@ void HexManager::FinishItem( uint id, bool is_deleted )
         item->SetHideAnim();
 }
 
-auto HexManager::DeleteItem( ItemHex * item, bool with_delete /* = true */ )->ItemHexVec::iterator
+auto HexManager::DeleteItem( ItemHex* item, bool with_delete /* = true */ )->ItemHexVec::iterator
 {
     ushort pid = item->GetProtoId();
     ushort hx = item->GetHexX();
@@ -554,10 +554,10 @@ void HexManager::GetItems( ushort hx, ushort hy, ItemHexVec& items )
         return;
 
     Field& f = GetField( hx, hy );
-    for( uint i = 0, j = (uint) f.Items.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)f.Items.size(); i < j; i++ )
     {
-        if( std::find( items.begin(), items.end(), f.Items[ i ] ) == items.end() )
-            items.push_back( f.Items[ i ] );
+        if( std::find( items.begin(), items.end(), f.Items[i] ) == items.end() )
+            items.push_back( f.Items[i] );
     }
 }
 
@@ -571,13 +571,13 @@ Rect HexManager::GetRectForText( ushort hx, ushort hy )
     if( f.Crit )
         return f.Crit->GetTextRect();
     else if( f.DeadCrits.size() )
-        return f.DeadCrits[ 0 ]->GetTextRect();
+        return f.DeadCrits[0]->GetTextRect();
 
     // Items
     Rect r( 0, 0, 0, 0 );
-    for( uint i = 0, j = (uint) f.Items.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)f.Items.size(); i < j; i++ )
     {
-        SpriteInfo* si = SprMngr.GetSpriteInfo( f.Items[ i ]->SprId );
+        SpriteInfo* si = SprMngr.GetSpriteInfo( f.Items[i]->SprId );
         if( si )
         {
             int w = si->Width - si->OffsX;
@@ -673,7 +673,7 @@ void HexManager::ProcessRain()
         else
         {
             cur_drop->DropCnt++;
-            if( (uint) cur_drop->DropCnt >= picRainDrop->GetCnt() )
+            if( (uint)cur_drop->DropCnt >= picRainDrop->GetCnt() )
             {
                 cur_drop->CurSprId = picRainFall->GetCurSprId();
                 cur_drop->DropCnt = -1;
@@ -747,10 +747,10 @@ void HexManager::SetCursorPos( int x, int y, bool show_steps, bool refresh )
                     if( !FindPath( chosen, cx, cy, hx, hy, steps, -1 ) )
                         drawCursorX = -1;
                     else if( !is_tb )
-                        drawCursorX = (int) ( show_steps ? steps.size() : 0 );
+                        drawCursorX = (int)( show_steps ? steps.size() : 0 );
                     else
                     {
-                        drawCursorX = (int) steps.size();
+                        drawCursorX = (int)steps.size();
                         if( !show_steps && drawCursorX > chosen->GetAllAp() )
                             drawCursorX = -1;
                     }
@@ -780,20 +780,20 @@ void HexManager::DrawCursor( uint spr_id )
     if( !si )
         return;
     SprMngr.DrawSpriteSize( spr_id,
-                            (int) ( (float) ( cursorX + GameOpt.ScrOx ) / GameOpt.SpritesZoom ),
-                            (int) ( (float) ( cursorY + GameOpt.ScrOy ) / GameOpt.SpritesZoom ),
-                            (float) si->Width / GameOpt.SpritesZoom,
-                            (float) si->Height / GameOpt.SpritesZoom, true, false );
+                            (int)( (float)( cursorX + GameOpt.ScrOx ) / GameOpt.SpritesZoom ),
+                            (int)( (float)( cursorY + GameOpt.ScrOy ) / GameOpt.SpritesZoom ),
+                            (float)si->Width / GameOpt.SpritesZoom,
+                            (float)si->Height / GameOpt.SpritesZoom, true, false );
 }
 
 void HexManager::DrawCursor( const char* text )
 {
     if( GameOpt.HideCursor || !isShowCursor )
         return;
-    int x = (int) ( (float) ( cursorX + GameOpt.ScrOx ) / GameOpt.SpritesZoom );
-    int y = (int) ( (float) ( cursorY + GameOpt.ScrOy ) / GameOpt.SpritesZoom );
-    SprMngr.DrawStr( Rect( x, y, (int) ( (float) ( x + HEX_W ) / GameOpt.SpritesZoom ),
-                           (int) ( (float) ( y + HEX_REAL_H ) / GameOpt.SpritesZoom ) ), text, FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
+    int x = (int)( (float)( cursorX + GameOpt.ScrOx ) / GameOpt.SpritesZoom );
+    int y = (int)( (float)( cursorY + GameOpt.ScrOy ) / GameOpt.SpritesZoom );
+    SprMngr.DrawStr( Rect( x, y, (int)( (float)( x + HEX_W ) / GameOpt.SpritesZoom ),
+                           (int)( (float)( y + HEX_REAL_H ) / GameOpt.SpritesZoom ) ), text, FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
 }
 
 void HexManager::RebuildMap( int rx, int ry )
@@ -817,16 +817,16 @@ void HexManager::RebuildMap( int rx, int ry )
         {
             vpos = y2 + tx;
 
-            int hx = viewField[ vpos ].HexX;
-            int hy = viewField[ vpos ].HexY;
+            int hx = viewField[vpos].HexX;
+            int hy = viewField[vpos].HexY;
 
             if( hx < 0 || hy < 0 || hx >= maxHexX || hy >= maxHexY )
                 continue;
 
             GetHexToDraw( hx, hy ) = true;
             Field& f = GetField( hx, hy );
-            f.ScrX = viewField[ vpos ].ScrX;
-            f.ScrY = viewField[ vpos ].ScrY;
+            f.ScrX = viewField[vpos].ScrX;
+            f.ScrY = viewField[vpos].ScrY;
         }
         y2 += wVisible;
     }
@@ -856,8 +856,8 @@ void HexManager::RebuildMap( int rx, int ry )
         for( int x = 0; x < wVisible; x++ )
         {
             vpos = y2 + x;
-            int ny = viewField[ vpos ].HexY;
-            int nx = viewField[ vpos ].HexX;
+            int ny = viewField[vpos].HexY;
+            int nx = viewField[vpos].HexX;
             if( ny < 0 || nx < 0 || nx >= maxHexX || ny >= maxHexY )
                 continue;
 
@@ -887,7 +887,7 @@ void HexManager::RebuildMap( int rx, int ry )
                 bool thru = ( vpos == lt_pos || vpos == lb_pos || vpos == rb_pos || vpos == rt_pos ||
                               vpos == lt_pos2 || vpos == lb_pos2 || vpos == rb_pos2 || vpos == rt_pos2 );
 
-                uint        spr_id = ( thru ? picHex[ 1 ]->GetCurSprId() : picHex[ 0 ]->GetCurSprId() );
+                uint        spr_id = ( thru ? picHex[1]->GetCurSprId() : picHex[0]->GetCurSprId() );
                 SpriteInfo* si = SprMngr.GetSpriteInfo( spr_id );
                 mainTree.AddSprite( DRAW_ORDER_HEX_GRID, nx, ny, 0, f.ScrX + ( si ? si->Width / 2 : 0 ), f.ScrY + ( si ? si->Height : 0 ), spr_id,
                                     NULL, NULL, NULL, NULL, NULL, NULL );
@@ -1058,7 +1058,7 @@ void HexManager::RebuildMap( int rx, int ry )
 #define MAX_LIGHT_VALUE      ( 10000 )
 #define MAX_LIGHT_HEX        ( 200 )
 #define MAX_LIGHT_ALPHA      ( 100 )
-#define LIGHT_SOFT_LENGTH    ( HEX_W )
+#define LIGHT_SOFT_LENGTH    (HEX_W)
 int LightCapacity = 0;
 int LightMinHx = 0;
 int LightMaxHx = 0;
@@ -1100,8 +1100,8 @@ void HexManager::MarkLightEndNeighbor( ushort hx, ushort hy, bool north_south, u
             int    lg_full = light_full * LightProcentG / 100;
             int    lb_full = light_full * LightProcentB / 100;
             int    lr_self = int(*p) + light_self * LightProcentR / 100;
-            int    lg_self = int( *( p + 1 ) ) + light_self * LightProcentG / 100;
-            int    lb_self = int( *( p + 2 ) ) + light_self * LightProcentB / 100;
+            int    lg_self = int(*( p + 1 ) ) + light_self * LightProcentG / 100;
+            int    lb_self = int(*( p + 2 ) ) + light_self * LightProcentB / 100;
             if( lr_self > lr_full )
                 lr_self = lr_full;
             if( lg_self > lg_full )
@@ -1188,8 +1188,8 @@ void HexManager::TraceLight( ushort from_hx, ushort from_hy, ushort& hx, ushort&
     GetStepsXY( base_sx, base_sy, from_hx, from_hy, hx, hy );
     float sx1f = base_sx;
     float sy1f = base_sy;
-    float curx1f = (float) from_hx;
-    float cury1f = (float) from_hy;
+    float curx1f = (float)from_hx;
+    float cury1f = (float)from_hy;
     int   curx1i = from_hx;
     int   cury1i = from_hy;
     int   old_curx1i = curx1i;
@@ -1207,11 +1207,11 @@ void HexManager::TraceLight( ushort from_hx, ushort from_hy, ushort& hx, ushort&
         old_cury1i = cury1i;
 
         // Casts
-        curx1i = (int) curx1f;
-        if( curx1f - (float) curx1i >= 0.5f )
+        curx1i = (int)curx1f;
+        if( curx1f - (float)curx1i >= 0.5f )
             curx1i++;
-        cury1i = (int) cury1f;
-        if( cury1f - (float) cury1i >= 0.5f )
+        cury1i = (int)cury1f;
+        if( cury1f - (float)cury1i >= 0.5f )
             cury1i++;
         bool can_mark = ( curx1i >= LightMinHx && curx1i <= LightMaxHx && cury1i >= LightMinHy && cury1i <= LightMaxHy );
 
@@ -1332,10 +1332,10 @@ void HexManager::ParseLightTriangleFan( LightSource& ls )
     lightPointsCount++;
     if( lightPoints.size() < lightPointsCount )
         lightPoints.push_back( PointVec() );
-    PointVec& points = lightPoints[ lightPointsCount - 1 ];
+    PointVec& points = lightPoints[lightPointsCount - 1];
     points.clear();
     points.reserve( 3 + dist * DIRS_COUNT );
-    points.push_back( PrepPoint( base_x, base_y, color, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) ); // Center of light
+    points.push_back( PrepPoint( base_x, base_y, color, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );   // Center of light
     color = COLOR_ARGB( 0, ( color >> 16 ) & 0xFF, ( color >> 8 ) & 0xFF, color & 0xFF );
 
     int    hx_far = hx, hy_far = hy;
@@ -1376,7 +1376,7 @@ void HexManager::ParseLightTriangleFan( LightSource& ls )
 
             if( hx_ != last_hx || hy_ != last_hy )
             {
-                if( (int) hx_ != hx_far || (int) hy_ != hy_far )
+                if( (int)hx_ != hx_far || (int)hy_ != hy_far )
                 {
                     int a = alpha - DistGame( hx, hy, hx_, hy_ ) * alpha / dist;
                     a = CLAMP( a, 0, alpha );
@@ -1386,29 +1386,29 @@ void HexManager::ParseLightTriangleFan( LightSource& ls )
                     color = COLOR_ARGB( 0, ( color >> 16 ) & 0xFF, ( color >> 8 ) & 0xFF, color & 0xFF );
                 int x, y;
                 GetHexInterval( hx, hy, hx_, hy_, x, y );
-                points.push_back( PrepPoint( base_x + x, base_y + y, color, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) );
+                points.push_back( PrepPoint( base_x + x, base_y + y, color, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );
                 last_hx = hx_;
                 last_hy = hy_;
             }
         }
     }
 
-    for( uint i = 1, j = (uint) points.size(); i < j; i++ )
+    for( uint i = 1, j = (uint)points.size(); i < j; i++ )
     {
-        PrepPoint& cur = points[ i ];
-        PrepPoint& next = points[ i >= points.size() - 1 ? 1 : i + 1 ];
-        if( DistSqrt( cur.PointX, cur.PointY, next.PointX, next.PointY ) > (uint) LIGHT_SOFT_LENGTH )
+        PrepPoint& cur = points[i];
+        PrepPoint& next = points[i >= points.size() - 1 ? 1 : i + 1];
+        if( DistSqrt( cur.PointX, cur.PointY, next.PointX, next.PointY ) > (uint)LIGHT_SOFT_LENGTH )
         {
             bool dist_comp = ( DistSqrt( base_x, base_y, cur.PointX, cur.PointY ) > DistSqrt( base_x, base_y, next.PointX, next.PointY ) );
-            lightSoftPoints.push_back( PrepPoint( next.PointX, next.PointY, next.PointColor, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) );
-            lightSoftPoints.push_back( PrepPoint( cur.PointX, cur.PointY, cur.PointColor, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) );
-            float x = (float) ( dist_comp ? next.PointX - cur.PointX : cur.PointX - next.PointX );
-            float y = (float) ( dist_comp ? next.PointY - cur.PointY : cur.PointY - next.PointY );
+            lightSoftPoints.push_back( PrepPoint( next.PointX, next.PointY, next.PointColor, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );
+            lightSoftPoints.push_back( PrepPoint( cur.PointX, cur.PointY, cur.PointColor, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );
+            float x = (float)( dist_comp ? next.PointX - cur.PointX : cur.PointX - next.PointX );
+            float y = (float)( dist_comp ? next.PointY - cur.PointY : cur.PointY - next.PointY );
             ChangeStepsXY( x, y, dist_comp ? -2.5f : 2.5f );
             if( dist_comp )
-                lightSoftPoints.push_back( PrepPoint( cur.PointX + int(x), cur.PointY + int(y), cur.PointColor, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) );
+                lightSoftPoints.push_back( PrepPoint( cur.PointX + int(x), cur.PointY + int(y), cur.PointColor, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );
             else
-                lightSoftPoints.push_back( PrepPoint( next.PointX + int(x), next.PointY + int(y), next.PointColor, (short*) &GameOpt.ScrOx, (short*) &GameOpt.ScrOy ) );
+                lightSoftPoints.push_back( PrepPoint( next.PointX + int(x), next.PointY + int(y), next.PointColor, (short*)&GameOpt.ScrOx, (short*)&GameOpt.ScrOy ) );
         }
     }
 }
@@ -1423,10 +1423,10 @@ void HexManager::RealRebuildLight()
     ClearHexLight();
     CollectLightSources();
 
-    LightMinHx = viewField[ 0 ].HexX;
-    LightMaxHx = viewField[ hVisible * wVisible - 1 ].HexX;
-    LightMinHy = viewField[ wVisible - 1 ].HexY;
-    LightMaxHy = viewField[ hVisible * wVisible - wVisible ].HexY;
+    LightMinHx = viewField[0].HexX;
+    LightMaxHx = viewField[hVisible * wVisible - 1].HexX;
+    LightMinHy = viewField[wVisible - 1].HexY;
+    LightMaxHy = viewField[hVisible * wVisible - wVisible].HexY;
 
     for( auto it = lightSources.begin(), end = lightSources.end(); it != end; ++it )
     {
@@ -1528,8 +1528,8 @@ void HexManager::RebuildTiles()
             vpos = y2 + x;
             if( vpos < 0 || vpos >= wVisible * hVisible )
                 continue;
-            int hx = viewField[ vpos ].HexX;
-            int hy = viewField[ vpos ].HexY;
+            int hx = viewField[vpos].HexX;
+            int hy = viewField[vpos].HexY;
 
             if( hy < 0 || hx < 0 || hy >= maxHexY || hx >= maxHexX )
                 continue;
@@ -1538,9 +1538,9 @@ void HexManager::RebuildTiles()
             if( f.Tiles.empty() )
                 continue;
 
-            for( uint i = 0, j = (uint) f.Tiles.size(); i < j; i++ )
+            for( uint i = 0, j = (uint)f.Tiles.size(); i < j; i++ )
             {
-                Field::Tile& tile = f.Tiles[ i ];
+                Field::Tile& tile = f.Tiles[i];
                 uint         spr_id = tile.Anim->GetSprId( 0 );
                 int          ox = f.ScrX + tile.OffsX + TILE_OX;
                 int          oy = f.ScrY + tile.OffsY + TILE_OY;
@@ -1549,7 +1549,7 @@ void HexManager::RebuildTiles()
                 #ifdef FONLINE_MAPPER
                 {
                     ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
-                    tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, tiles[ i ].IsSelected ? (uchar*) &SELECT_ALPHA : NULL, &Effect::Tile, NULL );
+                    tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, tiles[i].IsSelected ? (uchar*)&SELECT_ALPHA : NULL, &Effect::Tile, NULL );
                 }
                 #else
                     tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, NULL, &Effect::Tile, NULL );
@@ -1578,8 +1578,8 @@ void HexManager::RebuildRoof()
         for( int x = 0; x < wVisible; x++ )
         {
             vpos = y2 + x;
-            int hx = viewField[ vpos ].HexX;
-            int hy = viewField[ vpos ].HexY;
+            int hx = viewField[vpos].HexX;
+            int hy = viewField[vpos].HexY;
 
             if( hy < 0 || hx < 0 || hy >= maxHexY || hx >= maxHexX )
                 continue;
@@ -1590,9 +1590,9 @@ void HexManager::RebuildRoof()
 
             if( !roofSkip || roofSkip != f.RoofNum )
             {
-                for( uint i = 0, j = (uint) f.Roofs.size(); i < j; i++ )
+                for( uint i = 0, j = (uint)f.Roofs.size(); i < j; i++ )
                 {
-                    Field::Tile& roof = f.Roofs[ i ];
+                    Field::Tile& roof = f.Roofs[i];
                     uint         spr_id = roof.Anim->GetSprId( 0 );
                     int          ox = f.ScrX + roof.OffsX + ROOF_OX;
                     int          oy = f.ScrY + roof.OffsY + ROOF_OY;
@@ -1601,7 +1601,7 @@ void HexManager::RebuildRoof()
                     #ifdef FONLINE_MAPPER
                     {
                         ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
-                        roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, roofs[ i ].IsSelected ? (uchar*) &SELECT_ALPHA : &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
+                        roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, roofs[i].IsSelected ? (uchar*)&SELECT_ALPHA : &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
                     }
                     #else
                         roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
@@ -1737,18 +1737,18 @@ bool HexManager::ResizeField( ushort w, ushort h )
     if( !w || !h )
         return true;
 
-    hexField = new Field[ w * h ];
+    hexField = new Field[w * h];
     if( !hexField )
         return false;
-    hexToDraw = new bool[ w * h ];
+    hexToDraw = new bool[w * h];
     if( !hexToDraw )
         return false;
     memzero( hexToDraw, w * h * sizeof( bool ) );
-    hexTrack = new char[ w * h ];
+    hexTrack = new char[w * h];
     if( !hexTrack )
         return false;
     memzero( hexTrack, w * h * sizeof( char ) );
-    hexLight = new uchar[ w * h * 3 ];
+    hexLight = new uchar[w * h * 3];
     if( !hexLight )
         return false;
     memzero( hexLight, w * h * 3 * sizeof( uchar ) );
@@ -1795,7 +1795,7 @@ void HexManager::InitView( int cx, int cy )
         int y2 = 0;
         int vpos;
         int hx, hy;
-        int wx = (int) ( MODE_WIDTH * GameOpt.SpritesZoom );
+        int wx = (int)( MODE_WIDTH * GameOpt.SpritesZoom );
 
         for( int j = 0; j < hVisible; j++ )
         {
@@ -1806,12 +1806,12 @@ void HexManager::InitView( int cx, int cy )
             for( int i = 0; i < wVisible; i++ )
             {
                 vpos = y2 + i;
-                viewField[ vpos ].ScrX = wx - x;
-                viewField[ vpos ].ScrY = y;
-                viewField[ vpos ].ScrXf = (float) viewField[ vpos ].ScrX;
-                viewField[ vpos ].ScrYf = (float) viewField[ vpos ].ScrY;
-                viewField[ vpos ].HexX = hx;
-                viewField[ vpos ].HexY = hy;
+                viewField[vpos].ScrX = wx - x;
+                viewField[vpos].ScrY = y;
+                viewField[vpos].ScrXf = (float)viewField[vpos].ScrX;
+                viewField[vpos].ScrYf = (float)viewField[vpos].ScrY;
+                viewField[vpos].HexX = hx;
+                viewField[vpos].HexY = hy;
 
                 if( hx & 1 )
                     hy--;
@@ -1835,7 +1835,7 @@ void HexManager::InitView( int cx, int cy )
         int xa = -HEX_W * wRight;
         int xb = -HEX_W * wRight - HEX_W / 2;
         int y = -HEX_LINE_H * hTop;
-        int wx = (int) ( MODE_WIDTH * GameOpt.SpritesZoom );
+        int wx = (int)( MODE_WIDTH * GameOpt.SpritesZoom );
         int hx, hy;
 
         // Initialize field
@@ -1848,12 +1848,12 @@ void HexManager::InitView( int cx, int cy )
             for( int i = 0; i < wVisible; i++ )
             {
                 vpos = y2 + i;
-                viewField[ vpos ].ScrX = wx - x;
-                viewField[ vpos ].ScrY = y;
-                viewField[ vpos ].ScrXf = (float) viewField[ vpos ].ScrX;
-                viewField[ vpos ].ScrYf = (float) viewField[ vpos ].ScrY;
-                viewField[ vpos ].HexX = hx;
-                viewField[ vpos ].HexY = hy;
+                viewField[vpos].ScrX = wx - x;
+                viewField[vpos].ScrY = y;
+                viewField[vpos].ScrXf = (float)viewField[vpos].ScrX;
+                viewField[vpos].ScrYf = (float)viewField[vpos].ScrY;
+                viewField[vpos].HexX = hx;
+                viewField[vpos].HexY = hy;
 
                 hx++;
                 hy--;
@@ -1876,7 +1876,7 @@ void HexManager::ResizeView()
     hVisible = VIEW_HEIGHT + hTop + hBottom;
     wVisible = VIEW_WIDTH + wLeft + wRight;
     SAFEDELA( viewField );
-    viewField = new ViewField[ hVisible * wVisible ];
+    viewField = new ViewField[hVisible * wVisible];
 }
 
 void HexManager::ChangeZoom( int zoom )
@@ -1908,7 +1908,7 @@ void HexManager::ChangeZoom( int zoom )
     if( zoom || GameOpt.SpritesZoom < 1.0f )
     {
         float old_zoom = GameOpt.SpritesZoom;
-        float w = (float) ( MODE_WIDTH / HEX_W + ( ( MODE_WIDTH % HEX_W ) ? 1 : 0 ) );
+        float w = (float)( MODE_WIDTH / HEX_W + ( ( MODE_WIDTH % HEX_W ) ? 1 : 0 ) );
         GameOpt.SpritesZoom = ( w * GameOpt.SpritesZoom + ( zoom >= 0 ? 2.0f : -2.0f ) ) / w;
 
         if( GameOpt.SpritesZoom < max( GameOpt.SpritesZoomMin, MIN_ZOOM ) || GameOpt.SpritesZoom > min( GameOpt.SpritesZoomMax, MAX_ZOOM ) )
@@ -1937,7 +1937,7 @@ void HexManager::GetScreenHexes( int& sx, int& sy )
 
 void HexManager::GetHexCurrentPosition( ushort hx, ushort hy, int& x, int& y )
 {
-    ViewField& center_hex = viewField[ hVisible / 2 * wVisible + wVisible / 2 ];
+    ViewField& center_hex = viewField[hVisible / 2 * wVisible + wVisible / 2];
     int        center_hx = center_hex.HexX;
     int        center_hy = center_hex.HexY;
 
@@ -1986,7 +1986,7 @@ void HexManager::DrawMap()
 
     // Light
     for( uint i = 0; i < lightPointsCount; i++ )
-        SprMngr.DrawPoints( lightPoints[ i ], PRIMITIVE_TRIANGLEFAN, &GameOpt.SpritesZoom );
+        SprMngr.DrawPoints( lightPoints[i], PRIMITIVE_TRIANGLEFAN, &GameOpt.SpritesZoom );
     SprMngr.DrawPoints( lightSoftPoints, PRIMITIVE_TRIANGLELIST, &GameOpt.SpritesZoom );
 
     // Cursor flat
@@ -2045,7 +2045,7 @@ bool HexManager::Scroll()
         static uint last_tick = tick;
         if( tick - last_tick < GameOpt.ScrollDelay / 2 )
             return false;
-        float time_k = (float) ( tick - last_tick ) / (float) GameOpt.ScrollDelay;
+        float time_k = (float)( tick - last_tick ) / (float)GameOpt.ScrollDelay;
         last_tick = tick;
     }
 
@@ -2073,27 +2073,27 @@ bool HexManager::Scroll()
     {
         AutoScroll.OffsXStep += AutoScroll.OffsX * AutoScroll.Speed * time_k;
         AutoScroll.OffsYStep += AutoScroll.OffsY * AutoScroll.Speed * time_k;
-        int xscroll = (int) AutoScroll.OffsXStep;
-        int yscroll = (int) AutoScroll.OffsYStep;
+        int xscroll = (int)AutoScroll.OffsXStep;
+        int yscroll = (int)AutoScroll.OffsYStep;
         if( xscroll > SCROLL_OX )
         {
             xscroll = SCROLL_OX;
-            AutoScroll.OffsXStep = (double) SCROLL_OX;
+            AutoScroll.OffsXStep = (double)SCROLL_OX;
         }
         if( xscroll < -SCROLL_OX )
         {
             xscroll = -SCROLL_OX;
-            AutoScroll.OffsXStep = -(double) SCROLL_OX;
+            AutoScroll.OffsXStep = -(double)SCROLL_OX;
         }
         if( yscroll > SCROLL_OY )
         {
             yscroll = SCROLL_OY;
-            AutoScroll.OffsYStep = (double) SCROLL_OY;
+            AutoScroll.OffsYStep = (double)SCROLL_OY;
         }
         if( yscroll < -SCROLL_OY )
         {
             yscroll = -SCROLL_OY;
-            AutoScroll.OffsYStep = -(double) SCROLL_OY;
+            AutoScroll.OffsYStep = -(double)SCROLL_OY;
         }
 
         AutoScroll.OffsX -= xscroll;
@@ -2102,7 +2102,7 @@ bool HexManager::Scroll()
         AutoScroll.OffsYStep -= yscroll;
         if( !xscroll && !yscroll )
             return false;
-        if( !DistSqrt( 0, 0, (int) AutoScroll.OffsX, (int) AutoScroll.OffsY ) )
+        if( !DistSqrt( 0, 0, (int)AutoScroll.OffsX, (int)AutoScroll.OffsY ) )
             AutoScroll.Active = false;
 
         scr_ox += xscroll;
@@ -2127,8 +2127,8 @@ bool HexManager::Scroll()
         if( !xscroll && !yscroll )
             return false;
 
-        scr_ox += (int) ( xscroll * GameOpt.ScrollStep * GameOpt.SpritesZoom * time_k );
-        scr_oy += (int) ( yscroll * ( GameOpt.ScrollStep * SCROLL_OY / SCROLL_OX ) * GameOpt.SpritesZoom * time_k );
+        scr_ox += (int)( xscroll * GameOpt.ScrollStep * GameOpt.SpritesZoom * time_k );
+        scr_oy += (int)( yscroll * ( GameOpt.ScrollStep * SCROLL_OY / SCROLL_OX ) * GameOpt.SpritesZoom * time_k );
     }
 
     if( GameOpt.ScrollCheck )
@@ -2197,8 +2197,8 @@ bool HexManager::Scroll()
     {
         int vpos1 = 5 * wVisible + 4;
         int vpos2 = ( 5 + ymod ) * wVisible + 4 + xmod;
-        int hx = screenHexX + ( viewField[ vpos2 ].HexX - viewField[ vpos1 ].HexX );
-        int hy = screenHexY + ( viewField[ vpos2 ].HexY - viewField[ vpos1 ].HexY );
+        int hx = screenHexX + ( viewField[vpos2].HexX - viewField[vpos1].HexX );
+        int hy = screenHexY + ( viewField[vpos2].HexY - viewField[vpos1].HexY );
         RebuildMap( hx, hy );
 
         if( GameOpt.ScrollCheck )
@@ -2223,17 +2223,17 @@ bool HexManager::Scroll()
     return true;
 }
 
-bool HexManager::ScrollCheckPos( int(&positions)[ 4 ], int dir1, int dir2 )
+bool HexManager::ScrollCheckPos( int(&positions)[4], int dir1, int dir2 )
 {
     int max_pos = wVisible * hVisible;
     for( int i = 0; i < 4; i++ )
     {
-        int pos = positions[ i ];
+        int pos = positions[i];
         if( pos < 0 || pos >= max_pos )
             return true;
 
-        ushort hx = viewField[ pos ].HexX;
-        ushort hy = viewField[ pos ].HexY;
+        ushort hx = viewField[pos].HexX;
+        ushort hy = viewField[pos].HexY;
         if( hx >= maxHexX || hy >= maxHexY )
             return true;
 
@@ -2252,14 +2252,14 @@ bool HexManager::ScrollCheckPos( int(&positions)[ 4 ], int dir1, int dir2 )
 
 bool HexManager::ScrollCheck( int xmod, int ymod )
 {
-    int positions_left[ 4 ] =
+    int positions_left[4] =
     {
         hTop* wVisible + wRight + VIEW_WIDTH,                            // Left top
         ( hTop + VIEW_HEIGHT - 1 ) * wVisible + wRight + VIEW_WIDTH,     // Left bottom
         ( hTop + 1 ) * wVisible + wRight + VIEW_WIDTH,                   // Left top 2
         ( hTop + VIEW_HEIGHT - 1 - 1 ) * wVisible + wRight + VIEW_WIDTH, // Left bottom 2
     };
-    int positions_right[ 4 ] =
+    int positions_right[4] =
     {
         ( hTop + VIEW_HEIGHT - 1 ) * wVisible + wRight + 1,            // Right bottom
         hTop * wVisible + wRight + 1,                                  // Right top
@@ -2267,10 +2267,10 @@ bool HexManager::ScrollCheck( int xmod, int ymod )
         ( hTop + 1 ) * wVisible + wRight + 1,                          // Right top 2
     };
 
-    int dirs[ 8 ] = { 0, 5, 2, 3, 4, -1, 1, -1 };                      // Hexagonal
+    int dirs[8] = { 0, 5, 2, 3, 4, -1, 1, -1 };                        // Hexagonal
     if( !GameOpt.MapHexagonal )
-        dirs[ 0 ] = 7, dirs[ 1 ] = -1, dirs[ 2 ] = 3, dirs[ 3 ] = -1,
-        dirs[ 4 ] = 5, dirs[ 5 ] = -1, dirs[ 6 ] = 1, dirs[ 7 ] = -1;  // Square
+        dirs[0] = 7, dirs[1] = -1, dirs[2] = 3, dirs[3] = -1,
+        dirs[4] = 5, dirs[5] = -1, dirs[6] = 1, dirs[7] = -1;          // Square
 
     if( GameOpt.MapHexagonal )
     {
@@ -2299,9 +2299,9 @@ bool HexManager::ScrollCheck( int xmod, int ymod )
     if( GameOpt.SpritesZoom != 1.0f )
     {
         for( int i = 0; i < 4; i++ )
-            positions_left[ i ]--;
+            positions_left[i]--;
         for( int i = 0; i < 4; i++ )
-            positions_right[ i ]++;
+            positions_right[i]++;
 
         if( GameOpt.MapHexagonal )
         {
@@ -2590,8 +2590,8 @@ void HexManager::SetMultihex( ushort hx, ushort hy, uint multihex, bool set )
         GetHexOffsets( hx & 1, sx, sy );
         for( int i = 0, j = NumericalNumber( multihex ) * DIRS_COUNT; i < j; i++ )
         {
-            short cx = (short) hx + sx[ i ];
-            short cy = (short) hy + sy[ i ];
+            short cx = (short)hx + sx[i];
+            short cy = (short)hy + sy[i];
             if( cx >= 0 && cy >= 0 && cx < maxHexX && cy < maxHexY )
             {
                 Field& neighbor = GetField( cx, cy );
@@ -2607,10 +2607,10 @@ bool HexManager::GetHexPixel( int x, int y, ushort& hx, ushort& hy )
     if( !IsMapLoaded() )
         return false;
 
-    float xf = (float) x - (float) GameOpt.ScrOx / GameOpt.SpritesZoom;
-    float yf = (float) y - (float) GameOpt.ScrOy / GameOpt.SpritesZoom;
-    float ox = (float) HEX_W / GameOpt.SpritesZoom;
-    float oy = (float) HEX_REAL_H / GameOpt.SpritesZoom;
+    float xf = (float)x - (float)GameOpt.ScrOx / GameOpt.SpritesZoom;
+    float yf = (float)y - (float)GameOpt.ScrOy / GameOpt.SpritesZoom;
+    float ox = (float)HEX_W / GameOpt.SpritesZoom;
+    float oy = (float)HEX_REAL_H / GameOpt.SpritesZoom;
     int   y2 = 0;
     int   vpos = 0;
 
@@ -2620,18 +2620,18 @@ bool HexManager::GetHexPixel( int x, int y, ushort& hx, ushort& hy )
         {
             vpos = y2 + tx;
 
-            float x_ = viewField[ vpos ].ScrXf / GameOpt.SpritesZoom;
-            float y_ = viewField[ vpos ].ScrYf / GameOpt.SpritesZoom;
+            float x_ = viewField[vpos].ScrXf / GameOpt.SpritesZoom;
+            float y_ = viewField[vpos].ScrYf / GameOpt.SpritesZoom;
 
             if( xf >= x_ && xf < x_ + ox && yf >= y_ && yf < y_ + oy )
             {
-                int hx_ = viewField[ vpos ].HexX;
-                int hy_ = viewField[ vpos ].HexY;
+                int hx_ = viewField[vpos].HexX;
+                int hy_ = viewField[vpos].HexY;
 
                 // Correct with hex color mask
                 if( picHexMask )
                 {
-                    uint r = ( SprMngr.GetPixColor( picHexMask->Ind[ 0 ], (int) ( xf - x_ ), (int) ( yf - y_ ) ) & 0x00FF0000 ) >> 16;
+                    uint r = ( SprMngr.GetPixColor( picHexMask->Ind[0], (int)( xf - x_ ), (int)( yf - y_ ) ) & 0x00FF0000 ) >> 16;
                     if( r == 50 )
                         MoveHexByDirUnsafe( hx_, hy_, GameOpt.MapHexagonal ? 5 : 6 );
                     else if( r == 100 )
@@ -2708,10 +2708,10 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
             continue;
         }
 
-        int l = (int) ( ( *item->HexScrX + item->ScrX + si->OffsX + HEX_OX + GameOpt.ScrOx - si->Width / 2 ) / GameOpt.SpritesZoom );
-        int r = (int) ( ( *item->HexScrX + item->ScrX + si->OffsX + HEX_OX + GameOpt.ScrOx + si->Width / 2 ) / GameOpt.SpritesZoom );
-        int t = (int) ( ( *item->HexScrY + item->ScrY + si->OffsY + HEX_OY + GameOpt.ScrOy - si->Height ) / GameOpt.SpritesZoom );
-        int b = (int) ( ( *item->HexScrY + item->ScrY + si->OffsY + HEX_OY + GameOpt.ScrOy ) / GameOpt.SpritesZoom );
+        int l = (int)( ( *item->HexScrX + item->ScrX + si->OffsX + HEX_OX + GameOpt.ScrOx - si->Width / 2 ) / GameOpt.SpritesZoom );
+        int r = (int)( ( *item->HexScrX + item->ScrX + si->OffsX + HEX_OX + GameOpt.ScrOx + si->Width / 2 ) / GameOpt.SpritesZoom );
+        int t = (int)( ( *item->HexScrY + item->ScrY + si->OffsY + HEX_OY + GameOpt.ScrOy - si->Height ) / GameOpt.SpritesZoom );
+        int b = (int)( ( *item->HexScrY + item->ScrY + si->OffsY + HEX_OY + GameOpt.ScrOy ) / GameOpt.SpritesZoom );
 
         if( x >= l && x <= r && y >= t && y <= b )
         {
@@ -2745,7 +2745,7 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
             std::sort( pix_item_egg.begin(), pix_item_egg.end(), Sorter::ByTransparent );
         }
         item_egg = true;
-        return pix_item_egg[ 0 ];
+        return pix_item_egg[0];
     }
 
     // Visible items
@@ -2755,7 +2755,7 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
         std::sort( pix_item.begin(), pix_item.end(), Sorter::ByTransparent );
     }
     item_egg = false;
-    return pix_item[ 0 ];
+    return pix_item[0];
 }
 
 CritterCl* HexManager::GetCritterPixel( int x, int y, bool ignore_dead_and_chosen )
@@ -2783,7 +2783,7 @@ CritterCl* HexManager::GetCritterPixel( int x, int y, bool ignore_dead_and_chose
         // Check sprite hit
         if( x >= ( cr->DRect.L + GameOpt.ScrOx ) / GameOpt.SpritesZoom && x <= ( cr->DRect.R + GameOpt.ScrOx ) / GameOpt.SpritesZoom &&
             y >= ( cr->DRect.T + GameOpt.ScrOy ) / GameOpt.SpritesZoom && y <= ( cr->DRect.B + GameOpt.ScrOy ) / GameOpt.SpritesZoom &&
-            SprMngr.IsPixNoTransp( cr->SprId, (int) ( x - ( cr->DRect.L + GameOpt.ScrOx ) / GameOpt.SpritesZoom ), (int) ( y - ( cr->DRect.T + GameOpt.ScrOy ) / GameOpt.SpritesZoom ) ) )
+            SprMngr.IsPixNoTransp( cr->SprId, (int)( x - ( cr->DRect.L + GameOpt.ScrOx ) / GameOpt.SpritesZoom ), (int)( y - ( cr->DRect.T + GameOpt.ScrOy ) / GameOpt.SpritesZoom ) ) )
         {
             crits.push_back( cr );
         }
@@ -2793,10 +2793,11 @@ CritterCl* HexManager::GetCritterPixel( int x, int y, bool ignore_dead_and_chose
         return NULL;
     struct Sorter
     {
-        static bool ByTreeIndex( CritterCl* cr1, CritterCl* cr2 ) { return cr1->SprDraw->TreeIndex > cr2->SprDraw->TreeIndex; } };
+        static bool ByTreeIndex( CritterCl* cr1, CritterCl* cr2 ) { return cr1->SprDraw->TreeIndex > cr2->SprDraw->TreeIndex; }
+    };
     if( crits.size() > 1 )
         std::sort( crits.begin(), crits.end(), Sorter::ByTreeIndex );
-    return crits[ 0 ];
+    return crits[0];
 }
 
 void HexManager::GetSmthPixel( int pix_x, int pix_y, ItemHex*& item, CritterCl*& cr )
@@ -2822,7 +2823,7 @@ void HexManager::GetSmthPixel( int pix_x, int pix_y, ItemHex*& item, CritterCl*&
 bool HexManager::FindPath( CritterCl* cr, ushort start_x, ushort start_y, ushort& end_x, ushort& end_y, UCharVec& steps, int cut )
 {
     // Static data
-    #define GRID( x, y )    grid[ ( ( MAX_FIND_PATH + 1 ) + ( y ) - grid_oy ) * ( MAX_FIND_PATH * 2 + 2 ) + ( ( MAX_FIND_PATH + 1 ) + ( x ) - grid_ox ) ]
+    #define GRID( x, y )    grid[( ( MAX_FIND_PATH + 1 ) + ( y ) - grid_oy ) * ( MAX_FIND_PATH * 2 + 2 ) + ( ( MAX_FIND_PATH + 1 ) + ( x ) - grid_ox )]
     static int           grid_ox = 0, grid_oy = 0;
     static short*        grid = NULL;
     static UShortPairVec coords;
@@ -2830,7 +2831,7 @@ bool HexManager::FindPath( CritterCl* cr, ushort start_x, ushort start_y, ushort
     // Allocate temporary grid
     if( !grid )
     {
-        grid = new short[ ( MAX_FIND_PATH * 2 + 2 ) * ( MAX_FIND_PATH * 2 + 2 ) ];
+        grid = new short[( MAX_FIND_PATH * 2 + 2 ) * ( MAX_FIND_PATH * 2 + 2 )];
         if( !grid )
             return false;
     }
@@ -2855,22 +2856,22 @@ bool HexManager::FindPath( CritterCl* cr, ushort start_x, ushort start_y, ushort
         if( ++numindex > MAX_FIND_PATH )
             return false;
 
-        int p_togo = (int) coords.size() - p;
+        int p_togo = (int)coords.size() - p;
         if( !p_togo )
             return false;
 
         for( int i = 0; i < p_togo; ++i, ++p )
         {
-            int    hx = coords[ p ].first;
-            int    hy = coords[ p ].second;
+            int    hx = coords[p].first;
+            int    hy = coords[p].second;
 
             short* sx, * sy;
             GetHexOffsets( hx & 1, sx, sy );
 
             for( int j = 0, jj = DIRS_COUNT; j < jj; j++ )
             {
-                int nx = hx + sx[ j ];
-                int ny = hy + sy[ j ];
+                int nx = hx + sx[j];
+                int ny = hy + sy[j];
                 if( nx < 0 || ny < 0 || nx >= maxHexX || ny >= maxHexY || GRID( nx, ny ) )
                     continue;
                 GRID( nx, ny ) = -1;
@@ -2963,38 +2964,38 @@ label_FindOk:
                 {
                     if( GRID( x1 - 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         y1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 5
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         y1++;
                         continue;
                     }                                                                                                // 2
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         y1--;
                         continue;
@@ -3004,39 +3005,39 @@ label_FindOk:
                 {
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 5
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         y1++;
                         continue;
                     }                                                                                                // 2
                     if( GRID( x1 + 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         y1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1 - 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         y1++;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         continue;
                     }                                                                                                // 4
@@ -3048,39 +3049,39 @@ label_FindOk:
                 {
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         y1--;
                         continue;
                     }                                                                                                // 4
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 5
                     if( GRID( x1 - 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         y1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         y1++;
                         continue;
                     }                                                                                                // 2
@@ -3089,39 +3090,39 @@ label_FindOk:
                 {
                     if( GRID( x1 - 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         y1++;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         continue;
                     }                                                                                                // 4
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 5
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1 + 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         y1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         y1++;
                         continue;
                     }                                                                                                // 2
@@ -3157,52 +3158,52 @@ label_FindOk:
             {
                 if( GRID( x1 - 1, y1  ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 4;
+                    steps[numindex - 1] = 4;
                     x1--;
                     continue;
                 }                                                                                            // 0
                 if( GRID( x1, y1 - 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 2;
+                    steps[numindex - 1] = 2;
                     y1--;
                     continue;
                 }                                                                                            // 6
                 if( GRID( x1, y1 + 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 6;
+                    steps[numindex - 1] = 6;
                     y1++;
                     continue;
                 }                                                                                            // 2
                 if( GRID( x1 + 1, y1  ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 0;
+                    steps[numindex - 1] = 0;
                     x1++;
                     continue;
                 }                                                                                            // 4
                 if( GRID( x1 - 1, y1 + 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 5;
+                    steps[numindex - 1] = 5;
                     x1--;
                     y1++;
                     continue;
                 }                                                                                            // 1
                 if( GRID( x1 + 1, y1 - 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 1;
+                    steps[numindex - 1] = 1;
                     x1++;
                     y1--;
                     continue;
                 }                                                                                            // 5
                 if( GRID( x1 + 1, y1 + 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 7;
+                    steps[numindex - 1] = 7;
                     x1++;
                     y1++;
                     continue;
                 }                                                                                            // 3
                 if( GRID( x1 - 1, y1 - 1 ) == numindex )
                 {
-                    steps[ numindex - 1 ] = 3;
+                    steps[numindex - 1] = 3;
                     x1--;
                     y1--;
                     continue;
@@ -3215,52 +3216,52 @@ label_FindOk:
                 {
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 6;
+                        steps[numindex - 1] = 6;
                         y1++;
                         continue;
                     }                                                                                                // 2
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         continue;
                     }                                                                                                // 4
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 6
                     if( GRID( x1 + 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 7;
+                        steps[numindex - 1] = 7;
                         x1++;
                         y1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1 - 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         y1--;
                         continue;
                     }                                                                                                // 7
                     if( GRID( x1 - 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         x1--;
                         y1++;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         y1--;
                         continue;
@@ -3270,52 +3271,52 @@ label_FindOk:
                 {
                     if( GRID( x1 + 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 7;
+                        steps[numindex - 1] = 7;
                         x1++;
                         y1++;
                         continue;
                     }                                                                                                // 3
                     if( GRID( x1 - 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 3;
+                        steps[numindex - 1] = 3;
                         x1--;
                         y1--;
                         continue;
                     }                                                                                                // 7
                     if( GRID( x1 - 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 4;
+                        steps[numindex - 1] = 4;
                         x1--;
                         continue;
                     }                                                                                                // 0
                     if( GRID( x1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 6;
+                        steps[numindex - 1] = 6;
                         y1++;
                         continue;
                     }                                                                                                // 2
                     if( GRID( x1 + 1, y1  ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 0;
+                        steps[numindex - 1] = 0;
                         x1++;
                         continue;
                     }                                                                                                // 4
                     if( GRID( x1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 2;
+                        steps[numindex - 1] = 2;
                         y1--;
                         continue;
                     }                                                                                                // 6
                     if( GRID( x1 - 1, y1 + 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 5;
+                        steps[numindex - 1] = 5;
                         x1--;
                         y1++;
                         continue;
                     }                                                                                                // 1
                     if( GRID( x1 + 1, y1 - 1 ) == numindex )
                     {
-                        steps[ numindex - 1 ] = 1;
+                        steps[numindex - 1] = 1;
                         x1++;
                         y1--;
                         continue;
@@ -3414,72 +3415,72 @@ void HexManager::FindSetCenter( int cx, int cy )
     int    ih = VIEW_HEIGHT / 2 + 2;
     ushort hx = cx;
     ushort hy = cy;
-    int    dirs[ 2 ];
+    int    dirs[2];
 
     // Up
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 0, dirs[ 1 ] = 5;
+        dirs[0] = 0, dirs[1] = 5;
     else
-        dirs[ 0 ] = 0, dirs[ 1 ] = 6;
+        dirs[0] = 0, dirs[1] = 6;
     FindSetCenterDir( hx, hy, dirs, ih );
     // Down
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 3, dirs[ 1 ] = 2;
+        dirs[0] = 3, dirs[1] = 2;
     else
-        dirs[ 0 ] = 4, dirs[ 1 ] = 2;
+        dirs[0] = 4, dirs[1] = 2;
     FindSetCenterDir( hx, hy, dirs, ih );
     // Right
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 1, dirs[ 1 ] = -1;
+        dirs[0] = 1, dirs[1] = -1;
     else
-        dirs[ 0 ] = 1, dirs[ 1 ] = -1;
+        dirs[0] = 1, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, iw );
     // Left
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 4, dirs[ 1 ] = -1;
+        dirs[0] = 4, dirs[1] = -1;
     else
-        dirs[ 0 ] = 5, dirs[ 1 ] = -1;
+        dirs[0] = 5, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, iw );
 
     // Up-Right
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 0, dirs[ 1 ] = -1;
+        dirs[0] = 0, dirs[1] = -1;
     else
-        dirs[ 0 ] = 0, dirs[ 1 ] = -1;
+        dirs[0] = 0, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, ih );
     // Down-Left
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 3, dirs[ 1 ] = -1;
+        dirs[0] = 3, dirs[1] = -1;
     else
-        dirs[ 0 ] = 4, dirs[ 1 ] = -1;
+        dirs[0] = 4, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, ih );
     // Up-Left
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 5, dirs[ 1 ] = -1;
+        dirs[0] = 5, dirs[1] = -1;
     else
-        dirs[ 0 ] = 6, dirs[ 1 ] = -1;
+        dirs[0] = 6, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, ih );
     // Down-Right
     if( GameOpt.MapHexagonal )
-        dirs[ 0 ] = 2, dirs[ 1 ] = -1;
+        dirs[0] = 2, dirs[1] = -1;
     else
-        dirs[ 0 ] = 2, dirs[ 1 ] = -1;
+        dirs[0] = 2, dirs[1] = -1;
     FindSetCenterDir( hx, hy, dirs, ih );
 
     RebuildMap( hx, hy );
     #endif // FONLINE_CLIENT
 }
 
-void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[ 2 ], int steps )
+void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int steps )
 {
     ushort sx = hx;
     ushort sy = hy;
-    int    dirs_count = ( dirs[ 1 ] == -1 ? 1 : 2 );
+    int    dirs_count = ( dirs[1] == -1 ? 1 : 2 );
 
     int    i;
     for( i = 0; i < steps; i++ )
     {
-        if( !MoveHexByDir( sx, sy, dirs[ i % dirs_count ], maxHexX, maxHexY ) )
+        if( !MoveHexByDir( sx, sy, dirs[i % dirs_count], maxHexX, maxHexY ) )
             break;
 
         GetHexTrack( sx, sy ) = 1;
@@ -3489,7 +3490,7 @@ void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[ 2 ], int st
     }
 
     for( ; i < steps; i++ )
-        MoveHexByDir( hx, hy, ReverseDir( dirs[ i % dirs_count ] ), maxHexX, maxHexY );
+        MoveHexByDir( hx, hy, ReverseDir( dirs[i % dirs_count] ), maxHexX, maxHexY );
 }
 
 bool HexManager::LoadMap( ushort map_pid )
@@ -3504,7 +3505,7 @@ bool HexManager::LoadMap( ushort map_pid )
         ReloadSprites();
 
     // Make name
-    char map_name[ 256 ];
+    char map_name[256];
     Str::Format( map_name, "map%u", map_pid );
 
     // Find in cache
@@ -3744,8 +3745,8 @@ void HexManager::UnloadMap()
         delete *it;
     rainData.clear();
 
-    for( uint i = 0, j = (uint) hexItems.size(); i < j; i++ )
-        hexItems[ i ]->Release();
+    for( uint i = 0, j = (uint)hexItems.size(); i < j; i++ )
+        hexItems[i]->Release();
     hexItems.clear();
 
     ResizeField( 0, 0 );
@@ -3779,7 +3780,7 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
         return;
     }
 
-    char map_name[ 256 ];
+    char map_name[256];
     Str::Format( map_name, "map%u", map_pid );
 
     uint   cache_len;
@@ -3872,7 +3873,7 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
 
 bool HexManager::GetMapData( ushort map_pid, ItemVec& items, ushort& maxhx, ushort& maxhy )
 {
-    char map_name[ 256 ];
+    char map_name[256];
     Str::Format( map_name, "map%u", map_pid );
 
     uint   cache_len;
@@ -3980,12 +3981,12 @@ bool HexManager::ParseScenery( SceneryCl& scen )
     {
         SETFLAG( scenery->Data.Flags, ITEM_SHOW_ANIM );
         SETFLAG( scenery->Data.Flags, ITEM_SHOW_ANIM_EXT );
-        scenery->Data.AnimShow[ 0 ] = scen.AnimStayBegin;
-        scenery->Data.AnimShow[ 1 ] = scen.AnimStayEnd;
-        scenery->Data.AnimStay[ 0 ] = scen.AnimStayBegin;
-        scenery->Data.AnimStay[ 1 ] = scen.AnimStayEnd;
-        scenery->Data.AnimHide[ 0 ] = scen.AnimStayBegin;
-        scenery->Data.AnimHide[ 1 ] = scen.AnimStayEnd;
+        scenery->Data.AnimShow[0] = scen.AnimStayBegin;
+        scenery->Data.AnimShow[1] = scen.AnimStayEnd;
+        scenery->Data.AnimStay[0] = scen.AnimStayBegin;
+        scenery->Data.AnimStay[1] = scen.AnimStayEnd;
+        scenery->Data.AnimHide[0] = scen.AnimStayBegin;
+        scenery->Data.AnimHide[1] = scen.AnimStayEnd;
         refresh_anim = true;
     }
     if( scen.AnimWait )
@@ -4010,7 +4011,7 @@ bool HexManager::ParseScenery( SceneryCl& scen )
 
 int HexManager::GetDayTime()
 {
-    return ( GameOpt.Hour * 60 + GameOpt.Minute );
+    return GameOpt.Hour * 60 + GameOpt.Minute;
 }
 
 int HexManager::GetMapTime()
@@ -4048,9 +4049,9 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
     }
 
     for( int i = 0; i < 4; i++ )
-        dayTime[ i ] = pmap.Header.DayTime[ i ];
+        dayTime[i] = pmap.Header.DayTime[i];
     for( int i = 0; i < 12; i++ )
-        dayColor[ i ] = pmap.Header.DayColor[ i ];
+        dayColor[i] = pmap.Header.DayColor[i];
 
     // Tiles
     for( ushort hy = 0; hy < pmap.Header.MaxHexY; hy++ )
@@ -4063,9 +4064,9 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
             {
                 ProtoMap::TileVec& tiles = pmap.GetTiles( hx, hy, r != 0 );
 
-                for( uint i = 0, j = (uint) tiles.size(); i < j; i++ )
+                for( uint i = 0, j = (uint)tiles.size(); i < j; i++ )
                 {
-                    ProtoMap::Tile& tile = tiles[ i ];
+                    ProtoMap::Tile& tile = tiles[i];
                     AnyFrames*      anim = ResMngr.GetItemAnim( tile.NameHash );
                     if( anim )
                     {
@@ -4089,9 +4090,9 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
 
     // Objects
     uint cur_id = 0;
-    for( uint i = 0, j = (uint) pmap.MObjects.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)pmap.MObjects.size(); i < j; i++ )
     {
-        MapObject* o = pmap.MObjects[ i ];
+        MapObject* o = pmap.MObjects[i];
         if( o->MapX >= maxHexX || o->MapY >= maxHexY )
         {
             WriteLog( "Invalid position of map object. Skip.\n" );
@@ -4153,9 +4154,9 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
             ProtoItem* pitem_main = NULL;
             ProtoItem* pitem_ext = NULL;
             ProtoItem* pitem_armor = NULL;
-            for( uint k = 0, l = (uint) pmap.MObjects.size(); k < l; k++ )
+            for( uint k = 0, l = (uint)pmap.MObjects.size(); k < l; k++ )
             {
-                MapObject* child = pmap.MObjects[ k ];
+                MapObject* child = pmap.MObjects[k];
                 if( child->MapObjType == MAP_OBJECT_ITEM && child->ContainerUID && child->ContainerUID == o->UID )
                 {
                     if( child->MItem.ItemSlot == SLOT_HAND1 )
@@ -4175,7 +4176,7 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
             cr->HexX = o->MapX;
             cr->HexY = o->MapY;
             cr->Flags = o->ProtoId;
-            cr->SetDir( (uchar) o->Dir );
+            cr->SetDir( (uchar)o->Dir );
             cr->Id = ++cur_id;
             cr->Init();
             AffectCritter( o, cr );
@@ -4211,7 +4212,7 @@ void HexManager::ClearSelTiles()
                 ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
                 for( uint i = 0; i < tiles.size();)
                 {
-                    if( tiles[ i ].IsSelected )
+                    if( tiles[i].IsSelected )
                     {
                         tiles.erase( tiles.begin() + i );
                         f.Tiles.erase( f.Tiles.begin() + i );
@@ -4225,7 +4226,7 @@ void HexManager::ClearSelTiles()
                 ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
                 for( uint i = 0; i < roofs.size();)
                 {
-                    if( roofs[ i ].IsSelected )
+                    if( roofs[i].IsSelected )
                     {
                         roofs.erase( roofs.begin() + i );
                         f.Roofs.erase( f.Roofs.begin() + i );
@@ -4252,16 +4253,16 @@ void HexManager::ParseSelTiles()
             if( f.Tiles.size() )
             {
                 ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
-                for( uint i = 0, j = (uint) tiles.size(); i < j; i++ )
-                    if( tiles[ i ].IsSelected )
-                        tiles[ i ].IsSelected = false;
+                for( uint i = 0, j = (uint)tiles.size(); i < j; i++ )
+                    if( tiles[i].IsSelected )
+                        tiles[i].IsSelected = false;
             }
             if( f.Roofs.size() )
             {
                 ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
-                for( uint i = 0, j = (uint) roofs.size(); i < j; i++ )
-                    if( roofs[ i ].IsSelected )
-                        roofs[ i ].IsSelected = false;
+                for( uint i = 0, j = (uint)roofs.size(); i < j; i++ )
+                    if( roofs[i].IsSelected )
+                        roofs[i].IsSelected = false;
             }
         }
     }
@@ -4283,15 +4284,15 @@ void HexManager::SetTile( uint name_hash, ushort hx, ushort hy, short ox, short 
     {
         f.AddTile( anim, 0, 0, layer, true );
         ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
-        roofs.push_back( ProtoMap::Tile( name_hash, hx, hy, (char) ox, (char) oy, layer, true ) );
-        roofs.back().      IsSelected = select;
+        roofs.push_back( ProtoMap::Tile( name_hash, hx, hy, (char)ox, (char)oy, layer, true ) );
+        roofs.back().IsSelected = select;
     }
     else
     {
         f.AddTile( anim, 0, 0, layer, false );
         ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
-        tiles.push_back( ProtoMap::Tile( name_hash, hx, hy, (char) ox, (char) oy, layer, false ) );
-        tiles.back().      IsSelected = select;
+        tiles.push_back( ProtoMap::Tile( name_hash, hx, hy, (char)ox, (char)oy, layer, false ) );
+        tiles.back().IsSelected = select;
     }
 
     if( CheckTilesBorder( is_roof ? f.Roofs.back() : f.Tiles.back(), is_roof ) )
@@ -4493,12 +4494,12 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
     {
         SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM );
         SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
-        item->Data.AnimShow[ 0 ] = mobj->MItem.AnimStayBegin;
-        item->Data.AnimShow[ 1 ] = mobj->MItem.AnimStayEnd;
-        item->Data.AnimStay[ 0 ] = mobj->MItem.AnimStayBegin;
-        item->Data.AnimStay[ 1 ] = mobj->MItem.AnimStayEnd;
-        item->Data.AnimHide[ 0 ] = mobj->MItem.AnimStayBegin;
-        item->Data.AnimHide[ 1 ] = mobj->MItem.AnimStayEnd;
+        item->Data.AnimShow[0] = mobj->MItem.AnimStayBegin;
+        item->Data.AnimShow[1] = mobj->MItem.AnimStayEnd;
+        item->Data.AnimStay[0] = mobj->MItem.AnimStayBegin;
+        item->Data.AnimStay[1] = mobj->MItem.AnimStayEnd;
+        item->Data.AnimHide[0] = mobj->MItem.AnimStayBegin;
+        item->Data.AnimHide[1] = mobj->MItem.AnimStayEnd;
     }
     else
     {
@@ -4506,12 +4507,12 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
         UNSETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
         SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_SHOW_ANIM );
         SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_SHOW_ANIM_EXT );
-        item->Data.AnimShow[ 0 ] = item->Proto->AnimShow[ 0 ];
-        item->Data.AnimShow[ 1 ] = item->Proto->AnimShow[ 1 ];
-        item->Data.AnimStay[ 0 ] = item->Proto->AnimStay[ 0 ];
-        item->Data.AnimStay[ 1 ] = item->Proto->AnimStay[ 1 ];
-        item->Data.AnimHide[ 0 ] = item->Proto->AnimHide[ 0 ];
-        item->Data.AnimHide[ 1 ] = item->Proto->AnimHide[ 1 ];
+        item->Data.AnimShow[0] = item->Proto->AnimShow[0];
+        item->Data.AnimShow[1] = item->Proto->AnimShow[1];
+        item->Data.AnimStay[0] = item->Proto->AnimStay[0];
+        item->Data.AnimStay[1] = item->Proto->AnimStay[1];
+        item->Data.AnimHide[0] = item->Proto->AnimHide[0];
+        item->Data.AnimHide[1] = item->Proto->AnimHide[1];
     }
 
     if( mobj->MItem.AnimWait )
@@ -4524,8 +4525,8 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
     item->Data.LightFlags = ( mobj->LightDirOff | ( ( mobj->LightDay & 3 ) << 6 ) );
     item->Data.LightDistance = mobj->LightDistance;
 
-    mobj->MItem.PicMapHash = ( mobj->RunTime.PicMapName[ 0 ] ? Str::GetHash( mobj->RunTime.PicMapName ) : 0 );
-    mobj->MItem.PicInvHash = ( mobj->RunTime.PicInvName[ 0 ] ? Str::GetHash( mobj->RunTime.PicInvName ) : 0 );
+    mobj->MItem.PicMapHash = ( mobj->RunTime.PicMapName[0] ? Str::GetHash( mobj->RunTime.PicMapName ) : 0 );
+    mobj->MItem.PicInvHash = ( mobj->RunTime.PicInvName[0] ? Str::GetHash( mobj->RunTime.PicInvName ) : 0 );
     item->Data.PicMapHash = mobj->MItem.PicMapHash;
     item->Data.PicInvHash = mobj->MItem.PicInvHash;
     item->Data.Dir = mobj->Dir;
@@ -4577,10 +4578,10 @@ void HexManager::AffectCritter( MapObject* mobj, CritterCl* cr )
 
     for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
     {
-        int param = mobj->MCritter.ParamIndex[ i ];
+        int param = mobj->MCritter.ParamIndex[i];
         if( param >= 0 && param < MAX_PARAMS )
         {
-            cr->Params[ param ] = mobj->MCritter.ParamValue[ i ];
+            cr->Params[param] = mobj->MCritter.ParamValue[i];
             if( param >= ST_ANIM3D_LAYER_BEGIN && param <= ST_ANIM3D_LAYER_END )
                 refresh = true;
         }

@@ -3,7 +3,7 @@
 #include "Crypt.h"
 #include "FileManager.h"
 
-const char* TextMsgFileName[ TEXTMSG_COUNT ] =
+const char* TextMsgFileName[TEXTMSG_COUNT] =
 {
     "FOTEXT.MSG",
     "FODLG.MSG",
@@ -62,7 +62,7 @@ void FOMsg::AddBinary( uint num, const uchar* binary, uint len )
     str.reserve( len * 2 + 1 );
     for( uint i = 0; i < len; i++ )
     {
-        char c = (char) binary[ i ];
+        char c = (char)binary[i];
         if( c == 0 || c == '}' )
         {
             str.push_back( 2 );
@@ -76,7 +76,7 @@ void FOMsg::AddBinary( uint num, const uchar* binary, uint len )
     }
     str.push_back( 0 );
 
-    AddStr( num, (char*) &str[ 0 ] );
+    AddStr( num, (char*)&str[0] );
 }
 
 uint FOMsg::AddStr( const char* str )
@@ -90,7 +90,7 @@ uint FOMsg::AddStr( const char* str )
 
 const char* FOMsg::GetStr( uint num )
 {
-    uint str_count = (uint) strData.count( num );
+    uint str_count = (uint)strData.count( num );
     auto it = strData.find( num );
 
     switch( str_count )
@@ -110,7 +110,7 @@ const char* FOMsg::GetStr( uint num )
 
 const char* FOMsg::GetStr( uint num, uint skip )
 {
-    uint str_count = (uint) strData.count( num );
+    uint str_count = (uint)strData.count( num );
     auto it = strData.find( num );
 
     if( skip >= str_count )
@@ -139,7 +139,7 @@ uint FOMsg::GetStrNumLower( uint num )
 
 int FOMsg::GetInt( uint num )
 {
-    uint str_count = (uint) strData.count( num );
+    uint str_count = (uint)strData.count( num );
     auto it = strData.find( num );
 
     switch( str_count )
@@ -170,21 +170,21 @@ const uchar* FOMsg::GetBinary( uint num, uint& len )
     binary->clear();
     for( int i = 0, j = Str::Length( str ); i < j - 1; i += 2 )
     {
-        if( str[ i ] == 1 )
-            binary->push_back( str[ i + 1 ] );
-        else if( str[ i ] == 2 )
-            binary->push_back( str[ i + 1 ] - 1 );
+        if( str[i] == 1 )
+            binary->push_back( str[i + 1] );
+        else if( str[i] == 2 )
+            binary->push_back( str[i + 1] - 1 );
         else
             return NULL;
     }
 
-    len = (uint) binary->size();
-    return &( *binary )[ 0 ];
+    len = (uint)binary->size();
+    return &( *binary )[0];
 }
 
 int FOMsg::Count( uint num )
 {
-    return !num ? 0 : (uint) strData.count( num );
+    return !num ? 0 : (uint)strData.count( num );
 }
 
 void FOMsg::EraseStr( uint num )
@@ -204,7 +204,7 @@ void FOMsg::EraseStr( uint num )
 
 uint FOMsg::GetSize()
 {
-    return (uint) strData.size() - 1;
+    return (uint)strData.size() - 1;
 }
 
 void FOMsg::CalculateHash()
@@ -220,18 +220,18 @@ void FOMsg::CalculateHash()
     {
         uint    num = ( *it ).first;
         string& str = ( *it ).second;
-        uint    str_len = (uint) str.size();
+        uint    str_len = (uint)str.size();
 
         #ifdef FONLINE_SERVER
         toSend.resize( toSend.size() + sizeof( num ) + sizeof( str_len ) + str_len );
-        memcpy( &toSend[ toSend.size() - ( sizeof( num ) + sizeof( str_len ) + str_len ) ], &num, sizeof( num ) );
-        memcpy( &toSend[ toSend.size() - ( sizeof( str_len ) + str_len ) ], &str_len, sizeof( str_len ) );
-        memcpy( &toSend[ toSend.size() - str_len ], (void*) str.c_str(), str_len );
+        memcpy( &toSend[toSend.size() - ( sizeof( num ) + sizeof( str_len ) + str_len )], &num, sizeof( num ) );
+        memcpy( &toSend[toSend.size() - ( sizeof( str_len ) + str_len )], &str_len, sizeof( str_len ) );
+        memcpy( &toSend[toSend.size() - str_len], (void*)str.c_str(), str_len );
         #endif
 
-        Crypt.Crc32( (uchar*) &num, sizeof( num ), strDataHash );
-        Crypt.Crc32( (uchar*) &str_len, sizeof( str_len ), strDataHash );
-        Crypt.Crc32( (uchar*) str.c_str(), str_len, strDataHash );
+        Crypt.Crc32( (uchar*)&num, sizeof( num ), strDataHash );
+        Crypt.Crc32( (uchar*)&str_len, sizeof( str_len ), strDataHash );
+        Crypt.Crc32( (uchar*)str.c_str(), str_len, strDataHash );
     }
 }
 
@@ -248,12 +248,12 @@ UIntStrMulMap& FOMsg::GetData()
 #ifdef FONLINE_SERVER
 const char* FOMsg::GetToSend()
 {
-    return &toSend[ 0 ];
+    return &toSend[0];
 }
 
 uint FOMsg::GetToSendLen()
 {
-    return (uint) toSend.size();
+    return (uint)toSend.size();
 }
 #endif
 
@@ -273,18 +273,18 @@ int FOMsg::LoadMsgStream( CharVec& stream )
     {
         if( pos + sizeof( num ) > stream.size() )
             break;
-        memcpy( &num, &stream[ pos ], sizeof( num ) );
+        memcpy( &num, &stream[pos], sizeof( num ) );
         pos += sizeof( num );
 
         if( pos + sizeof( len ) > stream.size() )
             break;
-        memcpy( &len, &stream[ pos ], sizeof( len ) );
+        memcpy( &len, &stream[pos], sizeof( len ) );
         pos += sizeof( len );
 
         if( pos + len > stream.size() )
             break;
         str.resize( len );
-        memcpy( &str[ 0 ], &stream[ pos ], len ); // !!!
+        memcpy( &str[0], &stream[pos], len );     // !!!
         pos += len;
 
         AddStr( num, str );
@@ -299,7 +299,7 @@ int FOMsg::LoadMsgFile( const char* fname, int path_type )
 
     #ifdef FONLINE_CLIENT
     uint  buf_len;
-    char* buf = (char*) Crypt.GetCache( fname, buf_len );
+    char* buf = (char*)Crypt.GetCache( fname, buf_len );
     if( !buf )
         return -1;
     #else
@@ -307,7 +307,7 @@ int FOMsg::LoadMsgFile( const char* fname, int path_type )
     if( !fm.LoadFile( fname, path_type ) )
         return -2;
     uint  buf_len = fm.GetFsize();
-    char* buf = (char*) fm.ReleaseBuffer();
+    char* buf = (char*)fm.ReleaseBuffer();
     #endif
 
     int result = LoadMsgFileBuf( buf, buf_len );
@@ -320,7 +320,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
     Clear();
 
     #ifdef FONLINE_CLIENT
-    char* buf = (char*) Crypt.Uncompress( (uchar*) data, data_len, 10 );
+    char* buf = (char*)Crypt.Uncompress( (uchar*)data, data_len, 10 );
     if( !buf )
         return -3;
     #else
@@ -403,14 +403,14 @@ int FOMsg::SaveMsgFile( const char* fname, int path_type )
         str += "}\n";
     }
 
-    char* buf = (char*) str.c_str();
-    uint  buf_len = (uint) str.length();
+    char* buf = (char*)str.c_str();
+    uint  buf_len = (uint)str.length();
 
     #ifdef FONLINE_CLIENT
-    buf = (char*) Crypt.Compress( (uchar*) buf, buf_len );
+    buf = (char*)Crypt.Compress( (uchar*)buf, buf_len );
     if( !buf )
         return -2;
-    Crypt.SetCache( fname, (uchar*) buf, buf_len );
+    Crypt.SetCache( fname, (uchar*)buf, buf_len );
     delete[] buf;
     #else
     fm.SetData( buf, buf_len );
@@ -483,10 +483,10 @@ int LanguagePack::LoadAll()
     int count_fail = 0;
     for( int i = 0; i < TEXTMSG_COUNT; i++ )
     {
-        if( Msg[ i ].LoadMsgFile( Str::FormatBuf( "%s" DIR_SLASH_S "%s", NameStr, TextMsgFileName[ i ] ), PathType ) < 0 )
+        if( Msg[i].LoadMsgFile( Str::FormatBuf( "%s" DIR_SLASH_S "%s", NameStr, TextMsgFileName[i] ), PathType ) < 0 )
         {
             count_fail++;
-            WriteLogF( _FUNC_, " - Unable to load MSG<%s>.\n", TextMsgFileName[ i ] );
+            WriteLogF( _FUNC_, " - Unable to load MSG<%s>.\n", TextMsgFileName[i] );
         }
     }
 

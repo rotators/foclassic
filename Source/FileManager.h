@@ -52,7 +52,7 @@
 #define PT_MAPPER_DATA            ( 46 )
 
 #define PATH_LIST_COUNT           ( 50 )
-extern const char* PathList[ PATH_LIST_COUNT ];
+extern const char* PathList[PATH_LIST_COUNT];
 
 class FileManager
 {
@@ -127,7 +127,7 @@ public:
     static void         GetFolderFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result );
     static void         GetDatsFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result );
 
-    FileManager(): dataOutBuf( NULL ), posOutBuf( 0 ), endOutBuf( 0 ), lenOutBuf( 0 ), fileSize( 0 ), curPos( 0 ), fileBuf( NULL ) {};
+    FileManager() : dataOutBuf( NULL ), posOutBuf( 0 ), endOutBuf( 0 ), lenOutBuf( 0 ), fileSize( 0 ), curPos( 0 ), fileBuf( NULL ) {};
     ~FileManager()
     {
         UnloadFile();
@@ -135,7 +135,7 @@ public:
     }
 
 private:
-    static char        dataPath[ MAX_FOPATH ];
+    static char        dataPath[MAX_FOPATH];
     static DataFileVec dataFiles;
 
     uint               fileSize;

@@ -46,22 +46,22 @@ public:
     #ifdef FONLINE_NPCEDITOR
     string ValueStr;            // Main value string
     string ParamName;           // Parameter Name
-    string ValuesNames[ 5 ];    // Values names
+    string ValuesNames[5];      // Values names
     #else
     int    Value;               // Main value
-    int    ValueExt[ 5 ];       // Extra value
+    int    ValueExt[5];         // Extra value
     #endif
 
     #ifdef FONLINE_NPCEDITOR
-    DemandResult(): Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), ValuesCount( 0 ) {}
+    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), ValuesCount( 0 ) {}
     #else
-    DemandResult(): Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DemandResult ) ); }
+    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DemandResult ) ); }
     DemandResult( const DemandResult& r )
     {
         *this = r;
         MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DemandResult ) );
     }
-    ~DemandResult() { MEMORY_PROCESS( MEMORY_DIALOG, -(int) sizeof( DemandResult ) ); }
+    ~DemandResult() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( DemandResult ) ); }
     #endif
 };
 typedef vector< DemandResult > DemandResultVec;
@@ -75,15 +75,15 @@ public:
     DemandResultVec Results;
 
     #ifdef FONLINE_NPCEDITOR
-    DialogAnswer(): Link( 0 ), TextId( 0 ) {}
+    DialogAnswer() : Link( 0 ), TextId( 0 ) {}
     #else
-    DialogAnswer(): Link( 0 ), TextId( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DialogAnswer ) ); }
+    DialogAnswer() : Link( 0 ), TextId( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DialogAnswer ) ); }
     DialogAnswer( const DialogAnswer& r )
     {
         *this = r;
         MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DialogAnswer ) );
     }
-    ~DialogAnswer() { MEMORY_PROCESS( MEMORY_DIALOG, -(int) sizeof( DialogAnswer ) ); }
+    ~DialogAnswer() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( DialogAnswer ) ); }
     #endif
 };
 typedef vector< DialogAnswer > AnswersVec;
@@ -105,10 +105,11 @@ public:
 
     bool IsNoShuffle() { return Flags & DIALOG_FLAG_NO_SHUFFLE; }
 
-    Dialog(): Id( 0 ), TextId( 0 ), Flags( 0 ), RetVal( false )
-              #ifdef FONLINE_NPCEDITOR
-    { DlgScript = "None"; }
-              #else
+    Dialog() : Id( 0 ), TextId( 0 ), Flags( 0 ), RetVal( false )
+        #ifdef FONLINE_NPCEDITOR
+            { DlgScript = "None";
+            }
+        #else
     {
         DlgScript = NOT_ANSWER_CLOSE_DIALOG;
         MEMORY_PROCESS( MEMORY_DIALOG, sizeof( Dialog ) );
@@ -118,9 +119,9 @@ public:
         *this = r;
         MEMORY_PROCESS( MEMORY_DIALOG, sizeof( Dialog ) );
     }
-    ~Dialog() { MEMORY_PROCESS( MEMORY_DIALOG, -(int) sizeof( Dialog ) ); }
-    #endif
-    bool operator==( const uint& r ) { return Id == r; }
+    ~Dialog() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( Dialog ) ); }
+        #endif
+        bool operator==( const uint& r ) { return Id == r; }
 };
 typedef vector< Dialog > DialogsVec;
 
@@ -134,7 +135,7 @@ public:
     FOMsgVec   Texts;
     string     Comment;
 
-    DialogPack( uint id, string name ): PackId( id ), PackName( name ) {}
+    DialogPack( uint id, string name ) : PackId( id ), PackName( name ) {}
 };
 typedef map< uint, DialogPack* > DialogPackMap;
 

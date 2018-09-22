@@ -22,7 +22,7 @@ struct LoadedAnim
 {
     int        ResType;
     AnyFrames* Anim;
-    LoadedAnim( int res_type, AnyFrames* anim ): ResType( res_type ), Anim( anim ) {}
+    LoadedAnim( int res_type, AnyFrames* anim ) : ResType( res_type ), Anim( anim ) {}
 };
 typedef map< uint, LoadedAnim, less< uint > > LoadedAnimMap;
 

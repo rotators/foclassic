@@ -40,7 +40,7 @@ Sprite* Sprite::GetIntersected( int ox, int oy )
         spr = spr->Parent;
 
     // Check sprites
-    float oxf = (float) ox * GameOpt.SpritesZoom;
+    float oxf = (float)ox * GameOpt.SpritesZoom;
     while( spr )
     {
         if( oxf >= spr->CutX && oxf < spr->CutX + spr->CutW )
@@ -64,7 +64,7 @@ SPRITE_SETTER( SetEgg, int, EggType );
 SPRITE_SETTER( SetContour, int, ContourType );
 SPRITE_SETTER2( SetContour, int, ContourType, uint, ContourColor );
 SPRITE_SETTER( SetColor, uint, Color );
-SPRITE_SETTER( SetAlpha, uchar *, Alpha );
+SPRITE_SETTER( SetAlpha, uchar*, Alpha );
 SPRITE_SETTER( SetFlash, uint, FlashMask );
 
 void Sprite::SetLight( uchar* light, int maxhx, int maxhy )
@@ -74,7 +74,7 @@ void Sprite::SetLight( uchar* light, int maxhx, int maxhy )
     Valid = false;
 
     if( HexX >= 0 && HexX < maxhx && HexY >= 0 && HexY < maxhy )
-        Light = &light[ HexY * maxhx * 3 + HexX * 3 ];
+        Light = &light[HexY * maxhx * 3 + HexX * 3];
     else
         Light = NULL;
 
@@ -112,7 +112,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
         if( spritesTreeSize >= spritesTree.size() )
             Resize( spritesTreeSize + SPRITES_RESIZE_COUNT );
     }
-    Sprite* spr = spritesTree[ index ];
+    Sprite* spr = spritesTree[index];
     spr->TreeIndex = index;
     spr->HexX = hx;
     spr->HexY = hy;
@@ -146,7 +146,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
         int  stepi = GameOpt.MapHexWidth / 2;
         if( GameOpt.MapHexagonal && hor )
             stepi = ( GameOpt.MapHexWidth + GameOpt.MapHexWidth / 2 ) / 2;
-        float       stepf = (float) stepi;
+        float       stepf = (float)stepi;
 
         SpriteInfo* si = SprMngr.GetSpriteInfo( id_ptr ? *id_ptr : id );
         if( !si || si->Width < stepi * 2 )
@@ -168,7 +168,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
             spr->HexY = h1;
         }
 
-        float   widthf = (float) si->Width;
+        float   widthf = (float)si->Width;
         float   xx = 0.0f;
         Sprite* parent = spr;
         for( int i = h1; ;)
@@ -193,7 +193,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
             spr_.CutOyL = ( hor ? -6 : -12 ) * ( ( hor ? hx : hy ) - i );
             spr_.CutOyR = spr_.CutOyL;
             if( ww < stepf )
-                spr_.CutOyR += (int) ( ( hor ? 3.6f : -8.0f ) * ( 1.0f - ( ww / stepf ) ) );
+                spr_.CutOyR += (int)( ( hor ? 3.6f : -8.0f ) * ( 1.0f - ( ww / stepf ) ) );
             #endif
 
             xx += stepf;
@@ -236,7 +236,7 @@ Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, i
                  MAXHEX_MAX * MAXHEX_MAX * DRAW_ORDER + hy * DRAW_ORDER * MAXHEX_MAX + hx * DRAW_ORDER + ( draw_order - DRAW_ORDER ) );
     for( ; index < spritesTreeSize; index++ )
     {
-        Sprite* spr = spritesTree[ index ];
+        Sprite* spr = spritesTree[index];
         if( !spr->Valid )
             continue;
         if( pos < spr->DrawOrderPos )
@@ -245,7 +245,7 @@ Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, i
 
     // Gain tree index to other sprites
     for( uint i = index; i < spritesTreeSize; i++ )
-        spritesTree[ i ]->TreeIndex++;
+        spritesTree[i]->TreeIndex++;
 
     // Insert to array
     spritesTreeSize++;
@@ -262,8 +262,8 @@ Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, i
 
 void Sprites::Resize( uint size )
 {
-    uint tree_size = (uint) spritesTree.size();
-    uint pool_size = (uint) spritesPool.size();
+    uint tree_size = (uint)spritesTree.size();
+    uint pool_size = (uint)spritesPool.size();
     if( size > tree_size ) // Get from pool
     {
         uint diff = size - tree_size;
@@ -319,8 +319,8 @@ void Sprites::SortBySurfaces()
     {
         static bool SortBySurfaces( Sprite* spr1, Sprite* spr2 )
         {
-            SpriteInfo* si1 = ( *SortSpritesSurfSprData )[ spr1->PSprId ? *spr1->PSprId : spr1->SprId ];
-            SpriteInfo* si2 = ( *SortSpritesSurfSprData )[ spr2->PSprId ? *spr2->PSprId : spr2->SprId ];
+            SpriteInfo* si1 = ( *SortSpritesSurfSprData )[spr1->PSprId ? *spr1->PSprId : spr1->SprId];
+            SpriteInfo* si2 = ( *SortSpritesSurfSprData )[spr2->PSprId ? *spr2->PSprId : spr2->SprId];
             return si1 && si2 && si1->Surf && si2->Surf && si1->Surf->TextureOwner < si2->Surf->TextureOwner;
         }
     };
@@ -340,5 +340,5 @@ void Sprites::SortByMapPos()
     };
     std::sort( spritesTree.begin(), spritesTree.begin() + spritesTreeSize, Sorter::SortByMapPos );
     for( uint i = 0; i < spritesTreeSize; i++ )
-        spritesTree[ i ]->TreeIndex = i;
+        spritesTree[i]->TreeIndex = i;
 }

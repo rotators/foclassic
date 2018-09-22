@@ -15,7 +15,7 @@
 #define TEXTMSG_CRAFT       ( 8 )
 #define TEXTMSG_INTERNAL    ( 9 )
 #define TEXTMSG_COUNT       ( 10 )
-extern const char* TextMsgFileName[ TEXTMSG_COUNT ];
+extern const char* TextMsgFileName[TEXTMSG_COUNT];
 
 #define DEFAULT_LANGUAGE    "russ"
 
@@ -89,11 +89,11 @@ public:
     union
     {
         uint Name;
-        char NameStr[ 5 ];
+        char NameStr[5];
     };
 
     int   PathType;
-    FOMsg Msg[ TEXTMSG_COUNT ];
+    FOMsg Msg[TEXTMSG_COUNT];
 
     bool Init( const char* lang, int path_type );
     int  LoadAll();

@@ -18,7 +18,7 @@ class MapObject;
 #define ITEM_EVENT_MOVE               ( 6 )
 #define ITEM_EVENT_WALK               ( 7 )
 #define ITEM_EVENT_MAX                ( 8 )
-extern const char* ItemEventFuncName[ ITEM_EVENT_MAX ];
+extern const char* ItemEventFuncName[ITEM_EVENT_MAX];
 
 // Prototypes
 #define MAX_ITEM_PROTOTYPES           ( 30000 )
@@ -213,9 +213,9 @@ public:
     ushort AnimWaitBase;
     ushort AnimWaitRndMin;
     ushort AnimWaitRndMax;
-    uchar  AnimStay[ 2 ];
-    uchar  AnimShow[ 2 ];
-    uchar  AnimHide[ 2 ];
+    uchar  AnimStay[2];
+    uchar  AnimShow[2];
+    uchar  AnimHide[2];
     short  OffsetX;
     short  OffsetY;
     uchar  SpriteCut;
@@ -227,13 +227,13 @@ public:
     uchar  IndicatorStart;
     uchar  IndicatorMax;
     uint   HolodiskNum;
-    int    StartValue[ ITEM_MAX_SCRIPT_VALUES ];
-    uchar  BlockLines[ ITEM_MAX_BLOCK_LINES ];
-    ushort ChildPid[ ITEM_MAX_CHILDS ];
-    uchar  ChildLines[ ITEM_MAX_CHILDS ][ ITEM_MAX_CHILD_LINES ];
+    int    StartValue[ITEM_MAX_SCRIPT_VALUES];
+    uchar  BlockLines[ITEM_MAX_BLOCK_LINES];
+    ushort ChildPid[ITEM_MAX_CHILDS];
+    uchar  ChildLines[ITEM_MAX_CHILDS][ITEM_MAX_CHILD_LINES];
 
     // User data, binded with 'bindfield' pragma
-    int UserData[ PROTO_ITEM_USER_DATA_SIZE / sizeof( int ) ];
+    int UserData[PROTO_ITEM_USER_DATA_SIZE / sizeof( int )];
 
     // Type specific data
     bool   Weapon_IsUnarmed;
@@ -249,13 +249,13 @@ public:
     int    Weapon_MinStrength;
     int    Weapon_Perk;
     uint   Weapon_ActiveUses;
-    int    Weapon_Skill[ MAX_USES ];
-    uint   Weapon_PicUse[ MAX_USES ];
-    uint   Weapon_MaxDist[ MAX_USES ];
-    uint   Weapon_Round[ MAX_USES ];
-    uint   Weapon_ApCost[ MAX_USES ];
-    bool   Weapon_Aim[ MAX_USES ];
-    uchar  Weapon_SoundId[ MAX_USES ];
+    int    Weapon_Skill[MAX_USES];
+    uint   Weapon_PicUse[MAX_USES];
+    uint   Weapon_MaxDist[MAX_USES];
+    uint   Weapon_Round[MAX_USES];
+    uint   Weapon_ApCost[MAX_USES];
+    bool   Weapon_Aim[MAX_USES];
+    uchar  Weapon_SoundId[MAX_USES];
     int    Ammo_Caliber;
     bool   Door_NoBlockMove;
     bool   Door_NoBlockShoot;
@@ -280,7 +280,7 @@ public:
     void Release() {}
 
     void Clear()   { memzero( this, sizeof( ProtoItem ) ); }
-    uint GetHash() { return Crypt.Crc32( (uchar*) this, sizeof( ProtoItem ) ); }
+    uint GetHash() { return Crypt.Crc32( (uchar*)this, sizeof( ProtoItem ) ); }
 
     bool IsItem() { return !IsScen() && !IsWall() && !IsGrid(); }
     bool IsScen() { return Type == ITEM_TYPE_GENERIC; }
@@ -298,7 +298,7 @@ public:
     bool IsGeneric()   { return Type == ITEM_TYPE_GENERIC; }
     bool IsCar()       { return Type == ITEM_TYPE_CAR; }
 
-    bool IsBlocks() { return BlockLines[ 0 ] != 0; }
+    bool IsBlocks() { return BlockLines[0] != 0; }
     bool LockerIsChangeble()
     {
         if( IsDoor() ) return true;
@@ -307,7 +307,7 @@ public:
     }
     bool IsCanPickUp() { return FLAG( Flags, ITEM_CAN_PICKUP ); }
 
-    bool operator==( const ushort& _r ) { return ( ProtoId == _r ); }
+    bool operator==( const ushort& _r ) { return ProtoId == _r;  }
     ProtoItem() { Clear(); }
 
     #if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
@@ -319,8 +319,8 @@ public:
     string ScriptFunc;
     string PicMapStr;
     string PicInvStr;
-    string WeaponPicStr[ MAX_USES ];
-    string Weapon_Anim2[ MAX_USES ];
+    string WeaponPicStr[MAX_USES];
+    string Weapon_Anim2[MAX_USES];
     #endif
 
     #ifdef FONLINE_MAPPER
@@ -370,12 +370,12 @@ public:
             uint StackId;
         } AccContainer;
 
-        char AccBuffer[ 8 ];
+        char AccBuffer[8];
     };
 
     struct ItemData     // 120, size used in NetProto.h
     {
-        static char SendMask[ ITEM_DATA_MASK_MAX ][ 120 ];
+        static char SendMask[ITEM_DATA_MASK_MAX][120];
 
         ushort      SortValue;
         uchar       Info;
@@ -383,9 +383,9 @@ public:
         uint        PicMapHash;
         uint        PicInvHash;
         ushort      AnimWaitBase;
-        uchar       AnimStay[ 2 ];
-        uchar       AnimShow[ 2 ];
-        uchar       AnimHide[ 2 ];
+        uchar       AnimStay[2];
+        uchar       AnimShow[2];
+        uchar       AnimHide[2];
         uint        Flags;
         uchar       Mode;
         char        LightIntensity;
@@ -396,7 +396,7 @@ public:
         short       TrapValue;
         uint        Count;
         uint        Cost;
-        int         ScriptValues[ ITEM_MAX_SCRIPT_VALUES ];
+        int         ScriptValues[ITEM_MAX_SCRIPT_VALUES];
         uchar       BrokenFlags;
         uchar       BrokenCount;
         ushort      Deterioration;
@@ -414,14 +414,14 @@ public:
         short       OffsetX;
         short       OffsetY;
         short       Dir;
-        char        Reserved[ 2 ];
+        char        Reserved[2];
     } Data;
 
     short RefCounter;
     bool  IsNotValid;
 
     #ifdef FONLINE_SERVER
-    int         FuncId[ ITEM_EVENT_MAX ];
+    int         FuncId[ITEM_EVENT_MAX];
     Critter*    ViewByCritter;
     ItemPtrVec* ChildItems;
     char*       PLexems;
@@ -538,7 +538,7 @@ public:
     uint WeapGetMaxAmmoCount()       { return Proto->Weapon_MaxAmmoCount; }
     int  WeapGetAmmoCaliber()        { return Proto->Weapon_Caliber; }
     bool WeapIsUseAviable( int use ) { return use >= USE_PRIMARY && use <= USE_THIRD ? ( ( ( Proto->Weapon_ActiveUses >> use ) & 1 ) != 0 ) : false; }
-    bool WeapIsCanAim( int use )     { return use >= 0 && use < MAX_USES && Proto->Weapon_Aim[ use ]; }
+    bool WeapIsCanAim( int use )     { return use >= 0 && use < MAX_USES && Proto->Weapon_Aim[use]; }
     void WeapLoadHolder();
 
     // Container
@@ -594,8 +594,8 @@ public:
     uint LightGetHash()
     {
         if( !IsLight() ) return 0;
-        if( Data.LightIntensity ) return Crypt.Crc32( (uchar*) &Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_LIGHT );
-        return (uint) Proto;
+        if( Data.LightIntensity ) return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_LIGHT );
+        return (uint)Proto;
     }
     int  LightGetIntensity() { return Data.LightIntensity ? Data.LightIntensity : Proto->LightIntensity; }
     int  LightGetDistance()  { return Data.LightDistance ? Data.LightDistance : Proto->LightDistance; }
@@ -624,7 +624,7 @@ public:
     void TrapSetValue( int val ) { Data.TrapValue = val; }
     int  TrapGetValue()          { return Data.TrapValue; }
 
-    bool operator==( const uint& id ) { return ( Id == id ); }
+    bool operator==( const uint& id ) { return Id == id;  }
 
     #ifdef FONLINE_SERVER
     Item()
@@ -639,7 +639,7 @@ public:
         Proto = NULL;
         if( PLexems ) MEMORY_PROCESS( MEMORY_ITEM, -LEXEMS_SIZE );
         SAFEDELA( PLexems );
-        MEMORY_PROCESS( MEMORY_ITEM, -(int) sizeof( Item ) );
+        MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof( Item ) );
     }
     #elif FONLINE_CLIENT
     Item()
@@ -661,7 +661,7 @@ public:
     int maxhx__ = maxhx, maxhy__ = maxhy;                                    \
     for( uint i__ = 0; i__ < sizeof( lines ); i__++ )                        \
     {                                                                        \
-        uchar block__ = lines[ i__ ];                                        \
+        uchar block__ = lines[i__];                                          \
         uchar dir__ = ( block__ >> 4 );                                      \
         if( dir__ >= DIRS_COUNT )                                            \
             break;                                                           \

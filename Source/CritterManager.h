@@ -14,10 +14,10 @@ class CritterManager
 private:
     bool        isActive;
     FileManager fileMngr;
-    CritData    allProtos[ MAX_CRIT_PROTOS ];
+    CritData    allProtos[MAX_CRIT_PROTOS];
 
 public:
-    CritterManager(): isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( CritterManager ) ); }
+    CritterManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( CritterManager ) ); }
 
     bool Init();
     bool IsInit() { return isActive; }
@@ -68,7 +68,7 @@ public:
 
 
     #ifdef FONLINE_MAPPER
-    string ProtosCollectionName[ MAX_CRIT_PROTOS ];
+    string ProtosCollectionName[MAX_CRIT_PROTOS];
     #endif
 };
 

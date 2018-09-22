@@ -34,11 +34,11 @@ public:
     uchar  LightDistance;
     char   LightIntensity;
 
-    char   ScriptName[ MAPOBJ_SCRIPT_NAME + 1 ];
-    char   FuncName[ MAPOBJ_SCRIPT_NAME + 1 ];
+    char   ScriptName[MAPOBJ_SCRIPT_NAME + 1];
+    char   FuncName[MAPOBJ_SCRIPT_NAME + 1];
 
-    uint   Reserved[ 7 ];
-    int    UserData[ 10 ];
+    uint   Reserved[7];
+    int    UserData[10];
 
     union
     {
@@ -47,8 +47,8 @@ public:
             uchar Cond;
             uint  Anim1;
             uint  Anim2;
-            short ParamIndex[ MAPOBJ_CRITTER_PARAMS ];
-            int   ParamValue[ MAPOBJ_CRITTER_PARAMS ];
+            short ParamIndex[MAPOBJ_CRITTER_PARAMS];
+            int   ParamValue[MAPOBJ_CRITTER_PARAMS];
         } MCritter;
 
         struct
@@ -78,7 +78,7 @@ public:
 
             short  TrapValue;
 
-            int    Val[ 10 ];
+            int    Val[10];
         } MItem;
 
         struct
@@ -97,7 +97,7 @@ public:
             uint   TriggerNum;
 
             uchar  ParamsCount;
-            int    Param[ 5 ];
+            int    Param[5];
 
             ushort ToMapPid;
             uint   ToEntire;
@@ -112,8 +112,8 @@ public:
         #ifdef FONLINE_MAPPER
         ProtoMap* FromMap;
         uint      MapObjId;
-        char      PicMapName[ 64 ];
-        char      PicInvName[ 64 ];
+        char      PicMapName[64];
+        char      PicInvName[64];
         #endif
         #ifdef FONLINE_SERVER
         int       BindScriptId;
@@ -176,12 +176,12 @@ public:
         uint   Version;
         ushort MaxHexX, MaxHexY;
         int    WorkHexX, WorkHexY;
-        char   ScriptModule[ MAX_SCRIPT_NAME + 1 ];
-        char   ScriptFunc[ MAX_SCRIPT_NAME + 1 ];
+        char   ScriptModule[MAX_SCRIPT_NAME + 1];
+        char   ScriptFunc[MAX_SCRIPT_NAME + 1];
         int    Time;
         bool   NoLogOut;
-        int    DayTime[ 4 ];
-        uchar  DayColor[ 12 ];
+        int    DayTime[4];
+        uchar  DayColor[12];
 
         // Deprecated
         ushort HeaderSize;
@@ -206,7 +206,7 @@ public:
         #endif
 
         Tile() { memzero( this, sizeof( Tile ) ); }
-        Tile( uint name, ushort hx, ushort hy, char ox, char oy, uchar layer, bool is_roof ): NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
+        Tile( uint name, ushort hx, ushort hy, char ox, char oy, uchar layer, bool is_roof ) : NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
     };
     typedef vector< Tile >    TileVec;
     TileVec Tiles;
@@ -215,7 +215,7 @@ public:
     typedef vector< TileVec > TileVecVec;
     TileVecVec TilesField;
     TileVecVec RoofsField;
-    TileVec&   GetTiles( ushort hx, ushort hy, bool is_roof ) { return is_roof ? RoofsField[ hy * Header.MaxHexX + hx ] : TilesField[ hy * Header.MaxHexX + hx ]; }
+    TileVec&   GetTiles( ushort hx, ushort hy, bool is_roof ) { return is_roof ? RoofsField[hy * Header.MaxHexX + hx] : TilesField[hy * Header.MaxHexX + hx]; }
     #endif
 
 private:
@@ -258,7 +258,7 @@ public:
         uchar  Dir;
 
         MapEntire() { memzero( this, sizeof( MapEntire ) ); }
-        MapEntire( ushort hx, ushort hy, uchar dir, uint type ): HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
+        MapEntire( ushort hx, ushort hy, uchar dir, uint type ) : HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
     };
     typedef vector< MapEntire > EntiresVec;
 
@@ -304,7 +304,7 @@ public:
     void       GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs );
     void       GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs );
     MapObject* GetMapGrid( ushort hx, ushort hy );
-    ProtoMap(): isInit( false ), pathType( 0 ), HexFlags( NULL ) { MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof( ProtoMap ) ); }
+    ProtoMap() : isInit( false ), pathType( 0 ), HexFlags( NULL ) { MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof( ProtoMap ) ); }
     ProtoMap( const ProtoMap& r )
     {
         *this = r;
@@ -314,10 +314,10 @@ public:
     {
         isInit = false;
         HexFlags = NULL;
-        MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) sizeof( ProtoMap ) );
+        MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)sizeof( ProtoMap ) );
     }
     #else
-    ProtoMap(): isInit( false ), pathType( 0 ), RefCounter( 1 ) {}
+    ProtoMap() : isInit( false ), pathType( 0 ), RefCounter( 1 ) {}
     ~ProtoMap() { isInit = false; }
     #endif
 };

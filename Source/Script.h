@@ -12,7 +12,7 @@
 #define GLOBAL_CONTEXT_STACK_SIZE    ( 10 )
 #define CONTEXT_BUFFER_SIZE          ( 512 )
 
-typedef void ( *EndExecutionCallback )();
+typedef void ( * EndExecutionCallback )();
 typedef std::vector< asIScriptModule* > ScriptModuleVec;
 
 struct EngineData
@@ -26,8 +26,8 @@ struct EngineData
 struct ReservedScriptFunction
 {
     int* BindId;
-    char FuncName[ 256 ];
-    char FuncDecl[ 256 ];
+    char FuncName[256];
+    char FuncDecl[256];
 };
 
 namespace Script
@@ -147,12 +147,12 @@ namespace Script
     {
         if( !vec.empty() && arr )
         {
-            uint i = (uint) arr->GetSize();
-            arr->Resize( (asUINT) ( i + (uint) vec.size() ) );
-            for( uint k = 0, l = (uint) vec.size(); k < l; k++, i++ )
+            uint i = (uint)arr->GetSize();
+            arr->Resize( (asUINT)( i + (uint)vec.size() ) );
+            for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
-                Type* p = (Type*) arr->At( i );
-                *p = vec[ k ];
+                Type* p = (Type*)arr->At( i );
+                *p = vec[k];
             }
         }
     }
@@ -161,12 +161,12 @@ namespace Script
     {
         if( !vec.empty() && arr )
         {
-            uint i = (uint) arr->GetSize();
-            arr->Resize( (asUINT) ( i + (uint) vec.size() ) );
-            for( uint k = 0, l = (uint) vec.size(); k < l; k++, i++ )
+            uint i = (uint)arr->GetSize();
+            arr->Resize( (asUINT)( i + (uint)vec.size() ) );
+            for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
-                Type* p = (Type*) arr->At( i );
-                *p = vec[ k ];
+                Type* p = (Type*)arr->At( i );
+                *p = vec[k];
                 ( *p )->AddRef();
             }
         }
@@ -176,14 +176,14 @@ namespace Script
     {
         if( arr )
         {
-            uint count = (uint) arr->GetSize();
+            uint count = (uint)arr->GetSize();
             if( count )
             {
                 vec.resize( count );
                 for( uint i = 0; i < count; i++ )
                 {
-                    Type* p = (Type*) arr->At( i );
-                    vec[ i ] = *p;
+                    Type* p = (Type*)arr->At( i );
+                    vec[i] = *p;
                 }
             }
         }
@@ -207,13 +207,13 @@ public:
     {
         if( !ptr || !size ) return;
         binBuf.resize( binBuf.size() + size );
-        memcpy( &binBuf[ writePos ], ptr, size );
+        memcpy( &binBuf[writePos], ptr, size );
         writePos += size;
     }
     void Read( void* ptr, asUINT size )
     {
         if( !ptr || !size ) return;
-        memcpy( ptr, &binBuf[ readPos ], size );
+        memcpy( ptr, &binBuf[readPos], size );
         readPos += size;
     }
     std::vector< asBYTE >& GetBuf() { return binBuf; }

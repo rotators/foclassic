@@ -19,8 +19,8 @@ class FOMsg;
 struct CritTypeType
 {
     bool Enabled;
-    char Name[ 64 ];
-    char SoundName[ 64 ];
+    char Name[64];
+    char SoundName[64];
     uint Alias;
     uint Multihex;
     int  AnimType;
@@ -31,7 +31,7 @@ struct CritTypeType
     bool CanArmor;
     bool CanRotate;
 
-    bool Anim1[ 37 ];   // A..Z 0..9
+    bool Anim1[37];     // A..Z 0..9
 };
 
 namespace CritType

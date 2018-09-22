@@ -70,7 +70,7 @@ private:
 
     Animation3dEntity*    animEntity;
     AnimController*       animController;
-    int                   currentLayers[ LAYERS3D_COUNT + 1 ];     // +1 for actions
+    int                   currentLayers[LAYERS3D_COUNT + 1];       // +1 for actions
     uint                  numAnimationSets;
     uint                  currentTrack;
     uint                  lastTick;

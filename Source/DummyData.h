@@ -118,9 +118,9 @@ struct ProtoItem
     int  AnimWaitBase;
     int  AnimWaitRndMin;
     int  AnimWaitRndMax;
-    int  AnimStay[ 2 ];
-    int  AnimShow[ 2 ];
-    int  AnimHide[ 2 ];
+    int  AnimStay[2];
+    int  AnimShow[2];
+    int  AnimHide[2];
     int  OffsetX;
     int  OffsetY;
     int  SpriteCut;
@@ -132,11 +132,11 @@ struct ProtoItem
     int  IndicatorStart;
     int  IndicatorMax;
     int  HolodiskNum;
-    int  StartValue[ 10 ];
-    int  BlockLines[ 10 ];
-    int  ChildPid[ 10 ];
-    int  ChildLines[ 10 ][ 10 ];
-    int  UserData[ 100 ];
+    int  StartValue[10];
+    int  BlockLines[10];
+    int  ChildPid[10];
+    int  ChildLines[10][10];
+    int  UserData[100];
     int  Weapon_IsUnarmed;
     int  Weapon_UnarmedTree;
     int  Weapon_UnarmedPriority;
@@ -150,13 +150,13 @@ struct ProtoItem
     int  Weapon_MinStrength;
     int  Weapon_Perk;
     int  Weapon_ActiveUses;
-    int  Weapon_Skill[ 3 ];
-    int  Weapon_PicUse[ 3 ];
-    int  Weapon_MaxDist[ 3 ];
-    int  Weapon_Round[ 3 ];
-    int  Weapon_ApCost[ 3 ];
-    int  Weapon_Aim[ 3 ];
-    int  Weapon_SoundId[ 3 ];
+    int  Weapon_Skill[3];
+    int  Weapon_PicUse[3];
+    int  Weapon_MaxDist[3];
+    int  Weapon_Round[3];
+    int  Weapon_ApCost[3];
+    int  Weapon_Aim[3];
+    int  Weapon_SoundId[3];
     int  Ammo_Caliber;
     int  Container_Volume;
     int  Container_CannotPickUp;
@@ -221,9 +221,9 @@ struct Item
         int PicMapHash;
         int PicInvHash;
         int AnimWaitBase;
-        int AnimStay[ 2 ];
-        int AnimShow[ 2 ];
-        int AnimHide[ 2 ];
+        int AnimStay[2];
+        int AnimShow[2];
+        int AnimHide[2];
         int Flags;
         int Mode;
         int LightIntensity;
@@ -234,7 +234,7 @@ struct Item
         int TrapValue;
         int Count;
         int Cost;
-        int ScriptValues[ 10 ];
+        int ScriptValues[10];
         int BrokenFlags;
         int BrokenCount;
         int Deterioration;
@@ -252,7 +252,7 @@ struct Item
         int OffsetX;
         int OffsetY;
         int Dir;
-        int Reserved[ 10 ];
+        int Reserved[10];
     } Data;
 
     int  RefCounter;
@@ -280,15 +280,15 @@ struct MapObject
     int LightDistance;
     int LightIntensity;
 
-    int UserData[ 10 ];
+    int UserData[10];
 
     struct
     {
         int Cond;
         int Anim1;
         int Anim2;
-        int ParamIndex[ 15 ];
-        int ParamValue[ 15 ];
+        int ParamIndex[15];
+        int ParamValue[15];
     } MCritter;
 
     struct
@@ -301,7 +301,7 @@ struct MapObject
         int PicMapDeprecated;
         int PicInvDeprecated;
         int InfoOffset;
-        int Reserved[ 3 ];
+        int Reserved[3];
         int PicMapHash;
         int PicInvHash;
 
@@ -323,7 +323,7 @@ struct MapObject
 
         int TrapValue;
 
-        int Val[ 10 ];
+        int Val[10];
     } MItem;
 
     struct
@@ -336,7 +336,7 @@ struct MapObject
         int PicMapDeprecated;
         int PicInvDeprecated;
         int InfoOffset;
-        int Reserved[ 3 ];
+        int Reserved[3];
         int PicMapHash;
         int PicInvHash;
 
@@ -345,7 +345,7 @@ struct MapObject
         int TriggerNum;
 
         int ParamsCount;
-        int Param[ 5 ];
+        int Param[5];
 
         int ToMapPid;
         int ToEntire;
@@ -411,7 +411,7 @@ struct Critter
     int  NameStr;
     int  IsRuning;
     int  IsNotValid;
-    int  ThisPtr[ 1 ];
+    int  ThisPtr[1];
     int  RefCounter;
 
     void AddRef()  {}
@@ -429,8 +429,8 @@ struct Map
         int IsTurnBasedAviable;
         int MapTime;
         int ScriptId;
-        int MapDayTime[ 4 ];
-        int MapDayColor[ 12 ];
+        int MapDayTime[4];
+        int MapDayColor[12];
     } Data;
 
     int  TurnBasedRound;
@@ -458,8 +458,8 @@ struct Location
         int AutoGarbage;
         int Reserved0;
         int Color;
-        int Reserved3[ 10 ];
-        int MapIds[ 1 ];
+        int Reserved3[10];
+        int MapIds[1];
     } Data;
 
     int  GeckCount;
@@ -1272,8 +1272,8 @@ struct GameOptions
     int WhisperDist;
     int ShoutDist;
     int LookChecks;
-    int LookDir[ 4 ];
-    int LookSneakDir[ 4 ];
+    int LookDir[4];
+    int LookSneakDir[4];
     int LookWeight;
     int CustomItemCost;
     int RegistrationTimeout;
@@ -1425,7 +1425,7 @@ struct GameOptions
     int SpritesZoom;
     int SpritesZoomMax;
     int SpritesZoomMin;
-    int EffectValues[ 10 ];
+    int EffectValues[10];
     int AlwaysRun;
     int AlwaysRunMoveDist;
     int AlwaysRunUseDist;

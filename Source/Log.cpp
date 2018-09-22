@@ -27,7 +27,7 @@ void LogToFile( const char* fname )
         FileClose( LogFileHandle );
     LogFileHandle = NULL;
 
-    if( fname && fname[ 0 ] )
+    if( fname && fname[0] )
         LogFileHandle = FileOpen( fname, true, true );
 }
 
@@ -109,19 +109,19 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
     if( LogFunctionsInProcess )
         return;
 
-    char str_tid[ 64 ] = { 0 };
+    char str_tid[64] = { 0 };
     #if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
     if( LoggingWithThread )
     {
         const char* name = Thread::GetCurrentName();
-        if( name[ 0 ] )
+        if( name[0] )
             Str::Format( str_tid, "[%s]", name );
         else
             Str::Format( str_tid, "[%04u]", Thread::GetCurrentId() );
     }
     #endif
 
-    char str_time[ 64 ] = { 0 };
+    char str_time[64] = { 0 };
     if( LoggingWithTime )
     {
         if( StartLogTime == 0 )
@@ -139,19 +139,19 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
             Str::Format( str_time, "[%02u:%03u]", seconds % 60, delta % 1000 );
     }
 
-    char str[ MAX_LOGTEXT ] = { 0 };
-    if( str_tid[ 0 ] )
+    char str[MAX_LOGTEXT] = { 0 };
+    if( str_tid[0] )
         Str::Append( str, str_tid );
-    if( str_time[ 0 ] )
+    if( str_time[0] )
         Str::Append( str, str_time );
-    if( str_tid[ 0 ] || str_time[ 0 ] )
+    if( str_tid[0] || str_time[0] )
         Str::Append( str, " " );
     if( func )
         Str::Append( str, func );
 
     size_t len = Str::Length( str );
-    vsnprintf( &str[ len ], MAX_LOGTEXT - len, frmt, list );
-    str[ MAX_LOGTEXT - 1 ] = 0;
+    vsnprintf( &str[len], MAX_LOGTEXT - len, frmt, list );
+    str[MAX_LOGTEXT - 1] = 0;
 
     if( LogFileHandle )
     {
@@ -161,13 +161,13 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
     {
         LogFunctionsInProcess = true;
         for( size_t i = 0, j = LogFunctions.size(); i < j; i++ )
-            ( *LogFunctions[ i ] )( str );
+            ( *LogFunctions[i] )( str );
         LogFunctionsInProcess = false;
     }
     if( LogTextBox )
     {
         #if defined ( FONLINE_SERVER ) && !defined ( SERVER_DAEMON )
-        ( (Fl_Text_Display*) LogTextBox )->buffer()->append( str );
+        ( (Fl_Text_Display*)LogTextBox )->buffer()->append( str );
         #endif
     }
     if( LogBufferStr )

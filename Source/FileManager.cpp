@@ -3,7 +3,7 @@
 
 #define OUT_BUF_START_SIZE    ( 0x100 )
 
-const char* PathList[ PATH_LIST_COUNT ] =
+const char* PathList[PATH_LIST_COUNT] =
 {
     // Client and mapper paths
     "",
@@ -63,12 +63,12 @@ const char* PathList[ PATH_LIST_COUNT ] =
 };
 
 DataFileVec FileManager::dataFiles;
-char        FileManager::dataPath[ MAX_FOPATH ] = { DIR_SLASH_SD };
+char        FileManager::dataPath[MAX_FOPATH] = { DIR_SLASH_SD };
 
 void FileManager::SetDataPath( const char* path )
 {
     Str::Copy( dataPath, path );
-    if( dataPath[ Str::Length( dataPath ) - 1 ] != DIR_SLASH_C )
+    if( dataPath[Str::Length( dataPath ) - 1] != DIR_SLASH_C )
         Str::Append( dataPath, DIR_SLASH_S );
     FormatPath( dataPath );
     MakeDirectory( GetFullPath( "", PT_DATA ) );
@@ -76,15 +76,15 @@ void FileManager::SetDataPath( const char* path )
 
 void FileManager::SetCacheName( const char* name )
 {
-    char cache_path[ MAX_FOPATH ];
-    Str::Format( cache_path, "cache%s%s%s", DIR_SLASH_S, name && name[ 0 ] ? name : "dummy", DIR_SLASH_S );
-    PathList[ PT_CACHE ] = Str::Duplicate( cache_path );
+    char cache_path[MAX_FOPATH];
+    Str::Format( cache_path, "cache%s%s%s", DIR_SLASH_S, name && name[0] ? name : "dummy", DIR_SLASH_S );
+    PathList[PT_CACHE] = Str::Duplicate( cache_path );
     MakeDirectory( GetFullPath( "", PT_CACHE ) );
 }
 
 void FileManager::InitDataFiles( const char* path )
 {
-    char list_path[ MAX_FOPATH ];
+    char list_path[MAX_FOPATH];
     Str::Format( list_path, "%sDataFiles.cfg", path );
 
     FileManager*           list = new FileManager();
@@ -92,7 +92,7 @@ void FileManager::InitDataFiles( const char* path )
     vec.push_back( list );
     if( list->LoadFile( list_path, -1 ) )
     {
-        char line[ MAX_FOTEXT ];
+        char line[MAX_FOTEXT];
         while( !vec.empty() )
         {
             if( !vec.back()->GetLine( line, 1024 ) )
@@ -120,8 +120,8 @@ void FileManager::InitDataFiles( const char* path )
                 Str::EraseFrontBackSpecificChars( line );
 
                 // Make file path
-                char fpath[ MAX_FOPATH ] = { 0 };
-                if( line[ 1 ] != ':' )
+                char fpath[MAX_FOPATH] = { 0 };
+                if( line[1] != ':' )
                     Str::Copy( fpath, path );                                           // Relative path
                 Str::Append( fpath, line );
                 FormatPath( fpath );
@@ -129,7 +129,7 @@ void FileManager::InitDataFiles( const char* path )
                 FileManager* mgr = new FileManager();
                 if( !mgr->LoadFile( fpath, -1 ) )
                 {
-                    char errmsg[ MAX_FOTEXT ];
+                    char errmsg[MAX_FOTEXT];
                     Str::Format( errmsg, "Data file '%s' not found. Run Updater.exe.", fpath );
                     ShowMessage( errmsg );
                     WriteLogF( _FUNC_, " - %s\n", errmsg );
@@ -141,8 +141,8 @@ void FileManager::InitDataFiles( const char* path )
             }
 
             // Make file path
-            char fpath[ MAX_FOPATH ] = { 0 };
-            if( line[ 1 ] != ':' )
+            char fpath[MAX_FOPATH] = { 0 };
+            if( line[1] != ':' )
                 Str::Copy( fpath, path );                       // Relative path
             Str::Append( fpath, line );
             FormatPath( fpath );
@@ -150,7 +150,7 @@ void FileManager::InitDataFiles( const char* path )
             // Try load
             if( !LoadDataFile( fpath ) )
             {
-                char errmsg[ MAX_FOTEXT ];
+                char errmsg[MAX_FOTEXT];
                 Str::Format( errmsg, "Data file '%s' not found. Run Updater.exe.", fpath );
                 ShowMessage( errmsg );
                 WriteLogF( _FUNC_, " - %s\n", errmsg );
@@ -172,7 +172,7 @@ bool FileManager::LoadDataFile( const char* path )
     }
 
     // Extract full path
-    char path_[ MAX_FOPATH ];
+    char path_[MAX_FOPATH];
     Str::Copy( path_, path );
     FormatPath( path_ );
     if( !ResolvePath( path_ ) )
@@ -228,21 +228,21 @@ bool FileManager::LoadFile( const char* fname, int path_type )
 {
     UnloadFile();
 
-    if( !fname || !fname[ 0 ] )
+    if( !fname || !fname[0] )
         return false;
 
-    char folder_path[ MAX_FOPATH ] = { 0 };
-    char dat_path[ MAX_FOPATH ] = { 0 };
+    char folder_path[MAX_FOPATH] = { 0 };
+    char dat_path[MAX_FOPATH] = { 0 };
     bool only_folder = false;
 
     if( path_type >= 0 && path_type < PATH_LIST_COUNT )
     {
         // Make data path
-        Str::Copy( dat_path, PathList[ path_type ] );
+        Str::Copy( dat_path, PathList[path_type] );
         Str::Append( dat_path, fname );
         FormatPath( dat_path );
         #ifndef FO_WINDOWS
-        if( dat_path[ 0 ] == '.' && dat_path[ 1 ] == DIR_SLASH_C )
+        if( dat_path[0] == '.' && dat_path[1] == DIR_SLASH_C )
             Str::CopyBack( dat_path ), Str::CopyBack( dat_path );
         #endif
 
@@ -253,17 +253,17 @@ bool FileManager::LoadFile( const char* fname, int path_type )
 
         // Check for full path
         #ifdef FO_WINDOWS
-        if( dat_path[ 1 ] == ':' )
+        if( dat_path[1] == ':' )
             only_folder = true;                        // C:/folder/file.ext
         #else
-        if( dat_path[ 0 ] == DIR_SLASH_C )
+        if( dat_path[0] == DIR_SLASH_C )
             only_folder = true;                        // /folder/file.ext
         #endif
-        if( dat_path[ 0 ] == '.' && dat_path[ 1 ] == '.' && dat_path[ 2 ] == DIR_SLASH_C )
+        if( dat_path[0] == '.' && dat_path[1] == '.' && dat_path[2] == DIR_SLASH_C )
             only_folder = true;                        // ../folder/file.ext
 
         // Check for empty
-        if( !dat_path[ 0 ] || !folder_path[ 0 ] )
+        if( !dat_path[0] || !folder_path[0] )
             return false;
     }
     else if( path_type == -1 )
@@ -284,7 +284,7 @@ bool FileManager::LoadFile( const char* fname, int path_type )
         FileGetTime( file, timeCreate, timeAccess, timeWrite );
 
         uint   size = FileGetSize( file );
-        uchar* buf = new uchar[ size + 1 ];
+        uchar* buf = new uchar[size + 1];
         if( !buf )
             return false;
 
@@ -295,7 +295,7 @@ bool FileManager::LoadFile( const char* fname, int path_type )
 
         fileSize = size;
         fileBuf = buf;
-        fileBuf[ fileSize ] = 0;
+        fileBuf[fileSize] = 0;
         curPos = 0;
         return true;
     }
@@ -336,11 +336,11 @@ bool FileManager::LoadStream( const uchar* stream, uint length )
     if( !length )
         return false;
     fileSize = length;
-    fileBuf = new uchar[ fileSize + 1 ];
+    fileBuf = new uchar[fileSize + 1];
     if( !fileBuf )
         return false;
     memcpy( fileBuf, stream, fileSize );
-    fileBuf[ fileSize ] = 0;
+    fileBuf[fileSize] = 0;
     curPos = 0;
     return true;
 }
@@ -367,12 +367,12 @@ bool FileManager::FindFragment( const uchar* fragment, uint fragment_len, uint b
 
     for( uint i = begin_offs; i < fileSize - fragment_len; i++ )
     {
-        if( fileBuf[ i ] == fragment[ 0 ] )
+        if( fileBuf[i] == fragment[0] )
         {
             bool not_match = false;
             for( uint j = 1; j < fragment_len; j++ )
             {
-                if( fileBuf[ i + j ] != fragment[ j ] )
+                if( fileBuf[i + j] != fragment[j] )
                 {
                     not_match = true;
                     break;
@@ -397,20 +397,20 @@ bool FileManager::GetLine( char* str, uint len )
     uint wpos = 0;
     for( ; wpos < len && curPos < fileSize; curPos++, wpos++ )
     {
-        if( fileBuf[ curPos ] == '\r' || fileBuf[ curPos ] == '\n' || fileBuf[ curPos ] == '#' || fileBuf[ curPos ] == ';' )
+        if( fileBuf[curPos] == '\r' || fileBuf[curPos] == '\n' || fileBuf[curPos] == '#' || fileBuf[curPos] == ';' )
         {
             for( ; curPos < fileSize; curPos++ )
-                if( fileBuf[ curPos ] == '\n' )
+                if( fileBuf[curPos] == '\n' )
                     break;
             curPos++;
             break;
         }
 
-        str[ wpos ] = fileBuf[ curPos ];
+        str[wpos] = fileBuf[curPos];
     }
 
-    str[ wpos ] = 0;
-    if( !str[ 0 ] )
+    str[wpos] = 0;
+    if( !str[0] )
         return GetLine( str, len );          // Skip empty line
     return true;
 }
@@ -442,7 +442,7 @@ uchar FileManager::GetUChar()
     if( curPos + sizeof( uchar ) > fileSize )
         return 0;
     uchar res = 0;
-    res = fileBuf[ curPos++ ];
+    res = fileBuf[curPos++];
     return res;
 }
 
@@ -451,9 +451,9 @@ ushort FileManager::GetBEUShort()
     if( curPos + sizeof( ushort ) > fileSize )
         return 0;
     ushort res = 0;
-    uchar* cres = (uchar*) &res;
-    cres[ 1 ] = fileBuf[ curPos++ ];
-    cres[ 0 ] = fileBuf[ curPos++ ];
+    uchar* cres = (uchar*)&res;
+    cres[1] = fileBuf[curPos++];
+    cres[0] = fileBuf[curPos++];
     return res;
 }
 
@@ -462,9 +462,9 @@ ushort FileManager::GetLEUShort()
     if( curPos + sizeof( ushort ) > fileSize )
         return 0;
     ushort res = 0;
-    uchar* cres = (uchar*) &res;
-    cres[ 0 ] = fileBuf[ curPos++ ];
-    cres[ 1 ] = fileBuf[ curPos++ ];
+    uchar* cres = (uchar*)&res;
+    cres[0] = fileBuf[curPos++];
+    cres[1] = fileBuf[curPos++];
     return res;
 }
 
@@ -473,9 +473,9 @@ uint FileManager::GetBEUInt()
     if( curPos + sizeof( uint ) > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*) &res;
+    uchar* cres = (uchar*)&res;
     for( int i = 3; i >= 0; i-- )
-        cres[ i ] = fileBuf[ curPos++ ];
+        cres[i] = fileBuf[curPos++];
     return res;
 }
 
@@ -484,9 +484,9 @@ uint FileManager::GetLEUInt()
     if( curPos + sizeof( uint ) > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*) &res;
+    uchar* cres = (uchar*)&res;
     for( int i = 0; i <= 3; i++ )
-        cres[ i ] = fileBuf[ curPos++ ];
+        cres[i] = fileBuf[curPos++];
     return res;
 }
 
@@ -495,9 +495,9 @@ uint FileManager::GetLE3UChar()
     if( curPos + sizeof( uchar ) * 3 > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*) &res;
+    uchar* cres = (uchar*)&res;
     for( int i = 0; i <= 2; i++ )
-        cres[ i ] = fileBuf[ curPos++ ];
+        cres[i] = fileBuf[curPos++];
     return res;
 }
 
@@ -506,9 +506,9 @@ float FileManager::GetBEFloat()
     if( curPos + sizeof( float ) > fileSize )
         return 0.0f;
     float  res;
-    uchar* cres = (uchar*) &res;
+    uchar* cres = (uchar*)&res;
     for( int i = 3; i >= 0; i-- )
-        cres[ i ] = fileBuf[ curPos++ ];
+        cres[i] = fileBuf[curPos++];
     return res;
 }
 
@@ -517,9 +517,9 @@ float FileManager::GetLEFloat()
     if( curPos + sizeof( float ) > fileSize )
         return 0.0f;
     float  res;
-    uchar* cres = (uchar*) &res;
+    uchar* cres = (uchar*)&res;
     for( int i = 0; i <= 3; i++ )
-        cres[ i ] = fileBuf[ curPos++ ];
+        cres[i] = fileBuf[curPos++];
     return res;
 }
 
@@ -557,20 +557,20 @@ bool FileManager::ResizeOutBuf()
 {
     if( !lenOutBuf )
     {
-        dataOutBuf = new uchar[ OUT_BUF_START_SIZE ];
+        dataOutBuf = new uchar[OUT_BUF_START_SIZE];
         if( !dataOutBuf )
             return false;
         lenOutBuf = OUT_BUF_START_SIZE;
-        memzero( (void*) dataOutBuf, lenOutBuf );
+        memzero( (void*)dataOutBuf, lenOutBuf );
         return true;
     }
 
     uchar* old_obuf = dataOutBuf;
-    dataOutBuf = new uchar[ lenOutBuf * 2 ];
+    dataOutBuf = new uchar[lenOutBuf * 2];
     if( !dataOutBuf )
         return false;
-    memzero( (void*) dataOutBuf, lenOutBuf * 2 );
-    memcpy( (void*) dataOutBuf, (void*) old_obuf, lenOutBuf );
+    memzero( (void*)dataOutBuf, lenOutBuf * 2 );
+    memcpy( (void*)dataOutBuf, (void*)old_obuf, lenOutBuf );
     SAFEDELA( old_obuf );
     lenOutBuf *= 2;
     return true;
@@ -592,11 +592,11 @@ bool FileManager::SaveOutBufToFile( const char* fname, int path_type )
     if( !fname )
         return false;
 
-    char fpath[ MAX_FOPATH ];
+    char fpath[MAX_FOPATH];
     if( path_type >= 0 && path_type < PATH_LIST_COUNT )
     {
         Str::Copy( fpath, GetDataPath( path_type ) );
-        Str::Append( fpath, PathList[ path_type ] );
+        Str::Append( fpath, PathList[path_type] );
         Str::Append( fpath, fname );
     }
     else if( path_type == -1 )
@@ -635,7 +635,7 @@ void FileManager::SetData( void* data, uint len )
         return;
     }
 
-    memcpy( &dataOutBuf[ posOutBuf ], data, len );
+    memcpy( &dataOutBuf[posOutBuf], data, len );
     posOutBuf += len;
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
@@ -643,7 +643,7 @@ void FileManager::SetData( void* data, uint len )
 
 void FileManager::SetStr( const char* fmt, ... )
 {
-    char    str[ 2048 ];
+    char    str[2048];
 
     va_list list;
     va_start( list, fmt );
@@ -657,7 +657,7 @@ void FileManager::SetUChar( uchar data )
 {
     if( posOutBuf + sizeof( uchar ) > lenOutBuf && !ResizeOutBuf() )
         return;
-    dataOutBuf[ posOutBuf++ ] = data;
+    dataOutBuf[posOutBuf++] = data;
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
@@ -666,9 +666,9 @@ void FileManager::SetBEUShort( ushort data )
 {
     if( posOutBuf + sizeof( ushort ) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*) &data;
-    dataOutBuf[ posOutBuf++ ] = pdata[ 1 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 0 ];
+    uchar* pdata = (uchar*)&data;
+    dataOutBuf[posOutBuf++] = pdata[1];
+    dataOutBuf[posOutBuf++] = pdata[0];
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
@@ -677,9 +677,9 @@ void FileManager::SetLEUShort( ushort data )
 {
     if( posOutBuf + sizeof( ushort ) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*) &data;
-    dataOutBuf[ posOutBuf++ ] = pdata[ 0 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 1 ];
+    uchar* pdata = (uchar*)&data;
+    dataOutBuf[posOutBuf++] = pdata[0];
+    dataOutBuf[posOutBuf++] = pdata[1];
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
@@ -688,11 +688,11 @@ void FileManager::SetBEUInt( uint data )
 {
     if( posOutBuf + sizeof( uint ) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*) &data;
-    dataOutBuf[ posOutBuf++ ] = pdata[ 3 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 2 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 1 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 0 ];
+    uchar* pdata = (uchar*)&data;
+    dataOutBuf[posOutBuf++] = pdata[3];
+    dataOutBuf[posOutBuf++] = pdata[2];
+    dataOutBuf[posOutBuf++] = pdata[1];
+    dataOutBuf[posOutBuf++] = pdata[0];
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
@@ -701,23 +701,23 @@ void FileManager::SetLEUInt( uint data )
 {
     if( posOutBuf + sizeof( uint ) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*) &data;
-    dataOutBuf[ posOutBuf++ ] = pdata[ 0 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 1 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 2 ];
-    dataOutBuf[ posOutBuf++ ] = pdata[ 3 ];
+    uchar* pdata = (uchar*)&data;
+    dataOutBuf[posOutBuf++] = pdata[0];
+    dataOutBuf[posOutBuf++] = pdata[1];
+    dataOutBuf[posOutBuf++] = pdata[2];
+    dataOutBuf[posOutBuf++] = pdata[3];
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
 
 const char* FileManager::GetFullPath( const char* fname, int path_type )
 {
-    static THREAD char buf[ MAX_FOPATH ];
-    buf[ 0 ] = 0;
+    static THREAD char buf[MAX_FOPATH];
+    buf[0] = 0;
     if( path_type >= 0 )
         Str::Append( buf, GetDataPath( path_type ) );
     if( path_type >= 0 )
-        Str::Append( buf, PathList[ path_type ] );
+        Str::Append( buf, PathList[path_type] );
     if( fname )
         Str::Append( buf, fname );
     FormatPath( buf );
@@ -728,11 +728,11 @@ void FileManager::GetFullPath( const char* fname, int path_type, char* get_path 
 {
     if( !get_path )
         return;
-    get_path[ 0 ] = 0;
+    get_path[0] = 0;
     if( path_type >= 0 )
         Str::Append( get_path, MAX_FOPATH, GetDataPath( path_type ) );
     if( path_type >= 0 )
-        Str::Append( get_path, MAX_FOPATH, PathList[ path_type ] );
+        Str::Append( get_path, MAX_FOPATH, PathList[path_type] );
     if( fname )
         Str::Append( get_path, MAX_FOPATH, fname );
     FormatPath( get_path );
@@ -741,7 +741,7 @@ void FileManager::GetFullPath( const char* fname, int path_type, char* get_path 
 const char* FileManager::GetPath( int path_type )
 {
     static const char any[] = "error";
-    return (uint) path_type >= PATH_LIST_COUNT ? any : PathList[ path_type ];
+    return (uint)path_type >= PATH_LIST_COUNT ? any : PathList[path_type];
 }
 
 const char* FileManager::GetDataPath( int path_type )
@@ -779,7 +779,7 @@ void FileManager::FormatPath( char* path, bool first_skipped /* = false */ )
     // Skip first '../'
     if( !first_skipped )
     {
-        while( path[ 0 ] == '.' && path[ 1 ] == '.' && path[ 2 ] == DIR_SLASH_C )
+        while( path[0] == '.' && path[1] == '.' && path[2] == DIR_SLASH_C )
         {
             path += 3;
             first_skipped = true;
@@ -826,14 +826,14 @@ void FileManager::FormatPath( char* path, bool first_skipped /* = false */ )
 
     // Extra dot+slash in beginning
     #ifndef FO_WINDOWS
-    if( !first_skipped && path[ 0 ] != DIR_SLASH_C )
+    if( !first_skipped && path[0] != DIR_SLASH_C )
         Str::Insert( path, DIR_SLASH_SD );
     #endif
 }
 
 void FileManager::ExtractPath( const char* fname, char* path )
 {
-    char buf[ MAX_FOPATH ];
+    char buf[MAX_FOPATH];
     Str::Copy( buf, fname );
     FormatPath( buf );
 
@@ -852,17 +852,17 @@ void FileManager::ExtractPath( const char* fname, char* path )
         size_t len = str - buf;
         if( len )
             memcpy( path, buf, len );
-        path[ len ] = 0;
+        path[len] = 0;
     }
     else
     {
-        path[ 0 ] = 0;
+        path[0] = 0;
     }
 }
 
 void FileManager::ExtractFileName( const char* fname, char* name )
 {
-    char buf[ MAX_FOPATH ];
+    char buf[MAX_FOPATH];
     Str::Copy( buf, fname );
     FormatPath( buf );
 
@@ -880,29 +880,29 @@ void FileManager::ExtractFileName( const char* fname, char* name )
         }
         int len = 0;
         for( ; *str; len++, str++ )
-            name[ len ] = *str;
-        name[ len ] = 0;
+            name[len] = *str;
+        name[len] = 0;
     }
     else
     {
-        name[ 0 ] = 0;
+        name[0] = 0;
     }
 }
 
 void FileManager::MakeFilePath( const char* name, const char* path, char* result )
 {
-    char name_[ MAX_FOPATH ];
+    char name_[MAX_FOPATH];
     Str::Copy( name_, name );
     FormatPath( name_ );
 
-    char path_[ MAX_FOPATH ];
+    char path_[MAX_FOPATH];
     if( path )
     {
         Str::Copy( path_, path );
         FormatPath( path_ );
     }
 
-    if( Str::Substring( name_, DIR_SLASH_S ) && name_[ 0 ] != '.' )
+    if( Str::Substring( name_, DIR_SLASH_S ) && name_[0] != '.' )
     {
         // Direct
         Str::Copy( result, MAX_FOPATH, name_ );
@@ -956,7 +956,7 @@ char* FileManager::EraseExtension( char* fname )
 {
     if( !fname )
         return NULL;
-    char* ext = (char*) GetExtension( fname );
+    char* ext = (char*)GetExtension( fname );
     if( ext )
         *( ext - 1 ) = 0;
     return fname;
@@ -968,11 +968,11 @@ int FileManager::ParseLinesInt( const char* fname, int path_type, IntVec& lines 
     if( !LoadFile( fname, path_type ) )
         return -1;
 
-    char cur_line[ 129 ];
+    char cur_line[129];
     while( GetLine( cur_line, 128 ) )
         lines.push_back( atoi( cur_line ) );
     UnloadFile();
-    return (int) lines.size();
+    return (int)lines.size();
 }
 
 void FileManager::GetTime( uint64* create, uint64* access, uint64* write )
@@ -987,8 +987,8 @@ void FileManager::GetTime( uint64* create, uint64* access, uint64* write )
 
 void FileManager::RecursiveDirLook( const char* init_dir, bool include_subdirs, const char* ext, StrVec& result )
 {
-    char path[ MAX_FOPATH ];
-    char short_init_dir[ MAX_FOPATH ];
+    char path[MAX_FOPATH];
+    char short_init_dir[MAX_FOPATH];
     Str::Format( path, "%s%s", dataPath, init_dir );
 
     // Short init dir name, no initial segment of the file name
@@ -996,9 +996,9 @@ void FileManager::RecursiveDirLook( const char* init_dir, bool include_subdirs, 
     int i = Str::Length( short_init_dir );
     while( i-- )
     {
-        if( short_init_dir[ i ] == DIR_SLASH_C )
+        if( short_init_dir[i] == DIR_SLASH_C )
         {
-            short_init_dir[ i + 1 ] = '\0';
+            short_init_dir[i + 1] = '\0';
             break;
         }
     }
@@ -1045,7 +1045,7 @@ void FileManager::RecursiveDirLook( const char* init_dir, bool include_subdirs, 
 void FileManager::GetFolderFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result )
 {
     // Format path
-    char path_[ MAX_FOPATH ];
+    char path_[MAX_FOPATH];
     Str::Copy( path_, path );
     FormatPath( path_ );
     #ifndef FO_WINDOWS
@@ -1061,7 +1061,7 @@ void FileManager::GetFolderFileNames( const char* path, bool include_subdirs, co
 void FileManager::GetDatsFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result )
 {
     // Format path
-    char path_[ MAX_FOPATH ];
+    char path_[MAX_FOPATH];
     Str::Copy( path_, path );
     FormatPath( path_ );
 

@@ -35,7 +35,7 @@ bool  FileRename( const char* fname, const char* new_fname );
 
 struct FIND_DATA
 {
-    char FileName[ MAX_FOPATH ];
+    char FileName[MAX_FOPATH];
     bool IsDirectory;
 };
 void* FileFindFirst( const char* path, const char* extension, FIND_DATA& fd );

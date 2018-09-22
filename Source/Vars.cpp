@@ -34,7 +34,7 @@ bool VarManager::Init( const char* fpath )
 }
 
 #ifdef FONLINE_SERVER
-void VarManager::SaveVarsDataFile( void ( * save_func )( void*, size_t ) )
+void VarManager::SaveVarsDataFile( void ( *save_func )( void*, size_t ) )
 {
     save_func( &varsCount, sizeof( varsCount ) );
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
@@ -84,7 +84,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
         TemplateVar* tvar = GetTemplateVar( temp_id );
         if( !tvar )
         {
-            uint failed = failed_tvars[ temp_id ]++;
+            uint failed = failed_tvars[temp_id]++;
             if( failed < 8 )
                 WriteLog( "Template var not found, tid<%u>.\n", temp_id );
             else if( !( failed & ( failed - 1 ) ) )
@@ -102,7 +102,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
         if( tvar->IsNotUnicum() )
             var = CreateVar( master_id, tvar );
         else
-            var = CreateVarUnicum( ( ( (uint64) slave_id ) << 32 ) | ( (uint64) master_id ), master_id, slave_id, tvar );
+            var = CreateVarUnicum( ( ( (uint64)slave_id ) << 32 ) | ( (uint64)master_id ), master_id, slave_id, tvar );
 
         if( !var )
         {
@@ -177,7 +177,7 @@ bool VarManager::UpdateVarsTemplate()
     }
 
     TempVarVec load_vars;
-    if( !LoadTemplateVars( (char*) fm.GetBuf(), load_vars ) )
+    if( !LoadTemplateVars( (char*)fm.GetBuf(), load_vars ) )
         return false;
 
     for( auto it = load_vars.begin(), it_end = load_vars.end(); it != it_end; ++it )
@@ -192,8 +192,8 @@ bool VarManager::LoadTemplateVars( const char* str, TempVarVec& vars )
 {
     ushort var_id;
     int    var_type;
-    char   var_name[ VAR_NAME_LEN ];
-    char   var_desc[ VAR_DESC_LEN ];
+    char   var_name[VAR_NAME_LEN];
+    char   var_desc[VAR_DESC_LEN];
     int    var_start;
     int    var_min;
     int    var_max;
@@ -271,7 +271,7 @@ bool VarManager::AddTemplateVar( TemplateVar* var )
         return false;
     }
 
-    if( var->TempId < tempVars.size() && tempVars[ var->TempId ] )
+    if( var->TempId < tempVars.size() && tempVars[var->TempId] )
     {
         WriteLogF( _FUNC_, " - Id already used, name<%s>, id<%u>.\n", var->Name.c_str(), var->TempId );
         return false;
@@ -279,7 +279,7 @@ bool VarManager::AddTemplateVar( TemplateVar* var )
 
     if( var->TempId >= tempVars.size() )
         tempVars.resize( var->TempId + 1 );
-    tempVars[ var->TempId ] = var;
+    tempVars[var->TempId] = var;
     return true;
 }
 
@@ -290,7 +290,7 @@ void VarManager::EraseTemplateVar( ushort temp_id )
         return;
 
     delete var;     // If delete on server runtime than possible memory leaks
-    tempVars[ temp_id ] = NULL;
+    tempVars[temp_id] = NULL;
 }
 
 ushort VarManager::GetTemplateVarId( const char* var_name )
@@ -307,7 +307,7 @@ ushort VarManager::GetTemplateVarId( const char* var_name )
 TemplateVar* VarManager::GetTemplateVar( ushort temp_id )
 {
     if( temp_id < tempVars.size() )
-        return tempVars[ temp_id ];
+        return tempVars[temp_id];
     return NULL;
 }
 
@@ -362,7 +362,7 @@ void VarManager::SaveTemplateVars()
         else
             fm.SetStr( "?VAR_" );
         fm.SetStr( "%s", var->Name.c_str() );
-        int spaces = (uint) var->Name.length() + ( var->Type == VAR_LOCAL_LOCATION || var->Type == VAR_LOCAL_MAP || var->Type == VAR_LOCAL_ITEM ? 1 : 0 );
+        int spaces = (uint)var->Name.length() + ( var->Type == VAR_LOCAL_LOCATION || var->Type == VAR_LOCAL_MAP || var->Type == VAR_LOCAL_ITEM ? 1 : 0 );
         for( int i = 0, j = MAX( 1, 40 - spaces ); i < j; i++ )
             fm.SetStr( " " );
         fm.SetStr( "(%u)\n", var->TempId );
@@ -571,7 +571,7 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
     {
         SCOPE_LOCK( varsLocker );
 
-        uint64 id = ( ( (uint64) slave_id ) << 32 ) | ( (uint64) master_id );
+        uint64 id = ( ( (uint64)slave_id ) << 32 ) | ( (uint64)master_id );
         auto   it = tvar->VarsUnicum.find( id );
         if( it == tvar->VarsUnicum.end() )
         {
@@ -620,12 +620,12 @@ GameVar* VarManager::CreateVar( uint master_id, TemplateVar* tvar )
     if( tvar->IsQuest() )
     {
         bool founded = false;
-        for( uint i = 0, j = (uint) allQuestVars.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)allQuestVars.size(); i < j; i++ )
         {
-            if( !allQuestVars[ i ] )
+            if( !allQuestVars[i] )
             {
                 var->QuestVarIndex = i;
-                allQuestVars[ i ] = var;
+                allQuestVars[i] = var;
                 founded = true;
                 break;
             }
@@ -633,7 +633,7 @@ GameVar* VarManager::CreateVar( uint master_id, TemplateVar* tvar )
 
         if( !founded )
         {
-            var->QuestVarIndex = (uint) allQuestVars.size();
+            var->QuestVarIndex = (uint)allQuestVars.size();
             allQuestVars.push_back( var );
         }
     }
@@ -882,7 +882,7 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
 
         // Delete it
         if( tvar->IsQuest() )
-            allQuestVars[ var->QuestVarIndex ] = NULL;
+            allQuestVars[var->QuestVarIndex] = NULL;
 
         if( tvar->IsNotUnicum() )
             tvar->Vars.erase( var->MasterId );

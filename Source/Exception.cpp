@@ -9,8 +9,8 @@ char DumpMess[] =
     "under what circumstances there was a failure. Thanks."
 };
 
-char AppName[ 128 ] = { 0 };
-char ManualDumpAppendix[ 128 ] = { 0 };
+char AppName[128] = { 0 };
+char ManualDumpAppendix[128] = { 0 };
 
 #ifdef FO_WINDOWS
 
@@ -37,9 +37,9 @@ typedef struct _IMAGEHLP_MODULE64_V2
     DWORD    CheckSum;               // checksum from the pe header
     DWORD    NumSyms;                // number of symbols in the symbol table
     SYM_TYPE SymType;                // type of symbols loaded
-    CHAR     ModuleName[ 32 ];       // module name
-    CHAR     ImageName[ 256 ];       // image name
-    CHAR     LoadedImageName[ 256 ]; // symbol file name
+    CHAR     ModuleName[32];         // module name
+    CHAR     ImageName[256];         // image name
+    CHAR     LoadedImageName[256];   // symbol file name
 } IMAGEHLP_MODULE64_V2;
 
 void CatchExceptions( const char* app_name )
@@ -63,9 +63,9 @@ void CatchExceptions( const char* app_name )
 LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
 {
     LONG        retval = EXCEPTION_CONTINUE_SEARCH;
-    char        mess[ MAX_FOTEXT ];
-    char        dump_path[ MAX_FOPATH ];
-    char        dump_path_dir[ MAX_FOPATH ];
+    char        mess[MAX_FOTEXT];
+    char        dump_path[MAX_FOPATH];
+    char        dump_path_dir[MAX_FOPATH];
 
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
@@ -88,7 +88,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         OSVERSIONINFOA ver;
         memset( &ver, 0, sizeof( OSVERSIONINFOA ) );
         ver.dwOSVersionInfoSize = sizeof( ver );
-        if( GetVersionEx( (OSVERSIONINFOA*) &ver ) )
+        if( GetVersionEx( (OSVERSIONINFOA*)&ver ) )
         {
             fprintf( f, "\tOS          %d.%d.%d (%s)\n",
                      ver.dwMajorVersion, ver.dwMinorVersion, ver.dwBuildNumber, ver.szCSDVersion );
@@ -137,28 +137,28 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             fprintf( f, "\tFlags     0x%0X\n", except->ExceptionRecord->ExceptionFlags );
             if( except->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION || except->ExceptionRecord->ExceptionCode == EXCEPTION_IN_PAGE_ERROR )
             {
-                int readWrite = (int) except->ExceptionRecord->ExceptionInformation[ 0 ];
+                int readWrite = (int)except->ExceptionRecord->ExceptionInformation[0];
                 if( readWrite == 0 )
-                    fprintf( f, "\tInfo      Attempted to read to an 0x%p", except->ExceptionRecord->ExceptionInformation[ 1 ] );
+                    fprintf( f, "\tInfo      Attempted to read to an 0x%p", except->ExceptionRecord->ExceptionInformation[1] );
                 else if( readWrite == 1 )
-                    fprintf( f, "\tInfo      Attempted to write to an 0x%p", except->ExceptionRecord->ExceptionInformation[ 1 ] );
+                    fprintf( f, "\tInfo      Attempted to write to an 0x%p", except->ExceptionRecord->ExceptionInformation[1] );
                 else // readWrite == 8
-                    fprintf( f, "\tInfo      Data execution prevention to an 0x%p", except->ExceptionRecord->ExceptionInformation[ 1 ] );
+                    fprintf( f, "\tInfo      Data execution prevention to an 0x%p", except->ExceptionRecord->ExceptionInformation[1] );
                 if( except->ExceptionRecord->ExceptionCode == EXCEPTION_IN_PAGE_ERROR )
-                    fprintf( f, ", NTSTATUS %p", except->ExceptionRecord->ExceptionInformation[ 2 ] );
+                    fprintf( f, ", NTSTATUS %p", except->ExceptionRecord->ExceptionInformation[2] );
                 fprintf( f, "\n" );
             }
             else
             {
                 for( DWORD i = 0; i < except->ExceptionRecord->NumberParameters; i++ )
-                    fprintf( f, "\tInfo %u    0x%p\n", i, except->ExceptionRecord->ExceptionInformation[ i ] );
+                    fprintf( f, "\tInfo %u    0x%p\n", i, except->ExceptionRecord->ExceptionInformation[i] );
             }
             fprintf( f, "\n" );
         }
 
         // Collect current threads
         HANDLE process = GetCurrentProcess();
-        DWORD  threads_ids[ 1024 ] = { GetCurrentThreadId() };
+        DWORD  threads_ids[1024] = { GetCurrentThreadId() };
         uint   threads_ids_count = 1;
         HANDLE snapshot = CreateToolhelp32Snapshot( TH32CS_SNAPTHREAD, 0 );
         if( snapshot != INVALID_HANDLE_VALUE )
@@ -171,8 +171,8 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                 {
                     if( te.dwSize >= FIELD_OFFSET( THREADENTRY32, th32OwnerProcessID ) + sizeof( te.th32OwnerProcessID ) )
                     {
-                        if( te.th32OwnerProcessID == GetCurrentProcessId() && te.th32ThreadID != threads_ids[ 0 ] )
-                            threads_ids[ threads_ids_count++ ] = te.th32ThreadID;
+                        if( te.th32OwnerProcessID == GetCurrentProcessId() && te.th32ThreadID != threads_ids[0] )
+                            threads_ids[threads_ids_count++] = te.th32ThreadID;
                     }
                     te.dwSize = sizeof( te );
                     if( !Thread32Next( snapshot, &te ) )
@@ -193,7 +193,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         // Print information about each thread
         for( uint i = 0; i < threads_ids_count; i++ )
         {
-            DWORD       tid = threads_ids[ i ];
+            DWORD       tid = threads_ids[i];
             HANDLE      t = OpenThread( THREAD_SUSPEND_RESUME | THREAD_QUERY_INFORMATION | THREAD_GET_CONTEXT, FALSE, tid );
             const char* tname = Thread::FindName( tid );
             fprintf( f, "Thread '%s' (%u%s)\n", tname ? tname : "Unknown", tid, !i ? ", current" : "" );
@@ -211,11 +211,11 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                 else
                 {
                     # ifdef FO_X86
-                    __asm     label :
-                    __asm mov[ context.Ebp ], ebp;
-                    __asm     mov[ context.Esp ], esp;
-                    __asm mov eax, [ label ];
-                    __asm     mov[ context.Eip ], eax;
+                    __asm     label:
+                    __asm mov[context.Ebp], ebp;
+                    __asm     mov[context.Esp], esp;
+                    __asm mov eax, [label];
+                    __asm     mov[context.Eip], eax;
                     # else // FO_X64
                     RtlCaptureContext( &context );
                     # endif
@@ -233,11 +233,11 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
 
             # ifdef FO_X86
             DWORD machine_type = IMAGE_FILE_MACHINE_I386;
-            stack.AddrFrame.Mode   = AddrModeFlat;
+            stack.AddrFrame.Mode = AddrModeFlat;
             stack.AddrFrame.Offset = context.Ebp;
-            stack.AddrPC.Mode      = AddrModeFlat;
-            stack.AddrPC.Offset    = context.Eip;
-            stack.AddrStack.Mode   = AddrModeFlat;
+            stack.AddrPC.Mode = AddrModeFlat;
+            stack.AddrPC.Offset = context.Eip;
+            stack.AddrStack.Mode = AddrModeFlat;
             stack.AddrStack.Offset = context.Esp;
             # else // FO_X64
             DWORD machine_type = IMAGE_FILE_MACHINE_AMD64;
@@ -250,8 +250,8 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             # endif
 
             # define STACKWALK_MAX_NAMELEN    ( 1024 )
-            char symbol_buffer[ sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN ];
-            SYMBOL_INFO* symbol = (SYMBOL_INFO*) symbol_buffer;
+            char symbol_buffer[sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN];
+            SYMBOL_INFO* symbol = (SYMBOL_INFO*)symbol_buffer;
             memset( symbol, 0, sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN );
             symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
             symbol->MaxNameLen = STACKWALK_MAX_NAMELEN;
@@ -261,8 +261,8 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                 static BOOL __stdcall Call( HANDLE hProcess, DWORD64 qwBaseAddress, PVOID lpBuffer, DWORD nSize, LPDWORD lpNumberOfBytesRead )
                 {
                     SIZE_T st;
-                    BOOL   bRet = ReadProcessMemory( hProcess, (LPVOID) qwBaseAddress, lpBuffer, nSize, &st );
-                    *      lpNumberOfBytesRead = (DWORD) st;
+                    BOOL   bRet = ReadProcessMemory( hProcess, (LPVOID)qwBaseAddress, lpBuffer, nSize, &st );
+                    *      lpNumberOfBytesRead = (DWORD)st;
                     return bRet;
                 }
             };
@@ -275,35 +275,35 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                     struct CallstackEntry
                     {
                         DWORD64 offset;
-                        CHAR    name[ STACKWALK_MAX_NAMELEN ];
-                        CHAR    undName[ STACKWALK_MAX_NAMELEN ];
-                        CHAR    undFullName[ STACKWALK_MAX_NAMELEN ];
+                        CHAR    name[STACKWALK_MAX_NAMELEN];
+                        CHAR    undName[STACKWALK_MAX_NAMELEN];
+                        CHAR    undFullName[STACKWALK_MAX_NAMELEN];
                         DWORD64 offsetFromSmybol;
                         DWORD   offsetFromLine;
                         DWORD   lineNumber;
-                        CHAR    lineFileName[ STACKWALK_MAX_NAMELEN ];
+                        CHAR    lineFileName[STACKWALK_MAX_NAMELEN];
                         DWORD   symType;
                         LPCSTR  symTypeString;
-                        CHAR    moduleName[ STACKWALK_MAX_NAMELEN ];
+                        CHAR    moduleName[STACKWALK_MAX_NAMELEN];
                         DWORD64 baseOfImage;
-                        CHAR    loadedImageName[ STACKWALK_MAX_NAMELEN ];
+                        CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
                     };
 
                     static void OnCallstackEntry( FILE* f, int frame_num, CallstackEntry& entry )
                     {
                         if( frame_num >= 0 && entry.offset != 0 )
                         {
-                            if( entry.name[ 0 ] == 0 )
+                            if( entry.name[0] == 0 )
                                 strcpy_s( entry.name, "(function-name not available)" );
-                            if( entry.undName[ 0 ] != 0 )
+                            if( entry.undName[0] != 0 )
                                 strcpy_s( entry.name, entry.undName );
-                            if( entry.undFullName[ 0 ] != 0 )
+                            if( entry.undFullName[0] != 0 )
                                 strcpy_s( entry.name, entry.undFullName );
-                            if( entry.moduleName[ 0 ] == 0 )
+                            if( entry.moduleName[0] == 0 )
                                 strcpy_s( entry.moduleName, "???" );
 
                             fprintf( f, "\t%s, %s + %d", entry.moduleName, entry.name, entry.offsetFromSmybol );
-                            if( entry.lineFileName[ 0 ] != 0 )
+                            if( entry.lineFileName[0] != 0 )
                                 fprintf( f, ", %s (%d)\n", entry.lineFileName, entry.lineNumber );
                             else
                                 fprintf( f, "\n" );
@@ -402,16 +402,16 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         }
 
         // Print modules
-        HMODULE modules[ 1024 ];
+        HMODULE modules[1024];
         DWORD   needed;
         fprintf( f, "Loaded modules\n" );
         if( EnumProcessModules( process, modules, sizeof( modules ), &needed ) )
         {
-            for( int i = 0; i < (int) ( needed / sizeof( HMODULE ) ); i++ )
+            for( int i = 0; i < (int)( needed / sizeof( HMODULE ) ); i++ )
             {
-                char module_name[ MAX_PATH ] = { 0 };
-                if( GetModuleFileNameEx( process, modules[ i ], module_name, sizeof( module_name ) ) )
-                    fprintf( f, "\t%s (%p)\n", module_name, modules[ i ] );
+                char module_name[MAX_PATH] = { 0 };
+                if( GetModuleFileNameEx( process, modules[i], module_name, sizeof( module_name ) ) )
+                    fprintf( f, "\t%s (%p)\n", module_name, modules[i] );
                 else
                     fprintf( f, "\tGetModuleFileNameEx fail\n" );
             }
@@ -437,9 +437,9 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
 LONG WINAPI TopLevelFilterMiniDump( EXCEPTION_POINTERS* except )
 {
     LONG       retval = EXCEPTION_CONTINUE_SEARCH;
-    char       mess[ MAX_FOTEXT ];
-    char       dump_path[ MAX_FOPATH ];
-    char       dump_path_dir[ MAX_FOPATH ];
+    char       mess[MAX_FOTEXT];
+    char       dump_path[MAX_FOPATH];
+    char       dump_path_dir[MAX_FOPATH];
 
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
@@ -563,9 +563,9 @@ void CreateDump( const char* appendix )
 
 void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
 {
-    char        mess[ MAX_FOTEXT ];
-    char        dump_path[ MAX_FOPATH ];
-    char        dump_path_dir[ MAX_FOPATH ];
+    char        mess[MAX_FOTEXT];
+    char        dump_path[MAX_FOPATH];
+    char        dump_path_dir[MAX_FOPATH];
 
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
@@ -601,7 +601,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
                 "Invalid permissions for mapped object, SEGV_ACCERR",
             };
             if( siginfo->si_signo == SIGSEGV && siginfo->si_code >= 0 && siginfo->si_code < 2 )
-                str = str_SIGSEGV[ siginfo->si_code ];
+                str = str_SIGSEGV[siginfo->si_code];
             static const char* str_SIGFPE[] =
             {
                 "Integer divide by zero, FPE_INTDIV",
@@ -614,7 +614,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
                 "Subscript out of range, FPE_FLTSUB",
             };
             if( siginfo->si_signo == SIGFPE && siginfo->si_code >= 0 && siginfo->si_code < 8 )
-                str = str_SIGFPE[ siginfo->si_code ];
+                str = str_SIGFPE[siginfo->si_code];
 
             fprintf( f, "Exception\n" );
             fprintf( f, "\tSigno   %s (%d)\n", strsignal( siginfo->si_signo ), siginfo->si_signo );
@@ -624,13 +624,13 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
         }
 
         // Stack
-        void* array[ BACKTRACE_BUFFSER_COUNT ];
+        void* array[BACKTRACE_BUFFSER_COUNT];
         int size = backtrace( array, BACKTRACE_BUFFSER_COUNT );
         char** symbols = backtrace_symbols( array, size );
 
         fprintf( f, "Thread '%s' (%u%s)\n", Thread::GetCurrentName(), Thread::GetCurrentId(), ", current" );
         for( int i = 0; i < size; i++ )
-            fprintf( f, "\t%s\n", symbols[ i ] );
+            fprintf( f, "\t%s\n", symbols[i] );
 
         free( symbols );
         fclose( f );

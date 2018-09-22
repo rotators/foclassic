@@ -41,8 +41,8 @@ uint AcceleratorAccelerate = 0;
 void Timer::Init()
 {
     #ifdef FO_WINDOWS
-    QueryPerformanceCounter( (LARGE_INTEGER*) &QPCStartValue );
-    QueryPerformanceFrequency( (LARGE_INTEGER*) &QPCFrequency );
+    QueryPerformanceCounter( (LARGE_INTEGER*)&QPCStartValue );
+    QueryPerformanceFrequency( (LARGE_INTEGER*)&QPCFrequency );
     timeBeginPeriod( 1 );
     #else
     # ifdef FO_MACOSX
@@ -80,12 +80,12 @@ double Timer::AccurateTick()
 {
     #ifdef FO_WINDOWS
     int64 qpc_value;
-    QueryPerformanceCounter( (LARGE_INTEGER*) &qpc_value );
-    return (double) ( (double) ( qpc_value - QPCStartValue ) / (double) QPCFrequency * 1000.0 );
+    QueryPerformanceCounter( (LARGE_INTEGER*)&qpc_value );
+    return (double)( (double)( qpc_value - QPCStartValue ) / (double)QPCFrequency * 1000.0 );
     #else
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    return (double) ( tv.tv_sec * 1000000 + tv.tv_usec ) / 1000.0;
+    return (double)( tv.tv_sec * 1000000 + tv.tv_usec ) / 1000.0;
     #endif
 }
 
@@ -161,7 +161,7 @@ void Timer::GetCurrentDateTime( DateTime& dt )
 void Timer::DateTimeToFullTime( const DateTime& dt, uint64& ft )
 {
     // Minor year
-    ft = (uint64) ( dt.Year - 1601 ) * 365 * 24 * 60 * 60 * 1000 * 1000;
+    ft = (uint64)( dt.Year - 1601 ) * 365 * 24 * 60 * 60 * 1000 * 1000;
 
     // Leap days
     uint leap_days = ( dt.Year - 1601 ) / 4;
@@ -169,20 +169,20 @@ void Timer::DateTimeToFullTime( const DateTime& dt, uint64& ft )
     leap_days -= ( dt.Year - 1601 ) / 100;
 
     // Current month
-    static const uint count1[ 12 ] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
-    static const uint count2[ 12 ] = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 }; // Leap
+    static const uint count1[12] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+    static const uint count2[12] = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335 };   // Leap
     if( dt.Year % 400 == 0 || ( dt.Year % 4 == 0 && dt.Year % 100 != 0 ) )
-        ft += (uint64) ( count2[ dt.Month - 1 ] ) * 24 * 60 * 60 * 1000 * 1000;
+        ft += (uint64)( count2[dt.Month - 1] ) * 24 * 60 * 60 * 1000 * 1000;
     else
-        ft += (uint64) ( count1[ dt.Month - 1 ] ) * 24 * 60 * 60 * 1000 * 1000;
+        ft += (uint64)( count1[dt.Month - 1] ) * 24 * 60 * 60 * 1000 * 1000;
 
     // Other calculations
-    ft += (uint64) ( dt.Day - 1 + leap_days ) * 24 * 60 * 60 * 1000 * 1000;
-    ft += (uint64) dt.Hour * 60 * 60 * 1000 * 1000;
-    ft += (uint64) dt.Minute * 60 * 1000 * 1000;
-    ft += (uint64) dt.Second * 1000 * 1000;
-    ft += (uint64) dt.Milliseconds * 1000;
-    ft *= (uint64) 10;
+    ft += (uint64)( dt.Day - 1 + leap_days ) * 24 * 60 * 60 * 1000 * 1000;
+    ft += (uint64)dt.Hour * 60 * 60 * 1000 * 1000;
+    ft += (uint64)dt.Minute * 60 * 1000 * 1000;
+    ft += (uint64)dt.Second * 1000 * 1000;
+    ft += (uint64)dt.Milliseconds * 1000;
+    ft *= (uint64)10;
 }
 
 void Timer::FullTimeToDateTime( uint64 ft, DateTime& dt )
@@ -199,8 +199,8 @@ void Timer::FullTimeToDateTime( uint64 ft, DateTime& dt )
     ft /= 24;
 
     // Year
-    int year = (int) ft / 365;
-    int days = (int) ft % 365;
+    int year = (int)ft / 365;
+    int days = (int)ft % 365;
     days -= year / 4 + year / 400 - year / 100;
     while( days < 0 )
     {
@@ -214,21 +214,21 @@ void Timer::FullTimeToDateTime( uint64 ft, DateTime& dt )
     ft = days;
 
     // Month
-    static const uint count1[ 13 ] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
-    static const uint count2[ 13 ] = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }; // Leap
+    static const uint count1[13] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
+    static const uint count2[13] = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };   // Leap
     const uint*       count = ( ( dt.Year % 400 == 0 || ( dt.Year % 4 == 0 && dt.Year % 100 != 0 ) ) ? count2 : count1 );
     for( int i = 0; i < 12; i++ )
     {
-        if( (uint) ft >= count[ i ] && (uint) ft < count[ i + 1 ] )
+        if( (uint)ft >= count[i] && (uint)ft < count[i + 1] )
         {
-            ft -= count[ i ];
+            ft -= count[i];
             dt.Month = i + 1;
             break;
         }
     }
 
     // Day
-    dt.Day = (ushort) ft + 1;
+    dt.Day = (ushort)ft + 1;
 
     // Day of week
     int a = ( 14 - dt.Month ) / 12;
@@ -242,14 +242,14 @@ int Timer::GetTimeDifference( const DateTime& dt1, const DateTime& dt2 )
     uint64 ft1 = 0, ft2 = 0;
     DateTimeToFullTime( dt1, ft1 );
     DateTimeToFullTime( dt2, ft2 );
-    return (int) ( ( ft1 - ft2 ) / 10000000 );
+    return (int)( ( ft1 - ft2 ) / 10000000 );
 }
 
 void Timer::ContinueTime( DateTime& td, int seconds )
 {
     uint64 ft;
     DateTimeToFullTime( td, ft );
-    ft += (uint64) seconds * 10000000;
+    ft += (uint64)seconds * 10000000;
     FullTimeToDateTime( ft, td );
 }
 
@@ -259,7 +259,7 @@ uint Timer::GetFullSecond( ushort year, ushort month, ushort day, ushort hour, u
     uint64   ft = 0;
     Timer::DateTimeToFullTime( dt, ft );
     ft -= PACKUINT64( GameOpt.YearStartFTHi, GameOpt.YearStartFTLo );
-    return (uint) ( ft / 10000000 );
+    return (uint)( ft / 10000000 );
 }
 
 DateTime Timer::GetGameTime( uint full_second )
@@ -317,10 +317,10 @@ void SetTick()
     # ifdef FO_LINUX
     struct timespec tv;
     clock_gettime( CLOCK_MONOTONIC, &tv );
-    uint            timer_tick = (uint) ( tv.tv_sec * 1000 + tv.tv_nsec / 1000000 );
+    uint            timer_tick = (uint)( tv.tv_sec * 1000 + tv.tv_nsec / 1000000 );
     InterlockedExchange( &TimerTick, timer_tick );
     # else
-    uint timer_tick = (uint) ( Timer::AccurateTick() - InitialAccurateTick );
+    uint timer_tick = (uint)( Timer::AccurateTick() - InitialAccurateTick );
     InterlockedExchange( &TimerTick, timer_tick );
     # endif
 }

@@ -13,7 +13,7 @@ typedef vector< Sound* > SoundVec;
 class SoundManager
 {
 public:
-    SoundManager(): isActive( false ), soundVolume( 100 ), musicVolume( 100 ) {}
+    SoundManager() : isActive( false ), soundVolume( 100 ), musicVolume( 100 ) {}
 
     bool Init();
     void Finish();

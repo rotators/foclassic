@@ -71,7 +71,7 @@ struct AIDataPlane
 
         struct
         {
-            uint Buffer[ 8 ];
+            uint Buffer[8];
         } Buffer;
     };
 
@@ -125,7 +125,7 @@ struct AIDataPlane
         RefCounter--;
         if( !RefCounter ) delete this;
     }
-    AIDataPlane( uint type, uint priority ): Type( type ), Priority( priority ), Identifier( 0 ), IdentifierExt( 0 ), ChildPlane( NULL ), IsMove( false ), Assigned( false ), RefCounter( 1 )
+    AIDataPlane( uint type, uint priority ) : Type( type ), Priority( priority ), Identifier( 0 ), IdentifierExt( 0 ), ChildPlane( NULL ), IsMove( false ), Assigned( false ), RefCounter( 1 )
     {
         memzero( &Buffer, sizeof( Buffer ) );
         memzero( &Move, sizeof( Move ) );
@@ -134,7 +134,7 @@ struct AIDataPlane
     ~AIDataPlane()
     {
         SAFEREL( ChildPlane );
-        MEMORY_PROCESS( MEMORY_NPC_PLANE, -(int) sizeof( AIDataPlane ) );
+        MEMORY_PROCESS( MEMORY_NPC_PLANE, -(int)sizeof( AIDataPlane ) );
     }
 private: AIDataPlane() {}        // Disable default constructor
 };
@@ -148,8 +148,8 @@ public:
     uint MaxCnt;
     uint ItemSlot;
 
-    NpcBagItem(): ItemPid( 0 ), MinCnt( 0 ), MaxCnt( 0 ), ItemSlot( SLOT_INV ) {}
-    NpcBagItem( const NpcBagItem& r ): ItemPid( r.ItemPid ), MinCnt( r.MinCnt ), MaxCnt( r.MaxCnt ), ItemSlot( r.ItemSlot ) {}
+    NpcBagItem() : ItemPid( 0 ), MinCnt( 0 ), MaxCnt( 0 ), ItemSlot( SLOT_INV ) {}
+    NpcBagItem( const NpcBagItem& r ) : ItemPid( r.ItemPid ), MinCnt( r.MinCnt ), MaxCnt( r.MaxCnt ), ItemSlot( r.ItemSlot ) {}
 };
 typedef vector< NpcBagItem >             NpcBagItems;
 typedef vector< NpcBagItems >            NpcBagCombination;

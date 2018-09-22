@@ -44,9 +44,9 @@ int main( int argc, char** argv )
 
     // Singleplayer mode initialization
     #ifdef FO_WINDOWS
-    char full_path[ MAX_FOPATH ] = { 0 };
-    char path[ MAX_FOPATH ] = { 0 };
-    char name[ MAX_FOPATH ] = { 0 };
+    char full_path[MAX_FOPATH] = { 0 };
+    char path[MAX_FOPATH] = { 0 };
+    char name[MAX_FOPATH] = { 0 };
     GetModuleFileName( NULL, full_path, MAX_FOPATH );
     FileManager::ExtractPath( full_path, path );
     FileManager::ExtractFileName( full_path, name );
@@ -81,9 +81,9 @@ int main( int argc, char** argv )
 
         // Config parsing
         IniParser cfg;
-        char      server_exe[ MAX_FOPATH ] = { 0 };
-        char      server_path[ MAX_FOPATH ] = { 0 };
-        char      server_cmdline[ MAX_FOPATH ] = { 0 };
+        char      server_exe[MAX_FOPATH] = { 0 };
+        char      server_path[MAX_FOPATH] = { 0 };
+        char      server_cmdline[MAX_FOPATH] = { 0 };
         cfg.LoadFile( GetConfigFileName(), PT_ROOT );
         cfg.GetStr( CLIENT_CONFIG_APP, "ServerAppName", "Server.exe", server_exe );
         cfg.GetStr( CLIENT_CONFIG_APP, "ServerPath", "..\\server\\", server_path );
@@ -96,7 +96,7 @@ int main( int argc, char** argv )
         memzero( &sui, sizeof( sui ) );
         sui.cb = sizeof( sui );
         HANDLE client_process = OpenProcess( SYNCHRONIZE, TRUE, GetCurrentProcessId() );
-        char   command_line[ 2048 ];
+        char   command_line[2048];
 
         // Start server
         Str::Format( command_line, "\"%s%s\" -singleplayer %p %p %s -logpath %s", server_path, server_exe, map_file, client_process, server_cmdline, path );

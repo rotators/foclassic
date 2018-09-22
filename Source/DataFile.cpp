@@ -65,7 +65,7 @@ public:
 
 DataFile* OpenDataFile( const char* fname )
 {
-    if( !fname || !fname[ 0 ] )
+    if( !fname || !fname[0] )
     {
         WriteLogF( _FUNC_, " - Invalid file name, empty or nullptr.\n" );
         return NULL;
@@ -173,25 +173,25 @@ bool FalloutDatFile::ReadTree()
             return false;
 
         // Read tree
-        if( !FileSetPointer( datHandle, -(int) tree_size, SEEK_END ) )
+        if( !FileSetPointer( datHandle, -(int)tree_size, SEEK_END ) )
             return false;
         if( !FileRead( datHandle, &files_total, 4 ) )
             return false;
         tree_size -= 28 + 4;     // Subtract information block and files total
-        if( ( memTree = new uchar[ tree_size ] ) == NULL )
+        if( ( memTree = new uchar[tree_size] ) == NULL )
             return false;
         memzero( memTree, tree_size );
         if( !FileRead( datHandle, memTree, tree_size ) )
             return false;
 
         // Indexing tree
-        char   name[ MAX_FOPATH ];
+        char   name[MAX_FOPATH];
         uchar* ptr = memTree;
         uchar* end_ptr = memTree + tree_size;
         while( true )
         {
-            uint fnsz = *(uint*) ptr;                            // Include zero
-            uint type = *(uint*) ( ptr + 4 + fnsz + 4 );
+            uint fnsz = *(uint*)ptr;                             // Include zero
+            uint type = *(uint*)( ptr + 4 + fnsz + 4 );
 
             if( fnsz > 1 && fnsz < MAX_FOPATH && type != 0x400 ) // Not folder
             {
@@ -236,29 +236,29 @@ bool FalloutDatFile::ReadTree()
         return false;
 
     // Read tree
-    if( !FileSetPointer( datHandle, -( (int) tree_size + 8 ), SEEK_END ) )
+    if( !FileSetPointer( datHandle, -( (int)tree_size + 8 ), SEEK_END ) )
         return false;
     if( !FileRead( datHandle, &files_total, 4 ) )
         return false;
     tree_size -= 4;
-    if( ( memTree = new uchar[ tree_size ] ) == NULL )
+    if( ( memTree = new uchar[tree_size] ) == NULL )
         return false;
     memzero( memTree, tree_size );
     if( !FileRead( datHandle, memTree, tree_size ) )
         return false;
 
     // Indexing tree
-    char   name[ MAX_FOPATH ];
+    char   name[MAX_FOPATH];
     uchar* ptr = memTree;
     uchar* end_ptr = memTree + tree_size;
     while( true )
     {
-        uint fnsz = *(uint*) ptr;
+        uint fnsz = *(uint*)ptr;
 
         if( fnsz && fnsz + 1 < MAX_FOPATH )
         {
             memcpy( name, ptr + 4, fnsz );
-            name[ fnsz ] = 0;
+            name[fnsz] = 0;
             Str::Lower( name );
             filesTree.insert( PAIR( string( name ), ptr + 4 + fnsz ) );
         }
@@ -282,9 +282,9 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
 
     uchar* ptr = ( *it ).second;
     uchar  type = *ptr;
-    uint   real_size = *(uint*) ( ptr + 1 );
-    uint   packed_size = *(uint*) ( ptr + 5 );
-    uint   offset = *(uint*) ( ptr + 9 );
+    uint   real_size = *(uint*)( ptr + 1 );
+    uint   packed_size = *(uint*)( ptr + 5 );
+    uint   offset = *(uint*)( ptr + 9 );
 
     CFile* reader = NULL;
     if( !type )
@@ -294,7 +294,7 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
     if( !reader )
         return NULL;
 
-    uchar* buf = new uchar[ real_size + 1 ];
+    uchar* buf = new uchar[real_size + 1];
     if( !buf )
     {
         delete reader;
@@ -304,7 +304,7 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
     if( real_size )
     {
         uint br;
-        reader->read( buf, real_size, (long*) &br );
+        reader->read( buf, real_size, (long*)&br );
         delete reader;
         if( real_size != br )
         {
@@ -314,7 +314,7 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
     }
 
     len = real_size;
-    buf[ len ] = 0;
+    buf[len] = 0;
     return buf;
 }
 
@@ -324,12 +324,12 @@ void FalloutDatFile::GetFileNames( const char* path, bool include_subdirs, const
     for( auto it = filesTree.begin(), end = filesTree.end(); it != end; ++it )
     {
         const string& fname = ( *it ).first;
-        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int) fname.find_last_of( '\\' ) < (int) path_len ) )
+        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len ) )
         {
             if( ext && *ext )
             {
                 size_t pos = fname.find_last_of( '.' );
-                if( pos != string::npos && Str::CompareCase( &fname.c_str()[ pos + 1 ], ext ) )
+                if( pos != string::npos && Str::CompareCase( &fname.c_str()[pos + 1], ext ) )
                     result.push_back( fname );
             }
             else
@@ -359,7 +359,7 @@ bool ZipFile::Init( const char* fname )
     fileName = fname;
     zipHandle = NULL;
 
-    char path[ MAX_FOPATH ];
+    char path[MAX_FOPATH];
     Str::Copy( path, fname );
     if( !ResolvePath( path ) )
     {
@@ -379,7 +379,7 @@ bool ZipFile::Init( const char* fname )
     FileClose( file );
 
     #ifdef FO_WINDOWS
-    wchar_t path_wc[ MAX_FOPATH ];
+    wchar_t path_wc[MAX_FOPATH];
     if( MultiByteToWideChar( CP_UTF8, 0, path, -1, path_wc, MAX_FOPATH ) == 0 ||
         WideCharToMultiByte( GetACP(), 0, path_wc, -1, path, MAX_FOPATH, NULL, NULL ) == 0 )
     {
@@ -422,7 +422,7 @@ bool ZipFile::ReadTree()
     ZipFileInfo   zip_info;
     unz_file_pos  pos;
     unz_file_info info;
-    char          name[ MAX_FOPATH ] = { 0 };
+    char          name[MAX_FOPATH] = { 0 };
     for( uLong i = 0; i < gi.number_entry; i++ )
     {
         if( unzGetFilePos( zipHandle, &pos ) != UNZ_OK )
@@ -462,7 +462,7 @@ uchar* ZipFile::OpenFile( const char* fname, uint& len )
     if( unzGoToFilePos( zipHandle, &info.Pos ) != UNZ_OK )
         return NULL;
 
-    uchar* buf = new uchar[ info.UncompressedSize + 1 ];
+    uchar* buf = new uchar[info.UncompressedSize + 1];
     if( !buf )
         return NULL;
 
@@ -473,14 +473,14 @@ uchar* ZipFile::OpenFile( const char* fname, uint& len )
     }
 
     int read = unzReadCurrentFile( zipHandle, buf, info.UncompressedSize );
-    if( unzCloseCurrentFile( zipHandle ) != UNZ_OK || read != (int) info.UncompressedSize )
+    if( unzCloseCurrentFile( zipHandle ) != UNZ_OK || read != (int)info.UncompressedSize )
     {
         delete[] buf;
         return NULL;
     }
 
     len = info.UncompressedSize;
-    buf[ len ] = 0;
+    buf[len] = 0;
     return buf;
 }
 
@@ -490,12 +490,12 @@ void ZipFile::GetFileNames( const char* path, bool include_subdirs, const char* 
     for( auto it = filesTree.begin(), end = filesTree.end(); it != end; ++it )
     {
         const string& fname = ( *it ).first;
-        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int) fname.find_last_of( '\\' ) < (int) path_len ) )
+        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len ) )
         {
             if( ext && *ext )
             {
                 size_t pos = fname.find_last_of( '.' );
-                if( pos != string::npos && Str::CompareCase( &fname.c_str()[ pos + 1 ], ext ) )
+                if( pos != string::npos && Str::CompareCase( &fname.c_str()[pos + 1], ext ) )
                     result.push_back( fname );
             }
             else

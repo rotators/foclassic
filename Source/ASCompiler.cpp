@@ -58,7 +58,7 @@ void PrintContextCallstack( asIScriptContext* ctx )
     int                      line, column;
     const asIScriptFunction* func;
     int                      stack_size = ctx->GetCallstackSize();
-    printf( "State<%s>, call stack<%d>:\n", ContextStatesStr[ (int) ctx->GetState() ], stack_size );
+    printf( "State<%s>, call stack<%d>:\n", ContextStatesStr[(int)ctx->GetState()], stack_size );
 
     // Print current function
     if( ctx->GetState() == asEXECUTION_EXCEPTION )
@@ -87,7 +87,7 @@ void PrintContextCallstack( asIScriptContext* ctx )
 void RunMain( asIScriptModule* module, const char* func_str )
 {
     // Make function declaration
-    char func_decl[ 1024 ];
+    char func_decl[1024];
     sprintf( func_decl, "void %s()", func_str );
 
     // Run
@@ -115,7 +115,7 @@ void RunMain( asIScriptModule* module, const char* func_str )
         else if( state == asEXECUTION_SUSPENDED )
             printf( "Execution of script stopped due to timeout.\n" );
         else
-            printf( "Execution of script stopped due to %s.\n", ContextStatesStr[ (int) state ] );
+            printf( "Execution of script stopped due to %s.\n", ContextStatesStr[(int)state] );
         PrintContextCallstack( ctx );
         ctx->Abort();
         return;
@@ -123,7 +123,7 @@ void RunMain( asIScriptModule* module, const char* func_str )
 
     if( result < 0 )
     {
-        printf( "Execution error<%d>, state<%s>.\n", result, ContextStatesStr[ (int) state ] );
+        printf( "Execution error<%d>, state<%s>.\n", result, ContextStatesStr[(int)state] );
     }
     printf( "Execution finished.\n" );
 }
@@ -170,7 +170,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
 }
 
 // Server
-#define OFFSETOF( type, member )    ( (int) offsetof( type, member ) )
+#define OFFSETOF( type, member )    ( (int)offsetof( type, member ) )
 #define BIND_SERVER
 #define BIND_CLASS    BindClass::
 #define BIND_ASSERT( x )            if( ( x ) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
@@ -242,28 +242,28 @@ int main( int argc, char* argv[] )
     }
 
     // Parse args
-    char*           str_fname = argv[ 1 ];
+    char*           str_fname = argv[1];
     char*           str_prep = NULL;
     vector< char* > defines;
     vector< char* > run_func;
     for( int i = 2; i < argc; i++ )
     {
         // Server / Client / Mapper
-        if( !_stricmp( argv[ i ], "-client" ) )
+        if( !_stricmp( argv[i], "-client" ) )
             IsServer = false, IsClient = true, IsMapper = false;
-        else if( !_stricmp( argv[ i ], "-mapper" ) )
+        else if( !_stricmp( argv[i], "-mapper" ) )
             IsServer = false, IsClient = false, IsMapper = true;
         // Preprocessor output
-        else if( !_stricmp( argv[ i ], "-p" ) && i + 1 < argc )
-            str_prep = argv[ ++i ];
+        else if( !_stricmp( argv[i], "-p" ) && i + 1 < argc )
+            str_prep = argv[++i];
         // Define
-        else if( !_stricmp( argv[ i ], "-d" ) && i + 1 < argc )
-            defines.push_back( argv[ ++i ] );
+        else if( !_stricmp( argv[i], "-d" ) && i + 1 < argc )
+            defines.push_back( argv[++i] );
         // Run function
-        else if( !_stricmp( argv[ i ], "-run" ) && i + 1 < argc )
-            run_func.push_back( argv[ ++i ] );
+        else if( !_stricmp( argv[i], "-run" ) && i + 1 < argc )
+            run_func.push_back( argv[++i] );
         // Collect garbage
-        else if( !_stricmp( argv[ i ], "-gc" ) )
+        else if( !_stricmp( argv[i], "-gc" ) )
             CollectGarbage = true;
     }
 
@@ -273,7 +273,7 @@ int main( int argc, char* argv[] )
         FixPathSlashes( str_prep );
 
     // Set current directory
-    char path[ 2048 ];
+    char path[2048];
     Str::Copy( path, str_fname );
     FileManager::ExtractPath( path, path );
     if( ResolvePath( path ) )
@@ -343,7 +343,7 @@ int main( int argc, char* argv[] )
     else if( IsMapper )
         Preprocessor::Define( "__MAPPER" );
     for( size_t i = 0; i < defines.size(); i++ )
-        Preprocessor::Define( string( defines[ i ] ) );
+        Preprocessor::Define( string( defines[i] ) );
     if( !run_func.empty() )
         Preprocessor::Define( string( "Log __CompilerLog" ) );
 
@@ -381,9 +381,9 @@ int main( int argc, char* argv[] )
     }
 
     // Break buffer into null-terminated lines
-    for( int i = 0; Buf[ i ] != '\0'; i++ )
-        if( Buf[ i ] == '\n' )
-            Buf[ i ] = '\0';
+    for( int i = 0; Buf[i] != '\0'; i++ )
+        if( Buf[i] == '\n' )
+            Buf[i] = '\0';
 
     // AS compilation
     asIScriptModule* module = Engine->GetModule( 0, asGM_ALWAYS_CREATE );
@@ -425,7 +425,7 @@ int main( int argc, char* argv[] )
         };
         int bad_typeids_count = sizeof( bad_typeids ) / sizeof( int );
         for( int k = 0; k < bad_typeids_count; k++ )
-            bad_typeids[ k ] &= asTYPEID_MASK_SEQNBR;
+            bad_typeids[k] &= asTYPEID_MASK_SEQNBR;
 
         vector< int > bad_typeids_class;
         for( int m = 0, n = module->GetObjectTypeCount(); m < n; m++ )
@@ -438,7 +438,7 @@ int main( int argc, char* argv[] )
                 type &= asTYPEID_MASK_SEQNBR;
                 for( int k = 0; k < bad_typeids_count; k++ )
                 {
-                    if( type == bad_typeids[ k ] )
+                    if( type == bad_typeids[k] )
                     {
                         bad_typeids_class.push_back( ot->GetTypeId() & asTYPEID_MASK_SEQNBR );
                         break;
@@ -456,7 +456,7 @@ int main( int argc, char* argv[] )
 
             while( type & asTYPEID_TEMPLATE )
             {
-                asIObjectType* obj = (asIObjectType*) Engine->GetObjectTypeById( type );
+                asIObjectType* obj = (asIObjectType*)Engine->GetObjectTypeById( type );
                 if( !obj )
                     break;
                 type = obj->GetSubTypeId();
@@ -466,7 +466,7 @@ int main( int argc, char* argv[] )
 
             for( int k = 0; k < bad_typeids_count; k++ )
             {
-                if( type == bad_typeids[ k ] )
+                if( type == bad_typeids[k] )
                 {
                     const char* name = NULL;
                     module->GetGlobalVar( i, &name, NULL, NULL );
@@ -503,7 +503,7 @@ int main( int argc, char* argv[] )
 
     // Execute functions
     for( size_t i = 0; i < run_func.size(); i++ )
-        RunMain( module, run_func[ i ] );
+        RunMain( module, run_func[i] );
 
     // Collect garbage
     if( CollectGarbage )

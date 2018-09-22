@@ -44,17 +44,17 @@ Thread     GUIUpdateThread;
 // GUI
 Fl_Window* GuiWindow;
 Fl_Box*    GuiLabelGameTime, * GuiLabelClients, * GuiLabelIngame, * GuiLabelNPC, * GuiLabelLocCount,
-* GuiLabelItemsCount, * GuiLabelVarsCount, * GuiLabelAnyDataCount, * GuiLabelTECount,
-* GuiLabelFPS, * GuiLabelDelta, * GuiLabelUptime, * GuiLabelSend, * GuiLabelRecv, * GuiLabelCompress;
+      * GuiLabelItemsCount, * GuiLabelVarsCount, * GuiLabelAnyDataCount, * GuiLabelTECount,
+      * GuiLabelFPS, * GuiLabelDelta, * GuiLabelUptime, * GuiLabelSend, * GuiLabelRecv, * GuiLabelCompress;
 Fl_Button* GuiBtnRlClScript, * GuiBtnSaveWorld, * GuiBtnSaveLog, * GuiBtnSaveInfo,
-* GuiBtnCreateDump, * GuiBtnMemory, * GuiBtnPlayers, * GuiBtnLocsMaps, * GuiBtnTimeEvents,
-* GuiBtnAnyData, * GuiBtnItemsCount, * GuiBtnProfiler, * GuiBtnStartStop, * GuiBtnSplitUp, * GuiBtnSplitDown;
+         * GuiBtnCreateDump, * GuiBtnMemory, * GuiBtnPlayers, * GuiBtnLocsMaps, * GuiBtnTimeEvents,
+         * GuiBtnAnyData, * GuiBtnItemsCount, * GuiBtnProfiler, * GuiBtnStartStop, * GuiBtnSplitUp, * GuiBtnSplitDown;
 Fl_Check_Button* GuiCBtnScriptDebug, * GuiCBtnLogging, * GuiCBtnLoggingTime,
-* GuiCBtnLoggingThread, * GuiCBtnAutoUpdate;
+               * GuiCBtnLoggingThread, * GuiCBtnAutoUpdate;
 Fl_Text_Display* GuiLog, * GuiInfo;
 int              GUISizeMod = 0;
 
-# define GUI_SIZE1( x )                 ( (int) ( x ) * 175 * ( 100 + GUISizeMod ) / 100 / 100 )
+# define GUI_SIZE1( x )                 ( (int)( x ) * 175 * ( 100 + GUISizeMod ) / 100 / 100 )
 # define GUI_SIZE2( x1, x2 )            GUI_SIZE1( x1 ), GUI_SIZE1( x2 )
 # define GUI_SIZE4( x1, x2, x3, x4 )    GUI_SIZE1( x1 ), GUI_SIZE1( x2 ), GUI_SIZE1( x3 ), GUI_SIZE1( x4 )
 # define GUI_LABEL_BUF_SIZE    ( 128 )
@@ -124,7 +124,7 @@ int main( int argc, char** argv )
         Timer::SetGamePause( true );
 
         // Logging
-        char log_path[ MAX_FOPATH ] = { 0 };
+        char log_path[MAX_FOPATH] = { 0 };
         if( !strstr( CommandLine, "-nologpath" ) && strstr( CommandLine, "-logpath " ) )
         {
             const char* ptr = strstr( CommandLine, "-logpath " ) + Str::Length( "-logpath " );
@@ -237,8 +237,8 @@ void GUIInit( IniParser& cfg )
             widget->labelsize( FontSize );
             widget->align( FL_ALIGN_LEFT | FL_ALIGN_INSIDE );
             widget->box( FL_NO_BOX );
-            widget->label( new char[ GUI_LABEL_BUF_SIZE ] );
-            *(char*) widget->label() = 0;
+            widget->label( new char[GUI_LABEL_BUF_SIZE] );
+            *(char*)widget->label() = 0;
         }
 
         void Setup( Fl_Button* widget )
@@ -286,52 +286,52 @@ void GUIInit( IniParser& cfg )
 
     // Icon
     # ifdef FO_WINDOWS
-    GuiWindow->icon( (char*) LoadIcon( fl_display, MAKEINTRESOURCE( 101 ) ) );
+    GuiWindow->icon( (char*)LoadIcon( fl_display, MAKEINTRESOURCE( 101 ) ) );
     # else
     fl_open_display();
     // Todo: linux
     # endif
 
     // Labels
-    GUISetup.Setup( GuiLabelGameTime    = new Fl_Box( GUI_SIZE4( 5, 6, 128, 8 ), "Time:" ) );
-    GUISetup.Setup( GuiLabelClients     = new Fl_Box( GUI_SIZE4( 5, 14, 124, 8 ), "Connections:" ) );
-    GUISetup.Setup( GuiLabelIngame      = new Fl_Box( GUI_SIZE4( 5, 22, 124, 8 ), "Players in game:" ) );
-    GUISetup.Setup( GuiLabelNPC         = new Fl_Box( GUI_SIZE4( 5, 30, 124, 8 ), "NPC in game:" ) );
-    GUISetup.Setup( GuiLabelLocCount    = new Fl_Box( GUI_SIZE4( 5, 38, 124, 8 ), "Locations:" ) );
-    GUISetup.Setup( GuiLabelItemsCount  = new Fl_Box( GUI_SIZE4( 5, 46, 124, 8 ), "Items:" ) );
-    GUISetup.Setup( GuiLabelVarsCount   = new Fl_Box( GUI_SIZE4( 5, 54, 124, 8 ), "Vars:" ) );
+    GUISetup.Setup( GuiLabelGameTime = new Fl_Box( GUI_SIZE4( 5, 6, 128, 8 ), "Time:" ) );
+    GUISetup.Setup( GuiLabelClients = new Fl_Box( GUI_SIZE4( 5, 14, 124, 8 ), "Connections:" ) );
+    GUISetup.Setup( GuiLabelIngame = new Fl_Box( GUI_SIZE4( 5, 22, 124, 8 ), "Players in game:" ) );
+    GUISetup.Setup( GuiLabelNPC = new Fl_Box( GUI_SIZE4( 5, 30, 124, 8 ), "NPC in game:" ) );
+    GUISetup.Setup( GuiLabelLocCount = new Fl_Box( GUI_SIZE4( 5, 38, 124, 8 ), "Locations:" ) );
+    GUISetup.Setup( GuiLabelItemsCount = new Fl_Box( GUI_SIZE4( 5, 46, 124, 8 ), "Items:" ) );
+    GUISetup.Setup( GuiLabelVarsCount = new Fl_Box( GUI_SIZE4( 5, 54, 124, 8 ), "Vars:" ) );
     GUISetup.Setup( GuiLabelAnyDataCount = new Fl_Box( GUI_SIZE4( 5, 62, 124, 8 ), "Any data:" ) );
-    GUISetup.Setup( GuiLabelTECount     = new Fl_Box( GUI_SIZE4( 5, 70, 124, 8 ), "Time events:" ) );
-    GUISetup.Setup( GuiLabelFPS         = new Fl_Box( GUI_SIZE4( 5, 78, 124, 8 ), "Cycles per second:" ) );
-    GUISetup.Setup( GuiLabelDelta       = new Fl_Box( GUI_SIZE4( 5, 86, 124, 8 ), "Cycle time:" ) );
-    GUISetup.Setup( GuiLabelUptime      = new Fl_Box( GUI_SIZE4( 5, 94, 124, 8 ), "Uptime:" ) );
-    GUISetup.Setup( GuiLabelSend        = new Fl_Box( GUI_SIZE4( 5, 102, 124, 8 ), "KBytes send:" ) );
-    GUISetup.Setup( GuiLabelRecv        = new Fl_Box( GUI_SIZE4( 5, 110, 124, 8 ), "KBytes recv:" ) );
-    GUISetup.Setup( GuiLabelCompress    = new Fl_Box( GUI_SIZE4( 5, 118, 124, 8 ), "Compress ratio:" ) );
+    GUISetup.Setup( GuiLabelTECount = new Fl_Box( GUI_SIZE4( 5, 70, 124, 8 ), "Time events:" ) );
+    GUISetup.Setup( GuiLabelFPS = new Fl_Box( GUI_SIZE4( 5, 78, 124, 8 ), "Cycles per second:" ) );
+    GUISetup.Setup( GuiLabelDelta = new Fl_Box( GUI_SIZE4( 5, 86, 124, 8 ), "Cycle time:" ) );
+    GUISetup.Setup( GuiLabelUptime = new Fl_Box( GUI_SIZE4( 5, 94, 124, 8 ), "Uptime:" ) );
+    GUISetup.Setup( GuiLabelSend = new Fl_Box( GUI_SIZE4( 5, 102, 124, 8 ), "KBytes send:" ) );
+    GUISetup.Setup( GuiLabelRecv = new Fl_Box( GUI_SIZE4( 5, 110, 124, 8 ), "KBytes recv:" ) );
+    GUISetup.Setup( GuiLabelCompress = new Fl_Box( GUI_SIZE4( 5, 118, 124, 8 ), "Compress ratio:" ) );
 
     // Buttons
     GUISetup.Setup( GuiBtnRlClScript = new Fl_Button( GUI_SIZE4( 5, 128, 124, 14 ), "Reload client scripts" ) );
     GUISetup.Setup( GuiBtnSaveWorld = new Fl_Button( GUI_SIZE4( 5, 144, 124, 14 ), "Save world" ) );
-    GUISetup.Setup( GuiBtnSaveLog   = new Fl_Button( GUI_SIZE4( 5, 160, 124, 14 ), "Save log" ) );
-    GUISetup.Setup( GuiBtnSaveInfo  = new Fl_Button( GUI_SIZE4( 5, 176, 124, 14 ), "Save info" ) );
+    GUISetup.Setup( GuiBtnSaveLog = new Fl_Button( GUI_SIZE4( 5, 160, 124, 14 ), "Save log" ) );
+    GUISetup.Setup( GuiBtnSaveInfo = new Fl_Button( GUI_SIZE4( 5, 176, 124, 14 ), "Save info" ) );
     GUISetup.Setup( GuiBtnCreateDump = new Fl_Button( GUI_SIZE4( 5, 192, 124, 14 ), "Create dump" ) );
-    GUISetup.Setup( GuiBtnMemory    = new Fl_Button( GUI_SIZE4( 5, 219, 124, 14 ), "Memory usage" ) );
-    GUISetup.Setup( GuiBtnPlayers   = new Fl_Button( GUI_SIZE4( 5, 235, 124, 14 ), "Players" ) );
-    GUISetup.Setup( GuiBtnLocsMaps  = new Fl_Button( GUI_SIZE4( 5, 251, 124, 14 ), "Locations and maps" ) );
+    GUISetup.Setup( GuiBtnMemory = new Fl_Button( GUI_SIZE4( 5, 219, 124, 14 ), "Memory usage" ) );
+    GUISetup.Setup( GuiBtnPlayers = new Fl_Button( GUI_SIZE4( 5, 235, 124, 14 ), "Players" ) );
+    GUISetup.Setup( GuiBtnLocsMaps = new Fl_Button( GUI_SIZE4( 5, 251, 124, 14 ), "Locations and maps" ) );
     GUISetup.Setup( GuiBtnTimeEvents = new Fl_Button( GUI_SIZE4( 5, 267, 124, 14 ), "Time events" ) );
-    GUISetup.Setup( GuiBtnAnyData   = new Fl_Button( GUI_SIZE4( 5, 283, 124, 14 ), "Any data" ) );
+    GUISetup.Setup( GuiBtnAnyData = new Fl_Button( GUI_SIZE4( 5, 283, 124, 14 ), "Any data" ) );
     GUISetup.Setup( GuiBtnItemsCount = new Fl_Button( GUI_SIZE4( 5, 299, 124, 14 ), "Items count" ) );
     GUISetup.Setup( GuiBtnProfiler = new Fl_Button( GUI_SIZE4( 5, 315, 124, 14 ), "Profiler" ) );
     GUISetup.Setup( GuiBtnStartStop = new Fl_Button( GUI_SIZE4( 5, 393, 124, 14 ), "Start server" ) );
-    GUISetup.Setup( GuiBtnSplitUp   = new Fl_Button( GUI_SIZE4( 117, 357, 12, 9 ), "" ) );
+    GUISetup.Setup( GuiBtnSplitUp = new Fl_Button( GUI_SIZE4( 117, 357, 12, 9 ), "" ) );
     GUISetup.Setup( GuiBtnSplitDown = new Fl_Button( GUI_SIZE4( 117, 368, 12, 9 ), "" ) );
 
     // Check buttons
-    GUISetup.Setup( GuiCBtnAutoUpdate   = new Fl_Check_Button( GUI_SIZE4( 5, 339, 110, 10 ), "Update info every second" ) );
-    GUISetup.Setup( GuiCBtnLogging      = new Fl_Check_Button( GUI_SIZE4( 5, 349, 110, 10 ), "Logging" ) );
-    GUISetup.Setup( GuiCBtnLoggingTime  = new Fl_Check_Button( GUI_SIZE4( 5, 359, 110, 10 ), "Logging with time" ) );
+    GUISetup.Setup( GuiCBtnAutoUpdate = new Fl_Check_Button( GUI_SIZE4( 5, 339, 110, 10 ), "Update info every second" ) );
+    GUISetup.Setup( GuiCBtnLogging = new Fl_Check_Button( GUI_SIZE4( 5, 349, 110, 10 ), "Logging" ) );
+    GUISetup.Setup( GuiCBtnLoggingTime = new Fl_Check_Button( GUI_SIZE4( 5, 359, 110, 10 ), "Logging with time" ) );
     GUISetup.Setup( GuiCBtnLoggingThread = new Fl_Check_Button( GUI_SIZE4( 5, 369, 110, 10 ), "Logging with thread" ) );
-    GUISetup.Setup( GuiCBtnScriptDebug  = new Fl_Check_Button( GUI_SIZE4( 5, 379, 110, 10 ), "Script debug info" ) );
+    GUISetup.Setup( GuiCBtnScriptDebug = new Fl_Check_Button( GUI_SIZE4( 5, 379, 110, 10 ), "Script debug info" ) );
 
     // Text boxes
     GUISetup.Setup( GuiLog = new Fl_Text_Display( GUI_SIZE4( 133, 7, 358, 195 ) ) );
@@ -358,7 +358,7 @@ void GUIInit( IniParser& cfg )
     UpdateInfo();
 
     // Show window
-    char  dummy_argv0[ 2 ] = "";
+    char  dummy_argv0[2] = "";
     char* dummy_argv[] = { dummy_argv0 };
     int   dummy_argc = 1;
     GuiWindow->show( dummy_argc, dummy_argv );
@@ -384,8 +384,8 @@ void GUICallback( Fl_Widget* widget, void* data )
     {
         DateTime         dt;
         Timer::GetCurrentDateTime( dt );
-        char             log_name[ MAX_FOTEXT ];
-        char             log_name_dir[ MAX_FOTEXT ];
+        char             log_name[MAX_FOTEXT];
+        char             log_name_dir[MAX_FOTEXT];
         Fl_Text_Display* log = ( widget == GuiBtnSaveLog ? GuiLog : GuiInfo );
         FileManager::GetFullPath( NULL, PT_SERVER_LOGS, log_name_dir );
         log->buffer()->savefile( Str::Format( log_name, "%sFOnlineServer_%s_%04u.%02u.%02u_%02u-%02u-%02u.log", log_name_dir,
@@ -512,16 +512,16 @@ void GUIUpdate( void* )
 
 void UpdateInfo()
 {
-    static char   str[ MAX_FOTEXT ];
+    static char   str[MAX_FOTEXT];
     static string std_str;
 
     struct Label
     {
         static void Update( Fl_Box* label, char* text )
         {
-            if( !Str::Compare( text, (char*) label->label() ) )
+            if( !Str::Compare( text, (char*)label->label() ) )
             {
-                Str::Copy( (char*) label->label(), GUI_LABEL_BUF_SIZE, text );
+                Str::Copy( (char*)label->label(), GUI_LABEL_BUF_SIZE, text );
                 label->redraw_label();
             }
         }
@@ -561,7 +561,7 @@ void UpdateInfo()
     Label::Update( GuiLabelUptime, Str::Format( str, "Uptime: %2u:%2u:%2u", seconds / 60 / 60, seconds / 60 % 60, seconds % 60 ) );
     Label::Update( GuiLabelSend, Str::Format( str, "KBytes Send: %u", Server.Statistics.BytesSend / 1024 ) );
     Label::Update( GuiLabelRecv, Str::Format( str, "KBytes Recv: %u", Server.Statistics.BytesRecv / 1024 ) );
-    Label::Update( GuiLabelCompress, Str::Format( str, "Compress ratio: %g", (double) Server.Statistics.DataReal / ( Server.Statistics.DataCompressed ? Server.Statistics.DataCompressed : 1 ) ) );
+    Label::Update( GuiLabelCompress, Str::Format( str, "Compress ratio: %g", (double)Server.Statistics.DataReal / ( Server.Statistics.DataCompressed ? Server.Statistics.DataCompressed : 1 ) ) );
 
     if( FOServer::UpdateIndex == -1 && FOServer::UpdateLastTick && FOServer::UpdateLastTick + 1000 < Timer::FastTick() )
     {
@@ -637,8 +637,8 @@ void UpdateLog()
 void CheckTextBoxSize( bool force )
 {
     static Rect last_rmain;
-    if( force || GuiWindow->x() != last_rmain[ 0 ] || GuiWindow->y() != last_rmain[ 1 ] ||
-        GuiWindow->x() + GuiWindow->w() != last_rmain[ 2 ] || GuiWindow->y() + GuiWindow->h() != last_rmain[ 3 ] )
+    if( force || GuiWindow->x() != last_rmain[0] || GuiWindow->y() != last_rmain[1] ||
+        GuiWindow->x() + GuiWindow->w() != last_rmain[2] || GuiWindow->y() + GuiWindow->h() != last_rmain[3] )
     {
         Rect rmain( GuiWindow->x(), GuiWindow->y(), GuiWindow->x() + GuiWindow->w(), GuiWindow->y() + GuiWindow->h() );
         if( rmain.W() > 0 && rmain.H() > 0 )
@@ -759,15 +759,15 @@ void ServiceMain( bool as_service )
     SC_HANDLE service = OpenService( manager, "FOnlineServer", SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG | SERVICE_QUERY_STATUS | SERVICE_START );
 
     // Compile service path
-    char path1[ MAX_FOPATH ];
+    char path1[MAX_FOPATH];
     GetModuleFileName( GetModuleHandle( NULL ), path1, MAX_FOPATH );
-    char path2[ MAX_FOPATH ];
+    char path2[MAX_FOPATH];
     Str::Format( path2, "\"%s\" --service", path1 );
 
     // Change executable path, if changed
     if( service )
     {
-        LPQUERY_SERVICE_CONFIG service_cfg = (LPQUERY_SERVICE_CONFIG) calloc( 8192, 1 );
+        LPQUERY_SERVICE_CONFIG service_cfg = (LPQUERY_SERVICE_CONFIG)calloc( 8192, 1 );
         DWORD                  dw;
         if( QueryServiceConfig( service, service_cfg, 8192, &dw ) && !Str::CompareCase( service_cfg->lpBinaryPathName, path2 ) )
             ChangeServiceConfig( service, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, SERVICE_NO_CHANGE, path2, NULL, NULL, NULL, NULL, NULL, NULL );
@@ -1037,7 +1037,7 @@ void InitAdminManager( IniParser* cfg )
     if( port )
     {
         AdminManagerThread.Finish();
-        AdminManagerThread.Start( AdminManager, "AdminPanelManager", (void*) port );
+        AdminManagerThread.Start( AdminManager, "AdminPanelManager", (void*)port );
     }
 }
 
@@ -1059,12 +1059,12 @@ void AdminManager( void* port_ )
         return;
     }
     const int   opt = 1;
-    setsockopt( listen_sock, SOL_SOCKET, SO_REUSEADDR, (char*) &opt, sizeof( opt ) );
+    setsockopt( listen_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof( opt ) );
     sockaddr_in sin;
     sin.sin_family = AF_INET;
-    sin.sin_port = htons( (ushort) (size_t) port_ );
+    sin.sin_port = htons( (ushort)(size_t)port_ );
     sin.sin_addr.s_addr = INADDR_ANY;
-    if( bind( listen_sock, (sockaddr*) &sin, sizeof( sin ) ) == SOCKET_ERROR )
+    if( bind( listen_sock, (sockaddr*)&sin, sizeof( sin ) ) == SOCKET_ERROR )
     {
         WriteLog( "Can't bind listen socket for admin manager.\n" );
         closesocket( listen_sock );
@@ -1090,7 +1090,7 @@ void AdminManager( void* port_ )
         {
             sockaddr_in from;
             socklen_t   len = sizeof( from );
-            SOCKET      sock = accept( listen_sock, (sockaddr*) &from, &len );
+            SOCKET      sock = accept( listen_sock, (sockaddr*)&from, &len );
             if( sock != INVALID_SOCKET )
             {
                 // Found already connected from this IP
@@ -1119,7 +1119,7 @@ void AdminManager( void* port_ )
                     s->From = from;
                     Timer::GetCurrentDateTime( s->StartWork );
                     s->Authorized = false;
-                    s->WorkThread.Start( AdminWork, "AdminPanel", (void*) s );
+                    s->WorkThread.Start( AdminWork, "AdminPanel", (void*)s );
                     sessions.push_back( s );
                 }
             }
@@ -1168,10 +1168,10 @@ void AdminManager( void* port_ )
 #define ADMIN_LOG( format, ... )                                                  \
     do {                                                                          \
         WriteLog( ADMIN_PREFIX format, admin_name, ## __VA_ARGS__ );              \
-        char buf[ MAX_FOTEXT ];                                                   \
+        char buf[MAX_FOTEXT];                                                     \
         Str::Format( buf, format, ## __VA_ARGS__ );                               \
         uint buf_len = Str::Length( buf ) + 1;                                    \
-        if( send( s->Sock, buf, buf_len, 0 ) != (int) buf_len )                   \
+        if( send( s->Sock, buf, buf_len, 0 ) != (int)buf_len )                    \
         {                                                                         \
             WriteLog( ADMIN_PREFIX "Send data fail, disconnect.\n", admin_name ); \
             goto label_Finish;                                                    \
@@ -1181,13 +1181,13 @@ void AdminManager( void* port_ )
 void AdminWork( void* session_ )
 {
     // Data
-    Session* s = (Session*) session_;
-    char     admin_name[ MAX_FOTEXT ] = { "Not authorized" };
+    Session* s = (Session*)session_;
+    char     admin_name[MAX_FOTEXT] = { "Not authorized" };
 
     // Welcome string
     char welcome[] = { "Welcome to FOnline admin panel.\nEnter access key: " };
     uint welcome_len = Str::Length( welcome ) + 1;
-    if( send( s->Sock, welcome, welcome_len, 0 ) != (int) welcome_len )
+    if( send( s->Sock, welcome, welcome_len, 0 ) != (int)welcome_len )
     {
         WriteLog( "Admin connection first send fail, disconnect.\n" );
         goto label_Finish;
@@ -1197,7 +1197,7 @@ void AdminWork( void* session_ )
     while( true )
     {
         // Get command
-        char cmd[ MAX_FOTEXT ];
+        char cmd[MAX_FOTEXT];
         memzero( cmd, sizeof( cmd ) );
         int  len = recv( s->Sock, cmd, sizeof( cmd ), 0 );
         if( len <= 0 || len == MAX_FOTEXT )
@@ -1210,7 +1210,7 @@ void AdminWork( void* session_ )
         }
         if( len > 200 )
             len = 200;
-        cmd[ len ] = 0;
+        cmd[len] = 0;
         Str::EraseFrontBackSpecificChars( cmd );
 
         // Authorization
@@ -1221,16 +1221,16 @@ void AdminWork( void* session_ )
             int    pos = -1;
             for( size_t i = 0, j = admin.size(); i < j; i++ )
             {
-                if( Str::Compare( admin[ i ].c_str(), cmd ) )
+                if( Str::Compare( admin[i].c_str(), cmd ) )
                 {
-                    pos = (int) i;
+                    pos = (int)i;
                     break;
                 }
             }
             if( pos != -1 )
             {
-                if( pos < (int) admin_names.size() )
-                    Str::Copy( admin_name, admin_names[ pos ].c_str() );
+                if( pos < (int)admin_names.size() )
+                    Str::Copy( admin_name, admin_names[pos].c_str() );
                 else
                     Str::Format( admin_name, "%d", pos );
 
@@ -1260,10 +1260,10 @@ void AdminWork( void* session_ )
         }
         else if( Str::CompareCaseCount( cmd, "log ", 4 ) )
         {
-            if( !Str::CompareCase( &cmd[ 4 ], "disable" ) )
+            if( !Str::CompareCase( &cmd[4], "disable" ) )
             {
-                LogToFile( &cmd[ 4 ] );
-                ADMIN_LOG( "Logging to file '%s'.\n", &cmd[ 4 ] );
+                LogToFile( &cmd[4] );
+                ADMIN_LOG( "Logging to file '%s'.\n", &cmd[4] );
             }
             else
             {
@@ -1338,7 +1338,7 @@ void AdminWork( void* session_ )
             else
                 ADMIN_LOG( "Unknown state.\n" );
         }
-        else if( cmd[ 0 ] == '~' )
+        else if( cmd[0] == '~' )
         {
             if( Server.Started() )
             {
@@ -1349,18 +1349,18 @@ void AdminWork( void* session_ )
                 {
                     static void Message( const char* str )
                     {
-                        char buf[ MAX_FOTEXT ];
+                        char buf[MAX_FOTEXT];
                         Str::Copy( buf, str );
                         uint buf_len = Str::Length( buf );
-                        if( !buf_len || buf[ buf_len - 1 ] != '\n' )
+                        if( !buf_len || buf[buf_len - 1] != '\n' )
                         {
-                            buf[ buf_len ] = '\n';
-                            buf[ buf_len + 1 ] = 0;
+                            buf[buf_len] = '\n';
+                            buf[buf_len + 1] = 0;
                             buf_len++;
                         }
                         buf_len++;
 
-                        if( !send_fail && send( sock, buf, buf_len, 0 ) != (int) buf_len )
+                        if( !send_fail && send( sock, buf, buf_len, 0 ) != (int)buf_len )
                         {
                             WriteLog( ADMIN_PREFIX "Send data fail, disconnect.\n", admin_name_ptr );
                             send_fail = true;
@@ -1372,7 +1372,7 @@ void AdminWork( void* session_ )
                 send_fail = false;
 
                 BufferManager buf;
-                PackCommand( &cmd[ 1 ], buf, LogCB::Message, NULL );
+                PackCommand( &cmd[1], buf, LogCB::Message, NULL );
                 if( !buf.IsEmpty() )
                 {
                     if( Script::InitThread() )

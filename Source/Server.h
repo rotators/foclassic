@@ -64,7 +64,7 @@ public:
     static void Process_GiveGlobalInfo( Client* cl );
     static void Process_RuleGlobal( Client* cl );
     static void Process_Text( Client* cl );
-    static void Process_Command( BufferManager& buf, void ( * logcb )( const char* ), Client* cl, const char* admin_panel );
+    static void Process_Command( BufferManager& buf, void ( *logcb )( const char* ), Client* cl, const char* admin_panel );
     static void Process_Dialog( Client* cl, bool is_say );
     static void Process_Barter( Client* cl );
     static void Process_GiveMap( Client* cl );
@@ -94,7 +94,7 @@ public:
         bool   CanRewrite;
         string Title;
         string Text;
-        HoloInfo( bool can_rw, const char* title, const char* text ): CanRewrite( can_rw ), Title( title ), Text( text ) {}
+        HoloInfo( bool can_rw, const char* title, const char* text ) : CanRewrite( can_rw ), Title( title ), Text( text ) {}
     };
     typedef map< uint, HoloInfo* > HoloInfoMap;
     static HoloInfoMap HolodiskInfo;
@@ -203,7 +203,7 @@ public:
     {
         int    FuncId;
         int    SayType;
-        char   FirstStr[ TEXT_LISTEN_FIRST_STR_MAX_LEN + 1 ];
+        char   FirstStr[TEXT_LISTEN_FIRST_STR_MAX_LEN + 1];
         uint   FirstStrLen;
         ushort Parameter;
     };
@@ -324,8 +324,8 @@ public:
     // Dump save/load
     struct ClientSaveData
     {
-        char                    Name[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char                    PasswordHash[ PASS_HASH_SIZE ];
+        char                    Name[UTF8_BUF_SIZE( MAX_NAME )];
+        char                    PasswordHash[PASS_HASH_SIZE];
         CritData                Data;
         CritDataExt             DataExt;
         Critter::CrTimeEventVec TimeEvents;
@@ -375,13 +375,13 @@ public:
         DateTime    BeginTime;
         DateTime    EndTime;
         uint        ClientIp;
-        char        ClientName[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char        BannedBy[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char        BanInfo[ UTF8_BUF_SIZE( 128 ) ];
+        char        ClientName[UTF8_BUF_SIZE( MAX_NAME )];
+        char        BannedBy[UTF8_BUF_SIZE( MAX_NAME )];
+        char        BanInfo[UTF8_BUF_SIZE( 128 )];
         bool operator==( const char* name ) { return Str::CompareCaseUTF8( name, ClientName ); }
         bool operator==( const uint ip )    { return ClientIp == ip; }
 
-        const char* GetBanLexems() { return Str::FormatBuf( "$banby%s$time%d$reason%s", BannedBy[ 0 ] ? BannedBy : "?", Timer::GetTimeDifference( EndTime, BeginTime ) / 60 / 60, BanInfo[ 0 ] ? BanInfo : "just for fun" ); }
+        const char* GetBanLexems() { return Str::FormatBuf( "$banby%s$time%d$reason%s", BannedBy[0] ? BannedBy : "?", Timer::GetTimeDifference( EndTime, BeginTime ) / 60 / 60, BanInfo[0] ? BanInfo : "just for fun" ); }
     };
     typedef vector< ClientBanned > ClientBannedVec;
     static ClientBannedVec Banned;
@@ -406,11 +406,11 @@ public:
     // Clients data
     struct ClientData
     {
-        char ClientName[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char ClientPassHash[ PASS_HASH_SIZE ];
+        char ClientName[UTF8_BUF_SIZE( MAX_NAME )];
+        char ClientPassHash[PASS_HASH_SIZE];
         uint ClientId;
         uint SaveIndex;
-        uint UID[ 5 ];
+        uint UID[5];
         uint UIDEndTick;
         void Clear()                        { memzero( this, sizeof( ClientData ) ); }
         bool operator==( const char* name ) { return Str::CompareCaseUTF8( name, ClientName ); }
@@ -461,7 +461,7 @@ public:
     static string GetIngamePlayersStatistics();
 
     // Scores
-    static ScoreType BestScores[ SCORES_MAX ];
+    static ScoreType BestScores[SCORES_MAX];
     static Mutex     BestScoresLocker;
 
     static void        SetScore( int score, Critter* cr, int val );

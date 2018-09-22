@@ -7,7 +7,7 @@ class CryptManager
 {
 private:
     // Crc32 table
-    uint crcTable[ 0x100 ];
+    uint crcTable[0x100];
 
 public:
     // Init Crypt Manager

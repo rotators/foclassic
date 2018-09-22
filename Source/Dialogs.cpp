@@ -25,7 +25,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
         return false;
     }
 
-    istrstream str( (char*) lst.GetBuf() );
+    istrstream str( (char*)lst.GetBuf() );
     int        dlg_count = 0;
     int        dlg_loaded = 0;
     while( !str.eof() )
@@ -45,7 +45,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
             continue;
         }
 
-        char dlg_name[ MAX_FOTEXT ];
+        char dlg_name[MAX_FOTEXT];
         str >> dlg_name;
         if( str.fail() )
         {
@@ -59,7 +59,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
             continue;
         }
 
-        char name[ 256 ];
+        char name[256];
         Str::Copy( name, dlg_name );
         Str::Append( name, DIALOG_FILE_EXT );
 
@@ -70,7 +70,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
             continue;
         }
 
-        DialogPack* pack = ParseDialog( dlg_name, dlg_id, (char*) fdlg.GetBuf() );
+        DialogPack* pack = ParseDialog( dlg_name, dlg_id, (char*)fdlg.GetBuf() );
         if( !pack )
         {
             WriteLog( "Unable to parse dialog, id<%u>, path<%s>.\n", dlg_id, dlg_name );
@@ -94,7 +94,7 @@ void DialogManager::SaveList( const char* list_path, const char* list_name )
 {
     if( !list_path || !list_name )
         return;
-    char full_path[ 1024 ];
+    char full_path[1024];
     Str::Copy( full_path, list_path );
     Str::Append( full_path, list_name );
 
@@ -207,7 +207,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     SAFEDELA( comment );
 
     // Texts
-    char lang_key[ 256 ];
+    char lang_key[256];
     if( !fodlg.GetStr( "data", "lang", "russ", lang_key ) )
         LOAD_FAIL( "Lang app not found." );
 
@@ -215,14 +215,14 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     if( !lang.size() )
         LOAD_FAIL( "Lang app is empty." );
 
-    for( uint i = 0, j = (uint) lang.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)lang.size(); i < j; i++ )
     {
-        string& l = lang[ i ];
+        string& l = lang[i];
         lang_buf = fodlg.GetApp( l.c_str() );
         if( !lang_buf )
             LOAD_FAIL( "One of the lang section not found." );
         pack->Texts.push_back( new FOMsg );
-        pack->Texts[ i ]->LoadMsgFileBuf( lang_buf, Str::Length( lang_buf ) );
+        pack->Texts[i]->LoadMsgFileBuf( lang_buf, Str::Length( lang_buf ) );
         SAFEDELA( lang_buf );
     }
 
@@ -238,11 +238,11 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     uint dlg_id;
     uint text_id;
     uint link;
-    char read_str[ 256 ];
+    char read_str[256];
     bool ret_val;
 
     #ifdef FONLINE_NPCEDITOR
-    char script[ 1024 ];
+    char script[1024];
     #else
     int  script;
     #endif
@@ -399,20 +399,20 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
     char who = 'p';
     char oper = '=';
     int  values_count = 0;
-    char svalue[ 256 ] = { 0 };
+    char svalue[256] = { 0 };
     int  ivalue = 0;
     int  id = 0;
-    char type_str[ 256 ];
-    char name[ 256 ] = { 0 };
+    char type_str[256];
+    char name[256] = { 0 };
     bool no_recheck = false;
     bool ret_value = false;
 
     #define READ_VALUE    if( !deprecated ) { input >> svalue; ivalue = ConstantsManager::GetDefineValue( svalue ); } else { input >> ivalue; Str::Format( svalue, "%d", ivalue ); }
 
     #ifdef FONLINE_NPCEDITOR
-    string script_val[ 5 ];
+    string script_val[5];
     #else
-    int    script_val[ 5 ] = { 0, 0, 0, 0, 0 };
+    int    script_val[5] = { 0, 0, 0, 0, 0 };
     #endif
 
     input >> type_str;
@@ -562,17 +562,17 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             #else
             # define READ_SCRIPT_VALUE_( val )       { input >> value_str; val = ConstantsManager::GetDefineValue( value_str ); }
             #endif
-            char value_str[ 256 ];
+            char value_str[256];
             if( values_count > 0 )
-                READ_SCRIPT_VALUE_( script_val[ 0 ] );
+                READ_SCRIPT_VALUE_( script_val[0] );
             if( values_count > 1 )
-                READ_SCRIPT_VALUE_( script_val[ 1 ] );
+                READ_SCRIPT_VALUE_( script_val[1] );
             if( values_count > 2 )
-                READ_SCRIPT_VALUE_( script_val[ 2 ] );
+                READ_SCRIPT_VALUE_( script_val[2] );
             if( values_count > 3 )
-                READ_SCRIPT_VALUE_( script_val[ 3 ] );
+                READ_SCRIPT_VALUE_( script_val[3] );
             if( values_count > 4 )
-                READ_SCRIPT_VALUE_( script_val[ 4 ] );
+                READ_SCRIPT_VALUE_( script_val[4] );
             if( values_count > 5 )
             {
                 AddError( "Invalid DR script values count<%d>.", values_count );
@@ -596,21 +596,21 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             if( ch == ' ' )
             {
                 #ifdef FONLINE_NPCEDITOR
-                # define READ_SCRIPT_VALUE( val )    { input >> value_int; char buf[ 64 ]; val = itoa( value_int, buf, 10 ); }
+                # define READ_SCRIPT_VALUE( val )    { input >> value_int; char buf[64]; val = itoa( value_int, buf, 10 ); }
                 #else
                 # define READ_SCRIPT_VALUE( val )    { input >> value_int; val = value_int; }
                 #endif
                 int value_int;
                 if( values_count > 0 )
-                    READ_SCRIPT_VALUE( script_val[ 0 ] );
+                    READ_SCRIPT_VALUE( script_val[0] );
                 if( values_count > 1 )
-                    READ_SCRIPT_VALUE( script_val[ 1 ] );
+                    READ_SCRIPT_VALUE( script_val[1] );
                 if( values_count > 2 )
-                    READ_SCRIPT_VALUE( script_val[ 2 ] );
+                    READ_SCRIPT_VALUE( script_val[2] );
                 if( values_count > 3 )
-                    READ_SCRIPT_VALUE( script_val[ 3 ] );
+                    READ_SCRIPT_VALUE( script_val[3] );
                 if( values_count > 4 )
-                    READ_SCRIPT_VALUE( script_val[ 4 ] );
+                    READ_SCRIPT_VALUE( script_val[4] );
                 if( values_count > 5 )
                 {
                     AddError( "Invalid DR script values count<%d>.", values_count );
@@ -621,10 +621,10 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             else
             {
                 #ifdef FONLINE_NPCEDITOR
-                char buf[ 64 ];
-                script_val[ 0 ] = _itoa( values_count, buf, 10 );
+                char buf[64];
+                script_val[0] = _itoa( values_count, buf, 10 );
                 #else
-                script_val[ 0 ] = values_count;
+                script_val[0] = values_count;
                 #endif
                 values_count = 1;
             }
@@ -704,18 +704,18 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
     #ifdef FONLINE_NPCEDITOR
     result.ValueStr = svalue;
     result.ParamName = name;
-    result.ValuesNames[ 0 ] = script_val[ 0 ];
-    result.ValuesNames[ 1 ] = script_val[ 1 ];
-    result.ValuesNames[ 2 ] = script_val[ 2 ];
-    result.ValuesNames[ 3 ] = script_val[ 3 ];
-    result.ValuesNames[ 4 ] = script_val[ 4 ];
+    result.ValuesNames[0] = script_val[0];
+    result.ValuesNames[1] = script_val[1];
+    result.ValuesNames[2] = script_val[2];
+    result.ValuesNames[3] = script_val[3];
+    result.ValuesNames[4] = script_val[4];
     #else
     result.Value = ivalue;
-    result.ValueExt[ 0 ] = script_val[ 0 ];
-    result.ValueExt[ 1 ] = script_val[ 1 ];
-    result.ValueExt[ 2 ] = script_val[ 2 ];
-    result.ValueExt[ 3 ] = script_val[ 3 ];
-    result.ValueExt[ 4 ] = script_val[ 4 ];
+    result.ValueExt[0] = script_val[0];
+    result.ValueExt[1] = script_val[1];
+    result.ValueExt[2] = script_val[2];
+    result.ValueExt[3] = script_val[3];
+    result.ValueExt[4] = script_val[4];
     if( errors )
         return NULL;
     #endif
@@ -849,7 +849,7 @@ bool DialogManager::CheckWho( char who )
 
 void DialogManager::AddError( const char* fmt, ... )
 {
-    static char res[ 1024 ];
+    static char res[1024];
 
     va_list list;
     va_start( list, fmt );

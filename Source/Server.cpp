@@ -68,7 +68,7 @@ Mutex                       FOServer::BannedLocker;
 FOServer::ClientDataVec     FOServer::ClientsData;
 Mutex                       FOServer::ClientsDataLocker;
 volatile uint               FOServer::LastClientId = 0;
-ScoreType                   FOServer::BestScores[ SCORES_MAX ];
+ScoreType                   FOServer::BestScores[SCORES_MAX];
 Mutex                       FOServer::BestScoresLocker;
 FOServer::SingleplayerSave_ FOServer::SingleplayerSave;
 MutexSynchronizer           FOServer::LogicThreadSync;
@@ -102,12 +102,12 @@ void FOServer::Finish()
     if( WorldSaveManager )
     {
         DumpEndEvent.Wait();
-        MEMORY_PROCESS( MEMORY_SAVE_DATA, -(int) ClientsSaveData.size() * sizeof( ClientSaveData ) );
+        MEMORY_PROCESS( MEMORY_SAVE_DATA, -(int)ClientsSaveData.size() * sizeof( ClientSaveData ) );
         ClientsSaveData.clear();
         ClientsSaveDataCount = 0;
-        MEMORY_PROCESS( MEMORY_SAVE_DATA, -(int) WorldSaveData.size() * WORLD_SAVE_DATA_BUFFER_SIZE );
+        MEMORY_PROCESS( MEMORY_SAVE_DATA, -(int)WorldSaveData.size() * WORLD_SAVE_DATA_BUFFER_SIZE );
         for( uint i = 0; i < WorldSaveData.size(); i++ )
-            delete[] WorldSaveData[ i ];
+            delete[] WorldSaveData[i];
         WorldSaveData.clear();
         WorldSaveDataBufCount = 0;
         WorldSaveDataBufFreeSize = 0;
@@ -159,7 +159,7 @@ void FOServer::Finish()
     for( uint i = 0; i < NetIOThreadsCount; i++ )
         PostQueuedCompletionStatus( NetIOCompletionPort, 0, 1, NULL );
     for( uint i = 0; i < NetIOThreadsCount; i++ )
-        NetIOThreads[ i ].Wait();
+        NetIOThreads[i].Wait();
     SAFEDELA( NetIOThreads );
     NetIOThreadsCount = 0;
     CloseHandle( NetIOCompletionPort );
@@ -196,12 +196,12 @@ string FOServer::GetIngamePlayersStatistics()
 {
     static string result;
     const char*   cond_states_str[] = { "None", "Life", "Knockout", "Dead" };
-    char          str[ MAX_FOTEXT ];
-    char          str_loc[ MAX_FOTEXT ];
-    char          str_map[ MAX_FOTEXT ];
+    char          str[MAX_FOTEXT];
+    char          str_loc[MAX_FOTEXT];
+    char          str_map[MAX_FOTEXT];
 
     ConnectedClientsLocker.Lock();
-    uint conn_count = (uint) ConnectedClients.size();
+    uint conn_count = (uint)ConnectedClients.size();
     ConnectedClientsLocker.Unlock();
 
     ClVec players;
@@ -210,9 +210,9 @@ string FOServer::GetIngamePlayersStatistics()
     Str::Format( str, "Players in game: %u\nConnections: %u\n", players.size(), conn_count );
     result = str;
     result += "Name                 Id        Ip              Online  Cond     X     Y     Location (Id, Pid)             Map (Id, Pid)                  Level\n";
-    for( uint i = 0, j = (uint) players.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)players.size(); i < j; i++ )
     {
-        Client*     cl = players[ i ];
+        Client*     cl = players[i];
         const char* name = cl->GetName();
         Map*        map = MapMngr.GetMap( cl->GetMap(), false );
         Location*   loc = ( map ? map->GetLocation( false ) : NULL );
@@ -220,8 +220,8 @@ string FOServer::GetIngamePlayersStatistics()
         Str::Format( str_loc, "%s (%u, %u)", map ? loc->Proto->Name.c_str() : "", map ? loc->GetId() : 0, map ? loc->GetPid() : 0 );
         Str::Format( str_map, "%s (%u, %u)", map ? map->Proto->GetName() : "", map ? map->GetId() : 0, map ? map->GetPid() : 0 );
         Str::Format( str, "%-20s %-9u %-15s %-7s %-8s %-5u %-5u %-30s %-30s %-4d\n",
-                     cl->GetName(), cl->GetId(), cl->GetIpStr(), cl->IsOffline() ? "No" : "Yes", cond_states_str[ cl->Data.Cond ],
-                     map ? cl->GetHexX() : cl->Data.WorldX, map ? cl->GetHexY() : cl->Data.WorldY, map ? str_loc : "Global map", map ? str_map : "", cl->Data.Params[ ST_LEVEL ] );
+                     cl->GetName(), cl->GetId(), cl->GetIpStr(), cl->IsOffline() ? "No" : "Yes", cond_states_str[cl->Data.Cond],
+                     map ? cl->GetHexX() : cl->Data.WorldX, map ? cl->GetHexY() : cl->Data.WorldY, map ? str_loc : "Global map", map ? str_map : "", cl->Data.Params[ST_LEVEL] );
         result += str;
     }
     return result;
@@ -239,7 +239,7 @@ void FOServer::GetAccesses( StrVec& client, StrVec& tester, StrVec& moder, StrVe
     cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
     if( cfg.IsLoaded() )
     {
-        char buf[ MAX_FOTEXT ];
+        char buf[MAX_FOTEXT];
         if( cfg.GetStr( "Access_client", "", buf ) )
             Str::ParseLine( buf, ' ', client, Str::ParseLineDummy );
         if( cfg.GetStr( "Access_tester", "", buf ) )
@@ -374,13 +374,13 @@ void FOServer::RemoveClient( Client* cl )
 void FOServer::DeleteClientFile( const char* client_name )
 {
     // Make old name
-    char clients_path[ MAX_FOPATH ];
+    char clients_path[MAX_FOPATH];
     FileManager::GetFullPath( "", PT_SERVER_CLIENTS, clients_path );
-    char old_client_fname[ MAX_FOPATH ];
+    char old_client_fname[MAX_FOPATH];
     Str::Format( old_client_fname, "%s%s.client", clients_path, client_name );
 
     // Make new name
-    char new_client_fname[ MAX_FOPATH ];
+    char new_client_fname[MAX_FOPATH];
     for( uint i = 0; ; i++ )
     {
         if( !i )
@@ -450,28 +450,28 @@ void FOServer::MainLoop()
     WriteLog( "Starting logic threads, count<%u>.\n", LogicThreadCount );
     WriteLog( "***   Starting game loop   ***\n" );
 
-    LogicThreads = new Thread[ LogicThreadCount ];
+    LogicThreads = new Thread[LogicThreadCount];
     for( uint i = 0; i < LogicThreadCount; i++ )
     {
         Job::PushBack( JOB_THREAD_SYNCHRONIZE );
 
-        char thread_name[ MAX_FOTEXT ];
+        char thread_name[MAX_FOTEXT];
         if( LogicThreadCount > 1 )
             Str::Format( thread_name, "Logic%u", i );
         else
             Str::Format( thread_name, "Logic" );
 
-        LogicThreads[ i ].Start( Logic_Work, thread_name );
+        LogicThreads[i].Start( Logic_Work, thread_name );
 
         if( LogicThreadSetAffinity )
         {
             #if defined ( FO_WINDOWS )
-            SetThreadAffinityMask( LogicThreads[ i ].GetWindowsHandle(), 1 << ( i % CpuCount ) );
+            SetThreadAffinityMask( LogicThreads[i].GetWindowsHandle(), 1 << ( i % CpuCount ) );
             #elif defined ( FO_LINUX )
             cpu_set_t mask;
             CPU_ZERO( &mask );
             CPU_SET( i % CpuCount, &mask );
-            sched_setaffinity( LogicThreads[ i ].GetPid(), sizeof( mask ), &mask );
+            sched_setaffinity( LogicThreads[i].GetPid(), sizeof( mask ), &mask );
             #elif defined ( FO_MACOSX )
             // Todo: https://developer.apple.com/library/mac/#releasenotes/Performance/RN-AffinityAPI/index.html
             #endif
@@ -538,7 +538,7 @@ void FOServer::MainLoop()
     for( uint i = 0; i < LogicThreadCount; i++ )
         Job::PushBack( JOB_THREAD_FINISH );
     for( uint i = 0; i < LogicThreadCount; i++ )
-        LogicThreads[ i ].Wait();
+        LogicThreads[i].Wait();
     SAFEDELA( LogicThreads );
 
     // Erase all jobs
@@ -550,7 +550,7 @@ void FOServer::MainLoop()
     for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
     {
         Critter* cr = ( *it ).second;
-        bool     to_delete = ( cr->IsPlayer() && ( (Client*) cr )->Data.ClientToDelete );
+        bool     to_delete = ( cr->IsPlayer() && ( (Client*)cr )->Data.ClientToDelete );
 
         cr->EventFinish( to_delete );
         if( Script::PrepareContext( ServerFunctions.CritterFinish, _FUNC_, cr->GetInfo() ) )
@@ -563,7 +563,7 @@ void FOServer::MainLoop()
         if( to_delete )
         {
             cr->FullClear();
-            DeleteClientFile( ( (Client*) cr )->Name );
+            DeleteClientFile( ( (Client*)cr )->Name );
         }
     }
 
@@ -625,7 +625,7 @@ void FOServer::Logic_Work( void* data )
 
         if( job.Type == JOB_CLIENT )
         {
-            Client* cl = (Client*) job.Data;
+            Client* cl = (Client*)job.Data;
             SYNC_LOCK( cl );
 
             // Disconnect
@@ -677,17 +677,17 @@ void FOServer::Logic_Work( void* data )
 
             // Process net
             Process( cl );
-            if( (Client*) job.Data != cl )
+            if( (Client*)job.Data != cl )
                 job.Data = cl;
         }
         else if( job.Type == JOB_CRITTER )
         {
-            Critter* cr = (Critter*) job.Data;
+            Critter* cr = (Critter*)job.Data;
             SYNC_LOCK( cr );
 
             // Player specific
             if( cr->CanBeRemoved )
-                RemoveClient( (Client*) cr );                           // Todo: rework, add to garbage collector
+                RemoveClient( (Client*)cr );                            // Todo: rework, add to garbage collector
 
             // Check for removing
             if( cr->IsNotValid )
@@ -698,7 +698,7 @@ void FOServer::Logic_Work( void* data )
         }
         else if( job.Type == JOB_MAP )
         {
-            Map* map = (Map*) job.Data;
+            Map* map = (Map*)job.Data;
             SYNC_LOCK( map );
 
             // Check for removing
@@ -820,7 +820,7 @@ void FOServer::Logic_Work( void* data )
             uint cycle_time = 0, loop_time = 0, loop_cycles = 0, loop_min = 0, loop_max = 0, lags = 0;
             for( auto it = stats_ptrs.begin(), end = stats_ptrs.end(); it != end; ++it )
             {
-                StatisticsThread* stats_thread = (StatisticsThread*) *it;
+                StatisticsThread* stats_thread = (StatisticsThread*)*it;
                 cycle_time += stats_thread->CycleTime;
                 loop_time += stats_thread->LoopTime;
                 loop_cycles += stats_thread->LoopCycles;
@@ -829,7 +829,7 @@ void FOServer::Logic_Work( void* data )
                 lags += stats_thread->LagsCount;
                 real_min_cycle = MIN( real_min_cycle, stats->LoopCycles );
             }
-            uint count = (uint) stats_ptrs.size();
+            uint count = (uint)stats_ptrs.size();
             Statistics.CycleTime = cycle_time / count;
             Statistics.LoopTime = loop_time / count;
             Statistics.LoopCycles = loop_cycles / count;
@@ -892,10 +892,10 @@ void FOServer::Net_Listen( void* )
         sockaddr_in from;
         #ifdef FO_WINDOWS
         socklen_t   addrsize = sizeof( from );
-        SOCKET      sock = WSAAccept( ListenSock, (sockaddr*) &from, &addrsize, NULL, NULL );
+        SOCKET      sock = WSAAccept( ListenSock, (sockaddr*)&from, &addrsize, NULL, NULL );
         #else
         socklen_t   addrsize = sizeof( from );
-        SOCKET      sock = accept( ListenSock, (sockaddr*) &from, &addrsize );
+        SOCKET      sock = accept( ListenSock, (sockaddr*)&from, &addrsize );
         #endif
         if( sock == INVALID_SOCKET )
         {
@@ -914,7 +914,7 @@ void FOServer::Net_Listen( void* )
         }
 
         ConnectedClientsLocker.Lock();
-        uint count = (uint) ConnectedClients.size();
+        uint count = (uint)ConnectedClients.size();
         ConnectedClientsLocker.Unlock();
         if( count >= MAX_CLIENTS_IN_GAME )
         {
@@ -926,7 +926,7 @@ void FOServer::Net_Listen( void* )
         {
             #ifdef FO_WINDOWS
             int optval = 1;
-            if( setsockopt( sock, IPPROTO_TCP, TCP_NODELAY, (char*) &optval, sizeof( optval ) ) )
+            if( setsockopt( sock, IPPROTO_TCP, TCP_NODELAY, (char*)&optval, sizeof( optval ) ) )
                 WriteLogF( _FUNC_, " - Can't set TCP_NODELAY (disable Nagle) to socket, error<%s>.\n", GetLastSocketError() );
             #else
             // socklen_t optval = 1;
@@ -968,7 +968,7 @@ void FOServer::Net_Listen( void* )
         bufferevent_lock( bev );
         #else // IOCP
         // CompletionPort
-        if( !CreateIoCompletionPort( (HANDLE) sock, NetIOCompletionPort, 0, 0 ) )
+        if( !CreateIoCompletionPort( (HANDLE)sock, NetIOCompletionPort, 0, 0 ) )
         {
             WriteLogF( _FUNC_, " - CreateIoCompletionPort fail, error<%u>.\n", GetLastError() );
             closesocket( sock );
@@ -1060,9 +1060,9 @@ void CheckThreadName()
 {
     static uint thread_count = 0;
     const char* cur_name = Thread::GetCurrentName();
-    if( !cur_name[ 0 ] )
+    if( !cur_name[0] )
     {
-        char thread_name[ MAX_FOTEXT ];
+        char thread_name[MAX_FOTEXT];
         Str::Format( thread_name, "NetWork%u", thread_count++ );
         Thread::SetCurrentName( thread_name );
     }
@@ -1072,7 +1072,7 @@ void FOServer::NetIO_Event( bufferevent* bev, short what, void* arg )
 {
     CheckThreadName();
 
-    Client::NetIOArg* arg_ = (Client::NetIOArg*) arg;
+    Client::NetIOArg* arg_ = (Client::NetIOArg*)arg;
     SCOPE_LOCK( arg_->Locker );
     Client*           cl = arg_->PClient;
 
@@ -1120,14 +1120,14 @@ void FOServer::NetIO_Input( bufferevent* bev, void* arg )
 {
     CheckThreadName();
 
-    Client::NetIOArg* arg_ = (Client::NetIOArg*) arg;
+    Client::NetIOArg* arg_ = (Client::NetIOArg*)arg;
     SCOPE_LOCK( arg_->Locker );
     Client*           cl = arg_->PClient;
 
     if( cl->IsOffline() )
     {
         evbuffer* input = bufferevent_get_input( bev );
-        uint      read_len = (uint) evbuffer_get_length( input );
+        uint      read_len = (uint)evbuffer_get_length( input );
         if( read_len )
             evbuffer_drain( input, read_len );
         bufferevent_disable( bev, EV_READ );
@@ -1135,7 +1135,7 @@ void FOServer::NetIO_Input( bufferevent* bev, void* arg )
     }
 
     evbuffer* input = bufferevent_get_input( bev );
-    uint      read_len = (uint) evbuffer_get_length( input );
+    uint      read_len = (uint)evbuffer_get_length( input );
     if( read_len )
     {
         cl->Bin.Lock();
@@ -1154,7 +1154,7 @@ void FOServer::NetIO_Input( bufferevent* bev, void* arg )
         uint  pos = cl->Bin.GetEndPos();
         cl->Bin.SetEndPos( pos + read_len );
 
-        if( evbuffer_remove( input, data + pos, read_len ) != (int) read_len )
+        if( evbuffer_remove( input, data + pos, read_len ) != (int)read_len )
         {
             WriteLogF( _FUNC_, " - Receive fail.\n" );
             cl->Bin.Unlock();
@@ -1172,7 +1172,7 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
 {
     CheckThreadName();
 
-    Client::NetIOArg* arg_ = (Client::NetIOArg*) arg;
+    Client::NetIOArg* arg_ = (Client::NetIOArg*)arg;
     SCOPE_LOCK( arg_->Locker );
     Client*           cl = arg_->PClient;
 
@@ -1187,7 +1187,7 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
 
     // Compress
     const uint         output_buffer_len = 100000; // 100kb
-    static THREAD char output_buffer[ output_buffer_len ];
+    static THREAD char output_buffer[output_buffer_len];
     uint               write_len = 0;
     if( !GameOpt.DisableZlibCompression && !cl->DisableZlib )
     {
@@ -1195,9 +1195,9 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
         if( to_compr > output_buffer_len )
             to_compr = output_buffer_len;
 
-        cl->Zstrm.next_in = (uchar*) cl->Bout.GetCurData();
+        cl->Zstrm.next_in = (uchar*)cl->Bout.GetCurData();
         cl->Zstrm.avail_in = to_compr;
-        cl->Zstrm.next_out = (uchar*) output_buffer;
+        cl->Zstrm.next_out = (uchar*)output_buffer;
         cl->Zstrm.avail_out = output_buffer_len;
 
         if( deflate( &cl->Zstrm, Z_SYNC_FLUSH ) != Z_OK )
@@ -1210,8 +1210,8 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
             return;
         }
 
-        uint compr = cl->Zstrm.next_out - (uchar*) output_buffer;
-        uint real = cl->Zstrm.next_in - (uchar*) cl->Bout.GetCurData();
+        uint compr = cl->Zstrm.next_out - (uchar*)output_buffer;
+        uint real = cl->Zstrm.next_in - (uchar*)cl->Bout.GetCurData();
         write_len = compr;
         cl->Bout.Cut( real );
         Statistics.DataReal += real;
@@ -1254,12 +1254,12 @@ void FOServer::NetIO_Work( void* )
         DWORD             bytes;
         uint              key;
         Client::NetIOArg* io;
-        BOOL              ok = GetQueuedCompletionStatus( NetIOCompletionPort, &bytes, (PULONG_PTR) &key, (LPOVERLAPPED*) &io, INFINITE );
+        BOOL              ok = GetQueuedCompletionStatus( NetIOCompletionPort, &bytes, (PULONG_PTR)&key, (LPOVERLAPPED*)&io, INFINITE );
         if( key == 1 )
             break;                // End of work
 
         io->Locker.Lock();
-        Client* cl = (Client*) io->PClient;
+        Client* cl = (Client*)io->PClient;
         cl->AddRef();
 
         if( ok && bytes )
@@ -1295,7 +1295,7 @@ void FOServer::NetIO_Work( void* )
 
 void FOServer::NetIO_Input( Client::NetIOArg* io )
 {
-    Client* cl = (Client*) io->PClient;
+    Client* cl = (Client*)io->PClient;
 
     if( cl->IsOffline() )
     {
@@ -1328,7 +1328,7 @@ void FOServer::NetIO_Input( Client::NetIOArg* io )
 
 void FOServer::NetIO_Output( Client::NetIOArg* io )
 {
-    Client* cl = (Client*) io->PClient;
+    Client* cl = (Client*)io->PClient;
 
     // Nothing to send
     cl->Bout.Lock();
@@ -1346,9 +1346,9 @@ void FOServer::NetIO_Output( Client::NetIOArg* io )
         if( to_compr > WSA_BUF_SIZE )
             to_compr = WSA_BUF_SIZE;
 
-        cl->Zstrm.next_in = (Bytef*) cl->Bout.GetCurData();
+        cl->Zstrm.next_in = (Bytef*)cl->Bout.GetCurData();
         cl->Zstrm.avail_in = to_compr;
-        cl->Zstrm.next_out = (Bytef*) io->Buffer.buf;
+        cl->Zstrm.next_out = (Bytef*)io->Buffer.buf;
         cl->Zstrm.avail_out = WSA_BUF_SIZE;
 
         if( deflate( &cl->Zstrm, Z_SYNC_FLUSH ) != Z_OK )
@@ -1361,8 +1361,8 @@ void FOServer::NetIO_Output( Client::NetIOArg* io )
             return;
         }
 
-        uint compr = (uint) ( (size_t) cl->Zstrm.next_out - (size_t) io->Buffer.buf );
-        uint real = (uint) ( (size_t) cl->Zstrm.next_in - (size_t) cl->Bout.GetCurData() );
+        uint compr = (uint)( (size_t)cl->Zstrm.next_out - (size_t)io->Buffer.buf );
+        uint real = (uint)( (size_t)cl->Zstrm.next_in - (size_t)cl->Bout.GetCurData() );
         io->Buffer.len = compr;
         cl->Bout.Cut( real );
         Statistics.DataReal += real;
@@ -1386,7 +1386,7 @@ void FOServer::NetIO_Output( Client::NetIOArg* io )
 
     // Send
     DWORD bytes;
-    if( WSASend( cl->Sock, &io->Buffer, 1, &bytes, 0, (LPOVERLAPPED) io, NULL ) == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING )
+    if( WSASend( cl->Sock, &io->Buffer, 1, &bytes, 0, (LPOVERLAPPED)io, NULL ) == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING )
     {
         WriteLogF( _FUNC_, " - Send fail, error<%s>.\n", GetLastSocketError() );
         InterlockedExchange( &io->Operation, WSAOP_FREE );
@@ -1420,9 +1420,9 @@ void FOServer::Process( ClientPtr& cl )
             {
             case 0xFFFFFFFF:
             {
-                uint answer[ 4 ] = { CrMngr.PlayersInGame(), Statistics.Uptime, 0, 0 };
+                uint answer[4] = { CrMngr.PlayersInGame(), Statistics.Uptime, 0, 0 };
                 BOUT_BEGIN( cl );
-                cl->Bout.Push( (char*) answer, sizeof( answer ) );
+                cl->Bout.Push( (char*)answer, sizeof( answer ) );
                 cl->DisableZlib = true;
                 BOUT_END( cl );
                 cl->Disconnect();
@@ -1464,8 +1464,8 @@ void FOServer::Process( ClientPtr& cl )
     }
     else if( cl->GameState == STATE_TRANSFERRING )
     {
-        #define CHECK_BUSY                                                                                             \
-            if( cl->IsBusy() && !Singleplayer ) { cl->Bin.MoveReadPos( -int( sizeof( msg ) ) ); BIN_END( cl ); return; \
+        #define CHECK_BUSY                                                                                            \
+            if( cl->IsBusy() && !Singleplayer ) { cl->Bin.MoveReadPos( -int(sizeof( msg ) ) ); BIN_END( cl ); return; \
             }
 
         BIN_BEGIN( cl );
@@ -1507,9 +1507,9 @@ void FOServer::Process( ClientPtr& cl )
     else if( cl->GameState == STATE_PLAYING )
     {
         #define MESSAGES_PER_CYCLE    ( 5 )
-        #define CHECK_BUSY_AND_LIFE                                                                                               \
-            if( !cl->IsLife() )                                                                                                   \
-                break; if( cl->IsBusy() && !Singleplayer ) { cl->Bin.MoveReadPos( -int( sizeof( msg ) ) ); BIN_END( cl ); return; \
+        #define CHECK_BUSY_AND_LIFE                                                                                              \
+            if( !cl->IsLife() )                                                                                                  \
+                break; if( cl->IsBusy() && !Singleplayer ) { cl->Bin.MoveReadPos( -int(sizeof( msg ) ) ); BIN_END( cl ); return; \
             }
         #define CHECK_NO_GLOBAL \
             if( !cl->GetMap() ) \
@@ -1519,13 +1519,13 @@ void FOServer::Process( ClientPtr& cl )
                     break;
                 #define CHECK_AP_MSG                                                                                                      \
                     uchar ap; cl->Bin >> ap; if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( ap > cl->GetParam( ST_ACTION_POINTS ) ) \
-                                                                                                  break; if( (int) ap > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int( sizeof( msg ) + sizeof( ap ) ) ); BIN_END( cl ); return; } } }
-        #define CHECK_AP( ap )                                                                                     \
-            if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int) ( ap ) > cl->GetParam( ST_ACTION_POINTS ) ) \
-                                                                 break; if( (int) ( ap ) > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int( sizeof( msg ) ) ); BIN_END( cl ); return; } } }
-        #define CHECK_REAL_AP( ap )                                                                                             \
-            if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int) ( ap ) > cl->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) \
-                                                                 break; if( (int) ( ap ) > cl->GetRealAp() ) { cl->Bin.MoveReadPos( -int( sizeof( msg ) ) ); BIN_END( cl ); return; } } }
+                                                                                                  break; if( (int)ap > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int(sizeof( msg ) + sizeof( ap ) ) ); BIN_END( cl ); return; } } }
+        #define CHECK_AP( ap )                                                                                    \
+            if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int)( ap ) > cl->GetParam( ST_ACTION_POINTS ) ) \
+                                                                 break; if( (int)( ap ) > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int(sizeof( msg ) ) ); BIN_END( cl ); return; } } }
+        #define CHECK_REAL_AP( ap )                                                                                            \
+            if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int)( ap ) > cl->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) \
+                                                                 break; if( (int)( ap ) > cl->GetRealAp() ) { cl->Bin.MoveReadPos( -int(sizeof( msg ) ) ); BIN_END( cl ); return; } } }
 
         for( int i = 0; i < MESSAGES_PER_CYCLE; i++ )
         {
@@ -1815,7 +1815,7 @@ void FOServer::Process_Text( Client* cl )
     uint   msg_len = 0;
     uchar  how_say = 0;
     ushort len = 0;
-    char   str[ UTF8_BUF_SIZE( MAX_CHAT_MESSAGE ) ];
+    char   str[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
 
     cl->Bin >> msg_len;
     cl->Bin >> how_say;
@@ -1830,7 +1830,7 @@ void FOServer::Process_Text( Client* cl )
     }
 
     cl->Bin.Pop( str, len );
-    str[ len ] = '\0';
+    str[len] = '\0';
     CHECK_IN_BUFF_ERROR( cl );
 
     if( !cl->IsLife() && how_say >= SAY_NORM && how_say <= SAY_RADIO )
@@ -1930,8 +1930,8 @@ void FOServer::Process_Text( Client* cl )
 
     // Text listen
     int           listen_count = 0;
-    int           licten_func_id[ 100 ];  // 100 calls per one message is enough
-    ScriptString* licten_str[ 100 ];
+    int           licten_func_id[100];    // 100 calls per one message is enough
+    ScriptString* licten_str[100];
 
     TextListenersLocker.Lock();
 
@@ -1939,12 +1939,12 @@ void FOServer::Process_Text( Client* cl )
     {
         for( uint i = 0; i < TextListeners.size(); i++ )
         {
-            TextListen& tl = TextListeners[ i ];
+            TextListen& tl = TextListeners[i];
             if( tl.SayType == SAY_RADIO && std::find( channels.begin(), channels.end(), tl.Parameter ) != channels.end() &&
                 Str::CompareCaseCountUTF8( str, tl.FirstStr, tl.FirstStrLen ) )
             {
-                licten_func_id[ listen_count ] = tl.FuncId;
-                licten_str[ listen_count ] = new ScriptString( str );
+                licten_func_id[listen_count] = tl.FuncId;
+                licten_str[listen_count] = new ScriptString( str );
                 if( ++listen_count >= 100 )
                     break;
             }
@@ -1955,11 +1955,11 @@ void FOServer::Process_Text( Client* cl )
         ushort pid = cl->GetProtoMap();
         for( uint i = 0; i < TextListeners.size(); i++ )
         {
-            TextListen& tl = TextListeners[ i ];
+            TextListen& tl = TextListeners[i];
             if( tl.SayType == how_say && tl.Parameter == pid && Str::CompareCaseCountUTF8( str, tl.FirstStr, tl.FirstStrLen ) )
             {
-                licten_func_id[ listen_count ] = tl.FuncId;
-                licten_str[ listen_count ] = new ScriptString( str );
+                licten_func_id[listen_count] = tl.FuncId;
+                licten_str[listen_count] = new ScriptString( str );
                 if( ++listen_count >= 100 )
                     break;
             }
@@ -1970,17 +1970,17 @@ void FOServer::Process_Text( Client* cl )
 
     for( int i = 0; i < listen_count; i++ )
     {
-        if( Script::PrepareContext( licten_func_id[ i ], _FUNC_, cl->GetInfo() ) )
+        if( Script::PrepareContext( licten_func_id[i], _FUNC_, cl->GetInfo() ) )
         {
             Script::SetArgObject( cl );
-            Script::SetArgObject( licten_str[ i ] );
+            Script::SetArgObject( licten_str[i] );
             Script::RunPrepared();
         }
-        licten_str[ i ]->Release();
+        licten_str[i]->Release();
     }
 }
 
-void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char* ), Client* cl_, const char* admin_panel )
+void FOServer::Process_Command( BufferManager& buf, void ( *logcb )( const char* ), Client* cl_, const char* admin_panel )
 {
     uint  msg_len = 0;
     uchar cmd = 0;
@@ -2026,7 +2026,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
         CHECK_ALLOW_COMMAND;
         CHECK_ADMIN_PANEL;
 
-        char istr[ 1024 ];
+        char istr[1024];
         Str::Format( istr, "|0xFF00FF00 Name: |0xFFFF0000 %s"
                            "|0xFF00FF00 , Id: |0xFFFF0000 %u"
                            "|0xFF00FF00 , Access: ",
@@ -2085,7 +2085,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             break;
         }
 
-        char str[ MAX_FOTEXT ];
+        char str[MAX_FOTEXT];
         ConnectedClientsLocker.Lock();
         Str::Format( str, "Connections: %u, Players: %u, Npc: %u. FOServer machine uptime: %u min., FOServer uptime: %u min.",
                      ConnectedClients.size(), CrMngr.PlayersInGame(), CrMngr.NpcInGame(),
@@ -2095,18 +2095,18 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
 
         const char* ptext = result.c_str();
         uint        text_begin = 0;
-        char        buf[ MAX_FOTEXT ];
-        for( uint i = 0, j = (uint) result.length(); i < j; i++ )
+        char        buf[MAX_FOTEXT];
+        for( uint i = 0, j = (uint)result.length(); i < j; i++ )
         {
-            if( result[ i ] == '\n' )
+            if( result[i] == '\n' )
             {
                 uint len = i - text_begin;
                 if( len )
                 {
                     if( len >= MAX_FOTEXT )
                         len = MAX_FOTEXT - 1;
-                    memcpy( buf, &ptext[ text_begin ], len );
-                    buf[ len ] = 0;
+                    memcpy( buf, &ptext[text_begin], len );
+                    buf[len] = 0;
                     logcb( buf );
                 }
                 text_begin = i + 1;
@@ -2116,9 +2116,9 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_CRITID:
     {
-        char name[ UTF8_BUF_SIZE( MAX_NAME ) ];
+        char name[UTF8_BUF_SIZE( MAX_NAME )];
         buf.Pop( name, sizeof( name ) );
-        name[ sizeof( name ) - 1 ] = 0;
+        name[sizeof( name ) - 1] = 0;
 
         CHECK_ALLOW_COMMAND;
 
@@ -2214,7 +2214,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             return;
         }
 
-        Client* cl2 = (Client*) cr;
+        Client* cl2 = (Client*)cr;
         if( cl2->GameState != STATE_PLAYING )
         {
             logcb( "Player is not in a game." );
@@ -2284,7 +2284,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             }
 
             cr->ChangeParam( param_num );
-            cr->Data.Params[ param_num ] = param_val;
+            cr->Data.Params[param_num] = param_val;
             logcb( "Done." );
         }
         else
@@ -2295,12 +2295,12 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_GETACCESS:
     {
-        char name_access[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char pasw_access[ UTF8_BUF_SIZE( 128 ) ];
+        char name_access[UTF8_BUF_SIZE( MAX_NAME )];
+        char pasw_access[UTF8_BUF_SIZE( 128 )];
         buf.Pop( name_access, sizeof( name_access ) );
         buf.Pop( pasw_access, sizeof( pasw_access ) );
-        name_access[ sizeof( name_access ) - 1 ] = 0;
-        pasw_access[ sizeof( pasw_access ) - 1 ] = 0;
+        name_access[sizeof( name_access ) - 1] = 0;
+        pasw_access[sizeof( pasw_access ) - 1] = 0;
 
         CHECK_ALLOW_COMMAND;
         CHECK_ADMIN_PANEL;
@@ -2442,7 +2442,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             // Reload script modules
             Script::Undef( NULL );
             Script::Define( "__SERVER" );
-            if( Script::ReloadScripts( (char*) scripts_cfg.GetBuf(), "server", false ) )
+            if( Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
                 logcb( "Success." );
             else
                 logcb( "Fail." );
@@ -2457,9 +2457,9 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_LOADSCRIPT:
     {
-        char module_name[ MAX_SCRIPT_NAME + 1 ];
+        char module_name[MAX_SCRIPT_NAME + 1];
         buf.Pop( module_name, MAX_SCRIPT_NAME );
-        module_name[ MAX_SCRIPT_NAME ] = 0;
+        module_name[MAX_SCRIPT_NAME] = 0;
 
         CHECK_ALLOW_COMMAND;
         if( Script::Profiler::IsActive() )
@@ -2505,13 +2505,13 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_RUNSCRIPT:
     {
-        char module_name[ MAX_SCRIPT_NAME + 1 ];
-        char func_name[ MAX_SCRIPT_NAME + 1 ];
+        char module_name[MAX_SCRIPT_NAME + 1];
+        char func_name[MAX_SCRIPT_NAME + 1];
         uint param0, param1, param2;
         buf.Pop( module_name, MAX_SCRIPT_NAME );
-        module_name[ MAX_SCRIPT_NAME ] = 0;
+        module_name[MAX_SCRIPT_NAME] = 0;
         buf.Pop( func_name, MAX_SCRIPT_NAME );
-        func_name[ MAX_SCRIPT_NAME ] = 0;
+        func_name[MAX_SCRIPT_NAME] = 0;
         buf >> param0;
         buf >> param1;
         buf >> param2;
@@ -2595,7 +2595,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
                 logcb( "Load proto location fail." );
             else
             {
-                MapMngr.ProtoLoc[ loc_pid ] = ploc;
+                MapMngr.ProtoLoc[loc_pid] = ploc;
                 logcb( "Load proto location success." );
             }
         }
@@ -2616,14 +2616,14 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
         int fails = 0;
         for( int map_pid = 0; map_pid < MAX_PROTO_MAPS; map_pid++ )
         {
-            if( MapMngr.ProtoMaps[ map_pid ].IsInit() )
+            if( MapMngr.ProtoMaps[map_pid].IsInit() )
             {
                 ProtoMap    pmap;
-                const char* map_name = MapMngr.ProtoMaps[ map_pid ].GetName();
+                const char* map_name = MapMngr.ProtoMaps[map_pid].GetName();
                 if( pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
                 {
-                    MapMngr.ProtoMaps[ map_pid ].Clear();
-                    MapMngr.ProtoMaps[ map_pid ] = pmap;
+                    MapMngr.ProtoMaps[map_pid].Clear();
+                    MapMngr.ProtoMaps[map_pid] = pmap;
                 }
                 else
                 {
@@ -2649,14 +2649,14 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
 
         SynchronizeLogicThreads();
 
-        if( map_pid > 0 && map_pid < MAX_PROTO_MAPS && MapMngr.ProtoMaps[ map_pid ].IsInit() )
+        if( map_pid > 0 && map_pid < MAX_PROTO_MAPS && MapMngr.ProtoMaps[map_pid].IsInit() )
         {
             ProtoMap    pmap;
-            const char* map_name = MapMngr.ProtoMaps[ map_pid ].GetName();
+            const char* map_name = MapMngr.ProtoMaps[map_pid].GetName();
             if( pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
             {
-                MapMngr.ProtoMaps[ map_pid ].Clear();
-                MapMngr.ProtoMaps[ map_pid ] = pmap;
+                MapMngr.ProtoMaps[map_pid].Clear();
+                MapMngr.ProtoMaps[map_pid] = pmap;
 
                 logcb( "Load proto map success." );
             }
@@ -2728,11 +2728,11 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_LOADDIALOG:
     {
-        char dlg_name[ 128 ];
+        char dlg_name[128];
         uint dlg_id;
         buf.Pop( dlg_name, 128 );
         buf >> dlg_id;
-        dlg_name[ 127 ] = 0;
+        dlg_name[127] = 0;
 
         CHECK_ALLOW_COMMAND;
 
@@ -2741,7 +2741,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
         FileManager fm;
         if( fm.LoadFile( Str::FormatBuf( "%s%s", dlg_name, DIALOG_FILE_EXT ), PT_SERVER_DIALOGS ) )
         {
-            DialogPack* pack = DlgMngr.ParseDialog( dlg_name, dlg_id, (char*) fm.GetBuf() );
+            DialogPack* pack = DlgMngr.ParseDialog( dlg_name, dlg_id, (char*)fm.GetBuf() );
             if( pack )
             {
                 DlgMngr.EraseDialogs( dlg_id );
@@ -2939,17 +2939,17 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_BAN:
     {
-        char name[ UTF8_BUF_SIZE( MAX_NAME ) ];
-        char params[ UTF8_BUF_SIZE( MAX_NAME ) ];
+        char name[UTF8_BUF_SIZE( MAX_NAME )];
+        char params[UTF8_BUF_SIZE( MAX_NAME )];
         uint ban_hours;
-        char info[ UTF8_BUF_SIZE( MAX_CHAT_MESSAGE ) ];
+        char info[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
         buf.Pop( name, sizeof( name ) );
-        name[ sizeof( name - 1 ) ] = 0;
+        name[sizeof( name - 1 )] = 0;
         buf.Pop( params, sizeof( params ) );
-        params[ sizeof( params ) - 1 ] = 0;
+        params[sizeof( params ) - 1] = 0;
         buf >> ban_hours;
         buf.Pop( info, sizeof( info ) );
-        info[ sizeof( info ) - 1 ] = 0;
+        info[sizeof( info ) - 1] = 0;
 
         CHECK_ALLOW_COMMAND;
 
@@ -2968,15 +2968,15 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             {
                 ClientBanned& ban = *it;
                 logcb( Str::FormatBuf( "--- %3u ---", index ) );
-                if( ban.ClientName[ 0 ] )
+                if( ban.ClientName[0] )
                     logcb( Str::FormatBuf( "User: %s", ban.ClientName ) );
                 if( ban.ClientIp )
                     logcb( Str::FormatBuf( "UserIp: %u", ban.ClientIp ) );
                 logcb( Str::FormatBuf( "BeginTime: %u %u %u %u %u", ban.BeginTime.Year, ban.BeginTime.Month, ban.BeginTime.Day, ban.BeginTime.Hour, ban.BeginTime.Minute ) );
                 logcb( Str::FormatBuf( "EndTime: %u %u %u %u %u", ban.EndTime.Year, ban.EndTime.Month, ban.EndTime.Day, ban.EndTime.Hour, ban.EndTime.Minute ) );
-                if( ban.BannedBy[ 0 ] )
+                if( ban.BannedBy[0] )
                     logcb( Str::FormatBuf( "BannedBy: %s", ban.BannedBy ) );
-                if( ban.BanInfo[ 0 ] )
+                if( ban.BanInfo[0] )
                     logcb( Str::FormatBuf( "Comment: %s", ban.BanInfo ) );
                 index++;
             }
@@ -3023,8 +3023,8 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
             bool resave = false;
             if( Str::CompareCase( name, "*" ) )
             {
-                int index = (int) ban_hours - 1;
-                if( index >= 0 && index < (int) Banned.size() )
+                int index = (int)ban_hours - 1;
+                if( index >= 0 && index < (int)Banned.size() )
                 {
                     Banned.erase( Banned.begin() + index );
                     resave = true;
@@ -3066,7 +3066,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_DELETE_ACCOUNT:
     {
-        char pass_hash[ PASS_HASH_SIZE ];
+        char pass_hash[PASS_HASH_SIZE];
         buf.Pop( pass_hash, PASS_HASH_SIZE );
 
         CHECK_ALLOW_COMMAND;
@@ -3093,8 +3093,8 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_CHANGE_PASSWORD:
     {
-        char pass_hash[ PASS_HASH_SIZE ];
-        char new_pass_hash[ PASS_HASH_SIZE ];
+        char pass_hash[PASS_HASH_SIZE];
+        char new_pass_hash[PASS_HASH_SIZE];
         buf.Pop( pass_hash, PASS_HASH_SIZE );
         buf.Pop( new_pass_hash, PASS_HASH_SIZE );
 
@@ -3128,7 +3128,7 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
         if( data )
         {
             for( int i = 0; i < 5; i++ )
-                data->UID[ i ] = 0;
+                data->UID[i] = 0;
             data->UIDEndTick = 0;
         }
         logcb( "UID dropped, you can relogin on another account without timeout." );
@@ -3136,18 +3136,18 @@ void FOServer::Process_Command( BufferManager& buf, void ( * logcb )( const char
     break;
     case CMD_LOG:
     {
-        char flags[ 16 ];
+        char flags[16];
         buf.Pop( flags, 16 );
 
         CHECK_ALLOW_COMMAND;
         CHECK_ADMIN_PANEL;
 
         int action = -1;
-        if( flags[ 0 ] == '-' && flags[ 1 ] == '-' )
+        if( flags[0] == '-' && flags[1] == '-' )
             action = 2;                                  // Detach all
-        else if( flags[ 0 ] == '-' )
+        else if( flags[0] == '-' )
             action = 0;                                  // Detach current
-        else if( flags[ 0 ] == '+' )
+        else if( flags[0] == '+' )
             action = 1;                                  // Attach current
         else
         {
@@ -3202,16 +3202,16 @@ void FOServer::SaveGameInfoFile()
         AddWorldSaveData( csd.Name, sizeof( csd.Name ) );
         AddWorldSaveData( &csd.Data, sizeof( csd.Data ) );
         AddWorldSaveData( &csd.DataExt, sizeof( csd.DataExt ) );
-        uint te_count = (uint) csd.TimeEvents.size();
+        uint te_count = (uint)csd.TimeEvents.size();
         AddWorldSaveData( &te_count, sizeof( te_count ) );
         if( te_count )
-            AddWorldSaveData( &csd.TimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) );
+            AddWorldSaveData( &csd.TimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) );
 
         // Picture data
-        uint pic_size = (uint) SingleplayerSave.PicData.size();
+        uint pic_size = (uint)SingleplayerSave.PicData.size();
         AddWorldSaveData( &pic_size, sizeof( pic_size ) );
         if( pic_size )
-            AddWorldSaveData( &SingleplayerSave.PicData[ 0 ], pic_size );
+            AddWorldSaveData( &SingleplayerSave.PicData[0], pic_size );
     }
 
     // Time
@@ -3225,7 +3225,7 @@ void FOServer::SaveGameInfoFile()
     AddWorldSaveData( &GameOpt.TimeMultiplier, sizeof( GameOpt.TimeMultiplier ) );
 
     // Scores
-    AddWorldSaveData( &BestScores[ 0 ], sizeof( BestScores ) );
+    AddWorldSaveData( &BestScores[0], sizeof( BestScores ) );
 }
 
 bool FOServer::LoadGameInfoFile( void* f )
@@ -3251,13 +3251,13 @@ bool FOServer::LoadGameInfoFile( void* f )
             return false;
         if( !FileRead( f, &csd.DataExt, sizeof( csd.DataExt ) ) )
             return false;
-        uint te_count = (uint) csd.TimeEvents.size();
+        uint te_count = (uint)csd.TimeEvents.size();
         if( !FileRead( f, &te_count, sizeof( te_count ) ) )
             return false;
         if( te_count )
         {
             csd.TimeEvents.resize( te_count );
-            if( !FileRead( f, &csd.TimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) ) )
+            if( !FileRead( f, &csd.TimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) ) )
                 return false;
         }
 
@@ -3268,7 +3268,7 @@ bool FOServer::LoadGameInfoFile( void* f )
         if( pic_size )
         {
             SingleplayerSave.PicData.resize( pic_size );
-            if( !FileRead( f, &SingleplayerSave.PicData[ 0 ], pic_size ) )
+            if( !FileRead( f, &SingleplayerSave.PicData[0], pic_size ) )
                 return false;
         }
     }
@@ -3293,7 +3293,7 @@ bool FOServer::LoadGameInfoFile( void* f )
         return false;
 
     // Scores
-    if( !FileRead( f, &BestScores[ 0 ], sizeof( BestScores ) ) )
+    if( !FileRead( f, &BestScores[0], sizeof( BestScores ) ) )
         return false;
 
     WriteLog( "complete.\n" );
@@ -3330,9 +3330,9 @@ void FOServer::InitGameTime()
     GameOpt.Year = CLAMP( GameOpt.Year, GameOpt.YearStart, GameOpt.YearStart + 130 );
     GameOpt.Month = CLAMP( GameOpt.Month, 1, 12 );
     GameOpt.Day = CLAMP( GameOpt.Day, 1, 31 );
-    GameOpt.Hour = CLAMP( (short) GameOpt.Hour, 0, 23 );
-    GameOpt.Minute = CLAMP( (short) GameOpt.Minute, 0, 59 );
-    GameOpt.Second = CLAMP( (short) GameOpt.Second, 0, 59 );
+    GameOpt.Hour = CLAMP( (short)GameOpt.Hour, 0, 23 );
+    GameOpt.Minute = CLAMP( (short)GameOpt.Minute, 0, 59 );
+    GameOpt.Second = CLAMP( (short)GameOpt.Second, 0, 59 );
     GameOpt.FullSecond = Timer::GetFullSecond( GameOpt.Year, GameOpt.Month, GameOpt.Day, GameOpt.Hour, GameOpt.Minute, GameOpt.Second );
 
     GameOpt.FullSecondStart = GameOpt.FullSecond;
@@ -3392,12 +3392,13 @@ bool FOServer::InitReal()
     memzero( Critter::ParamsGetScript, sizeof( Critter::ParamsGetScript ) );
     memzero( Critter::SlotDataSendEnabled, sizeof( Critter::SlotDataSendEnabled ) );
     for( int i = 0; i < MAX_PARAMS; i++ )
-        Critter::ParamsChosenSendMask[ i ] = uint( -1 );
+        Critter::ParamsChosenSendMask[i] = uint( -1 );
 
     // Register dll script data
     struct CritterChangeParameter_
     {
-        static void CritterChangeParameter( void* cr, uint index ) { ( (Critter*) cr )->ChangeParam( index ); } };
+        static void CritterChangeParameter( void* cr, uint index ) { ( (Critter*)cr )->ChangeParam( index ); }
+    };
     GameOpt.CritterChangeParameter = &CritterChangeParameter_::CritterChangeParameter;
     GameOpt.CritterTypes = &CritType::GetRealCritType( 0 );
 
@@ -3550,7 +3551,7 @@ bool FOServer::InitReal()
     sin.sin_port = htons( port );
     sin.sin_addr.s_addr = INADDR_ANY;
 
-    if( bind( ListenSock, (sockaddr*) &sin, sizeof( sin ) ) == SOCKET_ERROR )
+    if( bind( ListenSock, (sockaddr*)&sin, sizeof( sin ) ) == SOCKET_ERROR )
     {
         WriteLog( "Bind error.\n" );
         return false;
@@ -3559,7 +3560,7 @@ bool FOServer::InitReal()
     if( Singleplayer )
     {
         socklen_t namelen = sizeof( sin );
-        if( getsockname( ListenSock, (sockaddr*) &sin, &namelen ) )
+        if( getsockname( ListenSock, (sockaddr*)&sin, &namelen ) )
         {
             WriteLog( "Getsockname error.\n" );
             closesocket( ListenSock );
@@ -3637,16 +3638,16 @@ bool FOServer::InitReal()
     ListenThread.Start( Net_Listen, "NetListen" );
 
     WriteLogF( NULL, "Starting net work threads, count<%u>.\n", NetIOThreadsCount );
-    NetIOThreads = new Thread[ NetIOThreadsCount ];
+    NetIOThreads = new Thread[NetIOThreadsCount];
     for( uint i = 0; i < NetIOThreadsCount; i++ )
     {
-        char thread_name[ MAX_FOTEXT ];
+        char thread_name[MAX_FOTEXT];
         if( NetIOThreadsCount > 1 )
             Str::Format( thread_name, "NetWork%u", i );
         else
             Str::Format( thread_name, "NetWork" );
 
-        NetIOThreads[ i ].Start( NetIO_Work, thread_name );
+        NetIOThreads[i].Start( NetIO_Work, thread_name );
     }
 
     Client::SendData = &NetIO_Output;
@@ -3679,18 +3680,18 @@ bool FOServer::InitReal()
                 const char* type_decl = engine->GetTypeDeclaration( type_id );
                 if( Str::Compare( type_decl, "bool" ) )
                 {
-                    *(bool*) pointer = atoi( cmd_name + Str::Length( name ) + 1 ) != 0;
-                    WriteLog( "Global var<%s> changed to<%s>.\n", name, *(bool*) pointer ? "true" : "false" );
+                    *(bool*)pointer = atoi( cmd_name + Str::Length( name ) + 1 ) != 0;
+                    WriteLog( "Global var<%s> changed to<%s>.\n", name, *(bool*)pointer ? "true" : "false" );
                 }
                 else if( Str::Compare( type_decl, "string" ) )
                 {
-                    *(string*) pointer = cmd_name + Str::Length( name ) + 1;
-                    WriteLog( "Global var<%s> changed to<%s>.\n", name, ( *(string*) pointer ).c_str() );
+                    *(string*)pointer = cmd_name + Str::Length( name ) + 1;
+                    WriteLog( "Global var<%s> changed to<%s>.\n", name, ( *(string*)pointer ).c_str() );
                 }
                 else
                 {
-                    *(int*) pointer = atoi( cmd_name + Str::Length( name ) + 1 );
-                    WriteLog( "Global var<%s> changed to<%d>.\n", name, *(int*) pointer );
+                    *(int*)pointer = atoi( cmd_name + Str::Length( name ) + 1 );
+                    WriteLog( "Global var<%s> changed to<%d>.\n", name, *(int*)pointer );
                 }
             }
         }
@@ -3742,7 +3743,7 @@ bool FOServer::InitCrafts( LangPackVec& lang_packs )
 
         if( it == lang_packs.begin() )
         {
-            if( !MrFixit.LoadCrafts( lang.Msg[ TEXTMSG_CRAFT ] ) )
+            if( !MrFixit.LoadCrafts( lang.Msg[TEXTMSG_CRAFT] ) )
             {
                 WriteLogF( _FUNC_, " - Unable to load crafts from<%s>.\n", lang.NameStr );
                 return false;
@@ -3752,7 +3753,7 @@ bool FOServer::InitCrafts( LangPackVec& lang_packs )
         }
 
         CraftManager mr_fixit;
-        if( !mr_fixit.LoadCrafts( lang.Msg[ TEXTMSG_CRAFT ] ) )
+        if( !mr_fixit.LoadCrafts( lang.Msg[TEXTMSG_CRAFT] ) )
         {
             WriteLogF( _FUNC_, " - Unable to load crafts from<%s>.\n", lang.NameStr );
             return false;
@@ -3778,8 +3779,8 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
 
     while( true )
     {
-        char cur_str_lang[ MAX_FOTEXT ];
-        char lang_name[ MAX_FOTEXT ];
+        char cur_str_lang[MAX_FOTEXT];
+        char lang_name[MAX_FOTEXT];
         Str::Format( cur_str_lang, "Language_%u", cur_lang );
 
         if( !cfg.GetStr( cur_str_lang, "", lang_name ) )
@@ -3791,7 +3792,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
             return false;
         }
 
-        uint pack_id = *(uint*) &lang_name;
+        uint pack_id = *(uint*)&lang_name;
         if( std::find( lang_packs.begin(), lang_packs.end(), pack_id ) != lang_packs.end() )
         {
             WriteLog( "Language pack<%u> is already initialized.\n", cur_lang );
@@ -3822,16 +3823,16 @@ bool FOServer::InitLangPacksDialogs( LangPackVec& lang_packs )
     for( auto it = DlgMngr.DialogsPacks.begin(), end = DlgMngr.DialogsPacks.end(); it != end; ++it )
     {
         DialogPack* pack = ( *it ).second;
-        for( uint i = 0, j = (uint) pack->TextsLang.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)pack->TextsLang.size(); i < j; i++ )
         {
             for( auto it_ = lang_packs.begin(), end_ = lang_packs.end(); it_ != end_; ++it_ )
             {
                 LanguagePack& lang = *it_;
-                if( pack->TextsLang[ i ] != lang.NameStr )
+                if( pack->TextsLang[i] != lang.NameStr )
                     continue;
 
-                FOMsg* msg = pack->Texts[ i ];
-                FOMsg* msg_dlg = &lang.Msg[ TEXTMSG_DLG ];
+                FOMsg* msg = pack->Texts[i];
+                FOMsg* msg_dlg = &lang.Msg[TEXTMSG_DLG];
 
                 // Npc names, descriptions
                 // 100000..10100000
@@ -3845,14 +3846,14 @@ bool FOServer::InitLangPacksDialogs( LangPackVec& lang_packs )
                 // 100000000..999999999
                 for( uint i_ = 0; i_ < pack->Dialogs.size(); i_++ )
                 {
-                    Dialog& dlg = pack->Dialogs[ i_ ];
+                    Dialog& dlg = pack->Dialogs[i_];
                     if( dlg.TextId < 100000000 )
                         dlg.TextId = msg_dlg->AddStr( msg->GetStr( ( i_ + 1 ) * 1000 ) );
                     else
                         msg_dlg->AddStr( dlg.TextId, msg->GetStr( ( i_ + 1 ) * 1000 ) );
                     for( uint j_ = 0; j_ < dlg.Answers.size(); j_++ )
                     {
-                        DialogAnswer& answ = dlg.Answers[ j_ ];
+                        DialogAnswer& answ = dlg.Answers[j_];
                         if( answ.TextId < 100000000 )
                             answ.TextId = msg_dlg->AddStr( msg->GetStr( ( i_ + 1 ) * 1000 + ( j_ + 1 ) * 10 ) );
                         else
@@ -3873,7 +3874,7 @@ bool FOServer::InitLangPacksDialogs( LangPackVec& lang_packs )
     for( auto it = lang_packs.begin(), end = lang_packs.end(); it != end; ++it )
     {
         LanguagePack& lang = *it;
-        lang.Msg[ TEXTMSG_DLG ].CalculateHash();
+        lang.Msg[TEXTMSG_DLG].CalculateHash();
         // lang.Msg[TEXTMSG_DLG].SaveMsgFile(Str::FormatBuf("%s.txt",lang.NameStr),PT_SERVER_ROOT);
     }
 
@@ -3899,8 +3900,8 @@ bool FOServer::InitLangCrTypes( LangPackVec& lang_packs )
     {
         LanguagePack& lang = *it;
         for( int i = 0; i < MAX_CRIT_TYPES; i++ )
-            lang.Msg[ TEXTMSG_INTERNAL ].EraseStr( STR_INTERNAL_CRTYPE( i ) );
-        lang.Msg[ TEXTMSG_INTERNAL ] += msg_crtypes;
+            lang.Msg[TEXTMSG_INTERNAL].EraseStr( STR_INTERNAL_CRTYPE( i ) );
+        lang.Msg[TEXTMSG_INTERNAL] += msg_crtypes;
     }
 
     return true;
@@ -3910,7 +3911,7 @@ bool FOServer::InitLangCrTypes( LangPackVec& lang_packs )
 void FOServer::LogToClients( const char* str )
 {
     ushort str_len = Str::Length( str );
-    if( str_len && str[ str_len - 1 ] == '\n' )
+    if( str_len && str[str_len - 1] == '\n' )
         str_len--;
     if( str_len )
     {
@@ -3979,15 +3980,15 @@ void FOServer::SaveBan( ClientBanned& ban, bool expired )
     fm.SwitchToWrite();
 
     fm.SetStr( "[Ban]\n" );
-    if( ban.ClientName[ 0 ] )
+    if( ban.ClientName[0] )
         fm.SetStr( "User=%s\n", ban.ClientName );
     if( ban.ClientIp )
         fm.SetStr( "UserIp=%u\n", ban.ClientIp );
     fm.SetStr( "BeginTime=%u %u %u %u %u\n", ban.BeginTime.Year, ban.BeginTime.Month, ban.BeginTime.Day, ban.BeginTime.Hour, ban.BeginTime.Minute );
     fm.SetStr( "EndTime=%u %u %u %u %u\n", ban.EndTime.Year, ban.EndTime.Month, ban.EndTime.Day, ban.EndTime.Hour, ban.EndTime.Minute );
-    if( ban.BannedBy[ 0 ] )
+    if( ban.BannedBy[0] )
         fm.SetStr( "BannedBy=%s\n", ban.BannedBy );
-    if( ban.BanInfo[ 0 ] )
+    if( ban.BanInfo[0] )
         fm.SetStr( "Comment=%s\n", ban.BanInfo );
     fm.SetStr( "\n" );
 
@@ -4004,15 +4005,15 @@ void FOServer::SaveBans()
     {
         ClientBanned& ban = *it;
         fm.SetStr( "[Ban]\n" );
-        if( ban.ClientName[ 0 ] )
+        if( ban.ClientName[0] )
             fm.SetStr( "User=%s\n", ban.ClientName );
         if( ban.ClientIp )
             fm.SetStr( "UserIp=%u\n", ban.ClientIp );
         fm.SetStr( "BeginTime=%u %u %u %u %u\n", ban.BeginTime.Year, ban.BeginTime.Month, ban.BeginTime.Day, ban.BeginTime.Hour, ban.BeginTime.Minute );
         fm.SetStr( "EndTime=%u %u %u %u %u\n", ban.EndTime.Year, ban.EndTime.Month, ban.EndTime.Day, ban.EndTime.Hour, ban.EndTime.Minute );
-        if( ban.BannedBy[ 0 ] )
+        if( ban.BannedBy[0] )
             fm.SetStr( "BannedBy=%s\n", ban.BannedBy );
-        if( ban.BanInfo[ 0 ] )
+        if( ban.BanInfo[0] )
             fm.SetStr( "Comment=%s\n", ban.BanInfo );
         fm.SetStr( "\n" );
     }
@@ -4036,7 +4037,7 @@ void FOServer::LoadBans()
         return;
     }
 
-    char buf[ MAX_FOTEXT ];
+    char buf[MAX_FOTEXT];
     while( bans_txt.GotoNextApp( "Ban" ) )
     {
         ClientBanned ban;
@@ -4066,21 +4067,21 @@ bool FOServer::LoadClientsData()
     ClientsData.reserve( 10000 );
 
     bool success = false;
-    char client_name[ MAX_FOPATH ];
-    char clients_path[ MAX_FOPATH ];
+    char client_name[MAX_FOPATH];
+    char clients_path[MAX_FOPATH];
     FileManager::GetFullPath( "", PT_SERVER_CLIENTS, clients_path );
 
     // Last id
-    char  last_id_fname[ MAX_FOPATH ];
+    char  last_id_fname[MAX_FOPATH];
     Str::Format( last_id_fname, "%slast_id.txt", clients_path );
     void* last_id_file = FileOpen( last_id_fname, false );
     if( last_id_file )
     {
         uint  fsize = FileGetSize( last_id_file );
-        char* buf = new char[ fsize + 1 ];
+        char* buf = new char[fsize + 1];
         if( FileRead( last_id_file, buf, fsize ) )
         {
-            buf[ fsize ] = 0;
+            buf[fsize] = 0;
             sscanf( buf, "%u", &LastClientId );
         }
         FileClose( last_id_file );
@@ -4090,7 +4091,7 @@ bool FOServer::LoadClientsData()
     // Get cache for clients
     istrstream* cache_str = NULL;
     char*       cache_buf = NULL;
-    char        cache_fname[ MAX_FOPATH ];
+    char        cache_fname[MAX_FOPATH];
     Str::Format( cache_fname, "%sclients_list.txt", clients_path );
 
     if( FileExist( "cache_fail" ) )
@@ -4103,15 +4104,15 @@ bool FOServer::LoadClientsData()
     if( cache_file )
     {
         uint  fsize = FileGetSize( cache_file );
-        char* cache_buf = new char[ fsize + 1 ];
+        char* cache_buf = new char[fsize + 1];
         if( fsize > 0 && FileRead( cache_file, cache_buf, fsize ) )
         {
             FileClose( cache_file );
-            cache_buf[ fsize ] = 0;
+            cache_buf[fsize] = 0;
             cache_str = new istrstream( cache_buf );
             cache_str->getline( client_name, sizeof( client_name ) );
             Str::EraseFrontBackSpecificChars( client_name );
-            if( !client_name[ 0 ] )
+            if( !client_name[0] )
             {
                 SAFEDEL( cache_str );
                 SAFEDELA( cache_buf );
@@ -4164,7 +4165,7 @@ bool FOServer::LoadClientsData()
             {
                 cache_str->getline( client_name, sizeof( client_name ) );
                 Str::EraseFrontBackSpecificChars( client_name );
-                if( cache_str->eof() || !client_name[ 0 ] )
+                if( cache_str->eof() || !client_name[0] )
                 {
                     success = true;
                     break;
@@ -4177,7 +4178,7 @@ bool FOServer::LoadClientsData()
         }
 
         // Take name from file title
-        char        name[ MAX_FOPATH ];
+        char        name[MAX_FOPATH];
         const char* ext = FileManager::GetExtension( client_name );
         if( !ext || !Str::CompareCase( ext, "client" ) )
         {
@@ -4185,10 +4186,10 @@ bool FOServer::LoadClientsData()
             break;
         }
         Str::Copy( name, client_name );
-        name[ Str::Length( name ) - 7 ] = 0; // Erase extension, 7 == ".client"
+        name[Str::Length( name ) - 7] = 0;   // Erase extension, 7 == ".client"
 
         // Take id and password from file
-        char  client_fname[ MAX_FOPATH ];
+        char  client_fname[MAX_FOPATH];
         Str::Format( client_fname, "%s%s", clients_path, client_name );
         void* f = FileOpen( client_fname, false );
         if( !f )
@@ -4200,7 +4201,7 @@ bool FOServer::LoadClientsData()
         }
 
 
-        uchar signature[ sizeof( ClientSaveSignature ) ];
+        uchar signature[sizeof( ClientSaveSignature )];
         if( !FileRead( f, signature, sizeof( signature ) ) )
         {
             WriteLog( "Unable to read signature of client save file<%s>. Skipped.\n", client_fname );
@@ -4208,7 +4209,7 @@ bool FOServer::LoadClientsData()
             continue;
         }
 
-        char pass_hash[ PASS_HASH_SIZE ];
+        char pass_hash[PASS_HASH_SIZE];
         uint id;
         if( !FileRead( f, pass_hash, sizeof( pass_hash ) ) || !FileRead( f, &id, sizeof( uint ) ) )
         {
@@ -4219,7 +4220,7 @@ bool FOServer::LoadClientsData()
         FileClose( f );
 
         // ignore all vanilla clients
-        if( signature[ 0 ] == 'F' && signature[ 1 ] == 'O' && signature[ 2 ] == 0 )
+        if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
         {
             WriteLog( "Client save file<%s> ignored.\n", client_fname );
             continue;
@@ -4288,7 +4289,7 @@ bool FOServer::LoadClientsData()
     last_id_file = FileOpen( last_id_fname, true );
     if( last_id_file )
     {
-        char last_id_str[ 128 ];
+        char last_id_str[128];
         Str::Format( last_id_str, "%u", LastClientId );
         FileWrite( last_id_file, last_id_str, Str::Length( last_id_str ) );
         FileClose( last_id_file );
@@ -4330,7 +4331,7 @@ bool FOServer::SaveClient( Client* cl, bool deferred )
     }
     else
     {
-        char fname[ MAX_FOPATH ];
+        char fname[MAX_FOPATH];
         FileManager::GetFullPath( cl->Name, PT_SERVER_CLIENTS, fname );
         Str::Append( fname, ".client" );
         void* f = FileOpen( fname, true );
@@ -4344,10 +4345,10 @@ bool FOServer::SaveClient( Client* cl, bool deferred )
         FileWrite( f, cl->PassHash, sizeof( cl->PassHash ) );
         FileWrite( f, &cl->Data, sizeof( cl->Data ) );
         FileWrite( f, data_ext, sizeof( CritDataExt ) );
-        uint te_count = (uint) cl->CrTimeEvents.size();
+        uint te_count = (uint)cl->CrTimeEvents.size();
         FileWrite( f, &te_count, sizeof( te_count ) );
         if( te_count )
-            FileWrite( f, &cl->CrTimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) );
+            FileWrite( f, &cl->CrTimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) );
         FileClose( f );
 
         cl->Data.Temp = 0;
@@ -4367,7 +4368,7 @@ bool FOServer::LoadClient( Client* cl )
         return false;
     }
 
-    char fname[ MAX_FOPATH ];
+    char fname[MAX_FOPATH];
     FileManager::GetFullPath( cl->Name, PT_SERVER_CLIENTS, fname );
     Str::Append( fname, ".client" );
     void* f = FileOpen( fname, false );
@@ -4378,7 +4379,7 @@ bool FOServer::LoadClient( Client* cl )
     }
 
     // Read data
-    uchar signature[ sizeof( ClientSaveSignature ) ];
+    uchar signature[sizeof( ClientSaveSignature )];
     if( !FileRead( f, signature, sizeof( signature ) ) )
     {
         WriteLog( "Unable to read signature of client save file<%s>.\n", fname );
@@ -4387,7 +4388,7 @@ bool FOServer::LoadClient( Client* cl )
     }
 
     // ignore all vanilla clients
-    if( signature[ 0 ] == 'F' && signature[ 1 ] == 'O' && signature[ 2 ] == 0 )
+    if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
     {
         WriteLog( "Client save file<%s> ignored.\n", fname );
         FileClose( f );
@@ -4415,7 +4416,7 @@ bool FOServer::LoadClient( Client* cl )
     if( te_count )
     {
         cl->CrTimeEvents.resize( te_count );
-        if( !FileRead( f, &cl->CrTimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) ) )
+        if( !FileRead( f, &cl->CrTimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) ) )
             goto label_FileTruncated;
     }
     FileClose( f );
@@ -4457,7 +4458,7 @@ void FOServer::SaveWorld( const char* fname )
     {
         // Save directly to file
         tick = Timer::AccurateTick();
-        char auto_fname[ MAX_FOPATH ];
+        char auto_fname[MAX_FOPATH];
         Str::Format( auto_fname, "%sworld%04d.fo", FileManager::GetFullPath( NULL, PT_SERVER_SAVE ), SaveWorldIndex + 1 );
         DumpFile = FileOpen( fname ? fname : auto_fname, true );
         if( !DumpFile )
@@ -4479,7 +4480,7 @@ void FOServer::SaveWorld( const char* fname )
         delete_indexes->Release();
     }
 
-    AddWorldSaveData( (char*) WorldSaveSignature, sizeof( WorldSaveSignature ) );
+    AddWorldSaveData( (char*)WorldSaveSignature, sizeof( WorldSaveSignature ) );
 
     // SaveGameInfoFile
     SaveGameInfoFile();
@@ -4558,7 +4559,7 @@ bool FOServer::LoadWorld( const char* fname )
     {
         for( int i = WORLD_SAVE_MAX_INDEX; i >= 1; i-- )
         {
-            char auto_fname[ MAX_FOPATH ];
+            char auto_fname[MAX_FOPATH];
             Str::Format( auto_fname, "%sworld%04d.fo", FileManager::GetFullPath( NULL, PT_SERVER_SAVE ), i );
             f = FileOpen( auto_fname, false );
             if( f )
@@ -4589,7 +4590,7 @@ bool FOServer::LoadWorld( const char* fname )
     }
 
     // File begin
-    uchar  signature[ sizeof( WorldSaveSignature ) ];
+    uchar  signature[sizeof( WorldSaveSignature )];
     ushort version = 0;
     if( !FileRead( f, &signature, sizeof( signature ) ) )
     {
@@ -4599,7 +4600,7 @@ bool FOServer::LoadWorld( const char* fname )
     }
 
     // ignore vanilla worldsave
-    if( signature[ 1 ] == 0x0F && signature[ 2 ] == 0xAB && signature[ 3 ] == 0x01 )
+    if( signature[1] == 0x0F && signature[2] == 0xAB && signature[3] == 0x01 )
     {
         WriteLog( "World dump file ignored.\n" );
         FileClose( f );
@@ -4723,18 +4724,18 @@ void FOServer::AddWorldSaveData( void* data, size_t size )
         if( WorldSaveDataBufCount >= WorldSaveData.size() )
         {
             MEMORY_PROCESS( MEMORY_SAVE_DATA, WORLD_SAVE_DATA_BUFFER_SIZE );
-            WorldSaveData.push_back( new uchar[ WORLD_SAVE_DATA_BUFFER_SIZE ] );
+            WorldSaveData.push_back( new uchar[WORLD_SAVE_DATA_BUFFER_SIZE] );
         }
     }
 
     size_t flush = ( size <= WorldSaveDataBufFreeSize ? size : WorldSaveDataBufFreeSize );
     if( flush )
     {
-        uchar* ptr = WorldSaveData[ WorldSaveDataBufCount - 1 ];
-        memcpy( &ptr[ WORLD_SAVE_DATA_BUFFER_SIZE - WorldSaveDataBufFreeSize ], data, flush );
+        uchar* ptr = WorldSaveData[WorldSaveDataBufCount - 1];
+        memcpy( &ptr[WORLD_SAVE_DATA_BUFFER_SIZE - WorldSaveDataBufFreeSize], data, flush );
         WorldSaveDataBufFreeSize -= flush;
         if( !WorldSaveDataBufFreeSize )
-            AddWorldSaveData( ( (uchar*) data ) + flush, size - flush );
+            AddWorldSaveData( ( (uchar*)data ) + flush, size - flush );
     }
 }
 
@@ -4746,7 +4747,7 @@ void FOServer::AddClientSaveData( Client* cl )
         MEMORY_PROCESS( MEMORY_SAVE_DATA, sizeof( ClientSaveData ) );
     }
 
-    ClientSaveData& csd = ClientsSaveData[ ClientsSaveDataCount ];
+    ClientSaveData& csd = ClientsSaveData[ClientsSaveDataCount];
     memcpy( csd.Name, cl->Name, sizeof( csd.Name ) );
     memcpy( csd.PasswordHash, cl->PassHash, sizeof( csd.PasswordHash ) );
     memcpy( &csd.Data, &cl->Data, sizeof( cl->Data ) );
@@ -4758,7 +4759,7 @@ void FOServer::AddClientSaveData( Client* cl )
 
 void FOServer::Dump_Work( void* data )
 {
-    char fname[ MAX_FOPATH ];
+    char fname[MAX_FOPATH];
 
     while( true )
     {
@@ -4767,9 +4768,9 @@ void FOServer::Dump_Work( void* data )
         DumpBeginEvent.Disallow();
 
         // Paths
-        char save_path[ MAX_FOPATH ];
+        char save_path[MAX_FOPATH];
         FileManager::GetFullPath( NULL, PT_SERVER_SAVE, save_path );
-        char clients_path[ MAX_FOPATH ];
+        char clients_path[MAX_FOPATH];
         FileManager::GetFullPath( NULL, PT_SERVER_CLIENTS, clients_path );
 
         // Save world data
@@ -4778,7 +4779,7 @@ void FOServer::Dump_Work( void* data )
         {
             for( uint i = 0; i < WorldSaveDataBufCount; i++ )
             {
-                uchar* ptr = WorldSaveData[ i ];
+                uchar* ptr = WorldSaveData[i];
                 size_t flush = WORLD_SAVE_DATA_BUFFER_SIZE;
                 if( i == WorldSaveDataBufCount - 1 )
                     flush -= WorldSaveDataBufFreeSize;
@@ -4798,9 +4799,9 @@ void FOServer::Dump_Work( void* data )
         // Save clients data
         for( uint i = 0; i < ClientsSaveDataCount; i++ )
         {
-            ClientSaveData& csd = ClientsSaveData[ i ];
+            ClientSaveData& csd = ClientsSaveData[i];
 
-            char            fname[ MAX_FOPATH ];
+            char            fname[MAX_FOPATH];
             Str::Format( fname, "%s%s.client", clients_path, csd.Name );
             void*           fc = FileOpen( fname, true );
             if( !fc )
@@ -4813,10 +4814,10 @@ void FOServer::Dump_Work( void* data )
             FileWrite( fc, csd.PasswordHash, sizeof( csd.PasswordHash ) );
             FileWrite( fc, &csd.Data, sizeof( csd.Data ) );
             FileWrite( fc, &csd.DataExt, sizeof( csd.DataExt ) );
-            uint te_count = (uint) csd.TimeEvents.size();
+            uint te_count = (uint)csd.TimeEvents.size();
             FileWrite( fc, &te_count, sizeof( te_count ) );
             if( te_count )
-                FileWrite( fc, &csd.TimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) );
+                FileWrite( fc, &csd.TimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) );
             FileClose( fc );
             Thread::Sleep( 1 );
         }
@@ -4845,34 +4846,34 @@ void FOServer::SetScore( int score, Critter* cr, int val )
 {
     SCOPE_LOCK( BestScoresLocker );
 
-    cr->Data.Scores[ score ] += val;
-    if( BestScores[ score ].ClientId == cr->GetId() )
+    cr->Data.Scores[score] += val;
+    if( BestScores[score].ClientId == cr->GetId() )
         return;
-    if( BestScores[ score ].Value >= cr->Data.Scores[ score ] )
+    if( BestScores[score].Value >= cr->Data.Scores[score] )
         return;                                                     // TODO: less/greater
-    BestScores[ score ].Value = cr->Data.Scores[ score ];
-    BestScores[ score ].ClientId = cr->GetId();
-    Str::Copy( BestScores[ score ].ClientName, cr->GetName() );
+    BestScores[score].Value = cr->Data.Scores[score];
+    BestScores[score].ClientId = cr->GetId();
+    Str::Copy( BestScores[score].ClientName, cr->GetName() );
 }
 
 void FOServer::SetScore( int score, const char* name )
 {
     SCOPE_LOCK( BestScoresLocker );
 
-    BestScores[ score ].ClientId = 0;
-    BestScores[ score ].Value = 0;
-    Str::Copy( BestScores[ score ].ClientName, name );
+    BestScores[score].ClientId = 0;
+    BestScores[score].Value = 0;
+    Str::Copy( BestScores[score].ClientName, name );
 }
 
 const char* FOServer::GetScores()
 {
     SCOPE_LOCK( BestScoresLocker );
 
-    static THREAD char scores[ SCORE_NAME_LEN * SCORES_MAX ]; // Only names
+    static THREAD char scores[SCORE_NAME_LEN * SCORES_MAX];   // Only names
     for( int i = 0; i < SCORES_MAX; i++ )
     {
-        char* offs = &scores[ i * SCORE_NAME_LEN ];           // Name
-        memcpy( offs, BestScores[ i ].ClientName, SCORE_NAME_LEN );
+        char* offs = &scores[i * SCORE_NAME_LEN];             // Name
+        memcpy( offs, BestScores[i].ClientName, SCORE_NAME_LEN );
     }
 
     return scores;
@@ -4882,9 +4883,9 @@ void FOServer::ClearScore( int score )
 {
     SCOPE_LOCK( BestScoresLocker );
 
-    BestScores[ score ].ClientId = 0;
-    BestScores[ score ].ClientName[ 0 ] = '\0';
-    BestScores[ score ].Value = 0;
+    BestScores[score].ClientId = 0;
+    BestScores[score].ClientName[0] = '\0';
+    BestScores[score].Value = 0;
 }
 
 void FOServer::Process_GetScores( Client* cl )
@@ -4964,15 +4965,15 @@ void FOServer::SaveTimeEventsFile()
         if( !te->IsSaved )
             continue;
         AddWorldSaveData( &te->Num, sizeof( te->Num ) );
-        ushort script_name_len = (ushort) te->FuncName.length();
+        ushort script_name_len = (ushort)te->FuncName.length();
         AddWorldSaveData( &script_name_len, sizeof( script_name_len ) );
-        AddWorldSaveData( (void*) te->FuncName.c_str(), script_name_len );
+        AddWorldSaveData( (void*)te->FuncName.c_str(), script_name_len );
         AddWorldSaveData( &te->FullSecond, sizeof( te->FullSecond ) );
         AddWorldSaveData( &te->Rate, sizeof( te->Rate ) );
-        uint values_size = (uint) te->Values.size();
+        uint values_size = (uint)te->Values.size();
         AddWorldSaveData( &values_size, sizeof( values_size ) );
         if( values_size )
-            AddWorldSaveData( &te->Values[ 0 ], values_size * sizeof( uint ) );
+            AddWorldSaveData( &te->Values[0], values_size * sizeof( uint ) );
     }
 }
 
@@ -4991,13 +4992,13 @@ bool FOServer::LoadTimeEventsFile( void* f )
         if( !FileRead( f, &num, sizeof( num ) ) )
             return false;
 
-        char   script_name[ MAX_SCRIPT_NAME * 2 + 2 ];
+        char   script_name[MAX_SCRIPT_NAME * 2 + 2];
         ushort script_name_len;
         if( !FileRead( f, &script_name_len, sizeof( script_name_len ) ) )
             return false;
         if( !FileRead( f, script_name, script_name_len ) )
             return false;
-        script_name[ script_name_len ] = 0;
+        script_name[script_name_len] = 0;
 
         uint begin_second;
         if( !FileRead( f, &begin_second, sizeof( begin_second ) ) )
@@ -5013,7 +5014,7 @@ bool FOServer::LoadTimeEventsFile( void* f )
         if( values_size )
         {
             values.resize( values_size );
-            if( !FileRead( f, &values[ 0 ], values_size * sizeof( uint ) ) )
+            if( !FileRead( f, &values[0], values_size * sizeof( uint ) ) )
                 return false;
         }
 
@@ -5071,8 +5072,8 @@ void FOServer::AddTimeEvent( TimeEvent* te )
 
 uint FOServer::CreateTimeEvent( uint begin_second, const char* script_name, int values, uint val1, ScriptArray* val2, bool save )
 {
-    char module_name[ MAX_FOTEXT ];
-    char func_name[ MAX_FOTEXT ];
+    char module_name[MAX_FOTEXT];
+    char func_name[MAX_FOTEXT];
     if( !Script::ReparseScriptName( script_name, module_name, func_name ) )
         return 0;
 
@@ -5113,7 +5114,7 @@ uint FOServer::CreateTimeEvent( uint begin_second, const char* script_name, int 
         if( count )
         {
             te->Values.resize( count );
-            memcpy( &te->Values[ 0 ], val2->At( 0 ), count * sizeof( uint ) );
+            memcpy( &te->Values[0], val2->At( 0 ), count * sizeof( uint ) );
         }
     }
 
@@ -5306,7 +5307,7 @@ void FOServer::ProcessTimeEvents()
     if( Script::PrepareContext( cur_event->BindId, _FUNC_, Str::FormatBuf( "Time event<%u>, name<%s>", cur_event->Num, cur_event->FuncName.c_str() ) ) )
     {
         ScriptArray* values = NULL;
-        uint         size = (uint) cur_event->Values.size();
+        uint         size = (uint)cur_event->Values.size();
 
         if( size > 0 )
         {
@@ -5323,7 +5324,7 @@ void FOServer::ProcessTimeEvents()
             else
             {
                 values->Resize( size );
-                memcpy( values->At( 0 ), (void*) &cur_event->Values[ 0 ], size * sizeof( uint ) );
+                memcpy( values->At( 0 ), (void*)&cur_event->Values[0], size * sizeof( uint ) );
             }
         }
 
@@ -5343,7 +5344,7 @@ void FOServer::ProcessTimeEvents()
                     uint arr_size = values->GetSize();
                     cur_event->Values.resize( arr_size );
                     if( arr_size )
-                        memcpy( &cur_event->Values[ 0 ], values->At( 0 ), arr_size * sizeof( cur_event->Values[ 0 ] ) );
+                        memcpy( &cur_event->Values[0], values->At( 0 ), arr_size * sizeof( cur_event->Values[0] ) );
                 }
             }
 
@@ -5381,7 +5382,7 @@ uint FOServer::GetTimeEventsCount()
 {
     SCOPE_LOCK( TimeEventsLocker );
 
-    uint count = (uint) TimeEvents.size();
+    uint count = (uint)TimeEvents.size();
     return count;
 }
 
@@ -5390,22 +5391,22 @@ string FOServer::GetTimeEventsStatistics()
     SCOPE_LOCK( TimeEventsLocker );
 
     static string result;
-    char          str[ 1024 ];
+    char          str[1024];
     Str::Format( str, "Time events: %u\n", TimeEvents.size() );
     result = str;
     DateTime st = Timer::GetGameTime( GameOpt.FullSecond );
     Str::Format( str, "Game time: %02u.%02u.%04u %02u:%02u:%02u\n", st.Day, st.Month, st.Year, st.Hour, st.Minute, st.Second );
     result += str;
     result += "Number    Date       Time     Rate Saved Function                            Values\n";
-    for( uint i = 0, j = (uint) TimeEvents.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)TimeEvents.size(); i < j; i++ )
     {
-        TimeEvent* te = TimeEvents[ i ];
+        TimeEvent* te = TimeEvents[i];
         st = Timer::GetGameTime( te->FullSecond );
         Str::Format( str, "%09u %02u.%02u.%04u %02u:%02u:%02u %04u %-5s %-35s", te->Num, st.Day, st.Month, st.Year, st.Hour, st.Minute, st.Second, te->Rate, te->IsSaved ? "true" : "false", te->FuncName.c_str() );
         result += str;
-        for( uint k = 0, l = (uint) te->Values.size(); k < l; k++ )
+        for( uint k = 0, l = (uint)te->Values.size(); k < l; k++ )
         {
-            Str::Format( str, " %-10u", te->Values[ k ] );
+            Str::Format( str, " %-10u", te->Values[k] );
             result += str;
         }
         result += "\n";
@@ -5416,14 +5417,14 @@ string FOServer::GetTimeEventsStatistics()
 void FOServer::SaveScriptFunctionsFile()
 {
     const StrVec& cache = Script::GetScriptFuncCache();
-    uint          count = (uint) cache.size();
+    uint          count = (uint)cache.size();
     AddWorldSaveData( &count, sizeof( count ) );
-    for( uint i = 0, j = (uint) cache.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)cache.size(); i < j; i++ )
     {
-        const string& func_name = cache[ i ];
-        uint          len = (uint) func_name.length();
+        const string& func_name = cache[i];
+        uint          len = (uint)func_name.length();
         AddWorldSaveData( &len, sizeof( len ) );
-        AddWorldSaveData( (void*) func_name.c_str(), len );
+        AddWorldSaveData( (void*)func_name.c_str(), len );
     }
 }
 
@@ -5436,13 +5437,13 @@ bool FOServer::LoadScriptFunctionsFile( void* f )
     {
         Script::ResizeCache( i );
 
-        char script[ 1024 ];
+        char script[1024];
         uint len = 0;
         if( !FileRead( f, &len, sizeof( len ) ) )
             return false;
         if( len && !FileRead( f, script, len ) )
             return false;
-        script[ len ] = 0;
+        script[len] = 0;
 
         // Cut off decl
         char* decl = strstr( script, "|" );
@@ -5469,19 +5470,19 @@ bool FOServer::LoadScriptFunctionsFile( void* f )
 /************************************************************************/
 void FOServer::SaveAnyDataFile()
 {
-    uint count = (uint) AnyData.size();
+    uint count = (uint)AnyData.size();
     AddWorldSaveData( &count, sizeof( count ) );
     for( auto it = AnyData.begin(), end = AnyData.end(); it != end; ++it )
     {
         const string& name = ( *it ).first;
         UCharVec&     data = ( *it ).second;
-        uint          name_len = (uint) name.length();
+        uint          name_len = (uint)name.length();
         AddWorldSaveData( &name_len, sizeof( name_len ) );
-        AddWorldSaveData( (void*) name.c_str(), name_len );
-        uint data_len = (uint) data.size();
+        AddWorldSaveData( (void*)name.c_str(), name_len );
+        uint data_len = (uint)data.size();
         AddWorldSaveData( &data_len, sizeof( data_len ) );
         if( data_len )
-            AddWorldSaveData( &data[ 0 ], data_len );
+            AddWorldSaveData( &data[0], data_len );
     }
 }
 
@@ -5493,23 +5494,23 @@ bool FOServer::LoadAnyDataFile( void* f )
         return false;
     for( uint i = 0; i < count; i++ )
     {
-        char name[ MAX_FOTEXT ];
+        char name[MAX_FOTEXT];
         uint name_len;
         if( !FileRead( f, &name_len, sizeof( name_len ) ) )
             return false;
         if( !FileRead( f, name, name_len ) )
             return false;
-        name[ name_len ] = 0;
+        name[name_len] = 0;
 
         uint data_len;
         if( !FileRead( f, &data_len, sizeof( data_len ) ) )
             return false;
         data.resize( data_len );
-        if( data_len && !FileRead( f, &data[ 0 ], data_len ) )
+        if( data_len && !FileRead( f, &data[0], data_len ) )
             return false;
 
         auto result = AnyData.insert( PAIR( string( name ), data ) );
-        MEMORY_PROCESS( MEMORY_ANY_DATA, (int) ( *result.first ).second.capacity() );
+        MEMORY_PROCESS( MEMORY_ANY_DATA, (int)( *result.first ).second.capacity() );
     }
     return true;
 }
@@ -5521,11 +5522,11 @@ bool FOServer::SetAnyData( const string& name, const uchar* data, uint data_size
     auto      result = AnyData.insert( PAIR( name, UCharVec() ) );
     UCharVec& data_ = ( *result.first ).second;
 
-    MEMORY_PROCESS( MEMORY_ANY_DATA, -(int) data_.capacity() );
+    MEMORY_PROCESS( MEMORY_ANY_DATA, -(int)data_.capacity() );
     data_.resize( data_size );
     if( data_size )
-        memcpy( &data_[ 0 ], data, data_size );
-    MEMORY_PROCESS( MEMORY_ANY_DATA, (int) data_.capacity() );
+        memcpy( &data_[0], data, data_size );
+    MEMORY_PROCESS( MEMORY_ANY_DATA, (int)data_.capacity() );
     return true;
 }
 
@@ -5538,7 +5539,7 @@ bool FOServer::GetAnyData( const string& name, ScriptArray& script_array )
         return false;
 
     UCharVec& data = ( *it ).second;
-    uint      length = (uint) data.size();
+    uint      length = (uint)data.size();
 
     if( !length )
     {
@@ -5548,7 +5549,7 @@ bool FOServer::GetAnyData( const string& name, ScriptArray& script_array )
 
     uint element_size = script_array.GetElementSize();
     script_array.Resize( length / element_size + ( ( length % element_size ) ? 1 : 0 ) );
-    memcpy( script_array.At( 0 ), &data[ 0 ], length );
+    memcpy( script_array.At( 0 ), &data[0], length );
     return true;
 }
 
@@ -5573,9 +5574,9 @@ string FOServer::GetAnyDataStatistics()
     SCOPE_LOCK( AnyDataLocker );
 
     static string result;
-    char          str[ MAX_FOTEXT ];
+    char          str[MAX_FOTEXT];
     result = "Any data count: ";
-    result += Str::ItoA( (int) AnyData.size() );
+    result += Str::ItoA( (int)AnyData.size() );
     result += "\nName                          Length    Data\n";
     for( auto it = AnyData.begin(), end = AnyData.end(); it != end; ++it )
     {
@@ -5585,9 +5586,9 @@ string FOServer::GetAnyDataStatistics()
         result += str;
         Str::Format( str, "%-10u", data.size() );
         result += str;
-        for( uint i = 0, j = (uint) data.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)data.size(); i < j; i++ )
         {
-            Str::Format( str, "%02X", data[ i ] );
+            Str::Format( str, "%02X", data[i] );
             result += str;
         }
         result += "\n";

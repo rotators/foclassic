@@ -28,7 +28,7 @@ Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uin
     // Create childs
     for( int i = 0; i < ITEM_MAX_CHILDS; i++ )
     {
-        ushort child_pid = item->Proto->ChildPid[ i ];
+        ushort child_pid = item->Proto->ChildPid[i];
         if( !child_pid )
             continue;
 
@@ -37,7 +37,7 @@ Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uin
             continue;
 
         ushort child_hx = hx, child_hy = hy;
-        FOREACH_PROTO_ITEM_LINES( item->Proto->ChildLines[ i ], child_hx, child_hy, map->GetMaxHexX(), map->GetMaxHexY(),;
+        FOREACH_PROTO_ITEM_LINES( item->Proto->ChildLines[i], child_hx, child_hy, map->GetMaxHexX(), map->GetMaxHexY(),;
                                   );
 
         CreateItemOnHex( map, child_hx, child_hy, child_pid, 1, false );

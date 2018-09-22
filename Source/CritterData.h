@@ -30,11 +30,11 @@ struct CritData
     uint       GlobalGroupUid;
     ushort     LastHexX;
     ushort     LastHexY;
-    uint       Reserved1[ 4 ];
+    uint       Reserved1[4];
     uint       MapId;
     ushort     MapPid;
     ushort     Reserved2;
-    int        Params[ MAX_PARAMS ];
+    int        Params[MAX_PARAMS];
     uint       Anim1Life;
     uint       Anim1Knockout;
     uint       Anim1Dead;
@@ -42,19 +42,19 @@ struct CritData
     uint       Anim2Knockout;
     uint       Anim2Dead;
     uint       Anim2KnockoutEnd;
-    uint       Reserved3[ 3 ];
-    char       Lexems[ LEXEMS_SIZE ];
-    uint       Reserved4[ 8 ];
+    uint       Reserved3[3];
+    char       Lexems[LEXEMS_SIZE];
+    uint       Reserved4[8];
     bool       ClientToDelete;
     uchar      Reserved5;
     ushort     Reserved6;
     uint       Temp;
     ushort     Reserved8;
     ushort     HoloInfoCount;
-    uint       HoloInfo[ MAX_HOLO_INFO ];
-    uint       Reserved9[ 10 ];
-    int        Scores[ SCORES_MAX ];
-    uchar      UserData[ CRITTER_USER_DATA_SIZE ];
+    uint       HoloInfo[MAX_HOLO_INFO];
+    uint       Reserved9[10];
+    int        Scores[SCORES_MAX];
+    uchar      UserData[CRITTER_USER_DATA_SIZE];
     // Npc data
     uint       HomeMap;
     ushort     HomeX;
@@ -69,32 +69,32 @@ struct CritData
     bool       IsDataExt;
     uchar      Reserved16;
     ushort     Reserved17;
-    uint       Reserved18[ 8 ];
-    ushort     FavoriteItemPid[ 4 ];
-    uint       Reserved19[ 10 ];
+    uint       Reserved18[8];
+    ushort     FavoriteItemPid[4];
+    uint       Reserved19[10];
     uint       EnemyStackCount;
-    uint       EnemyStack[ MAX_ENEMY_STACK ];
-    uint       Reserved20[ 5 ];
-    uchar      BagCurrentSet[ MAX_NPC_BAGS_PACKS ];
+    uint       EnemyStack[MAX_ENEMY_STACK];
+    uint       Reserved20[5];
+    uchar      BagCurrentSet[MAX_NPC_BAGS_PACKS];
     short      BagRefreshTime;
     uchar      Reserved21;
     uchar      BagSize;
-    NpcBagItem Bag[ MAX_NPC_BAGS ];
-    uint       Reserved22[ 100 ];
+    NpcBagItem Bag[MAX_NPC_BAGS];
+    uint       Reserved22[100];
 };
 
 struct CritDataExt
 {
-    uint   Reserved23[ 10 ];
-    uchar  GlobalMapFog[ GM_ZONES_FOG_SIZE ];
+    uint   Reserved23[10];
+    uchar  GlobalMapFog[GM_ZONES_FOG_SIZE];
     ushort Reserved24;
     ushort LocationsCount;
-    uint   LocationsId[ MAX_STORED_LOCATIONS ];
-    uint   Reserved25[ 40 ];
-    uint   PlayIp[ MAX_STORED_IP ];
-    ushort PlayPort[ MAX_STORED_IP ];
+    uint   LocationsId[MAX_STORED_LOCATIONS];
+    uint   Reserved25[40];
+    uint   PlayIp[MAX_STORED_IP];
+    ushort PlayPort[MAX_STORED_IP];
     uint   CurrentIp;
-    uint   Reserved26[ 29 ];
+    uint   Reserved26[29];
 };
 
 #endif // __CRITTER_DATA__

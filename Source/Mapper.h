@@ -86,7 +86,7 @@ public:
         uint       LastTick;
         int        ResType;
 
-        IfaceAnim( AnyFrames* frm, int res_type ): Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::FastTick() ), ResType( res_type ) {}
+        IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::FastTick() ), ResType( res_type ) {}
     };
     typedef vector< IfaceAnim* > IfaceAnimVec;
 
@@ -120,8 +120,8 @@ public:
     void CurRMouseUp();
     void CurMMouseDown();
 
-    bool IsCurInRect( Rect& rect, int ax, int ay )                      { return ( GameOpt.MouseX >= rect[ 0 ] + ax && GameOpt.MouseY >= rect[ 1 ] + ay && GameOpt.MouseX <= rect[ 2 ] + ax && GameOpt.MouseY <= rect[ 3 ] + ay ); }
-    bool IsCurInRect( Rect& rect )                                      { return ( GameOpt.MouseX >= rect[ 0 ] && GameOpt.MouseY >= rect[ 1 ] && GameOpt.MouseX <= rect[ 2 ] && GameOpt.MouseY <= rect[ 3 ] ); }
+    bool IsCurInRect( Rect& rect, int ax, int ay )                      { return GameOpt.MouseX >= rect[0] + ax && GameOpt.MouseY >= rect[1] + ay && GameOpt.MouseX <= rect[2] + ax && GameOpt.MouseY <= rect[3] + ay;  }
+    bool IsCurInRect( Rect& rect )                                      { return GameOpt.MouseX >= rect[0] && GameOpt.MouseY >= rect[1] && GameOpt.MouseX <= rect[2] && GameOpt.MouseY <= rect[3];  }
     bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay ) { return IsCurInRect( rect, ax, ay ) && SprMngr.IsPixNoTransp( spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false ); }
     bool IsCurInInterface();
     bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
@@ -171,7 +171,7 @@ public:
     Rect IntWMain;
     Rect IntWWork, IntWHint;
 
-    Rect IntBCust[ 10 ], IntBItem, IntBTile, IntBCrit, IntBFast, IntBIgnore, IntBInCont, IntBMess, IntBList,
+    Rect IntBCust[10], IntBItem, IntBTile, IntBCrit, IntBFast, IntBIgnore, IntBInCont, IntBMess, IntBList,
          IntBScrBack, IntBScrBackFst, IntBScrFront, IntBScrFrontFst;
 
     Rect IntBShowItem, IntBShowScen, IntBShowWall, IntBShowCrit, IntBShowTile, IntBShowRoof, IntBShowFast;
@@ -195,7 +195,7 @@ public:
         StrVec       TileNames;
         UIntVec      TileHashes;
         int          Index, Scroll;
-        SubTab(): Index( 0 ), Scroll( 0 ) {}
+        SubTab() : Index( 0 ), Scroll( 0 ) {}
     };
     typedef map< string, SubTab > SubTabMap;
 
@@ -205,11 +205,11 @@ public:
         BoolVec TileSubDirs;
     };
 
-    SubTabMap  Tabs[ TAB_COUNT ];
-    SubTab*    TabsActive[ TAB_COUNT ];
-    TileTab    TabsTiles[ TAB_COUNT ];
-    string     TabsName[ INT_MODE_COUNT ];
-    int        TabsScroll[ INT_MODE_COUNT ];
+    SubTabMap  Tabs[TAB_COUNT];
+    SubTab*    TabsActive[TAB_COUNT];
+    TileTab    TabsTiles[TAB_COUNT];
+    string     TabsName[INT_MODE_COUNT];
+    int        TabsScroll[INT_MODE_COUNT];
 
     bool       SubTabsActive;
     int        SubTabsActiveTab;
@@ -226,7 +226,7 @@ public:
     int*          CurProtoScroll;
     uint          ProtoWidth;
     uint          ProtosOnScreen;
-    uint          TabIndex[ INT_MODE_COUNT ];
+    uint          TabIndex[INT_MODE_COUNT];
     int           InContScroll;
     int           ListScroll;
     MapObject*    InContObject;
@@ -252,8 +252,8 @@ public:
         CritterCl*      MapNpc;
         MapObjectPtrVec Childs;
 
-        SelMapObj( MapObject* mobj, ItemHex* itm ): MapObj( mobj ), MapItem( itm ), MapNpc( NULL ) {}
-        SelMapObj( MapObject* mobj, CritterCl* npc ): MapObj( mobj ), MapItem( NULL ), MapNpc( npc ) {}
+        SelMapObj( MapObject* mobj, ItemHex* itm ) : MapObj( mobj ), MapItem( itm ), MapNpc( NULL ) {}
+        SelMapObj( MapObject* mobj, CritterCl* npc ) : MapObj( mobj ), MapItem( NULL ), MapNpc( npc ) {}
         SelMapObj( const SelMapObj& r )
         {
             MapObj = r.MapObj;
@@ -283,7 +283,7 @@ public:
         ushort HexX, HexY;
         bool   IsRoof;
 
-        SelMapTile( ushort hx, ushort hy, bool is_roof ): HexX( hx ), HexY( hy ), IsRoof( is_roof ) {}
+        SelMapTile( ushort hx, ushort hy, bool is_roof ) : HexX( hx ), HexY( hy ), IsRoof( is_roof ) {}
         SelMapTile( const SelMapTile& r ) { memcpy( this, &r, sizeof( SelMapTile ) ); }
         SelMapTile& operator=( const SelMapTile& r )
         {
@@ -313,7 +313,7 @@ public:
 
     // Parse new
     uint AnyId;
-    int  DefaultCritterParam[ MAPOBJ_CRITTER_PARAMS ];
+    int  DefaultCritterParam[MAPOBJ_CRITTER_PARAMS];
 
     MapObject* ParseProto( ushort pid, ushort hx, ushort hy, MapObject* owner, bool is_child = false );
     void       ParseTile( uint name_hash, ushort hx, ushort hy, short ox, short oy, uchar layer, bool is_roof );
@@ -383,7 +383,7 @@ public:
         string Mess;
         string Time;
 
-        MessBoxMessage( int type, const char* mess, const char* time ): Type( type ), Mess( mess ), Time( time ) {}
+        MessBoxMessage( int type, const char* mess, const char* time ) : Type( type ), Mess( mess ), Time( time ) {}
         MessBoxMessage( const MessBoxMessage& r )
         {
             Type = r.Type;

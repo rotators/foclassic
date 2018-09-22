@@ -6,7 +6,7 @@
 #include "Access.h"
 #include "CritterManager.h"
 
-const char* CritterEventFuncName[ CRITTER_EVENT_MAX ] =
+const char* CritterEventFuncName[CRITTER_EVENT_MAX] =
 {
     "void %s(Critter&)",                                                          // CRITTER_EVENT_IDLE
     "void %s(Critter&,bool)",                                                     // CRITTER_EVENT_FINISH
@@ -58,39 +58,39 @@ const char* CritterEventFuncName[ CRITTER_EVENT_MAX ] =
 /*                                                                      */
 /************************************************************************/
 
-bool      Critter::ParamsRegEnabled[ MAX_PARAMS ] = { 0 };
+bool      Critter::ParamsRegEnabled[MAX_PARAMS] = { 0 };
 uint      Critter::ParamsSendMsgLen = sizeof( Critter::ParamsSendCount );
 ushort    Critter::ParamsSendCount = 0;
 UShortVec Critter::ParamsSend;
-bool      Critter::ParamsSendEnabled[ MAX_PARAMS ] = { 0 };
-int       Critter::ParamsSendScript[ MAX_PARAMS ] = { 0 };
-int       Critter::ParamsChangeScript[ MAX_PARAMS ] = { 0 };
-int       Critter::ParamsGetScript[ MAX_PARAMS ] = { 0 };
-int       Critter::ParamsDialogGetScript[ MAX_PARAMS ] = { 0 };
-bool      Critter::SlotDataSendEnabled[ 0x100 ] = { 0 };
-int       Critter::SlotDataSendScript[ 0x100 ] = { 0 };
-uint      Critter::ParamsChosenSendMask[ MAX_PARAMS ] = { 0 };
-uint      Critter::ParametersMin[ MAX_PARAMETERS_ARRAYS ] = { 0 };
-uint      Critter::ParametersMax[ MAX_PARAMETERS_ARRAYS ] = { MAX_PARAMS - 1, 0 };
-bool      Critter::ParametersOffset[ MAX_PARAMETERS_ARRAYS ] = { 0 };
-bool      Critter::SlotEnabled[ 0x100 ] = { true, true, true, true, 0 };
-Item*     Critter::SlotEnabledCacheData[ 0x100 ] = { 0 };
-Item*     Critter::SlotEnabledCacheDataExt[ 0x100 ] = { 0 };
+bool      Critter::ParamsSendEnabled[MAX_PARAMS] = { 0 };
+int       Critter::ParamsSendScript[MAX_PARAMS] = { 0 };
+int       Critter::ParamsChangeScript[MAX_PARAMS] = { 0 };
+int       Critter::ParamsGetScript[MAX_PARAMS] = { 0 };
+int       Critter::ParamsDialogGetScript[MAX_PARAMS] = { 0 };
+bool      Critter::SlotDataSendEnabled[0x100] = { 0 };
+int       Critter::SlotDataSendScript[0x100] = { 0 };
+uint      Critter::ParamsChosenSendMask[MAX_PARAMS] = { 0 };
+uint      Critter::ParametersMin[MAX_PARAMETERS_ARRAYS] = { 0 };
+uint      Critter::ParametersMax[MAX_PARAMETERS_ARRAYS] = { MAX_PARAMS - 1, 0 };
+bool      Critter::ParametersOffset[MAX_PARAMETERS_ARRAYS] = { 0 };
+bool      Critter::SlotEnabled[0x100] = { true, true, true, true, 0 };
+Item*     Critter::SlotEnabledCacheData[0x100] = { 0 };
+Item*     Critter::SlotEnabledCacheDataExt[0x100] = { 0 };
 
-Critter::Critter(): CritterIsNpc( false ), RefCounter( 1 ), IsNotValid( false ),
-                    GroupMove( NULL ), PrevHexTick( 0 ), PrevHexX( 0 ), PrevHexY( 0 ),
-                    startBreakTime( 0 ), breakTime( 0 ), waitEndTick( 0 ), KnockoutAp( 0 ), CacheValuesNextTick( 0 ), IntellectCacheValue( 0 ),
-                    Flags( 0 ), AccessContainerId( 0 ), ItemTransferCount( 0 ),
-                    TryingGoHomeTick( 0 ), ApRegenerationTick( 0 ), GlobalIdleNextTick( 0 ), LockMapTransfers( 0 ),
-                    ViewMapId( 0 ), ViewMapPid( 0 ), ViewMapLook( 0 ), ViewMapHx( 0 ), ViewMapHy( 0 ), ViewMapDir( 0 ),
-                    DisableSend( 0 ), CanBeRemoved( false )
+Critter::Critter() : CritterIsNpc( false ), RefCounter( 1 ), IsNotValid( false ),
+    GroupMove( NULL ), PrevHexTick( 0 ), PrevHexX( 0 ), PrevHexY( 0 ),
+    startBreakTime( 0 ), breakTime( 0 ), waitEndTick( 0 ), KnockoutAp( 0 ), CacheValuesNextTick( 0 ), IntellectCacheValue( 0 ),
+    Flags( 0 ), AccessContainerId( 0 ), ItemTransferCount( 0 ),
+    TryingGoHomeTick( 0 ), ApRegenerationTick( 0 ), GlobalIdleNextTick( 0 ), LockMapTransfers( 0 ),
+    ViewMapId( 0 ), ViewMapPid( 0 ), ViewMapLook( 0 ), ViewMapHx( 0 ), ViewMapHy( 0 ), ViewMapDir( 0 ),
+    DisableSend( 0 ), CanBeRemoved( false )
 {
     memzero( &Data, sizeof( Data ) );
     DataExt = NULL;
     memzero( FuncId, sizeof( FuncId ) );
     GroupSelf = new GlobalMapGroup();
-    GroupSelf->CurX = (float) Data.WorldX;
-    GroupSelf->CurY = (float) Data.WorldY;
+    GroupSelf->CurX = (float)Data.WorldX;
+    GroupSelf->CurY = (float)Data.WorldY;
     GroupSelf->ToX = GroupSelf->CurX;
     GroupSelf->ToY = GroupSelf->CurY;
     GroupSelf->Speed = 0.0f;
@@ -99,7 +99,7 @@ Critter::Critter(): CritterIsNpc( false ), RefCounter( 1 ), IsNotValid( false ),
     ParamsChanged.reserve( 10 );
     ParamLocked = -1;
     for( int i = 0; i < MAX_PARAMETERS_ARRAYS; i++ )
-        ThisPtr[ i ] = this;
+        ThisPtr[i] = this;
     ItemSlotMain = ItemSlotExt = defItemSlotHand = new Item();
     ItemSlotArmor = defItemSlotArmor = new Item();
 }
@@ -148,14 +148,14 @@ void Critter::FullClear()
 int Critter::GetLook()
 {
     int look = GameOpt.LookNormal + GetParam( ST_PERCEPTION ) * 3 + GetParam( ST_BONUS_LOOK ) + GetMultihex();
-    if( look < (int) GameOpt.LookMinimum )
+    if( look < (int)GameOpt.LookMinimum )
         look = GameOpt.LookMinimum;
     return look;
 }
 
 uint Critter::GetTalkDistance( Critter* talker )
 {
-    int dist = Data.Params[ ST_TALK_DISTANCE ];
+    int dist = Data.Params[ST_TALK_DISTANCE];
     if( dist <= 0 )
         dist = GameOpt.TalkDistance;
     if( talker )
@@ -205,18 +205,18 @@ void Critter::SetLexems( const char* lexems )
         uint len = Str::Length( lexems );
         if( !len )
         {
-            Data.Lexems[ 0 ] = 0;
+            Data.Lexems[0] = 0;
             return;
         }
 
         if( len >= LEXEMS_SIZE )
             len = LEXEMS_SIZE - 1;
         memcpy( Data.Lexems, lexems, len );
-        Data.Lexems[ len ] = 0;
+        Data.Lexems[len] = 0;
     }
     else
     {
-        Data.Lexems[ 0 ] = 0;
+        Data.Lexems[0] = 0;
     }
 }
 
@@ -307,7 +307,7 @@ void Critter::ProcessVisibleCritters()
 
         if( IsPlayer() )
         {
-            Client* cl = (Client*) this;
+            Client* cl = (Client*)this;
             for( auto it = GroupMove->CritMove.begin(), end = GroupMove->CritMove.end(); it != end; ++it )
             {
                 Critter* cr = *it;
@@ -333,9 +333,9 @@ void Critter::ProcessVisibleCritters()
     int  look_base_self = GetLook();
     int  dir_self = GetDir();
     int  dirs_count = DIRS_COUNT;
-    bool show_cr1 = ( ( FuncId[ CRITTER_EVENT_SHOW_CRITTER_1 ] > 0 || FuncId[ CRITTER_EVENT_HIDE_CRITTER_1 ] > 0 ) && Data.ShowCritterDist1 > 0 );
-    bool show_cr2 = ( ( FuncId[ CRITTER_EVENT_SHOW_CRITTER_2 ] > 0 || FuncId[ CRITTER_EVENT_HIDE_CRITTER_2 ] > 0 ) && Data.ShowCritterDist2 > 0 );
-    bool show_cr3 = ( ( FuncId[ CRITTER_EVENT_SHOW_CRITTER_3 ] > 0 || FuncId[ CRITTER_EVENT_HIDE_CRITTER_3 ] > 0 ) && Data.ShowCritterDist3 > 0 );
+    bool show_cr1 = ( ( FuncId[CRITTER_EVENT_SHOW_CRITTER_1] > 0 || FuncId[CRITTER_EVENT_HIDE_CRITTER_1] > 0 ) && Data.ShowCritterDist1 > 0 );
+    bool show_cr2 = ( ( FuncId[CRITTER_EVENT_SHOW_CRITTER_2] > 0 || FuncId[CRITTER_EVENT_HIDE_CRITTER_2] > 0 ) && Data.ShowCritterDist2 > 0 );
+    bool show_cr3 = ( ( FuncId[CRITTER_EVENT_SHOW_CRITTER_3] > 0 || FuncId[CRITTER_EVENT_HIDE_CRITTER_3] > 0 ) && Data.ShowCritterDist3 > 0 );
     bool show_cr = ( show_cr1 || show_cr2 || show_cr3 );
     // Sneak self
     int  sneak_base_self = GetRawParam( SK_SNEAK );
@@ -416,7 +416,7 @@ void Critter::ProcessVisibleCritters()
             {
                 if( show_cr1 )
                 {
-                    if( (int) Data.ShowCritterDist1 >= dist )
+                    if( (int)Data.ShowCritterDist1 >= dist )
                     {
                         if( AddCrIntoVisSet1( cr->GetId() ) )
                             EventShowCritter1( cr );
@@ -429,7 +429,7 @@ void Critter::ProcessVisibleCritters()
                 }
                 if( show_cr2 )
                 {
-                    if( (int) Data.ShowCritterDist2 >= dist )
+                    if( (int)Data.ShowCritterDist2 >= dist )
                     {
                         if( AddCrIntoVisSet2( cr->GetId() ) )
                             EventShowCritter2( cr );
@@ -442,7 +442,7 @@ void Critter::ProcessVisibleCritters()
                 }
                 if( show_cr3 )
                 {
-                    if( (int) Data.ShowCritterDist3 >= dist )
+                    if( (int)Data.ShowCritterDist3 >= dist )
                     {
                         if( AddCrIntoVisSet3( cr->GetId() ) )
                             EventShowCritter3( cr );
@@ -455,9 +455,9 @@ void Critter::ProcessVisibleCritters()
                 }
             }
 
-            if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_1 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_1 ] > 0 ) && cr->Data.ShowCritterDist1 > 0 )
+            if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_1] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_1] > 0 ) && cr->Data.ShowCritterDist1 > 0 )
             {
-                if( (int) cr->Data.ShowCritterDist1 >= dist )
+                if( (int)cr->Data.ShowCritterDist1 >= dist )
                 {
                     if( cr->AddCrIntoVisSet1( GetId() ) )
                         cr->EventShowCritter1( this );
@@ -468,9 +468,9 @@ void Critter::ProcessVisibleCritters()
                         cr->EventHideCritter1( this );
                 }
             }
-            if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_2 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_2 ] > 0 ) && cr->Data.ShowCritterDist2 > 0 )
+            if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_2] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_2] > 0 ) && cr->Data.ShowCritterDist2 > 0 )
             {
-                if( (int) cr->Data.ShowCritterDist2 >= dist )
+                if( (int)cr->Data.ShowCritterDist2 >= dist )
                 {
                     if( cr->AddCrIntoVisSet2( GetId() ) )
                         cr->EventShowCritter2( this );
@@ -481,9 +481,9 @@ void Critter::ProcessVisibleCritters()
                         cr->EventHideCritter2( this );
                 }
             }
-            if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_3 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_3 ] > 0 ) && cr->Data.ShowCritterDist3 > 0 )
+            if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_3] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_3] > 0 ) && cr->Data.ShowCritterDist3 > 0 )
             {
-                if( (int) cr->Data.ShowCritterDist3 >= dist )
+                if( (int)cr->Data.ShowCritterDist3 >= dist )
                 {
                     if( cr->AddCrIntoVisSet3( GetId() ) )
                         cr->EventShowCritter3( this );
@@ -508,14 +508,14 @@ void Critter::ProcessVisibleCritters()
             int i = ( dir_self > real_dir ? dir_self - real_dir : real_dir - dir_self );
             if( i > dirs_count / 2 )
                 i = dirs_count - i;
-            look_self -= look_self * GameOpt.LookDir[ i ] / 100;
+            look_self -= look_self * GameOpt.LookDir[i] / 100;
             // Opponent
             int dir_opp = cr->GetDir();
             real_dir = ( ( real_dir + dirs_count / 2 ) % dirs_count );
             i = ( dir_opp > real_dir ? dir_opp - real_dir : real_dir - dir_opp );
             if( i > dirs_count / 2 )
                 i = dirs_count - i;
-            look_opp -= look_opp * GameOpt.LookDir[ i ] / 100;
+            look_opp -= look_opp * GameOpt.LookDir[i] / 100;
         }
 
         if( dist > look_self && dist > look_opp )
@@ -547,9 +547,9 @@ void Critter::ProcessVisibleCritters()
                 int i = ( dir_self > real_dir ? dir_self - real_dir : real_dir - dir_self );
                 if( i > dirs_count / 2 )
                     i = dirs_count - i;
-                sneak_opp -= sneak_opp * GameOpt.LookSneakDir[ i ] / 100;
+                sneak_opp -= sneak_opp * GameOpt.LookSneakDir[i] / 100;
             }
-            sneak_opp /= (int) GameOpt.SneakDivider;
+            sneak_opp /= (int)GameOpt.SneakDivider;
             if( sneak_opp < 0 )
                 sneak_opp = 0;
             vis = look_self - sneak_opp;
@@ -558,7 +558,7 @@ void Critter::ProcessVisibleCritters()
         {
             vis = look_self;
         }
-        if( vis < (int) GameOpt.LookMinimum )
+        if( vis < (int)GameOpt.LookMinimum )
             vis = GameOpt.LookMinimum;
 
         if( vis >= dist )
@@ -580,7 +580,7 @@ void Critter::ProcessVisibleCritters()
 
         if( show_cr1 )
         {
-            if( (int) Data.ShowCritterDist1 >= dist )
+            if( (int)Data.ShowCritterDist1 >= dist )
             {
                 if( AddCrIntoVisSet1( cr->GetId() ) )
                     EventShowCritter1( cr );
@@ -593,7 +593,7 @@ void Critter::ProcessVisibleCritters()
         }
         if( show_cr2 )
         {
-            if( (int) Data.ShowCritterDist2 >= dist )
+            if( (int)Data.ShowCritterDist2 >= dist )
             {
                 if( AddCrIntoVisSet2( cr->GetId() ) )
                     EventShowCritter2( cr );
@@ -606,7 +606,7 @@ void Critter::ProcessVisibleCritters()
         }
         if( show_cr3 )
         {
-            if( (int) Data.ShowCritterDist3 >= dist )
+            if( (int)Data.ShowCritterDist3 >= dist )
             {
                 if( AddCrIntoVisSet3( cr->GetId() ) )
                     EventShowCritter3( cr );
@@ -629,9 +629,9 @@ void Critter::ProcessVisibleCritters()
                 int i = ( dir_opp > real_dir ? dir_opp - real_dir : real_dir - dir_opp );
                 if( i > dirs_count / 2 )
                     i = dirs_count - i;
-                sneak_self -= sneak_self * GameOpt.LookSneakDir[ i ] / 100;
+                sneak_self -= sneak_self * GameOpt.LookSneakDir[i] / 100;
             }
-            sneak_self /= (int) GameOpt.SneakDivider;
+            sneak_self /= (int)GameOpt.SneakDivider;
             if( sneak_self < 0 )
                 sneak_self = 0;
             vis = look_opp - sneak_self;
@@ -640,7 +640,7 @@ void Critter::ProcessVisibleCritters()
         {
             vis = look_opp;
         }
-        if( vis < (int) GameOpt.LookMinimum )
+        if( vis < (int)GameOpt.LookMinimum )
             vis = GameOpt.LookMinimum;
 
         if( vis >= dist )
@@ -660,9 +660,9 @@ void Critter::ProcessVisibleCritters()
             }
         }
 
-        if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_1 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_1 ] > 0 ) && cr->Data.ShowCritterDist1 > 0 )
+        if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_1] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_1] > 0 ) && cr->Data.ShowCritterDist1 > 0 )
         {
-            if( (int) cr->Data.ShowCritterDist1 >= dist )
+            if( (int)cr->Data.ShowCritterDist1 >= dist )
             {
                 if( cr->AddCrIntoVisSet1( GetId() ) )
                     cr->EventShowCritter1( this );
@@ -673,9 +673,9 @@ void Critter::ProcessVisibleCritters()
                     cr->EventHideCritter1( this );
             }
         }
-        if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_2 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_2 ] > 0 ) && cr->Data.ShowCritterDist2 > 0 )
+        if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_2] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_2] > 0 ) && cr->Data.ShowCritterDist2 > 0 )
         {
-            if( (int) cr->Data.ShowCritterDist2 >= dist )
+            if( (int)cr->Data.ShowCritterDist2 >= dist )
             {
                 if( cr->AddCrIntoVisSet2( GetId() ) )
                     cr->EventShowCritter2( this );
@@ -686,9 +686,9 @@ void Critter::ProcessVisibleCritters()
                     cr->EventHideCritter2( this );
             }
         }
-        if( ( cr->FuncId[ CRITTER_EVENT_SHOW_CRITTER_3 ] > 0 || cr->FuncId[ CRITTER_EVENT_HIDE_CRITTER_3 ] > 0 ) && cr->Data.ShowCritterDist3 > 0 )
+        if( ( cr->FuncId[CRITTER_EVENT_SHOW_CRITTER_3] > 0 || cr->FuncId[CRITTER_EVENT_HIDE_CRITTER_3] > 0 ) && cr->Data.ShowCritterDist3 > 0 )
         {
-            if( (int) cr->Data.ShowCritterDist3 >= dist )
+            if( (int)cr->Data.ShowCritterDist3 >= dist )
             {
                 if( cr->AddCrIntoVisSet3( GetId() ) )
                     cr->EventShowCritter3( this );
@@ -811,7 +811,7 @@ void Critter::ViewMap( Map* map, int look, ushort hx, ushort hy, int dir )
             int i = ( dir > real_dir ? dir - real_dir : real_dir - dir );
             if( i > dirs_count / 2 )
                 i = dirs_count - i;
-            look_self -= look_self * GameOpt.LookDir[ i ] / 100;
+            look_self -= look_self * GameOpt.LookDir[i] / 100;
         }
 
         if( dist > look_self )
@@ -843,9 +843,9 @@ void Critter::ViewMap( Map* map, int look, ushort hx, ushort hy, int dir )
                 int i = ( dir > real_dir ? dir - real_dir : real_dir - dir );
                 if( i > dirs_count / 2 )
                     i = dirs_count - i;
-                sneak_opp -= sneak_opp * GameOpt.LookSneakDir[ i ] / 100;
+                sneak_opp -= sneak_opp * GameOpt.LookSneakDir[i] / 100;
             }
-            sneak_opp /= (int) GameOpt.SneakDivider;
+            sneak_opp /= (int)GameOpt.SneakDivider;
             if( sneak_opp < 0 )
                 sneak_opp = 0;
             vis = look_self - sneak_opp;
@@ -854,7 +854,7 @@ void Critter::ViewMap( Map* map, int look, ushort hx, ushort hy, int dir )
         {
             vis = look_self;
         }
-        if( vis < (int) GameOpt.LookMinimum )
+        if( vis < (int)GameOpt.LookMinimum )
             vis = GameOpt.LookMinimum;
         if( vis >= dist )
             Send_AddCritter( cr );
@@ -1507,7 +1507,7 @@ bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count
         return false;
     }
 
-    if( to_slot != SLOT_GROUND && !SlotEnabled[ to_slot ] )
+    if( to_slot != SLOT_GROUND && !SlotEnabled[to_slot] )
     {
         WriteLogF( _FUNC_, " - Slot<%u> is not allowed, critter<%s>.\n", to_slot, GetInfo() );
         return false;
@@ -1687,7 +1687,7 @@ void Critter::TryUpOnKnockout()
         int cur_ap = GetRawParam( ST_CURRENT_AP );
         if( cur_ap <= 0 )
             return;
-        int ap = MIN( (int) KnockoutAp, cur_ap );
+        int ap = MIN( (int)KnockoutAp, cur_ap );
         SubAp( ap );
         KnockoutAp -= ap;
         if( KnockoutAp )
@@ -1709,7 +1709,7 @@ void Critter::ToDead( uint anim2, bool send_all )
     bool already_dead = IsDead();
 
     if( GetParam( ST_CURRENT_HP ) > 0 )
-        Data.Params[ ST_CURRENT_HP ] = 0;
+        Data.Params[ST_CURRENT_HP] = 0;
     Data.Cond = COND_DEAD;
     Data.Anim2Dead = anim2;
 
@@ -1742,7 +1742,7 @@ void Critter::ToDead( uint anim2, bool send_all )
 
 bool Critter::ParseScript( const char* script, bool first_time )
 {
-    if( script && script[ 0 ] )
+    if( script && script[0] )
     {
         uint func_num = Script::GetScriptFuncNum( script, "void %s(Critter&,bool)" );
         if( !func_num )
@@ -1766,9 +1766,9 @@ bool Critter::PrepareScriptFunc( int num_scr_func )
 {
     if( num_scr_func >= CRITTER_EVENT_MAX )
         return false;
-    if( FuncId[ num_scr_func ] <= 0 )
+    if( FuncId[num_scr_func] <= 0 )
         return false;
-    return Script::PrepareContext( FuncId[ num_scr_func ], _FUNC_, Str::FormatBuf( "Critter<%s>, func<%s>", GetInfo(), Script::GetBindFuncName( FuncId[ num_scr_func ] ).c_str() ) );
+    return Script::PrepareContext( FuncId[num_scr_func], _FUNC_, Str::FormatBuf( "Critter<%s>, func<%s>", GetInfo(), Script::GetBindFuncName( FuncId[num_scr_func] ).c_str() ) );
 }
 
 void Critter::EventIdle()
@@ -1802,7 +1802,7 @@ void Critter::EventDead( Critter* killer )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_DEAD ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_DEAD] > 0 )
             cr->EventSmthDead( this, killer );
     }
 }
@@ -1934,7 +1934,7 @@ bool Critter::EventAttack( Critter* target )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_ATTACK ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_ATTACK] > 0 )
             cr->EventSmthAttack( this, target );
     }
     return result;
@@ -1956,7 +1956,7 @@ bool Critter::EventAttacked( Critter* attacker )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_ATTACKED ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_ATTACKED] > 0 )
             cr->EventSmthAttacked( this, attacker );
     }
 
@@ -2000,7 +2000,7 @@ bool Critter::EventStealing( Critter* thief, Item* item, uint count )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_STEALING ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_STEALING] > 0 )
             cr->EventSmthStealing( this, thief, success, item, count );
     }
 
@@ -2037,7 +2037,7 @@ bool Critter::EventUseItem( Item* item, Critter* on_critter, Item* on_item, MapO
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_USE_ITEM ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_USE_ITEM] > 0 )
             cr->EventSmthUseItem( this, item, on_critter, on_item, on_scenery );
     }
 
@@ -2077,7 +2077,7 @@ bool Critter::EventUseSkill( int skill, Critter* on_critter, Item* on_item, MapO
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_USE_SKILL ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_USE_SKILL] > 0 )
             cr->EventSmthUseSkill( this, skill, on_critter, on_item, on_scenery );
     }
 
@@ -2112,7 +2112,7 @@ void Critter::EventDropItem( Item* item )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_DROP_ITEM ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_DROP_ITEM] > 0 )
             cr->EventSmthDropItem( this, item );
     }
 }
@@ -2140,7 +2140,7 @@ void Critter::EventMoveItem( Item* item, uchar from_slot )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_MOVE_ITEM ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_MOVE_ITEM] > 0 )
             cr->EventSmthMoveItem( this, item, from_slot );
     }
 }
@@ -2163,7 +2163,7 @@ void Critter::EventKnockout( uint anim2begin, uint anim2idle, uint anim2end, uin
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_KNOCKOUT ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_KNOCKOUT] > 0 )
             cr->EventSmthKnockout( this, anim2begin, anim2idle, anim2end, lost_ap, knock_dist );
     }
 }
@@ -2320,7 +2320,7 @@ int Critter::EventPlaneRun( AIDataPlane* plane, int reason, uint& p0, uint& p1, 
 
 bool Critter::EventBarter( Critter* cr_barter, bool attach, uint barter_count )
 {
-    if( FuncId[ CRITTER_EVENT_BARTER ] <= 0 )
+    if( FuncId[CRITTER_EVENT_BARTER] <= 0 )
         return true;
     if( !PrepareScriptFunc( CRITTER_EVENT_BARTER ) )
         return false;
@@ -2335,7 +2335,7 @@ bool Critter::EventBarter( Critter* cr_barter, bool attach, uint barter_count )
 
 bool Critter::EventTalk( Critter* cr_talk, bool attach, uint talk_count )
 {
-    if( FuncId[ CRITTER_EVENT_TALK ] <= 0 )
+    if( FuncId[CRITTER_EVENT_TALK] <= 0 )
         return true;
     if( !PrepareScriptFunc( CRITTER_EVENT_TALK ) )
         return false;
@@ -2403,7 +2403,7 @@ void Critter::EventTurnBasedProcess( Map* map, bool begin_turn )
     {
         Critter* cr = *it;
         SYNC_LOCK( cr );
-        if( cr->FuncId[ CRITTER_EVENT_SMTH_TURN_BASED_PROCESS ] > 0 )
+        if( cr->FuncId[CRITTER_EVENT_SMTH_TURN_BASED_PROCESS] > 0 )
             cr->EventSmthTurnBasedProcess( this, map, begin_turn );
     }
 }
@@ -2423,237 +2423,237 @@ void Critter::EventSmthTurnBasedProcess( Critter* from_cr, Map* map, bool begin_
 void Critter::Send_Move( Critter* from_cr, uint move_params )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Move( from_cr, move_params );
+        ( (Client*)this )->Send_Move( from_cr, move_params );
 }
 void Critter::Send_Dir( Critter* from_cr )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Dir( from_cr );
+        ( (Client*)this )->Send_Dir( from_cr );
 }
 void Critter::Send_AddCritter( Critter* cr )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AddCritter( cr );
+        ( (Client*)this )->Send_AddCritter( cr );
 }
 void Critter::Send_RemoveCritter( Critter* cr )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_RemoveCritter( cr );
+        ( (Client*)this )->Send_RemoveCritter( cr );
 }
 void Critter::Send_LoadMap( Map* map )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_LoadMap( map );
+        ( (Client*)this )->Send_LoadMap( map );
 }
 void Critter::Send_XY( Critter* cr )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_XY( cr );
+        ( (Client*)this )->Send_XY( cr );
 }
 void Critter::Send_AddItemOnMap( Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AddItemOnMap( item );
+        ( (Client*)this )->Send_AddItemOnMap( item );
 }
 void Critter::Send_ChangeItemOnMap( Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ChangeItemOnMap( item );
+        ( (Client*)this )->Send_ChangeItemOnMap( item );
 }
 void Critter::Send_EraseItemFromMap( Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_EraseItemFromMap( item );
+        ( (Client*)this )->Send_EraseItemFromMap( item );
 }
 void Critter::Send_AnimateItem( Item* item, uchar from_frm, uchar to_frm )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AnimateItem( item, from_frm, to_frm );
+        ( (Client*)this )->Send_AnimateItem( item, from_frm, to_frm );
 }
 void Critter::Send_AddItem( Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AddItem( item );
+        ( (Client*)this )->Send_AddItem( item );
 }
 void Critter::Send_EraseItem( Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_EraseItem( item );
+        ( (Client*)this )->Send_EraseItem( item );
 }
 void Critter::Send_ContainerInfo()
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ContainerInfo();
+        ( (Client*)this )->Send_ContainerInfo();
 }
 void Critter::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open_screen )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ContainerInfo( item_cont, transfer_type, open_screen );
+        ( (Client*)this )->Send_ContainerInfo( item_cont, transfer_type, open_screen );
 }
 void Critter::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool open_screen )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ContainerInfo( cr_cont, transfer_type, open_screen );
+        ( (Client*)this )->Send_ContainerInfo( cr_cont, transfer_type, open_screen );
 }
 void Critter::Send_GlobalInfo( uchar flags )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_GlobalInfo( flags );
+        ( (Client*)this )->Send_GlobalInfo( flags );
 }
 void Critter::Send_GlobalLocation( Location* loc, bool add )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_GlobalLocation( loc, add );
+        ( (Client*)this )->Send_GlobalLocation( loc, add );
 }
 void Critter::Send_GlobalMapFog( ushort zx, ushort zy, uchar fog )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_GlobalMapFog( zx, zy, fog );
+        ( (Client*)this )->Send_GlobalMapFog( zx, zy, fog );
 }
 void Critter::Send_AllParams()
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AllParams();
+        ( (Client*)this )->Send_AllParams();
 }
 void Critter::Send_Param( ushort num_param )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Param( num_param );
+        ( (Client*)this )->Send_Param( num_param );
 }
 void Critter::Send_ParamOther( ushort num_param, int val )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ParamOther( num_param, val );
+        ( (Client*)this )->Send_ParamOther( num_param, val );
 }
 void Critter::Send_CritterParam( Critter* cr, ushort num_param, int val )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_CritterParam( cr, num_param, val );
+        ( (Client*)this )->Send_CritterParam( cr, num_param, val );
 }
 void Critter::Send_Talk()
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Talk();
+        ( (Client*)this )->Send_Talk();
 }
 void Critter::Send_GameInfo( Map* map )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_GameInfo( map );
+        ( (Client*)this )->Send_GameInfo( map );
 }
 void Critter::Send_Text( Critter* from_cr, const char* s_str, uchar how_say )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Text( from_cr, s_str, how_say );
+        ( (Client*)this )->Send_Text( from_cr, s_str, how_say );
 }
 void Critter::Send_TextEx( uint from_id, const char* s_str, ushort str_len, uchar how_say, ushort intellect, bool unsafe_text )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_TextEx( from_id, s_str, str_len, how_say, intellect, unsafe_text );
+        ( (Client*)this )->Send_TextEx( from_id, s_str, str_len, how_say, intellect, unsafe_text );
 }
 void Critter::Send_TextMsg( Critter* from_cr, uint str_num, uchar how_say, ushort num_msg )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_TextMsg( from_cr, str_num, how_say, num_msg );
+        ( (Client*)this )->Send_TextMsg( from_cr, str_num, how_say, num_msg );
 }
 void Critter::Send_TextMsg( uint from_id, uint str_num, uchar how_say, ushort num_msg )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_TextMsg( from_id, str_num, how_say, num_msg );
+        ( (Client*)this )->Send_TextMsg( from_id, str_num, how_say, num_msg );
 }
 void Critter::Send_TextMsgLex( Critter* from_cr, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_TextMsgLex( from_cr, num_str, how_say, num_msg, lexems );
+        ( (Client*)this )->Send_TextMsgLex( from_cr, num_str, how_say, num_msg, lexems );
 }
 void Critter::Send_TextMsgLex( uint from_id, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_TextMsgLex( from_id, num_str, how_say, num_msg, lexems );
+        ( (Client*)this )->Send_TextMsgLex( from_id, num_str, how_say, num_msg, lexems );
 }
 void Critter::Send_Action( Critter* from_cr, int action, int action_ext, Item* item )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Action( from_cr, action, action_ext, item );
+        ( (Client*)this )->Send_Action( from_cr, action, action_ext, item );
 }
 void Critter::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, ushort knock_hx, ushort knock_hy )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Knockout( from_cr, anim2begin, anim2idle, knock_hx, knock_hy );
+        ( (Client*)this )->Send_Knockout( from_cr, anim2begin, anim2idle, knock_hx, knock_hy );
 }
 void Critter::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar prev_slot )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_MoveItem( from_cr, item, action, prev_slot );
+        ( (Client*)this )->Send_MoveItem( from_cr, item, action, prev_slot );
 }
 void Critter::Send_ItemData( Critter* from_cr, uchar slot, Item* item, bool ext_data )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_ItemData( from_cr, slot, item, ext_data );
+        ( (Client*)this )->Send_ItemData( from_cr, slot, item, ext_data );
 }
 void Critter::Send_Animate( Critter* from_cr, uint anim1, uint anim2, Item* item, bool clear_sequence, bool delay_play )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Animate( from_cr, anim1, anim2, item, clear_sequence, delay_play );
+        ( (Client*)this )->Send_Animate( from_cr, anim1, anim2, item, clear_sequence, delay_play );
 }
 void Critter::Send_SetAnims( Critter* from_cr, int cond, uint anim1, uint anim2 )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_SetAnims( from_cr, cond, anim1, anim2 );
+        ( (Client*)this )->Send_SetAnims( from_cr, cond, anim1, anim2 );
 }
 void Critter::Send_CombatResult( uint* combat_res, uint len )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_CombatResult( combat_res, len );
+        ( (Client*)this )->Send_CombatResult( combat_res, len );
 }
 void Critter::Send_Quest( uint num )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Quest( num );
+        ( (Client*)this )->Send_Quest( num );
 }
 void Critter::Send_Quests( UIntVec& nums )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Quests( nums );
+        ( (Client*)this )->Send_Quests( nums );
 }
 void Critter::Send_HoloInfo( bool clear, ushort offset, ushort count )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_HoloInfo( clear, offset, count );
+        ( (Client*)this )->Send_HoloInfo( clear, offset, count );
 }
 void Critter::Send_AutomapsInfo( void* locs_vec, Location* loc )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_AutomapsInfo( locs_vec, loc );
+        ( (Client*)this )->Send_AutomapsInfo( locs_vec, loc );
 }
 void Critter::Send_Follow( uint rule, uchar follow_type, ushort map_pid, uint follow_wait )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Follow( rule, follow_type, map_pid, follow_wait );
+        ( (Client*)this )->Send_Follow( rule, follow_type, map_pid, follow_wait );
 }
 void Critter::Send_Effect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_Effect( eff_pid, hx, hy, radius );
+        ( (Client*)this )->Send_Effect( eff_pid, hx, hy, radius );
 }
 void Critter::Send_FlyEffect( ushort eff_pid, uint from_crid, uint to_crid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_FlyEffect( eff_pid, from_crid, to_crid, from_hx, from_hy, to_hx, to_hy );
+        ( (Client*)this )->Send_FlyEffect( eff_pid, from_crid, to_crid, from_hx, from_hy, to_hx, to_hy );
 }
 void Critter::Send_PlaySound( uint crid_synchronize, const char* sound_name )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_PlaySound( crid_synchronize, sound_name );
+        ( (Client*)this )->Send_PlaySound( crid_synchronize, sound_name );
 }
 void Critter::Send_PlaySoundType( uint crid_synchronize, uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_PlaySoundType( crid_synchronize, sound_type, sound_type_ext, sound_id, sound_id_ext );
+        ( (Client*)this )->Send_PlaySoundType( crid_synchronize, sound_type, sound_type_ext, sound_id, sound_id_ext );
 }
 void Critter::Send_CritterLexems( Critter* cr )
 {
     if( IsPlayer() )
-        ( (Client*) this )->Send_CritterLexems( cr );
+        ( (Client*)this )->Send_CritterLexems( cr );
 }
 
 void Critter::SendA_Move( uint move_params )
@@ -2752,11 +2752,11 @@ void Critter::SendAA_ItemData( Item* item )
         Send_AddItem( item );
 
     uchar slot = item->AccCritter.Slot;
-    if( !VisCr.empty() && slot != SLOT_INV && SlotEnabled[ slot ] )
+    if( !VisCr.empty() && slot != SLOT_INV && SlotEnabled[slot] )
     {
-        if( SlotDataSendEnabled[ slot ] )
+        if( SlotDataSendEnabled[slot] )
         {
-            int script = SlotDataSendScript[ slot ];
+            int script = SlotDataSendScript[slot];
             if( !script )
             {
                 // Send all data
@@ -2851,7 +2851,7 @@ void Critter::SendA_GlobalInfo( GlobalMapGroup* group, uchar info_flags )
 
 void Critter::SendAA_Text( CrVec& to_cr, const char* str, uchar how_say, bool unsafe_text )
 {
-    if( !str || !str[ 0 ] )
+    if( !str || !str[0] )
         return;
 
     ushort str_len = Str::Length( str );
@@ -3002,10 +3002,10 @@ void Critter::SendA_ParamCheck( ushort num_param )
     if( VisCr.empty() )
         return;
 
-    int script = ParamsSendScript[ num_param ];
+    int script = ParamsSendScript[num_param];
     if( !script )
     {
-        int val = Data.Params[ num_param ];
+        int val = Data.Params[num_param];
         for( auto it = VisCr.begin(), end = VisCr.end(); it != end; ++it )
         {
             Critter* cr = *it;
@@ -3033,7 +3033,7 @@ void Critter::Send_AddAllItems()
 
     SyncLockItems();
 
-    Client* cl = (Client*) this;
+    Client* cl = (Client*)this;
     BOUT_BEGIN( cl );
     cl->Bout << NETMSG_CLEAR_ITEMS;
     BOUT_END( cl );
@@ -3064,7 +3064,7 @@ void Critter::Send_AllAutomapsInfo()
     LocVec locs;
     for( ushort i = 0; i < data_ext->LocationsCount; i++ )
     {
-        uint      loc_id = data_ext->LocationsId[ i ];
+        uint      loc_id = data_ext->LocationsId[i];
         Location* loc = MapMngr.GetLocation( loc_id );
         if( loc && loc->IsAutomaps() )
             locs.push_back( loc );
@@ -3123,13 +3123,13 @@ void Critter::RefreshName()
 {
     if( IsPlayer() )
     {
-        NameStr = ( (Client*) this )->Name;
+        NameStr = ( (Client*)this )->Name;
     }
     else
     {
-        uint        dlg_pack_id = Data.Params[ ST_DIALOG_ID ];
+        uint        dlg_pack_id = Data.Params[ST_DIALOG_ID];
         DialogPack* dlg_pack = ( dlg_pack_id > 0 ? DlgMngr.GetDialogPack( dlg_pack_id ) : NULL );
-        char        buf[ MAX_FOTEXT ];
+        char        buf[MAX_FOTEXT];
         if( dlg_pack )
             NameStr = Str::Format( buf, "Npc (%s, %u)", dlg_pack->PackName.c_str(), GetId() );
         else
@@ -3147,23 +3147,23 @@ const char* Critter::GetInfo()
 
 int Critter::GetParam( uint index )
 {
-    if( ParamsGetScript[ index ] && Script::PrepareContext( ParamsGetScript[ index ], _FUNC_, "" ) )
+    if( ParamsGetScript[index] && Script::PrepareContext( ParamsGetScript[index], _FUNC_, "" ) )
     {
         Script::SetArgObject( this );
-        Script::SetArgUInt( index - ( ParametersOffset[ index ] ? ParametersMin[ index ] : 0 ) );
+        Script::SetArgUInt( index - ( ParametersOffset[index] ? ParametersMin[index] : 0 ) );
         if( Script::RunPrepared() )
             return Script::GetReturnedUInt();
     }
-    return Data.Params[ index ];
+    return Data.Params[index];
 }
 
 void Critter::ChangeParam( uint index )
 {
-    if( !ParamsIsChanged[ index ] && ParamLocked != (int) index )
+    if( !ParamsIsChanged[index] && ParamLocked != (int)index )
     {
         ParamsChanged.push_back( index );
-        ParamsChanged.push_back( Data.Params[ index ] );
-        ParamsIsChanged[ index ] = true;
+        ParamsChanged.push_back( Data.Params[index] );
+        ParamsIsChanged[index] = true;
     }
 }
 
@@ -3179,45 +3179,45 @@ void Critter::ProcessChangedParams()
         }
 
         CallChange.clear();
-        for( uint i = 0, j = (uint) ParamsChanged.size(); i < j; i += 2 )
+        for( uint i = 0, j = (uint)ParamsChanged.size(); i < j; i += 2 )
         {
-            int index = ParamsChanged[ i ];
-            int old_val = ParamsChanged[ i + 1 ];
-            if( Data.Params[ index ] != old_val )
+            int index = ParamsChanged[i];
+            int old_val = ParamsChanged[i + 1];
+            if( Data.Params[index] != old_val )
             {
-                if( ParamsChangeScript[ index ] )
+                if( ParamsChangeScript[index] )
                 {
-                    CallChange.push_back( ParamsChangeScript[ index ] );
+                    CallChange.push_back( ParamsChangeScript[index] );
                     CallChange.push_back( index );
                     CallChange.push_back( old_val );
                 }
                 else
                 {
                     Send_Param( index );
-                    if( ParamsSendEnabled[ index ] )
+                    if( ParamsSendEnabled[index] )
                         SendA_ParamCheck( index );
                 }
             }
-            ParamsIsChanged[ index ] = false;
+            ParamsIsChanged[index] = false;
         }
         ParamsChanged.clear();
 
         if( CallChange.size() )
         {
-            for( uint i = 0, j = (uint) CallChange.size(); i < j; i += 3 )
+            for( uint i = 0, j = (uint)CallChange.size(); i < j; i += 3 )
             {
-                uint index = CallChange[ i + 1 ];
+                uint index = CallChange[i + 1];
                 ParamLocked = index;
-                if( Script::PrepareContext( CallChange[ i ], _FUNC_, GetInfo() ) )
+                if( Script::PrepareContext( CallChange[i], _FUNC_, GetInfo() ) )
                 {
                     Script::SetArgObject( this );
-                    Script::SetArgUInt( index - ( ParametersOffset[ index ] ? ParametersMin[ index ] : 0 ) );
-                    Script::SetArgUInt( CallChange[ i + 2 ] );
+                    Script::SetArgUInt( index - ( ParametersOffset[index] ? ParametersMin[index] : 0 ) );
+                    Script::SetArgUInt( CallChange[i + 2] );
                     Script::RunPrepared();
                 }
                 ParamLocked = -1;
                 Send_Param( index );
-                if( ParamsSendEnabled[ index ] )
+                if( ParamsSendEnabled[index] )
                     SendA_ParamCheck( index );
             }
         }
@@ -3360,9 +3360,9 @@ void Critter::SetTimeout( int timeout, uint game_seconds )
 {
     ChangeParam( timeout );
     if( game_seconds )
-        Data.Params[ timeout ] = GameOpt.FullSecond + game_seconds;
+        Data.Params[timeout] = GameOpt.FullSecond + game_seconds;
     else
-        Data.Params[ timeout ] = 0;
+        Data.Params[timeout] = 0;
 }
 
 bool Critter::IsTransferTimeouts( bool send )
@@ -3392,33 +3392,33 @@ void Critter::AddEnemyInStack( uint crid )
     int stack_count = MIN( Data.EnemyStackCount, MAX_ENEMY_STACK );
     for( int i = 0; i < stack_count; i++ )
     {
-        if( Data.EnemyStack[ i ] == crid )
+        if( Data.EnemyStack[i] == crid )
         {
             for( int j = i; j < stack_count - 1; j++ )
             {
-                Data.EnemyStack[ j ] = Data.EnemyStack[ j + 1 ];
+                Data.EnemyStack[j] = Data.EnemyStack[j + 1];
             }
-            Data.EnemyStack[ stack_count - 1 ] = crid;
+            Data.EnemyStack[stack_count - 1] = crid;
             return;
         }
     }
     // Add
     for( int i = 0; i < stack_count - 1; i++ )
     {
-        Data.EnemyStack[ i ] = Data.EnemyStack[ i + 1 ];
+        Data.EnemyStack[i] = Data.EnemyStack[i + 1];
     }
-    Data.EnemyStack[ stack_count - 1 ] = crid;
+    Data.EnemyStack[stack_count - 1] = crid;
 }
 
 bool Critter::CheckEnemyInStack( uint crid )
 {
-    if( Data.Params[ MODE_NO_ENEMY_STACK ] )
+    if( Data.Params[MODE_NO_ENEMY_STACK] )
         return false;
 
     int stack_count = MIN( Data.EnemyStackCount, MAX_ENEMY_STACK );
     for( int i = 0; i < stack_count; i++ )
     {
-        if( Data.EnemyStack[ i ] == crid )
+        if( Data.EnemyStack[i] == crid )
             return true;
     }
     return false;
@@ -3429,13 +3429,13 @@ void Critter::EraseEnemyInStack( uint crid )
     int stack_count = MIN( Data.EnemyStackCount, MAX_ENEMY_STACK );
     for( int i = 0; i < stack_count; i++ )
     {
-        if( Data.EnemyStack[ i ] == crid )
+        if( Data.EnemyStack[i] == crid )
         {
             for( int j = i; j > 0; j-- )
             {
-                Data.EnemyStack[ j ] = Data.EnemyStack[ j - 1 ];
+                Data.EnemyStack[j] = Data.EnemyStack[j - 1];
             }
-            Data.EnemyStack[ 0 ] = 0;
+            Data.EnemyStack[0] = 0;
             break;
         }
     }
@@ -3443,13 +3443,13 @@ void Critter::EraseEnemyInStack( uint crid )
 
 Critter* Critter::ScanEnemyStack()
 {
-    if( Data.Params[ MODE_NO_ENEMY_STACK ] )
+    if( Data.Params[MODE_NO_ENEMY_STACK] )
         return NULL;
 
     int stack_count = MIN( Data.EnemyStackCount, MAX_ENEMY_STACK );
     for( int i = stack_count - 1; i >= 0; i-- )
     {
-        uint crid = Data.EnemyStack[ i ];
+        uint crid = Data.EnemyStack[i];
         if( crid )
         {
             Critter* enemy = GetCritSelf( crid, true );
@@ -3486,7 +3486,7 @@ void Critter::AddCrTimeEvent( uint func_num, uint rate, uint duration, int ident
 
 void Critter::EraseCrTimeEvent( int index )
 {
-    if( index >= (int) CrTimeEvents.size() )
+    if( index >= (int)CrTimeEvents.size() )
         return;
     CrTimeEvents.erase( CrTimeEvents.begin() + index );
 }
@@ -3504,9 +3504,9 @@ void Critter::ContinueTimeEvents( int offs_time )
 void Critter::Delete()
 {
     if( IsPlayer() )
-        delete (Client*) this;
+        delete (Client*)this;
     else
-        delete (Npc*) this;
+        delete (Npc*)this;
 }
 
 /************************************************************************/
@@ -3517,10 +3517,10 @@ void Critter::Delete()
 Client::SendCallback Client::SendData = NULL;
 #endif
 
-Client::Client(): ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), LanguageMsg( 0 ),
-                  GameState( STATE_NONE ), IsDisconnected( false ), DisconnectTick( 0 ), DisableZlib( false ),
-                  LastSendScoresTick( 0 ), LastSendCraftTick( 0 ), LastSendEntrancesTick( 0 ), LastSendEntrancesLocId( 0 ),
-                  ScreenCallbackBindId( 0 ), ConnectTime( 0 ), LastSendedMapTick( 0 ), RadioMessageSended( 0 )
+Client::Client() : ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), LanguageMsg( 0 ),
+    GameState( STATE_NONE ), IsDisconnected( false ), DisconnectTick( 0 ), DisableZlib( false ),
+    LastSendScoresTick( 0 ), LastSendCraftTick( 0 ), LastSendEntrancesTick( 0 ), LastSendEntrancesLocId( 0 ),
+    ScreenCallbackBindId( 0 ), ConnectTime( 0 ), LastSendedMapTick( 0 ), RadioMessageSended( 0 )
 {
     CritterIsNpc = false;
     MEMORY_PROCESS( MEMORY_CLIENT, sizeof( Client ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 );
@@ -3534,7 +3534,7 @@ Client::Client(): ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), 
     Talk.Clear();
     talkNextTick = Timer::GameTick() + PROCESS_TALK_TICK;
     ConnectTime = Timer::FastTick();
-    LastSay[ 0 ] = 0;
+    LastSay[0] = 0;
     LastSayEqualCount = 0;
     memzero( UID, sizeof( UID ) );
 
@@ -3545,7 +3545,7 @@ Client::Client(): ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), 
     NetIOIn = new NetIOArg();
     memzero( &NetIOIn->OV, sizeof( NetIOIn->OV ) );
     NetIOIn->PClient = this;
-    NetIOIn->Buffer.buf = new char[ WSA_BUF_SIZE ];
+    NetIOIn->Buffer.buf = new char[WSA_BUF_SIZE];
     NetIOIn->Buffer.len = WSA_BUF_SIZE;
     NetIOIn->Operation = WSAOP_RECV;
     NetIOIn->Flags = 0;
@@ -3553,7 +3553,7 @@ Client::Client(): ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), 
     NetIOOut = new NetIOArg();
     memzero( &NetIOOut->OV, sizeof( NetIOOut->OV ) );
     NetIOOut->PClient = this;
-    NetIOOut->Buffer.buf = new char[ WSA_BUF_SIZE ];
+    NetIOOut->Buffer.buf = new char[WSA_BUF_SIZE];
     NetIOOut->Buffer.len = WSA_BUF_SIZE;
     NetIOOut->Operation = WSAOP_FREE;
     NetIOOut->Flags = 0;
@@ -3563,10 +3563,10 @@ Client::Client(): ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ), 
 
 Client::~Client()
 {
-    MEMORY_PROCESS( MEMORY_CLIENT, -(int) ( sizeof( Client ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 ) );
+    MEMORY_PROCESS( MEMORY_CLIENT, -(int)( sizeof( Client ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 ) );
     if( DataExt )
     {
-        MEMORY_PROCESS( MEMORY_CLIENT, -(int) sizeof( CritDataExt ) );
+        MEMORY_PROCESS( MEMORY_CLIENT, -(int)sizeof( CritDataExt ) );
         SAFEDEL( DataExt );
     }
     if( ZstrmInit )
@@ -3578,7 +3578,7 @@ Client::~Client()
     #if defined ( USE_LIBEVENT )
     SAFEDEL( NetIOArgPtr );
     #else // IOCP
-    MEMORY_PROCESS( MEMORY_CLIENT, -(int) ( WSA_BUF_SIZE * 2 ) );
+    MEMORY_PROCESS( MEMORY_CLIENT, -(int)( WSA_BUF_SIZE * 2 ) );
     if( NetIOIn )
     {
         SAFEDELA( NetIOIn->Buffer.buf );
@@ -3649,7 +3649,7 @@ void Client::PingClient()
 
     BOUT_BEGIN( this );
     Bout << NETMSG_PING;
-    Bout << (uchar) PING_CLIENT;
+    Bout << (uchar)PING_CLIENT;
     BOUT_END( this );
 
     pingNextTick = Timer::FastTick() + PING_CLIENT_LIFE_TIME;
@@ -3666,7 +3666,7 @@ void Client::Send_AddCritter( Critter* cr )
     uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( uint ) + sizeof( uint ) + sizeof( ushort ) * 2 +
                    sizeof( uchar ) + sizeof( uchar ) + sizeof( uint ) * 6 + sizeof( uint ) + sizeof( short ) +
                    ( is_npc ? sizeof( ushort ) + sizeof( uint ) : UTF8_BUF_SIZE( MAX_NAME ) ) + ParamsSendMsgLen;
-    int dialog_id = ( is_npc ? cr->Data.Params[ ST_DIALOG_ID ] : 0 );
+    int dialog_id = ( is_npc ? cr->Data.Params[ST_DIALOG_ID] : 0 );
 
     BOUT_BEGIN( this );
     Bout << msg;
@@ -3688,13 +3688,13 @@ void Client::Send_AddCritter( Critter* cr )
 
     if( is_npc )
     {
-        Npc* npc = (Npc*) cr;
+        Npc* npc = (Npc*)cr;
         Bout << npc->GetProtoId();
         Bout << dialog_id;
     }
     else
     {
-        Client* cl = (Client*) cr;
+        Client* cl = (Client*)cr;
         Bout.Push( cl->Name, UTF8_BUF_SIZE( MAX_NAME ) );
     }
 
@@ -3704,9 +3704,9 @@ void Client::Send_AddCritter( Critter* cr )
         ushort index = *it;
         Bout << index;
 
-        int script = ParamsSendScript[ index ];
+        int script = ParamsSendScript[index];
         if( !script )
-            Bout << cr->Data.Params[ index ];
+            Bout << cr->Data.Params[index];
         else
             Bout << RunParamsSendScript( script, index, cr, this );
         #pragma MESSAGE("RunParamsSendScript call before BOUT_END, may be unsafe.")
@@ -3806,7 +3806,7 @@ void Client::Send_Action( Critter* from_cr, int action, int action_ext, Item* it
     Bout << from_cr->GetId();
     Bout << action;
     Bout << action_ext;
-    Bout << (bool) ( item ? true : false );
+    Bout << (bool)( item ? true : false );
     BOUT_END( this );
 }
 
@@ -3844,17 +3844,17 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
     {
         Item* item_ = *it;
         uchar slot = item_->AccCritter.Slot;
-        if( slot != SLOT_INV && SlotEnabled[ slot ] )
+        if( slot != SLOT_INV && SlotEnabled[slot] )
         {
-            int script = SlotDataSendScript[ slot ];
-            if( SlotDataSendEnabled[ slot ] && ( !script || RunSlotDataSendScript( script, slot, item_, from_cr, this ) ) )
+            int script = SlotDataSendScript[slot];
+            if( SlotDataSendEnabled[slot] && ( !script || RunSlotDataSendScript( script, slot, item_, from_cr, this ) ) )
             {
-                SlotEnabledCacheDataExt[ slots_data_ext_count ] = item_;
+                SlotEnabledCacheDataExt[slots_data_ext_count] = item_;
                 slots_data_ext_count++;
             }
             else
             {
-                SlotEnabledCacheData[ slots_data_count ] = item_;
+                SlotEnabledCacheData[slots_data_count] = item_;
                 slots_data_count++;
             }
         }
@@ -3867,35 +3867,35 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
     Bout << from_cr->GetId();
     Bout << action;
     Bout << prev_slot;
-    Bout << (bool) ( item ? true : false );
+    Bout << (bool)( item ? true : false );
 
     // Slots
-    Bout << (uchar) ( slots_data_count + slots_data_ext_count );
+    Bout << (uchar)( slots_data_count + slots_data_ext_count );
     for( uchar i = 0; i < slots_data_count; i++ )
     {
-        Item* item_ = SlotEnabledCacheData[ i ];
+        Item* item_ = SlotEnabledCacheData[i];
         Bout << item_->AccCritter.Slot;
         Bout << item_->GetId();
         Bout << item_->GetProtoId();
-        Bout.Push( (char*) &item_->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CRITTER ], sizeof( item_->Data ) );
+        Bout.Push( (char*)&item_->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CRITTER], sizeof( item_->Data ) );
     }
     for( uchar i = 0; i < slots_data_ext_count; i++ )
     {
-        Item* item_ = SlotEnabledCacheDataExt[ i ];
+        Item* item_ = SlotEnabledCacheDataExt[i];
         Bout << item_->AccCritter.Slot;
         Bout << item_->GetId();
         Bout << item_->GetProtoId();
-        Bout.Push( (char*) &item_->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CRITTER_EXT ], sizeof( item_->Data ) );
+        Bout.Push( (char*)&item_->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CRITTER_EXT], sizeof( item_->Data ) );
     }
     BOUT_END( this );
 
     // Lexems
     for( uchar i = 0; i < slots_data_count; i++ )
-        if( SlotEnabledCacheData[ i ]->PLexems )
-            Send_ItemLexems( SlotEnabledCacheData[ i ] );
+        if( SlotEnabledCacheData[i]->PLexems )
+            Send_ItemLexems( SlotEnabledCacheData[i] );
     for( uchar i = 0; i < slots_data_ext_count; i++ )
-        if( SlotEnabledCacheDataExt[ i ]->PLexems )
-            Send_ItemLexems( SlotEnabledCacheDataExt[ i ] );
+        if( SlotEnabledCacheDataExt[i]->PLexems )
+            Send_ItemLexems( SlotEnabledCacheDataExt[i] );
 }
 
 void Client::Send_ItemData( Critter* from_cr, uchar slot, Item* item, bool ext_data )
@@ -3907,7 +3907,7 @@ void Client::Send_ItemData( Critter* from_cr, uchar slot, Item* item, bool ext_d
     Bout << NETMSG_CRITTER_ITEM_DATA;
     Bout << from_cr->GetId();
     Bout << slot;
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ext_data ? ITEM_DATA_MASK_CRITTER_EXT : ITEM_DATA_MASK_CRITTER ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ext_data ? ITEM_DATA_MASK_CRITTER_EXT : ITEM_DATA_MASK_CRITTER], sizeof( item->Data ) );
     BOUT_END( this );
 }
 
@@ -3925,7 +3925,7 @@ void Client::Send_Animate( Critter* from_cr, uint anim1, uint anim2, Item* item,
     Bout << from_cr->GetId();
     Bout << anim1;
     Bout << anim2;
-    Bout << (bool) ( item ? true : false );
+    Bout << (bool)( item ? true : false );
     Bout << clear_sequence;
     Bout << delay_play;
     BOUT_END( this );
@@ -3959,7 +3959,7 @@ void Client::Send_AddItemOnMap( Item* item )
     Bout << item->AccHex.HexX;
     Bout << item->AccHex.HexY;
     Bout << is_added;
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_MAP ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_MAP], sizeof( item->Data ) );
     BOUT_END( this );
 
     if( item->PLexems )
@@ -3974,7 +3974,7 @@ void Client::Send_ChangeItemOnMap( Item* item )
     BOUT_BEGIN( this );
     Bout << NETMSG_CHANGE_ITEM_ON_MAP;
     Bout << item->GetId();
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_MAP ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_MAP], sizeof( item->Data ) );
     BOUT_END( this );
 
     if( item->PLexems )
@@ -4018,7 +4018,7 @@ void Client::Send_AddItem( Item* item )
     Bout << item->GetId();
     Bout << item->GetProtoId();
     Bout << item->AccCritter.Slot;
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CHOSEN ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CHOSEN], sizeof( item->Data ) );
     BOUT_END( this );
 
     if( item->PLexems )
@@ -4064,7 +4064,7 @@ void Client::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open
     ItemPtrVec items;
     item_cont->ContGetAllItems( items, true, true );
     if( items.size() )
-        msg_len += (uint) items.size() * ( sizeof( uint ) + sizeof( ushort ) + sizeof( Item::ItemData ) );
+        msg_len += (uint)items.size() * ( sizeof( uint ) + sizeof( ushort ) + sizeof( Item::ItemData ) );
     if( open_screen )
         SETFLAG( transfer_type, 0x80 );
 
@@ -4082,7 +4082,7 @@ void Client::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open
         Item* item = *it;
         Bout << item->GetId();
         Bout << item->GetProtoId();
-        Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CONTAINER ], sizeof( item->Data ) );
+        Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CONTAINER], sizeof( item->Data ) );
     }
     BOUT_END( this );
 
@@ -4110,29 +4110,29 @@ void Client::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool ope
         if( cr_cont->GetRawParam( SK_BARTER ) > GetRawParam( SK_BARTER ) )
             barter_k = cr_cont->GetRawParam( SK_BARTER ) - GetRawParam( SK_BARTER );
         barter_k = CLAMP( barter_k, 5, 95 );
-        if( cr_cont->Data.Params[ ST_FREE_BARTER_PLAYER ] == (int) GetId() )
+        if( cr_cont->Data.Params[ST_FREE_BARTER_PLAYER] == (int)GetId() )
             barter_k = 0;
     }
 
     if( open_screen )
         SETFLAG( transfer_type, 0x80 );
-    msg_len += (uint) items.size() * ( sizeof( uint ) + sizeof( ushort ) + sizeof( Item::ItemData ) );
+    msg_len += (uint)items.size() * ( sizeof( uint ) + sizeof( ushort ) + sizeof( Item::ItemData ) );
 
     BOUT_BEGIN( this );
     Bout << NETMSG_CONTAINER_INFO;
     Bout << msg_len;
     Bout << transfer_type;
-    Bout << (uint) Talk.TalkTime;
+    Bout << (uint)Talk.TalkTime;
     Bout << cr_cont->GetId();
     Bout << barter_k;
-    Bout << (uint) items.size();
+    Bout << (uint)items.size();
 
     for( auto it = items.begin(), end = items.end(); it != end; ++it )
     {
         Item* item = *it;
         Bout << item->GetId();
         Bout << item->GetProtoId();
-        Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CONTAINER ], sizeof( item->Data ) );
+        Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CONTAINER], sizeof( item->Data ) );
     }
     BOUT_END( this );
 
@@ -4183,10 +4183,10 @@ void Client::Send_GlobalInfo( uchar info_flags )
     {
         Bout << loc_count;
 
-        char empty_loc[ SEND_LOCATION_SIZE ] = { 0, 0, 0, 0 };
+        char empty_loc[SEND_LOCATION_SIZE] = { 0, 0, 0, 0 };
         for( int i = 0; i < data_ext->LocationsCount;)
         {
-            uint      loc_id = data_ext->LocationsId[ i ];
+            uint      loc_id = data_ext->LocationsId[i];
             Location* loc = MapMngr.GetLocation( loc_id );
             if( loc && !loc->Data.ToGarbage )
             {
@@ -4208,11 +4208,11 @@ void Client::Send_GlobalInfo( uchar info_flags )
 
     if( FLAG( info_flags, GM_INFO_GROUP_PARAM ) )
     {
-        ushort cur_x = (ushort) GroupMove->CurX;
-        ushort cur_y = (ushort) GroupMove->CurY;
-        ushort to_x = (ushort) GroupMove->ToX;
-        ushort to_y = (ushort) GroupMove->ToY;
-        uint   speed = (uint) ( GroupMove->Speed * 1000000.0f );
+        ushort cur_x = (ushort)GroupMove->CurX;
+        ushort cur_y = (ushort)GroupMove->CurY;
+        ushort to_x = (ushort)GroupMove->ToX;
+        ushort to_y = (ushort)GroupMove->ToY;
+        uint   speed = (uint)( GroupMove->Speed * 1000000.0f );
         bool   wait = ( GroupMove->EncounterDescriptor ? true : false );
 
         Bout << cur_x;
@@ -4225,12 +4225,12 @@ void Client::Send_GlobalInfo( uchar info_flags )
         if( car )
             Bout << car->AccCritter.Id;
         else
-            Bout << (uint) 0;
+            Bout << (uint)0;
     }
 
     if( FLAG( info_flags, GM_INFO_ZONES_FOG ) )
     {
-        Bout.Push( (char*) data_ext->GlobalMapFog, GM_ZONES_FOG_SIZE );
+        Bout.Push( (char*)data_ext->GlobalMapFog, GM_ZONES_FOG_SIZE );
     }
     BOUT_END( this );
 
@@ -4301,7 +4301,7 @@ void Client::Send_AllParams()
 
     BOUT_BEGIN( this );
     Bout << NETMSG_ALL_PARAMS;
-    Bout.Push( (char*) Data.Params, (char*) &ParamsChosenSendMask[ 0 ], sizeof( Data.Params ) );
+    Bout.Push( (char*)Data.Params, (char*)&ParamsChosenSendMask[0], sizeof( Data.Params ) );
     BOUT_END( this );
 }
 
@@ -4309,13 +4309,13 @@ void Client::Send_Param( ushort num_param )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
-    if( !ParamsChosenSendMask[ num_param ] )
+    if( !ParamsChosenSendMask[num_param] )
         return;
 
     BOUT_BEGIN( this );
     Bout << NETMSG_PARAM;
     Bout << num_param;
-    Bout << Data.Params[ num_param ];
+    Bout << Data.Params[num_param];
     BOUT_END( this );
 }
 
@@ -4366,16 +4366,16 @@ void Client::Send_Talk()
     }
     else
     {
-        uchar all_answers = (uchar) Talk.CurDialog.Answers.size();
-        msg_len += sizeof( uint ) + sizeof( uint ) * all_answers + sizeof( uint ) + sizeof( ushort ) + (uint) Talk.Lexems.length();
+        uchar all_answers = (uchar)Talk.CurDialog.Answers.size();
+        msg_len += sizeof( uint ) + sizeof( uint ) * all_answers + sizeof( uint ) + sizeof( ushort ) + (uint)Talk.Lexems.length();
 
         Bout << msg_len;
         Bout << is_npc;
         Bout << talk_id;
         Bout << all_answers;
-        Bout << (ushort) Talk.Lexems.length();                                  // Lexems length
+        Bout << (ushort)Talk.Lexems.length();                                   // Lexems length
         if( Talk.Lexems.length() )
-            Bout.Push( Talk.Lexems.c_str(), (uint) Talk.Lexems.length() );      // Lexems string
+            Bout.Push( Talk.Lexems.c_str(), (uint)Talk.Lexems.length() );       // Lexems string
         Bout << Talk.CurDialog.TextId;                                          // Main text_id
         for( auto it = Talk.CurDialog.Answers.begin(), end = Talk.CurDialog.Answers.end(); it != end; ++it )
             Bout << ( *it ).TextId;                                             // Answers text_id
@@ -4395,8 +4395,8 @@ void Client::Send_GameInfo( Map* map )
     uchar              rain = ( map ? map->GetRain() : 0 );
     bool               turn_based = ( map ? map->IsTurnBasedOn : false );
     bool               no_log_out = ( map ? map->IsNoLogOut() : true );
-    static const int   day_time_dummy[ 4 ] = { 0 };
-    static const uchar day_color_dummy[ 12 ] = { 0 };
+    static const int   day_time_dummy[4] = { 0 };
+    static const uchar day_color_dummy[12] = { 0 };
     const int*         day_time = ( map ? map->Data.MapDayTime : day_time_dummy );
     const uchar*       day_color = ( map ? map->Data.MapDayColor : day_color_dummy );
     if( map )
@@ -4416,8 +4416,8 @@ void Client::Send_GameInfo( Map* map )
     Bout << rain;
     Bout << turn_based;
     Bout << no_log_out;
-    Bout.Push( (const char*) day_time, sizeof( day_time_dummy ) );
-    Bout.Push( (const char*) day_color, sizeof( day_color_dummy ) );
+    Bout.Push( (const char*)day_time, sizeof( day_time_dummy ) );
+    Bout.Push( (const char*)day_color, sizeof( day_color_dummy ) );
     BOUT_END( this );
 }
 
@@ -4425,7 +4425,7 @@ void Client::Send_Text( Critter* from_cr, const char* s_str, uchar how_say )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
-    if( !s_str || !s_str[ 0 ] )
+    if( !s_str || !s_str[0] )
         return;
     ushort s_len = Str::Length( s_str );
     uint   from_id = ( from_cr ? from_cr->GetId() : 0 );
@@ -4614,7 +4614,7 @@ void Client::Send_CombatResult( uint* combat_res, uint len )
     Bout << msg_len;
     Bout << len;
     if( len )
-        Bout.Push( (char*) combat_res, len * sizeof( uint ) );
+        Bout.Push( (char*)combat_res, len * sizeof( uint ) );
     BOUT_END( this );
 }
 
@@ -4634,14 +4634,14 @@ void Client::Send_Quests( UIntVec& nums )
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uint msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( uint ) + sizeof( uint ) * (uint) nums.size();
+    uint msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( uint ) + sizeof( uint ) * (uint)nums.size();
 
     BOUT_BEGIN( this );
     Bout << NETMSG_QUESTS;
     Bout << msg_len;
-    Bout << (uint) nums.size();
+    Bout << (uint)nums.size();
     if( nums.size() )
-        Bout.Push( (char*) &nums[ 0 ], (uint) nums.size() * sizeof( uint ) );
+        Bout.Push( (char*)&nums[0], (uint)nums.size() * sizeof( uint ) );
     BOUT_END( this );
 }
 
@@ -4661,7 +4661,7 @@ void Client::Send_HoloInfo( bool clear, ushort offset, ushort count )
     Bout << offset;
     Bout << count;
     if( count )
-        Bout.Push( (char*) &Data.HoloInfo[ offset ], count * sizeof( uint ) );
+        Bout.Push( (char*)&Data.HoloInfo[offset], count * sizeof( uint ) );
     BOUT_END( this );
 }
 
@@ -4688,28 +4688,28 @@ void Client::Send_AutomapsInfo( void* locs_vec, Location* loc )
 
     if( locs_vec )
     {
-        LocVec* locs = (LocVec*) locs_vec;
+        LocVec* locs = (LocVec*)locs_vec;
         uint    msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( bool ) + sizeof( ushort );
-        for( uint i = 0, j = (uint) locs->size(); i < j; i++ )
+        for( uint i = 0, j = (uint)locs->size(); i < j; i++ )
         {
-            Location* loc_ = ( *locs )[ i ];
-            msg_len += sizeof( uint ) + sizeof( ushort ) + sizeof( ushort ) + sizeof( ushort ) * (uint) loc_->GetAutomaps().size();
+            Location* loc_ = ( *locs )[i];
+            msg_len += sizeof( uint ) + sizeof( ushort ) + sizeof( ushort ) + sizeof( ushort ) * (uint)loc_->GetAutomaps().size();
         }
 
         BOUT_BEGIN( this );
         Bout << NETMSG_AUTOMAPS_INFO;
         Bout << msg_len;
-        Bout << (bool) true;        // Clear list
-        Bout << (ushort) locs->size();
-        for( uint i = 0, j = (uint) locs->size(); i < j; i++ )
+        Bout << (bool)true;         // Clear list
+        Bout << (ushort)locs->size();
+        for( uint i = 0, j = (uint)locs->size(); i < j; i++ )
         {
-            Location*  loc_ = ( *locs )[ i ];
+            Location*  loc_ = ( *locs )[i];
             UShortVec& automaps = loc_->GetAutomaps();
             Bout << loc_->GetId();
             Bout << loc_->GetPid();
-            Bout << (ushort) automaps.size();
-            for( uint k = 0, l = (uint) automaps.size(); k < l; k++ )
-                Bout << automaps[ k ];
+            Bout << (ushort)automaps.size();
+            for( uint k = 0, l = (uint)automaps.size(); k < l; k++ )
+                Bout << automaps[k];
         }
         BOUT_END( this );
     }
@@ -4718,18 +4718,18 @@ void Client::Send_AutomapsInfo( void* locs_vec, Location* loc )
     {
         UShortVec& automaps = loc->GetAutomaps();
         uint       msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( bool ) + sizeof( ushort ) +
-                             sizeof( uint ) + sizeof( ushort ) + sizeof( ushort ) + sizeof( ushort ) * (uint) automaps.size();
+                             sizeof( uint ) + sizeof( ushort ) + sizeof( ushort ) + sizeof( ushort ) * (uint)automaps.size();
 
         BOUT_BEGIN( this );
         Bout << NETMSG_AUTOMAPS_INFO;
         Bout << msg_len;
-        Bout << (bool) false;        // Append this information
-        Bout << (ushort) 1;
+        Bout << (bool)false;         // Append this information
+        Bout << (ushort)1;
         Bout << loc->GetId();
         Bout << loc->GetPid();
-        Bout << (ushort) automaps.size();
-        for( uint i = 0, j = (uint) automaps.size(); i < j; i++ )
-            Bout << automaps[ i ];
+        Bout << (ushort)automaps.size();
+        for( uint i = 0, j = (uint)automaps.size(); i < j; i++ )
+            Bout << automaps[i];
         BOUT_END( this );
     }
 }
@@ -4847,7 +4847,7 @@ void Client::Send_PlayersBarterSetHide( Item* item, uint count )
     Bout << item->GetId();
     Bout << item->GetProtoId();
     Bout << count;
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CONTAINER ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CONTAINER], sizeof( item->Data ) );
     BOUT_END( this );
 
     if( item->PLexems )
@@ -4874,7 +4874,7 @@ void Client::Send_RunClientScript( const char* func_name, int p0, int p1, int p2
 
     ushort func_name_len = Str::Length( func_name );
     ushort p3len = ( p3 ? Str::Length( p3 ) : 0 );
-    ushort p4size = (uint) p4.size();
+    ushort p4size = (uint)p4.size();
     uint   msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( func_name_len ) + func_name_len + sizeof( p0 ) + sizeof( p1 ) + sizeof( p2 ) + sizeof( p3len ) + p3len + sizeof( p4size ) + p4size * sizeof( uint );
 
     BOUT_BEGIN( this );
@@ -4890,7 +4890,7 @@ void Client::Send_RunClientScript( const char* func_name, int p0, int p1, int p2
         Bout.Push( p3, p3len );
     Bout << p4size;
     if( p4size )
-        Bout.Push( (char*) &p4[ 0 ], p4size * sizeof( uint ) );
+        Bout.Push( (char*)&p4[0], p4size * sizeof( uint ) );
     BOUT_END( this );
 }
 
@@ -4958,33 +4958,33 @@ void Client::Send_CheckUIDS()
     if( IsSendDisabled() )
         return;
 
-    const uint uid_msg[ 5 ] = { NETMSG_CHECK_UID0, NETMSG_CHECK_UID1, NETMSG_CHECK_UID2, NETMSG_CHECK_UID3, NETMSG_CHECK_UID4 };
-    uint       msg = uid_msg[ Random( 0, 4 ) ];
+    const uint uid_msg[5] = { NETMSG_CHECK_UID0, NETMSG_CHECK_UID1, NETMSG_CHECK_UID2, NETMSG_CHECK_UID3, NETMSG_CHECK_UID4 };
+    uint       msg = uid_msg[Random( 0, 4 )];
     uchar      rnd_count = Random( 1, 21 );
     uchar      rnd_count2 = Random( 2, 12 );
-    uint       uidxor[ 5 ] = { (uint) Random( 1, 0x6FFFFFFF ), (uint) Random( 1, 0x6FFFFFFF ), (uint) Random( 1, 0x6FFFFFFF ), (uint) Random( 1, 0x6FFFFFFF ), (uint) Random( 1, 0x6FFFFFFF ) };
-    uint       uid[ 5 ] = { UID[ 0 ] ^ uidxor[ 0 ], UID[ 1 ] ^ uidxor[ 1 ], UID[ 2 ] ^ uidxor[ 2 ], UID[ 3 ] ^ uidxor[ 3 ], UID[ 4 ] ^ uidxor[ 4 ] };
+    uint       uidxor[5] = { (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ) };
+    uint       uid[5] = { UID[0] ^ uidxor[0], UID[1] ^ uidxor[1], UID[2] ^ uidxor[2], UID[3] ^ uidxor[3], UID[4] ^ uidxor[4] };
     uint       msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( uid ) + sizeof( uidxor ) + sizeof( rnd_count ) * 2 + rnd_count + rnd_count2;
 
     BOUT_BEGIN( this );
     Bout << msg;
     Bout << msg_len;
-    Bout << uid[ 3 ];
-    Bout << uidxor[ 0 ];
+    Bout << uid[3];
+    Bout << uidxor[0];
     Bout << rnd_count;
-    Bout << uid[ 1 ];
-    Bout << uidxor[ 2 ];
+    Bout << uid[1];
+    Bout << uidxor[2];
     for( int i = 0; i < rnd_count; i++ )
-        Bout << (uchar) Random( 0, 255 );
-    Bout << uid[ 2 ];
-    Bout << uidxor[ 1 ];
-    Bout << uid[ 4 ];
+        Bout << (uchar)Random( 0, 255 );
+    Bout << uid[2];
+    Bout << uidxor[1];
+    Bout << uid[4];
     Bout << rnd_count2;
-    Bout << uidxor[ 3 ];
-    Bout << uidxor[ 4 ];
-    Bout << uid[ 0 ];
+    Bout << uidxor[3];
+    Bout << uidxor[4];
+    Bout << uid[0];
     for( int i = 0; i < rnd_count2; i++ )
-        Bout << (uchar) Random( 0, 255 );
+        Bout << (uchar)Random( 0, 255 );
     BOUT_END( this );
 }
 
@@ -4995,7 +4995,7 @@ void Client::Send_SomeItem( Item* item )
     Bout << item->GetId();
     Bout << item->GetProtoId();
     Bout << item->AccCritter.Slot;
-    Bout.Push( (char*) &item->Data, Item::ItemData::SendMask[ ITEM_DATA_MASK_CRITTER ], sizeof( item->Data ) );
+    Bout.Push( (char*)&item->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CRITTER], sizeof( item->Data ) );
     BOUT_END( this );
 }
 
@@ -5012,7 +5012,7 @@ bool Client::CheckKnownLocById( uint loc_id )
         return false;
 
     for( int i = 0; i < data_ext->LocationsCount; i++ )
-        if( data_ext->LocationsId[ i ] == loc_id )
+        if( data_ext->LocationsId[i] == loc_id )
             return true;
     return false;
 }
@@ -5027,7 +5027,7 @@ bool Client::CheckKnownLocByPid( ushort loc_pid )
 
     for( int i = 0; i < data_ext->LocationsCount; i++ )
     {
-        Location* loc = MapMngr.GetLocation( data_ext->LocationsId[ i ] );
+        Location* loc = MapMngr.GetLocation( data_ext->LocationsId[i] );
         if( loc && loc->GetPid() == loc_pid )
             return true;
     }
@@ -5043,15 +5043,15 @@ void Client::AddKnownLoc( uint loc_id )
     if( data_ext->LocationsCount >= MAX_STORED_LOCATIONS )
     {
         // Erase 100..199
-        memcpy( &data_ext->LocationsId[ 100 ], &data_ext->LocationsId[ 200 ], MAX_STORED_LOCATIONS - 100 );
+        memcpy( &data_ext->LocationsId[100], &data_ext->LocationsId[200], MAX_STORED_LOCATIONS - 100 );
         data_ext->LocationsCount = MAX_STORED_LOCATIONS - 100;
     }
 
     for( int i = 0; i < data_ext->LocationsCount; i++ )
-        if( data_ext->LocationsId[ i ] == loc_id )
+        if( data_ext->LocationsId[i] == loc_id )
             return;
 
-    data_ext->LocationsId[ data_ext->LocationsCount ] = loc_id;
+    data_ext->LocationsId[data_ext->LocationsCount] = loc_id;
     data_ext->LocationsCount++;
 }
 
@@ -5065,11 +5065,11 @@ void Client::EraseKnownLoc( uint loc_id )
 
     for( int i = 0; i < data_ext->LocationsCount; i++ )
     {
-        uint& cur_loc_id = data_ext->LocationsId[ i ];
+        uint& cur_loc_id = data_ext->LocationsId[i];
         if( cur_loc_id == loc_id )
         {
             // Swap
-            uint& last_loc_id = data_ext->LocationsId[ data_ext->LocationsCount - 1 ];
+            uint& last_loc_id = data_ext->LocationsId[data_ext->LocationsCount - 1];
             if( i != data_ext->LocationsCount - 1 )
                 cur_loc_id = last_loc_id;
             data_ext->LocationsCount--;
@@ -5094,22 +5094,22 @@ Client* Client::BarterGetOpponent( uint opponent_id )
     {
         Critter* cr = ( GetMap() ? GetCritSelf( BarterOpponent, true ) : GroupMove->GetCritter( BarterOpponent ) );
         if( cr && cr->IsPlayer() )
-            ( (Client*) cr )->BarterEnd();
+            ( (Client*)cr )->BarterEnd();
         BarterEnd();
     }
 
     Critter* cr = ( GetMap() ? GetCritSelf( opponent_id, true ) : GroupMove->GetCritter( opponent_id ) );
-    if( !cr || !cr->IsPlayer() || !cr->IsLife() || cr->IsBusy() || cr->GetParam( TO_BATTLE ) || ( (Client*) cr )->IsOffline() ||
+    if( !cr || !cr->IsPlayer() || !cr->IsLife() || cr->IsBusy() || cr->GetParam( TO_BATTLE ) || ( (Client*)cr )->IsOffline() ||
         ( GetMap() && !CheckDist( GetHexX(), GetHexY(), cr->GetHexX(), cr->GetHexY(), BARTER_DIST + GetMultihex() + cr->GetMultihex() ) ) )
     {
         if( cr && cr->IsPlayer() && BarterOpponent == cr->GetId() )
-            ( (Client*) cr )->BarterEnd();
+            ( (Client*)cr )->BarterEnd();
         BarterEnd();
         return NULL;
     }
 
     BarterOpponent = cr->GetId();
-    return (Client*) cr;
+    return (Client*)cr;
 }
 
 void Client::BarterEnd()
@@ -5305,7 +5305,7 @@ void Client::CloseTalk()
 /* NPC                                                                  */
 /************************************************************************/
 
-Npc::Npc(): NextRefreshBagTick( 0 )
+Npc::Npc() : NextRefreshBagTick( 0 )
 {
     CritterIsNpc = true;
     MEMORY_PROCESS( MEMORY_NPC, sizeof( Npc ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 );
@@ -5314,10 +5314,10 @@ Npc::Npc(): NextRefreshBagTick( 0 )
 
 Npc::~Npc()
 {
-    MEMORY_PROCESS( MEMORY_NPC, -(int) ( sizeof( Npc ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 ) );
+    MEMORY_PROCESS( MEMORY_NPC, -(int)( sizeof( Npc ) + sizeof( GlobalMapGroup ) + 40 + sizeof( Item ) * 2 ) );
     if( DataExt )
     {
-        MEMORY_PROCESS( MEMORY_NPC, -(int) sizeof( CritDataExt ) );
+        MEMORY_PROCESS( MEMORY_NPC, -(int)sizeof( CritDataExt ) );
         SAFEDEL( DataExt );
     }
     DropPlanes();
@@ -5332,13 +5332,13 @@ void Npc::RefreshBag()
     SyncLockItems();
 
     // Collect pids and count
-    static THREAD uint pids[ MAX_ITEM_PROTOTYPES ];
+    static THREAD uint pids[MAX_ITEM_PROTOTYPES];
     memzero( &pids, sizeof( pids ) );
 
     for( auto it = invItems.begin(), end = invItems.end(); it != end; ++it )
     {
         Item* item = *it;
-        pids[ item->GetProtoId() ] += item->GetCount();
+        pids[item->GetProtoId()] += item->GetCount();
 
         // Repair/reload item in slots
         if( item->AccCritter.Slot != SLOT_INV )
@@ -5357,13 +5357,13 @@ void Npc::RefreshBag()
         uint need_count = Random( 2, 4 );
         for( uint i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
         {
-            if( pids[ i ] <= need_count )
+            if( pids[i] <= need_count )
                 continue;
             ProtoItem* proto_item = ItemMngr.GetProtoItem( i );
             if( !proto_item || proto_item->Stackable )
                 continue;
             ItemMngr.SetItemCritter( this, i, need_count );
-            pids[ i ] = need_count;
+            pids[i] = need_count;
             need_count = Random( 2, 4 );
         }
     }
@@ -5372,7 +5372,7 @@ void Npc::RefreshBag()
     bool drop_last_weapon = false;
 
     // Internal bag
-    if( !Data.Params[ ST_BAG_ID ] )
+    if( !Data.Params[ST_BAG_ID] )
     {
         if( !Data.BagSize )
             return;
@@ -5380,9 +5380,9 @@ void Npc::RefreshBag()
         // Update cur items
         for( int k = 0; k < Data.BagSize; k++ )
         {
-            NpcBagItem& item = Data.Bag[ k ];
+            NpcBagItem& item = Data.Bag[k];
             uint        count = item.MinCnt;
-            if( pids[ item.ItemPid ] > count )
+            if( pids[item.ItemPid] > count )
                 continue;
             if( item.MinCnt != item.MaxCnt )
                 count = Random( item.MinCnt, item.MaxCnt );
@@ -5393,29 +5393,29 @@ void Npc::RefreshBag()
     // External bags
     else
     {
-        NpcBag& bag = AIMngr.GetBag( Data.Params[ ST_BAG_ID ] );
+        NpcBag& bag = AIMngr.GetBag( Data.Params[ST_BAG_ID] );
         if( bag.empty() )
             return;
 
         // Check combinations, update or create new
         for( uint i = 0; i < bag.size(); i++ )
         {
-            NpcBagCombination& comb = bag[ i ];
+            NpcBagCombination& comb = bag[i];
             bool               create = true;
-            if( i < MAX_NPC_BAGS_PACKS && Data.BagCurrentSet[ i ] < comb.size() )
+            if( i < MAX_NPC_BAGS_PACKS && Data.BagCurrentSet[i] < comb.size() )
             {
-                NpcBagItems& items = comb[ Data.BagCurrentSet[ i ] ];
+                NpcBagItems& items = comb[Data.BagCurrentSet[i]];
                 for( uint l = 0; l < items.size(); l++ )
                 {
-                    NpcBagItem& item = items[ l ];
-                    if( pids[ item.ItemPid ] > 0 )
+                    NpcBagItem& item = items[l];
+                    if( pids[item.ItemPid] > 0 )
                     {
                         // Update cur items
                         for( uint k = 0; k < items.size(); k++ )
                         {
-                            NpcBagItem& item_ = items[ k ];
+                            NpcBagItem& item_ = items[k];
                             uint        count = item_.MinCnt;
-                            if( pids[ item_.ItemPid ] > count )
+                            if( pids[item_.ItemPid] > count )
                                 continue;
                             if( item_.MinCnt != item_.MaxCnt )
                                 count = Random( item_.MinCnt, item_.MaxCnt );
@@ -5433,12 +5433,12 @@ label_EndCycles:
             // Create new combination
             if( create && comb.size() )
             {
-                int          rnd = Random( 0, (int) comb.size() - 1 );
-                Data.BagCurrentSet[ i ] = rnd;
-                NpcBagItems& items = comb[ rnd ];
+                int          rnd = Random( 0, (int)comb.size() - 1 );
+                Data.BagCurrentSet[i] = rnd;
+                NpcBagItems& items = comb[rnd];
                 for( uint k = 0; k < items.size(); k++ )
                 {
-                    NpcBagItem& bag_item = items[ k ];
+                    NpcBagItem& bag_item = items[k];
                     uint        count = bag_item.MinCnt;
                     if( bag_item.MinCnt != bag_item.MaxCnt )
                         count = Random( bag_item.MinCnt, bag_item.MaxCnt );
@@ -5452,7 +5452,7 @@ label_EndCycles:
                             {
                                 Item* item = GetItemByPid( bag_item.ItemPid );
                                 if( item && MoveItem( SLOT_INV, bag_item.ItemSlot, item->GetId(), item->GetCount() ) )
-                                    Data.FavoriteItemPid[ bag_item.ItemSlot ] = bag_item.ItemPid;
+                                    Data.FavoriteItemPid[bag_item.ItemSlot] = bag_item.ItemPid;
                             }
                         }
                         drop_last_weapon = true;
@@ -5462,10 +5462,10 @@ label_EndCycles:
         }
     }
 
-    if( drop_last_weapon && Data.Params[ ST_LAST_WEAPON_ID ] )
+    if( drop_last_weapon && Data.Params[ST_LAST_WEAPON_ID] )
     {
         ChangeParam( ST_LAST_WEAPON_ID );
-        Data.Params[ ST_LAST_WEAPON_ID ] = 0;
+        Data.Params[ST_LAST_WEAPON_ID] = 0;
     }
 }
 
@@ -5515,7 +5515,7 @@ bool Npc::AddPlane( int reason, AIDataPlane* plane, bool is_child, Critter* some
     plane->Assigned = true;
     if( is_child )
     {
-        AIDataPlane* parent = aiPlanes[ 0 ]->GetCurPlane();
+        AIDataPlane* parent = aiPlanes[0]->GetCurPlane();
         parent->ChildPlane = plane;
         plane->Priority = parent->Priority;
     }
@@ -5529,10 +5529,10 @@ bool Npc::AddPlane( int reason, AIDataPlane* plane, bool is_child, Critter* some
         {
             uint i = 0;
             for( ; i < aiPlanes.size(); i++ )
-                if( plane->Priority > aiPlanes[ i ]->Priority )
+                if( plane->Priority > aiPlanes[i]->Priority )
                     break;
             aiPlanes.insert( aiPlanes.begin() + i, plane );
-            if( i && plane->Priority == aiPlanes[ 0 ]->Priority )
+            if( i && plane->Priority == aiPlanes[0]->Priority )
                 SetBestCurPlane();
         }
     }
@@ -5545,8 +5545,8 @@ void Npc::NextPlane( int reason, Critter* some_cr, Item* some_item )
         return;
     SendA_XY();
 
-    AIDataPlane* cur = aiPlanes[ 0 ];
-    AIDataPlane* last = aiPlanes[ 0 ]->GetCurPlane();
+    AIDataPlane* cur = aiPlanes[0];
+    AIDataPlane* last = aiPlanes[0]->GetCurPlane();
 
     aiPlanes.erase( aiPlanes.begin() );
     SetBestCurPlane();
@@ -5569,8 +5569,8 @@ void Npc::NextPlane( int reason, Critter* some_cr, Item* some_item )
         if( aiPlanes.size() )
         {
             place = 1;
-            for( uint i = (uint) aiPlanes.size(); place < i; place++ )
-                if( cur->Priority > aiPlanes[ place ]->Priority )
+            for( uint i = (uint)aiPlanes.size(); place < i; place++ )
+                if( cur->Priority > aiPlanes[place]->Priority )
                     break;
         }
         aiPlanes.insert( aiPlanes.begin() + place, cur );
@@ -5592,8 +5592,8 @@ void Npc::NextPlane( int reason, Critter* some_cr, Item* some_item )
 
 bool Npc::RunPlane( int reason, uint& r0, uint& r1, uint& r2 )
 {
-    AIDataPlane* cur = aiPlanes[ 0 ];
-    AIDataPlane* last = aiPlanes[ 0 ]->GetCurPlane();
+    AIDataPlane* cur = aiPlanes[0];
+    AIDataPlane* last = aiPlanes[0]->GetCurPlane();
 //	aiPlanes.erase(aiPlanes.begin());
 
     int result = EventPlaneRun( last, reason, r0, r1, r2 );
@@ -5633,18 +5633,18 @@ bool Npc::RunPlane( int reason, uint& r0, uint& r1, uint& r2 )
 
 bool Npc::IsPlaneAviable( int plane_type )
 {
-    for( uint i = 0, j = (uint) aiPlanes.size(); i < j; i++ )
-        if( aiPlanes[ i ]->IsSelfOrHas( plane_type ) )
+    for( uint i = 0, j = (uint)aiPlanes.size(); i < j; i++ )
+        if( aiPlanes[i]->IsSelfOrHas( plane_type ) )
             return true;
     return false;
 }
 
 void Npc::DropPlanes()
 {
-    for( uint i = 0, j = (uint) aiPlanes.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)aiPlanes.size(); i < j; i++ )
     {
-        aiPlanes[ i ]->Assigned = false;
-        aiPlanes[ i ]->Release();
+        aiPlanes[i]->Assigned = false;
+        aiPlanes[i]->Release();
     }
     aiPlanes.clear();
 }
@@ -5654,16 +5654,16 @@ void Npc::SetBestCurPlane()
     if( aiPlanes.size() < 2 )
         return;
 
-    uint type = aiPlanes[ 0 ]->Type;
-    uint priority = aiPlanes[ 0 ]->Priority;
+    uint type = aiPlanes[0]->Type;
+    uint priority = aiPlanes[0]->Priority;
 
     if( type != AI_PLANE_ATTACK )
         return;
 
     int sort_cnt = 1;
-    for( uint i = 1, j = (uint) aiPlanes.size(); i < j; i++ )
+    for( uint i = 1, j = (uint)aiPlanes.size(); i < j; i++ )
     {
-        if( aiPlanes[ i ]->Priority == priority )
+        if( aiPlanes[i]->Priority == priority )
             sort_cnt++;
         else
             break;
@@ -5679,7 +5679,7 @@ void Npc::SetBestCurPlane()
     int best_dist = -1;
     for( int i = 0; i < sort_cnt; i++ )
     {
-        Critter* cr = GetCritSelf( aiPlanes[ i ]->Attack.TargId, false );
+        Critter* cr = GetCritSelf( aiPlanes[i]->Attack.TargId, false );
         if( !cr )
             continue;
 
@@ -5688,8 +5688,8 @@ void Npc::SetBestCurPlane()
             continue;
         else if( dist == best_dist )
         {
-            Critter* cr2 = GetCritSelf( aiPlanes[ best_plane ]->Attack.TargId, false );
-            if( !cr || cr->Data.Params[ ST_CURRENT_HP ] >= cr2->Data.Params[ ST_CURRENT_HP ] )
+            Critter* cr2 = GetCritSelf( aiPlanes[best_plane]->Attack.TargId, false );
+            if( !cr || cr->Data.Params[ST_CURRENT_HP] >= cr2->Data.Params[ST_CURRENT_HP] )
                 continue;
         }
 
@@ -5698,7 +5698,7 @@ void Npc::SetBestCurPlane()
     }
 
     if( best_plane > 0 )
-        std::swap( aiPlanes[ 0 ], aiPlanes[ best_plane ] );
+        std::swap( aiPlanes[0], aiPlanes[best_plane] );
 }
 
 uint Npc::GetTalkedPlayers()
@@ -5709,7 +5709,7 @@ uint Npc::GetTalkedPlayers()
         Critter* cr = *it;
         if( !cr->IsPlayer() )
             continue;
-        Client* cl = (Client*) cr;
+        Client* cl = (Client*)cr;
         if( cl->Talk.TalkType == TALK_WITH_NPC && cl->Talk.TalkNpc == GetId() )
             talk++;
     }
@@ -5723,7 +5723,7 @@ bool Npc::IsTalkedPlayers()
         Critter* cr = *it;
         if( !cr->IsPlayer() )
             continue;
-        Client* cl = (Client*) cr;
+        Client* cl = (Client*)cr;
         if( cl->Talk.TalkType == TALK_WITH_NPC && cl->Talk.TalkNpc == GetId() )
             return true;
     }
@@ -5738,7 +5738,7 @@ uint Npc::GetBarterPlayers()
         Critter* cr = *it;
         if( !cr->IsPlayer() )
             continue;
-        Client* cl = (Client*) cr;
+        Client* cl = (Client*)cr;
         if( cl->Talk.TalkType == TALK_WITH_NPC && cl->Talk.TalkNpc == GetId() && cl->Talk.Barter )
             barter++;
     }
@@ -5751,8 +5751,8 @@ bool Npc::IsFreeToTalk()
     if( max_talkers < 0 )
         return false;
     else if( !max_talkers )
-        max_talkers = (uint) GameOpt.NpcMaxTalkers;
-    return GetTalkedPlayers() < (uint) max_talkers;
+        max_talkers = (uint)GameOpt.NpcMaxTalkers;
+    return GetTalkedPlayers() < (uint)max_talkers;
 }
 
 bool Npc::IsPlaneNoTalk()
@@ -5789,12 +5789,12 @@ void Npc::MoveToHex( int reason, ushort hx, ushort hy, uchar ori, bool is_run, u
 
 void Npc::SetTarget( int reason, Critter* target, int min_hp, bool is_gag )
 {
-    for( uint i = 0, j = (uint) aiPlanes.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)aiPlanes.size(); i < j; i++ )
     {
-        AIDataPlane* pp = aiPlanes[ i ];
+        AIDataPlane* pp = aiPlanes[i];
         if( pp->Type == AI_PLANE_ATTACK && pp->Attack.TargId == target->GetId() )
         {
-            if( i && pp->Priority == aiPlanes[ 0 ]->Priority )
+            if( i && pp->Priority == aiPlanes[0]->Priority )
                 SetBestCurPlane();
             return;
         }

@@ -66,8 +66,8 @@ public:
     short  OffsetX;
     short  OffsetY;
 
-    char   ScriptName[ 25 + 1 ];
-    char   FuncName[ 25 + 1 ];
+    char   ScriptName[25 + 1];
+    char   FuncName[25 + 1];
 
     uint   LightRGB;
     uchar  Reserved5;
@@ -143,7 +143,7 @@ public:
 
         struct
         {
-            uint Reserved[ 4 ];
+            uint Reserved[4];
             int  Val1;
             int  Val2;
             int  Val3;
@@ -181,16 +181,16 @@ public:
             uchar  CanUse;
             uchar  TriggerNum;
             ushort Reserved0;
-            uint   Reserved1[ 3 ];         // Trash
+            uint   Reserved1[3];           // Trash
             ushort Reserved2;
             uchar  Reserved3;
             uchar  ParamsCount;
-            int    Param[ 5 ];
+            int    Param[5];
         } GENERIC;
 
         struct
         {
-            uint Buffer[ 10 ];
+            uint Buffer[10];
         } ALIGN;
     };
 };
@@ -208,10 +208,10 @@ struct HeaderV9
     int    Time;
     int    CenterX;
     int    CenterY;
-    char   ScriptModule[ 64 + 1 ];
-    char   ScriptFunc[ 64 + 1 ];
-    int    DayTime[ 4 ];
-    uchar  DayColor[ 12 ];
+    char   ScriptModule[64 + 1];
+    char   ScriptFunc[64 + 1];
+    int    DayTime[4];
+    uchar  DayColor[12];
 };
 
 class MapObjectV9
@@ -227,10 +227,10 @@ public:
     uchar  LightDirOff;
     uchar  LightDistance;
     char   LightIntensity;
-    char   ScriptName[ 25 + 1 ];
-    char   FuncName[ 25 + 1 ];
-    uint   Reserved[ 7 ];
-    int    UserData[ 10 ];
+    char   ScriptName[25 + 1];
+    char   FuncName[25 + 1];
+    uint   Reserved[7];
+    int    UserData[10];
 
     union
     {
@@ -238,8 +238,8 @@ public:
         {
             uchar Cond;
             uchar CondExt;
-            short ParamIndex[ 15 ];
-            int   ParamValue[ 15 ];
+            short ParamIndex[15];
+            int   ParamValue[15];
         } MCritter;
 
         struct
@@ -252,7 +252,7 @@ public:
             ushort PicMapDeprecated;
             ushort PicInvDeprecated;
             uchar  InfoOffset;
-            uchar  Reserved[ 3 ];
+            uchar  Reserved[3];
             uint   PicMapHash;
             uint   PicInvHash;
             uint   Count;
@@ -267,7 +267,7 @@ public:
             ushort LockerCondition;
             ushort LockerComplexity;
             short  TrapValue;
-            int    Val[ 10 ];
+            int    Val[10];
         } MItem;
 
         struct
@@ -280,14 +280,14 @@ public:
             ushort PicMapDeprecated;
             ushort PicInvDeprecated;
             uchar  InfoOffset;
-            uchar  Reserved[ 3 ];
+            uchar  Reserved[3];
             uint   PicMapHash;
             uint   PicInvHash;
             bool   CanUse;
             bool   CanTalk;
             uint   TriggerNum;
             uchar  ParamsCount;
-            int    Param[ 5 ];
+            int    Param[5];
             ushort ToMapPid;
             uint   ToEntire;
             ushort ToMapX;
@@ -298,7 +298,7 @@ public:
 
         struct
         {
-            uint Buffer[ 25 ];
+            uint Buffer[25];
         } MAlign;
     };
 };
@@ -310,7 +310,7 @@ public:
 bool ProtoMap::Init( ushort pid, const char* name, int path_type )
 {
     Clear();
-    if( !name || !name[ 0 ] )
+    if( !name || !name[0] )
         return false;
 
     pmapPid = pid;
@@ -330,15 +330,15 @@ bool ProtoMap::Init( ushort pid, const char* name, int path_type )
 void ProtoMap::Clear()
 {
     #ifdef FONLINE_SERVER
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) SceneriesToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) WallsToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) mapEntires.capacity() * sizeof( MapEntire ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) CrittersVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) ItemsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) SceneryVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) GridsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) Header.MaxHexX * Header.MaxHexY );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int) Tiles.capacity() * sizeof( MapEntire ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)SceneriesToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)WallsToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)mapEntires.capacity() * sizeof( MapEntire ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)CrittersVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)ItemsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)SceneryVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)GridsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)Header.MaxHexX * Header.MaxHexY );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)Tiles.capacity() * sizeof( MapEntire ) );
 
     SAFEDELA( HexFlags );
 
@@ -381,22 +381,22 @@ bool ProtoMap::ReadHeader( FileManager& fm, int version )
 {
     HeaderV9 header9;
     memzero( &header9, sizeof( header9 ) );
-    header9.DayTime[ 0 ] = 300;
-    header9.DayTime[ 1 ] = 600;
-    header9.DayTime[ 2 ] = 1140;
-    header9.DayTime[ 3 ] = 1380;
-    header9.DayColor[ 0 ] = 18;
-    header9.DayColor[ 1 ] = 128;
-    header9.DayColor[ 2 ] = 103;
-    header9.DayColor[ 3 ] = 51;
-    header9.DayColor[ 4 ] = 18;
-    header9.DayColor[ 5 ] = 128;
-    header9.DayColor[ 6 ] = 95;
-    header9.DayColor[ 7 ] = 40;
-    header9.DayColor[ 8 ] = 53;
-    header9.DayColor[ 9 ] = 128;
-    header9.DayColor[ 10 ] = 86;
-    header9.DayColor[ 11 ] = 29;
+    header9.DayTime[0] = 300;
+    header9.DayTime[1] = 600;
+    header9.DayTime[2] = 1140;
+    header9.DayTime[3] = 1380;
+    header9.DayColor[0] = 18;
+    header9.DayColor[1] = 128;
+    header9.DayColor[2] = 103;
+    header9.DayColor[3] = 51;
+    header9.DayColor[4] = 18;
+    header9.DayColor[5] = 128;
+    header9.DayColor[6] = 95;
+    header9.DayColor[7] = 40;
+    header9.DayColor[8] = 53;
+    header9.DayColor[9] = 128;
+    header9.DayColor[10] = 86;
+    header9.DayColor[11] = 29;
 
     if( version >= 9 )
     {
@@ -442,7 +442,7 @@ bool ProtoMap::ReadHeader( FileManager& fm, int version )
 
 bool ProtoMap::ReadTiles( FileManager& fm, int version )
 {
-    uint* tiles = new uint[ ( ( Header.MaxHexX / 2 ) * ( Header.MaxHexY / 2 ) * sizeof( uint ) * 2 ) / sizeof( uint ) ];
+    uint* tiles = new uint[( ( Header.MaxHexX / 2 ) * ( Header.MaxHexY / 2 ) * sizeof( uint ) * 2 ) / sizeof( uint )];
     if( !tiles )
         return false;
     fm.SetCurPos( Header.Packed ? 0 : Header.HeaderSize );
@@ -452,15 +452,15 @@ bool ProtoMap::ReadTiles( FileManager& fm, int version )
         // Convert lst offsets to name hashes
         memzero( tiles, ( Header.MaxHexX / 2 ) * ( Header.MaxHexY / 2 ) * sizeof( uint ) * 2 );
         uint  size = ( Header.MaxHexX / 2 ) * ( Header.MaxHexY / 2 ) * sizeof( uint );
-        uint* ptr = new uint[ size / sizeof( uint ) ];
+        uint* ptr = new uint[size / sizeof( uint )];
         if( !fm.CopyMem( ptr, size ) )
             return false;
         for( int x = 0; x < Header.MaxHexX / 2; x++ )
         {
             for( int y = 0; y < Header.MaxHexY / 2; y++ )
             {
-                ushort tile = ( ptr[ y * ( Header.MaxHexX / 2 ) + x ] >> 16 );
-                ushort roof = ( ptr[ y * ( Header.MaxHexX / 2 ) + x ] & 0xFFFF );
+                ushort tile = ( ptr[y * ( Header.MaxHexX / 2 ) + x] >> 16 );
+                ushort roof = ( ptr[y * ( Header.MaxHexX / 2 ) + x] & 0xFFFF );
                 if( tile > 1 && ( tile = Deprecated_GetPicHash( -2, 0, tile ) ) )
                     Tiles.push_back( Tile( tile, x * 2, y * 2, 0, 0, 0, false ) );
                 if( roof > 1 && ( roof = Deprecated_GetPicHash( -2, 0, roof ) ) )
@@ -480,8 +480,8 @@ bool ProtoMap::ReadTiles( FileManager& fm, int version )
     {
         for( int ty = 0; ty < Header.MaxHexY / 2; ty++ )
         {
-            uint tile = tiles[ ty * ( Header.MaxHexX / 2 ) * 2 + tx * 2 ];
-            uint roof = tiles[ ty * ( Header.MaxHexX / 2 ) * 2 + tx * 2 + 1 ];
+            uint tile = tiles[ty * ( Header.MaxHexX / 2 ) * 2 + tx * 2];
+            uint roof = tiles[ty * ( Header.MaxHexX / 2 ) * 2 + tx * 2 + 1];
             if( tile )
                 Tiles.push_back( Tile( tile, tx * 2, ty * 2, 0, 0, 0, false ) );
             if( roof )
@@ -503,12 +503,12 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
 
         vector< MapObjectV5 > objects_v5;
         objects_v5.resize( count );
-        if( !fm.CopyMem( &objects_v5[ 0 ], count * sizeof( MapObjectV5 ) ) )
+        if( !fm.CopyMem( &objects_v5[0], count * sizeof( MapObjectV5 ) ) )
             return false;
 
         for( uint k = 0; k < count; k++ )
         {
-            MapObjectV5& obj_v5 = objects_v5[ k ];
+            MapObjectV5& obj_v5 = objects_v5[k];
             MapObject    obj_v6;
             memzero( &obj_v6, sizeof( obj_v6 ) );
             ProtoItem*   proto = ItemMngr.GetProtoItem( obj_v5.ProtoId );
@@ -516,10 +516,10 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
             if( version < 5 && obj_v5.MapObjType == MAPOBJ_ITEM )
             {
                 obj_v5.ITEM_VAL.Val0 = 0;
-                obj_v5.ITEM_VAL.Val1 = obj_v5.ITEM_VAL.Reserved[ 0 ];
-                obj_v5.ITEM_VAL.Val2 = obj_v5.ITEM_VAL.Reserved[ 1 ];
-                obj_v5.ITEM_VAL.Val3 = obj_v5.ITEM_VAL.Reserved[ 2 ];
-                obj_v5.ITEM_VAL.Val4 = obj_v5.ITEM_VAL.Reserved[ 3 ];
+                obj_v5.ITEM_VAL.Val1 = obj_v5.ITEM_VAL.Reserved[0];
+                obj_v5.ITEM_VAL.Val2 = obj_v5.ITEM_VAL.Reserved[1];
+                obj_v5.ITEM_VAL.Val3 = obj_v5.ITEM_VAL.Reserved[2];
+                obj_v5.ITEM_VAL.Val4 = obj_v5.ITEM_VAL.Reserved[3];
                 obj_v5.ITEM_VAL.Val5 = 0;
             }
 
@@ -551,19 +551,19 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                 obj_v6.MCritter.Cond = obj_v5.CRITTER.Cond;
                 Deprecated_CondExtToAnim2( obj_v5.CRITTER.Cond, obj_v5.CRITTER.CondExt, obj_v6.MCritter.Anim2, obj_v6.MCritter.Anim2 );
                 for( int i = 0; i < 15; i++ )
-                    obj_v6.MCritter.ParamIndex[ i ] = -1;
-                obj_v6.MCritter.ParamIndex[ 0 ] = ST_DIALOG_ID;
-                obj_v6.MCritter.ParamIndex[ 1 ] = ST_AI_ID;
-                obj_v6.MCritter.ParamIndex[ 2 ] = ST_BAG_ID;
-                obj_v6.MCritter.ParamIndex[ 3 ] = ST_TEAM_ID;
-                obj_v6.MCritter.ParamIndex[ 4 ] = ST_NPC_ROLE;
-                obj_v6.MCritter.ParamIndex[ 5 ] = ST_REPLICATION_TIME;
-                obj_v6.MCritter.ParamValue[ 0 ] = obj_v5.CRITTER.DialogId;
-                obj_v6.MCritter.ParamValue[ 1 ] = obj_v5.CRITTER.AiPack;
-                obj_v6.MCritter.ParamValue[ 2 ] = obj_v5.CRITTER.BagId;
-                obj_v6.MCritter.ParamValue[ 3 ] = obj_v5.CRITTER.TeamId;
-                obj_v6.MCritter.ParamValue[ 4 ] = obj_v5.CRITTER.NpcRole;
-                obj_v6.MCritter.ParamValue[ 5 ] = obj_v5.CRITTER.RespawnTime;
+                    obj_v6.MCritter.ParamIndex[i] = -1;
+                obj_v6.MCritter.ParamIndex[0] = ST_DIALOG_ID;
+                obj_v6.MCritter.ParamIndex[1] = ST_AI_ID;
+                obj_v6.MCritter.ParamIndex[2] = ST_BAG_ID;
+                obj_v6.MCritter.ParamIndex[3] = ST_TEAM_ID;
+                obj_v6.MCritter.ParamIndex[4] = ST_NPC_ROLE;
+                obj_v6.MCritter.ParamIndex[5] = ST_REPLICATION_TIME;
+                obj_v6.MCritter.ParamValue[0] = obj_v5.CRITTER.DialogId;
+                obj_v6.MCritter.ParamValue[1] = obj_v5.CRITTER.AiPack;
+                obj_v6.MCritter.ParamValue[2] = obj_v5.CRITTER.BagId;
+                obj_v6.MCritter.ParamValue[3] = obj_v5.CRITTER.TeamId;
+                obj_v6.MCritter.ParamValue[4] = obj_v5.CRITTER.NpcRole;
+                obj_v6.MCritter.ParamValue[5] = obj_v5.CRITTER.RespawnTime;
             }
             else if( obj_v6.MapObjType == MAP_OBJECT_ITEM )
             {
@@ -578,13 +578,13 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                 if( obj_v6.ContainerUID )
                     obj_v6.MItem.ItemSlot = obj_v5.ItemSlot;
                 for( int i = 0; i < 10; i++ )
-                    obj_v6.MItem.Val[ i ] = 0;
-                obj_v6.MItem.Val[ 0 ] = obj_v5.ITEM_VAL.Val0;
-                obj_v6.MItem.Val[ 1 ] = obj_v5.ITEM_VAL.Val1;
-                obj_v6.MItem.Val[ 2 ] = obj_v5.ITEM_VAL.Val2;
-                obj_v6.MItem.Val[ 3 ] = obj_v5.ITEM_VAL.Val3;
-                obj_v6.MItem.Val[ 4 ] = obj_v5.ITEM_VAL.Val4;
-                obj_v6.MItem.Val[ 5 ] = obj_v5.ITEM_VAL.Val5;
+                    obj_v6.MItem.Val[i] = 0;
+                obj_v6.MItem.Val[0] = obj_v5.ITEM_VAL.Val0;
+                obj_v6.MItem.Val[1] = obj_v5.ITEM_VAL.Val1;
+                obj_v6.MItem.Val[2] = obj_v5.ITEM_VAL.Val2;
+                obj_v6.MItem.Val[3] = obj_v5.ITEM_VAL.Val3;
+                obj_v6.MItem.Val[4] = obj_v5.ITEM_VAL.Val4;
+                obj_v6.MItem.Val[5] = obj_v5.ITEM_VAL.Val5;
 
                 if( proto->Type == ITEM_TYPE_AMMO )
                     obj_v6.MItem.Count = obj_v5.AMMO.Count;
@@ -639,7 +639,7 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                     obj_v6.MScenery.TriggerNum = obj_v5.GENERIC.TriggerNum;
                     obj_v6.MScenery.ParamsCount = obj_v5.GENERIC.ParamsCount;
                     for( int i = 0; i < obj_v6.MScenery.ParamsCount; i++ )
-                        obj_v6.MScenery.Param[ i ] = obj_v5.GENERIC.Param[ i ];
+                        obj_v6.MScenery.Param[i] = obj_v5.GENERIC.Param[i];
                 }
             }
 
@@ -675,7 +675,7 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
             Str::Copy( mobj->ScriptName, mobj_v9.ScriptName );
             Str::Copy( mobj->FuncName, mobj_v9.FuncName );
             for( int i = 0; i < 10; i++ )
-                mobj->UserData[ i ] = mobj_v9.UserData[ i ];
+                mobj->UserData[i] = mobj_v9.UserData[i];
             mobj->MapObjType = mobj_v9.MapObjType;
 
             if( mobj->MapObjType == MAP_OBJECT_CRITTER )
@@ -683,9 +683,9 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                 mobj->MCritter.Cond = mobj_v9.MCritter.Cond;
                 Deprecated_CondExtToAnim2( mobj_v9.MCritter.Cond, mobj_v9.MCritter.CondExt, mobj->MCritter.Anim2, mobj->MCritter.Anim2 );
                 for( int i = 0; i < 15; i++ )
-                    mobj->MCritter.ParamIndex[ i ] = mobj_v9.MCritter.ParamIndex[ i ];
+                    mobj->MCritter.ParamIndex[i] = mobj_v9.MCritter.ParamIndex[i];
                 for( int i = 0; i < 15; i++ )
-                    mobj->MCritter.ParamValue[ i ] = mobj_v9.MCritter.ParamValue[ i ];
+                    mobj->MCritter.ParamValue[i] = mobj_v9.MCritter.ParamValue[i];
             }
             else if( mobj->MapObjType == MAP_OBJECT_ITEM )
             {
@@ -710,7 +710,7 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                 mobj->MItem.LockerComplexity = mobj_v9.MItem.LockerComplexity;
                 mobj->MItem.TrapValue = mobj_v9.MItem.TrapValue;
                 for( int i = 0; i < 10; i++ )
-                    mobj->MItem.Val[ i ] = mobj_v9.MItem.Val[ i ];
+                    mobj->MItem.Val[i] = mobj_v9.MItem.Val[i];
             }
             else if( mobj->MapObjType == MAP_OBJECT_SCENERY )
             {
@@ -727,7 +727,7 @@ bool ProtoMap::ReadObjects( FileManager& fm, int version )
                 mobj->MScenery.TriggerNum = mobj_v9.MScenery.TriggerNum;
                 mobj->MScenery.ParamsCount = mobj_v9.MScenery.ParamsCount;
                 for( int i = 0; i < 5; i++ )
-                    mobj->MScenery.Param[ i ] = mobj_v9.MScenery.Param[ i ];
+                    mobj->MScenery.Param[i] = mobj_v9.MScenery.Param[i];
                 mobj->MScenery.ToMapPid = mobj_v9.MScenery.ToMapPid;
                 mobj->MScenery.ToEntire = mobj_v9.MScenery.ToEntire;
                 mobj->MScenery.ToDir = mobj_v9.MScenery.ToDir;
@@ -768,22 +768,22 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                         old_version == FO_MAP_VERSION_V8 || old_version == FO_MAP_VERSION_V9 )
                     {
                         Header.Version = FO_MAP_VERSION_TEXT1;
-                        Header.DayTime[ 0 ] = 300;
-                        Header.DayTime[ 1 ] = 600;
-                        Header.DayTime[ 2 ] = 1140;
-                        Header.DayTime[ 3 ] = 1380;
-                        Header.DayColor[ 0 ] = 18;
-                        Header.DayColor[ 1 ] = 128;
-                        Header.DayColor[ 2 ] = 103;
-                        Header.DayColor[ 3 ] = 51;
-                        Header.DayColor[ 4 ] = 18;
-                        Header.DayColor[ 5 ] = 128;
-                        Header.DayColor[ 6 ] = 95;
-                        Header.DayColor[ 7 ] = 40;
-                        Header.DayColor[ 8 ] = 53;
-                        Header.DayColor[ 9 ] = 128;
-                        Header.DayColor[ 10 ] = 86;
-                        Header.DayColor[ 11 ] = 29;
+                        Header.DayTime[0] = 300;
+                        Header.DayTime[1] = 600;
+                        Header.DayTime[2] = 1140;
+                        Header.DayTime[3] = 1380;
+                        Header.DayColor[0] = 18;
+                        Header.DayColor[1] = 128;
+                        Header.DayColor[2] = 103;
+                        Header.DayColor[3] = 51;
+                        Header.DayColor[4] = 18;
+                        Header.DayColor[5] = 128;
+                        Header.DayColor[6] = 95;
+                        Header.DayColor[7] = 40;
+                        Header.DayColor[8] = 53;
+                        Header.DayColor[9] = 128;
+                        Header.DayColor[10] = 86;
+                        Header.DayColor[11] = 29;
                     }
                 }
                 if( field == "MaxHexX" )
@@ -804,42 +804,42 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                     Str::Copy( Header.ScriptFunc, value.c_str() );
                 if( field == "DayTime" )
                 {
-                    Header.DayTime[ 0 ] = ivalue;
-                    istr >> Header.DayTime[ 1 ];
-                    istr >> Header.DayTime[ 2 ];
-                    istr >> Header.DayTime[ 3 ];
+                    Header.DayTime[0] = ivalue;
+                    istr >> Header.DayTime[1];
+                    istr >> Header.DayTime[2];
+                    istr >> Header.DayTime[3];
                 }
                 if( field == "DayColor0" )
                 {
-                    Header.DayColor[ 0 ] = ivalue;
+                    Header.DayColor[0] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 4 ] = ivalue;
+                    Header.DayColor[4] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 8 ] = ivalue;
+                    Header.DayColor[8] = ivalue;
                 }
                 if( field == "DayColor1" )
                 {
-                    Header.DayColor[ 1 ] = ivalue;
+                    Header.DayColor[1] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 5 ] = ivalue;
+                    Header.DayColor[5] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 9 ] = ivalue;
+                    Header.DayColor[9] = ivalue;
                 }
                 if( field == "DayColor2" )
                 {
-                    Header.DayColor[ 2 ] = ivalue;
+                    Header.DayColor[2] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 6 ] = ivalue;
+                    Header.DayColor[6] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 10 ] = ivalue;
+                    Header.DayColor[10] = ivalue;
                 }
                 if( field == "DayColor3" )
                 {
-                    Header.DayColor[ 3 ] = ivalue;
+                    Header.DayColor[3] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 7 ] = ivalue;
+                    Header.DayColor[7] = ivalue;
                     istr >> ivalue;
-                    Header.DayColor[ 11 ] = ivalue;
+                    Header.DayColor[11] = ivalue;
                 }
             }
         }
@@ -883,7 +883,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
         }
         else
         {
-            char   name[ MAX_FOTEXT ];
+            char   name[MAX_FOTEXT];
             int    hx, hy;
             int    ox, oy, layer;
             bool   is_roof;
@@ -909,7 +909,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                     {
                         while( --len >= 5 )
                         {
-                            switch( type[ len ] )
+                            switch( type[len] )
                             {
                             case 'o':
                                 has_offs = true;
@@ -948,7 +948,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
     {
         istrstream istr( objects_str );
         string     field;
-        char       svalue[ MAX_FOTEXT ];
+        char       svalue[MAX_FOTEXT];
         int        ivalue;
         while( !istr.eof() && !istr.fail() )
         {
@@ -968,7 +968,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                     {
                         mobj->MCritter.Cond = COND_LIFE;
                         for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
-                            mobj->MCritter.ParamIndex[ i ] = -1;
+                            mobj->MCritter.ParamIndex[i] = -1;
                     }
                     else if( ivalue != MAP_OBJECT_ITEM && ivalue != MAP_OBJECT_SCENERY )
                     {
@@ -1012,25 +1012,25 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                     else if( field == "FuncName" )
                         Str::Copy( mobj.FuncName, Str::EraseFrontBackSpecificChars( svalue ) );
                     else if( field == "UserData0" )
-                        mobj.UserData[ 0 ] = ivalue;
+                        mobj.UserData[0] = ivalue;
                     else if( field == "UserData1" )
-                        mobj.UserData[ 1 ] = ivalue;
+                        mobj.UserData[1] = ivalue;
                     else if( field == "UserData2" )
-                        mobj.UserData[ 2 ] = ivalue;
+                        mobj.UserData[2] = ivalue;
                     else if( field == "UserData3" )
-                        mobj.UserData[ 3 ] = ivalue;
+                        mobj.UserData[3] = ivalue;
                     else if( field == "UserData4" )
-                        mobj.UserData[ 4 ] = ivalue;
+                        mobj.UserData[4] = ivalue;
                     else if( field == "UserData5" )
-                        mobj.UserData[ 5 ] = ivalue;
+                        mobj.UserData[5] = ivalue;
                     else if( field == "UserData6" )
-                        mobj.UserData[ 6 ] = ivalue;
+                        mobj.UserData[6] = ivalue;
                     else if( field == "UserData7" )
-                        mobj.UserData[ 7 ] = ivalue;
+                        mobj.UserData[7] = ivalue;
                     else if( field == "UserData8" )
-                        mobj.UserData[ 8 ] = ivalue;
+                        mobj.UserData[8] = ivalue;
                     else if( field == "UserData9" )
-                        mobj.UserData[ 9 ] = ivalue;
+                        mobj.UserData[9] = ivalue;
                     // Critter
                     else if( mobj.MapObjType == MAP_OBJECT_CRITTER )
                     {
@@ -1046,11 +1046,11 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                         {
                             for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
                             {
-                                char str[ 128 ];
+                                char str[128];
                                 if( field == Str::Format( str, "Critter_ParamIndex%d", i ) )
-                                    mobj.MCritter.ParamIndex[ i ] = ConstantsManager::GetParamId( Str::EraseFrontBackSpecificChars( svalue ) );
+                                    mobj.MCritter.ParamIndex[i] = ConstantsManager::GetParamId( Str::EraseFrontBackSpecificChars( svalue ) );
                                 else if( field == Str::Format( str, "Critter_ParamValue%d", i ) )
-                                    mobj.MCritter.ParamValue[ i ] = ivalue;
+                                    mobj.MCritter.ParamValue[i] = ivalue;
                                 else
                                     continue;
                                 break;
@@ -1115,25 +1115,25 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                             else if( field == "Item_TrapValue" )
                                 mobj.MItem.TrapValue = ivalue;
                             else if( field == "Item_Val0" )
-                                mobj.MItem.Val[ 0 ] = ivalue;
+                                mobj.MItem.Val[0] = ivalue;
                             else if( field == "Item_Val1" )
-                                mobj.MItem.Val[ 1 ] = ivalue;
+                                mobj.MItem.Val[1] = ivalue;
                             else if( field == "Item_Val2" )
-                                mobj.MItem.Val[ 2 ] = ivalue;
+                                mobj.MItem.Val[2] = ivalue;
                             else if( field == "Item_Val3" )
-                                mobj.MItem.Val[ 3 ] = ivalue;
+                                mobj.MItem.Val[3] = ivalue;
                             else if( field == "Item_Val4" )
-                                mobj.MItem.Val[ 4 ] = ivalue;
+                                mobj.MItem.Val[4] = ivalue;
                             else if( field == "Item_Val5" )
-                                mobj.MItem.Val[ 5 ] = ivalue;
+                                mobj.MItem.Val[5] = ivalue;
                             else if( field == "Item_Val6" )
-                                mobj.MItem.Val[ 6 ] = ivalue;
+                                mobj.MItem.Val[6] = ivalue;
                             else if( field == "Item_Val7" )
-                                mobj.MItem.Val[ 7 ] = ivalue;
+                                mobj.MItem.Val[7] = ivalue;
                             else if( field == "Item_Val8" )
-                                mobj.MItem.Val[ 8 ] = ivalue;
+                                mobj.MItem.Val[8] = ivalue;
                             else if( field == "Item_Val9" )
-                                mobj.MItem.Val[ 9 ] = ivalue;
+                                mobj.MItem.Val[9] = ivalue;
                             // Deprecated
                             else if( field == "Item_DeteorationFlags" )
                                 mobj.MItem.BrokenFlags = ivalue;
@@ -1156,15 +1156,15 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                             else if( field == "Scenery_ParamsCount" )
                                 mobj.MScenery.ParamsCount = ivalue;
                             else if( field == "Scenery_Param0" )
-                                mobj.MScenery.Param[ 0 ] = ivalue;
+                                mobj.MScenery.Param[0] = ivalue;
                             else if( field == "Scenery_Param1" )
-                                mobj.MScenery.Param[ 1 ] = ivalue;
+                                mobj.MScenery.Param[1] = ivalue;
                             else if( field == "Scenery_Param2" )
-                                mobj.MScenery.Param[ 2 ] = ivalue;
+                                mobj.MScenery.Param[2] = ivalue;
                             else if( field == "Scenery_Param3" )
-                                mobj.MScenery.Param[ 3 ] = ivalue;
+                                mobj.MScenery.Param[3] = ivalue;
                             else if( field == "Scenery_Param4" )
-                                mobj.MScenery.Param[ 4 ] = ivalue;
+                                mobj.MScenery.Param[4] = ivalue;
                             else if( field == "Scenery_ToMapPid" )
                                 mobj.MScenery.ToMapPid = ivalue;
                             else if( field == "Scenery_ToEntire" )
@@ -1194,23 +1194,23 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
     fm.SetStr( "%-20s %d\n", "MaxHexY", Header.MaxHexY );
     fm.SetStr( "%-20s %d\n", "WorkHexX", Header.WorkHexX );
     fm.SetStr( "%-20s %d\n", "WorkHexY", Header.WorkHexY );
-    fm.SetStr( "%-20s %s\n", "ScriptModule", Header.ScriptModule[ 0 ] ? Header.ScriptModule : "-" );
-    fm.SetStr( "%-20s %s\n", "ScriptFunc", Header.ScriptFunc[ 0 ] ? Header.ScriptFunc : "-" );
+    fm.SetStr( "%-20s %s\n", "ScriptModule", Header.ScriptModule[0] ? Header.ScriptModule : "-" );
+    fm.SetStr( "%-20s %s\n", "ScriptFunc", Header.ScriptFunc[0] ? Header.ScriptFunc : "-" );
     fm.SetStr( "%-20s %d\n", "NoLogOut", Header.NoLogOut );
     fm.SetStr( "%-20s %d\n", "Time", Header.Time );
-    fm.SetStr( "%-20s %-4d %-4d %-4d %-4d\n", "DayTime", Header.DayTime[ 0 ], Header.DayTime[ 1 ], Header.DayTime[ 2 ], Header.DayTime[ 3 ] );
-    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor0", Header.DayColor[ 0 ], Header.DayColor[ 4 ], Header.DayColor[ 8 ] );
-    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor1", Header.DayColor[ 1 ], Header.DayColor[ 5 ], Header.DayColor[ 9 ] );
-    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor2", Header.DayColor[ 2 ], Header.DayColor[ 6 ], Header.DayColor[ 10 ] );
-    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor3", Header.DayColor[ 3 ], Header.DayColor[ 7 ], Header.DayColor[ 11 ] );
+    fm.SetStr( "%-20s %-4d %-4d %-4d %-4d\n", "DayTime", Header.DayTime[0], Header.DayTime[1], Header.DayTime[2], Header.DayTime[3] );
+    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor0", Header.DayColor[0], Header.DayColor[4], Header.DayColor[8] );
+    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor1", Header.DayColor[1], Header.DayColor[5], Header.DayColor[9] );
+    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor2", Header.DayColor[2], Header.DayColor[6], Header.DayColor[10] );
+    fm.SetStr( "%-20s %-3d %-3d %-3d\n", "DayColor3", Header.DayColor[3], Header.DayColor[7], Header.DayColor[11] );
     fm.SetStr( "\n" );
 
     // Tiles
     fm.SetStr( "[%s]\n", APP_TILES );
-    char tile_str[ 256 ];
-    for( uint i = 0, j = (uint) Tiles.size(); i < j; i++ )
+    char tile_str[256];
+    for( uint i = 0, j = (uint)Tiles.size(); i < j; i++ )
     {
-        Tile&       tile = Tiles[ i ];
+        Tile&       tile = Tiles[i];
         const char* name = Str::GetName( tile.NameHash );
         if( name )
         {
@@ -1246,7 +1246,7 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
     fm.SetStr( "[%s]\n", APP_OBJECTS );
     for( uint k = 0; k < MObjects.size(); k++ )
     {
-        MapObject& mobj = *MObjects[ k ];
+        MapObject& mobj = *MObjects[k];
         // Shared
         fm.SetStr( "%-20s %d\n", "MapObjType", mobj.MapObjType );
         fm.SetStr( "%-20s %d\n", "ProtoId", mobj.ProtoId );
@@ -1274,30 +1274,30 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
             fm.SetStr( "%-20s %d\n", "LightDistance", mobj.LightDistance );
         if( mobj.LightIntensity )
             fm.SetStr( "%-20s %d\n", "LightIntensity", mobj.LightIntensity );
-        if( mobj.ScriptName[ 0 ] )
+        if( mobj.ScriptName[0] )
             fm.SetStr( "%-20s %s\n", "ScriptName", mobj.ScriptName );
-        if( mobj.FuncName[ 0 ] )
+        if( mobj.FuncName[0] )
             fm.SetStr( "%-20s %s\n", "FuncName", mobj.FuncName );
-        if( mobj.UserData[ 0 ] )
-            fm.SetStr( "%-20s %d\n", "UserData0", mobj.UserData[ 0 ] );
-        if( mobj.UserData[ 1 ] )
-            fm.SetStr( "%-20s %d\n", "UserData1", mobj.UserData[ 1 ] );
-        if( mobj.UserData[ 2 ] )
-            fm.SetStr( "%-20s %d\n", "UserData2", mobj.UserData[ 2 ] );
-        if( mobj.UserData[ 3 ] )
-            fm.SetStr( "%-20s %d\n", "UserData3", mobj.UserData[ 3 ] );
-        if( mobj.UserData[ 4 ] )
-            fm.SetStr( "%-20s %d\n", "UserData4", mobj.UserData[ 4 ] );
-        if( mobj.UserData[ 5 ] )
-            fm.SetStr( "%-20s %d\n", "UserData5", mobj.UserData[ 5 ] );
-        if( mobj.UserData[ 6 ] )
-            fm.SetStr( "%-20s %d\n", "UserData6", mobj.UserData[ 6 ] );
-        if( mobj.UserData[ 7 ] )
-            fm.SetStr( "%-20s %d\n", "UserData7", mobj.UserData[ 7 ] );
-        if( mobj.UserData[ 8 ] )
-            fm.SetStr( "%-20s %d\n", "UserData8", mobj.UserData[ 8 ] );
-        if( mobj.UserData[ 9 ] )
-            fm.SetStr( "%-20s %d\n", "UserData9", mobj.UserData[ 9 ] );
+        if( mobj.UserData[0] )
+            fm.SetStr( "%-20s %d\n", "UserData0", mobj.UserData[0] );
+        if( mobj.UserData[1] )
+            fm.SetStr( "%-20s %d\n", "UserData1", mobj.UserData[1] );
+        if( mobj.UserData[2] )
+            fm.SetStr( "%-20s %d\n", "UserData2", mobj.UserData[2] );
+        if( mobj.UserData[3] )
+            fm.SetStr( "%-20s %d\n", "UserData3", mobj.UserData[3] );
+        if( mobj.UserData[4] )
+            fm.SetStr( "%-20s %d\n", "UserData4", mobj.UserData[4] );
+        if( mobj.UserData[5] )
+            fm.SetStr( "%-20s %d\n", "UserData5", mobj.UserData[5] );
+        if( mobj.UserData[6] )
+            fm.SetStr( "%-20s %d\n", "UserData6", mobj.UserData[6] );
+        if( mobj.UserData[7] )
+            fm.SetStr( "%-20s %d\n", "UserData7", mobj.UserData[7] );
+        if( mobj.UserData[8] )
+            fm.SetStr( "%-20s %d\n", "UserData8", mobj.UserData[8] );
+        if( mobj.UserData[9] )
+            fm.SetStr( "%-20s %d\n", "UserData9", mobj.UserData[9] );
         // Critter
         if( mobj.MapObjType == MAP_OBJECT_CRITTER )
         {
@@ -1306,16 +1306,16 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
             fm.SetStr( "%-20s %d\n", "Critter_Anim2", mobj.MCritter.Anim2 );
             for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
             {
-                if( mobj.MCritter.ParamIndex[ i ] >= 0 && mobj.MCritter.ParamIndex[ i ] < MAX_PARAMS )
+                if( mobj.MCritter.ParamIndex[i] >= 0 && mobj.MCritter.ParamIndex[i] < MAX_PARAMS )
                 {
-                    const char* param_name = ConstantsManager::GetParamName( mobj.MCritter.ParamIndex[ i ] );
+                    const char* param_name = ConstantsManager::GetParamName( mobj.MCritter.ParamIndex[i] );
                     if( param_name )
                     {
-                        char str[ 128 ];
+                        char str[128];
                         Str::Format( str, "Critter_ParamIndex%d", i );
                         fm.SetStr( "%-20s %s\n", str, param_name );
                         Str::Format( str, "Critter_ParamValue%d", i );
-                        fm.SetStr( "%-20s %d\n", str, mobj.MCritter.ParamValue[ i ] );
+                        fm.SetStr( "%-20s %d\n", str, mobj.MCritter.ParamValue[i] );
                     }
                 }
             }
@@ -1333,9 +1333,9 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
                 fm.SetStr( "%-20s %d\n", "AnimStayEnd", mobj.MItem.AnimStayEnd );
             if( mobj.MItem.AnimWait )
                 fm.SetStr( "%-20s %d\n", "AnimWait", mobj.MItem.AnimWait );
-            if( mobj.RunTime.PicMapName[ 0 ] )
+            if( mobj.RunTime.PicMapName[0] )
                 fm.SetStr( "%-20s %s\n", "PicMapName", mobj.RunTime.PicMapName );
-            if( mobj.RunTime.PicInvName[ 0 ] )
+            if( mobj.RunTime.PicInvName[0] )
                 fm.SetStr( "%-20s %s\n", "PicInvName", mobj.RunTime.PicInvName );
             if( mobj.MItem.InfoOffset )
                 fm.SetStr( "%-20s %d\n", "InfoOffset", mobj.MItem.InfoOffset );
@@ -1363,26 +1363,26 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
                     fm.SetStr( "%-20s %d\n", "Item_LockerComplexity", mobj.MItem.LockerComplexity );
                 if( mobj.MItem.TrapValue )
                     fm.SetStr( "%-20s %d\n", "Item_TrapValue", mobj.MItem.TrapValue );
-                if( mobj.MItem.Val[ 0 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val0", mobj.MItem.Val[ 0 ] );
-                if( mobj.MItem.Val[ 1 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val1", mobj.MItem.Val[ 1 ] );
-                if( mobj.MItem.Val[ 2 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val2", mobj.MItem.Val[ 2 ] );
-                if( mobj.MItem.Val[ 3 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val3", mobj.MItem.Val[ 3 ] );
-                if( mobj.MItem.Val[ 4 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val4", mobj.MItem.Val[ 4 ] );
-                if( mobj.MItem.Val[ 5 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val5", mobj.MItem.Val[ 5 ] );
-                if( mobj.MItem.Val[ 6 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val6", mobj.MItem.Val[ 6 ] );
-                if( mobj.MItem.Val[ 7 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val7", mobj.MItem.Val[ 7 ] );
-                if( mobj.MItem.Val[ 8 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val8", mobj.MItem.Val[ 8 ] );
-                if( mobj.MItem.Val[ 9 ] )
-                    fm.SetStr( "%-20s %d\n", "Item_Val9", mobj.MItem.Val[ 9 ] );
+                if( mobj.MItem.Val[0] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val0", mobj.MItem.Val[0] );
+                if( mobj.MItem.Val[1] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val1", mobj.MItem.Val[1] );
+                if( mobj.MItem.Val[2] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val2", mobj.MItem.Val[2] );
+                if( mobj.MItem.Val[3] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val3", mobj.MItem.Val[3] );
+                if( mobj.MItem.Val[4] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val4", mobj.MItem.Val[4] );
+                if( mobj.MItem.Val[5] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val5", mobj.MItem.Val[5] );
+                if( mobj.MItem.Val[6] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val6", mobj.MItem.Val[6] );
+                if( mobj.MItem.Val[7] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val7", mobj.MItem.Val[7] );
+                if( mobj.MItem.Val[8] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val8", mobj.MItem.Val[8] );
+                if( mobj.MItem.Val[9] )
+                    fm.SetStr( "%-20s %d\n", "Item_Val9", mobj.MItem.Val[9] );
             }
             // Scenery
             else if( mobj.MapObjType == MAP_OBJECT_SCENERY )
@@ -1395,16 +1395,16 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
                     fm.SetStr( "%-20s %d\n", "Scenery_TriggerNum", mobj.MScenery.TriggerNum );
                 if( mobj.MScenery.ParamsCount )
                     fm.SetStr( "%-20s %d\n", "Scenery_ParamsCount", mobj.MScenery.ParamsCount );
-                if( mobj.MScenery.Param[ 0 ] )
-                    fm.SetStr( "%-20s %d\n", "Scenery_Param0", mobj.MScenery.Param[ 0 ] );
-                if( mobj.MScenery.Param[ 1 ] )
-                    fm.SetStr( "%-20s %d\n", "Scenery_Param1", mobj.MScenery.Param[ 1 ] );
-                if( mobj.MScenery.Param[ 2 ] )
-                    fm.SetStr( "%-20s %d\n", "Scenery_Param2", mobj.MScenery.Param[ 2 ] );
-                if( mobj.MScenery.Param[ 3 ] )
-                    fm.SetStr( "%-20s %d\n", "Scenery_Param3", mobj.MScenery.Param[ 3 ] );
-                if( mobj.MScenery.Param[ 4 ] )
-                    fm.SetStr( "%-20s %d\n", "Scenery_Param4", mobj.MScenery.Param[ 4 ] );
+                if( mobj.MScenery.Param[0] )
+                    fm.SetStr( "%-20s %d\n", "Scenery_Param0", mobj.MScenery.Param[0] );
+                if( mobj.MScenery.Param[1] )
+                    fm.SetStr( "%-20s %d\n", "Scenery_Param1", mobj.MScenery.Param[1] );
+                if( mobj.MScenery.Param[2] )
+                    fm.SetStr( "%-20s %d\n", "Scenery_Param2", mobj.MScenery.Param[2] );
+                if( mobj.MScenery.Param[3] )
+                    fm.SetStr( "%-20s %d\n", "Scenery_Param3", mobj.MScenery.Param[3] );
+                if( mobj.MScenery.Param[4] )
+                    fm.SetStr( "%-20s %d\n", "Scenery_Param4", mobj.MScenery.Param[4] );
                 if( mobj.MScenery.ToMapPid )
                     fm.SetStr( "%-20s %d\n", "Scenery_ToMapPid", mobj.MScenery.ToMapPid );
                 if( mobj.MScenery.ToEntire )
@@ -1424,7 +1424,7 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
 #ifdef FONLINE_SERVER
 bool ProtoMap::LoadCache( FileManager& fm )
 {
-    uchar signature[ sizeof( MapSaveSignature ) ];
+    uchar signature[sizeof( MapSaveSignature )];
     if( !fm.CopyMem( signature, sizeof( signature ) ) )
         return false;
 
@@ -1440,7 +1440,7 @@ bool ProtoMap::LoadCache( FileManager& fm )
     if( tiles_count )
     {
         Tiles.resize( tiles_count );
-        fm.CopyMem( &Tiles[ 0 ], tiles_count * sizeof( Tile ) );
+        fm.CopyMem( &Tiles[0], tiles_count * sizeof( Tile ) );
     }
 
     // Critters
@@ -1473,7 +1473,7 @@ bool ProtoMap::LoadCache( FileManager& fm )
         SceneryVec.push_back( mobj );
         mobj->RunTime.RefCounter = 1;
         mobj->RunTime.BindScriptId = 0;
-        if( mobj->ScriptName[ 0 ] && mobj->FuncName[ 0 ] )
+        if( mobj->ScriptName[0] && mobj->FuncName[0] )
             BindSceneryScript( mobj );
     }
 
@@ -1494,14 +1494,14 @@ bool ProtoMap::LoadCache( FileManager& fm )
     if( count )
     {
         WallsToSend.resize( count );
-        if( !fm.CopyMem( &WallsToSend[ 0 ], count * sizeof( SceneryCl ) ) )
+        if( !fm.CopyMem( &WallsToSend[0], count * sizeof( SceneryCl ) ) )
             return false;
     }
     count = fm.GetBEUInt();
     if( count )
     {
         SceneriesToSend.resize( count );
-        if( !fm.CopyMem( &SceneriesToSend[ 0 ], count * sizeof( SceneryCl ) ) )
+        if( !fm.CopyMem( &SceneriesToSend[0], count * sizeof( SceneryCl ) ) )
             return false;
     }
 
@@ -1511,7 +1511,7 @@ bool ProtoMap::LoadCache( FileManager& fm )
     HashScen = fm.GetBEUInt();
 
     // Hex flags
-    HexFlags = new uchar[ Header.MaxHexX * Header.MaxHexY ];
+    HexFlags = new uchar[Header.MaxHexX * Header.MaxHexY];
     if( !HexFlags )
         return false;
     if( !fm.CopyMem( HexFlags, Header.MaxHexX * Header.MaxHexY ) )
@@ -1522,60 +1522,60 @@ bool ProtoMap::LoadCache( FileManager& fm )
     if( count )
     {
         mapEntires.resize( count );
-        if( !fm.CopyMem( &mapEntires[ 0 ], count * sizeof( MapEntire ) ) )
+        if( !fm.CopyMem( &mapEntires[0], count * sizeof( MapEntire ) ) )
             return false;
     }
 
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) SceneriesToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) WallsToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) mapEntires.capacity() * sizeof( MapEntire ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) CrittersVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) ItemsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) SceneryVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) GridsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) Header.MaxHexX * Header.MaxHexY );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) Tiles.capacity() * sizeof( Tile ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)SceneriesToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)WallsToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)mapEntires.capacity() * sizeof( MapEntire ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)CrittersVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)ItemsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)SceneryVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)GridsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)Header.MaxHexX * Header.MaxHexY );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)Tiles.capacity() * sizeof( Tile ) );
     return true;
 }
 
 void ProtoMap::SaveCache( FileManager& fm )
 {
     ushort version = BINARY_SIGNATURE_VERSION( MapSaveSignature );
-    fm.SetData( (uchar*) MapSaveSignature, sizeof( MapSaveSignature ) );
+    fm.SetData( (uchar*)MapSaveSignature, sizeof( MapSaveSignature ) );
 
     // Header
     fm.SetData( &Header, sizeof( Header ) );
 
     // Tiles
-    fm.SetBEUInt( (uint) Tiles.size() );
+    fm.SetBEUInt( (uint)Tiles.size() );
     if( Tiles.size() )
-        fm.SetData( &Tiles[ 0 ], (uint) Tiles.size() * sizeof( Tile ) );
+        fm.SetData( &Tiles[0], (uint)Tiles.size() * sizeof( Tile ) );
 
     // Critters
-    fm.SetBEUInt( (uint) CrittersVec.size() );
+    fm.SetBEUInt( (uint)CrittersVec.size() );
     for( auto it = CrittersVec.begin(), end = CrittersVec.end(); it != end; ++it )
-        fm.SetData( *it, (uint) sizeof( MapObject ) - sizeof( MapObject::_RunTime ) );
+        fm.SetData( *it, (uint)sizeof( MapObject ) - sizeof( MapObject::_RunTime ) );
 
     // Items
-    fm.SetBEUInt( (uint) ItemsVec.size() );
+    fm.SetBEUInt( (uint)ItemsVec.size() );
     for( auto it = ItemsVec.begin(), end = ItemsVec.end(); it != end; ++it )
-        fm.SetData( *it, (uint) sizeof( MapObject ) - sizeof( MapObject::_RunTime ) );
+        fm.SetData( *it, (uint)sizeof( MapObject ) - sizeof( MapObject::_RunTime ) );
 
     // Scenery
-    fm.SetBEUInt( (uint) SceneryVec.size() );
+    fm.SetBEUInt( (uint)SceneryVec.size() );
     for( auto it = SceneryVec.begin(), end = SceneryVec.end(); it != end; ++it )
-        fm.SetData( *it, (uint) sizeof( MapObject ) );
+        fm.SetData( *it, (uint)sizeof( MapObject ) );
 
     // Grids
-    fm.SetBEUInt( (uint) GridsVec.size() );
+    fm.SetBEUInt( (uint)GridsVec.size() );
     for( auto it = GridsVec.begin(), end = GridsVec.end(); it != end; ++it )
-        fm.SetData( *it, (uint) sizeof( MapObject ) );
+        fm.SetData( *it, (uint)sizeof( MapObject ) );
 
     // To send
-    fm.SetBEUInt( (uint) WallsToSend.size() );
-    fm.SetData( &WallsToSend[ 0 ], (uint) WallsToSend.size() * sizeof( SceneryCl ) );
-    fm.SetBEUInt( (uint) SceneriesToSend.size() );
-    fm.SetData( &SceneriesToSend[ 0 ], (uint) SceneriesToSend.size() * sizeof( SceneryCl ) );
+    fm.SetBEUInt( (uint)WallsToSend.size() );
+    fm.SetData( &WallsToSend[0], (uint)WallsToSend.size() * sizeof( SceneryCl ) );
+    fm.SetBEUInt( (uint)SceneriesToSend.size() );
+    fm.SetData( &SceneriesToSend[0], (uint)SceneriesToSend.size() * sizeof( SceneryCl ) );
 
     // Hashes
     fm.SetBEUInt( HashTiles );
@@ -1586,11 +1586,11 @@ void ProtoMap::SaveCache( FileManager& fm )
     fm.SetData( HexFlags, Header.MaxHexX * Header.MaxHexY );
 
     // Entires
-    fm.SetBEUInt( (uint) mapEntires.size() );
-    fm.SetData( &mapEntires[ 0 ], (uint) mapEntires.size() * sizeof( MapEntire ) );
+    fm.SetBEUInt( (uint)mapEntires.size() );
+    fm.SetData( &mapEntires[0], (uint)mapEntires.size() * sizeof( MapEntire ) );
 
     // Save
-    char fname[ MAX_FOPATH ];
+    char fname[MAX_FOPATH];
     Str::Format( fname, "%s%sb", pmapName.c_str(), MAP_PROTO_EXT );
     fm.SaveOutBufToFile( fname, pathType );
 }
@@ -1629,7 +1629,7 @@ void ProtoMap::BindSceneryScript( MapObject* mobj )
 
     if( mobj->RunTime.BindScriptId <= 0 )
     {
-        char map_info[ MAX_FOTEXT ];
+        char map_info[MAX_FOTEXT];
         Str::Format( map_info, "pid<%u>, name<%s>", GetPid(), pmapName.c_str() );
         WriteLogF( _FUNC_, " - Map<%s>, Can't bind scenery function<%s> in module<%s>. Scenery hexX<%u>, hexY<%u>.\n", map_info,
                    mobj->FuncName, mobj->ScriptName, mobj->MapX, mobj->MapY );
@@ -1643,7 +1643,7 @@ bool ProtoMap::Refresh()
     if( !IsInit() )
         return false;
 
-    char map_info[ MAX_FOTEXT ];
+    char map_info[MAX_FOTEXT];
     Str::Format( map_info, "pid<%u>, name<%s>", GetPid(), pmapName.c_str() );
 
     // Read
@@ -1713,7 +1713,7 @@ bool ProtoMap::Refresh()
     // Load
     if( text )
     {
-        if( !LoadTextFormat( (const char*) fm.GetBuf() ) )
+        if( !LoadTextFormat( (const char*)fm.GetBuf() ) )
         {
             WriteLogF( _FUNC_, " - Map<%s>. Can't read text map format.\n", map_info );
             return false;
@@ -1813,18 +1813,18 @@ bool ProtoMap::Refresh()
     if( Header.Version < FO_MAP_VERSION_TEXT4 )
     {
         uint uid = 0;
-        for( uint i = 0, j = (uint) MObjects.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)MObjects.size(); i < j; i++ )
         {
-            MapObject* mobj = MObjects[ i ];
+            MapObject* mobj = MObjects[i];
 
             // Find item in container
             if( mobj->MapObjType != MAP_OBJECT_ITEM || !mobj->ContainerUID )
                 continue;
 
             // Find container
-            for( uint k = 0, l = (uint) MObjects.size(); k < l; k++ )
+            for( uint k = 0, l = (uint)MObjects.size(); k < l; k++ )
             {
-                MapObject* mobj_ = MObjects[ k ];
+                MapObject* mobj_ = MObjects[k];
                 if( mobj_->MapX != mobj->MapX || mobj_->MapY != mobj->MapY )
                     continue;
                 if( mobj_->MapObjType != MAP_OBJECT_ITEM && mobj_->MapObjType != MAP_OBJECT_CRITTER )
@@ -1845,9 +1845,9 @@ bool ProtoMap::Refresh()
     }
 
     // Fix child objects positions
-    for( uint i = 0, j = (uint) MObjects.size(); i < j;)
+    for( uint i = 0, j = (uint)MObjects.size(); i < j;)
     {
-        MapObject* mobj_child = MObjects[ i ];
+        MapObject* mobj_child = MObjects[i];
         if( !mobj_child->ParentUID )
         {
             i++;
@@ -1855,32 +1855,32 @@ bool ProtoMap::Refresh()
         }
 
         bool delete_child = true;
-        for( uint k = 0, l = (uint) MObjects.size(); k < l; k++ )
+        for( uint k = 0, l = (uint)MObjects.size(); k < l; k++ )
         {
-            MapObject* mobj_parent = MObjects[ k ];
+            MapObject* mobj_parent = MObjects[k];
             if( !mobj_parent->UID || mobj_parent->UID != mobj_child->ParentUID || mobj_parent == mobj_child )
                 continue;
 
             ProtoItem* proto_parent = ItemMngr.GetProtoItem( mobj_parent->ProtoId );
-            if( !proto_parent || !proto_parent->ChildPid[ mobj_child->ParentChildIndex ] )
+            if( !proto_parent || !proto_parent->ChildPid[mobj_child->ParentChildIndex] )
                 break;
 
             ushort child_hx = mobj_parent->MapX, child_hy = mobj_parent->MapY;
-            FOREACH_PROTO_ITEM_LINES( proto_parent->ChildLines[ mobj_child->ParentChildIndex ], child_hx, child_hy, Header.MaxHexX, Header.MaxHexY,;
+            FOREACH_PROTO_ITEM_LINES( proto_parent->ChildLines[mobj_child->ParentChildIndex], child_hx, child_hy, Header.MaxHexX, Header.MaxHexY,;
                                       );
 
             mobj_child->MapX = child_hx;
             mobj_child->MapY = child_hy;
-            mobj_child->ProtoId = proto_parent->ChildPid[ mobj_child->ParentChildIndex ];
+            mobj_child->ProtoId = proto_parent->ChildPid[mobj_child->ParentChildIndex];
             delete_child = false;
             break;
         }
 
         if( delete_child )
         {
-            MObjects[ i ]->Release();
+            MObjects[i]->Release();
             MObjects.erase( MObjects.begin() + i );
-            j = (uint) MObjects.size();
+            j = (uint)MObjects.size();
         }
         else
         {
@@ -1895,7 +1895,7 @@ bool ProtoMap::Refresh()
     ushort maxhx = Header.MaxHexX;
     ushort maxhy = Header.MaxHexY;
 
-    HexFlags = new uchar[ Header.MaxHexX * Header.MaxHexY ];
+    HexFlags = new uchar[Header.MaxHexX * Header.MaxHexY];
     if( !HexFlags )
         return false;
     memzero( HexFlags, Header.MaxHexX * Header.MaxHexY );
@@ -1940,14 +1940,14 @@ bool ProtoMap::Refresh()
         case ITEM_TYPE_WALL:
         {
             if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_BLOCK );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
             if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
             {
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_BLOCK );
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_NOTRAKE );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
             }
 
-            SETFLAG( HexFlags[ hy * maxhx + hx ], FH_WALL );
+            SETFLAG( HexFlags[hy * maxhx + hx], FH_WALL );
 
             // To client
             SceneryCl cur_wall;
@@ -1983,15 +1983,15 @@ bool ProtoMap::Refresh()
             }
 
             if( type == ITEM_TYPE_GRID )
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_SCEN_GRID );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN_GRID );
             if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_BLOCK );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
             if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
             {
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_BLOCK );
-                SETFLAG( HexFlags[ hy * maxhx + hx ], FH_NOTRAKE );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
             }
-            SETFLAG( HexFlags[ hy * maxhx + hx ], FH_SCEN );
+            SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN );
 
             // To server
             if( pid == SP_MISC_SCRBLOCK )
@@ -2001,7 +2001,7 @@ bool ProtoMap::Refresh()
                 {
                     ushort hx_ = hx, hy_ = hy;
                     MoveHexByDir( hx_, hy_, k, Header.MaxHexX, Header.MaxHexY );
-                    SETFLAG( HexFlags[ hy_ * maxhx + hx_ ], FH_BLOCK );
+                    SETFLAG( HexFlags[hy_ * maxhx + hx_], FH_BLOCK );
                 }
             }
             else if( type == ITEM_TYPE_GRID )
@@ -2015,8 +2015,8 @@ bool ProtoMap::Refresh()
                 const char* script = ItemMngr.GetProtoScript( pid );
                 if( script )
                 {
-                    char script_module[ MAX_SCRIPT_NAME + 1 ];
-                    char script_func[ MAX_SCRIPT_NAME + 1 ];
+                    char script_module[MAX_SCRIPT_NAME + 1];
+                    char script_func[MAX_SCRIPT_NAME + 1];
                     if( Script::ReparseScriptName( script, script_module, script_func ) )
                     {
                         Str::Copy( mobj.ScriptName, script_module );
@@ -2025,7 +2025,7 @@ bool ProtoMap::Refresh()
                 }
 
                 mobj.RunTime.BindScriptId = 0;
-                if( mobj.ScriptName[ 0 ] && mobj.FuncName[ 0 ] )
+                if( mobj.ScriptName[0] && mobj.FuncName[0] )
                     BindSceneryScript( &mobj );
 
                 // Add to collection
@@ -2036,7 +2036,7 @@ bool ProtoMap::Refresh()
             if( pid == SP_SCEN_TRIGGER )
             {
                 if( mobj.RunTime.BindScriptId )
-                    SETFLAG( HexFlags[ hy * maxhx + hx ], FH_TRIGGER );
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_TRIGGER );
                 continue;
             }
 
@@ -2085,13 +2085,13 @@ bool ProtoMap::Refresh()
     // Generate hashes
     HashTiles = maxhx * maxhy;
     if( Tiles.size() )
-        Crypt.Crc32( (uchar*) &Tiles[ 0 ], (uint) Tiles.size() * sizeof( Tile ), HashTiles );
+        Crypt.Crc32( (uchar*)&Tiles[0], (uint)Tiles.size() * sizeof( Tile ), HashTiles );
     HashWalls = maxhx * maxhy;
     if( WallsToSend.size() )
-        Crypt.Crc32( (uchar*) &WallsToSend[ 0 ], (uint) WallsToSend.size() * sizeof( SceneryCl ), HashWalls );
+        Crypt.Crc32( (uchar*)&WallsToSend[0], (uint)WallsToSend.size() * sizeof( SceneryCl ), HashWalls );
     HashScen = maxhx * maxhy;
     if( SceneriesToSend.size() )
-        Crypt.Crc32( (uchar*) &SceneriesToSend[ 0 ], (uint) SceneriesToSend.size() * sizeof( SceneryCl ), HashScen );
+        Crypt.Crc32( (uchar*)&SceneriesToSend[0], (uint)SceneriesToSend.size() * sizeof( SceneryCl ), HashScen );
 
     // Shrink the vector capacities to fit their contents and reduce memory use
     SceneryClVec( SceneriesToSend ).swap( SceneriesToSend );
@@ -2103,24 +2103,24 @@ bool ProtoMap::Refresh()
     MapObjectPtrVec( GridsVec ).swap( GridsVec );
     TileVec( Tiles ).swap( Tiles );
 
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) SceneriesToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) WallsToSend.capacity() * sizeof( SceneryCl ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) mapEntires.capacity() * sizeof( MapEntire ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) CrittersVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) ItemsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) SceneryVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) GridsVec.size() * sizeof( MapObject ) );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) Header.MaxHexX * Header.MaxHexY );
-    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int) Tiles.capacity() * sizeof( Tile ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)SceneriesToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)WallsToSend.capacity() * sizeof( SceneryCl ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)mapEntires.capacity() * sizeof( MapEntire ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)CrittersVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)ItemsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)SceneryVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)GridsVec.size() * sizeof( MapObject ) );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)Header.MaxHexX * Header.MaxHexY );
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, (int)Tiles.capacity() * sizeof( Tile ) );
 
     SaveCache( fm );
     #endif
 
     #ifdef FONLINE_MAPPER
     // Post process objects
-    for( uint i = 0, j = (uint) MObjects.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)MObjects.size(); i < j; i++ )
     {
-        MapObject* mobj = MObjects[ i ];
+        MapObject* mobj = MObjects[i];
 
         // Map link
         mobj->RunTime.FromMap = this;
@@ -2128,9 +2128,9 @@ bool ProtoMap::Refresh()
         // Convert hashes to names
         if( mobj->MapObjType == MAP_OBJECT_ITEM || mobj->MapObjType == MAP_OBJECT_SCENERY )
         {
-            if( mobj->MItem.PicMapHash && !mobj->RunTime.PicMapName[ 0 ] )
+            if( mobj->MItem.PicMapHash && !mobj->RunTime.PicMapName[0] )
                 Str::Copy( mobj->RunTime.PicMapName, Str::GetName( mobj->MItem.PicMapHash ) );
-            if( mobj->MItem.PicInvHash && !mobj->RunTime.PicInvName[ 0 ] )
+            if( mobj->MItem.PicInvHash && !mobj->RunTime.PicInvName[0] )
                 Str::Copy( mobj->RunTime.PicInvName, Str::GetName( mobj->MItem.PicInvHash ) );
         }
 
@@ -2142,17 +2142,17 @@ bool ProtoMap::Refresh()
     // Create cached fields
     TilesField.resize( Header.MaxHexX * Header.MaxHexY );
     RoofsField.resize( Header.MaxHexX * Header.MaxHexY );
-    for( uint i = 0, j = (uint) Tiles.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)Tiles.size(); i < j; i++ )
     {
-        if( !Tiles[ i ].IsRoof )
+        if( !Tiles[i].IsRoof )
         {
-            TilesField[ Tiles[ i ].HexY * Header.MaxHexX + Tiles[ i ].HexX ].push_back( Tiles[ i ] );
-            TilesField[ Tiles[ i ].HexY * Header.MaxHexX + Tiles[ i ].HexX ].back().IsSelected = false;
+            TilesField[Tiles[i].HexY * Header.MaxHexX + Tiles[i].HexX].push_back( Tiles[i] );
+            TilesField[Tiles[i].HexY * Header.MaxHexX + Tiles[i].HexX].back().IsSelected = false;
         }
         else
         {
-            RoofsField[ Tiles[ i ].HexY * Header.MaxHexX + Tiles[ i ].HexX ].push_back( Tiles[ i ] );
-            RoofsField[ Tiles[ i ].HexY * Header.MaxHexX + Tiles[ i ].HexX ].back().IsSelected = false;
+            RoofsField[Tiles[i].HexY * Header.MaxHexX + Tiles[i].HexX].push_back( Tiles[i] );
+            RoofsField[Tiles[i].HexY * Header.MaxHexX + Tiles[i].HexX].back().IsSelected = false;
         }
     }
     Tiles.clear();
@@ -2174,22 +2174,22 @@ void ProtoMap::GenNew()
     // Day		10.00 - 18.59	 600 - 1139
     // Evening	19.00 - 22.59	1140 - 1379
     // Nigh		23.00 -  4.59	1380
-    Header.DayTime[ 0 ] = 300;
-    Header.DayTime[ 1 ] = 600;
-    Header.DayTime[ 2 ] = 1140;
-    Header.DayTime[ 3 ] = 1380;
-    Header.DayColor[ 0 ] = 18;
-    Header.DayColor[ 1 ] = 128;
-    Header.DayColor[ 2 ] = 103;
-    Header.DayColor[ 3 ] = 51;
-    Header.DayColor[ 4 ] = 18;
-    Header.DayColor[ 5 ] = 128;
-    Header.DayColor[ 6 ] = 95;
-    Header.DayColor[ 7 ] = 40;
-    Header.DayColor[ 8 ] = 53;
-    Header.DayColor[ 9 ] = 128;
-    Header.DayColor[ 10 ] = 86;
-    Header.DayColor[ 11 ] = 29;
+    Header.DayTime[0] = 300;
+    Header.DayTime[1] = 600;
+    Header.DayTime[2] = 1140;
+    Header.DayTime[3] = 1380;
+    Header.DayColor[0] = 18;
+    Header.DayColor[1] = 128;
+    Header.DayColor[2] = 103;
+    Header.DayColor[3] = 51;
+    Header.DayColor[4] = 18;
+    Header.DayColor[5] = 128;
+    Header.DayColor[6] = 95;
+    Header.DayColor[7] = 40;
+    Header.DayColor[8] = 53;
+    Header.DayColor[9] = 128;
+    Header.DayColor[10] = 86;
+    Header.DayColor[11] = 29;
 
     # ifdef FONLINE_MAPPER
     TilesField.resize( Header.MaxHexX * Header.MaxHexY );
@@ -2213,26 +2213,26 @@ bool ProtoMap::Save( const char* fname, int path_type )
     {
         for( ushort hx = 0; hx < Header.MaxHexX; hx++ )
         {
-            TileVec& tiles = TilesField[ hy * Header.MaxHexX + hx ];
-            for( uint i = 0, j = (uint) tiles.size(); i < j; i++ )
-                Tiles.push_back( tiles[ i ] );
-            TileVec& roofs = RoofsField[ hy * Header.MaxHexX + hx ];
-            for( uint i = 0, j = (uint) roofs.size(); i < j; i++ )
-                Tiles.push_back( roofs[ i ] );
+            TileVec& tiles = TilesField[hy * Header.MaxHexX + hx];
+            for( uint i = 0, j = (uint)tiles.size(); i < j; i++ )
+                Tiles.push_back( tiles[i] );
+            TileVec& roofs = RoofsField[hy * Header.MaxHexX + hx];
+            for( uint i = 0, j = (uint)roofs.size(); i < j; i++ )
+                Tiles.push_back( roofs[i] );
         }
     }
 
     // Delete non used UIDs
-    for( uint i = 0, j = (uint) MObjects.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)MObjects.size(); i < j; i++ )
     {
-        MapObject* mobj = MObjects[ i ];
+        MapObject* mobj = MObjects[i];
         if( !mobj->UID )
             continue;
 
         bool founded = false;
-        for( uint k = 0, l = (uint) MObjects.size(); k < l; k++ )
+        for( uint k = 0, l = (uint)MObjects.size(); k < l; k++ )
         {
-            MapObject* mobj_ = MObjects[ k ];
+            MapObject* mobj_ = MObjects[k];
             if( mobj_->ContainerUID == mobj->UID || mobj_->ParentUID == mobj->UID )
             {
                 founded = true;
@@ -2263,7 +2263,7 @@ bool ProtoMap::Save( const char* fname, int path_type )
 
 bool ProtoMap::IsMapFile( const char* fname )
 {
-    char* ext = (char*) FileManager::GetExtension( fname );
+    char* ext = (char*)FileManager::GetExtension( fname );
     if( !ext )
         return false;
     ext--;
@@ -2296,12 +2296,12 @@ bool ProtoMap::IsMapFile( const char* fname )
 uint ProtoMap::CountEntire( uint num )
 {
     if( num == uint( -1 ) )
-        return (uint) mapEntires.size();
+        return (uint)mapEntires.size();
 
     uint result = 0;
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        if( mapEntires[ i ].Number == num )
+        if( mapEntires[i].Number == num )
             result++;
     }
     return result;
@@ -2309,12 +2309,12 @@ uint ProtoMap::CountEntire( uint num )
 
 ProtoMap::MapEntire* ProtoMap::GetEntire( uint num, uint skip )
 {
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        if( num == uint( -1 ) || mapEntires[ i ].Number == num )
+        if( num == uint( -1 ) || mapEntires[i].Number == num )
         {
             if( !skip )
-                return &mapEntires[ i ];
+                return &mapEntires[i];
             else
                 skip--;
         }
@@ -2326,24 +2326,24 @@ ProtoMap::MapEntire* ProtoMap::GetEntire( uint num, uint skip )
 ProtoMap::MapEntire* ProtoMap::GetEntireRandom( uint num )
 {
     vector< MapEntire* > entires;
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        if( num == uint( -1 ) || mapEntires[ i ].Number == num )
-            entires.push_back( &mapEntires[ i ] );
+        if( num == uint( -1 ) || mapEntires[i].Number == num )
+            entires.push_back( &mapEntires[i] );
     }
 
     if( entires.empty() )
         return NULL;
-    return entires[ Random( 0, (uint) entires.size() - 1 ) ];
+    return entires[Random( 0, (uint)entires.size() - 1 )];
 }
 
 ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, ushort hx, ushort hy )
 {
     MapEntire* near_entire = NULL;
     uint       last_dist = 0;
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        MapEntire& entire = mapEntires[ i ];
+        MapEntire& entire = mapEntires[i];
         if( num == uint( -1 ) || entire.Number == num )
         {
             uint dist = DistGame( hx, hy, entire.HexX, entire.HexY );
@@ -2361,9 +2361,9 @@ ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, uint num_ext, ushort hx,
 {
     MapEntire* near_entire = NULL;
     uint       last_dist = 0;
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        MapEntire& entire = mapEntires[ i ];
+        MapEntire& entire = mapEntires[i];
         if( num == uint( -1 ) || num_ext == uint( -1 ) || entire.Number == num || entire.Number == num_ext )
         {
             uint dist = DistGame( hx, hy, entire.HexX, entire.HexY );
@@ -2379,9 +2379,9 @@ ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, uint num_ext, ushort hx,
 
 void ProtoMap::GetEntires( uint num, EntiresVec& entires )
 {
-    for( uint i = 0, j = (uint) mapEntires.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)mapEntires.size(); i < j; i++ )
     {
-        MapEntire& entire = mapEntires[ i ];
+        MapEntire& entire = mapEntires[i];
         if( num == uint( -1 ) || entire.Number == num )
             entires.push_back( entire );
     }

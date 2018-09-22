@@ -23,18 +23,18 @@ pthread_mutexattr_t Mutex::mutexAttr;
 #endif
 
 // Command line
-char   CommandLine[ MAX_FOTEXT ] = { 0 };
+char   CommandLine[MAX_FOTEXT] = { 0 };
 char** CommandLineArgValues = NULL;
 uint   CommandLineArgCount = 0;
 void SetCommandLine( uint argc, char** argv )
 {
     CommandLineArgCount = argc;
-    CommandLineArgValues = new char*[ CommandLineArgCount ];
+    CommandLineArgValues = new char*[CommandLineArgCount];
     for( uint i = 0; i < argc; i++ )
     {
-        Str::Append( CommandLine, argv[ i ] );
+        Str::Append( CommandLine, argv[i] );
         Str::Append( CommandLine, " " );
-        CommandLineArgValues[ i ] = Str::Duplicate( argv[ i ] );
+        CommandLineArgValues[i] = Str::Duplicate( argv[i] );
     }
 }
 
@@ -66,7 +66,7 @@ uint DistSqrt( int x1, int y1, int x2, int y2 )
 {
     int dx = x1 - x2;
     int dy = y1 - y2;
-    return (uint) sqrt( double(dx * dx + dy * dy) );
+    return (uint)sqrt( double(dx * dx + dy * dy) );
 }
 
 uint DistGame( int x1, int y1, int x2, int y2 )
@@ -173,13 +173,13 @@ int GetFarDir( int x1, int y1, int x2, int y2 )
 {
     if( GameOpt.MapHexagonal )
     {
-        float hx = (float) x1;
-        float hy = (float) y1;
-        float tx = (float) x2;
-        float ty = (float) y2;
+        float hx = (float)x1;
+        float hy = (float)y1;
+        float tx = (float)x2;
+        float ty = (float)y2;
         float nx = 3 * ( tx - hx );
         float ny = ( ty - hy ) * SQRT3T2_FLOAT - ( float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
-        float dir = 180.0f + RAD2DEG* atan2f( ny, nx );
+        float dir = 180.0f + RAD2DEG * atan2f( ny, nx );
 
         if( dir >= 60.0f  && dir < 120.0f )
             return 5;
@@ -195,7 +195,7 @@ int GetFarDir( int x1, int y1, int x2, int y2 )
     }
     else
     {
-        float dir = 180.0f + RAD2DEG* atan2( (float) ( x2 - x1 ), (float) ( y2 - y1 ) );
+        float dir = 180.0f + RAD2DEG * atan2( (float)( x2 - x1 ), (float)( y2 - y1 ) );
 
         if( dir >= 22.5f  && dir < 67.5f )
             return 7;
@@ -219,13 +219,13 @@ int GetFarDir( int x1, int y1, int x2, int y2, float offset )
 {
     if( GameOpt.MapHexagonal )
     {
-        float hx = (float) x1;
-        float hy = (float) y1;
-        float tx = (float) x2;
-        float ty = (float) y2;
+        float hx = (float)x1;
+        float hy = (float)y1;
+        float tx = (float)x2;
+        float ty = (float)y2;
         float nx = 3 * ( tx - hx );
         float ny = ( ty - hy ) * SQRT3T2_FLOAT - ( float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
-        float dir = 180.0f + RAD2DEG* atan2f( ny, nx ) + offset;
+        float dir = 180.0f + RAD2DEG * atan2f( ny, nx ) + offset;
         if( dir < 0.0f )
             dir = 360.0f - fmod( -dir, 360.0f );
         else if( dir >= 360.0f )
@@ -245,7 +245,7 @@ int GetFarDir( int x1, int y1, int x2, int y2, float offset )
     }
     else
     {
-        float dir = 180.0f + RAD2DEG* atan2( (float) ( x2 - x1 ), (float) ( y2 - y1 ) ) + offset;
+        float dir = 180.0f + RAD2DEG * atan2( (float)( x2 - x1 ), (float)( y2 - y1 ) ) + offset;
         if( dir < 0.0f )
             dir = 360.0f - fmod( -dir, 360.0f );
         else if( dir >= 360.0f )
@@ -282,8 +282,8 @@ int ReverseDir( int dir )
 
 void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 )
 {
-    float dx = (float) abs( x2 - x1 );
-    float dy = (float) abs( y2 - y1 );
+    float dx = (float)abs( x2 - x1 );
+    float dy = (float)abs( y2 - y1 );
 
     sx = 1.0f;
     sy = 1.0f;
@@ -298,9 +298,9 @@ void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 )
 
 void ChangeStepsXY( float& sx, float& sy, float deq )
 {
-    float                      rad = deq * PI_FLOAT / 180.0f;
-    sx = sx * cos( rad ) - sy* sin( rad );
-    sy = sx * sin( rad ) + sy* cos( rad );
+    float rad = deq * PI_FLOAT / 180.0f;
+    sx = sx * cos( rad ) - sy * sin( rad );
+    sy = sx * sin( rad ) + sy * cos( rad );
 }
 
 bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy )
@@ -414,21 +414,21 @@ void RestoreMainDirectory()
 {
     #ifdef FO_WINDOWS
     // Get executable file path
-    char path[ MAX_FOPATH ] = { 0 };
+    char path[MAX_FOPATH] = { 0 };
     GetModuleFileName( GetModuleHandle( NULL ), path, MAX_FOPATH );
 
     // Cut off executable name
     int last = 0;
-    for( int i = 0; path[ i ]; i++ )
-        if( path[ i ] == DIR_SLASH_C )
+    for( int i = 0; path[i]; i++ )
+        if( path[i] == DIR_SLASH_C )
             last = i;
-    path[ last + 1 ] = 0;
+    path[last + 1] = 0;
 
     // Set executable directory
     SetCurrentDirectory( path );
     #else
     // Read symlink to executable
-    char buf[ MAX_FOPATH ];
+    char buf[MAX_FOPATH];
     if( readlink( "/proc/self/exe", buf, MAX_FOPATH ) != -1 ||    // Linux
         readlink( "/proc/curproc/file", buf, MAX_FOPATH ) != -1 ) // FreeBSD
     {
@@ -436,7 +436,7 @@ void RestoreMainDirectory()
         string::size_type pos = sbuf.find_last_of( DIR_SLASH_C );
         if( pos != string::npos )
         {
-            buf[ pos ] = 0;
+            buf[pos] = 0;
             chdir( buf );
         }
     }
@@ -455,7 +455,7 @@ void ShowMessage( const char* message )
 uint GetDoubleClickTicks()
 {
     #ifdef FO_WINDOWS
-    return (uint) GetDoubleClickTime();
+    return (uint)GetDoubleClickTime();
     #else
     // Todo: Linux
     return 500;
@@ -484,10 +484,10 @@ void InitializeHexOffsets()
     if( GameOpt.MapHexagonal )
     {
         CurHexOffset = 1;
-        SXEven = new short[ HEX_OFFSET_SIZE ];
-        SYEven = new short[ HEX_OFFSET_SIZE ];
-        SXOdd = new short[ HEX_OFFSET_SIZE ];
-        SYOdd = new short[ HEX_OFFSET_SIZE ];
+        SXEven = new short[HEX_OFFSET_SIZE];
+        SYEven = new short[HEX_OFFSET_SIZE];
+        SXOdd = new short[HEX_OFFSET_SIZE];
+        SYOdd = new short[HEX_OFFSET_SIZE];
 
         int pos = 0;
         int xe = 0, ye = 0, xo = 1, yo = 0;
@@ -501,10 +501,10 @@ void InitializeHexOffsets()
                 int dir = ( j + 2 ) % 6;
                 for( int k = 0; k < i + 1; k++ )
                 {
-                    SXEven[ pos ] = xe;
-                    SYEven[ pos ] = ye;
-                    SXOdd[ pos ] = xo - 1;
-                    SYOdd[ pos ] = yo;
+                    SXEven[pos] = xe;
+                    SYEven[pos] = ye;
+                    SXOdd[pos] = xo - 1;
+                    SYOdd[pos] = yo;
                     pos++;
                     MoveHexByDirUnsafe( xe, ye, dir );
                     MoveHexByDirUnsafe( xo, yo, dir );
@@ -515,8 +515,8 @@ void InitializeHexOffsets()
     else
     {
         CurHexOffset = 2;
-        SXEven = SXOdd = new short[ HEX_OFFSET_SIZE ];
-        SYEven = SYOdd = new short[ HEX_OFFSET_SIZE ];
+        SXEven = SXOdd = new short[HEX_OFFSET_SIZE];
+        SYEven = SYOdd = new short[HEX_OFFSET_SIZE];
 
         int pos = 0;
         int hx = 0, hy = 0;
@@ -555,8 +555,8 @@ void InitializeHexOffsets()
 
                 for( int k = 0; k < steps; k++ )
                 {
-                    SXEven[ pos ] = hx;
-                    SYEven[ pos ] = hy;
+                    SXEven[pos] = hx;
+                    SYEven[pos] = hy;
                     pos++;
                     MoveHexByDirUnsafe( hx, hy, dir );
                 }
@@ -609,11 +609,11 @@ const char* GetConfigFileName()
 {
     // Default config names
     #if defined ( FONLINE_SERVER )
-    static char config_name[ MAX_FOPATH ] = { "FOnlineServer.cfg\0--default-server-config--" };
+    static char config_name[MAX_FOPATH] = { "FOnlineServer.cfg\0--default-server-config--" };
     #elif defined ( FONLINE_MAPPER )
-    static char config_name[ MAX_FOPATH ] = { "Mapper.cfg\0--default-mapper-config--" };
+    static char config_name[MAX_FOPATH] = { "Mapper.cfg\0--default-mapper-config--" };
     #else // FONLINE_CLIENT and others
-    static char config_name[ MAX_FOPATH ] = { "FOnline.cfg\0--default-client-config--" };
+    static char config_name[MAX_FOPATH] = { "FOnline.cfg\0--default-client-config--" };
     #endif
 
     // Extract config name from current exe
@@ -624,7 +624,7 @@ const char* GetConfigFileName()
         processed = true;
 
         // Get full path
-        char module_name[ MAX_FOPATH ];
+        char module_name[MAX_FOPATH];
         #ifdef FO_WINDOWS
         if( !GetModuleFileName( NULL, module_name, sizeof( module_name ) ) )
             return config_name;
@@ -633,7 +633,7 @@ const char* GetConfigFileName()
         #endif
 
         // Change extension
-        char* ext = (char*) FileManager::GetExtension( module_name );
+        char* ext = (char*)FileManager::GetExtension( module_name );
         if( !ext )
             return config_name;
         Str::Copy( ext, 4, "cfg" );
@@ -645,8 +645,8 @@ const char* GetConfigFileName()
         // Get file name
         const char* name = NULL;
         for( size_t i = 0, j = Str::Length( module_name ); i < j; i++ )
-            if( module_name[ i ] == DIR_SLASH_C )
-                name = &module_name[ i + 1 ];
+            if( module_name[i] == DIR_SLASH_C )
+                name = &module_name[i + 1];
         if( !name )
             return config_name;
 
@@ -665,13 +665,13 @@ const char* GetWindowName()
 {
     // Default config names
     #if defined ( FONLINE_SERVER )
-    static char window_name[ MAX_FOPATH ] = { "FOnline Server\0--default-server-name--" };
+    static char window_name[MAX_FOPATH] = { "FOnline Server\0--default-server-name--" };
     int         path_type = PT_SERVER_ROOT;
     #elif defined ( FONLINE_MAPPER )
-    static char window_name[ MAX_FOPATH ] = { "FOnline Mapper\0--default-mapper-name--" };
+    static char window_name[MAX_FOPATH] = { "FOnline Mapper\0--default-mapper-name--" };
     int         path_type = PT_MAPPER_ROOT;
     #else // FONLINE_CLIENT and others
-    static char window_name[ MAX_FOPATH ] = { "FOnline\0--default-client-name--" };
+    static char window_name[MAX_FOPATH] = { "FOnline\0--default-client-name--" };
     int         path_type = PT_ROOT;
     #endif
 
@@ -689,12 +689,12 @@ const char* GetWindowName()
             return window_name;
 
         // 'WindowName' section
-        char str[ MAX_FOPATH ];
+        char str[MAX_FOPATH];
         #if !defined ( FONLINE_CLIENT )
-        if( !cfg.GetStr( "WindowName", "", str ) || !str[ 0 ] )
+        if( !cfg.GetStr( "WindowName", "", str ) || !str[0] )
             return window_name;
         #else
-        if( !cfg.GetStr( CLIENT_CONFIG_APP, "WindowName", "", str ) || !str[ 0 ] )
+        if( !cfg.GetStr( CLIENT_CONFIG_APP, "WindowName", "", str ) || !str[0] )
             return window_name;
         #endif
         Str::Copy( window_name, str );
@@ -720,61 +720,61 @@ const char* GetWindowName()
 
 uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light )
 {
-    uchar result[ 3 ];
-    int   color_r[ 4 ] = { colors[ 0 ], colors[ 1 ], colors[ 2 ], colors[ 3 ] };
-    int   color_g[ 4 ] = { colors[ 4 ], colors[ 5 ], colors[ 6 ], colors[ 7 ] };
-    int   color_b[ 4 ] = { colors[ 8 ], colors[ 9 ], colors[ 10 ], colors[ 11 ] };
+    uchar result[3];
+    int   color_r[4] = { colors[0], colors[1], colors[2], colors[3] };
+    int   color_g[4] = { colors[4], colors[5], colors[6], colors[7] };
+    int   color_b[4] = { colors[8], colors[9], colors[10], colors[11] };
 
     game_time %= 1440;
     int time, duration;
-    if( game_time >= day_time[ 0 ] && game_time < day_time[ 1 ] )
+    if( game_time >= day_time[0] && game_time < day_time[1] )
     {
         time = 0;
-        game_time -= day_time[ 0 ];
-        duration = day_time[ 1 ] - day_time[ 0 ];
+        game_time -= day_time[0];
+        duration = day_time[1] - day_time[0];
     }
-    else if( game_time >= day_time[ 1 ] && game_time < day_time[ 2 ] )
+    else if( game_time >= day_time[1] && game_time < day_time[2] )
     {
         time = 1;
-        game_time -= day_time[ 1 ];
-        duration = day_time[ 2 ] - day_time[ 1 ];
+        game_time -= day_time[1];
+        duration = day_time[2] - day_time[1];
     }
-    else if( game_time >= day_time[ 2 ] && game_time < day_time[ 3 ] )
+    else if( game_time >= day_time[2] && game_time < day_time[3] )
     {
         time = 2;
-        game_time -= day_time[ 2 ];
-        duration = day_time[ 3 ] - day_time[ 2 ];
+        game_time -= day_time[2];
+        duration = day_time[3] - day_time[2];
     }
     else
     {
         time = 3;
-        if( game_time >= day_time[ 3 ] )
-            game_time -= day_time[ 3 ];
+        if( game_time >= day_time[3] )
+            game_time -= day_time[3];
         else
-            game_time += 1440 - day_time[ 3 ];
-        duration = ( 1440 - day_time[ 3 ] ) + day_time[ 0 ];
+            game_time += 1440 - day_time[3];
+        duration = ( 1440 - day_time[3] ) + day_time[0];
     }
 
     if( !duration )
         duration = 1;
-    result[ 0 ] = color_r[ time ] + ( color_r[ time < 3 ? time + 1 : 0 ] - color_r[ time ] ) * game_time / duration;
-    result[ 1 ] = color_g[ time ] + ( color_g[ time < 3 ? time + 1 : 0 ] - color_g[ time ] ) * game_time / duration;
-    result[ 2 ] = color_b[ time ] + ( color_b[ time < 3 ? time + 1 : 0 ] - color_b[ time ] ) * game_time / duration;
+    result[0] = color_r[time] + ( color_r[time < 3 ? time + 1 : 0] - color_r[time] ) * game_time / duration;
+    result[1] = color_g[time] + ( color_g[time < 3 ? time + 1 : 0] - color_g[time] ) * game_time / duration;
+    result[2] = color_b[time] + ( color_b[time < 3 ? time + 1 : 0] - color_b[time] ) * game_time / duration;
 
     if( light )
     {
-        int max_light = ( MAX( MAX( MAX( color_r[ 0 ], color_r[ 1 ] ), color_r[ 2 ] ), color_r[ 3 ] ) +
-                          MAX( MAX( MAX( color_g[ 0 ], color_g[ 1 ] ), color_g[ 2 ] ), color_g[ 3 ] ) +
-                          MAX( MAX( MAX( color_b[ 0 ], color_b[ 1 ] ), color_b[ 2 ] ), color_b[ 3 ] ) ) / 3;
-        int min_light = ( MIN( MIN( MIN( color_r[ 0 ], color_r[ 1 ] ), color_r[ 2 ] ), color_r[ 3 ] ) +
-                          MIN( MIN( MIN( color_g[ 0 ], color_g[ 1 ] ), color_g[ 2 ] ), color_g[ 3 ] ) +
-                          MIN( MIN( MIN( color_b[ 0 ], color_b[ 1 ] ), color_b[ 2 ] ), color_b[ 3 ] ) ) / 3;
-        int cur_light = ( result[ 0 ] + result[ 1 ] + result[ 2 ] ) / 3;
+        int max_light = ( MAX( MAX( MAX( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
+                          MAX( MAX( MAX( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
+                          MAX( MAX( MAX( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
+        int min_light = ( MIN( MIN( MIN( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
+                          MIN( MIN( MIN( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
+                          MIN( MIN( MIN( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
+        int cur_light = ( result[0] + result[1] + result[2] ) / 3;
         *light = Procent( max_light - min_light, max_light - cur_light );
         *light = CLAMP( *light, 0, 100 );
     }
 
-    return ( result[ 0 ] << 16 ) | ( result[ 1 ] << 8 ) | ( result[ 2 ] );
+    return ( result[0] << 16 ) | ( result[1] << 8 ) | ( result[2] );
 }
 
 void GetClientOptions()
@@ -792,11 +792,11 @@ void GetClientOptions()
     # define GETOPTIONS_CMD_LINE_STR( opt, str_id )                       \
         do { char* str = Str::Substring( CommandLine, str_id ); if( str ) \
                  sscanf( str + Str::Length( str_id ) + 1, "%s", opt ); } while( 0 )
-    # define GETOPTIONS_CHECK( val_, min_, max_, def_ )                 \
-        do { int val__ = (int) val_; if( val__ < min_ || val__ > max_ ) \
+    # define GETOPTIONS_CHECK( val_, min_, max_, def_ )                \
+        do { int val__ = (int)val_; if( val__ < min_ || val__ > max_ ) \
                  val_ = def_; } while( 0 )
 
-    char buf[ MAX_FOTEXT ];
+    char buf[MAX_FOTEXT];
 
     // Load config file
     # ifdef FONLINE_MAPPER
@@ -807,13 +807,13 @@ void GetClientOptions()
     GETOPTIONS_CMD_LINE_STR( buf, "-ClientPath" );
     FileManager::FormatPath( buf );
     GameOpt.ClientPath = buf;
-    if( GameOpt.ClientPath.length() && GameOpt.ClientPath.c_str()[ GameOpt.ClientPath.length() - 1 ] != DIR_SLASH_C )
+    if( GameOpt.ClientPath.length() && GameOpt.ClientPath.c_str()[GameOpt.ClientPath.length() - 1] != DIR_SLASH_C )
         GameOpt.ClientPath += DIR_SLASH_S;
     cfg_mapper.GetStr( "ServerPath", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-ServerPath" );
     FileManager::FormatPath( buf );
     GameOpt.ServerPath = buf;
-    if( GameOpt.ServerPath.length() && GameOpt.ServerPath.c_str()[ GameOpt.ServerPath.length() - 1 ] != DIR_SLASH_C )
+    if( GameOpt.ServerPath.length() && GameOpt.ServerPath.c_str()[GameOpt.ServerPath.length() - 1] != DIR_SLASH_C )
         GameOpt.ServerPath += DIR_SLASH_S;
 
     FileManager::SetDataPath( GameOpt.ClientPath.c_str() );
@@ -1001,7 +1001,7 @@ ServerScriptFunctions ServerFunctions;
 
 const char* GetLastSocketError()
 {
-    static THREAD char str[ MAX_FOTEXT ];
+    static THREAD char str[MAX_FOTEXT];
     int                error = WSAGetLastError();
     # define CASE_SOCK_ERROR( code, message ) \
     case code:                                \
@@ -1109,7 +1109,7 @@ const char* GetLastSocketError()
 
 const char* GetLastSocketError()
 {
-    static THREAD char str[ MAX_FOTEXT ];
+    static THREAD char str[MAX_FOTEXT];
     Str::Format( str, "%d", errno );
     return str;
 }
@@ -1192,16 +1192,16 @@ GameOptions::GameOptions()
     WhisperDist = 2;
     ShoutDist = 200;
     LookChecks = 0;
-    LookDir[ 0 ] = 0;
-    LookDir[ 1 ] = 20;
-    LookDir[ 2 ] = 40;
-    LookDir[ 3 ] = 60;
-    LookDir[ 4 ] = 60;
-    LookSneakDir[ 0 ] = 90;
-    LookSneakDir[ 1 ] = 60;
-    LookSneakDir[ 2 ] = 30;
-    LookSneakDir[ 3 ] = 0;
-    LookSneakDir[ 4 ] = 0;
+    LookDir[0] = 0;
+    LookDir[1] = 20;
+    LookDir[2] = 40;
+    LookDir[3] = 60;
+    LookDir[4] = 60;
+    LookSneakDir[0] = 90;
+    LookSneakDir[1] = 60;
+    LookSneakDir[2] = 30;
+    LookSneakDir[3] = 0;
+    LookSneakDir[4] = 0;
     LookWeight = 200;
     CustomItemCost = false;
     RegistrationTimeout = 5;
@@ -1487,7 +1487,7 @@ HANDLE InterprocessData::Init()
     if( !Lock() )
         return NULL;
     memzero( this, INTERPROCESS_DATA_SIZE );
-    ( (InterprocessData*) mapFilePtr )->mapFileMutex = mapFileMutex;
+    ( (InterprocessData*)mapFilePtr )->mapFileMutex = mapFileMutex;
     Unlock();
     return mapFile;
 }
@@ -1513,7 +1513,7 @@ bool InterprocessData::Attach( HANDLE map_file )
     void* ptr = MapViewOfFile( mapFile, FILE_MAP_WRITE, 0, 0, 0 );
     if( !ptr )
         return false;
-    mapFileMutex = ( (InterprocessData*) ptr )->mapFileMutex;
+    mapFileMutex = ( (InterprocessData*)ptr )->mapFileMutex;
     UnmapViewOfFile( ptr );
     if( !mapFileMutex )
         return false;
@@ -1569,16 +1569,16 @@ InterprocessData SingleplayerData;
 
 #if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
 
-THREAD char Thread::threadName[ 64 ] = { 0 };
+THREAD char Thread::threadName[64] = { 0 };
 UIntStrMap  Thread::threadNames;
 Mutex       Thread::threadNamesLocker;
 
 void* ThreadBeginExecution( void* args )
 {
-    void** args_ = (void**) args;
-    void   ( * func )( void* ) = ( void ( * )( void* ) )args_[ 0 ];
-    void*  func_arg = args_[ 1 ];
-    char*  name = (char*) args_[ 2 ];
+    void** args_ = (void**)args;
+    void   ( * func )( void* ) = ( void ( * )( void* ) )args_[0];
+    void*  func_arg = args_[1];
+    char*  name = (char*)args_[2];
     Thread::SetCurrentName( name );
     delete[] name;
     free( args );
@@ -1597,11 +1597,11 @@ Thread::~Thread()
     pthread_attr_destroy( &threadAttr );
 }
 
-bool Thread::Start( void ( * func )( void* ), const char* name, void* arg /* = NULL */ )
+bool Thread::Start( void ( *func )( void* ), const char* name, void* arg /* = NULL */ )
 {
-    void** args = (void**) malloc( sizeof( void* ) * 3 );
+    void** args = (void**)malloc( sizeof( void* ) * 3 );
     char*  name_ = Str::Duplicate( name );
-    args[ 0 ] = (void*) func, args[ 1 ] = arg, args[ 2 ] = name_;
+    args[0] = (void*)func, args[1] = arg, args[2] = name_;
     isStarted = ( pthread_create( &threadId, &threadAttr, ThreadBeginExecution, args ) == 0 );
     return isStarted;
 }
@@ -1630,22 +1630,22 @@ HANDLE Thread::GetWindowsHandle()
 # ifndef FO_WINDOWS
 pid_t Thread::GetPid()
 {
-    return (pid_t) threadId;
+    return (pid_t)threadId;
 }
 # endif
 
 uint Thread::GetCurrentId()
 {
     # ifdef FO_WINDOWS
-    return (uint) GetCurrentThreadId();
+    return (uint)GetCurrentThreadId();
     # else
-    return (uint) pthread_self();
+    return (uint)pthread_self();
     # endif
 }
 
 void Thread::SetCurrentName( const char* name )
 {
-    if( threadName[ 0 ] )
+    if( threadName[0] )
         return;
 
     Str::Copy( threadName, name );
@@ -1691,7 +1691,7 @@ void Thread_Sleep( uint ms ) // Used in Mutex.h as extern function
 
 #if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
 
-FOWindow::FOWindow(): Fl_Window( 0, 0, "" ), Focused( true )
+FOWindow::FOWindow() : Fl_Window( 0, 0, "" ), Focused( true )
 {
     label( GetWindowName() );
     position( ( Fl::w() - MODE_WIDTH ) / 2, ( Fl::h() - MODE_HEIGHT ) / 2 );
@@ -1699,7 +1699,7 @@ FOWindow::FOWindow(): Fl_Window( 0, 0, "" ), Focused( true )
 
     // Icon
     # ifdef FO_WINDOWS
-    icon( (char*) LoadIcon( fl_display, MAKEINTRESOURCE( 101 ) ) );
+    icon( (char*)LoadIcon( fl_display, MAKEINTRESOURCE( 101 ) ) );
     # else
     // Todo: Linux
     # endif
@@ -1792,7 +1792,7 @@ int FOWindow::handle( int event )
 #include <Item.h>
 
 bool     ListsLoaded = false;
-PCharVec LstNames[ PATH_LIST_COUNT ];
+PCharVec LstNames[PATH_LIST_COUNT];
 
 void LoadList( const char* lst_name, int path_type )
 {
@@ -1800,13 +1800,13 @@ void LoadList( const char* lst_name, int path_type )
     if( !fm.LoadFile( lst_name, PT_ROOT ) )
         return;
 
-    char        str[ 1024 ];
+    char        str[1024];
     uint        str_cnt = 0;
     const char* path = FileManager::GetPath( path_type );
 
-    PCharVec&   lst = LstNames[ path_type ];
-    for( uint i = 0, j = (uint) lst.size(); i < j; i++ )
-        SAFEDELA( lst[ i ] );
+    PCharVec&   lst = LstNames[path_type];
+    for( uint i = 0, j = (uint)lst.size(); i < j; i++ )
+        SAFEDELA( lst[i] );
     lst.clear();
 
     while( fm.GetLine( str, 1023 ) )
@@ -1815,18 +1815,18 @@ void LoadList( const char* lst_name, int path_type )
         Str::Lower( str );
 
         // Skip comments
-        if( !Str::Length( str ) || str[ 0 ] == '#' || str[ 0 ] == ';' )
+        if( !Str::Length( str ) || str[0] == '#' || str[0] == ';' )
             continue;
 
         // New value of line
-        if( str[ 0 ] == '*' )
+        if( str[0] == '*' )
         {
-            str_cnt = atoi( &str[ 1 ] );
+            str_cnt = atoi( &str[1] );
             continue;
         }
 
         // Find ext
-        char* ext = (char*) FileManager::GetExtension( str );
+        char* ext = (char*)FileManager::GetExtension( str );
         if( !ext )
         {
             str_cnt++;
@@ -1836,13 +1836,13 @@ void LoadList( const char* lst_name, int path_type )
 
         // Cut off comments
         int j = 0;
-        while( ext[ j ] && ext[ j ] != ' ' )
+        while( ext[j] && ext[j] != ' ' )
             j++;
-        ext[ j ] = '\0';
+        ext[j] = '\0';
 
         // Create name
         uint  len = Str::Length( path ) + Str::Length( str ) + 1;
-        char* rec = new char[ len ];
+        char* rec = new char[len];
         Str::Copy( rec, len, path );
         Str::Copy( rec, len, str );
 
@@ -1851,16 +1851,16 @@ void LoadList( const char* lst_name, int path_type )
             lst.resize( str_cnt + 1 );
 
         // Add
-        lst[ str_cnt ] = rec;
+        lst[str_cnt] = rec;
         str_cnt++;
     }
 }
 
 string GetPicName( uint lst_num, ushort pic_num )
 {
-    if( pic_num >= LstNames[ lst_num ].size() || !LstNames[ lst_num ][ pic_num ] )
+    if( pic_num >= LstNames[lst_num].size() || !LstNames[lst_num][pic_num] )
         return "";
-    return string( LstNames[ lst_num ][ pic_num ] );
+    return string( LstNames[lst_num][pic_num] );
 }
 
 string Deprecated_GetPicName( int pid, int type, ushort pic_num )
@@ -1954,16 +1954,16 @@ void Deprecated_CondExtToAnim2( uchar cond, uchar cond_ext, uint& anim2ko, uint&
 // Preprocessor output formatting
 int InsertTabs( string& str, int cur_pos, int level )
 {
-    if( cur_pos < 0 || cur_pos >= (int) str.length() )
-        return (int) str.size();
+    if( cur_pos < 0 || cur_pos >= (int)str.length() )
+        return (int)str.size();
 
     int i = cur_pos;
-    for( ; i < (int) str.length() - 1; i++ )
+    for( ; i < (int)str.length() - 1; i++ )
     {
-        if( str[ i ] == '\n' )
+        if( str[i] == '\n' )
         {
             int k = 0;
-            if( str[ i + 1 ] == '}' )
+            if( str[i + 1] == '}' )
                 k++;
             for( ; k < level; ++k )
             {
@@ -1971,11 +1971,11 @@ int InsertTabs( string& str, int cur_pos, int level )
                 str.insert( str.begin() + i, '\t' );
             }
         }
-        else if( str[ i ] == '{' )
+        else if( str[i] == '{' )
         {
             i = InsertTabs( str, i + 1, level + 1 );
         }
-        else if( str[ i ] == '}' )
+        else if( str[i] == '}' )
         {
             return i;
         }
@@ -1987,12 +1987,12 @@ int InsertTabs( string& str, int cur_pos, int level )
 void FormatPreprocessorOutput( string& str )
 {
     // Combine long line breaks
-    for( int i = 0; i < (int) str.length() - 2; ++i )
-        if( str[ i ] == '\n' && str[ i + 1 ] == '\n' && str[ i + 2 ] == '\n' )
-            str[ i ] = ' ';
+    for( int i = 0; i < (int)str.length() - 2; ++i )
+        if( str[i] == '\n' && str[i + 1] == '\n' && str[i + 2] == '\n' )
+            str[i] = ' ';
 
     // Add tabulations for {}
-    for( int i = 0; i < (int) str.length() - 1; ++i )
-        if( str[ i ] == '{' )
+    for( int i = 0; i < (int)str.length() - 1; ++i )
+        if( str[i] == '{' )
             i = InsertTabs( str, i + 1, 1 );
 }

@@ -20,7 +20,7 @@
 #define MAP_EVENT_TURN_BASED_END        ( 10 )
 #define MAP_EVENT_TURN_BASED_PROCESS    ( 11 )
 #define MAP_EVENT_MAX                   ( 12 )
-extern const char* MapEventFuncName[ MAP_EVENT_MAX ];
+extern const char* MapEventFuncName[MAP_EVENT_MAX];
 
 // Loop times
 #define MAP_LOOP_FUNC_MAX               ( 5 )
@@ -53,19 +53,19 @@ public:
         bool   IsTurnBasedAviable;
         int    MapTime;
         uint   ScriptId;
-        int    MapDayTime[ 4 ];
-        uchar  MapDayColor[ 12 ];
-        uint   Reserved[ 20 ];
-        int    UserData[ MAP_MAX_DATA ];
+        int    MapDayTime[4];
+        uchar  MapDayColor[12];
+        uint   Reserved[20];
+        int    UserData[MAP_MAX_DATA];
     } Data;
 
     ProtoMap* Proto;
 
     bool      NeedProcess;
-    int       FuncId[ MAP_EVENT_MAX ];
-    uint      LoopEnabled[ MAP_LOOP_FUNC_MAX ];
-    uint      LoopLastTick[ MAP_LOOP_FUNC_MAX ];
-    uint      LoopWaitTick[ MAP_LOOP_FUNC_MAX ];
+    int       FuncId[MAP_EVENT_MAX];
+    uint      LoopEnabled[MAP_LOOP_FUNC_MAX];
+    uint      LoopLastTick[MAP_LOOP_FUNC_MAX];
+    uint      LoopWaitTick[MAP_LOOP_FUNC_MAX];
 
     bool Init( ProtoMap* proto, Location* location );
     bool Generate();
@@ -143,13 +143,13 @@ public:
     bool IsHexRaked( ushort hx, ushort hy );
     bool IsHexesPassed( ushort hx, ushort hy, uint radius );
     bool IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex );
-    bool IsHexItem( ushort hx, ushort hy ) { return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_ITEM ); }
+    bool IsHexItem( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_ITEM ); }
 
-    bool IsHexTrigger( ushort hx, ushort hy ) { return FLAG( Proto->HexFlags[ hy * GetMaxHexX() + hx ], FH_TRIGGER ); }
-    bool IsHexTrap( ushort hx, ushort hy )    { return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_WALK_ITEM ); }
+    bool IsHexTrigger( ushort hx, ushort hy ) { return FLAG( Proto->HexFlags[hy * GetMaxHexX() + hx], FH_TRIGGER ); }
+    bool IsHexTrap( ushort hx, ushort hy )    { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_WALK_ITEM ); }
 
-    bool IsHexCritter( ushort hx, ushort hy ) { return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_CRITTER | FH_DEAD_CRITTER ); }
-    bool IsHexGag( ushort hx, ushort hy )     { return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_GAG_ITEM ); }
+    bool IsHexCritter( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_CRITTER | FH_DEAD_CRITTER ); }
+    bool IsHexGag( ushort hx, ushort hy )     { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_GAG_ITEM ); }
 
     bool     IsFlagCritter( ushort hx, ushort hy, bool dead );
     void     SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead );
@@ -259,7 +259,7 @@ public:
     bool        AutoGarbage;
     bool        GeckVisible;
 
-    ProtoLocation(): IsInit( false ) {};
+    ProtoLocation() : IsInit( false ) {};
 };
 typedef vector< ProtoLocation > ProtoLocVec;
 
@@ -267,7 +267,7 @@ typedef vector< ProtoLocation > ProtoLocVec;
 #define LOCATION_EVENT_FINISH    ( 0 )
 #define LOCATION_EVENT_ENTER     ( 1 )
 #define LOCATION_EVENT_MAX       ( 2 )
-extern const char* LocationEventFuncName[ LOCATION_EVENT_MAX ];
+extern const char* LocationEventFuncName[LOCATION_EVENT_MAX];
 
 class Location
 {
@@ -290,12 +290,12 @@ public:
         bool   AutoGarbage;
         bool   ToGarbage;
         uint   Color;
-        uint   Reserved3[ 59 ];
+        uint   Reserved3[59];
     } Data;
 
     ProtoLocation* Proto;
     volatile int   GeckCount;
-    int            FuncId[ LOCATION_EVENT_MAX ];
+    int            FuncId[LOCATION_EVENT_MAX];
 
     bool       Init( ProtoLocation* proto, ushort wx, ushort wy );
     void       Clear( bool full );
@@ -307,7 +307,7 @@ public:
     uint       GetRadius()       { return Data.Radius; }
     MapVec&    GetMapsNoLock()   { return locMaps; };
     void       GetMaps( MapVec& maps, bool lock );
-    uint       GetMapsCount() { return (uint) locMaps.size(); }
+    uint       GetMapsCount() { return (uint)locMaps.size(); }
     Map*       GetMap( uint count );
     bool       GetTransit( Map* from_map, uint& id_map, ushort& hx, ushort& hy, uchar& dir );
     bool       IsAutomaps()                { return !Proto->AutomapsPids.empty(); }
@@ -337,7 +337,7 @@ public:
         RefCounter--;
         if( RefCounter <= 0 ) delete this;
     }
-    Location(): RefCounter( 1 ), Proto( NULL ), IsNotValid( false ) { memzero( (void*) &Data, sizeof( Data ) ); }
+    Location() : RefCounter( 1 ), Proto( NULL ), IsNotValid( false ) { memzero( (void*)&Data, sizeof( Data ) ); }
 };
 typedef map< uint, Location* > LocMap;
 typedef vector< Location* >    LocVec;

@@ -136,7 +136,7 @@
 
 // Inventory
 #define STR_INV_SHORT_SPECIAL_( num )    ( 400 + ( num ) )
-#define STR_INV_SHORT_SPECIAL              # (num)    ( 400 + ( num ) )
+#define STR_INV_SHORT_SPECIAL              # (num)( 400 + ( num ) )
 #define STR_INV_HP                         ( 407 )
 #define STR_INV_AC                         ( 408 )
 #define STR_INV_NORMAL                     ( 409 )
@@ -310,16 +310,16 @@
 
 // Parameters
 #define STR_PARAM_NAME_( index )            ( 100000 + ( index ) * 10 + 1 )
-#define STR_PARAM_NAME                     # (index)         ( 100000 + ( index ) * 10 + 1 )
+#define STR_PARAM_NAME                     # (index)( 100000 + ( index ) * 10 + 1 )
 #define STR_PARAM_DESC_( index )            ( 100000 + ( index ) * 10 + 2 )
-#define STR_PARAM_DESC                     # (index)         ( 100000 + ( index ) * 10 + 2 )
+#define STR_PARAM_DESC                     # (index)( 100000 + ( index ) * 10 + 2 )
 #define STR_PARAM_NAME_SHORT_( index )      ( 100000 + ( index ) * 10 + 3 )
-#define STR_PARAM_NAME_SHORT               # (index)   ( 100000 + ( index ) * 10 + 3 )
+#define STR_PARAM_NAME_SHORT               # (index)( 100000 + ( index ) * 10 + 3 )
 
 #define STR_STAT_LEVEL_( val )              ( ( val ) > 10 ? ( 2310 ) : ( ( val ) < 1 ? ( 2301 ) : 2300 + ( val ) ) )
-#define STR_STAT_LEVEL                     # (val)           ( ( val ) > 10 ? ( 2310 ) : ( ( val ) < 1 ? ( 2301 ) : 2300 + ( val ) ) )
+#define STR_STAT_LEVEL                     # (val)( ( val ) > 10 ? ( 2310 ) : ( ( val ) < 1 ? ( 2301 ) : 2300 + ( val ) ) )
 #define STR_STAT_LEVEL_ABB_( val )          ( ( val ) > 10 ? ( 2320 ) : ( ( val ) < 1 ? ( 2311 ) : 2310 + ( val ) ) )
-#define STR_STAT_LEVEL_ABB                 # (val)       ( ( val ) > 10 ? ( 2320 ) : ( ( val ) < 1 ? ( 2311 ) : 2310 + ( val ) ) )
+#define STR_STAT_LEVEL_ABB                 # (val)( ( val ) > 10 ? ( 2320 ) : ( ( val ) < 1 ? ( 2311 ) : 2310 + ( val ) ) )
 
 #define STR_NEXT_LEVEL_NAME                ( 4001 )
 #define STR_UNSPENT_SKILL_POINTS_NAME      ( 4002 )
@@ -354,9 +354,9 @@
 #define STR_SKILL_NOFIRSTAID_NEEDDOCTOR    ( 3404 )
 #define STR_SKILL_NODOCTOR_NEEDFIRSTAID    ( 3405 )
 #define STR_SKILL_HEAL_DMG_( dmg )          ( 3410 + ( dmg ) )
-#define STR_SKILL_HEAL_DMG                 # (dmg)       ( 3410 + ( dmg ) )
+#define STR_SKILL_HEAL_DMG                 # (dmg)( 3410 + ( dmg ) )
 #define STR_SKILL_NOHEAL_DMG_( dmg )        ( 3420 + ( dmg ) )
-#define STR_SKILL_NOHEAL_DMG               # (dmg)     ( 3420 + ( dmg ) )
+#define STR_SKILL_NOHEAL_DMG               # (dmg)( 3420 + ( dmg ) )
 #define STR_SKILL_STEAL_TRIED_GET          ( 3430 )
 #define STR_SKILL_STEAL_TRIED_PUT          ( 3431 )
 #define STR_SKILL_LOCKPICK_FAIL            ( 3440 )
@@ -440,14 +440,14 @@
 
 // Caliber
 #define STR_CALIBER_( num )                 ( 10900 + ( num ) )
-#define STR_CALIBER                        # (num)              ( 10900 + ( num ) )
+#define STR_CALIBER                        # (num)( 10900 + ( num ) )
 
 // Critters
-#define STR_CRIT_LOOK1                     # (gen)                   ( 11000 + ( gen ) * 1000 )
-#define STR_CRIT_LOOK1_SELF                # (gen)              ( 11001 + ( gen ) * 1000 )
-#define STR_CRIT_LOOK2                     # (gen)                   ( 11002 + ( gen ) * 1000 )
-#define STR_CRIT_LOOK3                     # (gen)                   ( 11003 + ( gen ) * 1000 )
-#define STR_CRIT_LOOK_SELF                 # (gen)               ( 11005 + ( gen ) * 1000 )
+#define STR_CRIT_LOOK1                     # (gen)( 11000 + ( gen ) * 1000 )
+#define STR_CRIT_LOOK1_SELF                # (gen)( 11001 + ( gen ) * 1000 )
+#define STR_CRIT_LOOK2                     # (gen)( 11002 + ( gen ) * 1000 )
+#define STR_CRIT_LOOK3                     # (gen)( 11003 + ( gen ) * 1000 )
+#define STR_CRIT_LOOK_SELF                 # (gen)( 11005 + ( gen ) * 1000 )
 #define STR_CRIT_LOOK_LIFE                 ( 11010 )
 #define STR_CRIT_LOOK_KO                   ( 11011 )
 #define STR_CRIT_LOOK_DEAD                 ( 11012 )
@@ -459,10 +459,10 @@
 #define STR_CRIT_LOOK_DMG                  # ( gen, dmg )( 11400 + ( dmg ) + ( gen ) * 1000 )
 #define STR_CRIT_LOOK_PERK                 # ( gen, perk )( 11500 + ( perk ) + ( gen ) * 1000 )
 // Fallout system
-#define STR_CRIT_LOOK_WHO                  # (gender)             ( 12500 + ( gender ) )
-#define STR_CRIT_LOOK_STATE                # (num)              ( 12510 + ( num ) )
+#define STR_CRIT_LOOK_WHO                  # (gender)( 12500 + ( gender ) )
+#define STR_CRIT_LOOK_STATE                # (num)( 12510 + ( num ) )
 #define STR_CRIT_LOOK_LIMBS                # ( gender, unhurt )( 12520 + ( gender ) * 2 + ( unhurt ? 1 : 0 ) )
-#define STR_CRIT_LOOK_HP                   # (gender)              ( 12530 + ( gender ) )
+#define STR_CRIT_LOOK_HP                   # (gender)( 12530 + ( gender ) )
 #define STR_CRIT_LOOK_WEAP                 ( 12540 )
 #define STR_CRIT_LOOK_WEAP_AMMO            ( 12541 )
 #define STR_CRIT_LOOK_MISC                 ( 12542 )
@@ -489,7 +489,7 @@
 // ***  FOOBJ.MSG  ***********************************************************************
 // ***************************************************************************************
 
-#define STR_ITEM_INFO                      # (item)           ( item.GetProtoId() * 100 + item.Info )
+#define STR_ITEM_INFO                      # (item)( item.GetProtoId() * 100 + item.Info )
 
 // ***************************************************************************************
 // ***  FOGM.MSG  ************************************************************************
@@ -516,12 +516,12 @@
 // ***************************************************************************************
 
 #define STR_NPC_PROTO_NAME_( pid )          ( ( pid ) * 10 )
-#define STR_NPC_PROTO_NAME                 # (pid)                          ( ( pid ) * 10 )
-#define STR_NPC_PROTO_DESC                 # (pid)                          ( ( pid ) * 10 + 1 )
+#define STR_NPC_PROTO_NAME                 # (pid)( ( pid ) * 10 )
+#define STR_NPC_PROTO_DESC                 # (pid)( ( pid ) * 10 + 1 )
 #define STR_NPC_NAME_( num, pid )           ( ( num ) != 0 ? 100000 + ( num ) * 1000 + 100 : STR_NPC_PROTO_NAME_( pid ) )
 #define STR_NPC_NAME                       # ( num, pid )( ( num ) != 0 ? 100000 + ( num ) * 1000 + 100 : STR_NPC_PROTO_NAME( pid ) )
 #define STR_NPC_AVATAR_( num )              ( ( num ) != 0 ? 100000 + ( num ) * 1000 + 110 : 0 )
-#define STR_NPC_AVATAR                     # (num)                              ( ( num ) != 0 ? 100000 + ( num ) * 1000 + 110 : 0 )
+#define STR_NPC_AVATAR                     # (num)( ( num ) != 0 ? 100000 + ( num ) * 1000 + 110 : 0 )
 #define STR_NPC_INFO_LIFE                  # ( num, pid )( ( num ) != 0 ? 100000 + ( num ) * 1000 + 200 : STR_NPC_PROTO_DESC( pid ) )
 #define STR_NPC_FULL_INFO_LIFE             # ( num, pid )( ( num ) != 0 ? 100000 + ( num ) * 1000 + 210 : STR_NPC_PROTO_DESC( pid ) )
 #define STR_NPC_INFO_KO                    # ( num, pid )( ( num ) != 0 ? 100000 + ( num ) * 1000 + 220 : STR_NPC_PROTO_DESC( pid ) )
@@ -554,9 +554,9 @@
 #define STR_HOLO_WRITE_SUCC                ( 7 )
 #define STR_HOLO_WRITE_FAIL                ( 8 )
 #define STR_HOLO_INFO_NAME_( num )          ( ( num ) * 10 )
-#define STR_HOLO_INFO_NAME                 # (num)       ( ( num ) * 10 )
+#define STR_HOLO_INFO_NAME                 # (num)( ( num ) * 10 )
 #define STR_HOLO_INFO_DESC_( num )          ( ( num ) * 10 + 1 )
-#define STR_HOLO_INFO_DESC                 # (num)       ( ( num ) * 10 + 1 )
+#define STR_HOLO_INFO_DESC                 # (num)( ( num ) * 10 + 1 )
 
 // ***************************************************************************************
 // ***  FOCOMBAT.MSG  ********************************************************************

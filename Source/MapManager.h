@@ -21,7 +21,7 @@ public:
     uint     EncounterDescriptor;
     uint     EncounterTick;
     bool     EncounterForce;
-    uint     UserData[ 10 ];
+    uint     UserData[10];
 
     bool     IsValid();
     bool     IsMoving();
@@ -124,8 +124,8 @@ private:
     Mutex mapLocker;
 
 public:
-    ProtoMap      ProtoMaps[ MAX_PROTO_MAPS ];
-    ProtoLocation ProtoLoc[ MAX_PROTO_LOCATIONS ];
+    ProtoMap      ProtoMaps[MAX_PROTO_MAPS];
+    ProtoLocation ProtoLoc[MAX_PROTO_LOCATIONS];
 
     MapManager();
     bool Init();
@@ -134,7 +134,7 @@ public:
 
     bool   LoadLocationsProtos();
     bool   LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid );
-    void   SaveAllLocationsAndMapsFile( void ( * save_func )( void*, size_t ) );
+    void   SaveAllLocationsAndMapsFile( void ( *save_func )( void*, size_t ) );
     bool   LoadAllLocationsAndMapsFile( void* f );
     string GetLocationsMapsStatistics();
     void   RunInitScriptMaps();
@@ -188,7 +188,7 @@ public:
     // Maps
 private:
     MapMap      allMaps;
-    PathStepVec pathesPool[ FPATH_DATA_SIZE ];
+    PathStepVec pathesPool[FPATH_DATA_SIZE];
     uint        pathNumCur;
 
 public:
@@ -203,7 +203,7 @@ public:
     void         TraceBullet( TraceData& trace );
     int          FindPath( PathFindData& pfd );
     int          FindPathGrid( ushort& hx, ushort& hy, int index, bool smooth_switcher );
-    PathStepVec& GetPath( uint num ) { return pathesPool[ num ]; }
+    PathStepVec& GetPath( uint num ) { return pathesPool[num]; }
     void         PathSetMoveParams( PathStepVec& path, bool is_run );
 };
 

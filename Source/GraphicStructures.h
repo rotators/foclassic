@@ -26,7 +26,7 @@ struct Texture
 
     #ifdef FO_D3D
     LPDIRECT3DTEXTURE9 Instance;
-    Texture(): Name( NULL ), Instance( NULL ) {}
+    Texture() : Name( NULL ), Instance( NULL ) {}
     ~Texture() { SAFEREL( Instance ); }
     #else
     GLuint             Id;
@@ -34,12 +34,12 @@ struct Texture
     uint               Size;
     uint               Width;
     uint               Height;
-    float              SizeData[ 4 ]; // Width, Height, TexelWidth, TexelHeight
+    float              SizeData[4];   // Width, Height, TexelWidth, TexelHeight
     float              Samples;
     # ifdef FO_WINDOWS
     HPBUFFERARB        PBuffer;
     # endif
-    Texture(): Name( NULL ), Id( 0 ), Data( NULL ), Size( 0 ), Width( 0 ), Height( 0 ), Samples( 0.0f )
+    Texture() : Name( NULL ), Id( 0 ), Data( NULL ), Size( 0 ), Width( 0 ), Height( 0 ), Samples( 0.0f )
     {
         # ifdef FO_WINDOWS
         PBuffer = NULL;
@@ -50,7 +50,7 @@ struct Texture
         GL( glDeleteTextures( 1, &Id ) );
         SAFEDELA( Data );
     }
-    inline uint& Pixel( uint x, uint y ) { return *( (uint*) Data + y * Width + x ); }
+    inline uint& Pixel( uint x, uint y ) { return *( (uint*)Data + y * Width + x ); }
     bool         Update()
     {
         GL( glBindTexture( GL_TEXTURE_2D, Id ) );
@@ -60,7 +60,7 @@ struct Texture
     bool Update( const Rect& r )
     {
         GL( glBindTexture( GL_TEXTURE_2D, Id ) );
-        GL( glTexSubImage2D( GL_TEXTURE_2D, 0, 0, r.T, Width, r.H(), GL_BGRA, GL_UNSIGNED_BYTE, (uint*) Data + r.T * Width ) );
+        GL( glTexSubImage2D( GL_TEXTURE_2D, 0, 0, r.T, Width, r.H(), GL_BGRA, GL_UNSIGNED_BYTE, (uint*)Data + r.T * Width ) );
         return true;
     }
     #endif
@@ -146,12 +146,12 @@ struct Effect
     EffectValue_   Random3Effect;
     EffectValue_   Random4Effect;
     bool           IsTextures;
-    EffectValue_   Textures[ EFFECT_TEXTURES ];
+    EffectValue_   Textures[EFFECT_TEXTURES];
     #ifndef FO_D3D
-    EffectValue_   TexturesSize[ EFFECT_TEXTURES ];
+    EffectValue_   TexturesSize[EFFECT_TEXTURES];
     #endif
     bool           IsScriptValues;
-    EffectValue_   ScriptValues[ EFFECT_SCRIPT_VALUES ];
+    EffectValue_   ScriptValues[EFFECT_SCRIPT_VALUES];
     bool           IsAnimPos;
     EffectValue_   AnimPosProc;
     EffectValue_   AnimPosTime;
@@ -240,15 +240,15 @@ struct Vertex3D
     Vector Position;
     float  PositionW;
     Vector Normal;
-    float  Color[ 4 ];
-    float  TexCoord[ 2 ];
-    float  TexCoord2[ 2 ];
-    float  TexCoord3[ 2 ];
+    float  Color[4];
+    float  TexCoord[2];
+    float  TexCoord2[2];
+    float  TexCoord3[2];
     Vector Tangent;
     Vector Bitangent;
-    float  BlendWeights[ 4 ];
-    float  BlendIndices[ 4 ];
-    float  Padding[ 1 ];
+    float  BlendWeights[4];
+    float  BlendIndices[4];
+    float  Padding[1];
 };
 static_assert( sizeof( Vertex3D ) == 128, "Wrong Vertex3D size." );
 typedef vector< Vertex3D >    Vertex3DVec;
@@ -262,10 +262,10 @@ struct MeshSubset
     uint           FacesCount;
     UShortVec      Indicies;
     string         DiffuseTexture;
-    float          DiffuseColor[ 4 ];
-    float          AmbientColor[ 4 ];
-    float          SpecularColor[ 4 ];
-    float          EmissiveColor[ 4 ];
+    float          DiffuseColor[4];
+    float          AmbientColor[4];
+    float          SpecularColor[4];
+    float          EmissiveColor[4];
     uint           BoneInfluences;
     MatrixVec      BoneOffsets;
     MatrixPtrVec   FrameCombinedMatrixPointer;
@@ -296,7 +296,7 @@ struct Frame
             return this;
         for( uint i = 0; i < Children.size(); i++ )
         {
-            Frame* frame = Children[ i ]->Find( name );
+            Frame* frame = Children[i]->Find( name );
             if( frame )
                 return frame;
         }

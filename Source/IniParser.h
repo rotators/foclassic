@@ -8,7 +8,7 @@ class IniParser
 private:
     char*  bufPtr;
     uint   bufLen;
-    char   lastApp[ 128 ];
+    char   lastApp[128];
     uint   lastAppPos;
     StrSet cachedApps;
     StrSet cachedKeys;

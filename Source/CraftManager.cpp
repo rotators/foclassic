@@ -127,19 +127,19 @@ void CraftItem::SetName( FOMsg& msg_game, FOMsg& msg_item )
     Name = "";
 
     // Out items
-    for( uint i = 0, j = (uint) OutItems.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)OutItems.size(); i < j; i++ )
     {
-        ProtoItem* proto = ItemMngr.GetProtoItem( OutItems[ i ] );
+        ProtoItem* proto = ItemMngr.GetProtoItem( OutItems[i] );
 
         if( !proto )
             Name += "???";
         else
             Name += msg_item.GetStr( proto->ProtoId * 100 );
 
-        if( OutItemsVal[ i ] > 1 )
+        if( OutItemsVal[i] > 1 )
         {
             Name += " ";
-            Name += Str::UItoA( OutItemsVal[ i ] );
+            Name += Str::UItoA( OutItemsVal[i] );
             Name += " ";
             Name += msg_game.GetStr( STR_FIX_PIECES );
         }
@@ -172,11 +172,11 @@ void SetStrMetadata( T& v, const char*& str )
 template< class T >
 void GetStrMetadata( T& v, char* str )
 {
-    Str::Append( str, MAX_FOTEXT, Str::ItoA( (int) v.size() ) );
+    Str::Append( str, MAX_FOTEXT, Str::ItoA( (int)v.size() ) );
     Str::Append( str, MAX_FOTEXT, " " );
-    for( uint i = 0; i < (uint) v.size(); i++ )
+    for( uint i = 0; i < (uint)v.size(); i++ )
     {
-        Str::Append( str, MAX_FOTEXT, Str::ItoA( v[ i ] ) );
+        Str::Append( str, MAX_FOTEXT, Str::ItoA( v[i] ) );
         Str::Append( str, MAX_FOTEXT, " " );
     }
 }
@@ -185,7 +185,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
 {
     // Prepare
     const char* pstr_in = str_in;
-    char        str[ MAX_FOTEXT ];
+    char        str[MAX_FOTEXT];
     char*       pstr;
     bool        metadata = false;
 
@@ -302,11 +302,11 @@ int CraftItem::SetStr( uint num, const char* str_in )
 #if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
 int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
-    char  str[ MAX_FOTEXT ];
+    char  str[MAX_FOTEXT];
     char* pstr = str;
 
     int   param_num = 0;
-    char  param_name[ 128 ] = { 0 };
+    char  param_name[128] = { 0 };
     int   param_val = 0;
 
     while( *pstr_in != MRFIXIT_NEXT )
@@ -344,7 +344,7 @@ int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_
             if( *pstr_in == MRFIXIT_NEXT )
                 break;
 
-            param_name[ 0 ] = '\0';
+            param_name[0] = '\0';
             pstr = str;
             pstr_in++;
         }
@@ -358,7 +358,7 @@ int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_
 
 int CraftItem::SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
-    char  str[ MAX_FOTEXT ];
+    char  str[MAX_FOTEXT];
     char* pstr = str;
 
     int   item_pid = 0;
@@ -417,7 +417,7 @@ int CraftItem::SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& co
 
 const char* CraftItem::GetStr( bool metadata )
 {
-    static THREAD char str[ MAX_FOTEXT ];
+    static THREAD char str[MAX_FOTEXT];
 
     if( metadata )
     {
@@ -484,18 +484,18 @@ const char* CraftItem::GetStr( bool metadata )
 #if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
 void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
-    for( uint i = 0, j = (uint) num_vec.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
-        const char* s = ConstantsManager::GetParamName( num_vec[ i ] );
+        const char* s = ConstantsManager::GetParamName( num_vec[i] );
         if( !s )
             continue;
 
-        char str[ 128 ];
-        Str::Format( str, "%s%c%d", s, MRFIXIT_SPACE, val_vec[ i ] );
+        char str[128];
+        Str::Format( str, "%s%c%d", s, MRFIXIT_SPACE, val_vec[i] );
 
         if( i != j - 1 )
         {
-            if( or_vec[ i ] )
+            if( or_vec[i] )
                 Str::Append( str, MAX_FOTEXT, MRFIXIT_OR_S );
             else
                 Str::Append( str, MAX_FOTEXT, MRFIXIT_AND_S );
@@ -509,18 +509,18 @@ void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, 
 
 void CraftItem::GetStrItem( char* pstr_out, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
-    for( uint i = 0, j = (uint) pid_vec.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
-        const char* s = ConstantsManager::GetItemName( pid_vec[ i ] );
+        const char* s = ConstantsManager::GetItemName( pid_vec[i] );
         if( !s )
             continue;
 
-        char str[ 128 ];
-        Str::Format( str, "%s%c%u", s, MRFIXIT_SPACE, count_vec[ i ] );
+        char str[128];
+        Str::Format( str, "%s%c%u", s, MRFIXIT_SPACE, count_vec[i] );
 
         if( i != j - 1 )
         {
-            if( or_vec[ i ] )
+            if( or_vec[i] )
                 Str::Append( str, MRFIXIT_OR_S );
             else
                 Str::Append( str, MRFIXIT_AND_S );
@@ -859,11 +859,11 @@ void CraftManager::GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec )
 # ifdef FONLINE_SERVER
 bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
-    for( int i = 0, j = (uint) num_vec.size(); i < j; i++ )
+    for( int i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
-        uint  param_num = num_vec[ i ];
-        int   param_val = val_vec[ i ];
-        uchar param_or = or_vec[ i ];
+        uint  param_num = num_vec[i];
+        int   param_val = val_vec[i];
+        uchar param_or = or_vec[i];
 
         if( param_num >= MAX_PARAMS || cr->GetParam( param_num ) < param_val ) // Fail
         {
@@ -878,7 +878,7 @@ bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec,
                 return true;                                                   // Is last element
             // OR, skip elements
             if( param_or )
-                for( i++; i < j - 1 && or_vec[ i ]; i++ )
+                for( i++; i < j - 1 && or_vec[i]; i++ )
                     ;
         }
     }
@@ -889,11 +889,11 @@ bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec,
 # ifdef FONLINE_CLIENT
 bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
-    for( uint i = 0, j = (uint) num_vec.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
-        uint  param_num = num_vec[ i ];
-        int   param_val = val_vec[ i ];
-        uchar param_or = or_vec[ i ];
+        uint  param_num = num_vec[i];
+        int   param_val = val_vec[i];
+        uchar param_or = or_vec[i];
 
         if( param_num >= MAX_PARAMS || cr->GetParam( param_num ) < param_val ) // Fail
         {
@@ -908,7 +908,7 @@ bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_ve
                 return true;                                                   // Is last element
             // OR, skip elements
             if( param_or )
-                for( i++; i < j - 1 && or_vec[ i ]; i++ )
+                for( i++; i < j - 1 && or_vec[i]; i++ )
                     ;
         }
     }
@@ -919,13 +919,13 @@ bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_ve
 # ifdef FONLINE_SERVER
 bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
-    for( uint i = 0, j = (uint) pid_vec.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
         bool   next = true;
 
-        ushort item_pid = pid_vec[ i ];
-        uint   item_count = count_vec[ i ];
-        uchar  item_or = or_vec[ i ];
+        ushort item_pid = pid_vec[i];
+        uint   item_count = count_vec[i];
+        uchar  item_or = or_vec[i];
 
         if( cr->CountItemPid( item_pid ) < item_count )
             next = false;
@@ -943,7 +943,7 @@ bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_
             if( i == j - 1 )
                 return true;                    // Is last element
             // OR, skip elements
-            for( ; i < j - 1 && or_vec[ i ]; i++ )
+            for( ; i < j - 1 && or_vec[i]; i++ )
                 ;
         }
     }
@@ -954,13 +954,13 @@ bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_
 # ifdef FONLINE_CLIENT
 bool CraftManager::IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
-    for( uint i = 0, j = (uint) pid_vec.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
         bool   next = true;
 
-        ushort item_pid = pid_vec[ i ];
-        uint   item_count = count_vec[ i ];
-        uchar  item_or = or_vec[ i ];
+        ushort item_pid = pid_vec[i];
+        uint   item_count = count_vec[i];
+        uchar  item_or = or_vec[i];
 
         if( cr->CountItemPid( item_pid ) < item_count )
             next = false;
@@ -978,7 +978,7 @@ bool CraftManager::IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& coun
             if( i == j - 1 )
                 return true;                    // Is last element
             // OR, skip elements
-            for( ; i < j - 1 && or_vec[ i ]; i++ )
+            for( ; i < j - 1 && or_vec[i]; i++ )
                 ;
         }
     }
@@ -1025,11 +1025,11 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
     ItemPtrVec sub_items;
     if( FLAG( flags, FIXBOY_SUB_MATERIALS ) ) // Sub items
     {
-        for( uint i = 0, j = (uint) craft->NeedItems.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)craft->NeedItems.size(); i < j; i++ )
         {
-            ushort pid = craft->NeedItems[ i ];
-            uint   count = craft->NeedItemsVal[ i ];
-            uchar  or_cmd = craft->NeedItemsOr[ i ];
+            ushort pid = craft->NeedItems[i];
+            uint   count = craft->NeedItemsVal[i];
+            uchar  or_cmd = craft->NeedItemsOr[i];
 
             if( cr->CountItemPid( pid ) < count )
                 continue;
@@ -1037,7 +1037,7 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
 
             // Skip or
             if( or_cmd )
-                for( ; i < j - 1 && craft->NeedItemsOr[ i ]; i++ )
+                for( ; i < j - 1 && craft->NeedItemsOr[i]; i++ )
                     ;
         }
     }
@@ -1046,10 +1046,10 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
     {
         ItemPtrVec crafted;
         UIntVec    crafted_count;
-        for( uint i = 0, j = (uint) craft->OutItems.size(); i < j; i++ )
+        for( uint i = 0, j = (uint)craft->OutItems.size(); i < j; i++ )
         {
-            ushort     pid = craft->OutItems[ i ];
-            uint       count = craft->OutItemsVal[ i ];
+            ushort     pid = craft->OutItems[i];
+            uint       count = craft->OutItemsVal[i];
             ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
             if( !proto_item )
                 continue;
@@ -1114,9 +1114,9 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
     {
         cr->ChangeParam( ST_EXPERIENCE );
         if( craft->Experience )
-            cr->Data.Params[ ST_EXPERIENCE ] += craft->Experience;
+            cr->Data.Params[ST_EXPERIENCE] += craft->Experience;
         else if( GameOpt.FixBoyDefaultExperience )
-            cr->Data.Params[ ST_EXPERIENCE ] += GameOpt.FixBoyDefaultExperience;
+            cr->Data.Params[ST_EXPERIENCE] += GameOpt.FixBoyDefaultExperience;
     }
 
     CRAFT_RETURN_SUCC;

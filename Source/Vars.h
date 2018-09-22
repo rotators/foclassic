@@ -47,11 +47,11 @@ public:
     VarsMap64 VarsUnicum;
 
     bool IsNotUnicum() { return Type != VAR_UNICUM; }
-    bool IsError()     { return ( !TempId || !Name.size() || ( IsNoBorders() && ( MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal ) ) || ( IsQuest() && Type != VAR_LOCAL ) ); }
+    bool IsError()     { return !TempId || !Name.size() || ( IsNoBorders() && ( MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal ) ) || ( IsQuest() && Type != VAR_LOCAL );  }
     bool IsQuest()     { return FLAG( Flags, VAR_FLAG_QUEST ); }
     bool IsRandom()    { return FLAG( Flags, VAR_FLAG_RANDOM ); }
     bool IsNoBorders() { return FLAG( Flags, VAR_FLAG_NO_CHECK ); }
-    TemplateVar(): Type( VAR_GLOBAL ), TempId( 0 ), StartVal( 0 ), MinVal( 0 ), MaxVal( 0 ), Flags( 0 ) {}
+    TemplateVar() : Type( VAR_GLOBAL ), TempId( 0 ), StartVal( 0 ), MinVal( 0 ), MaxVal( 0 ), Flags( 0 ) {}
 };
 
 #ifdef FONLINE_SERVER
@@ -60,14 +60,14 @@ class Critter;
 class GameVar
 {
 public:
-    uint MasterId;
-    uint SlaveId;
-    int VarValue;
+    uint         MasterId;
+    uint         SlaveId;
+    int          VarValue;
     TemplateVar* VarTemplate;
-    uint QuestVarIndex;
-    ushort Type;
-    short RefCount;
-    SyncObject Sync;
+    uint         QuestVarIndex;
+    ushort       Type;
+    short        RefCount;
+    SyncObject   Sync;
 
     GameVar& operator+=( const int _right );
     GameVar& operator-=( const int _right );
@@ -107,16 +107,16 @@ public:
     uint         GetQuestStr()    { return VAR_CALC_QUEST( VarTemplate->TempId, VarValue ); }
     bool         IsRandom()       { return VarTemplate->IsRandom(); }
     TemplateVar* GetTemplateVar() { return VarTemplate; }
-    uint64       GetUid()         { return ( ( (uint64) SlaveId ) << 32 ) | ( (uint64) MasterId ); }
+    uint64       GetUid()         { return ( ( (uint64)SlaveId ) << 32 ) | ( (uint64)MasterId ); }
     uint         GetMasterId()    { return MasterId; }
     uint         GetSlaveId()     { return SlaveId; }
 
     void AddRef()  { RefCount++; }
     void Release() { if( !--RefCount ) delete this; }
 
-    GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val ): MasterId( master_id ), SlaveId( slave_id ), VarTemplate( var_template ), QuestVarIndex( 0 ),
-                                                                                  Type( var_template->Type ), VarValue( val ), RefCount( 1 ) { MEMORY_PROCESS( MEMORY_VAR, sizeof( GameVar ) ); }
-    ~GameVar() { MEMORY_PROCESS( MEMORY_VAR, -(int) sizeof( GameVar ) ); }
+    GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val ) : MasterId( master_id ), SlaveId( slave_id ), VarTemplate( var_template ), QuestVarIndex( 0 ),
+        Type( var_template->Type ), VarValue( val ), RefCount( 1 ) { MEMORY_PROCESS( MEMORY_VAR, sizeof( GameVar ) ); }
+    ~GameVar() { MEMORY_PROCESS( MEMORY_VAR, -(int)sizeof( GameVar ) ); }
 private: GameVar() {}
 };
 

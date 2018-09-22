@@ -27,9 +27,9 @@
 #define RAD( deg )                              ( ( deg ) * 3.141592654f / 180.0f )
 
 // Signatures
-#define BINARY_SIGNATURE( name, type, ver )     const unsigned char name[ 6 ] = { 'F', 'O', type, ( ( ver ) >> 8 ) & 0xFF, ( ( ver ) ) & 0xFF, 0 }
-#define BINARY_SIGNATURE_VALID( sig1, sig2 )    ( sig1[ 0 ] == sig2[ 0 ] && sig1[ 1 ] == sig2[ 1 ] && sig1[ 2 ] == sig2[ 2 ] && sig1[ 5 ] == sig2[ 5 ] ) // skip version check
-#define BINARY_SIGNATURE_VERSION( sig )         ( ( sig[ 3 ] << 8 ) | sig[ 4 ] )
+#define BINARY_SIGNATURE( name, type, ver )     const unsigned char name[6] = { 'F', 'O', type, ( ( ver ) >> 8 ) & 0xFF, ( ( ver ) ) & 0xFF, 0 }
+#define BINARY_SIGNATURE_VALID( sig1, sig2 )    ( sig1[0] == sig2[0] && sig1[1] == sig2[1] && sig1[2] == sig2[2] && sig1[5] == sig2[5] )                 // skip version check
+#define BINARY_SIGNATURE_VERSION( sig )         ( ( sig[3] << 8 ) | sig[4] )
 
 #define BINARY_CLIENTSAVE            'C'
 #define BINARY_MAPSAVE               'M'

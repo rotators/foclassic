@@ -84,7 +84,7 @@ private:
         struct Event
         {
             enum EType { Enable, Speed, Weight };
-            Event( EType t, float v, float start, float smooth ): type( t ), valueFrom( -1.0f ), valueTo( v ), startTime( start ), smoothTime( smooth ) {}
+            Event( EType t, float v, float start, float smooth ) : type( t ), valueFrom( -1.0f ), valueTo( v ), startTime( start ), smoothTime( smooth ) {}
             EType type;
             float valueFrom;
             float valueTo;
@@ -110,7 +110,7 @@ private:
     float       curTime;
 
 public:
-    AnimController(): sets( NULL ), outputs( NULL ), curTime( 0.0f )
+    AnimController() : sets( NULL ), outputs( NULL ), curTime( 0.0f )
     {}
 
     ~AnimController()
@@ -130,7 +130,7 @@ public:
         controller->sets = new AnimSetVec();
         controller->outputs = new OutputVec();
         controller->tracks.resize( track_count );
-        memzero( &controller->tracks[ 0 ], sizeof( Track ) * track_count );
+        memzero( &controller->tracks[0], sizeof( Track ) * track_count );
         controller->curTime = 0.0f;
         return controller;
     }
@@ -169,7 +169,7 @@ public:
     {
         if( index >= sets->size() )
             return NULL;
-        return ( *sets )[ index ];
+        return ( *sets )[index];
     }
 
     AnimSet* GetAnimationSetByName( const char* name )
@@ -184,7 +184,7 @@ public:
 
     float GetTrackPosition( uint track )
     {
-        return tracks[ track ].position;
+        return tracks[track].position;
     }
 
     uint GetMaxNumAnimationSets()
@@ -195,22 +195,22 @@ public:
     void SetTrackAnimationSet( uint track, AnimSet* anim )
     {
         // Set and link animation
-        tracks[ track ].anim = anim;
+        tracks[track].anim = anim;
         uint count = anim->GetOutputCount();
-        tracks[ track ].animOutput.resize( count );
+        tracks[track].animOutput.resize( count );
         for( uint i = 0; i < count; i++ )
         {
-            const string& link_name = anim->outputs[ i ].name;
+            const string& link_name = anim->outputs[i].name;
             Output*       output = NULL;
             for( uint j = 0; j < outputs->size(); j++ )
             {
-                if( ( *outputs )[ j ].name == link_name )
+                if( ( *outputs )[j].name == link_name )
                 {
-                    output = &( *outputs )[ j ];
+                    output = &( *outputs )[j];
                     break;
                 }
             }
-            tracks[ track ].animOutput[ i ] = output;
+            tracks[track].animOutput[i] = output;
         }
     }
 
@@ -218,7 +218,7 @@ public:
     {
         curTime = 0.0f;
         for( uint i = 0; i < tracks.size(); i++ )
-            tracks[ i ].events.clear();
+            tracks[i].events.clear();
     }
 
     float GetTime()
@@ -228,27 +228,27 @@ public:
 
     void AddEventEnable( uint track, bool enable, float start_time )
     {
-        tracks[ track ].events.push_back( Track::Event( Track::Event::Enable, enable ? 1.0f : -1.0f, start_time, 0.0f ) );
+        tracks[track].events.push_back( Track::Event( Track::Event::Enable, enable ? 1.0f : -1.0f, start_time, 0.0f ) );
     }
 
     void AddEventSpeed( uint track, float speed, float start_time, float smooth_time )
     {
-        tracks[ track ].events.push_back( Track::Event( Track::Event::Speed, speed, start_time, smooth_time ) );
+        tracks[track].events.push_back( Track::Event( Track::Event::Speed, speed, start_time, smooth_time ) );
     }
 
     void AddEventWeight( uint track, float weight, float start_time, float smooth_time )
     {
-        tracks[ track ].events.push_back( Track::Event( Track::Event::Weight, weight, start_time, smooth_time ) );
+        tracks[track].events.push_back( Track::Event( Track::Event::Weight, weight, start_time, smooth_time ) );
     }
 
     void SetTrackEnable( uint track, bool enable )
     {
-        tracks[ track ].enabled = enable;
+        tracks[track].enabled = enable;
     }
 
     void SetTrackPosition( uint track, float position )
     {
-        tracks[ track ].position = position;
+        tracks[track].position = position;
     }
 
     void AdvanceTime( float time )
@@ -259,7 +259,7 @@ public:
         // Track events
         for( uint i = 0, j = tracks.size(); i < j; i++ )
         {
-            Track& track = tracks[ i ];
+            Track& track = tracks[i];
 
             // Events
             for( auto it = track.events.begin(); it != track.events.end();)
@@ -314,46 +314,46 @@ public:
         // Track animation
         for( uint i = 0, j = tracks.size(); i < j; i++ )
         {
-            Track& track = tracks[ i ];
+            Track& track = tracks[i];
 
             for( uint k = 0, l = outputs->size(); k < l; k++ )
-                ( *outputs )[ k ].valid[ i ] = false;
+                ( *outputs )[k].valid[i] = false;
 
             if( !track.enabled || track.weight <= 0.0f || !track.anim )
                 continue;
 
             for( uint k = 0, l = track.anim->outputs.size(); k < l; k++ )
             {
-                if( !track.animOutput[ k ] )
+                if( !track.animOutput[k] )
                     continue;
 
-                AnimSet::Output& o = track.anim->outputs[ k ];
+                AnimSet::Output& o = track.anim->outputs[k];
 
                 float            time = fmod( track.position * track.anim->ticksPerSecond, track.anim->durationTicks );
-                FindSRTValue< Vector >( time, o.scaleTime, o.scaleValue, track.animOutput[ k ]->scale[ i ] );
-                FindSRTValue< Quaternion >( time, o.rotationTime, o.rotationValue, track.animOutput[ k ]->rotation[ i ] );
-                FindSRTValue< Vector >( time, o.translationTime, o.translationValue, track.animOutput[ k ]->translation[ i ] );
-                track.animOutput[ k ]->valid[ i ] = true;
-                track.animOutput[ k ]->factor[ i ] = track.weight;
+                FindSRTValue< Vector >( time, o.scaleTime, o.scaleValue, track.animOutput[k]->scale[i] );
+                FindSRTValue< Quaternion >( time, o.rotationTime, o.rotationValue, track.animOutput[k]->rotation[i] );
+                FindSRTValue< Vector >( time, o.translationTime, o.translationValue, track.animOutput[k]->translation[i] );
+                track.animOutput[k]->valid[i] = true;
+                track.animOutput[k]->factor[i] = track.weight;
             }
         }
 
         // Blend tracks
         for( uint i = 0, j = outputs->size(); i < j; i++ )
         {
-            Output& o = ( *outputs )[ i ];
+            Output& o = ( *outputs )[i];
 
             // Todo: add interpolation for tracks more than two
-            if( tracks.size() >= 2 && o.valid[ 0 ] && o.valid[ 1 ] )
+            if( tracks.size() >= 2 && o.valid[0] && o.valid[1] )
             {
-                float factor = o.factor[ 1 ];
-                Interpolate( o.scale[ 0 ], o.scale[ 1 ], factor );
-                Interpolate( o.rotation[ 0 ], o.rotation[ 1 ], factor );
-                Interpolate( o.translation[ 0 ], o.translation[ 1 ], factor );
+                float factor = o.factor[1];
+                Interpolate( o.scale[0], o.scale[1], factor );
+                Interpolate( o.rotation[0], o.rotation[1], factor );
+                Interpolate( o.translation[0], o.translation[1], factor );
                 Matrix ms, mr, mt;
-                Matrix::Scaling( o.scale[ 0 ], ms );
-                mr = Matrix( o.rotation[ 0 ].GetMatrix() );
-                Matrix::Translation( o.translation[ 0 ], mt );
+                Matrix::Scaling( o.scale[0], ms );
+                mr = Matrix( o.rotation[0].GetMatrix() );
+                Matrix::Translation( o.translation[0], mt );
                 Matrix m = mt * mr * ms;
                 MATRIX_TRANSPOSE( m );
                 *o.matrix = m;
@@ -362,12 +362,12 @@ public:
             {
                 for( uint k = 0, l = tracks.size(); k < l; k++ )
                 {
-                    if( o.valid[ k ] )
+                    if( o.valid[k] )
                     {
                         Matrix ms, mr, mt;
-                        Matrix::Scaling( o.scale[ k ], ms );
-                        mr = Matrix( o.rotation[ k ].GetMatrix() );
-                        Matrix::Translation( o.translation[ k ], mt );
+                        Matrix::Scaling( o.scale[k], ms );
+                        mr = Matrix( o.rotation[k].GetMatrix() );
+                        Matrix::Translation( o.translation[k], mt );
                         Matrix m = mt * mr * ms;
                         MATRIX_TRANSPOSE( m );
                         *o.matrix = m;
@@ -386,18 +386,18 @@ private:
         {
             if( n + 1 < m )
             {
-                if( time >= times[ n ] && time < times[ n + 1 ] )
+                if( time >= times[n] && time < times[n + 1] )
                 {
-                    result = values[ n ];
-                    T&    value = values[ n + 1 ];
-                    float factor = ( time - times[ n ] ) / ( times[ n + 1 ] - times[ n ] );
+                    result = values[n];
+                    T&    value = values[n + 1];
+                    float factor = ( time - times[n] ) / ( times[n + 1] - times[n] );
                     Interpolate( result, value, factor );
                     return;
                 }
             }
             else
             {
-                result = values[ n ];
+                result = values[n];
             }
         }
     }

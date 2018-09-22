@@ -17,7 +17,7 @@ public:
     ushort       Pid;
     ushort       HexX, HexY;
     uchar        CrDir;
-    int          Params[ MAX_PARAMS ];
+    int          Params[MAX_PARAMS];
     uint         NameColor;
     uint         ContourColor;
     UShortVec    LastHexX, LastHexY;
@@ -47,18 +47,18 @@ public:
     Item*        ItemSlotExt;
     Item*        ItemSlotArmor;
 
-    static bool  ParamsRegEnabled[ MAX_PARAMS ];
-    static int   ParamsReg[ MAX_PARAMS ];
-    CritterCl*   ThisPtr[ MAX_PARAMETERS_ARRAYS ];
-    static int   ParamsChangeScript[ MAX_PARAMS ];
-    static int   ParamsGetScript[ MAX_PARAMS ];
-    static uint  ParametersMin[ MAX_PARAMETERS_ARRAYS ];
-    static uint  ParametersMax[ MAX_PARAMETERS_ARRAYS ];
-    static bool  ParametersOffset[ MAX_PARAMETERS_ARRAYS ];
-    bool         ParamsIsChanged[ MAX_PARAMS ];
+    static bool  ParamsRegEnabled[MAX_PARAMS];
+    static int   ParamsReg[MAX_PARAMS];
+    CritterCl*   ThisPtr[MAX_PARAMETERS_ARRAYS];
+    static int   ParamsChangeScript[MAX_PARAMS];
+    static int   ParamsGetScript[MAX_PARAMS];
+    static uint  ParametersMin[MAX_PARAMETERS_ARRAYS];
+    static uint  ParametersMax[MAX_PARAMETERS_ARRAYS];
+    static bool  ParametersOffset[MAX_PARAMETERS_ARRAYS];
+    bool         ParamsIsChanged[MAX_PARAMS];
     IntVec       ParamsChanged;
     int          ParamLocked;
-    static bool  SlotEnabled[ 0x100 ];
+    static bool  SlotEnabled[0x100];
 
     CritterCl();
     ~CritterCl();
@@ -111,12 +111,12 @@ public:
     uint GetMultihex();
 
     int  GetParam( uint index );
-    bool IsRawParam( uint index )  { return Params[ index ] != 0; }
-    int  GetRawParam( uint index ) { return Params[ index ]; }
+    bool IsRawParam( uint index )  { return Params[index] != 0; }
+    int  GetRawParam( uint index ) { return Params[index]; }
     void ChangeParam( uint index );
     void ProcessChangedParams();
 
-    bool IsTagSkill( int index ) { return Params[ TAG_SKILL1 ] == index || Params[ TAG_SKILL2 ] == index || Params[ TAG_SKILL3 ] == index || Params[ TAG_SKILL4 ] == index; }
+    bool IsTagSkill( int index ) { return Params[TAG_SKILL1] == index || Params[TAG_SKILL2] == index || Params[TAG_SKILL3] == index || Params[TAG_SKILL4] == index; }
     uint GetMaxWeightKg()        { return GetParam( ST_CARRY_WEIGHT ) / 1000; }
     uint GetMaxVolume()          { return CRITTER_INV_VOLUME; }
     uint GetCrType();
@@ -124,17 +124,17 @@ public:
     bool IsDmgTwoLeg() { return IsRawParam( DAMAGE_RIGHT_LEG ) && IsRawParam( DAMAGE_LEFT_LEG ); }
     bool IsDmgArm()    { return IsRawParam( DAMAGE_RIGHT_ARM ) || IsRawParam( DAMAGE_LEFT_ARM ); }
     bool IsDmgTwoArm() { return IsRawParam( DAMAGE_RIGHT_ARM ) && IsRawParam( DAMAGE_LEFT_ARM ); }
-    int  GetRealAp()   { return Params[ ST_CURRENT_AP ]; }
+    int  GetRealAp()   { return Params[ST_CURRENT_AP]; }
     int  GetAllAp()    { return GetParam( ST_CURRENT_AP ) + GetParam( ST_MOVE_AP ); }
     void SubMoveAp( int val )
     {
         ChangeParam( ST_CURRENT_AP );
-        Params[ ST_MOVE_AP ] -= val;
+        Params[ST_MOVE_AP] -= val;
     }
     void SubAp( int val )
     {
         ChangeParam( ST_CURRENT_AP );
-        Params[ ST_CURRENT_AP ] -= val * AP_DIVIDER;
+        Params[ST_CURRENT_AP] -= val * AP_DIVIDER;
         ApRegenerationTick = 0;
     }
     bool IsHideMode() { return GetRawParam( MODE_HIDE ) != 0; }
@@ -182,8 +182,8 @@ public:
     ProtoItem*  GetProtoArm()  { return ItemSlotArmor->Proto; }
     const char* GetMoneyStr();
     Item*       GetAmmoAvialble( Item* weap );
-    bool        IsOverweight()       { return (int) GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ); }
-    bool        IsDoubleOverweight() { return (int) GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ) * 2; }
+    bool        IsOverweight()       { return (int)GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ); }
+    bool        IsDoubleOverweight() { return (int)GetItemsWeight() > GetParam( ST_CARRY_WEIGHT ) * 2; }
 
     // Moving
 public:
@@ -218,7 +218,7 @@ public:
         StartTick = Timer::GameTick();
     }
     void TickNull() { TickCount = 0; }
-    bool IsFree()   { return ( Timer::GameTick() - StartTick >= TickCount ); }
+    bool IsFree()   { return Timer::GameTick() - StartTick >= TickCount;  }
 
     // Animation
 public:
@@ -245,15 +245,15 @@ private:
         uint       IndCrType, IndAnim1, IndAnim2;
         Item*      ActiveItem;
         CritterAnim() {}
-        CritterAnim( AnyFrames* anim, uint tick, int beg_frm, int end_frm, bool move_text, int dir_offs, uint ind_crtype, uint ind_anim1, uint ind_anim2, Item* item ): Anim( anim ), AnimTick( tick ), BeginFrm( beg_frm ), EndFrm( end_frm ), MoveText( move_text ), DirOffs( dir_offs ),
-                                                                                                                                                                        IndCrType( ind_crtype ), IndAnim1( ind_anim1 ), IndAnim2( ind_anim2 ), ActiveItem( item ) {}
+        CritterAnim( AnyFrames* anim, uint tick, int beg_frm, int end_frm, bool move_text, int dir_offs, uint ind_crtype, uint ind_anim1, uint ind_anim2, Item* item ) : Anim( anim ), AnimTick( tick ), BeginFrm( beg_frm ), EndFrm( end_frm ), MoveText( move_text ), DirOffs( dir_offs ),
+            IndCrType( ind_crtype ), IndAnim1( ind_anim1 ), IndAnim2( ind_anim2 ), ActiveItem( item ) {}
     };
     typedef vector< CritterAnim > CritterAnimVec;
 
     CritterAnimVec animSequence;
     CritterAnim    stayAnim;
 
-    CritterAnim* GetCurAnim() { return IsAnim() ? &animSequence[ 0 ] : NULL; }
+    CritterAnim* GetCurAnim() { return IsAnim() ? &animSequence[0] : NULL; }
     void         NextAnim( bool erase_front );
 
 public:
@@ -296,7 +296,7 @@ private:
 
 public:
     bool IsFinishing() { return finishingTime != 0; }
-    bool IsFinish()    { return ( finishingTime && Timer::GameTick() > finishingTime ); }
+    bool IsFinish()    { return finishingTime && Timer::GameTick() > finishingTime;  }
 
     // Fade
 private:

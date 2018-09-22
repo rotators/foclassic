@@ -82,10 +82,10 @@ void* ProfilerFileHandle = NULL;
 enum EProfilerStage
 {
     ProfilerUninitialized = 0,
-    ProfilerDataSet = 1,
-    ProfilerInitialized = 2,
-    ProfilerModulesAdded = 3,
-    ProfilerWorking = 4
+    ProfilerDataSet       = 1,
+    ProfilerInitialized   = 2,
+    ProfilerModulesAdded  = 3,
+    ProfilerWorking       = 4
 };
 
 EProfilerStage ProfilerStage = ProfilerUninitialized;
@@ -108,7 +108,7 @@ void CheckProfiler()
 
 struct Call
 {
-    Call(): Id( 0 ), Line( 0 ) {}
+    Call() : Id( 0 ), Line( 0 ) {}
     Call( int id, uint line )
     {
         Id = id;
@@ -124,14 +124,14 @@ struct CallPath
     map< int, CallPath* > Children;
     uint                  Incl;
     uint                  Excl;
-    CallPath( int id ): Id( id ), Incl( 1 ), Excl( 0 ) {}
+    CallPath( int id ) : Id( id ), Incl( 1 ), Excl( 0 ) {}
     CallPath*             AddChild( int id )
     {
         auto it = Children.find( id );
         if( it != Children.end() ) return it->second;
 
         CallPath* child = new CallPath( id );
-        Children[ id ] = child;
+        Children[id] = child;
         return child;
     }
     void StackEnd()
@@ -158,7 +158,7 @@ void ProcessStack( CallStack* stack )
     if( itp == CallPaths.end() )
     {
         path = new CallPath( top_id );
-        CallPaths[ top_id ] = path;
+        CallPaths[top_id] = path;
     }
     else
     {
@@ -181,14 +181,14 @@ BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_SCRIPTSAVE, FOCLASSIC_VERSION );
 bool LoadLibraryCompiler = false;
 
 // Contexts
-THREAD asIScriptContext* GlobalCtx[ GLOBAL_CONTEXT_STACK_SIZE ] = { 0 };
+THREAD asIScriptContext* GlobalCtx[GLOBAL_CONTEXT_STACK_SIZE] = { 0 };
 THREAD uint              GlobalCtxIndex = 0;
 class ActiveContext
 {
 public:
     asIScriptContext** Contexts;
     uint               StartTick;
-    ActiveContext( asIScriptContext** ctx, uint tick ): Contexts( ctx ), StartTick( tick ) {}
+    ActiveContext( asIScriptContext** ctx, uint tick ) : Contexts( ctx ), StartTick( tick ) {}
     bool operator==( asIScriptContext** ctx ) { return ctx == Contexts; }
 };
 typedef vector< ActiveContext > ActiveContextVec;
@@ -235,7 +235,7 @@ bool Script::Init( bool with_log, Preprocessor::PragmaCallback* pragma_callback,
         }
         static uint ScriptBind( const char* module_name, const char* func_decl, bool temporary_id )
         {
-            return ( uint ) Script::Bind( module_name, func_decl, NULL, temporary_id, false );
+            return (uint)Script::Bind( module_name, func_decl, NULL, temporary_id, false );
         }
         static bool ScriptPrepare( uint bind_id )
         {
@@ -299,39 +299,39 @@ bool Script::Init( bool with_log, Preprocessor::PragmaCallback* pragma_callback,
         }
         static char ScriptGetReturnedInt8()
         {
-            return *(char*) Script::GetReturnedRawAddress();
+            return *(char*)Script::GetReturnedRawAddress();
         }
         static short ScriptGetReturnedInt16()
         {
-            return *(short*) Script::GetReturnedRawAddress();
+            return *(short*)Script::GetReturnedRawAddress();
         }
         static int ScriptGetReturnedInt()
         {
-            return *(int*) Script::GetReturnedRawAddress();
+            return *(int*)Script::GetReturnedRawAddress();
         }
         static int64 ScriptGetReturnedInt64()
         {
-            return *(int64*) Script::GetReturnedRawAddress();
+            return *(int64*)Script::GetReturnedRawAddress();
         }
         static uchar ScriptGetReturnedUInt8()
         {
-            return *(uchar*) Script::GetReturnedRawAddress();
+            return *(uchar*)Script::GetReturnedRawAddress();
         }
         static ushort ScriptGetReturnedUInt16()
         {
-            return *(ushort*) Script::GetReturnedRawAddress();
+            return *(ushort*)Script::GetReturnedRawAddress();
         }
         static uint ScriptGetReturnedUInt()
         {
-            return *(uint*) Script::GetReturnedRawAddress();
+            return *(uint*)Script::GetReturnedRawAddress();
         }
         static uint64 ScriptGetReturnedUInt64()
         {
-            return *(uint64*) Script::GetReturnedRawAddress();
+            return *(uint64*)Script::GetReturnedRawAddress();
         }
         static bool ScriptGetReturnedBool()
         {
-            return *(bool*) Script::GetReturnedRawAddress();
+            return *(bool*)Script::GetReturnedRawAddress();
         }
         static float ScriptGetReturnedFloat()
         {
@@ -343,11 +343,11 @@ bool Script::Init( bool with_log, Preprocessor::PragmaCallback* pragma_callback,
         }
         static void* ScriptGetReturnedObject()
         {
-            return *(void**) Script::GetReturnedRawAddress();
+            return *(void**)Script::GetReturnedRawAddress();
         }
         static void* ScriptGetReturnedAddress()
         {
-            return *(void**) Script::GetReturnedRawAddress();
+            return *(void**)Script::GetReturnedRawAddress();
         }
     };
     GameOpt.ScriptLoadModule = &GameOptScript::ScriptLoadModule;
@@ -415,8 +415,8 @@ bool Script::InitThread()
 {
     for( int i = 0; i < GLOBAL_CONTEXT_STACK_SIZE; i++ )
     {
-        GlobalCtx[ i ] = CreateContext();
-        if( !GlobalCtx[ i ] )
+        GlobalCtx[i] = CreateContext();
+        if( !GlobalCtx[i] )
         {
             WriteLogF( _FUNC_, " - Create global contexts fail.\n" );
             Engine->Release();
@@ -431,13 +431,13 @@ bool Script::InitThread()
 void Script::FinishThread()
 {
     ActiveGlobalCtxLocker.Lock();
-    auto it = std::find( ActiveContexts.begin(), ActiveContexts.end(), (asIScriptContext**) GlobalCtx );
+    auto it = std::find( ActiveContexts.begin(), ActiveContexts.end(), (asIScriptContext**)GlobalCtx );
     if( it != ActiveContexts.end() )
         ActiveContexts.erase( it );
     ActiveGlobalCtxLocker.Unlock();
 
     for( int i = 0; i < GLOBAL_CONTEXT_STACK_SIZE; i++ )
-        FinishContext( GlobalCtx[ i ] );
+        FinishContext( GlobalCtx[i] );
 
     asThreadCleanup();
 }
@@ -445,18 +445,18 @@ void Script::FinishThread()
 void* Script::LoadDynamicLibrary( const char* dll_name )
 {
     // Find in already loaded
-    char dll_name_lower[ MAX_FOPATH ];
+    char dll_name_lower[MAX_FOPATH];
     Str::Copy( dll_name_lower, dll_name );
     #ifdef FO_WINDOWS
     Str::Lower( dll_name_lower );
     #endif
-    EngineData* edata = (EngineData*) Engine->GetUserData();
+    EngineData* edata = (EngineData*)Engine->GetUserData();
     auto        it = edata->LoadedDlls.find( dll_name_lower );
     if( it != edata->LoadedDlls.end() )
         return ( *it ).second.second;
 
     // Make path
-    char dll_path[ MAX_FOPATH ];
+    char dll_path[MAX_FOPATH];
     Str::Copy( dll_path, dll_name_lower );
     FileManager::EraseExtension( dll_path );
 
@@ -501,30 +501,30 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     // Register variables
     ptr = DLL_GetAddress( dll, "FOnline" );
     if( ptr )
-        *ptr = (size_t) &GameOpt;
+        *ptr = (size_t)&GameOpt;
     ptr = DLL_GetAddress( dll, "ASEngine" );
     if( ptr )
-        *ptr = (size_t) Engine;
+        *ptr = (size_t)Engine;
 
     // Register functions
     ptr = DLL_GetAddress( dll, "Log" );
     if( ptr )
-        *ptr = (size_t) &WriteLog;
+        *ptr = (size_t)&WriteLog;
     ptr = DLL_GetAddress( dll, "ScriptGetActiveContext" );
     if( ptr )
-        *ptr = (size_t) &asGetActiveContext;
+        *ptr = (size_t)&asGetActiveContext;
     ptr = DLL_GetAddress( dll, "ScriptGetLibraryOptions" );
     if( ptr )
-        *ptr = (size_t) &asGetLibraryOptions;
+        *ptr = (size_t)&asGetLibraryOptions;
     ptr = DLL_GetAddress( dll, "ScriptGetLibraryVersion" );
     if( ptr )
-        *ptr = (size_t) &asGetLibraryVersion;
+        *ptr = (size_t)&asGetLibraryVersion;
 
     // Call init function
-    typedef void ( *DllMainEx )( bool );
-    DllMainEx func = (DllMainEx) DLL_GetAddress( dll, "DllMainEx" );
+    typedef void ( * DllMainEx )( bool );
+    DllMainEx func = (DllMainEx)DLL_GetAddress( dll, "DllMainEx" );
     if( func )
-        (func) ( LoadLibraryCompiler );
+        (func)( LoadLibraryCompiler );
 
     // Add to collection for current engine
     edata->LoadedDlls.insert( PAIR( string( dll_name_lower ), PAIR( string( dll_path ), dll ) ) );
@@ -549,7 +549,7 @@ void Script::SetLoadLibraryCompiler( bool enabled )
 
 void Script::UnloadScripts()
 {
-    EngineData*      edata = (EngineData*) Engine->GetUserData();
+    EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
 
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
@@ -580,17 +580,17 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     Script::UnloadScripts();
 
     int        errors = 0;
-    char       buf[ 1024 ];
+    char       buf[1024];
     string     value;
 
     istrstream config_( config );
     while( !config_.eof() )
     {
         config_.getline( buf, 1024 );
-        if( buf[ 0 ] != '@' )
+        if( buf[0] != '@' )
             continue;
 
-        istrstream str( &buf[ 1 ] );
+        istrstream str( &buf[1] );
         str >> value;
         if( str.fail() || value != key )
             continue;
@@ -639,21 +639,21 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
     WriteLog( "Bind reserved functions...\n" );
 
     int    errors = 0;
-    char   buf[ 1024 ];
+    char   buf[1024];
     string value;
     for( uint i = 0; i < bind_func_count; i++ )
     {
-        ReservedScriptFunction* bf = &bind_func[ i ];
+        ReservedScriptFunction* bf = &bind_func[i];
         int                     bind_id = 0;
 
         istrstream              config_( config );
         while( !config_.eof() )
         {
             config_.getline( buf, 1024 );
-            if( buf[ 0 ] != '@' )
+            if( buf[0] != '@' )
                 continue;
 
-            istrstream str( &buf[ 1 ] );
+            istrstream str( &buf[1] );
             str >> value;
             if( str.fail() || key != value )
                 continue;
@@ -735,11 +735,11 @@ void Script::Profiler::Init()
     DateTime dt;
     Timer::GetCurrentDateTime( dt );
 
-    char dump_file_path[ MAX_FOPATH ];
+    char dump_file_path[MAX_FOPATH];
     FileManager::GetFullPath( NULL, PT_SERVER_PROFILER, dump_file_path );
     FileManager::CreateDirectoryTree( dump_file_path );
 
-    char dump_file[ MAX_FOPATH ];
+    char dump_file[MAX_FOPATH];
     Str::Format( dump_file, "%sFOnlineServer_Profiler_%04u.%02u.%02u_%02u-%02u-%02u.foprof",
                  dump_file_path, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 
@@ -770,7 +770,7 @@ void Script::Profiler::AddModule( const char* module_name )
     }
     // No stage change
 
-    char fname_real[ MAX_FOPATH ];
+    char fname_real[MAX_FOPATH];
     Str::Copy( fname_real, module_name );
     Str::Replacement( fname_real, '.', DIR_SLASH_C );
     Str::Append( fname_real, ".fosp" );
@@ -781,7 +781,7 @@ void Script::Profiler::AddModule( const char* module_name )
     if( file.IsLoaded() )
     {
         FileWrite( ProfilerFileHandle, module_name, Str::Length( module_name ) + 1 );
-        FileWrite( ProfilerFileHandle, file.GetBuf(), Str::Length( (char*) file.GetBuf() ) + 1 );
+        FileWrite( ProfilerFileHandle, file.GetBuf(), Str::Length( (char*)file.GetBuf() ) + 1 );
     }
 }
 
@@ -824,7 +824,7 @@ void Script::Profiler::SaveFunctionsData()
         if( !func )
             continue;
 
-        char buf[ MAX_FOTEXT ] = { 0 };
+        char buf[MAX_FOTEXT] = { 0 };
         FileWrite( ProfilerFileHandle, &i, 4 );
 
         Str::Format( buf, "%s", func->GetModuleName() );
@@ -857,21 +857,21 @@ struct OutputLine
     uint   Depth;
     float  Incl;
     float  Excl;
-    OutputLine( char* text, uint depth, float incl, float excl ): FuncName( text ), Depth( depth ), Incl( incl ), Excl( excl ) {}
+    OutputLine( char* text, uint depth, float incl, float excl ) : FuncName( text ), Depth( depth ), Incl( incl ), Excl( excl ) {}
 };
 
 void TraverseCallPaths( asIScriptEngine* engine, CallPath* path, vector< OutputLine >& lines, uint depth, uint& max_depth, uint& max_len )
 {
     asIScriptFunction* func = engine->GetFunctionById( path->Id );
-    char               name[ MAX_FOTEXT ] = { 0 };
+    char               name[MAX_FOTEXT] = { 0 };
     if( func )
         Str::Format( name, "%s@%s", func->GetModuleName(), func->GetDeclaration() );
     else
         Str::Copy( name, 4, "???\0" );
 
     lines.push_back( OutputLine( name, depth,
-                                 100.0f * (float) ( path->Incl ) / float(TotalCallPaths),
-                                 100.0f * (float) ( path->Excl ) / float(TotalCallPaths) ) );
+                                 100.0f * (float)( path->Incl ) / float(TotalCallPaths),
+                                 100.0f * (float)( path->Excl ) / float(TotalCallPaths) ) );
 
     uint len = Str::Length( name ) + depth;
     if( len > max_len )
@@ -899,15 +899,15 @@ string Script::Profiler::GetStatistics()
     for( auto it = CallPaths.begin(), end = CallPaths.end(); it != end; ++it )
         TraverseCallPaths( GetEngine(), it->second, lines, 0, max_depth, max_len );
 
-    char buf[ MAX_FOTEXT ] = { 0 };
+    char buf[MAX_FOTEXT] = { 0 };
     Str::Format( buf, "%-*s Inclusive %%  Exclusive %%\n\n", max_len, "" );
     result += buf;
 
     for( uint i = 0; i < lines.size(); i++ )
     {
-        Str::Format( buf, "%*s%-*s   %6.2f       %6.2f\n", lines[ i ].Depth, "",
-                     max_len - lines[ i ].Depth, lines[ i ].FuncName.c_str(),
-                     lines[ i ].Incl, lines[ i ].Excl );
+        Str::Format( buf, "%*s%-*s   %6.2f       %6.2f\n", lines[i].Depth, "",
+                     max_len - lines[i].Depth, lines[i].FuncName.c_str(),
+                     lines[i].Incl, lines[i].Excl );
         result += buf;
     }
     return result;
@@ -967,7 +967,7 @@ void Script::FinishEngine( asIScriptEngine*& engine )
 {
     if( engine )
     {
-        EngineData* edata = (EngineData*) engine->SetUserData( NULL );
+        EngineData* edata = (EngineData*)engine->SetUserData( NULL );
         delete edata->PragmaCB;
         for( auto it = edata->LoadedDlls.begin(), end = edata->LoadedDlls.end(); it != end; ++it )
             DLL_Free( ( *it ).second.second );
@@ -993,7 +993,7 @@ asIScriptContext* Script::CreateContext()
         return NULL;
     }
 
-    char* buf = new char[ CONTEXT_BUFFER_SIZE ];
+    char* buf = new char[CONTEXT_BUFFER_SIZE];
     if( !buf )
     {
         WriteLogF( _FUNC_, " - Allocate memory for buffer fail.\n" );
@@ -1010,7 +1010,7 @@ void Script::FinishContext( asIScriptContext*& ctx )
 {
     if( ctx )
     {
-        char* buf = (char*) ctx->GetUserData();
+        char* buf = (char*)ctx->GetUserData();
         if( buf )
             delete[] buf;
         ctx->Release();
@@ -1024,11 +1024,11 @@ asIScriptContext* Script::GetGlobalContext()
     {
         WriteLogF( _FUNC_, " - Script context stack overflow! Context call stack:\n" );
         for( int i = GLOBAL_CONTEXT_STACK_SIZE - 1; i >= 0; i-- )
-            WriteLog( "  %d) %s.\n", i, GlobalCtx[ i ]->GetUserData() );
+            WriteLog( "  %d) %s.\n", i, GlobalCtx[i]->GetUserData() );
         return NULL;
     }
     GlobalCtxIndex++;
-    return GlobalCtx[ GlobalCtxIndex - 1 ];
+    return GlobalCtx[GlobalCtxIndex - 1];
 }
 
 void Script::PrintContextCallstack( asIScriptContext* ctx )
@@ -1036,7 +1036,7 @@ void Script::PrintContextCallstack( asIScriptContext* ctx )
     int                      line, column;
     const asIScriptFunction* func;
     int                      stack_size = ctx->GetCallstackSize();
-    WriteLog( "Context<%s>, state<%s>, call stack<%d>:\n", ctx->GetUserData(), ContextStatesStr[ (int) ctx->GetState() ], stack_size );
+    WriteLog( "Context<%s>, state<%s>, call stack<%d>:\n", ctx->GetUserData(), ContextStatesStr[(int)ctx->GetState()], stack_size );
 
     // Print current function
     if( ctx->GetState() == asEXECUTION_EXCEPTION )
@@ -1094,7 +1094,7 @@ asIScriptModule* Script::GetModule( const char* name )
 asIScriptModule* Script::CreateModule( const char* module_name )
 {
     // Delete old
-    EngineData*      edata = (EngineData*) Engine->GetUserData();
+    EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
     {
@@ -1122,8 +1122,8 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
     static uint   last_garbager_tick = 0;
     static uint   last_evaluation_tick = 0;
 
-    static uint   garbager_count[ 3 ];     // Uses garbager_state as index
-    static double garbager_time[ 3 ];      // Uses garbager_state as index
+    static uint   garbager_count[3];       // Uses garbager_state as index
+    static double garbager_time[3];        // Uses garbager_state as index
 
     if( !Engine )
         return;
@@ -1159,33 +1159,33 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
         if( current_size < last_nongarbage + ( best_count * ( 2 + garbager_state ) ) / 2 )
             break;
 
-        garbager_time[ garbager_state ] = Timer::AccurateTick();
+        garbager_time[garbager_state] = Timer::AccurateTick();
         CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
-        garbager_time[ garbager_state ] = Timer::AccurateTick() - garbager_time[ garbager_state ];
+        garbager_time[garbager_state] = Timer::AccurateTick() - garbager_time[garbager_state];
 
         last_nongarbage = GetGCStatistics();
-        garbager_count[ garbager_state ] = current_size - last_nongarbage;
+        garbager_count[garbager_state] = current_size - last_nongarbage;
 
-        if( !garbager_count[ garbager_state ] )
+        if( !garbager_count[garbager_state] )
             break;                                                 // Repeat this step
         garbager_state++;
     }
     break;
     case 3:     // Statistics last stage, calculate best count
     {
-        double obj_times[ 2 ];
+        double obj_times[2];
         bool   undetermined = false;
         for( int i = 0; i < 2; i++ )
         {
-            if( garbager_count[ i + 1 ] == garbager_count[ i ] )
+            if( garbager_count[i + 1] == garbager_count[i] )
             {
                 undetermined = true;                       // Too low resolution, break statistics and repeat later
                 break;
             }
 
-            obj_times[ i ] = ( garbager_time[ i + 1 ] - garbager_time[ i ] ) / ( (double) garbager_count[ i + 1 ] - (double) garbager_count[ i ] );
+            obj_times[i] = ( garbager_time[i + 1] - garbager_time[i] ) / ( (double)garbager_count[i + 1] - (double)garbager_count[i] );
 
-            if( obj_times[ i ] <= 0.0f )               // Should not happen
+            if( obj_times[i] <= 0.0f )                 // Should not happen
             {
                 undetermined = true;                   // Too low resolution, break statistics and repeat later
                 break;
@@ -1195,14 +1195,14 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
         if( undetermined )
             break;
 
-        double object_delete_time = ( obj_times[ 0 ] + obj_times[ 1 ] ) / 2;
+        double object_delete_time = ( obj_times[0] + obj_times[1] ) / 2;
         double overhead = 0.0f;
         for( int i = 0; i < 3; i++ )
-            overhead += ( garbager_time[ i ] - garbager_count[ i ] * object_delete_time );
+            overhead += ( garbager_time[i] - garbager_count[i] * object_delete_time );
         overhead /= 3;
         if( overhead > MaxGarbagerTime )
             overhead = MaxGarbagerTime;                                        // Will result on deletion on every frame
-        best_count = (uint) ( ( MaxGarbagerTime - overhead ) / object_delete_time );
+        best_count = (uint)( ( MaxGarbagerTime - overhead ) / object_delete_time );
     }
     break;
     case 4:     // Normal garbage check
@@ -1234,7 +1234,7 @@ uint GetGCStatistics()
 {
     asUINT current_size = 0;
     Engine->GetGCStatistics( &current_size );
-    return (uint) current_size;
+    return (uint)current_size;
 }
 
 void CollectGarbage( asDWORD flags )
@@ -1272,7 +1272,7 @@ void RunTimeout( void* data )
                 // Fetch the call stacks
                 for( int i = GLOBAL_CONTEXT_STACK_SIZE - 1; i >= 0; i-- )
                 {
-                    asIScriptContext* ctx = actx.Contexts[ i ];
+                    asIScriptContext* ctx = actx.Contexts[i];
                     if( ctx->GetState() == asEXECUTION_ACTIVE )
                     {
                         asIScriptFunction* func;
@@ -1351,8 +1351,8 @@ void RunTimeout( void* data )
             {
                 // Suspend all contexts
                 for( int i = GLOBAL_CONTEXT_STACK_SIZE - 1; i >= 0; i-- )
-                    if( actx.Contexts[ i ]->GetState() == asEXECUTION_ACTIVE )
-                        actx.Contexts[ i ]->Suspend();
+                    if( actx.Contexts[i]->GetState() == asEXECUTION_ACTIVE )
+                        actx.Contexts[i]->Suspend();
 
                 // Erase from collection
                 ActiveContexts.erase( it );
@@ -1392,29 +1392,29 @@ void Script::Undef( const char* def )
 
 void Script::CallPragmas( const StrVec& pragmas )
 {
-    EngineData* edata = (EngineData*) Engine->GetUserData();
+    EngineData* edata = (EngineData*)Engine->GetUserData();
 
     // Set current pragmas
     Preprocessor::SetPragmaCallback( edata->PragmaCB );
 
     // Call pragmas
-    for( uint i = 0, j = (uint) pragmas.size() / 2; i < j; i++ )
-        Preprocessor::CallPragma( pragmas[ i * 2 ], pragmas[ i * 2 + 1 ] );
+    for( uint i = 0, j = (uint)pragmas.size() / 2; i < j; i++ )
+        Preprocessor::CallPragma( pragmas[i * 2], pragmas[i * 2 + 1] );
 }
 
 bool Script::LoadScript( const char* module_name, const char* source, bool skip_binary, const char* file_prefix /* = NULL */ )
 {
-    EngineData*      edata = (EngineData*) Engine->GetUserData();
+    EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
 
     // Get script names
-    char fname_real[ MAX_FOPATH ];
+    char fname_real[MAX_FOPATH];
     Str::Copy( fname_real, module_name );
     Str::Replacement( fname_real, '.', DIR_SLASH_C );
     Str::Append( fname_real, ".fos" );
     FileManager::FormatPath( fname_real );
 
-    char fname_script[ MAX_FOPATH ];
+    char fname_script[MAX_FOPATH];
     if( file_prefix )
     {
         string temp = module_name;
@@ -1454,12 +1454,12 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
             bool load = true;
 
             // Load signature
-            uchar signature[ sizeof( ScriptSaveSignature ) ];
+            uchar signature[sizeof( ScriptSaveSignature )];
             bool  bin_signature = file_bin.CopyMem( signature, sizeof( signature ) );
             load = ( bin_signature && memcmp( ScriptSaveSignature, signature, sizeof( ScriptSaveSignature ) ) == 0 );
 
             // Load file dependencies and pragmas
-            char   str[ 1024 ];
+            char   str[1024];
             uint   dependencies_size = file_bin.GetBEUInt();
             StrVec dependencies;
             for( uint i = 0; i < dependencies_size; i++ )
@@ -1483,10 +1483,10 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
             bool no_all_files = !file.IsLoaded();
             bool outdated = ( file.IsLoaded() && last_write > last_write_bin );
             // Include files
-            for( uint i = 0, j = (uint) dependencies.size(); i < j; i++ )
+            for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
             {
                 FileManager file_dep;
-                file_dep.LoadFile( dependencies[ i ].c_str(), ScriptsPath );
+                file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
                 file_dep.GetTime( NULL, NULL, &last_write );
                 if( !no_all_files )
                     no_all_files = !file_dep.IsLoaded();
@@ -1515,8 +1515,8 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                 asIScriptModule* module = Engine->GetModule( module_name, asGM_ALWAYS_CREATE );
                 if( module )
                 {
-                    for( uint i = 0, j = (uint) pragmas.size() / 2; i < j; i++ )
-                        Preprocessor::CallPragma( pragmas[ i * 2 ], pragmas[ i * 2 + 1 ] );
+                    for( uint i = 0, j = (uint)pragmas.size() / 2; i < j; i++ )
+                        Preprocessor::CallPragma( pragmas[i * 2], pragmas[i * 2 + 1] );
 
                     CBytecodeStream binary;
                     binary.Write( file_bin.GetCurBuf(), file_bin.GetFsize() - file_bin.GetCurPos() );
@@ -1550,7 +1550,7 @@ protected:
         const char* source;
 
 public:
-        MemoryFileLoader( const char* s ): source( s ) {}
+        MemoryFileLoader( const char* s ) : source( s ) {}
         virtual ~MemoryFileLoader() {}
 
         virtual bool LoadFile( const std::string& dir, const std::string& file_name, std::vector< char >& data )
@@ -1559,7 +1559,7 @@ public:
             {
                 size_t len = strlen( source );
                 data.resize( len );
-                memcpy( &data[ 0 ], source, len );
+                memcpy( &data[0], source, len );
                 source = NULL;
                 return true;
             }
@@ -1574,7 +1574,7 @@ public:
 
     if( errors.String != "" )
     {
-        while( errors.String[ errors.String.length() - 1 ] == '\n' )
+        while( errors.String[errors.String.length() - 1] == '\n' )
             errors.String.pop_back();
         WriteLogF( _FUNC_, " - File<%s> preprocessor message<%s>.\n", fname_real, errors.String.c_str() );
     }
@@ -1638,7 +1638,7 @@ public:
                 type &= asTYPEID_MASK_SEQNBR;
                 for( uint k = 0; k < bad_typeids.size(); k++ )
                 {
-                    if( type == bad_typeids[ k ] )
+                    if( type == bad_typeids[k] )
                     {
                         bad_typeids_class.push_back( ot->GetTypeId() & asTYPEID_MASK_SEQNBR );
                         break;
@@ -1655,7 +1655,7 @@ public:
 
             while( type & asTYPEID_TEMPLATE )
             {
-                asIObjectType* obj = (asIObjectType*) Engine->GetObjectTypeById( type );
+                asIObjectType* obj = (asIObjectType*)Engine->GetObjectTypeById( type );
                 if( !obj )
                     break;
                 type = obj->GetSubTypeId();
@@ -1665,7 +1665,7 @@ public:
 
             for( uint k = 0; k < bad_typeids.size(); k++ )
             {
-                if( type == bad_typeids[ k ] )
+                if( type == bad_typeids[k] )
                 {
                     const char* name = NULL;
                     module->GetGlobalVar( i, &name, NULL, NULL );
@@ -1705,14 +1705,14 @@ public:
             const StrVec&          dependencies = Preprocessor::GetFileDependencies();
             const StrVec&          pragmas = Preprocessor::GetParsedPragmas();
 
-            file_bin.SetData( (uchar*) ScriptSaveSignature, sizeof( ScriptSaveSignature ) );
-            file_bin.SetBEUInt( (uint) dependencies.size() );
-            for( uint i = 0, j = (uint) dependencies.size(); i < j; i++ )
-                file_bin.SetData( (uchar*) dependencies[ i ].c_str(), (uint) dependencies[ i ].length() + 1 );
-            file_bin.SetBEUInt( (uint) pragmas.size() );
-            for( uint i = 0, j = (uint) pragmas.size(); i < j; i++ )
-                file_bin.SetData( (uchar*) pragmas[ i ].c_str(), (uint) pragmas[ i ].length() + 1 );
-            file_bin.SetData( &data[ 0 ], (uint) data.size() );
+            file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof( ScriptSaveSignature ) );
+            file_bin.SetBEUInt( (uint)dependencies.size() );
+            for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
+                file_bin.SetData( (uchar*)dependencies[i].c_str(), (uint)dependencies[i].length() + 1 );
+            file_bin.SetBEUInt( (uint)pragmas.size() );
+            for( uint i = 0, j = (uint)pragmas.size(); i < j; i++ )
+                file_bin.SetData( (uchar*)pragmas[i].c_str(), (uint)pragmas[i].length() + 1 );
+            file_bin.SetData( &data[0], (uint)data.size() );
 
             if( !file_bin.SaveOutBufToFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath ) )
                 WriteLogF( _FUNC_, " - Can't save bytecode, script<%s>.\n", module_name );
@@ -1724,7 +1724,7 @@ public:
 
         FileManager file_prep;
         FormatPreprocessorOutput( result.String );
-        file_prep.SetData( (void*) result.String.c_str(), result.String.length() );
+        file_prep.SetData( (void*)result.String.c_str(), result.String.length() );
         if( !file_prep.SaveOutBufToFile( Str::FormatBuf( "%sp", fname_script ), ScriptsPath ) )
             WriteLogF( _FUNC_, " - Can't write preprocessed file, script<%s>.\n", module_name );
     }
@@ -1739,7 +1739,7 @@ bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint le
         return false;
     }
 
-    EngineData*      edata = (EngineData*) Engine->GetUserData();
+    EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
 
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
@@ -1776,7 +1776,7 @@ bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint le
 
 int Script::BindImportedFunctions()
 {
-    EngineData*      edata = (EngineData*) Engine->GetUserData();
+    EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
     int              errors = 0;
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
@@ -1812,8 +1812,8 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         }
 
         // Find function
-        char decl_[ MAX_FOTEXT ];
-        if( decl && decl[ 0 ] )
+        char decl_[MAX_FOTEXT];
+        if( decl && decl[0] )
             Str::Format( decl_, decl, func_name );
         else
             Str::Copy( decl_, func_name );
@@ -1828,16 +1828,16 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         // Save to temporary bind
         if( is_temp )
         {
-            BindedFunctions[ 1 ].IsScriptCall = true;
-            BindedFunctions[ 1 ].ScriptFunc = script_func;
-            BindedFunctions[ 1 ].NativeFuncAddr = 0;
+            BindedFunctions[1].IsScriptCall = true;
+            BindedFunctions[1].ScriptFunc = script_func;
+            BindedFunctions[1].NativeFuncAddr = 0;
             return 1;
         }
 
         // Find already binded
-        for( int i = 2, j = (int) BindedFunctions.size(); i < j; i++ )
+        for( int i = 2, j = (int)BindedFunctions.size(); i < j; i++ )
         {
-            BindFunction& bf = BindedFunctions[ i ];
+            BindFunction& bf = BindedFunctions[i];
             if( bf.IsScriptCall && bf.ScriptFunc->GetId() == script_func->GetId() )
                 return i;
         }
@@ -1857,7 +1857,7 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         }
 
         // Load function
-        size_t func = (size_t) DLL_GetAddress( dll, func_name );
+        size_t func = (size_t)DLL_GetAddress( dll, func_name );
         if( !func )
         {
             if( !disable_log )
@@ -1868,16 +1868,16 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         // Save to temporary bind
         if( is_temp )
         {
-            BindedFunctions[ 1 ].IsScriptCall = false;
-            BindedFunctions[ 1 ].ScriptFunc = NULL;
-            BindedFunctions[ 1 ].NativeFuncAddr = func;
+            BindedFunctions[1].IsScriptCall = false;
+            BindedFunctions[1].ScriptFunc = NULL;
+            BindedFunctions[1].NativeFuncAddr = func;
             return 1;
         }
 
         // Find already binded
-        for( int i = 2, j = (int) BindedFunctions.size(); i < j; i++ )
+        for( int i = 2, j = (int)BindedFunctions.size(); i < j; i++ )
         {
-            BindFunction& bf = BindedFunctions[ i ];
+            BindFunction& bf = BindedFunctions[i];
             if( !bf.IsScriptCall && bf.NativeFuncAddr == func )
                 return i;
         }
@@ -1885,13 +1885,13 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         // Create new bind
         BindedFunctions.push_back( BindFunction( 0, func, module_name, func_name, decl ) );
     }
-    return (int) BindedFunctions.size() - 1;
+    return (int)BindedFunctions.size() - 1;
 }
 
 int Script::Bind( const char* script_name, const char* decl, bool is_temp, bool disable_log /* = false */ )
 {
-    char module_name[ MAX_FOTEXT ];
-    char func_name[ MAX_FOTEXT ];
+    char module_name[MAX_FOTEXT];
+    char func_name[MAX_FOTEXT];
     if( !ReparseScriptName( script_name, module_name, func_name, disable_log ) )
     {
         WriteLogF( _FUNC_, " - Parse script name<%s> fail.\n", script_name );
@@ -1907,9 +1907,9 @@ int Script::RebindFunctions()
     #endif
 
     int errors = 0;
-    for( int i = 2, j = (int) BindedFunctions.size(); i < j; i++ )
+    for( int i = 2, j = (int)BindedFunctions.size(); i < j; i++ )
     {
-        BindFunction& bf = BindedFunctions[ i ];
+        BindFunction& bf = BindedFunctions[i];
         if( bf.IsScriptCall )
         {
             int bind_id = Bind( bf.ModuleName.c_str(), bf.FuncName.c_str(), bf.FuncDecl.c_str(), true );
@@ -1921,7 +1921,7 @@ int Script::RebindFunctions()
             }
             else
             {
-                bf.ScriptFunc = BindedFunctions[ 1 ].ScriptFunc;
+                bf.ScriptFunc = BindedFunctions[1].ScriptFunc;
             }
         }
     }
@@ -1937,15 +1937,15 @@ bool Script::ReparseScriptName( const char* script_name, char* module_name, char
         return false;
     }
 
-    char script[ MAX_SCRIPT_NAME * 2 + 2 ];
+    char script[MAX_SCRIPT_NAME * 2 + 2];
     Str::Copy( script, script_name );
     Str::EraseChars( script, ' ' );
 
     if( Str::Substring( script, "@" ) )
     {
-        char* script_ptr = &script[ 0 ];
+        char* script_ptr = &script[0];
         Str::CopyWord( module_name, script_ptr, '@' );
-        Str::GoTo( ( char* & )script_ptr, '@', true );
+        Str::GoTo( (char*&)script_ptr, '@', true );
         Str::CopyWord( func_name, script_ptr, '\0' );
     }
     else
@@ -1958,14 +1958,14 @@ bool Script::ReparseScriptName( const char* script_name, char* module_name, char
     {
         if( !disable_log )
             WriteLogF( _FUNC_, " - Script name parse error, string<%s>.\n", script_name );
-        module_name[ 0 ] = func_name[ 0 ] = 0;
+        module_name[0] = func_name[0] = 0;
         return false;
     }
     if( !Str::Length( func_name ) )
     {
         if( !disable_log )
             WriteLogF( _FUNC_, " - Function name parse error, string<%s>.\n", script_name );
-        module_name[ 0 ] = func_name[ 0 ] = 0;
+        module_name[0] = func_name[0] = 0;
         return false;
     }
     return true;
@@ -1977,13 +1977,13 @@ string Script::GetBindFuncName( int bind_id )
     SCOPE_LOCK( BindedFunctionsLocker );
     #endif
 
-    if( bind_id <= 0 || bind_id >= (int) BindedFunctions.size() )
+    if( bind_id <= 0 || bind_id >= (int)BindedFunctions.size() )
     {
         WriteLogF( _FUNC_, " - Wrong bind id<%d>, bind buffer size<%u>.\n", bind_id, BindedFunctions.size() );
         return "";
     }
 
-    BindFunction& bf = BindedFunctions[ bind_id ];
+    BindFunction& bf = BindedFunctions[bind_id];
     string        result;
     result += bf.ModuleName;
     result += "@";
@@ -2012,9 +2012,9 @@ uint Script::GetScriptFuncNum( const char* script_name, const char* decl )
     SCOPE_LOCK( BindedFunctionsLocker );
     #endif
 
-    char full_name[ MAX_SCRIPT_NAME * 2 + 1 ];
-    char module_name[ MAX_SCRIPT_NAME + 1 ];
-    char func_name[ MAX_SCRIPT_NAME + 1 ];
+    char full_name[MAX_SCRIPT_NAME * 2 + 1];
+    char module_name[MAX_SCRIPT_NAME + 1];
+    char func_name[MAX_SCRIPT_NAME + 1];
     if( !Script::ReparseScriptName( script_name, module_name, func_name ) )
         return 0;
     Str::Format( full_name, "%s@%s", module_name, func_name );
@@ -2024,8 +2024,8 @@ uint Script::GetScriptFuncNum( const char* script_name, const char* decl )
     str_cache += decl;
 
     // Find already cached
-    for( uint i = 0, j = (uint) ScriptFuncCache.size(); i < j; i++ )
-        if( ScriptFuncCache[ i ] == str_cache )
+    for( uint i = 0, j = (uint)ScriptFuncCache.size(); i < j; i++ )
+        if( ScriptFuncCache[i] == str_cache )
             return i + 1;
 
     // Create new
@@ -2035,7 +2035,7 @@ uint Script::GetScriptFuncNum( const char* script_name, const char* decl )
 
     ScriptFuncCache.push_back( str_cache );
     ScriptFuncBindId.push_back( bind_id );
-    return (uint) ScriptFuncCache.size();
+    return (uint)ScriptFuncCache.size();
 }
 
 int Script::GetScriptFuncBindId( uint func_num )
@@ -2050,7 +2050,7 @@ int Script::GetScriptFuncBindId( uint func_num )
         WriteLogF( _FUNC_, " - Function index<%u> is greater than bind buffer size<%u>.\n", func_num, ScriptFuncBindId.size() );
         return 0;
     }
-    return ScriptFuncBindId[ func_num ];
+    return ScriptFuncBindId[func_num];
 }
 
 string Script::GetScriptFuncName( uint func_num )
@@ -2065,8 +2065,8 @@ string Script::GetScriptFuncName( uint func_num )
 THREAD bool              ScriptCall = false;
 THREAD asIScriptContext* CurrentCtx = NULL;
 THREAD size_t            NativeFuncAddr = 0;
-THREAD size_t            NativeArgs[ 256 ] = { 0 };
-THREAD size_t            NativeRetValue[ 2 ] = { 0 }; // EAX:EDX
+THREAD size_t            NativeArgs[256] = { 0 };
+THREAD size_t            NativeRetValue[2] = { 0 };   // EAX:EDX
 THREAD size_t            CurrentArg = 0;
 THREAD int               ExecutionRecursionCounter = 0;
 
@@ -2152,7 +2152,7 @@ void Script::EndExecution()
             for( auto it = EndExecutionCallbacks->begin(), end = EndExecutionCallbacks->end(); it != end; ++it )
             {
                 EndExecutionCallback func = *it;
-                (func) ( );
+                (func)( );
             }
             EndExecutionCallbacks->clear();
         }
@@ -2181,7 +2181,7 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
         BindedFunctionsLocker.Lock();
     #endif
 
-    if( bind_id <= 0 || bind_id >= (int) BindedFunctions.size() )
+    if( bind_id <= 0 || bind_id >= (int)BindedFunctions.size() )
     {
         WriteLogF( _FUNC_, " - Invalid bind id<%d>. Context info<%s>.\n", bind_id, ctx_info );
         #ifdef SCRIPT_MULTITHREADING
@@ -2191,7 +2191,7 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
         return false;
     }
 
-    BindFunction&      bf = BindedFunctions[ bind_id ];
+    BindFunction&      bf = BindedFunctions[bind_id];
     bool               is_script = bf.IsScriptCall;
     asIScriptFunction* script_func = bf.ScriptFunc;
     size_t             func_addr = bf.NativeFuncAddr;
@@ -2212,9 +2212,9 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
 
         BeginExecution();
 
-        Str::Copy( (char*) ctx->GetUserData(), CONTEXT_BUFFER_SIZE, call_func );
-        Str::Append( (char*) ctx->GetUserData(), CONTEXT_BUFFER_SIZE, " : " );
-        Str::Append( (char*) ctx->GetUserData(), CONTEXT_BUFFER_SIZE, ctx_info );
+        Str::Copy( (char*)ctx->GetUserData(), CONTEXT_BUFFER_SIZE, call_func );
+        Str::Append( (char*)ctx->GetUserData(), CONTEXT_BUFFER_SIZE, " : " );
+        Str::Append( (char*)ctx->GetUserData(), CONTEXT_BUFFER_SIZE, ctx_info );
 
         int result = ctx->Prepare( script_func );
         if( result < 0 )
@@ -2243,37 +2243,37 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
 void Script::SetArgUChar( uchar value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgByte( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgByte( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = value;
+        NativeArgs[CurrentArg] = value;
     CurrentArg++;
 }
 
 void Script::SetArgUShort( ushort value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgWord( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgWord( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = value;
+        NativeArgs[CurrentArg] = value;
     CurrentArg++;
 }
 
 void Script::SetArgUInt( uint value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgDWord( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgDWord( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = value;
+        NativeArgs[CurrentArg] = value;
     CurrentArg++;
 }
 
 void Script::SetArgUInt64( uint64 value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgQWord( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgQWord( (asUINT)CurrentArg, value );
     else
     {
-        *( (uint64*) &NativeArgs[ CurrentArg ] ) = value;
+        *( (uint64*)&NativeArgs[CurrentArg] ) = value;
         CurrentArg++;
     }
     CurrentArg++;
@@ -2282,28 +2282,28 @@ void Script::SetArgUInt64( uint64 value )
 void Script::SetArgBool( bool value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgByte( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgByte( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = value;
+        NativeArgs[CurrentArg] = value;
     CurrentArg++;
 }
 
 void Script::SetArgFloat( float value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgFloat( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgFloat( (asUINT)CurrentArg, value );
     else
-        *( (float*) &NativeArgs[ CurrentArg ] ) = value;
+        *( (float*)&NativeArgs[CurrentArg] ) = value;
     CurrentArg++;
 }
 
 void Script::SetArgDouble( double value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgDouble( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgDouble( (asUINT)CurrentArg, value );
     else
     {
-        *( (double*) &NativeArgs[ CurrentArg ] ) = value;
+        *( (double*)&NativeArgs[CurrentArg] ) = value;
         CurrentArg++;
     }
     CurrentArg++;
@@ -2312,18 +2312,18 @@ void Script::SetArgDouble( double value )
 void Script::SetArgObject( void* value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgObject( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgObject( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = (size_t) value;
+        NativeArgs[CurrentArg] = (size_t)value;
     CurrentArg++;
 }
 
 void Script::SetArgAddress( void* value )
 {
     if( ScriptCall )
-        CurrentCtx->SetArgAddress( (asUINT) CurrentArg, value );
+        CurrentCtx->SetArgAddress( (asUINT)CurrentArg, value );
     else
-        NativeArgs[ CurrentArg ] = (size_t) value;
+        NativeArgs[CurrentArg] = (size_t)value;
     CurrentArg++;
 }
 
@@ -2355,27 +2355,26 @@ uint64 __attribute( ( __noinline__ ) ) CallCDeclFunction32( const size_t * args,
         cmp  ecx, 0
         je   endcopy
 copyloop:
-        sub  eax, 4
-        push dword ptr[ eax ]
+        sub eax, 4
+        push dword ptr[eax]
         sub  ecx, 4
         jne  copyloop
 endcopy:
 
         // Call function
-        call[ func ]
+        call[func]
 
         // Pop arguments from stack
         add  esp, paramSize
 
         // Copy return value from EAX:EDX
         lea  ecx, retQW
-            mov[ ecx ], eax
-            mov  4[ ecx ], edx
+            mov[ecx], eax
+            mov  4[ecx], edx
 
         // Restore registers
         pop  ecx
     }
-
     #elif defined ( FO_GCC )
     // It is not possible to rely on ESP or BSP to refer to variables or arguments on the stack
     // depending on compiler settings BSP may not even be used, and the ESP is not always on the
@@ -2459,7 +2458,7 @@ bool Script::RunPrepared()
         if( GlobalCtxIndex == 0 )     // All scripts execution complete, erase timing
         {
             SCOPE_LOCK( ActiveGlobalCtxLocker );
-            auto it = std::find( ActiveContexts.begin(), ActiveContexts.end(), (asIScriptContext**) GlobalCtx );
+            auto it = std::find( ActiveContexts.begin(), ActiveContexts.end(), (asIScriptContext**)GlobalCtx );
             if( it != ActiveContexts.end() )
                 ActiveContexts.erase( it );
         }
@@ -2474,7 +2473,7 @@ bool Script::RunPrepared()
             else if( state == asEXECUTION_SUSPENDED )
                 WriteLog( "Execution of script stopped due to timeout<%u>.\n", RunTimeoutSuspend );
             else
-                WriteLog( "Execution of script stopped due to %s.\n", ContextStatesStr[ (int) state ] );
+                WriteLog( "Execution of script stopped due to %s.\n", ContextStatesStr[(int)state] );
             PrintContextCallstack( ctx );           // Name and state of context will be printed in this function
             ctx->Abort();
             EndExecution();
@@ -2487,7 +2486,7 @@ bool Script::RunPrepared()
 
         if( result < 0 )
         {
-            WriteLogF( _FUNC_, " - Context<%s> execute error<%d>, state<%s>.\n", ctx->GetUserData(), result, ContextStatesStr[ (int) state ] );
+            WriteLogF( _FUNC_, " - Context<%s> execute error<%d>, state<%s>.\n", ctx->GetUserData(), result, ContextStatesStr[(int)state] );
             EndExecution();
             return false;
         }
@@ -2497,7 +2496,7 @@ bool Script::RunPrepared()
     }
     else
     {
-        *( (uint64*) NativeRetValue ) = CallCDeclFunction32( NativeArgs, CurrentArg * 4, NativeFuncAddr );
+        *( (uint64*)NativeRetValue ) = CallCDeclFunction32( NativeArgs, CurrentArg * 4, NativeFuncAddr );
         ScriptCall = false;
     }
 
@@ -2507,24 +2506,24 @@ bool Script::RunPrepared()
 
 uint Script::GetReturnedUInt()
 {
-    return ScriptCall ? CurrentCtx->GetReturnDWord() : (uint) NativeRetValue[ 0 ];
+    return ScriptCall ? CurrentCtx->GetReturnDWord() : (uint)NativeRetValue[0];
 }
 
 bool Script::GetReturnedBool()
 {
-    return ScriptCall ? ( CurrentCtx->GetReturnByte() != 0 ) : ( ( NativeRetValue[ 0 ] & 1 ) != 0 );
+    return ScriptCall ? ( CurrentCtx->GetReturnByte() != 0 ) : ( ( NativeRetValue[0] & 1 ) != 0 );
 }
 
 void* Script::GetReturnedObject()
 {
-    return ScriptCall ? CurrentCtx->GetReturnObject() : (void*) NativeRetValue[ 0 ];
+    return ScriptCall ? CurrentCtx->GetReturnObject() : (void*)NativeRetValue[0];
 }
 
 float Script::GetReturnedFloat()
 {
     float            f;
     #ifdef FO_MSVC
-    __asm fstp dword ptr[ f ]
+    __asm fstp dword ptr[f]
     #else // FO_GCC
     asm ( "fstps %0 \n" : "=m" ( f ) );
     #endif
@@ -2535,7 +2534,7 @@ double Script::GetReturnedDouble()
 {
     double           d;
     #ifdef FO_MSVC
-    __asm fstp qword ptr[ d ]
+    __asm fstp qword ptr[d]
     #else // FO_GCC
     asm ( "fstpl %0 \n" : "=m" ( d ) );
     #endif
@@ -2544,7 +2543,7 @@ double Script::GetReturnedDouble()
 
 void* Script::GetReturnedRawAddress()
 {
-    return ScriptCall ? CurrentCtx->GetAddressOfReturnValue() : (void*) NativeRetValue;
+    return ScriptCall ? CurrentCtx->GetAddressOfReturnValue() : (void*)NativeRetValue;
 }
 
 bool Script::SynchronizeThread()

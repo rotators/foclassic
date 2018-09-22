@@ -81,7 +81,7 @@ bool CritterManager::LoadProtos()
         return false;
     }
 
-    char   buf[ 256 ];
+    char   buf[256];
     StrVec fnames;
     while( fileMngr.GetLine( buf, sizeof( buf ) ) )
         fnames.push_back( string( buf ) );
@@ -91,12 +91,12 @@ bool CritterManager::LoadProtos()
     IniParser protos_txt;
     int       loaded_count = 0;
     int       errors = 0;
-    for( uint i = 0, k = (uint) fnames.size(); i < k; i++ )
+    for( uint i = 0, k = (uint)fnames.size(); i < k; i++ )
     {
-        const char* fname = fnames[ i ].c_str();
+        const char* fname = fnames[i].c_str();
 
         #ifdef FONLINE_MAPPER
-        char collection_name[ MAX_FOPATH ];
+        char collection_name[MAX_FOPATH];
         Str::Format( collection_name, "%03d - %s", i + 1, fname );
         FileManager::EraseExtension( collection_name );
         #endif
@@ -106,7 +106,7 @@ bool CritterManager::LoadProtos()
             while( protos_txt.GotoNextApp( CRPROTO_APP ) )
             {
                 int pid = -1;
-                int params[ MAX_PARAMS ];
+                int params[MAX_PARAMS];
                 memzero( params, sizeof( params ) );
 
                 StrVec lines;
@@ -114,10 +114,10 @@ bool CritterManager::LoadProtos()
 
                 for( uint j = 0; j < lines.size(); j++ )
                 {
-                    char line[ 256 ];
-                    char indent[ 256 ];
+                    char line[256];
+                    char indent[256];
                     int  value;
-                    Str::Copy( line, lines[ j ].c_str() );
+                    Str::Copy( line, lines[j].c_str() );
                     Str::Replacement( line, '=', ' ' );
                     if( sscanf( line, "%s%d", indent, &value ) == 2 )
                     {
@@ -127,7 +127,7 @@ bool CritterManager::LoadProtos()
                         {
                             int param_id = ConstantsManager::GetParamId( indent );
                             if( param_id >= 0 && param_id < MAX_PARAMS )
-                                params[ param_id ] = value;
+                                params[param_id] = value;
                             else
                             {
                                 WriteLog( "Unknown parameter<%s> in<%s>.\n", indent, fname );
@@ -139,7 +139,7 @@ bool CritterManager::LoadProtos()
 
                 if( pid > 0 && pid < MAX_CRIT_PROTOS )
                 {
-                    CritData& proto = allProtos[ pid ];
+                    CritData& proto = allProtos[pid];
 
                     if( !proto.ProtoId )
                         loaded_count++;
@@ -150,7 +150,7 @@ bool CritterManager::LoadProtos()
                     memcpy( proto.Params, params, sizeof( params ) );
 
                     #ifdef FONLINE_MAPPER
-                    ProtosCollectionName[ pid ] = collection_name;
+                    ProtosCollectionName[pid] = collection_name;
                     #endif
                 }
                 else
@@ -168,9 +168,9 @@ bool CritterManager::LoadProtos()
 
 CritData* CritterManager::GetProto( ushort proto_id )
 {
-    if( !proto_id || proto_id >= MAX_CRIT_PROTOS || !allProtos[ proto_id ].ProtoId )
+    if( !proto_id || proto_id >= MAX_CRIT_PROTOS || !allProtos[proto_id].ProtoId )
         return NULL;
-    return &allProtos[ proto_id ];
+    return &allProtos[proto_id];
 }
 
 CritData* CritterManager::GetAllProtos()
@@ -179,7 +179,7 @@ CritData* CritterManager::GetAllProtos()
 }
 
 #ifdef FONLINE_SERVER
-void CritterManager::SaveCrittersFile( void ( * save_func )( void*, size_t ) )
+void CritterManager::SaveCrittersFile( void ( *save_func )( void*, size_t ) )
 {
     CrVec crits;
     for( auto it = allCritters.begin(), end = allCritters.end(); it != end; ++it )
@@ -189,7 +189,7 @@ void CritterManager::SaveCrittersFile( void ( * save_func )( void*, size_t ) )
             crits.push_back( cr );
     }
 
-    uint count = (uint) crits.size();  // npcCount
+    uint count = (uint)crits.size();   // npcCount
     save_func( &count, sizeof( count ) );
     for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
     {
@@ -198,10 +198,10 @@ void CritterManager::SaveCrittersFile( void ( * save_func )( void*, size_t ) )
         save_func( &cr->Data, sizeof( cr->Data ) );
         if( cr->Data.IsDataExt )
             save_func( cr->DataExt, sizeof( CritDataExt ) );
-        uint te_count = (uint) cr->CrTimeEvents.size();
+        uint te_count = (uint)cr->CrTimeEvents.size();
         save_func( &te_count, sizeof( te_count ) );
         if( te_count )
-            save_func( &cr->CrTimeEvents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) );
+            save_func( &cr->CrTimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) );
     }
 }
 
@@ -232,7 +232,7 @@ bool CritterManager::LoadCrittersFile( void* f, uint version )
         if( te_count )
         {
             tevents.resize( te_count );
-            FileRead( f, &tevents[ 0 ], te_count * sizeof( Critter::CrTimeEvent ) );
+            FileRead( f, &tevents[0], te_count * sizeof( Critter::CrTimeEvent ) );
         }
 
         if( data.Id > lastNpcId )
@@ -413,17 +413,17 @@ Npc* CritterManager::CreateNpc( ushort proto_id, uint params_count, int* params,
             cur_step++;
             if( cur_step >= 18 )
                 cur_step = 0;
-            if( hx_ + sx[ cur_step ] < 0 || hx_ + sx[ cur_step ] >= map->GetMaxHexX() )
+            if( hx_ + sx[cur_step] < 0 || hx_ + sx[cur_step] >= map->GetMaxHexX() )
                 continue;
-            if( hy_ + sy[ cur_step ] < 0 || hy_ + sy[ cur_step ] >= map->GetMaxHexY() )
+            if( hy_ + sy[cur_step] < 0 || hy_ + sy[cur_step] >= map->GetMaxHexY() )
                 continue;
-            if( !map->IsHexPassed( hx_ + sx[ cur_step ], hy_ + sy[ cur_step ] ) )
+            if( !map->IsHexPassed( hx_ + sx[cur_step], hy_ + sy[cur_step] ) )
                 continue;
             break;
         }
 
-        hx_ += sx[ cur_step ];
-        hy_ += sy[ cur_step ];
+        hx_ += sx[cur_step];
+        hy_ += sy[cur_step];
         hx = hx_;
         hy = hy_;
     }
@@ -456,10 +456,10 @@ Npc* CritterManager::CreateNpc( ushort proto_id, uint params_count, int* params,
 
     for( uint i = 0; i < params_count; i++ )
     {
-        int index = params[ i * 2 ];
-        int value = params[ i * 2 + 1 ];
+        int index = params[i * 2];
+        int value = params[i * 2 + 1];
         if( index >= 0 && index < MAX_PARAMS && value )
-            npc->Data.Params[ index ] = value;
+            npc->Data.Params[index] = value;
     }
 
     map->AddCritter( npc );
@@ -467,9 +467,9 @@ Npc* CritterManager::CreateNpc( ushort proto_id, uint params_count, int* params,
 
     for( uint i = 0; i < items_count; i++ )
     {
-        int pid = items[ i * 3 ];
-        int count = items[ i * 3 + 1 ];
-        int slot = items[ i * 3 + 2 ];
+        int pid = items[i * 3];
+        int count = items[i * 3 + 1];
+        int slot = items[i * 3 + 2];
         if( pid > 0 && count > 0 )
         {
             Item* item = ItemMngr.AddItemCritter( npc, pid, count );
@@ -596,7 +596,7 @@ void CritterManager::GetCopyNpcs( PcVec& npcs, bool sync_lock )
     {
         Critter* cr = ( *it ).second;
         if( cr->IsNpc() )
-            find_npcs.push_back( (Npc*) cr );
+            find_npcs.push_back( (Npc*)cr );
     }
 
     if( sync_lock && LogicMT )
@@ -616,7 +616,7 @@ void CritterManager::GetCopyNpcs( PcVec& npcs, bool sync_lock )
         {
             Critter* cr = ( *it ).second;
             if( cr->IsNpc() )
-                find_npcs2.push_back( (Npc*) cr );
+                find_npcs2.push_back( (Npc*)cr );
         }
 
         // Search again, if different
@@ -642,7 +642,7 @@ void CritterManager::GetCopyPlayers( ClVec& players, bool sync_lock )
     {
         Critter* cr = ( *it ).second;
         if( cr->IsPlayer() )
-            find_players.push_back( (Client*) cr );
+            find_players.push_back( (Client*)cr );
     }
 
     if( sync_lock && LogicMT )
@@ -662,7 +662,7 @@ void CritterManager::GetCopyPlayers( ClVec& players, bool sync_lock )
         {
             Critter* cr = ( *it ).second;
             if( cr->IsPlayer() )
-                find_players2.push_back( (Client*) cr );
+                find_players2.push_back( (Client*)cr );
         }
 
         // Search again, if different
@@ -687,7 +687,7 @@ void CritterManager::GetGlobalMapCritters( ushort wx, ushort wy, uint radius, in
     for( auto it = all_critters.begin(), end = all_critters.end(); it != end; ++it )
     {
         Critter* cr = ( *it ).second;
-        if( !cr->GetMap() && cr->GroupMove && DistSqrt( (int) cr->GroupMove->CurX, (int) cr->GroupMove->CurY, wx, wy ) <= radius &&
+        if( !cr->GetMap() && cr->GroupMove && DistSqrt( (int)cr->GroupMove->CurX, (int)cr->GroupMove->CurY, wx, wy ) <= radius &&
             cr->CheckFind( find_type ) )
             find_critters.push_back( cr );
     }
@@ -708,7 +708,7 @@ void CritterManager::GetGlobalMapCritters( ushort wx, ushort wy, uint radius, in
         for( auto it = all_critters.begin(), end = all_critters.end(); it != end; ++it )
         {
             Critter* cr = ( *it ).second;
-            if( !cr->GetMap() && cr->GroupMove && DistSqrt( (int) cr->GroupMove->CurX, (int) cr->GroupMove->CurY, wx, wy ) <= radius &&
+            if( !cr->GetMap() && cr->GroupMove && DistSqrt( (int)cr->GroupMove->CurX, (int)cr->GroupMove->CurY, wx, wy ) <= radius &&
                 cr->CheckFind( find_type ) )
                 find_critters2.push_back( cr );
         }
@@ -756,7 +756,7 @@ Client* CritterManager::GetPlayer( uint crid, bool sync_lock )
         return NULL;
     if( sync_lock )
         SYNC_LOCK( cr );
-    return (Client*) cr;
+    return (Client*)cr;
 }
 
 Client* CritterManager::GetPlayer( const char* name, bool sync_lock )
@@ -769,7 +769,7 @@ Client* CritterManager::GetPlayer( const char* name, bool sync_lock )
         Critter* cr = ( *it ).second;
         if( cr->IsPlayer() && Str::CompareCaseUTF8( name, cr->GetName() ) )
         {
-            cl = (Client*) cr;
+            cl = (Client*)cr;
             break;
         }
     }
@@ -797,7 +797,7 @@ Npc* CritterManager::GetNpc( uint crid, bool sync_lock )
         return NULL;
     if( sync_lock )
         SYNC_LOCK( cr );
-    return (Npc*) cr;
+    return (Npc*)cr;
 }
 
 void CritterManager::EraseCritter( Critter* cr )
@@ -847,7 +847,7 @@ uint CritterManager::CrittersInGame()
 {
     SCOPE_LOCK( crLocker );
 
-    uint count = (uint) allCritters.size();
+    uint count = (uint)allCritters.size();
     return count;
 }
 

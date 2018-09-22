@@ -27,7 +27,7 @@ label_ParseNext:
     NpcBagItem i;
     while( *str == ' ' )
         str++;
-    char  buf[ 128 ];
+    char  buf[128];
     char* pbuf = buf;
     // Parse pid
     for( ; *str != ':' && *str != '+' && *str != '^' && *str; str++, pbuf++ )
@@ -116,7 +116,7 @@ void NpcAIMngr::Finish()
 
 NpcBag& NpcAIMngr::GetBag( uint num )
 {
-    return num < npcBags.size() ? npcBags[ num ] : npcBags[ 0 ];
+    return num < npcBags.size() ? npcBags[num] : npcBags[0];
 }
 
 /************************************************************************/
@@ -136,7 +136,7 @@ bool NpcAIMngr::LoadNpcBags()
 
     int                 end_bag = bags_txt.GetInt( "end_bag", -1 );
     int                 bag_count = 0;
-    char*               bag_str = new char[ 0x10000 ];
+    char*               bag_str = new char[0x10000];
     StringNpcBagCombMap loaded_comb;
 
     npcBags.resize( end_bag + 1 );
@@ -146,14 +146,14 @@ bool NpcAIMngr::LoadNpcBags()
     {
         if( !bags_txt.GetStr( Str::FormatBuf( "bag_%d", i ), "", bag_str ) )
             continue;
-        NpcBag& cur_bag = npcBags[ i ];
+        NpcBag& cur_bag = npcBags[i];
 
         StrVec  comb;
         Str::ParseLine< StrVec, string ( * )( const char* ) >( bag_str, ' ', comb, ParseBagComb );
 
         for( uint j = 0; j < comb.size(); j++ )
         {
-            string& c = comb[ j ];
+            string& c = comb[j];
             auto    it = loaded_comb.find( c );
             if( it == loaded_comb.end() )
             {
@@ -171,10 +171,10 @@ bool NpcAIMngr::LoadNpcBags()
                 // Check
                 for( uint l = 0; l < items_comb.size(); l++ )
                 {
-                    NpcBagItems& items = items_comb[ l ];
+                    NpcBagItems& items = items_comb[l];
                     for( uint k = 0; k < items.size(); k++ )
                     {
-                        NpcBagItem& b = items[ k ];
+                        NpcBagItem& b = items[k];
                         if( b.ItemPid >= MAX_ITEM_PROTOTYPES || b.MinCnt > b.MaxCnt )
                         {
                             WriteLog( "Invalid items combination<%s>, Item combination<%d>, number<%d>.\n", c.c_str(), l, k );

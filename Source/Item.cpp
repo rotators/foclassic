@@ -8,7 +8,7 @@
 # include "AI.h"
 #endif
 
-const char* ItemEventFuncName[ ITEM_EVENT_MAX ] =
+const char* ItemEventFuncName[ITEM_EVENT_MAX] =
 {
     "void %s(Item&,bool)",                             // ITEM_EVENT_FINISH
     "bool %s(Item&,Critter&,Critter&)",                // ITEM_EVENT_ATTACK
@@ -21,7 +21,7 @@ const char* ItemEventFuncName[ ITEM_EVENT_MAX ] =
 };
 
 // Item default send data mask
-char Item::ItemData::SendMask[ ITEM_DATA_MASK_MAX ][ 120 ] =
+char Item::ItemData::SendMask[ITEM_DATA_MASK_MAX][120] =
 {
     // SortValue Info Indicator PicMapHash   PicInvHash   AnimWaitBase AnimStay[2] AnimShow[2] AnimHide[2] Flags        Rate               LightIntensity LightDistance LightFlags   LightColor   ScriptId  TrapValue        Count              Cost                    ScriptValues[10]                                                                                                                        Other 36 bytes
     // ITEM_DATA_MASK_CHOSEN                                                                                           ITEM_DATA_MASK_CHOSEN                                                                                                ITEM_DATA_MASK_CHOSEN
@@ -56,17 +56,17 @@ void Item::Init( ProtoItem* proto )
     Accessory = ITEM_ACCESSORY_NONE;
     Data.SortValue = 0x7FFF;
     Data.AnimWaitBase = Proto->AnimWaitBase;
-    Data.AnimStay[ 0 ] = Proto->AnimStay[ 0 ];
-    Data.AnimStay[ 1 ] = Proto->AnimStay[ 1 ];
-    Data.AnimShow[ 0 ] = Proto->AnimShow[ 0 ];
-    Data.AnimShow[ 1 ] = Proto->AnimShow[ 1 ];
-    Data.AnimHide[ 0 ] = Proto->AnimHide[ 0 ];
-    Data.AnimHide[ 1 ] = Proto->AnimHide[ 1 ];
+    Data.AnimStay[0] = Proto->AnimStay[0];
+    Data.AnimStay[1] = Proto->AnimStay[1];
+    Data.AnimShow[0] = Proto->AnimShow[0];
+    Data.AnimShow[1] = Proto->AnimShow[1];
+    Data.AnimHide[0] = Proto->AnimHide[0];
+    Data.AnimHide[1] = Proto->AnimHide[1];
     Data.Flags = Proto->Flags;
     Data.Indicator = Proto->IndicatorStart;
 
     for( int i = 0; i < ITEM_MAX_SCRIPT_VALUES; i++ )
-        Data.ScriptValues[ i ] = Proto->StartValue[ i ];
+        Data.ScriptValues[i] = Proto->StartValue[i];
 
     switch( GetType() )
     {
@@ -144,7 +144,7 @@ void Item::FullClear()
 
     if( IsContainer() && ChildItems )
     {
-        MEMORY_PROCESS( MEMORY_ITEM, -(int) sizeof( ItemPtrMap ) );
+        MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof( ItemPtrMap ) );
 
         ItemPtrVec del_items = *ChildItems;
         ChildItems->clear();
@@ -162,7 +162,7 @@ void Item::FullClear()
 
 bool Item::ParseScript( const char* script, bool first_time )
 {
-    if( script && script[ 0 ] )
+    if( script && script[0] )
     {
         uint func_num = Script::GetScriptFuncNum( script, "void %s(Item&,bool)" );
         if( !func_num )
@@ -186,9 +186,9 @@ bool Item::PrepareScriptFunc( int num_scr_func )
 {
     if( num_scr_func >= ITEM_EVENT_MAX )
         return false;
-    if( FuncId[ num_scr_func ] <= 0 )
+    if( FuncId[num_scr_func] <= 0 )
         return false;
-    return Script::PrepareContext( FuncId[ num_scr_func ], _FUNC_, Str::FormatBuf( "Item id<%u>, pid<%u>", GetId(), GetProtoId() ) );
+    return Script::PrepareContext( FuncId[num_scr_func], _FUNC_, Str::FormatBuf( "Item id<%u>, pid<%u>", GetId(), GetProtoId() ) );
 }
 
 void Item::EventFinish( bool deleted )
@@ -414,7 +414,7 @@ void Item::SetMode( uchar mode )
             break;
         }
 
-        if( use < MAX_USES && aim && !Proto->Weapon_Aim[ use ] )
+        if( use < MAX_USES && aim && !Proto->Weapon_Aim[use] )
             aim = 0;
         mode = ( aim << 4 ) | ( use & 0xF );
     }
@@ -454,12 +454,12 @@ void Item::SetLexems( const char* lexems )
         if( !PLexems )
         {
             MEMORY_PROCESS( MEMORY_ITEM, LEXEMS_SIZE );
-            PLexems = new char[ LEXEMS_SIZE ];
+            PLexems = new char[LEXEMS_SIZE];
             if( !PLexems )
                 return;
         }
         memcpy( PLexems, lexems, len );
-        PLexems[ len ] = 0;
+        PLexems[len] = 0;
     }
     else
     {
@@ -658,7 +658,7 @@ bool Item::ContIsItems()
 
 Item* Item::GetChild( uint child_index )
 {
-    if( child_index >= ITEM_MAX_CHILDS || !Proto->ChildPid[ child_index ] )
+    if( child_index >= ITEM_MAX_CHILDS || !Proto->ChildPid[child_index] )
         return NULL;
 
     if( Accessory == ITEM_ACCESSORY_HEX )
@@ -672,13 +672,13 @@ Item* Item::GetChild( uint child_index )
     {
         Critter* cr = CrMngr.GetCritter( AccCritter.Id, true );
         if( cr )
-            return cr->GetItemByPid( Proto->ChildPid[ child_index ] );
+            return cr->GetItemByPid( Proto->ChildPid[child_index] );
     }
     else if( Accessory == ITEM_ACCESSORY_CONTAINER )
     {
         Item* cont = ItemMngr.GetItem( AccContainer.ContainerId, true );
         if( cont )
-            return cont->ContGetItemByPid( Proto->ChildPid[ child_index ], AccContainer.StackId );
+            return cont->ContGetItemByPid( Proto->ChildPid[child_index], AccContainer.StackId );
     }
     return NULL;
 }
@@ -699,8 +699,8 @@ uint ProtoItem::GetCurSprId()
         end = anim->CntFrm - 1;
     if( FLAG( Flags, ITEM_SHOW_ANIM_EXT ) )
     {
-        beg = AnimStay[ 0 ];
-        end = AnimStay[ 1 ];
+        beg = AnimStay[0];
+        end = AnimStay[1];
     }
 
     if( beg >= anim->CntFrm )
@@ -711,7 +711,7 @@ uint ProtoItem::GetCurSprId()
         std::swap( beg, end );
     uint count = end - beg + 1;
     uint ticks = anim->Ticks / anim->CntFrm * count;
-    return anim->Ind[ beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100 ];
+    return anim->Ind[beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100];
 }
 
 uint Item::GetCurSprId()
@@ -725,8 +725,8 @@ uint Item::GetCurSprId()
         end = anim->CntFrm - 1;
     if( IsShowAnimExt() )
     {
-        beg = Data.AnimStay[ 0 ];
-        end = Data.AnimStay[ 1 ];
+        beg = Data.AnimStay[0];
+        end = Data.AnimStay[1];
     }
 
     if( beg >= anim->CntFrm )
@@ -737,6 +737,6 @@ uint Item::GetCurSprId()
         std::swap( beg, end );
     uint count = end - beg + 1;
     uint ticks = anim->Ticks / anim->CntFrm * count;
-    return anim->Ind[ beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100 ];
+    return anim->Ind[beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100];
 }
 #endif

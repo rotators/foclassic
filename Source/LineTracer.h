@@ -41,7 +41,7 @@ LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx
 
     if( is_square )
     {
-        dir = atan2( (float) ( ty - hy ), (float) ( tx - hx ) ) + angle;
+        dir = atan2( (float)( ty - hy ), (float)( tx - hx ) ) + angle;
         dx = cos( dir );
         dy = sin( dir );
         if( fabs( dx ) > fabs( dy ) )
@@ -54,14 +54,14 @@ LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx
             dx /= fabs( dy );
             dy = ( dy > 0 ? 1.0f : -1.0f );
         }
-        x1 = (float) hx + 0.5f;
-        y1 = (float) hy + 0.5f;
+        x1 = (float)hx + 0.5f;
+        y1 = (float)hy + 0.5f;
     }
     else
     {
-        float                         nx = 3.0f * ( float(tx) - float(hx) );
-        float                         ny = ( float(ty) - float(hy) ) * SQRT3T2_FLOAT - ( float(tx & 1) - float(hx & 1) ) * SQRT3_FLOAT;
-        this->dir = 180.0f + RAD2DEG* atan2f( ny, nx );
+        float nx = 3.0f * ( float(tx) - float(hx) );
+        float ny = ( float(ty) - float(hy) ) * SQRT3T2_FLOAT - ( float(tx & 1) - float(hx & 1) ) * SQRT3_FLOAT;
+        this->dir = 180.0f + RAD2DEG * atan2f( ny, nx );
         if( angle != 0.0f )
         {
             this->dir += angle;
@@ -147,8 +147,8 @@ void LineTracer::GetNextSquare( ushort& cx, ushort& cy )
 {
     x1 += dx;
     y1 += dy;
-    cx = (ushort) floor( x1 );
-    cy = (ushort) floor( y1 );
+    cx = (ushort)floor( x1 );
+    cy = (ushort)floor( y1 );
     if( cx >= maxHx )
         cx = maxHx - 1;
     if( cy >= maxHy )

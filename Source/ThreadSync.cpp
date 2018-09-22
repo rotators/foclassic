@@ -4,7 +4,7 @@
 
 static Mutex SyncLocker; // Defense code from simultaneously execution
 
-SyncObject::SyncObject(): curMngr( NULL )
+SyncObject::SyncObject() : curMngr( NULL )
 {}
 
 void SyncObject::Lock()
@@ -122,8 +122,8 @@ void SyncObject::Unlock()
 
 SyncManagerVec SyncManager::Managers;
 
-SyncManager::SyncManager(): isWaiting( false ),
-                            threadPriority( 3 ) // Default priority
+SyncManager::SyncManager() : isWaiting( false ),
+    threadPriority( 3 )                         // Default priority
 {
     lockedObjects.reserve( 100 );
     busyObjects.reserve( 100 );

@@ -17,16 +17,16 @@
 
 // DLL
 # ifdef FO_WINDOWS
-static char DLLTempBuf[ 64 ];
-#  define DLL_Load( name )              (void*) LoadLibrary( name )
-#  define DLL_Free( h )                 FreeLibrary( (HMODULE) h )
-#  define DLL_GetAddress( h, pname )    (size_t*) GetProcAddress( (HMODULE) h, pname )
+static char DLLTempBuf[64];
+#  define DLL_Load( name )              (void*)LoadLibrary( name )
+#  define DLL_Free( h )                 FreeLibrary( (HMODULE)h )
+#  define DLL_GetAddress( h, pname )    (size_t*)GetProcAddress( (HMODULE)h, pname )
 #  define DLL_Error()                   _itoa( GetLastError(), DLLTempBuf, 10 )
 # else
 #  include <dlfcn.h>
-#  define DLL_Load( name )              (void*) dlopen( name, RTLD_NOW | RTLD_LOCAL )
+#  define DLL_Load( name )              (void*)dlopen( name, RTLD_NOW | RTLD_LOCAL )
 #  define DLL_Free( h )                 dlclose( h )
-#  define DLL_GetAddress( h, pname )    (size_t*) dlsym( h, pname )
+#  define DLL_GetAddress( h, pname )    (size_t*)dlsym( h, pname )
 #  define DLL_Error()                   dlerror()
 # endif
 
@@ -34,12 +34,12 @@ namespace Script
 {
     asIScriptEngine* GetEngine()
     {
-        return (asIScriptEngine*) GetScriptEngine();
+        return (asIScriptEngine*)GetScriptEngine();
     }
 
     void* LoadDynamicLibrary( const char* dll_name )
     {
-        char dll_name_[ MAX_FOPATH ] = { 0 };
+        char dll_name_[MAX_FOPATH] = { 0 };
         # ifndef FO_WINDOWS
         strcat( dll_name_, "./" );
         # endif
@@ -51,7 +51,7 @@ namespace Script
         for( ; *str; str++ )
             if( *str == '.' )
                 last_dot = str;
-        if( !last_dot || !last_dot[ 1 ] )
+        if( !last_dot || !last_dot[1] )
             return NULL;
         *last_dot = 0;
 
@@ -72,12 +72,12 @@ namespace Script
         string                      dll_name_str = dll_name_;
         # ifdef FO_WINDOWS
         for( uint i = 0, j = dll_name_str.length(); i < j; i++ )
-            tolower( dll_name_str[ i ] );
+            tolower( dll_name_str[i] );
         # endif
         auto it = alreadyLoadedDll.find( dll_name_str );
         if( it != alreadyLoadedDll.end() )
             return ( *it ).second;
-        alreadyLoadedDll.insert( PAIR( dll_name_str, (void*) NULL ) );
+        alreadyLoadedDll.insert( PAIR( dll_name_str, (void*)NULL ) );
 
         // Load dynamic library
         void* dll = DLL_Load( dll_name_str.c_str() );
@@ -99,32 +99,32 @@ namespace Script
         // Register variables
         ptr = DLL_GetAddress( dll, "FOnline" );
         if( ptr )
-            *ptr = (size_t) NULL;
+            *ptr = (size_t)NULL;
         ptr = DLL_GetAddress( dll, "ASEngine" );
         if( ptr )
-            *ptr = (size_t) GetEngine();
+            *ptr = (size_t)GetEngine();
 
         // Register functions
         ptr = DLL_GetAddress( dll, "Log" );
         if( ptr )
-            *ptr = (size_t) &printf;
+            *ptr = (size_t)&printf;
         ptr = DLL_GetAddress( dll, "ScriptGetActiveContext" );
         if( ptr )
-            *ptr = (size_t) &asGetActiveContext;
+            *ptr = (size_t)&asGetActiveContext;
         ptr = DLL_GetAddress( dll, "ScriptGetLibraryOptions" );
         if( ptr )
-            *ptr = (size_t) &asGetLibraryOptions;
+            *ptr = (size_t)&asGetLibraryOptions;
         ptr = DLL_GetAddress( dll, "ScriptGetLibraryVersion" );
         if( ptr )
-            *ptr = (size_t) &asGetLibraryVersion;
+            *ptr = (size_t)&asGetLibraryVersion;
 
         // Call init function
-        typedef void ( *DllMainEx )( bool );
-        DllMainEx func = (DllMainEx) DLL_GetAddress( dll, "DllMainEx" );
+        typedef void ( * DllMainEx )( bool );
+        DllMainEx func = (DllMainEx)DLL_GetAddress( dll, "DllMainEx" );
         if( func )
             ( *func )( true );
 
-        alreadyLoadedDll[ dll_name_str ] = dll;
+        alreadyLoadedDll[dll_name_str] = dll;
         return dll;
     }
 }
@@ -213,7 +213,7 @@ public:
         }
         else if( type == "float" )
         {
-            auto it = floatArray.insert( floatArray.begin(), (float) float_value );
+            auto it = floatArray.insert( floatArray.begin(), (float)float_value );
             if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register float global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "double" )
@@ -248,7 +248,7 @@ private:
     uint          parametersIndex;
 
 public:
-    CrDataPragma( int pragma_type ): pragmaType( pragma_type ), parametersIndex( 1 /*0 is ParamBase*/ ) {}
+    CrDataPragma( int pragma_type ) : pragmaType( pragma_type ), parametersIndex( 1 /*0 is ParamBase*/ ) {}
 
     void Call( const string& text )
     {
@@ -270,18 +270,18 @@ public:
         if( parametersAlready.count( name ) ) return true;
         if( parametersIndex >= MAX_PARAMETERS_ARRAYS ) return false;
 
-        char decl_val[ 128 ];
+        char decl_val[128];
         sprintf( decl_val, "DataVal %s", name.c_str() );
-        char decl_ref[ 128 ];
+        char decl_ref[128];
         sprintf( decl_ref, "DataRef %sBase", name.c_str() );
 
         #ifdef FONLINE_SERVER
         // Real registration
-        if( engine->RegisterObjectProperty( "Critter", decl_val, OFFSETOF( Critter, ThisPtr[ 0 ] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        if( engine->RegisterObjectProperty( "Critter", decl_ref, OFFSETOF( Critter, ThisPtr[ 0 ] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        Critter::ParametersMin[ parametersIndex ] = min;
-        Critter::ParametersMax[ parametersIndex ] = max;
-        Critter::ParametersOffset[ parametersIndex ] = ( Str::Substring( text, "+" ) != NULL );
+        if( engine->RegisterObjectProperty( "Critter", decl_val, OFFSETOF( Critter, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "Critter", decl_ref, OFFSETOF( Critter, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        Critter::ParametersMin[parametersIndex] = min;
+        Critter::ParametersMax[parametersIndex] = max;
+        Critter::ParametersOffset[parametersIndex] = ( Str::Substring( text, "+" ) != NULL );
         #else
         // Fake registration
         if( engine->RegisterObjectProperty( "Critter", decl_val, 10000 + parametersIndex * 4 ) < 0 ) return false;
@@ -305,18 +305,18 @@ public:
         if( parametersAlready.count( name ) ) return true;
         if( parametersIndex >= MAX_PARAMETERS_ARRAYS ) return false;
 
-        char decl_val[ 128 ];
+        char decl_val[128];
         sprintf( decl_val, "DataVal %s", name.c_str() );
-        char decl_ref[ 128 ];
+        char decl_ref[128];
         sprintf( decl_ref, "DataRef %sBase", name.c_str() );
 
         #ifdef FONLINE_CLIENT
         // Real registration
-        if( engine->RegisterObjectProperty( "CritterCl", decl_val, OFFSETOF( CritterCl, ThisPtr[ 0 ] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        if( engine->RegisterObjectProperty( "CritterCl", decl_ref, OFFSETOF( CritterCl, ThisPtr[ 0 ] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        CritterCl::ParametersMin[ parametersIndex ] = min;
-        CritterCl::ParametersMax[ parametersIndex ] = max;
-        CritterCl::ParametersOffset[ parametersIndex ] = ( Str::Substring( text, "+" ) != NULL );
+        if( engine->RegisterObjectProperty( "CritterCl", decl_val, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "CritterCl", decl_ref, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        CritterCl::ParametersMin[parametersIndex] = min;
+        CritterCl::ParametersMax[parametersIndex] = max;
+        CritterCl::ParametersOffset[parametersIndex] = ( Str::Substring( text, "+" ) != NULL );
         #else
         // Fake registration
         if( engine->RegisterObjectProperty( "CritterCl", decl_val, 10000 + parametersIndex * 4 ) < 0 ) return false;
@@ -451,13 +451,13 @@ public:
         vector< bool >* busy_bytes;
         int             base_offset;
         int             data_size;
-        for( int i = 0; i < (int) className.size(); i++ )
+        for( int i = 0; i < (int)className.size(); i++ )
         {
-            if( class_name == className[ i ] )
+            if( class_name == className[i] )
             {
-                busy_bytes = &busyBytes[ i ];
-                base_offset = baseOffset[ i ];
-                data_size = dataSize[ i ];
+                busy_bytes = &busyBytes[i];
+                base_offset = baseOffset[i];
+                data_size = dataSize[i];
                 founded = true;
                 break;
             }
@@ -484,11 +484,11 @@ public:
         }
 
         // Check for already binded on this position
-        if( (int) busy_bytes->size() < offset + size ) busy_bytes->resize( offset + size );
+        if( (int)busy_bytes->size() < offset + size ) busy_bytes->resize( offset + size );
         bool busy = false;
         for( int i = offset; i < offset + size; i++ )
         {
-            if( ( *busy_bytes )[ i ] )
+            if( ( *busy_bytes )[i] )
             {
                 busy = true;
                 break;
@@ -526,7 +526,7 @@ public:
             WriteLog( "Error in 'bindfield' pragma<%s>, register object property fail, error<%d>.\n", text.c_str(), result );
             return;
         }
-        for( int i = offset; i < offset + size; i++ ) ( *busy_bytes )[ i ] = true;
+        for( int i = offset; i < offset + size; i++ ) ( *busy_bytes )[i] = true;
     }
 };
 

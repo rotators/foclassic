@@ -11,14 +11,14 @@ static Mutex JobLocker; // Defense code from simultaneously execution
 typedef deque< Job > JobDeque;
 static JobDeque Jobs;
 
-Job::Job(): Type( JOB_NOP ),
-            Data( NULL ),
-            ThreadId( 0 )
+Job::Job() : Type( JOB_NOP ),
+    Data( NULL ),
+    ThreadId( 0 )
 {}
 
-Job::Job( int type, void* data, bool cur_thread ): Type( type ),
-                                                   Data( data ),
-                                                   ThreadId( 0 )
+Job::Job( int type, void* data, bool cur_thread ) : Type( type ),
+    Data( data ),
+    ThreadId( 0 )
 {
     if( cur_thread )
         ThreadId = Thread::GetCurrentId();
@@ -43,7 +43,7 @@ uint Job::PushBack( const Job& job )
     SCOPE_LOCK( JobLocker );
 
     Jobs.push_back( job );
-    uint size = (uint) Jobs.size();
+    uint size = (uint)Jobs.size();
     return size;
 }
 
@@ -101,7 +101,7 @@ void Job::Erase( int type )
 uint Job::Count()
 {
     SCOPE_LOCK( JobLocker );
-    uint count = (uint) Jobs.size();
+    uint count = (uint)Jobs.size();
     return count;
 }
 
@@ -170,9 +170,9 @@ template< class T1, class T2 >
 void ProcessDeferredReleasing_( T1& cont, T2& cont_cycle )
 {
     uint del_count = 0;
-    for( uint i = 0, j = (uint) cont_cycle.size(); i < j; i++ )
+    for( uint i = 0, j = (uint)cont_cycle.size(); i < j; i++ )
     {
-        if( cont_cycle[ i ] >= DeferredReleaseCycle - 2 )
+        if( cont_cycle[i] >= DeferredReleaseCycle - 2 )
             break;
         else
             del_count++;
@@ -180,7 +180,7 @@ void ProcessDeferredReleasing_( T1& cont, T2& cont_cycle )
     if( del_count )
     {
         for( uint i = 0; i < del_count; i++ )
-            cont[ i ]->Release();
+            cont[i]->Release();
         cont.erase( cont.begin(), cont.begin() + del_count );
         cont_cycle.erase( cont_cycle.begin(), cont_cycle.begin() + del_count );
     }

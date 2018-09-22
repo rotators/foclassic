@@ -10,25 +10,25 @@
 #endif
 
 AnyFrames* CritterCl::DefaultAnim = NULL;
-int        CritterCl::ParamsChangeScript[ MAX_PARAMS ] = { 0 };
-int        CritterCl::ParamsGetScript[ MAX_PARAMS ] = { 0 };
-bool       CritterCl::ParamsRegEnabled[ MAX_PARAMS ] = { 0 };
-int        CritterCl::ParamsReg[ MAX_PARAMS ] = { 0 };
-uint       CritterCl::ParametersMin[ MAX_PARAMETERS_ARRAYS ] = { 0 };
-uint       CritterCl::ParametersMax[ MAX_PARAMETERS_ARRAYS ] = { MAX_PARAMS - 1 };
-bool       CritterCl::ParametersOffset[ MAX_PARAMETERS_ARRAYS ] = { false };
-bool       CritterCl::SlotEnabled[ 0x100 ] = { true, true, true, true, false };
+int        CritterCl::ParamsChangeScript[MAX_PARAMS] = { 0 };
+int        CritterCl::ParamsGetScript[MAX_PARAMS] = { 0 };
+bool       CritterCl::ParamsRegEnabled[MAX_PARAMS] = { 0 };
+int        CritterCl::ParamsReg[MAX_PARAMS] = { 0 };
+uint       CritterCl::ParametersMin[MAX_PARAMETERS_ARRAYS] = { 0 };
+uint       CritterCl::ParametersMax[MAX_PARAMETERS_ARRAYS] = { MAX_PARAMS - 1 };
+bool       CritterCl::ParametersOffset[MAX_PARAMETERS_ARRAYS] = { false };
+bool       CritterCl::SlotEnabled[0x100] = { true, true, true, true, false };
 
-CritterCl::CritterCl(): CrDir( 0 ), SprId( 0 ), Id( 0 ), Pid( 0 ), NameColor( 0 ), ContourColor( 0 ),
-                        Cond( 0 ), Anim1Life( 0 ), Anim1Knockout( 0 ), Anim1Dead( 0 ), Anim2Life( 0 ), Anim2Knockout( 0 ), Anim2Dead( 0 ),
-                        Flags( 0 ), BaseType( 0 ), BaseTypeAlias( 0 ), curSpr( 0 ), lastEndSpr( 0 ), animStartTick( 0 ),
-                        SprOx( 0 ), SprOy( 0 ), StartTick( 0 ), TickCount( 0 ), ApRegenerationTick( 0 ),
-                        tickTextDelay( 0 ), textOnHeadColor( COLOR_TEXT ), Alpha( 0 ),
-                        fadingEnable( false ), FadingTick( 0 ), fadeUp( false ), finishingTime( 0 ),
-                        staySprDir( 0 ), staySprTick( 0 ), needReSet( false ), reSetTick( 0 ), CurMoveStep( 0 ),
-                        Visible( true ), SprDrawValid( false ), IsNotValid( false ), RefCounter( 1 ),
-                        OxExtI( 0 ), OyExtI( 0 ), OxExtF( 0 ), OyExtF( 0 ), OxExtSpeed( 0 ), OyExtSpeed( 0 ), OffsExtNextTick( 0 ),
-                        Anim3d( NULL ), Anim3dStay( NULL ), Layers3d( NULL ), Multihex( 0 )
+CritterCl::CritterCl() : CrDir( 0 ), SprId( 0 ), Id( 0 ), Pid( 0 ), NameColor( 0 ), ContourColor( 0 ),
+    Cond( 0 ), Anim1Life( 0 ), Anim1Knockout( 0 ), Anim1Dead( 0 ), Anim2Life( 0 ), Anim2Knockout( 0 ), Anim2Dead( 0 ),
+    Flags( 0 ), BaseType( 0 ), BaseTypeAlias( 0 ), curSpr( 0 ), lastEndSpr( 0 ), animStartTick( 0 ),
+    SprOx( 0 ), SprOy( 0 ), StartTick( 0 ), TickCount( 0 ), ApRegenerationTick( 0 ),
+    tickTextDelay( 0 ), textOnHeadColor( COLOR_TEXT ), Alpha( 0 ),
+    fadingEnable( false ), FadingTick( 0 ), fadeUp( false ), finishingTime( 0 ),
+    staySprDir( 0 ), staySprTick( 0 ), needReSet( false ), reSetTick( 0 ), CurMoveStep( 0 ),
+    Visible( true ), SprDrawValid( false ), IsNotValid( false ), RefCounter( 1 ),
+    OxExtI( 0 ), OyExtI( 0 ), OxExtF( 0 ), OyExtF( 0 ), OxExtSpeed( 0 ), OyExtSpeed( 0 ), OffsExtNextTick( 0 ),
+    Anim3d( NULL ), Anim3dStay( NULL ), Layers3d( NULL ), Multihex( 0 )
 {
     Name = "";
     NameOnHead = "";
@@ -40,7 +40,7 @@ CritterCl::CritterCl(): CrDir( 0 ), SprId( 0 ), Id( 0 ), Pid( 0 ), NameColor( 0 
     ItemSlotArmor->Init( ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) );
     tickFidget = Timer::GameTick() + Random( GameOpt.CritterFidgetTime, GameOpt.CritterFidgetTime * 2 );
     for( int i = 0; i < MAX_PARAMETERS_ARRAYS; i++ )
-        ThisPtr[ i ] = this;
+        ThisPtr[i] = this;
     memzero( ParamsIsChanged, sizeof( ParamsIsChanged ) );
     ParamLocked = -1;
     memzero( &stayAnim, sizeof( stayAnim ) );
@@ -56,9 +56,9 @@ CritterCl::~CritterCl()
     if( Layers3d )
     {
         #ifdef FONLINE_CLIENT
-        ( (ScriptArray*) Layers3d )->Release();
+        ( (ScriptArray*)Layers3d )->Release();
         #else
-        uint* layers = (uint*) Layers3d;
+        uint* layers = (uint*)Layers3d;
         SAFEDELA( layers );
         Layers3d = NULL;
         #endif
@@ -87,10 +87,10 @@ void CritterCl::InitForRegistration()
 
     memzero( Params, sizeof( Params ) );
     memzero( ParamsReg, sizeof( ParamsReg ) );
-    ParamsReg[ 0 ] = ParamsReg[ 1 ] = ParamsReg[ 2 ] = ParamsReg[ 3 ] =
-                                                           ParamsReg[ 4 ] = ParamsReg[ 5 ] = ParamsReg[ 6 ] = 5;
-    ParamsReg[ ST_AGE ] = Random( AGE_MIN, AGE_MAX );
-    ParamsReg[ ST_GENDER ] = GENDER_MALE;
+    ParamsReg[0] = ParamsReg[1] = ParamsReg[2] = ParamsReg[3] =
+                                                     ParamsReg[4] = ParamsReg[5] = ParamsReg[6] = 5;
+    ParamsReg[ST_AGE] = Random( AGE_MIN, AGE_MAX );
+    ParamsReg[ST_GENDER] = GENDER_MALE;
     GenParams();
 }
 
@@ -110,11 +110,11 @@ void CritterCl::GenParams()
             return;
         arr->Resize( MAX_PARAMS );
         for( int i = 0; i < MAX_PARAMS; i++ )
-            ( *(int*) arr->At( i ) ) = ParamsReg[ i ];
+            ( *(int*)arr->At( i ) ) = ParamsReg[i];
         Script::SetArgObject( arr );
         if( Script::RunPrepared() && arr->GetSize() == MAX_PARAMS )
             for( int i = 0; i < MAX_PARAMS; i++ )
-                Params[ i ] = ( *(int*) arr->At( i ) );
+                Params[i] = ( *(int*)arr->At( i ) );
         arr->Release();
     }
     #endif
@@ -278,7 +278,7 @@ Item* CritterCl::GetItemByPidSlot( ushort item_pid, int slot )
 Item* CritterCl::GetAmmo( uint caliber )
 {
     for( auto it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
-        if( ( *it )->GetType() == ITEM_TYPE_AMMO && ( *it )->Proto->Ammo_Caliber == (int) caliber )
+        if( ( *it )->GetType() == ITEM_TYPE_AMMO && ( *it )->Proto->Ammo_Caliber == (int)caliber )
             return *it;
     return NULL;
 }
@@ -478,7 +478,7 @@ uint CritterCl::GetUsePicName( uchar num_slot )
             return use_on_pic;
         if( use >= MAX_USES )
             return 0;
-        return item->Proto->Weapon_PicUse[ use ];
+        return item->Proto->Weapon_PicUse[use];
     }
     if( item->IsCanUseOnSmth() )
         return use_on_pic;
@@ -494,7 +494,7 @@ bool CritterCl::IsItemAim( uchar num_slot )
     if( !item )
         return false;
     if( item->IsWeapon() && use < MAX_USES )
-        return item->Proto->Weapon_Aim[ use ] != 0;
+        return item->Proto->Weapon_Aim[use] != 0;
     return false;
 }
 
@@ -519,7 +519,7 @@ bool CritterCl::CheckFind( int find_type )
 uint CritterCl::GetLook()
 {
     int look = GameOpt.LookNormal + GetParam( ST_PERCEPTION ) * 3 + GetParam( ST_BONUS_LOOK ) + GetMultihex();
-    if( look < (int) GameOpt.LookMinimum )
+    if( look < (int)GameOpt.LookMinimum )
         look = GameOpt.LookMinimum;
     return look;
 }
@@ -557,24 +557,24 @@ uint CritterCl::GetMultihex()
 int CritterCl::GetParam( uint index )
 {
     #ifdef FONLINE_CLIENT
-    if( ParamsGetScript[ index ] && Script::PrepareContext( ParamsGetScript[ index ], _FUNC_, GetInfo() ) )
+    if( ParamsGetScript[index] && Script::PrepareContext( ParamsGetScript[index], _FUNC_, GetInfo() ) )
     {
         Script::SetArgObject( this );
-        Script::SetArgUInt( index - ( ParametersOffset[ index ] ? ParametersMin[ index ] : 0 ) );
+        Script::SetArgUInt( index - ( ParametersOffset[index] ? ParametersMin[index] : 0 ) );
         if( Script::RunPrepared() )
             return Script::GetReturnedUInt();
     }
     #endif
-    return Params[ index ];
+    return Params[index];
 }
 
 void CritterCl::ChangeParam( uint index )
 {
-    if( !ParamsIsChanged[ index ] && ParamLocked != (int) index )
+    if( !ParamsIsChanged[index] && ParamLocked != (int)index )
     {
         ParamsChanged.push_back( index );
-        ParamsChanged.push_back( Params[ index ] );
-        ParamsIsChanged[ index ] = true;
+        ParamsChanged.push_back( Params[index] );
+        ParamsIsChanged[index] = true;
     }
 }
 
@@ -584,22 +584,22 @@ void CritterCl::ProcessChangedParams()
     if( ParamsChanged.size() )
     {
         CallChange_.clear();
-        for( uint i = 0, j = (uint) ParamsChanged.size(); i < j; i += 2 )
+        for( uint i = 0, j = (uint)ParamsChanged.size(); i < j; i += 2 )
         {
-            int index = ParamsChanged[ i ];
-            int old_val = ParamsChanged[ i + 1 ];
-            if( ParamsChangeScript[ index ] && Params[ index ] != old_val )
+            int index = ParamsChanged[i];
+            int old_val = ParamsChanged[i + 1];
+            if( ParamsChangeScript[index] && Params[index] != old_val )
             {
-                CallChange_.push_back( ParamsChangeScript[ index ] );
+                CallChange_.push_back( ParamsChangeScript[index] );
                 CallChange_.push_back( index );
                 CallChange_.push_back( old_val );
             }
-            ParamsIsChanged[ index ] = false;
+            ParamsIsChanged[index] = false;
 
             // Internal processing
             if( index == ST_HANDS_ITEM_AND_MODE )
             {
-                int        value = Params[ ST_HANDS_ITEM_AND_MODE ];
+                int        value = Params[ST_HANDS_ITEM_AND_MODE];
                 ProtoItem* unarmed = ItemMngr.GetProtoItem( value >> 16 );
                 if( !unarmed || !unarmed->IsWeapon() || !unarmed->Weapon_IsUnarmed )
                     unarmed = NULL;
@@ -612,8 +612,8 @@ void CritterCl::ProcessChangedParams()
             {
                 if( Anim3d )
                 {
-                    int   value = Params[ ST_SCALE_FACTOR ];
-                    float scale = (float) ( value ? value : 1000 ) / 1000.0f;
+                    int   value = Params[ST_SCALE_FACTOR];
+                    float scale = (float)( value ? value : 1000 ) / 1000.0f;
                     Anim3d->SetScale( scale, scale, scale );
                 }
             }
@@ -622,16 +622,16 @@ void CritterCl::ProcessChangedParams()
 
         if( CallChange_.size() )
         {
-            for( uint i = 0, j = (uint) CallChange_.size(); i < j; i += 3 )
+            for( uint i = 0, j = (uint)CallChange_.size(); i < j; i += 3 )
             {
-                uint index = CallChange_[ i + 1 ];
+                uint index = CallChange_[i + 1];
                 ParamLocked = index;
                 #ifdef FONLINE_CLIENT
-                if( Script::PrepareContext( CallChange_[ i ], _FUNC_, GetInfo() ) )
+                if( Script::PrepareContext( CallChange_[i], _FUNC_, GetInfo() ) )
                 {
                     Script::SetArgObject( this );
-                    Script::SetArgUInt( index - ( ParametersOffset[ index ] ? ParametersMin[ index ] : 0 ) );
-                    Script::SetArgUInt( CallChange_[ i + 2 ] );
+                    Script::SetArgUInt( index - ( ParametersOffset[index] ? ParametersMin[index] : 0 ) );
+                    Script::SetArgUInt( CallChange_[i + 2] );
                     Script::RunPrepared();
                 }
                 #endif
@@ -661,16 +661,16 @@ void CritterCl::DrawStay( Rect r )
         AnyFrames* anim = ResMngr.GetCrit2dAnim( crtype, anim1, anim2, dir );
         if( anim )
         {
-            uint spr_id = ( IsLife() ? anim->Ind[ 0 ] : anim->Ind[ anim->CntFrm - 1 ] );
-            SprMngr.DrawSpriteSize( spr_id, r.L, r.T, (float) r.W(), (float) r.H(), false, true );
+            uint spr_id = ( IsLife() ? anim->Ind[0] : anim->Ind[anim->CntFrm - 1] );
+            SprMngr.DrawSpriteSize( spr_id, r.L, r.T, (float)r.W(), (float)r.H(), false, true );
         }
     }
     else if( Anim3dStay )
     {
         Anim3dStay->SetDir( dir );
         Anim3dStay->SetAnimation( anim1, anim2, GetLayers3dData(), IsLife() ? 0 : ANIMATION_STAY | ANIMATION_PERIOD( 100 ) | ANIMATION_NO_SMOOTH );
-        RectF r1 = RectF( (float) r.L, (float) r.T, (float) r.R, (float) r.B );
-        RectF r2 = RectF( (float) r.L, (float) r.T, (float) r.R, (float) r.B );
+        RectF r1 = RectF( (float)r.L, (float)r.T, (float)r.R, (float)r.B );
+        RectF r2 = RectF( (float)r.L, (float)r.T, (float)r.R, (float)r.B );
         SprMngr.Draw3dSize( r1, false, true, Anim3dStay, &r2, COLOR_IFACE );
     }
 }
@@ -678,7 +678,7 @@ void CritterCl::DrawStay( Rect r )
 #pragma MESSAGE("Exclude PID_BOTTLE_CAPS.")
 const char* CritterCl::GetMoneyStr()
 {
-    static char money_str[ 64 ];
+    static char money_str[64];
     uint        money_count = CountItemPid( 41 /*PID_BOTTLE_CAPS*/ );
     Str::Format( money_str, "%u$", money_count );
     return money_str;
@@ -896,7 +896,7 @@ bool CritterCl::IsLastHexes()
 
 void CritterCl::FixLastHexes()
 {
-    if( IsLastHexes() && LastHexX[ LastHexX.size() - 1 ] == HexX && LastHexY[ LastHexY.size() - 1 ] == HexY )
+    if( IsLastHexes() && LastHexX[LastHexX.size() - 1] == HexX && LastHexY[LastHexY.size() - 1] == HexY )
         return;
     LastHexX.push_back( HexX );
     LastHexY.push_back( HexY );
@@ -904,14 +904,14 @@ void CritterCl::FixLastHexes()
 
 ushort CritterCl::PopLastHexX()
 {
-    ushort hx = LastHexX[ LastHexX.size() - 1 ];
+    ushort hx = LastHexX[LastHexX.size() - 1];
     LastHexX.pop_back();
     return hx;
 }
 
 ushort CritterCl::PopLastHexY()
 {
-    ushort hy = LastHexY[ LastHexY.size() - 1 ];
+    ushort hy = LastHexY[LastHexY.size() - 1];
     LastHexY.pop_back();
     return hy;
 }
@@ -966,19 +966,19 @@ void CritterCl::Move( int dir )
                 int s2 = CritType::GetWalkFrmCnt( crtype, 2 );
                 int s3 = CritType::GetWalkFrmCnt( crtype, 3 );
 
-                if( (int) curSpr == s0 - 1 && s1 )
+                if( (int)curSpr == s0 - 1 && s1 )
                 {
                     beg_spr = s0;
                     end_spr = s1 - 1;
                     step = 2;
                 }
-                else if( (int) curSpr == s1 - 1 && s2 )
+                else if( (int)curSpr == s1 - 1 && s2 )
                 {
                     beg_spr = s1;
                     end_spr = s2 - 1;
                     step = 3;
                 }
-                else if( (int) curSpr == s2 - 1 && s3 )
+                else if( (int)curSpr == s2 - 1 && s3 )
                 {
                     beg_spr = s2;
                     end_spr = s3 - 1;
@@ -1159,7 +1159,7 @@ void CritterCl::NextAnim( bool erase_front )
     if( animSequence.empty() )
         return;
 
-    CritterAnim& cr_anim = animSequence[ 0 ];
+    CritterAnim& cr_anim = animSequence[0];
     animStartTick = Timer::GameTick();
 
     ProcessAnim( false, !Anim3d, cr_anim.IndAnim1, cr_anim.IndAnim2, cr_anim.ActiveItem );
@@ -1173,8 +1173,8 @@ void CritterCl::NextAnim( bool erase_front )
         short ox = 0, oy = 0;
         for( int i = 0, j = curSpr % cr_anim.Anim->GetCnt(); i <= j; i++ )
         {
-            ox += cr_anim.Anim->NextX[ i ];
-            oy += cr_anim.Anim->NextY[ i ];
+            ox += cr_anim.Anim->NextX[i];
+            oy += cr_anim.Anim->NextY[i];
         }
         SetOffs( ox, oy, cr_anim.MoveText );
     }
@@ -1260,8 +1260,8 @@ void CritterCl::AnimateStay()
         short ox = 0, oy = 0;
         for( uint i = 0, j = curSpr % anim->GetCnt(); i <= j; i++ )
         {
-            ox += anim->NextX[ i ];
-            oy += anim->NextY[ i ];
+            ox += anim->NextX[i];
+            oy += anim->NextY[i];
         }
         ChangeOffs( ox, oy, false );
     }
@@ -1283,7 +1283,7 @@ bool CritterCl::IsWalkAnim()
 {
     if( animSequence.size() )
     {
-        int anim2 = animSequence[ 0 ].IndAnim2;
+        int anim2 = animSequence[0].IndAnim2;
         return anim2 == ANIM2_WALK || anim2 == ANIM2_RUN || anim2 == ANIM2_LIMP || anim2 == ANIM2_PANIC_RUN;
     }
     return false;
@@ -1291,8 +1291,8 @@ bool CritterCl::IsWalkAnim()
 
 void CritterCl::ClearAnim()
 {
-    for( uint i = 0, j = (uint) animSequence.size(); i < j; i++ )
-        SAFEREL( animSequence[ i ].ActiveItem );
+    for( uint i = 0, j = (uint)animSequence.size(); i < j; i++ )
+        SAFEREL( animSequence[i].ActiveItem );
     animSequence.clear();
 }
 
@@ -1370,14 +1370,14 @@ void CritterCl::ProcessAnim( bool animate_stay, bool is2d, uint anim1, uint anim
 int* CritterCl::GetLayers3dData()
 {
     #ifdef FONLINE_CLIENT
-    static int   layers[ LAYERS3D_COUNT ];
-    ScriptArray* arr = (ScriptArray*) Layers3d;
+    static int   layers[LAYERS3D_COUNT];
+    ScriptArray* arr = (ScriptArray*)Layers3d;
     memcpy( layers, arr->At( 0 ), sizeof( layers ) );
     return layers;
     #endif
 
-    memcpy( Layers3d, &Params[ ST_ANIM3D_LAYER_BEGIN ], LAYERS3D_COUNT * sizeof( int ) );
-    return (int*) Layers3d;
+    memcpy( Layers3d, &Params[ST_ANIM3D_LAYER_BEGIN], LAYERS3D_COUNT * sizeof( int ) );
+    return (int*)Layers3d;
 }
 
 bool CritterCl::IsAnimAviable( uint anim1, uint anim2 )
@@ -1413,12 +1413,12 @@ void CritterCl::SetBaseType( uint type )
         if( !Layers3d )
         {
             Layers3d = Script::CreateArray( "int[]" );
-            ( (ScriptArray*) Layers3d )->Resize( LAYERS3D_COUNT );
+            ( (ScriptArray*)Layers3d )->Resize( LAYERS3D_COUNT );
         }
-        memzero( ( (ScriptArray*) Layers3d )->At( 0 ), LAYERS3D_COUNT * sizeof( int ) );
+        memzero( ( (ScriptArray*)Layers3d )->At( 0 ), LAYERS3D_COUNT * sizeof( int ) );
         #else
         if( !Layers3d )
-            Layers3d = new int[ LAYERS3D_COUNT ];
+            Layers3d = new int[LAYERS3D_COUNT];
         memzero( Layers3d, LAYERS3D_COUNT * sizeof( int ) );
         #endif
 
@@ -1459,13 +1459,13 @@ void CritterCl::Process()
         uint dist = DistSqrt( 0, 0, OxExtI, OyExtI );
         SprOx -= OxExtI;
         SprOy -= OyExtI;
-        float mul = (float) ( dist / 10 );
+        float mul = (float)( dist / 10 );
         if( mul < 1.0f )
             mul = 1.0f;
         OxExtF += OxExtSpeed * mul;
         OyExtF += OyExtSpeed * mul;
-        OxExtI = (int) OxExtF;
-        OyExtI = (int) OyExtF;
+        OxExtI = (int)OxExtF;
+        OyExtI = (int)OyExtF;
         if( DistSqrt( 0, 0, OxExtI, OyExtI ) > dist ) // End of work
         {
             OffsExtNextTick = 0;
@@ -1476,7 +1476,7 @@ void CritterCl::Process()
     }
 
     // Animation
-    CritterAnim& cr_anim = ( animSequence.size() ? animSequence[ 0 ] : stayAnim );
+    CritterAnim& cr_anim = ( animSequence.size() ? animSequence[0] : stayAnim );
     int          anim_proc = ( Timer::GameTick() - animStartTick ) * 100 / ( cr_anim.AnimTick ? cr_anim.AnimTick : 1 );
     if( anim_proc >= 100 )
     {
@@ -1501,13 +1501,13 @@ void CritterCl::Process()
             short ox = 0, oy = 0;
             for( uint i = 0, j = old_spr % cr_anim.Anim->GetCnt(); i <= j; i++ )
             {
-                ox -= cr_anim.Anim->NextX[ i ];
-                oy -= cr_anim.Anim->NextY[ i ];
+                ox -= cr_anim.Anim->NextX[i];
+                oy -= cr_anim.Anim->NextY[i];
             }
             for( uint i = 0, j = cur_spr % cr_anim.Anim->GetCnt(); i <= j; i++ )
             {
-                ox += cr_anim.Anim->NextX[ i ];
-                oy += cr_anim.Anim->NextY[ i ];
+                ox += cr_anim.Anim->NextX[i];
+                oy += cr_anim.Anim->NextY[i];
             }
             ChangeOffs( ox, oy, cr_anim.MoveText );
         }
@@ -1553,9 +1553,9 @@ void CritterCl::Process()
     // Todo: do same for 2d animations
     if( Anim3d && GameOpt.Anim2CombatIdle && !animSequence.size() && Cond == COND_LIFE && !Anim2Life )
     {
-        if( GameOpt.Anim2CombatBegin && IsCombatMode() && Anim3d->GetAnim2() != (int) GameOpt.Anim2CombatIdle )
+        if( GameOpt.Anim2CombatBegin && IsCombatMode() && Anim3d->GetAnim2() != (int)GameOpt.Anim2CombatIdle )
             Animate( 0, GameOpt.Anim2CombatBegin, NULL );
-        else if( GameOpt.Anim2CombatEnd && !IsCombatMode() && Anim3d->GetAnim2() == (int) GameOpt.Anim2CombatIdle )
+        else if( GameOpt.Anim2CombatEnd && !IsCombatMode() && Anim3d->GetAnim2() == (int)GameOpt.Anim2CombatIdle )
             Animate( 0, GameOpt.Anim2CombatEnd, NULL );
     }
 
@@ -1668,8 +1668,8 @@ void CritterCl::AddOffsExt( short ox, short oy )
     oy += OyExtI;
     OxExtI = ox;
     OyExtI = oy;
-    OxExtF = (float) ox;
-    OyExtF = (float) oy;
+    OxExtF = (float)ox;
+    OyExtF = (float)oy;
     GetStepsXY( OxExtSpeed, OyExtSpeed, 0, 0, ox, oy );
     OxExtSpeed = -OxExtSpeed;
     OyExtSpeed = -OyExtSpeed;
@@ -1705,11 +1705,11 @@ void CritterCl::DrawTextOnHead()
     if( SprDrawValid )
     {
         Rect tr = GetTextRect();
-        int  x = (int) ( (float) ( tr.L + tr.W() / 2 + GameOpt.ScrOx ) / GameOpt.SpritesZoom - 100.0f );
-        int  y = (int) ( (float) ( tr.T + GameOpt.ScrOy ) / GameOpt.SpritesZoom - 70.0f );
+        int  x = (int)( (float)( tr.L + tr.W() / 2 + GameOpt.ScrOx ) / GameOpt.SpritesZoom - 100.0f );
+        int  y = (int)( (float)( tr.T + GameOpt.ScrOy ) / GameOpt.SpritesZoom - 70.0f );
         Rect r( x, y, x + 200, y + 70 );
 
-        char str[ MAX_FOTEXT ];
+        char str[MAX_FOTEXT];
         uint color;
         if( strTextOnHead.empty() )
         {

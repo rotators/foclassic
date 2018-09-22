@@ -56,20 +56,20 @@ const char* GetLastSocketError();
 # endif
 #elif defined ( FO_MACOSX )
 # define fl_display           glXGetCurrentDisplay()
-# define fl_window            ( (uint) fl_xid( MainWindow ) )
+# define fl_window            ( (uint)fl_xid( MainWindow ) )
 #endif
 
 // DLL
 #ifdef FO_WINDOWS
-# define DLL_Load( name )                 (void*) LoadLibrary( name )
-# define DLL_Free( h )                    FreeLibrary( (HMODULE) h )
-# define DLL_GetAddress( h, pname )       (size_t*) GetProcAddress( (HMODULE) h, pname )
+# define DLL_Load( name )                 (void*)LoadLibrary( name )
+# define DLL_Free( h )                    FreeLibrary( (HMODULE)h )
+# define DLL_GetAddress( h, pname )       (size_t*)GetProcAddress( (HMODULE)h, pname )
 # define DLL_Error()                      Str::ItoA( GetLastError() )
 #else
 # include <dlfcn.h>
-# define DLL_Load( name )                 (void*) dlopen( name, RTLD_NOW | RTLD_LOCAL )
+# define DLL_Load( name )                 (void*)dlopen( name, RTLD_NOW | RTLD_LOCAL )
 # define DLL_Free( h )                    dlclose( h )
-# define DLL_GetAddress( h, pname )       (size_t*) dlsym( h, pname )
+# define DLL_GetAddress( h, pname )       (size_t*)dlsym( h, pname )
 # define DLL_Error()                      dlerror()
 #endif
 
@@ -114,15 +114,15 @@ const char* GetLastSocketError();
 #define MAX( a, b )                       ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 #define MIN( a, b )                       ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
-#define OFFSETOF( type, member )          ( (int) offsetof( type, member ) )
+#define OFFSETOF( type, member )          ( (int)offsetof( type, member ) )
 #define memzero( ptr, size )              memset( ptr, 0, size )
-#define PACKUINT64( u32hi, u32lo )        ( ( (uint64) u32hi << 32 ) | ( (uint64) u32lo ) )
-#define MAKEUINT( ch0, ch1, ch2, ch3 )    ( (uint) (uchar) ( ch0 ) | ( (uint) (uchar) ( ch1 ) << 8 ) | ( (uint) (uchar) ( ch2 ) << 16 ) | ( (uint) (uchar) ( ch3 ) << 24 ) )
+#define PACKUINT64( u32hi, u32lo )        ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
+#define MAKEUINT( ch0, ch1, ch2, ch3 )    ( (uint)(uchar)( ch0 ) | ( (uint)(uchar)( ch1 ) << 8 ) | ( (uint)(uchar)( ch2 ) << 16 ) | ( (uint)(uchar)( ch3 ) << 24 ) )
 
 typedef vector< Rect >  IntRectVec;
 typedef vector< RectF > FltRectVec;
 
-extern char   CommandLine[ MAX_FOTEXT ];
+extern char   CommandLine[MAX_FOTEXT];
 extern char** CommandLineArgValues;
 extern uint   CommandLineArgCount;
 void SetCommandLine( uint argc, char** argv );
@@ -150,7 +150,7 @@ uint GetDoubleClickTicks();
 
 // Containers comparator template
 template< class T >
-inline bool CompareContainers( const T& a, const T& b ) { return a.size() == b.size() && ( a.empty() || !memcmp( &a[ 0 ], &b[ 0 ], a.size() * sizeof( a[ 0 ] ) ) ); }
+inline bool CompareContainers( const T& a, const T& b ) { return a.size() == b.size() && ( a.empty() || !memcmp( &a[0], &b[0], a.size() * sizeof( a[0] ) ) ); }
 
 // Hex offsets
 #define MAX_HEX_OFFSET        ( 50 )   // Must be not odd
@@ -168,7 +168,7 @@ const char* GetWindowName();
 struct ScoreType
 {
     uint ClientId;
-    char ClientName[ SCORE_NAME_LEN ];
+    char ClientName[SCORE_NAME_LEN];
     int  Value;
 };
 
@@ -178,7 +178,7 @@ struct ScoreType
 #if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
 
 # define PI_VALUE             ( 3.141592654f )
-# define COLOR_ARGB( a, r, g, b )         ( (uint) ( ( ( ( a ) & 0xff ) << 24 ) | ( ( ( r ) & 0xff ) << 16 ) | ( ( ( g ) & 0xff ) << 8 ) | ( ( b ) & 0xff ) ) )
+# define COLOR_ARGB( a, r, g, b )         ( (uint)( ( ( ( a ) & 0xff ) << 24 ) | ( ( ( r ) & 0xff ) << 16 ) | ( ( ( g ) & 0xff ) << 8 ) | ( ( b ) & 0xff ) ) )
 # define COLOR_XRGB( r, g, b )            COLOR_ARGB( 0xff, r, g, b )
 
 # include "FL/Fl.H"
@@ -251,7 +251,7 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 #  define ViewPort_           D3DVIEWPORT9
 #  define LockRect_           D3DLOCKED_RECT
 # else
-#  define COLOR_FIX( c )                  COLOR_ARGB( ( (uchar*) &( c ) )[ 3 ], ( (uchar*) &( c ) )[ 0 ], ( (uchar*) &( c ) )[ 1 ], ( (uchar*) &( c ) )[ 2 ] )
+#  define COLOR_FIX( c )                  COLOR_ARGB( ( (uchar*)&( c ) )[3], ( (uchar*)&( c ) )[0], ( (uchar*)&( c ) )[1], ( (uchar*)&( c ) )[2] )
 #  define Device_             GLuint
 #  define Surface_            GLuint
 #  define EffectValue_        GLint
@@ -279,7 +279,7 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 #  define CFG_DEF_INT_FILE    "default800x600.ini"
 # else // FONLINE_MAPPER
 #  include "ResourceMapper.h"
-const uchar SELECT_ALPHA    = 100;
+const uchar SELECT_ALPHA = 100;
 #  define CFG_DEF_INT_FILE    "mapper_default.ini"
 # endif
 
@@ -519,8 +519,8 @@ struct GameOptions
     uint         WhisperDist;
     uint         ShoutDist;
     int          LookChecks;
-    uint         LookDir[ 5 ];
-    uint         LookSneakDir[ 5 ];
+    uint         LookDir[5];
+    uint         LookSneakDir[5];
     uint         LookWeight;
     bool         CustomItemCost;
     uint         RegistrationTimeout;
@@ -668,7 +668,7 @@ struct GameOptions
     float        SpritesZoom;
     float        SpritesZoomMax;
     float        SpritesZoomMin;
-    float        EffectValues[ EFFECT_SCRIPT_VALUES ];
+    float        EffectValues[EFFECT_SCRIPT_VALUES];
     bool         AlwaysRun;
     uint         AlwaysRunMoveDist;
     uint         AlwaysRunUseDist;
@@ -698,12 +698,12 @@ struct GameOptions
     uint         ClientMapWidth;
     uint         ClientMapHeight;
 
-    void*        ( *GetDrawingSprites )( uint & );
-    void*        ( *GetSpriteInfo )( uint );
+    void*        ( * GetDrawingSprites )( uint& );
+    void*        ( * GetSpriteInfo )( uint );
     uint         ( * GetSpriteColor )( uint, int, int, bool );
     bool         ( * IsSpriteHit )( void*, int, int, bool );
 
-    const char*  ( *GetNameByHash )( uint );
+    const char*  ( * GetNameByHash )( uint );
     uint         ( * GetHashByName )( const char* );
 
     bool         ( * ScriptLoadModule )( const char* );
@@ -734,8 +734,8 @@ struct GameOptions
     bool         ( * ScriptGetReturnedBool )();
     float        ( * ScriptGetReturnedFloat )();
     double       ( * ScriptGetReturnedDouble )();
-    void*        ( *ScriptGetReturnedObject )( );
-    void*        ( *ScriptGetReturnedAddress )( );
+    void*        ( * ScriptGetReturnedObject )();
+    void*        ( * ScriptGetReturnedAddress )();
 
     int          ( * Random )( int, int );
     uint         ( * GetTick )();
@@ -765,7 +765,7 @@ template< class T >
 class AutoPtr
 {
 public:
-    AutoPtr( T* ptr ): Ptr( ptr ) {}
+    AutoPtr( T* ptr ) : Ptr( ptr ) {}
     ~AutoPtr() { if( Ptr ) delete Ptr; }
     T& operator*() const  { return *Get(); }
     T* operator->() const { return Get(); }
@@ -791,7 +791,7 @@ template< class T >
 class AutoPtrArr
 {
 public:
-    AutoPtrArr( T* ptr ): Ptr( ptr ) {}
+    AutoPtrArr( T* ptr ) : Ptr( ptr ) {}
     ~AutoPtrArr() { if( Ptr ) delete[] Ptr; }
     T& operator*() const  { return *Get(); }
     T* operator->() const { return Get(); }
@@ -888,7 +888,7 @@ extern InterprocessData SingleplayerData;
 class Thread
 {
 private:
-    static THREAD char threadName[ 64 ];
+    static THREAD char threadName[64];
     static UIntStrMap  threadNames;
     static Mutex       threadNamesLocker;
     bool               isStarted;
@@ -898,7 +898,7 @@ private:
 public:
     Thread();
     ~Thread();
-    bool Start( void ( * func )( void* ), const char* name, void* arg = NULL );
+    bool Start( void ( *func )( void* ), const char* name, void* arg = NULL );
     void Wait();
     void Finish();
 

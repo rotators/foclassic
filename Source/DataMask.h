@@ -62,7 +62,7 @@ public:
     void Set2Bit( uint x, uint y, int val )
     {
         if( x >= width || y >= height ) return;
-        uchar& b = data[ y * width_b + x / 4 ];
+        uchar& b = data[y * width_b + x / 4];
         int    bit = ( x % 4 * 2 );
         UNSETFLAG( b, 3 << bit );
         SETFLAG( b, ( val & 3 ) << bit );
@@ -71,7 +71,7 @@ public:
     int Get2Bit( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
-        return ( data[ y * width_b + x / 4 ] >> ( x % 4 * 2 ) ) & 3;
+        return ( data[y * width_b + x / 4] >> ( x % 4 * 2 ) ) & 3;
     }
 
     void Fill( int fill )
@@ -95,7 +95,7 @@ public:
         else
         {
             isAlloc = true;
-            data = new uchar[ width_b * height ];
+            data = new uchar[width_b * height];
             Fill( 0 );
         }
     }
@@ -123,7 +123,7 @@ public:
     void Set4Bit( uint x, uint y, uchar val )
     {
         if( x >= width || y >= height ) return;
-        uchar& b = data[ y * width_b + x / 2 ];
+        uchar& b = data[y * width_b + x / 2];
         if( x & 1 ) b = ( b & 0xF0 ) | ( val & 0xF );
         else b = ( b & 0xF ) | ( val << 4 );
     }
@@ -131,7 +131,7 @@ public:
     uchar Get4Bit( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
-        uchar& b = data[ y * width_b + x / 2 ];
+        uchar& b = data[y * width_b + x / 2];
         if( x & 1 ) return b & 0xF;
         else return b >> 4;
     }
@@ -149,7 +149,7 @@ public:
         height = height_4bit;
         width_b = width / 2;
         if( width & 1 ) width_b++;
-        data = new uchar[ width_b * height ];
+        data = new uchar[width_b * height];
         Fill( fill );
     }
 
@@ -171,13 +171,13 @@ public:
     void SetByte( uint x, uint y, uchar val )
     {
         if( x >= width || y >= height ) return;
-        data[ y * width + x ] = val;
+        data[y * width + x] = val;
     }
 
     uchar GetByte( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
-        return data[ y * width + x ];
+        return data[y * width + x];
     }
 
     void Fill( int fill )
@@ -191,7 +191,7 @@ public:
         if( !_height ) _height = 1;
         width = _width;
         height = _height;
-        data = new uchar[ width * height ];
+        data = new uchar[width * height];
         Fill( fill );
     }
 

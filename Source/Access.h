@@ -51,7 +51,7 @@
 
 struct CmdDef
 {
-    char  cmd[ 20 ];
+    char  cmd[20];
     uchar id;
 };
 
@@ -139,13 +139,13 @@ const CmdDef cmdlist[] =
     { "log", CMD_LOG },
 };
 
-inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( const char* ), const char* name )
+inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( const char* ), const char* name )
 {
-    char args[ MAX_FOTEXT ];
+    char args[MAX_FOTEXT];
     Str::Copy( args, str );
     Str::EraseFrontBackSpecificChars( args );
 
-    char  cmd_str[ MAX_FOTEXT ];
+    char  cmd_str[MAX_FOTEXT];
     Str::Copy( cmd_str, args );
     char* space = Str::Substring( cmd_str, " " );
     if( space )
@@ -156,8 +156,8 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
 
     uchar cmd = 0;
     for( uint cur_cmd = 0; cur_cmd < sizeof( cmdlist ) / sizeof( CmdDef ); cur_cmd++ )
-        if( Str::CompareCase( cmd_str, cmdlist[ cur_cmd ].cmd ) )
-            cmd = cmdlist[ cur_cmd ].id;
+        if( Str::CompareCase( cmd_str, cmdlist[cur_cmd].cmd ) )
+            cmd = cmdlist[cur_cmd].id;
     if( !cmd )
         return;
 
@@ -198,14 +198,14 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_CRITID:
     {
-        char name[ MAX_FOTEXT ];
+        char name[MAX_FOTEXT];
         if( sscanf( args, "%s", name ) != 1 )
         {
             logcb( "Invalid arguments. Example: <~id name>." );
             break;
         }
         uint name_size_utf8 = UTF8_BUF_SIZE( MAX_NAME );
-        name[ name_size_utf8 - 1 ] = 0;
+        name[name_size_utf8 - 1] = 0;
         msg_len += name_size_utf8;
 
         buf << msg;
@@ -311,8 +311,8 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_GETACCESS:
     {
-        char name_access[ MAX_FOTEXT ];
-        char pasw_access[ MAX_FOTEXT ];
+        char name_access[MAX_FOTEXT];
+        char pasw_access[MAX_FOTEXT];
         if( sscanf( args, "%s%s", name_access, pasw_access ) != 2 )
             break;
         Str::Replacement( name_access, '*', ' ' );
@@ -321,8 +321,8 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
         uint name_size_utf8 = UTF8_BUF_SIZE( MAX_NAME );
         uint pasw_size_utf8 = UTF8_BUF_SIZE( 128 );
         msg_len += name_size_utf8 + pasw_size_utf8;
-        name_access[ name_size_utf8 - 1 ] = 0;
-        pasw_access[ pasw_size_utf8 - 1 ] = 0;
+        name_access[name_size_utf8 - 1] = 0;
+        pasw_access[pasw_size_utf8 - 1] = 0;
 
         buf << msg;
         buf << msg_len;
@@ -423,13 +423,13 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_LOADSCRIPT:
     {
-        char script_name[ MAX_SCRIPT_NAME + 1 ];
+        char script_name[MAX_SCRIPT_NAME + 1];
         if( sscanf( args, "%s", script_name ) != 1 )
         {
             logcb( "Invalid arguments. Example: <~loadscript name>." );
             break;
         }
-        script_name[ MAX_SCRIPT_NAME ] = 0;
+        script_name[MAX_SCRIPT_NAME] = 0;
         msg_len += MAX_SCRIPT_NAME;
 
         buf << msg;
@@ -447,16 +447,16 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_RUNSCRIPT:
     {
-        char script_name[ MAX_SCRIPT_NAME + 1 ];
-        char func_name[ MAX_SCRIPT_NAME + 1 ];
+        char script_name[MAX_SCRIPT_NAME + 1];
+        char func_name[MAX_SCRIPT_NAME + 1];
         uint param0, param1, param2;
         if( sscanf( args, "%s%s%d%d%d", script_name, func_name, &param0, &param1, &param2 ) != 5 )
         {
             logcb( "Invalid arguments. Example: <~runscript module func param0 param1 param2>." );
             break;
         }
-        script_name[ MAX_SCRIPT_NAME ] = 0;
-        func_name[ MAX_SCRIPT_NAME ] = 0;
+        script_name[MAX_SCRIPT_NAME] = 0;
+        func_name[MAX_SCRIPT_NAME] = 0;
         msg_len += MAX_SCRIPT_NAME * 2 + sizeof( uint ) * 3;
 
         buf << msg;
@@ -531,14 +531,14 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_LOADDIALOG:
     {
-        char dlg_name[ 128 ];
+        char dlg_name[128];
         uint dlg_id;
         if( sscanf( args, "%s%u", dlg_name, &dlg_id ) != 2 )
         {
             logcb( "Invalid arguments. Example: <~loaddialog name id>." );
             break;
         }
-        dlg_name[ 127 ] = 0;
+        dlg_name[127] = 0;
         msg_len += 128 + sizeof( dlg_id );
 
         buf << msg;
@@ -641,10 +641,10 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     case CMD_BAN:
     {
         istrstream str_( args );
-        char       params[ 128 ] = { 0 };
-        char       name[ 128 ] = { 0 };
+        char       params[128] = { 0 };
+        char       name[128] = { 0 };
         uint       ban_hours = 0;
-        char       info[ 128 ] = { 0 };
+        char       info[128] = { 0 };
         str_ >> params;
         if( !str_.fail() )
             str_ >> name;
@@ -659,15 +659,15 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
         }
         Str::Replacement( name, '*', ' ' );
         Str::Replacement( info, '$', '*' );
-        while( info[ 0 ] == ' ' )
+        while( info[0] == ' ' )
             Str::CopyBack( info );
 
         uint name_size_utf8 = UTF8_BUF_SIZE( MAX_NAME );
         uint params_size_utf8 = UTF8_BUF_SIZE( MAX_NAME );
         uint info_size_utf8 = UTF8_BUF_SIZE( MAX_CHAT_MESSAGE );
-        name[ name_size_utf8 - 1 ] = 0;
-        params[ params_size_utf8 - 1 ] = 0;
-        info[ info_size_utf8 - 1 ] = 0;
+        name[name_size_utf8 - 1] = 0;
+        params[params_size_utf8 - 1] = 0;
+        info[info_size_utf8 - 1] = 0;
 
         msg_len += name_size_utf8 + params_size_utf8 + info_size_utf8 + sizeof( ban_hours );
 
@@ -688,14 +688,14 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
             break;
         }
 
-        char pass[ 128 ];
+        char pass[128];
         if( sscanf( args, "%s", pass ) != 1 )
         {
             logcb( "Invalid arguments. Example: <~deleteself user_password>." );
             break;
         }
         Str::Replacement( pass, '*', ' ' );
-        char pass_hash[ PASS_HASH_SIZE ];
+        char pass_hash[PASS_HASH_SIZE];
         Crypt.ClientPassHash( name, pass, pass_hash );
         msg_len += PASS_HASH_SIZE;
 
@@ -713,8 +713,8 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
             break;
         }
 
-        char pass[ MAX_FOTEXT ];
-        char new_pass[ MAX_FOTEXT ];
+        char pass[MAX_FOTEXT];
+        char new_pass[MAX_FOTEXT];
         if( sscanf( args, "%s%s", pass, new_pass ) != 2 )
         {
             logcb( "Invalid arguments. Example: <~changepassword current_password new_password>." );
@@ -730,10 +730,10 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
             break;
         }
 
-        char pass_hash[ PASS_HASH_SIZE ];
+        char pass_hash[PASS_HASH_SIZE];
         Crypt.ClientPassHash( name, pass, pass_hash );
         Str::Replacement( new_pass, '*', ' ' );
-        char new_pass_hash[ PASS_HASH_SIZE ];
+        char new_pass_hash[PASS_HASH_SIZE];
         Crypt.ClientPassHash( name, new_pass, new_pass_hash );
         msg_len += PASS_HASH_SIZE * 2;
 
@@ -753,7 +753,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( * logcb )( 
     break;
     case CMD_LOG:
     {
-        char flags[ 128 ];
+        char flags[128];
         if( sscanf( args, "%s", flags ) != 1 )
         {
             logcb( "Invalid arguments. Example: <~log flag>. Valid flags: '+' attach, '-' detach, '--' detach all." );

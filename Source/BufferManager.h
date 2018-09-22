@@ -8,15 +8,15 @@
 class BufferManager
 {
 private:
-    bool isError;
+    bool  isError;
     Mutex bufLocker;
     char* bufData;
-    uint bufLen;
-    uint bufEndPos;
-    uint bufReadPos;
-    bool encryptActive;
-    int encryptKeyPos;
-    uint encryptKeys[ CRYPT_KEYS_COUNT ];
+    uint  bufLen;
+    uint  bufEndPos;
+    uint  bufReadPos;
+    bool  encryptActive;
+    int   encryptKeyPos;
+    uint  encryptKeys[CRYPT_KEYS_COUNT];
 
     void CopyBuf( const char* from, char* to, const char* mask, uint crypt_key, uint len );
     bool IsValidMsg( uint msg );
@@ -59,7 +59,7 @@ public:
     void SkipMsg( uint msg );
     void SeekValidMsg();
     #else
-    bool NeedProcess() { return ( bufReadPos < bufEndPos ); }
+    bool NeedProcess() { return bufReadPos < bufEndPos;  }
     #endif
 
     BufferManager& operator<<( uint i );
@@ -81,7 +81,7 @@ private:
     inline uint EncryptKey( int move )
     {
         if( !encryptActive ) return 0;
-        uint key = encryptKeys[ encryptKeyPos ];
+        uint key = encryptKeys[encryptKeyPos];
         encryptKeyPos += move;
         if( encryptKeyPos < 0 || encryptKeyPos >= CRYPT_KEYS_COUNT )
         {

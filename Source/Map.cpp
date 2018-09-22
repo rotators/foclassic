@@ -4,7 +4,7 @@
 #include "ItemManager.h"
 #include "MapManager.h"
 
-const char* MapEventFuncName[ MAP_EVENT_MAX ] =
+const char* MapEventFuncName[MAP_EVENT_MAX] =
 {
     "void %s(Map&,bool)",              // MAP_EVENT_FINISH
     "void %s(Map&)",                   // MAP_EVENT_LOOP_0
@@ -24,11 +24,11 @@ const char* MapEventFuncName[ MAP_EVENT_MAX ] =
 /* Map                                                                  */
 /************************************************************************/
 
-Map::Map(): RefCounter( 1 ), IsNotValid( false ), hexFlags( NULL ),
-            mapLocation( NULL ), Proto( NULL ), NeedProcess( false ),
-            IsTurnBasedOn( false ), TurnBasedEndTick( 0 ), TurnSequenceCur( 0 ),
-            IsTurnBasedTimeout( false ), TurnBasedBeginSecond( 0 ), NeedEndTurnBased( false ),
-            TurnBasedRound( 0 ), TurnBasedTurn( 0 ), TurnBasedWholeTurn( 0 )
+Map::Map() : RefCounter( 1 ), IsNotValid( false ), hexFlags( NULL ),
+    mapLocation( NULL ), Proto( NULL ), NeedProcess( false ),
+    IsTurnBasedOn( false ), TurnBasedEndTick( 0 ), TurnSequenceCur( 0 ),
+    IsTurnBasedTimeout( false ), TurnBasedBeginSecond( 0 ), NeedEndTurnBased( false ),
+    TurnBasedRound( 0 ), TurnBasedTurn( 0 ), TurnBasedWholeTurn( 0 )
 {
     MEMORY_PROCESS( MEMORY_MAP, sizeof( Map ) );
     memzero( &Data, sizeof( Data ) );
@@ -40,7 +40,7 @@ Map::Map(): RefCounter( 1 ), IsNotValid( false ), hexFlags( NULL ),
 
 Map::~Map()
 {
-    MEMORY_PROCESS( MEMORY_MAP, -(int) sizeof( Map ) );
+    MEMORY_PROCESS( MEMORY_MAP, -(int)sizeof( Map ) );
     MEMORY_PROCESS( MEMORY_MAP_FIELD, -( Proto->Header.MaxHexX * Proto->Header.MaxHexY ) );
     SAFEDELA( hexFlags );
 }
@@ -51,7 +51,7 @@ bool Map::Init( ProtoMap* proto, Location* location )
         return false;
 
     MEMORY_PROCESS( MEMORY_MAP_FIELD, proto->Header.MaxHexX * proto->Header.MaxHexY );
-    hexFlags = new uchar[ proto->Header.MaxHexX * proto->Header.MaxHexY ];
+    hexFlags = new uchar[proto->Header.MaxHexX * proto->Header.MaxHexY];
     if( !hexFlags )
         return false;
     memzero( hexFlags, proto->Header.MaxHexX * proto->Header.MaxHexY );
@@ -68,7 +68,7 @@ bool Map::Init( ProtoMap* proto, Location* location )
     TurnSequence.clear();
     IsTurnBasedTimeout = false;
     for( int i = 0; i < MAP_LOOP_FUNC_MAX; i++ )
-        LoopWaitTick[ i ] = MAP_LOOP_DEFAULT_TICK;
+        LoopWaitTick[i] = MAP_LOOP_DEFAULT_TICK;
     NeedProcess = false;
     IsNotValid = false;
     return true;
@@ -112,7 +112,7 @@ struct ItemNpcPtr
 {
     Item* item;
     Npc*  npc;
-    ItemNpcPtr( Item* i, Npc* n ): item( i ), npc( n ) {}
+    ItemNpcPtr( Item* i, Npc* n ) : item( i ), npc( n ) {}
 };
 typedef map< uint, ItemNpcPtr > UIDtoPtrMap;
 
@@ -121,9 +121,9 @@ bool Map::Generate()
     // Map data
     dataLocker.Lock();
     for( int i = 0; i < 4; i++ )
-        Data.MapDayTime[ i ] = Proto->Header.DayTime[ i ];
+        Data.MapDayTime[i] = Proto->Header.DayTime[i];
     for( int i = 0; i < 12; i++ )
-        Data.MapDayColor[ i ] = Proto->Header.DayColor[ i ];
+        Data.MapDayColor[i] = Proto->Header.DayColor[i];
     dataLocker.Unlock();
 
     // Associated UID -> Item or Critter
@@ -135,10 +135,10 @@ bool Map::Generate()
         MapObject& mobj = *( *it );
 
         // Make script name
-        char script[ MAX_SCRIPT_NAME * 2 + 1 ] = { 0 };
-        if( mobj.ScriptName[ 0 ] )
+        char script[MAX_SCRIPT_NAME * 2 + 1] = { 0 };
+        if( mobj.ScriptName[0] )
         {
-            if( mobj.FuncName[ 0 ] )
+            if( mobj.FuncName[0] )
             {
                 Str::Copy( script, mobj.ScriptName );
                 Str::Append( script, "@" );
@@ -151,21 +151,21 @@ bool Map::Generate()
         }
 
         // Make params array
-        int params[ MAPOBJ_CRITTER_PARAMS * 2 ];
+        int params[MAPOBJ_CRITTER_PARAMS * 2];
         int params_count = 0;
         for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
         {
-            int index = mobj.MCritter.ParamIndex[ i ];
+            int index = mobj.MCritter.ParamIndex[i];
             if( index >= 0 && index < MAX_PARAMS )
             {
-                params[ params_count * 2 ] = index;
-                params[ params_count * 2 + 1 ] = mobj.MCritter.ParamValue[ i ];
+                params[params_count * 2] = index;
+                params[params_count * 2 + 1] = mobj.MCritter.ParamValue[i];
                 params_count++;
             }
         }
 
         // Create npc
-        Npc* npc = CrMngr.CreateNpc( mobj.ProtoId, params_count, params, 0, NULL, script[ 0 ] ? script : NULL, this, mobj.MapX, mobj.MapY, (uchar) mobj.Dir, true );
+        Npc* npc = CrMngr.CreateNpc( mobj.ProtoId, params_count, params, 0, NULL, script[0] ? script : NULL, this, mobj.MapX, mobj.MapY, (uchar)mobj.Dir, true );
         if( !npc )
         {
             WriteLogF( _FUNC_, " - Create npc on map<%s> with pid<%u> failture - continue generate.\n", Proto->GetName(), mobj.ProtoId );
@@ -179,9 +179,9 @@ bool Map::Generate()
 
             if( npc->Data.Cond == COND_DEAD )
             {
-                npc->Data.Params[ ST_CURRENT_HP ] = GameOpt.DeadHitPoints - 1;
-                if( !npc->Data.Params[ ST_REPLICATION_TIME ] )
-                    npc->Data.Params[ ST_REPLICATION_TIME ] = -1;
+                npc->Data.Params[ST_CURRENT_HP] = GameOpt.DeadHitPoints - 1;
+                if( !npc->Data.Params[ST_REPLICATION_TIME] )
+                    npc->Data.Params[ST_REPLICATION_TIME] = -1;
 
                 uint multihex = npc->GetMultihex();
                 UnsetFlagCritter( npc->GetHexX(), npc->GetHexY(), multihex, false );
@@ -256,8 +256,8 @@ bool Map::Generate()
 
         // Script values
         for( int i = 0; i < 10; i++ )
-            if( mobj.MItem.Val[ i ] )
-                item->Data.ScriptValues[ i ] = mobj.MItem.Val[ i ];
+            if( mobj.MItem.Val[i] )
+                item->Data.ScriptValues[i] = mobj.MItem.Val[i];
 
         // Deterioration
         if( item->IsDeteriorable() )
@@ -308,12 +308,12 @@ bool Map::Generate()
         {
             SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM );
             SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
-            item->Data.AnimShow[ 0 ] = mobj.MItem.AnimStayBegin;
-            item->Data.AnimShow[ 1 ] = mobj.MItem.AnimStayEnd;
-            item->Data.AnimStay[ 0 ] = mobj.MItem.AnimStayBegin;
-            item->Data.AnimStay[ 1 ] = mobj.MItem.AnimStayEnd;
-            item->Data.AnimHide[ 0 ] = mobj.MItem.AnimStayBegin;
-            item->Data.AnimHide[ 1 ] = mobj.MItem.AnimStayEnd;
+            item->Data.AnimShow[0] = mobj.MItem.AnimStayBegin;
+            item->Data.AnimShow[1] = mobj.MItem.AnimStayEnd;
+            item->Data.AnimStay[0] = mobj.MItem.AnimStayBegin;
+            item->Data.AnimStay[1] = mobj.MItem.AnimStayEnd;
+            item->Data.AnimHide[0] = mobj.MItem.AnimStayBegin;
+            item->Data.AnimHide[1] = mobj.MItem.AnimStayEnd;
         }
         if( mobj.MItem.AnimWait )
             item->Data.AnimWaitBase = mobj.MItem.AnimWait;
@@ -321,10 +321,10 @@ bool Map::Generate()
             item->Data.PicMapHash = mobj.MItem.PicMapHash;
 
         // Parse script
-        char script[ MAX_SCRIPT_NAME * 2 + 1 ] = { 0 };
-        if( mobj.ScriptName[ 0 ] )
+        char script[MAX_SCRIPT_NAME * 2 + 1] = { 0 };
+        if( mobj.ScriptName[0] )
         {
-            if( mobj.FuncName[ 0 ] )
+            if( mobj.FuncName[0] )
             {
                 Str::Copy( script, mobj.ScriptName );
                 Str::Append( script, "@" );
@@ -347,11 +347,11 @@ bool Map::Generate()
             {
                 cr_cont->AddItem( item, false );
                 if( mobj.MItem.ItemSlot == SLOT_HAND1 )
-                    cr_cont->Data.FavoriteItemPid[ SLOT_HAND1 ] = item->GetProtoId();
+                    cr_cont->Data.FavoriteItemPid[SLOT_HAND1] = item->GetProtoId();
                 else if( mobj.MItem.ItemSlot == SLOT_HAND2 )
-                    cr_cont->Data.FavoriteItemPid[ SLOT_HAND2 ] = item->GetProtoId();
+                    cr_cont->Data.FavoriteItemPid[SLOT_HAND2] = item->GetProtoId();
                 else if( mobj.MItem.ItemSlot == SLOT_ARMOR )
-                    cr_cont->Data.FavoriteItemPid[ SLOT_ARMOR ] = item->GetProtoId();
+                    cr_cont->Data.FavoriteItemPid[SLOT_ARMOR] = item->GetProtoId();
             }
             else if( item_cont )
             {
@@ -370,7 +370,7 @@ bool Map::Generate()
         }
 
         // Script
-        if( script[ 0 ] )
+        if( script[0] )
             item->ParseScript( script, true );
     }
 
@@ -384,21 +384,21 @@ bool Map::Generate()
 
         // Generate internal bag
         ItemPtrVec& items = npc->GetInventory();
-        if( !npc->Data.Params[ ST_BAG_ID ] )
+        if( !npc->Data.Params[ST_BAG_ID] )
         {
             int cur_item = 0;
             for( auto it_ = items.begin(), end_ = items.end(); it_ != end_; ++it_ )
             {
                 Item*       item = *it_;
-                NpcBagItem& bag_item = npc->Data.Bag[ cur_item ];
+                NpcBagItem& bag_item = npc->Data.Bag[cur_item];
                 bag_item.ItemPid = item->GetProtoId();
                 bag_item.MaxCnt = item->GetCount();
                 bag_item.MinCnt = item->GetCount();
-                if( npc->Data.FavoriteItemPid[ SLOT_HAND1 ] == item->GetProtoId() )
+                if( npc->Data.FavoriteItemPid[SLOT_HAND1] == item->GetProtoId() )
                     bag_item.ItemSlot = SLOT_HAND1;
-                else if( npc->Data.FavoriteItemPid[ SLOT_HAND2 ] == item->GetProtoId() )
+                else if( npc->Data.FavoriteItemPid[SLOT_HAND2] == item->GetProtoId() )
                     bag_item.ItemSlot = SLOT_HAND2;
-                else if( npc->Data.FavoriteItemPid[ SLOT_ARMOR ] == item->GetProtoId() )
+                else if( npc->Data.FavoriteItemPid[SLOT_ARMOR] == item->GetProtoId() )
                     bag_item.ItemSlot = SLOT_ARMOR;
                 else
                     bag_item.ItemSlot = SLOT_INV;
@@ -416,9 +416,9 @@ bool Map::Generate()
     }
 
     // Map script
-    if( Proto->Header.ScriptModule[ 0 ] && Proto->Header.ScriptFunc[ 0 ] )
+    if( Proto->Header.ScriptModule[0] && Proto->Header.ScriptFunc[0] )
     {
-        char script[ MAX_SCRIPT_NAME * 2 + 2 ];
+        char script[MAX_SCRIPT_NAME * 2 + 2];
         Str::Copy( script, Proto->Header.ScriptModule );
         Str::Append( script, "@" );
         Str::Append( script, Proto->Header.ScriptFunc );
@@ -437,10 +437,10 @@ void Map::Process()
         uint tick = Timer::GameTick();
         for( int i = 0; i < MAP_LOOP_FUNC_MAX; i++ )
         {
-            if( LoopEnabled[ i ] && tick - LoopLastTick[ i ] >= LoopWaitTick[ i ] )
+            if( LoopEnabled[i] && tick - LoopLastTick[i] >= LoopWaitTick[i] )
             {
                 EventLoop( i );
-                LoopLastTick[ i ] = tick;
+                LoopLastTick[i] = tick;
             }
         }
     }
@@ -481,9 +481,9 @@ bool Map::GetStartCoordCar( ushort& hx, ushort& hy, ProtoItem* proto_item )
     Proto->GetEntires( proto_item->Car_Entrance, entires );
     std::random_shuffle( entires.begin(), entires.end() );
 
-    for( int i = 0, j = (uint) entires.size(); i < j; i++ )
+    for( int i = 0, j = (uint)entires.size(); i < j; i++ )
     {
-        ProtoMap::MapEntire* ent = &entires[ i ];
+        ProtoMap::MapEntire* ent = &entires[i];
         if( ent->HexX < GetMaxHexX() && ent->HexY < GetMaxHexY() && IsPlaceForItem( ent->HexX, ent->HexY, proto_item ) )
         {
             hx = ent->HexX;
@@ -518,8 +518,8 @@ bool Map::FindStartHex( ushort& hx, ushort& hy, uint multihex, uint seek_radius,
         cur_step++;
         if( cur_step >= cnt )
             cur_step = 0;
-        short nx = hx_ + sx[ cur_step ];
-        short ny = hy_ + sy[ cur_step ];
+        short nx = hx_ + sx[cur_step];
+        short ny = hy_ + sy[cur_step];
 
         if( nx < 0 || nx >= GetMaxHexX() || ny < 0 || ny >= GetMaxHexY() )
             continue;
@@ -530,8 +530,8 @@ bool Map::FindStartHex( ushort& hx, ushort& hy, uint multihex, uint seek_radius,
         break;
     }
 
-    hx_ += sx[ cur_step ];
-    hy_ += sy[ cur_step ];
+    hx_ += sx[cur_step];
+    hy_ += sy[cur_step];
     hx = hx_;
     hy = hy_;
     return true;
@@ -550,9 +550,9 @@ void Map::AddCritter( Critter* cr )
         }
 
         if( cr->IsPlayer() )
-            mapPlayers.push_back( (Client*) cr );
+            mapPlayers.push_back( (Client*)cr );
         else
-            mapNpcs.push_back( (Npc*) cr );
+            mapNpcs.push_back( (Npc*)cr );
         mapCritters.push_back( cr );
 
         cr->SetMaps( GetId(), GetPid() );
@@ -583,13 +583,13 @@ void Map::EraseCritter( Critter* cr )
 
         if( cr->IsPlayer() )
         {
-            auto it = std::find( mapPlayers.begin(), mapPlayers.end(), (Client*) cr );
+            auto it = std::find( mapPlayers.begin(), mapPlayers.end(), (Client*)cr );
             if( it != mapPlayers.end() )
                 mapPlayers.erase( it );
         }
         else
         {
-            auto it = std::find( mapNpcs.begin(), mapNpcs.end(), (Npc*) cr );
+            auto it = std::find( mapNpcs.begin(), mapNpcs.end(), (Npc*)cr );
             if( it != mapNpcs.end() )
                 mapNpcs.erase( it );
         }
@@ -711,7 +711,7 @@ void Map::SetItem( Item* item, ushort hx, ushort hy )
     if( item->IsBlocks() )
         PlaceItemBlocks( hx, hy, item->Proto );
 
-    if( item->FuncId[ ITEM_EVENT_WALK ] > 0 )
+    if( item->FuncId[ITEM_EVENT_WALK] > 0 )
         SetHexFlag( hx, hy, FH_WALK_ITEM );
     if( item->IsGeck() )
         mapLocation->GeckCount++;
@@ -1026,7 +1026,7 @@ void Map::GetItemsTrap( ushort hx, ushort hy, ItemPtrVec& traps, bool lock )
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         Item* item = *it;
-        if( item->AccHex.HexX == hx && item->AccHex.HexY == hy && item->FuncId[ ITEM_EVENT_WALK ] > 0 )
+        if( item->AccHex.HexX == hx && item->AccHex.HexY == hy && item->FuncId[ITEM_EVENT_WALK] > 0 )
             traps.push_back( item );
     }
     if( !traps.size() )
@@ -1109,17 +1109,17 @@ void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
 
 ushort Map::GetHexFlags( ushort hx, ushort hy )
 {
-    return ( hexFlags[ hy * GetMaxHexX() + hx ] << 8 ) | Proto->HexFlags[ hy * GetMaxHexX() + hx ];
+    return ( hexFlags[hy * GetMaxHexX() + hx] << 8 ) | Proto->HexFlags[hy * GetMaxHexX() + hx];
 }
 
 void Map::SetHexFlag( ushort hx, ushort hy, uchar flag )
 {
-    SETFLAG( hexFlags[ hy * GetMaxHexX() + hx ], flag );
+    SETFLAG( hexFlags[hy * GetMaxHexX() + hx], flag );
 }
 
 void Map::UnsetHexFlag( ushort hx, ushort hy, uchar flag )
 {
-    UNSETFLAG( hexFlags[ hy * GetMaxHexX() + hx ], flag );
+    UNSETFLAG( hexFlags[hy * GetMaxHexX() + hx], flag );
 }
 
 bool Map::IsHexPassed( ushort hx, ushort hy )
@@ -1148,8 +1148,8 @@ bool Map::IsHexesPassed( ushort hx, ushort hy, uint radius )
     short  maxhy = GetMaxHexY();
     for( uint i = 0; i < count; i++ )
     {
-        short hx_ = (short) hx + sx[ i ];
-        short hy_ = (short) hy + sy[ i ];
+        short hx_ = (short)hx + sx[i];
+        short hy_ = (short)hy + sy[i];
         if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy && FLAG( GetHexFlags( hx_, hy_ ), FH_NOWAY ) )
             return false;
     }
@@ -1203,9 +1203,9 @@ bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
 bool Map::IsFlagCritter( ushort hx, ushort hy, bool dead )
 {
     if( dead )
-        return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_DEAD_CRITTER );
+        return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_DEAD_CRITTER );
     else
-        return FLAG( hexFlags[ hy * GetMaxHexX() + hx ], FH_CRITTER );
+        return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_CRITTER );
 }
 
 void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
@@ -1227,8 +1227,8 @@ void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
             short  maxhy = GetMaxHexY();
             for( int i = 0; i < count; i++ )
             {
-                short hx_ = (short) hx + sx[ i ];
-                short hy_ = (short) hy + sy[ i ];
+                short hx_ = (short)hx + sx[i];
+                short hy_ = (short)hy + sy[i];
                 if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy )
                     SetHexFlag( hx_, hy_, FH_CRITTER );
             }
@@ -1267,8 +1267,8 @@ void Map::UnsetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
             short  maxhy = GetMaxHexY();
             for( int i = 0; i < count; i++ )
             {
-                short hx_ = (short) hx + sx[ i ];
-                short hy_ = (short) hy + sy[ i ];
+                short hx_ = (short)hx + sx[i];
+                short hy_ = (short)hy + sy[i];
                 if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy )
                     UnsetHexFlag( hx_, hy_, FH_CRITTER );
             }
@@ -1285,7 +1285,7 @@ uint Map::GetNpcCount( int npc_role, int find_type )
     for( auto it = npcs.begin(), end = npcs.end(); it != end; ++it )
     {
         Npc* npc = *it;
-        if( npc->Data.Params[ ST_NPC_ROLE ] == npc_role && npc->CheckFind( find_type ) )
+        if( npc->Data.Params[ST_NPC_ROLE] == npc_role && npc->CheckFind( find_type ) )
             result++;
     }
     return result;
@@ -1328,7 +1328,7 @@ Critter* Map::GetNpc( int npc_role, int find_type, uint skip_count, bool sync_lo
     for( auto it = mapNpcs.begin(), end = mapNpcs.end(); it != end; ++it )
     {
         Npc* npc_ = *it;
-        if( npc_->Data.Params[ ST_NPC_ROLE ] == npc_role && npc_->CheckFind( find_type ) )
+        if( npc_->Data.Params[ST_NPC_ROLE] == npc_role && npc_->CheckFind( find_type ) )
         {
             if( skip_count )
                 skip_count--;
@@ -1347,7 +1347,7 @@ Critter* Map::GetNpc( int npc_role, int find_type, uint skip_count, bool sync_lo
         SYNC_LOCK( npc );
 
         // Recheck
-        if( npc->GetMap() != GetId() || npc->Data.Params[ ST_NPC_ROLE ] != npc_role || !npc->CheckFind( find_type ) )
+        if( npc->GetMap() != GetId() || npc->Data.Params[ST_NPC_ROLE] != npc_role || !npc->CheckFind( find_type ) )
             return GetNpc( npc_role, find_type, skip_count, sync_lock );
     }
 
@@ -1520,21 +1520,21 @@ void Map::GetNpcs( PcVec& npcs, bool sync_lock )
 uint Map::GetCrittersCount()
 {
     SCOPE_LOCK( dataLocker );
-    uint count = (uint) mapCritters.size();
+    uint count = (uint)mapCritters.size();
     return count;
 }
 
 uint Map::GetPlayersCount()
 {
     SCOPE_LOCK( dataLocker );
-    uint count = (uint) mapPlayers.size();
+    uint count = (uint)mapPlayers.size();
     return count;
 }
 
 uint Map::GetNpcsCount()
 {
     SCOPE_LOCK( dataLocker );
-    uint count = (uint) mapNpcs.size();
+    uint count = (uint)mapNpcs.size();
     return count;
 }
 
@@ -1607,7 +1607,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
     // Move car bags from inventory to map
     for( int i = 0; i < ITEM_MAX_CHILDS; i++ )
     {
-        ushort child_pid = car->Proto->ChildPid[ i ];
+        ushort child_pid = car->Proto->ChildPid[i];
         if( !child_pid )
             continue;
 
@@ -1618,7 +1618,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
         // Move to position
         ushort child_hx = hx;
         ushort child_hy = hy;
-        FOREACH_PROTO_ITEM_LINES( car->Proto->ChildLines[ i ], child_hx, child_hy, GetMaxHexX(), GetMaxHexY(),;
+        FOREACH_PROTO_ITEM_LINES( car->Proto->ChildLines[i], child_hx, child_hy, GetMaxHexX(), GetMaxHexY(),;
                                   );
 
         cr->EraseItem( child, false );
@@ -1657,28 +1657,28 @@ void Map::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
                               UnsetHexFlag( hx, hy, FH_BLOCK_ITEM );
                               if( !raked )
-                              {
-                                  UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
-                                  if( IsHexItem( hx, hy ) )
-                                      RecacheHexBlockShoot( hx, hy );
-                              }
+    {
+        UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
+        if( IsHexItem( hx, hy ) )
+            RecacheHexBlockShoot( hx, hy );
+    }
                               else
-                              {
-                                  if( IsHexItem( hx, hy ) )
-                                      RecacheHexBlock( hx, hy );
-                              }
+    {
+        if( IsHexItem( hx, hy ) )
+            RecacheHexBlock( hx, hy );
+    }
                               );
 }
 
 Item* Map::GetItemChild( ushort hx, ushort hy, ProtoItem* proto_item, uint child_index )
 {
     // Get child pid
-    ushort child_pid = proto_item->ChildPid[ child_index ];
+    ushort child_pid = proto_item->ChildPid[child_index];
     if( !child_pid )
         return NULL;
 
     // Move to position
-    FOREACH_PROTO_ITEM_LINES( proto_item->ChildLines[ child_index ], hx, hy, GetMaxHexX(), GetMaxHexY(),;
+    FOREACH_PROTO_ITEM_LINES( proto_item->ChildLines[child_index], hx, hy, GetMaxHexX(), GetMaxHexY(),;
                               );
 
     // Find on map
@@ -1687,14 +1687,14 @@ Item* Map::GetItemChild( ushort hx, ushort hy, ProtoItem* proto_item, uint child
 
 bool Map::PrepareScriptFunc( int num_scr_func )
 {
-    if( FuncId[ num_scr_func ] <= 0 )
+    if( FuncId[num_scr_func] <= 0 )
         return false;
-    return Script::PrepareContext( FuncId[ num_scr_func ], _FUNC_, Str::FormatBuf( "Map id<%u>, pid<%u>", GetId(), GetPid() ) );
+    return Script::PrepareContext( FuncId[num_scr_func], _FUNC_, Str::FormatBuf( "Map id<%u>, pid<%u>", GetId(), GetPid() ) );
 }
 
 bool Map::ParseScript( const char* script, bool first_time )
 {
-    if( script && script[ 0 ] )
+    if( script && script[0] )
     {
         uint func_num = Script::GetScriptFuncNum( script, "void %s(Map&,bool)" );
         if( !func_num )
@@ -1797,7 +1797,7 @@ void Map::SetLoopTime( uint loop_num, uint ms )
 {
     if( loop_num >= MAP_LOOP_FUNC_MAX )
         return;
-    LoopWaitTick[ loop_num ] = ms;
+    LoopWaitTick[loop_num] = ms;
 }
 
 uchar Map::GetRain()
@@ -1844,7 +1844,7 @@ uint Map::GetDayTime( uint day_part )
 {
     SCOPE_LOCK( dataLocker );
 
-    uint result = ( day_part < 4 ? Data.MapDayTime[ day_part ] : 0 );
+    uint result = ( day_part < 4 ? Data.MapDayTime[day_part] : 0 );
     return result;
 }
 
@@ -1856,13 +1856,13 @@ void Map::SetDayTime( uint day_part, uint time )
 
         if( time >= 1440 )
             time = 1439;
-        Data.MapDayTime[ day_part ] = time;
-        if( Data.MapDayTime[ 1 ] < Data.MapDayTime[ 0 ] )
-            Data.MapDayTime[ 1 ] = Data.MapDayTime[ 0 ];
-        if( Data.MapDayTime[ 2 ] < Data.MapDayTime[ 1 ] )
-            Data.MapDayTime[ 2 ] = Data.MapDayTime[ 1 ];
-        if( Data.MapDayTime[ 3 ] < Data.MapDayTime[ 2 ] )
-            Data.MapDayTime[ 3 ] = Data.MapDayTime[ 2 ];
+        Data.MapDayTime[day_part] = time;
+        if( Data.MapDayTime[1] < Data.MapDayTime[0] )
+            Data.MapDayTime[1] = Data.MapDayTime[0];
+        if( Data.MapDayTime[2] < Data.MapDayTime[1] )
+            Data.MapDayTime[2] = Data.MapDayTime[1];
+        if( Data.MapDayTime[3] < Data.MapDayTime[2] )
+            Data.MapDayTime[3] = Data.MapDayTime[2];
 
         for( auto it = mapPlayers.begin(), end = mapPlayers.end(); it != end; ++it )
         {
@@ -1878,9 +1878,9 @@ void Map::GetDayColor( uint day_part, uchar& r, uchar& g, uchar& b )
     {
         SCOPE_LOCK( dataLocker );
 
-        r = Data.MapDayColor[ 0 + day_part ];
-        g = Data.MapDayColor[ 4 + day_part ];
-        b = Data.MapDayColor[ 8 + day_part ];
+        r = Data.MapDayColor[0 + day_part];
+        g = Data.MapDayColor[4 + day_part];
+        b = Data.MapDayColor[8 + day_part];
     }
 }
 
@@ -1890,9 +1890,9 @@ void Map::SetDayColor( uint day_part, uchar r, uchar g, uchar b )
     {
         SCOPE_LOCK( dataLocker );
 
-        Data.MapDayColor[ 0 + day_part ] = r;
-        Data.MapDayColor[ 4 + day_part ] = g;
-        Data.MapDayColor[ 8 + day_part ] = b;
+        Data.MapDayColor[0 + day_part] = r;
+        Data.MapDayColor[4 + day_part] = g;
+        Data.MapDayColor[8 + day_part] = b;
 
         for( auto it = mapPlayers.begin(), end = mapPlayers.end(); it != end; ++it )
         {
@@ -1906,7 +1906,7 @@ int Map::GetData( uint index )
 {
     SCOPE_LOCK( dataLocker );
 
-    uint result = ( index < MAP_MAX_DATA ? Data.UserData[ index ] : 0 );
+    uint result = ( index < MAP_MAX_DATA ? Data.UserData[index] : 0 );
     return result;
 }
 
@@ -1916,7 +1916,7 @@ void Map::SetData( uint index, int value )
     {
         SCOPE_LOCK( dataLocker );
 
-        Data.UserData[ index ] = value;
+        Data.UserData[index] = value;
     }
 }
 
@@ -1990,15 +1990,15 @@ void Map::BeginTurnBased( Critter* first_cr )
         cr->ChangeParam( ST_TURN_BASED_AC );
         if( !first_cr || cr != first_cr )
         {
-            if( cr->Data.Params[ ST_CURRENT_AP ] > 0 )
-                cr->Data.Params[ ST_CURRENT_AP ] = 0;
+            if( cr->Data.Params[ST_CURRENT_AP] > 0 )
+                cr->Data.Params[ST_CURRENT_AP] = 0;
             else
-                cr->Data.Params[ ST_CURRENT_AP ] = cr->Data.Params[ ST_CURRENT_AP ] / AP_DIVIDER * AP_DIVIDER;
+                cr->Data.Params[ST_CURRENT_AP] = cr->Data.Params[ST_CURRENT_AP] / AP_DIVIDER * AP_DIVIDER;
         }
 
-        cr->Data.Params[ ST_MOVE_AP ] = 0;
-        cr->Data.Params[ MODE_END_COMBAT ] = 0;
-        cr->Data.Params[ ST_TURN_BASED_AC ] = 0;
+        cr->Data.Params[ST_MOVE_AP] = 0;
+        cr->Data.Params[MODE_END_COMBAT] = 0;
+        cr->Data.Params[ST_TURN_BASED_AC] = 0;
         cr->Send_GameInfo( this );
         cr->SetTimeout( TO_BATTLE, TB_BATTLE_TIMEOUT );
         cr->SetTimeout( TO_TRANSFER, 0 );
@@ -2043,7 +2043,7 @@ void Map::EndTurnBased()
         cr->Send_GameInfo( this );
         cr->SetTimeout( TO_BATTLE, 0 );
         cr->ChangeParam( ST_TURN_BASED_AC );
-        cr->Data.Params[ ST_TURN_BASED_AC ] = 0;
+        cr->Data.Params[ST_TURN_BASED_AC] = 0;
 
         // Continue time events
         if( GameOpt.FullSecond > TurnBasedBeginSecond )
@@ -2072,16 +2072,16 @@ void Map::ProcessTurnBased()
 
 bool Map::IsCritterTurn( Critter* cr )
 {
-    if( TurnSequenceCur >= (int) TurnSequence.size() )
+    if( TurnSequenceCur >= (int)TurnSequence.size() )
         return false;
-    return TurnSequence[ TurnSequenceCur ] == cr->GetId();
+    return TurnSequence[TurnSequenceCur] == cr->GetId();
 }
 
 uint Map::GetCritterTurnId()
 {
-    if( TurnSequenceCur >= (int) TurnSequence.size() )
+    if( TurnSequenceCur >= (int)TurnSequence.size() )
         return 0;
-    return TurnSequence[ TurnSequenceCur ];
+    return TurnSequence[TurnSequenceCur];
 }
 
 uint Map::GetCritterTurnTime()
@@ -2100,7 +2100,7 @@ void Map::NextCritterTurn()
     // End previous turn
     if( TurnSequenceCur >= 0 )
     {
-        Critter* cr = GetCritter( TurnSequence[ TurnSequenceCur ], true );
+        Critter* cr = GetCritter( TurnSequence[TurnSequenceCur], true );
         if( cr )
         {
             cr->EventTurnBasedProcess( this, false );
@@ -2113,10 +2113,10 @@ void Map::NextCritterTurn()
                 Script::RunPrepared();
             }
 
-            if( cr->Data.Params[ ST_CURRENT_AP ] > 0 )
+            if( cr->Data.Params[ST_CURRENT_AP] > 0 )
             {
                 cr->ChangeParam( ST_CURRENT_AP );
-                cr->Data.Params[ ST_CURRENT_AP ] = 0;
+                cr->Data.Params[ST_CURRENT_AP] = 0;
             }
         }
         else
@@ -2128,7 +2128,7 @@ void Map::NextCritterTurn()
 
     // Begin next
     TurnSequenceCur++;
-    if( TurnSequenceCur >= (int) TurnSequence.size() ) // Next round
+    if( TurnSequenceCur >= (int)TurnSequence.size() )  // Next round
     {
         // Next turn
         GenerateSequence( NULL );
@@ -2150,7 +2150,7 @@ void Map::NextCritterTurn()
     }
     else     // Next critter turn
     {
-        Critter* cr = GetCritter( TurnSequence[ TurnSequenceCur ], true );
+        Critter* cr = GetCritter( TurnSequence[TurnSequenceCur], true );
         if( !cr || cr->IsDead() )
         {
             TurnSequence.erase( TurnSequence.begin() + TurnSequenceCur );
@@ -2161,15 +2161,15 @@ void Map::NextCritterTurn()
             return;
         }
 
-        if( cr->Data.Params[ ST_CURRENT_AP ] >= 0 )
+        if( cr->Data.Params[ST_CURRENT_AP] >= 0 )
         {
             cr->ChangeParam( ST_CURRENT_AP );
-            cr->Data.Params[ ST_CURRENT_AP ] = cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
+            cr->Data.Params[ST_CURRENT_AP] = cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
         }
         else
         {
             cr->ChangeParam( ST_CURRENT_AP );
-            cr->Data.Params[ ST_CURRENT_AP ] += cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
+            cr->Data.Params[ST_CURRENT_AP] += cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
             if( cr->GetParam( ST_CURRENT_AP ) < 0 || ( cr->GetParam( ST_CURRENT_AP ) == 0 && !cr->GetParam( ST_MAX_MOVE_AP ) ) )
             {
                 TurnBasedTurn++;
@@ -2250,7 +2250,7 @@ void Map::GenerateSequence( Critter* first_cr )
 /* Location                                                             */
 /************************************************************************/
 
-const char* LocationEventFuncName[ LOCATION_EVENT_MAX ] =
+const char* LocationEventFuncName[LOCATION_EVENT_MAX] =
 {
     "void %s(Location&,bool)",                      // LOCATION_EVENT_FINISH
     "bool %s(Location&,Critter@[]&,uint8)",         // LOCATION_EVENT_ENTER
@@ -2316,7 +2316,7 @@ Map* Location::GetMap( uint count )
 {
     if( count >= locMaps.size() )
         return NULL;
-    Map* map = locMaps[ count ];
+    Map* map = locMaps[count];
     SYNC_LOCK( map );
     return map;
 }
@@ -2448,9 +2448,9 @@ bool Location::IsCanDelete()
 
 bool Location::PrepareScriptFunc( int num_scr_func )
 {
-    if( FuncId[ num_scr_func ] <= 0 )
+    if( FuncId[num_scr_func] <= 0 )
         return false;
-    return Script::PrepareContext( FuncId[ num_scr_func ], _FUNC_, Str::FormatBuf( "Location id<%u>, pid<%u>", GetId(), GetPid() ) );
+    return Script::PrepareContext( FuncId[num_scr_func], _FUNC_, Str::FormatBuf( "Location id<%u>, pid<%u>", GetId(), GetPid() ) );
 }
 
 void Location::EventFinish( bool to_delete )

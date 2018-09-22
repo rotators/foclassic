@@ -5,46 +5,46 @@
 #define MAX_BLOCKS       ( 25 )
 #define MAX_ENTRY        ( 2000 )
 #define MAX_PROCESS      ( 20 )
-static double Ticks[ MAX_BLOCKS ][ MAX_ENTRY ][ MAX_PROCESS ];
-static int    Identifiers[ MAX_BLOCKS ][ MAX_ENTRY ][ MAX_PROCESS ];
-static uint   CurTick[ MAX_BLOCKS ][ MAX_ENTRY ];
-static int    CurEntry[ MAX_BLOCKS ];
+static double Ticks[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
+static int    Identifiers[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
+static uint   CurTick[MAX_BLOCKS][MAX_ENTRY];
+static int    CurEntry[MAX_BLOCKS];
 
 void Debugger::BeginCycle()
 {
     memzero( Identifiers, sizeof( Identifiers ) );
     for( int i = 0; i < MAX_BLOCKS; i++ )
-        CurEntry[ i ] = -1;
+        CurEntry[i] = -1;
 }
 
 void Debugger::BeginBlock( int num_block )
 {
-    if( CurEntry[ num_block ] + 1 >= MAX_ENTRY )
+    if( CurEntry[num_block] + 1 >= MAX_ENTRY )
         return;
-    CurEntry[ num_block ]++;
-    CurTick[ num_block ][ CurEntry[ num_block ] ] = 0;
-    Ticks[ num_block ][ CurEntry[ num_block ] ][ 0 ] = Timer::AccurateTick();
+    CurEntry[num_block]++;
+    CurTick[num_block][CurEntry[num_block]] = 0;
+    Ticks[num_block][CurEntry[num_block]][0] = Timer::AccurateTick();
 }
 
 void Debugger::ProcessBlock( int num_block, int identifier )
 {
-    if( CurEntry[ num_block ] + 1 >= MAX_ENTRY )
+    if( CurEntry[num_block] + 1 >= MAX_ENTRY )
         return;
-    CurTick[ num_block ][ CurEntry[ num_block ] ]++;
-    Ticks[ num_block ][ CurEntry[ num_block ] ][ CurTick[ num_block ][ CurEntry[ num_block ] ] ] = Timer::AccurateTick();
-    Identifiers[ num_block ][ CurEntry[ num_block ] ][ CurTick[ num_block ][ CurEntry[ num_block ] ] ] = identifier;
+    CurTick[num_block][CurEntry[num_block]]++;
+    Ticks[num_block][CurEntry[num_block]][CurTick[num_block][CurEntry[num_block]]] = Timer::AccurateTick();
+    Identifiers[num_block][CurEntry[num_block]][CurTick[num_block][CurEntry[num_block]]] = identifier;
 }
 
 void Debugger::EndCycle( double lag_to_show )
 {
     for( int num_block = 0; num_block < MAX_BLOCKS; num_block++ )
     {
-        for( int entry = 0; entry <= CurEntry[ num_block ]; entry++ )
+        for( int entry = 0; entry <= CurEntry[num_block]; entry++ )
         {
             bool is_first = true;
-            for( int i = 1, j = CurTick[ num_block ][ entry ]; i <= j; i++ )
+            for( int i = 1, j = CurTick[num_block][entry]; i <= j; i++ )
             {
-                double diff = Ticks[ num_block ][ entry ][ i ] - Ticks[ num_block ][ entry ][ i - 1 ];
+                double diff = Ticks[num_block][entry][i] - Ticks[num_block][entry][i - 1];
                 if( diff >= lag_to_show )
                 {
                     if( is_first )
@@ -52,7 +52,7 @@ void Debugger::EndCycle( double lag_to_show )
                         WriteLog( "Lag in block %d...", num_block );
                         is_first = false;
                     }
-                    WriteLog( "<%d,%g>", Identifiers[ num_block ][ entry ][ i ], diff );
+                    WriteLog( "<%d,%g>", Identifiers[num_block][entry][i], diff );
                 }
             }
             if( !is_first )
@@ -63,16 +63,16 @@ void Debugger::EndCycle( double lag_to_show )
 
 void Debugger::ShowLags( int num_block, double lag_to_show )
 {
-    for( int entry = 0; entry <= CurEntry[ num_block ]; entry++ )
+    for( int entry = 0; entry <= CurEntry[num_block]; entry++ )
     {
-        double diff = Ticks[ num_block ][ entry ][ CurTick[ num_block ][ entry ] ] - Ticks[ num_block ][ entry ][ 0 ];
+        double diff = Ticks[num_block][entry][CurTick[num_block][entry]] - Ticks[num_block][entry][0];
         if( diff >= lag_to_show )
         {
             WriteLog( "Lag in block %d...", num_block );
-            for( int i = 1, j = CurTick[ num_block ][ entry ]; i <= j; i++ )
+            for( int i = 1, j = CurTick[num_block][entry]; i <= j; i++ )
             {
-                double diff_ = Ticks[ num_block ][ entry ][ i ] - Ticks[ num_block ][ entry ][ i - 1 ];
-                WriteLog( "<%d,%g>", Identifiers[ num_block ][ entry ][ i ], diff_ );
+                double diff_ = Ticks[num_block][entry][i] - Ticks[num_block][entry][i - 1];
+                WriteLog( "<%d,%g>", Identifiers[num_block][entry][i], diff_ );
             }
             WriteLog( "\n" );
         }
@@ -86,9 +86,9 @@ struct MemNode
     int64 DeallocMem;
     int64 MinAlloc;
     int64 MaxAlloc;
-} static MemNodes[ MAX_MEM_NODES ] = { 0, 0, 0, 0 };
+} static MemNodes[MAX_MEM_NODES] = { 0, 0, 0, 0 };
 
-const char* MemBlockNames[ MAX_MEM_NODES ] =
+const char* MemBlockNames[MAX_MEM_NODES] =
 {
     "Static       ",
     "Npc          ",
@@ -118,7 +118,7 @@ void Debugger::Memory( int block, int value )
 
     if( value )
     {
-        MemNode& node = MemNodes[ block ];
+        MemNode& node = MemNodes[block];
         if( value > 0 )
         {
             node.AllocMem += value;
@@ -136,7 +136,7 @@ void Debugger::Memory( int block, int value )
 
 struct MemNodeStr
 {
-    char  Name[ 256 ];
+    char  Name[256];
     int64 AllocMem;
     int64 DeallocMem;
     int64 MinAlloc;
@@ -197,7 +197,7 @@ const char* Debugger::GetMemoryStatistics()
     result = "Memory statistics:\n";
 
     #ifdef FONLINE_SERVER
-    char  buf[ 512 ];
+    char  buf[512];
     int64 all_alloc = 0, all_dealloc = 0;
 
     if( MemoryDebugLevel >= 1 )
@@ -205,11 +205,11 @@ const char* Debugger::GetMemoryStatistics()
         result += "\n  Level 1            Memory        Alloc         Free    Min block    Max block\n";
         for( int i = 0; i < MAX_MEM_NODES; i++ )
         {
-            MemNode& node = MemNodes[ i ];
+            MemNode& node = MemNodes[i];
             # ifdef FO_WINDOWS
-            Str::Format( buf, "%s : %12I64d %12I64d %12I64d %12I64d %12I64d\n", MemBlockNames[ i ], node.AllocMem - node.DeallocMem, node.AllocMem, node.DeallocMem, node.MinAlloc, node.MaxAlloc );
+            Str::Format( buf, "%s : %12I64d %12I64d %12I64d %12I64d %12I64d\n", MemBlockNames[i], node.AllocMem - node.DeallocMem, node.AllocMem, node.DeallocMem, node.MinAlloc, node.MaxAlloc );
             # else
-            Str::Format( buf, "%s : %12lld %12lld %12lld %12lld %12lld\n", MemBlockNames[ i ], node.AllocMem - node.DeallocMem, node.AllocMem, node.DeallocMem, node.MinAlloc, node.MaxAlloc );
+            Str::Format( buf, "%s : %12lld %12lld %12lld %12lld %12lld\n", MemBlockNames[i], node.AllocMem - node.DeallocMem, node.AllocMem, node.DeallocMem, node.MinAlloc, node.MaxAlloc );
             # endif
             result += buf;
             all_alloc += node.AllocMem;
@@ -276,25 +276,25 @@ static map< size_t, StackInfo* >    StackHashStackInfo;
 static Mutex                        MemoryAllocLocker;
 static uint                         MemoryAllocRecursion;
 
-#define ALLOCATE_PTR( ptr, size, param )                                   \
-    if( ptr )                                                              \
-    {                                                                      \
-        StackInfo* si = GetStackInfo( param );                             \
-        si->Size += size;                                                  \
-        si->Chunks++;                                                      \
-        PtrStackInfoSize.insert( PAIR( (size_t) ptr, PAIR( si, size ) ) ); \
+#define ALLOCATE_PTR( ptr, size, param )                                  \
+    if( ptr )                                                             \
+    {                                                                     \
+        StackInfo* si = GetStackInfo( param );                            \
+        si->Size += size;                                                 \
+        si->Chunks++;                                                     \
+        PtrStackInfoSize.insert( PAIR( (size_t)ptr, PAIR( si, size ) ) ); \
     }
-#define DEALLOCATE_PTR( ptr )                            \
-    if( ptr )                                            \
-    {                                                    \
-        auto it = PtrStackInfoSize.find( (size_t) ptr ); \
-        if( it != PtrStackInfoSize.end() )               \
-        {                                                \
-            StackInfo* si = ( *it ).second.first;        \
-            si->Size -= ( *it ).second.second;           \
-            si->Chunks--;                                \
-            PtrStackInfoSize.erase( it );                \
-        }                                                \
+#define DEALLOCATE_PTR( ptr )                           \
+    if( ptr )                                           \
+    {                                                   \
+        auto it = PtrStackInfoSize.find( (size_t)ptr ); \
+        if( it != PtrStackInfoSize.end() )              \
+        {                                               \
+            StackInfo* si = ( *it ).second.first;       \
+            si->Size -= ( *it ).second.second;          \
+            si->Chunks--;                               \
+            PtrStackInfoSize.erase( it );               \
+        }                                               \
     }
 
 #ifdef FO_WINDOWS
@@ -318,11 +318,11 @@ void PatchWindowsDealloc();
 
 StackInfo* GetStackInfo( HANDLE heap )
 {
-    void*  blocks[ 63 ];
+    void*  blocks[63];
     ULONG  hash;
-    USHORT frames = CaptureStackBackTrace( 2, 60, (void**) blocks, &hash );
+    USHORT frames = CaptureStackBackTrace( 2, 60, (void**)blocks, &hash );
 
-    auto   it = StackHashStackInfo.find( (size_t) hash );
+    auto   it = StackHashStackInfo.find( (size_t)hash );
     if( it != StackHashStackInfo.end() )
         return ( *it ).second;
 
@@ -330,37 +330,37 @@ StackInfo* GetStackInfo( HANDLE heap )
     str.reserve( 16384 );
 
     # define STACKWALK_MAX_NAMELEN    ( 2048 )
-    char         symbol_buffer[ sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN ];
-    SYMBOL_INFO* symbol = (SYMBOL_INFO*) symbol_buffer;
+    char         symbol_buffer[sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN];
+    SYMBOL_INFO* symbol = (SYMBOL_INFO*)symbol_buffer;
     memset( symbol, 0, sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN );
     symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
     symbol->MaxNameLen = STACKWALK_MAX_NAMELEN;
 
-    for( int frame_num = 0; frame_num < (int) frames - 1; frame_num++ )
+    for( int frame_num = 0; frame_num < (int)frames - 1; frame_num++ )
     {
-        DWORD64 offset = (DWORD64) blocks[ frame_num ];
+        DWORD64 offset = (DWORD64)blocks[frame_num];
         if( !offset )
             continue;
 
         struct
         {
-            CHAR    name[ STACKWALK_MAX_NAMELEN ];
-            CHAR    undName[ STACKWALK_MAX_NAMELEN ];
-            CHAR    undFullName[ STACKWALK_MAX_NAMELEN ];
+            CHAR    name[STACKWALK_MAX_NAMELEN];
+            CHAR    undName[STACKWALK_MAX_NAMELEN];
+            CHAR    undFullName[STACKWALK_MAX_NAMELEN];
             DWORD64 offsetFromSmybol;
             DWORD   offsetFromLine;
             DWORD   lineNumber;
-            CHAR    lineFileName[ STACKWALK_MAX_NAMELEN ];
-            CHAR    moduleName[ STACKWALK_MAX_NAMELEN ];
+            CHAR    lineFileName[STACKWALK_MAX_NAMELEN];
+            CHAR    moduleName[STACKWALK_MAX_NAMELEN];
             DWORD64 baseOfImage;
-            CHAR    loadedImageName[ STACKWALK_MAX_NAMELEN ];
+            CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
         } callstack;
         memzero( &callstack, sizeof( callstack ) );
 
         if( SymFromAddr( ProcessHandle, offset, &callstack.offsetFromSmybol, symbol ) )
         {
             strncpy_s( callstack.name, symbol->Name, STACKWALK_MAX_NAMELEN - 1 );
-            callstack.name[ STACKWALK_MAX_NAMELEN - 1 ] = 0;
+            callstack.name[STACKWALK_MAX_NAMELEN - 1] = 0;
             UnDecorateSymbolName( symbol->Name, callstack.undName, STACKWALK_MAX_NAMELEN, UNDNAME_NAME_ONLY );
             UnDecorateSymbolName( symbol->Name, callstack.undFullName, STACKWALK_MAX_NAMELEN, UNDNAME_COMPLETE );
         }
@@ -385,23 +385,23 @@ StackInfo* GetStackInfo( HANDLE heap )
             strcpy( callstack.loadedImageName, module.LoadedImageName );
         }
 
-        if( callstack.name[ 0 ] == 0 )
+        if( callstack.name[0] == 0 )
             strcpy( callstack.name, "(function-name not available)" );
-        if( callstack.undName[ 0 ] != 0 )
+        if( callstack.undName[0] != 0 )
             strcpy( callstack.name, callstack.undName );
-        if( callstack.undFullName[ 0 ] != 0 )
+        if( callstack.undFullName[0] != 0 )
             strcpy( callstack.name, callstack.undFullName );
-        if( callstack.moduleName[ 0 ] == 0 )
+        if( callstack.moduleName[0] == 0 )
             strcpy( callstack.moduleName, "???" );
 
-        char buf[ 64 ];
+        char buf[64];
         str += "\t";
         str += callstack.moduleName;
         str += ", ";
         str += callstack.name;
         str += " + ";
-        str += _itoa( (int) callstack.offsetFromSmybol, buf, 10 );
-        if( callstack.lineFileName[ 0 ] )
+        str += _itoa( (int)callstack.offsetFromSmybol, buf, 10 );
+        if( callstack.lineFileName[0] )
         {
             str += ", ";
             str += callstack.lineFileName;
@@ -419,10 +419,10 @@ StackInfo* GetStackInfo( HANDLE heap )
     StackInfo* si = new StackInfo();
     si->Hash = hash;
     si->Name = _strdup( str.c_str() );
-    si->Heap = (size_t) heap;
+    si->Heap = (size_t)heap;
     si->Chunks = 0;
     si->Size = 0;
-    StackHashStackInfo.insert( PAIR( (size_t) hash, si ) );
+    StackHashStackInfo.insert( PAIR( (size_t)hash, si ) );
     return si;
 }
 
@@ -430,13 +430,13 @@ template< class T >
 class Patch
 {
 public:
-    Patch< T >(): Call( NULL ), PatchFunc( NULL ) {}
-    ~Patch< T >() { Uninstall(); }
+    Patch< T >( ) : Call( NULL ), PatchFunc( NULL ) {}
+    ~Patch< T >( ) { Uninstall(); }
     bool Install( void* orig, void* patch )
     {
         if( orig && patch )
-            Call = CodeHooker.createHook( (T) orig, (T) patch );
-        PatchFunc = (T) patch;
+            Call = CodeHooker.createHook( (T)orig, (T)patch );
+        PatchFunc = (T)patch;
         return Call != NULL;
     }
     void Uninstall()
@@ -464,7 +464,7 @@ DECLARE_PATCH( HANDLE, HeapCreate, ( DWORD flOptions, SIZE_T dwInitialSize, SIZE
     return Patch_HeapCreate.Call( flOptions, dwInitialSize, dwMaximumSize );
 }
 
-DECLARE_PATCH( BOOL, HeapDestroy, (HANDLE hHeap) )
+DECLARE_PATCH( BOOL, HeapDestroy, ( HANDLE hHeap ) )
 {
     return Patch_HeapDestroy.Call( hHeap );
 }
@@ -553,24 +553,24 @@ void PatchWindowsDealloc()
 
 StackInfo* GetStackInfo( const void* caller )
 {
-    auto it = StackHashStackInfo.find( (size_t) caller );
+    auto it = StackHashStackInfo.find( (size_t)caller );
     if( it != StackHashStackInfo.end() )
         return ( *it ).second;
 
     string str;
     str.reserve( 16384 );
 
-    char buf[ 64 ];
-    sprintf( buf, "\t0x%08X\n\n", (size_t) caller );
+    char buf[64];
+    sprintf( buf, "\t0x%08X\n\n", (size_t)caller );
     str += buf;
 
     StackInfo* si = new StackInfo();
-    si->Hash = (size_t) caller;
+    si->Hash = (size_t)caller;
     si->Name = strdup( str.c_str() );
     si->Heap = 0;
     si->Chunks = 0;
     si->Size = 0;
-    StackHashStackInfo.insert( PAIR( (size_t) caller, si ) );
+    StackHashStackInfo.insert( PAIR( (size_t)caller, si ) );
     return si;
 }
 
@@ -668,8 +668,8 @@ string Debugger::GetTraceMemory()
         if( si->Size )
         {
             blocks_chunks.push_back( si );
-            whole_chunks += (int64) si->Chunks;
-            whole_size += (int64) si->Size;
+            whole_chunks += (int64)si->Chunks;
+            whole_size += (int64)si->Size;
         }
     }
     std::sort( blocks_chunks.begin(), blocks_chunks.end(), ChunkSorter::Compare );
@@ -677,13 +677,13 @@ string Debugger::GetTraceMemory()
     // Print
     string str;
     str.reserve( 1000000 );
-    char   buf[ MAX_FOTEXT ];
+    char   buf[MAX_FOTEXT];
     str += "Unfreed memory:\n";
-    sprintf( buf, "  Whole blocks %lld\n", (int64) blocks_chunks.size() );
+    sprintf( buf, "  Whole blocks %lld\n", (int64)blocks_chunks.size() );
     str += buf;
-    sprintf( buf, "  Whole size   %lld\n", (int64) whole_size );
+    sprintf( buf, "  Whole size   %lld\n", (int64)whole_size );
     str += buf;
-    sprintf( buf, "  Whole chunks %lld\n", (int64) whole_chunks );
+    sprintf( buf, "  Whole chunks %lld\n", (int64)whole_chunks );
     str += buf;
     str += "\n";
     uint cur = 0;
