@@ -3,12 +3,12 @@
 
 #include "Common.h"
 
-#define SYNC_LOCK( obj )    ( obj )->Sync.Lock()
+#define SYNC_LOCK( obj )    (obj)->Sync.Lock()
 
 class SyncObject;
 class SyncManager;
-typedef vector< SyncObject* >  SyncObjectVec;
-typedef vector< SyncManager* > SyncManagerVec;
+typedef vector<SyncObject*>  SyncObjectVec;
+typedef vector<SyncManager*> SyncManagerVec;
 
 class SyncObject
 {

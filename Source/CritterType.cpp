@@ -123,12 +123,12 @@ int CritType::GetRunFrmCnt( uint cr_type, uint step )
 
 bool CritType::InitFromFile( FOMsg* fill_msg )
 {
-    AutoPtrArr< CritTypeType > CrTypesReserved( new CritTypeType[MAX_CRIT_TYPES] );
+    AutoPtrArr<CritTypeType> CrTypesReserved( new CritTypeType[MAX_CRIT_TYPES] );
     if( !CrTypesReserved.IsValid() )
         return false;
     int MoveWalkReserved[MAX_CRIT_TYPES][6];
-    memzero( CrTypesReserved.Get(), sizeof( CritTypeType ) * MAX_CRIT_TYPES );
-    memzero( MoveWalkReserved, sizeof( MoveWalkReserved ) );
+    memzero( CrTypesReserved.Get(), sizeof(CritTypeType) * MAX_CRIT_TYPES );
+    memzero( MoveWalkReserved, sizeof(MoveWalkReserved) );
 
     FileManager file;
     if( !file.LoadFile( CRTYPE_FILE_NAME, PT_SERVER_DATA ) )
@@ -273,8 +273,8 @@ bool CritType::InitFromFile( FOMsg* fill_msg )
         return false;
     }
 
-    memcpy( CrTypes, CrTypesReserved.Get(), sizeof( CrTypes ) );
-    memcpy( MoveWalk, MoveWalkReserved, sizeof( MoveWalk ) );
+    memcpy( CrTypes, CrTypesReserved.Get(), sizeof(CrTypes) );
+    memcpy( MoveWalk, MoveWalkReserved, sizeof(MoveWalk) );
 
     if( fill_msg )
     {
@@ -311,12 +311,12 @@ bool CritType::InitFromMsg( FOMsg* msg )
         return false;
     }
 
-    AutoPtrArr< CritTypeType > CrTypesReserved( new CritTypeType[MAX_CRIT_TYPES] );
+    AutoPtrArr<CritTypeType> CrTypesReserved( new CritTypeType[MAX_CRIT_TYPES] );
     if( !CrTypesReserved.IsValid() )
         return false;
     int MoveWalkReserved[MAX_CRIT_TYPES][6];
-    memzero( CrTypesReserved.Get(), sizeof( CritTypeType ) * MAX_CRIT_TYPES );
-    memzero( MoveWalkReserved, sizeof( MoveWalkReserved ) );
+    memzero( CrTypesReserved.Get(), sizeof(CritTypeType) * MAX_CRIT_TYPES );
+    memzero( MoveWalkReserved, sizeof(MoveWalkReserved) );
 
     int  errors = 0;
     int  success = 0;
@@ -372,8 +372,8 @@ bool CritType::InitFromMsg( FOMsg* msg )
         return false;
     }
 
-    memcpy( CrTypes, CrTypesReserved.Get(), sizeof( CrTypes ) );
-    memcpy( MoveWalk, MoveWalkReserved, sizeof( MoveWalk ) );
+    memcpy( CrTypes, CrTypesReserved.Get(), sizeof(CrTypes) );
+    memcpy( MoveWalk, MoveWalkReserved, sizeof(MoveWalk) );
     WriteLog( "Loaded<%d> critter types.\n", success );
     return true;
 }

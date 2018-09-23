@@ -55,7 +55,7 @@ namespace Script
             return NULL;
         *last_dot = 0;
 
-        # if defined ( FO_X64 )
+        # if defined (FO_X64)
         // Add '64' appendix
         strcat( dll_name_, "64" );
         # endif
@@ -68,15 +68,15 @@ namespace Script
         # endif
 
         // Register global function and vars
-        static map< string, void* > alreadyLoadedDll;
-        string                      dll_name_str = dll_name_;
+        static map<string, void*> alreadyLoadedDll;
+        string                    dll_name_str = dll_name_;
         # ifdef FO_WINDOWS
         for( uint i = 0, j = dll_name_str.length(); i < j; i++ )
             tolower( dll_name_str[i] );
         # endif
         auto it = alreadyLoadedDll.find( dll_name_str );
         if( it != alreadyLoadedDll.end() )
-            return ( *it ).second;
+            return (*it).second;
         alreadyLoadedDll.insert( PAIR( dll_name_str, (void*)NULL ) );
 
         // Load dynamic library
@@ -122,7 +122,7 @@ namespace Script
         typedef void ( * DllMainEx )( bool );
         DllMainEx func = (DllMainEx)DLL_GetAddress( dll, "DllMainEx" );
         if( func )
-            ( *func )( true );
+            (*func)( true );
 
         alreadyLoadedDll[dll_name_str] = dll;
         return dll;
@@ -149,7 +149,7 @@ namespace Script
 class IgnorePragma
 {
 private:
-    vector< string > ignoredPragmas;
+    vector<string> ignoredPragmas;
 
 public:
     bool IsIgnored( const string& text )
@@ -168,12 +168,12 @@ public:
 class GlobalVarPragma
 {
 private:
-    list< int >           intArray;
-    list< int64 >         int64Array;
-    list< ScriptString* > stringArray;
-    list< float >         floatArray;
-    list< double >        doubleArray;
-    list< char >          boolArray;
+    list<int>           intArray;
+    list<int64>         int64Array;
+    list<ScriptString*> stringArray;
+    list<float>         floatArray;
+    list<double>        doubleArray;
+    list<char>          boolArray;
 
 public:
     void Call( const string& text )
@@ -190,47 +190,47 @@ public:
             return;
         }
 
-        int    int_value = ( ch == '=' ? atoi( value.c_str() ) : 0 );
-        double float_value = ( ch == '=' ? atof( value.c_str() ) : 0.0 );
+        int    int_value = (ch == '=' ? atoi( value.c_str() ) : 0);
+        double float_value = (ch == '=' ? atof( value.c_str() ) : 0.0);
         string name = type + " " + decl;
 
         // Register
         if( type == "int8" || type == "int16" || type == "int32" || type == "int" || type == "uint8" || type == "uint16" || type == "uint32" || type == "uint" )
         {
             auto it = intArray.insert( intArray.begin(), int_value );
-            if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register integer global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), &(*it) ) < 0 ) WriteLog( "Unable to register integer global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "int64" || type == "uint64" )
         {
             auto it = int64Array.insert( int64Array.begin(), int_value );
-            if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register integer64 global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), &(*it) ) < 0 ) WriteLog( "Unable to register integer64 global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "string" )
         {
             if( value != "" ) value = text.substr( text.find( value ), string::npos );
             auto it = stringArray.insert( stringArray.begin(), new ScriptString( value ) );
-            if( engine->RegisterGlobalProperty( name.c_str(), ( *it ) ) < 0 ) WriteLog( "Unable to register string global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), (*it) ) < 0 ) WriteLog( "Unable to register string global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "float" )
         {
             auto it = floatArray.insert( floatArray.begin(), (float)float_value );
-            if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register float global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), &(*it) ) < 0 ) WriteLog( "Unable to register float global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "double" )
         {
             auto it = doubleArray.insert( doubleArray.begin(), float_value );
-            if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register double global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), &(*it) ) < 0 ) WriteLog( "Unable to register double global var, pragma<%s>.\n", text.c_str() );
         }
         else if( type == "bool" )
         {
-            value = ( ch == '=' ? value : "false" );
+            value = (ch == '=' ? value : "false");
             if( value != "true" && value != "false" )
             {
                 WriteLog( "Invalid start value of boolean type, pragma<%s>.\n", text.c_str() );
                 return;
             }
             auto it = boolArray.insert( boolArray.begin(), value == "true" ? true : false );
-            if( engine->RegisterGlobalProperty( name.c_str(), &( *it ) ) < 0 ) WriteLog( "Unable to register boolean global var, pragma<%s>.\n", text.c_str() );
+            if( engine->RegisterGlobalProperty( name.c_str(), &(*it) ) < 0 ) WriteLog( "Unable to register boolean global var, pragma<%s>.\n", text.c_str() );
         }
         else
         {
@@ -243,9 +243,9 @@ public:
 class CrDataPragma
 {
 private:
-    int           pragmaType;
-    set< string > parametersAlready;
-    uint          parametersIndex;
+    int         pragmaType;
+    set<string> parametersAlready;
+    uint        parametersIndex;
 
 public:
     CrDataPragma( int pragma_type ) : pragmaType( pragma_type ), parametersIndex( 1 /*0 is ParamBase*/ ) {}
@@ -277,11 +277,11 @@ public:
 
         #ifdef FONLINE_SERVER
         // Real registration
-        if( engine->RegisterObjectProperty( "Critter", decl_val, OFFSETOF( Critter, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        if( engine->RegisterObjectProperty( "Critter", decl_ref, OFFSETOF( Critter, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "Critter", decl_val, OFFSETOF( Critter, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "Critter", decl_ref, OFFSETOF( Critter, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
         Critter::ParametersMin[parametersIndex] = min;
         Critter::ParametersMax[parametersIndex] = max;
-        Critter::ParametersOffset[parametersIndex] = ( Str::Substring( text, "+" ) != NULL );
+        Critter::ParametersOffset[parametersIndex] = (Str::Substring( text, "+" ) != NULL);
         #else
         // Fake registration
         if( engine->RegisterObjectProperty( "Critter", decl_val, 10000 + parametersIndex * 4 ) < 0 ) return false;
@@ -312,11 +312,11 @@ public:
 
         #ifdef FONLINE_CLIENT
         // Real registration
-        if( engine->RegisterObjectProperty( "CritterCl", decl_val, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
-        if( engine->RegisterObjectProperty( "CritterCl", decl_ref, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof( void* ) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "CritterCl", decl_val, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
+        if( engine->RegisterObjectProperty( "CritterCl", decl_ref, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
         CritterCl::ParametersMin[parametersIndex] = min;
         CritterCl::ParametersMax[parametersIndex] = max;
-        CritterCl::ParametersOffset[parametersIndex] = ( Str::Substring( text, "+" ) != NULL );
+        CritterCl::ParametersOffset[parametersIndex] = (Str::Substring( text, "+" ) != NULL);
         #else
         // Fake registration
         if( engine->RegisterObjectProperty( "CritterCl", decl_val, 10000 + parametersIndex * 4 ) < 0 ) return false;
@@ -400,16 +400,16 @@ public:
 class BindFieldPragma
 {
 private:
-    vector< string >         className;
-    vector< vector< bool > > busyBytes;
-    vector< int >            baseOffset;
-    vector< int >            dataSize;
+    vector<string>       className;
+    vector<vector<bool>> busyBytes;
+    vector<int>          baseOffset;
+    vector<int>          dataSize;
 
 public:
     void Add( const string& class_name, int base_offset, int data_size )
     {
         className.push_back( class_name );
-        busyBytes.push_back( vector< bool >() );
+        busyBytes.push_back( vector<bool>() );
         baseOffset.push_back( base_offset );
         dataSize.push_back( data_size );
     }
@@ -447,10 +447,10 @@ public:
         }
 
         // Get class data
-        bool            founded = false;
-        vector< bool >* busy_bytes;
-        int             base_offset;
-        int             data_size;
+        bool          founded = false;
+        vector<bool>* busy_bytes;
+        int           base_offset;
+        int           data_size;
         for( int i = 0; i < (int)className.size(); i++ )
         {
             if( class_name == className[i] )
@@ -488,7 +488,7 @@ public:
         bool busy = false;
         for( int i = offset; i < offset + size; i++ )
         {
-            if( ( *busy_bytes )[i] )
+            if( (*busy_bytes)[i] )
             {
                 busy = true;
                 break;
@@ -520,13 +520,13 @@ public:
         }
 
         // Bind
-        int result = engine->RegisterObjectProperty( class_name.c_str(), ( type_name + field_name ).c_str(), base_offset + offset );
+        int result = engine->RegisterObjectProperty( class_name.c_str(), (type_name + field_name).c_str(), base_offset + offset );
         if( result < 0 )
         {
             WriteLog( "Error in 'bindfield' pragma<%s>, register object property fail, error<%d>.\n", text.c_str(), result );
             return;
         }
-        for( int i = offset; i < offset + size; i++ ) ( *busy_bytes )[i] = true;
+        for( int i = offset; i < offset + size; i++ ) (*busy_bytes)[i] = true;
     }
 };
 

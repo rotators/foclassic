@@ -37,15 +37,15 @@ public:
 
     BindFunction( asIScriptFunction* script_func, size_t native_func_addr, const char* module_name,  const char* func_name, const char* func_decl )
     {
-        IsScriptCall = ( native_func_addr == 0 );
+        IsScriptCall = (native_func_addr == 0);
         ScriptFunc = script_func;
         NativeFuncAddr = native_func_addr;
         ModuleName = module_name;
         FuncName = func_name;
-        FuncDecl = ( func_decl ? func_decl : "" );
+        FuncDecl = (func_decl ? func_decl : "");
     }
 };
-typedef vector< BindFunction > BindFunctionVec;
+typedef vector<BindFunction> BindFunctionVec;
 
 asIScriptEngine* Engine = NULL;
 void*            EngineLogFile = NULL;
@@ -120,12 +120,12 @@ struct Call
 
 struct CallPath
 {
-    uint                  Id;
-    map< int, CallPath* > Children;
-    uint                  Incl;
-    uint                  Excl;
+    uint                Id;
+    map<int, CallPath*> Children;
+    uint                Incl;
+    uint                Excl;
     CallPath( int id ) : Id( id ), Incl( 1 ), Excl( 0 ) {}
-    CallPath*             AddChild( int id )
+    CallPath*           AddChild( int id )
     {
         auto it = Children.find( id );
         if( it != Children.end() ) return it->second;
@@ -140,12 +140,12 @@ struct CallPath
     }
 };
 
-typedef map< int, CallPath* > IntCallPathMap;
+typedef map<int, CallPath*> IntCallPathMap;
 IntCallPathMap CallPaths;
 uint           TotalCallPaths = 0;
 
-typedef vector< Call >        CallStack;
-vector< CallStack* > Stacks;
+typedef vector<Call>        CallStack;
+vector<CallStack*> Stacks;
 
 void ProcessStack( CallStack* stack )
 {
@@ -191,7 +191,7 @@ public:
     ActiveContext( asIScriptContext** ctx, uint tick ) : Contexts( ctx ), StartTick( tick ) {}
     bool operator==( asIScriptContext** ctx ) { return ctx == Contexts; }
 };
-typedef vector< ActiveContext > ActiveContextVec;
+typedef vector<ActiveContext> ActiveContextVec;
 ActiveContextVec ActiveContexts;
 Mutex            ActiveGlobalCtxLocker;
 
@@ -453,14 +453,14 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     EngineData* edata = (EngineData*)Engine->GetUserData();
     auto        it = edata->LoadedDlls.find( dll_name_lower );
     if( it != edata->LoadedDlls.end() )
-        return ( *it ).second.second;
+        return (*it).second.second;
 
     // Make path
     char dll_path[MAX_FOPATH];
     Str::Copy( dll_path, dll_name_lower );
     FileManager::EraseExtension( dll_path );
 
-    #if defined ( FO_X64 )
+    #if defined (FO_X64)
     // Add '64' appendix
     Str::Append( dll_path, "64" );
     #endif
@@ -473,7 +473,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     #endif
 
     // Client path fixes
-    #if defined ( FONLINE_CLIENT )
+    #if defined (FONLINE_CLIENT)
     Str::Insert( dll_path, FileManager::GetPath( PT_SERVER_SCRIPTS ) );
     Str::Replacement( dll_path, '\\', '.' );
     Str::Replacement( dll_path, '/', '.' );
@@ -524,7 +524,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     typedef void ( * DllMainEx )( bool );
     DllMainEx func = (DllMainEx)DLL_GetAddress( dll, "DllMainEx" );
     if( func )
-        (func)( LoadLibraryCompiler );
+        (func)(LoadLibraryCompiler);
 
     // Add to collection for current engine
     edata->LoadedDlls.insert( PAIR( string( dll_name_lower ), PAIR( string( dll_path ), dll ) ) );
@@ -756,7 +756,7 @@ void Script::Profiler::Init()
         }
     }
 
-    FileWrite( ProfilerFileHandle, ProfilerSaveSignature, sizeof( ProfilerSaveSignature ) );
+    FileWrite( ProfilerFileHandle, ProfilerSaveSignature, sizeof(ProfilerSaveSignature) );
 }
 
 void Script::Profiler::AddModule( const char* module_name )
@@ -860,7 +860,7 @@ struct OutputLine
     OutputLine( char* text, uint depth, float incl, float excl ) : FuncName( text ), Depth( depth ), Incl( incl ), Excl( excl ) {}
 };
 
-void TraverseCallPaths( asIScriptEngine* engine, CallPath* path, vector< OutputLine >& lines, uint depth, uint& max_depth, uint& max_len )
+void TraverseCallPaths( asIScriptEngine* engine, CallPath* path, vector<OutputLine>& lines, uint depth, uint& max_depth, uint& max_len )
 {
     asIScriptFunction* func = engine->GetFunctionById( path->Id );
     char               name[MAX_FOTEXT] = { 0 };
@@ -870,8 +870,8 @@ void TraverseCallPaths( asIScriptEngine* engine, CallPath* path, vector< OutputL
         Str::Copy( name, 4, "???\0" );
 
     lines.push_back( OutputLine( name, depth,
-                                 100.0f * (float)( path->Incl ) / float(TotalCallPaths),
-                                 100.0f * (float)( path->Excl ) / float(TotalCallPaths) ) );
+                                 100.0f * (float)(path->Incl) / float(TotalCallPaths),
+                                 100.0f * (float)(path->Excl) / float(TotalCallPaths) ) );
 
     uint len = Str::Length( name ) + depth;
     if( len > max_len )
@@ -891,11 +891,11 @@ string Script::Profiler::GetStatistics()
     SCOPE_LOCK( ProfilerCallStacksLocker );
     if( !TotalCallPaths )
         return "No calls recorded.";
-    string               result;
+    string             result;
 
-    vector< OutputLine > lines;
-    uint                 max_depth = 0;
-    uint                 max_len = 0;
+    vector<OutputLine> lines;
+    uint               max_depth = 0;
+    uint               max_len = 0;
     for( auto it = CallPaths.begin(), end = CallPaths.end(); it != end; ++it )
         TraverseCallPaths( GetEngine(), it->second, lines, 0, max_depth, max_len );
 
@@ -970,7 +970,7 @@ void Script::FinishEngine( asIScriptEngine*& engine )
         EngineData* edata = (EngineData*)engine->SetUserData( NULL );
         delete edata->PragmaCB;
         for( auto it = edata->LoadedDlls.begin(), end = edata->LoadedDlls.end(); it != end; ++it )
-            DLL_Free( ( *it ).second.second );
+            DLL_Free( (*it).second.second );
         delete edata;
         engine->Release();
         engine = NULL;
@@ -1156,7 +1156,7 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
             uint current_size = GetGCStatistics();
 
             // Try 1x, 1.5x and 2x count time for time extrapolation
-            if( current_size < last_nongarbage + ( best_count * ( 2 + garbager_state ) ) / 2 )
+            if( current_size < last_nongarbage + (best_count * (2 + garbager_state) ) / 2 )
                 break;
 
             garbager_time[garbager_state] = Timer::AccurateTick();
@@ -1183,7 +1183,7 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
                     break;
                 }
 
-                obj_times[i] = ( garbager_time[i + 1] - garbager_time[i] ) / ( (double)garbager_count[i + 1] - (double)garbager_count[i] );
+                obj_times[i] = (garbager_time[i + 1] - garbager_time[i]) / ( (double)garbager_count[i + 1] - (double)garbager_count[i] );
 
                 if( obj_times[i] <= 0.0f )             // Should not happen
                 {
@@ -1195,14 +1195,14 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
             if( undetermined )
                 break;
 
-            double object_delete_time = ( obj_times[0] + obj_times[1] ) / 2;
+            double object_delete_time = (obj_times[0] + obj_times[1]) / 2;
             double overhead = 0.0f;
             for( int i = 0; i < 3; i++ )
-                overhead += ( garbager_time[i] - garbager_count[i] * object_delete_time );
+                overhead += (garbager_time[i] - garbager_count[i] * object_delete_time);
             overhead /= 3;
             if( overhead > MaxGarbagerTime )
                 overhead = MaxGarbagerTime;                                    // Will result on deletion on every frame
-            best_count = (uint)( ( MaxGarbagerTime - overhead ) / object_delete_time );
+            best_count = (uint)( (MaxGarbagerTime - overhead) / object_delete_time );
         }
         break;
         case 4: // Normal garbage check
@@ -1260,9 +1260,9 @@ void RunTimeout( void* data )
         if( ProfilerSampleInterval )
         {
             Thread::Sleep( ProfilerSampleInterval );
-            CallStack*                                         stack = NULL;
+            CallStack*                                     stack = NULL;
 
-            volatile MutexLocker< decltype( ProfilerLocker ) > scope_lock__2( ProfilerLocker );
+            volatile MutexLocker<decltype(ProfilerLocker)> scope_lock__2( ProfilerLocker );
             SCOPE_LOCK( ActiveGlobalCtxLocker );
 
             for( auto it = ActiveContexts.begin(), end = ActiveContexts.end(); it != end; ++it )
@@ -1322,8 +1322,8 @@ void RunTimeout( void* data )
                     CallStack* stack = *it;
                     for( auto it2 = stack->begin(), end2 = stack->end(); it2 != end2; ++it2 )
                     {
-                        FileWrite( ProfilerFileHandle, &( it2->Id ), 4 );
-                        FileWrite( ProfilerFileHandle, &( it2->Line ), 4 );
+                        FileWrite( ProfilerFileHandle, &(it2->Id), 4 );
+                        FileWrite( ProfilerFileHandle, &(it2->Line), 4 );
                     }
                     static int dummy = -1;
                     FileWrite( ProfilerFileHandle, &dummy, 4 );
@@ -1449,14 +1449,14 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         file.LoadFile( fname_real, ScriptsPath );
         file_bin.LoadFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath );
 
-        if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof( uint ) )
+        if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(uint) )
         {
             bool load = true;
 
             // Load signature
-            uchar signature[sizeof( ScriptSaveSignature )];
-            bool  bin_signature = file_bin.CopyMem( signature, sizeof( signature ) );
-            load = ( bin_signature && memcmp( ScriptSaveSignature, signature, sizeof( ScriptSaveSignature ) ) == 0 );
+            uchar signature[sizeof(ScriptSaveSignature)];
+            bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
+            load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
 
             // Load file dependencies and pragmas
             char   str[1024];
@@ -1481,7 +1481,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
             // Main file
             file.GetTime( NULL, NULL, &last_write );
             bool no_all_files = !file.IsLoaded();
-            bool outdated = ( file.IsLoaded() && last_write > last_write_bin );
+            bool outdated = (file.IsLoaded() && last_write > last_write_bin);
             // Include files
             for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
             {
@@ -1491,7 +1491,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                 if( !no_all_files )
                     no_all_files = !file_dep.IsLoaded();
                 if( !outdated )
-                    outdated = ( file_dep.IsLoaded() && last_write > last_write_bin );
+                    outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
             }
 
             if( no_all_files || outdated )
@@ -1553,7 +1553,7 @@ public:
         MemoryFileLoader( const char* s ) : source( s ) {}
         virtual ~MemoryFileLoader() {}
 
-        virtual bool LoadFile( const std::string& dir, const std::string& file_name, std::vector< char >& data )
+        virtual bool LoadFile( const std::string& dir, const std::string& file_name, std::vector<char>& data )
         {
             if( source )
             {
@@ -1625,7 +1625,7 @@ public:
         IntVec bad_typeids;
         bad_typeids.reserve( WrongGlobalObjects.size() );
         for( auto it = WrongGlobalObjects.begin(), end = WrongGlobalObjects.end(); it != end; ++it )
-            bad_typeids.push_back( Engine->GetTypeIdByDecl( ( *it ).c_str() ) & asTYPEID_MASK_SEQNBR );
+            bad_typeids.push_back( Engine->GetTypeIdByDecl( (*it).c_str() ) & asTYPEID_MASK_SEQNBR );
 
         IntVec bad_typeids_class;
         for( int m = 0, n = module->GetObjectTypeCount(); m < n; m++ )
@@ -1701,11 +1701,11 @@ public:
         CBytecodeStream binary;
         if( module->SaveByteCode( &binary ) >= 0 )
         {
-            std::vector< asBYTE >& data = binary.GetBuf();
-            const StrVec&          dependencies = Preprocessor::GetFileDependencies();
-            const StrVec&          pragmas = Preprocessor::GetParsedPragmas();
+            std::vector<asBYTE>& data = binary.GetBuf();
+            const StrVec&        dependencies = Preprocessor::GetFileDependencies();
+            const StrVec&        pragmas = Preprocessor::GetParsedPragmas();
 
-            file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof( ScriptSaveSignature ) );
+            file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
             file_bin.SetBEUInt( (uint)dependencies.size() );
             for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
                 file_bin.SetData( (uchar*)dependencies[i].c_str(), (uint)dependencies[i].length() + 1 );
@@ -2076,7 +2076,7 @@ int        SynchronizeThreadCounter = 0;
 MutexEvent SynchronizeThreadLocker;
 Mutex      SynchronizeThreadLocalLocker;
 
-typedef vector< EndExecutionCallback > EndExecutionCallbackVec;
+typedef vector<EndExecutionCallback> EndExecutionCallbackVec;
 THREAD EndExecutionCallbackVec* EndExecutionCallbacks;
 #endif
 
@@ -2131,7 +2131,7 @@ void Script::EndExecution()
             sync_mngr->PopPriority();
 
             SynchronizeThreadLocalLocker.Lock();
-            bool sync_not_closed = ( SynchronizeThreadId == Thread::GetCurrentId() );
+            bool sync_not_closed = (SynchronizeThreadId == Thread::GetCurrentId() );
             if( sync_not_closed )
             {
                 SynchronizeThreadId = 0;
@@ -2152,7 +2152,7 @@ void Script::EndExecution()
             for( auto it = EndExecutionCallbacks->begin(), end = EndExecutionCallbacks->end(); it != end; ++it )
             {
                 EndExecutionCallback func = *it;
-                (func)( );
+                (func)();
             }
             EndExecutionCallbacks->clear();
         }
@@ -2328,15 +2328,15 @@ void Script::SetArgAddress( void* value )
 }
 
 // Taked from AS sources
-#if defined ( FO_MSVC )
+#if defined (FO_MSVC)
 uint64 CallCDeclFunction32( const size_t* args, size_t paramSize, size_t func )
 #else
-uint64 __attribute( ( __noinline__ ) ) CallCDeclFunction32( const size_t * args, size_t paramSize, size_t func )
+uint64 __attribute( (__noinline__) ) CallCDeclFunction32( const size_t * args, size_t paramSize, size_t func )
 #endif
 {
     volatile uint64 retQW;
 
-    #if defined ( FO_MSVC )
+    #if defined (FO_MSVC)
     // Copy the data to the real stack. If we fail to do
     // this we may run into trouble in case of exceptions.
     __asm
@@ -2375,7 +2375,7 @@ endcopy:
         // Restore registers
         pop  ecx
     }
-    #elif defined ( FO_GCC )
+    #elif defined (FO_GCC)
     // It is not possible to rely on ESP or BSP to refer to variables or arguments on the stack
     // depending on compiler settings BSP may not even be used, and the ESP is not always on the
     // same offset from the local variables. Because the code adjusts the ESP register it is not
@@ -2431,7 +2431,7 @@ endcopy:
         "movl  %%eax, 0(%%ecx)  \n"
         "movl  %%edx, 4(%%ecx)  \n"
         :                                   // output
-        : "d" ( a ), "m" ( retQW )          // input - pass pointer of args in edx, pass pointer of retQW in memory argument
+        : "d" (a), "m" (retQW)              // input - pass pointer of args in edx, pass pointer of retQW in memory argument
         : "%eax", "%ecx"                    // clobber
         );
     #endif
@@ -2511,7 +2511,7 @@ uint Script::GetReturnedUInt()
 
 bool Script::GetReturnedBool()
 {
-    return ScriptCall ? ( CurrentCtx->GetReturnByte() != 0 ) : ( ( NativeRetValue[0] & 1 ) != 0 );
+    return ScriptCall ? (CurrentCtx->GetReturnByte() != 0) : ( (NativeRetValue[0] & 1) != 0 );
 }
 
 void* Script::GetReturnedObject()
@@ -2525,7 +2525,7 @@ float Script::GetReturnedFloat()
     #ifdef FO_MSVC
     __asm fstp dword ptr[f]
     #else // FO_GCC
-    asm ( "fstps %0 \n" : "=m" ( f ) );
+    asm ("fstps %0 \n" : "=m" (f) );
     #endif
     return f;
 }
@@ -2536,7 +2536,7 @@ double Script::GetReturnedDouble()
     #ifdef FO_MSVC
     __asm fstp qword ptr[d]
     #else // FO_GCC
-    asm ( "fstpl %0 \n" : "=m" ( d ) );
+    asm ("fstpl %0 \n" : "=m" (d) );
     #endif
     return d;
 }

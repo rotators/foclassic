@@ -9,7 +9,7 @@
 #include "Assimp/aiPostProcess.h"
 
 // Assimp functions
-const aiScene* ( *Ptr_aiImportFileFromMemory )( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );
+const aiScene* (*Ptr_aiImportFileFromMemory)( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );
 void         ( * Ptr_aiReleaseImport )( const aiScene* pScene );
 const char*  ( * Ptr_aiGetErrorString )();
 void         ( * Ptr_aiEnableVerboseLogging )( aiBool d );
@@ -54,7 +54,7 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
         if( !dll )
         {
             if( GameOpt.ClientPath.c_std_str() != "" )
-                dll = DLL_Load( ( GameOpt.ClientPath.c_std_str() + ASSIMP_LIB_NAME ).c_str() );
+                dll = DLL_Load( (GameOpt.ClientPath.c_std_str() + ASSIMP_LIB_NAME).c_str() );
             if( !dll )
             {
                 WriteLogF( _FUNC_, " - '" ASSIMP_LIB_NAME "' not found.\n" );
@@ -65,7 +65,7 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
         // Bind functions
         uint errors = 0;
         #define BIND_ASSIMP_FUNC( f )                                            \
-            Ptr_ ## f = ( decltype( Ptr_ ## f ) )DLL_GetAddress( dll, # f );     \
+            Ptr_ ## f = (decltype(Ptr_ ## f) )DLL_GetAddress( dll, # f );        \
             if( !Ptr_ ## f )                                                     \
             {                                                                    \
                 WriteLogF( _FUNC_, " - Assimp function<" # f "> not found.\n" ); \
@@ -203,7 +203,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 {
     // Create frame
     Frame* frame = new Frame();
-    memzero( frame, sizeof( Frame ) );
+    memzero( frame, sizeof(Frame) );
     frame->Name = Str::Duplicate( node->mName.data );
     frame->DrawMesh = NULL;
     frame->Sibling = NULL;
@@ -216,10 +216,10 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
     if( node->mNumMeshes )
     {
         // Calculate whole data
-        uint                   faces_count = 0;
-        uint                   vertices_count = 0;
-        vector< aiBone* >      all_bones;
-        vector< D3DXMATERIAL > materials;
+        uint                 faces_count = 0;
+        uint                 vertices_count = 0;
+        vector<aiBone*>      all_bones;
+        vector<D3DXMATERIAL> materials;
         for( unsigned int m = 0; m < node->mNumMeshes; m++ )
         {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[m]];
@@ -247,7 +247,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 
             // Material
             D3DXMATERIAL material;
-            memzero( &material, sizeof( material ) );
+            memzero( &material, sizeof(material) );
             aiMaterial*  mtrl = scene->mMaterials[mesh->mMaterialIndex];
             aiString     path;
             if( Ptr_aiGetMaterialTextureCount( mtrl, aiTextureType_DIFFUSE ) )
@@ -352,7 +352,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
                     ib++;
                 }
 
-                *( att + cur_faces + i ) = m;
+                *(att + cur_faces + i) = m;
             }
 
             cur_vertices += mesh->mNumVertices;
@@ -364,8 +364,8 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         {
             D3D_HR( D3DXCreateSkinInfo( vertices_count, declaration, (uint)all_bones.size(), &skin_info ) );
 
-            vector< vector< DWORD > > vertices( all_bones.size() );
-            vector< FloatVec >        weights( all_bones.size() );
+            vector<vector<DWORD>> vertices( all_bones.size() );
+            vector<FloatVec>      weights( all_bones.size() );
 
             for( uint b = 0, bb = (uint)all_bones.size(); b < bb; b++ )
             {
@@ -428,7 +428,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         D3D_HR( dxmesh.pMesh->UnlockAttributeBuffer() );
 
         MeshContainer* mesh_container = new MeshContainer();
-        memzero( mesh_container, sizeof( MeshContainer ) );
+        memzero( mesh_container, sizeof(MeshContainer) );
 
         // Adjacency data - holds information about triangle adjacency, required by the ID3DMESH object
         uint faces = dxmesh.pMesh->GetNumFaces();
@@ -455,20 +455,20 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
                 else
                     mesh_container->TextureNames[i] = NULL;
                 mesh_container->Materials[i] = materials[i].MatD3D;
-                memzero( &mesh_container->Effects[i], sizeof( EffectInstance ) );
+                memzero( &mesh_container->Effects[i], sizeof(EffectInstance) );
             }
         }
         else
         {
             // Make a default material in the case where the mesh did not provide one
-            memzero( &mesh_container->Materials[0], sizeof( Material_ ) );
+            memzero( &mesh_container->Materials[0], sizeof(Material_) );
             mesh_container->Materials[0].Diffuse.a = 1.0f;
             mesh_container->Materials[0].Diffuse.r = 0.5f;
             mesh_container->Materials[0].Diffuse.g = 0.5f;
             mesh_container->Materials[0].Diffuse.b = 0.5f;
             mesh_container->Materials[0].Specular = mesh_container->Materials[0].Diffuse;
             mesh_container->TextureNames[0] = NULL;
-            memzero( &mesh_container->Effects[0], sizeof( EffectInstance ) );
+            memzero( &mesh_container->Effects[0], sizeof(EffectInstance) );
         }
 
         // If there is skin data associated with the mesh copy it over
@@ -484,7 +484,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
 
             // Create the arrays for the bones and the frame matrices
             mesh_container->FrameCombinedMatrixPointer = new Matrix*[numBones];
-            memzero( mesh_container->FrameCombinedMatrixPointer, sizeof( Matrix* ) * numBones );
+            memzero( mesh_container->FrameCombinedMatrixPointer, sizeof(Matrix*) * numBones );
 
             // get each of the bone offset matrices so that we don't need to get them later
             for( UINT i = 0; i < numBones; i++ )
@@ -548,7 +548,7 @@ Frame* GraphicLoader::FillNode( aiScene* scene, aiNode* node )
         for( uint i = 0; i < aimesh->mNumVertices; i++ )
         {
             Vertex3D& v = ms.Vertices[i];
-            memzero( &v, sizeof( v ) );
+            memzero( &v, sizeof(v) );
             v.Position = aimesh->mVertices[i];
             v.PositionW = 1.0f;
             v.Normal = aimesh->mNormals[i];
@@ -694,25 +694,25 @@ void GraphicLoader::FixFrame( Frame* root_frame, Frame* frame, aiScene* scene, a
         // OGL buffers
         GL( glGenBuffers( 1, &mesh.VBO ) );
         GL( glBindBuffer( GL_ARRAY_BUFFER, mesh.VBO ) );
-        GL( glBufferData( GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof( Vertex3D ), &mesh.Vertices[0], GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ARRAY_BUFFER, mesh.Vertices.size() * sizeof(Vertex3D), &mesh.Vertices[0], GL_STATIC_DRAW ) );
         GL( glGenBuffers( 1, &mesh.IBO ) );
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, mesh.IBO ) );
-        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, mesh.Indicies.size() * sizeof( short ), &mesh.Indicies[0], GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, mesh.Indicies.size() * sizeof(short), &mesh.Indicies[0], GL_STATIC_DRAW ) );
         mesh.VAO = 0;
-        if( GLEW_ARB_vertex_array_object && ( GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object ) )
+        if( GLEW_ARB_vertex_array_object && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object) )
         {
             GL( glGenVertexArrays( 1, &mesh.VAO ) );
             GL( glBindVertexArray( mesh.VAO ) );
-            GL( glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Position ) ) );
-            GL( glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Normal ) ) );
-            GL( glVertexAttribPointer( 2, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Color ) ) );
-            GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord ) ) );
-            GL( glVertexAttribPointer( 4, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord2 ) ) );
-            GL( glVertexAttribPointer( 5, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, TexCoord3 ) ) );
-            GL( glVertexAttribPointer( 6, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Tangent ) ) );
-            GL( glVertexAttribPointer( 7, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, Bitangent ) ) );
-            GL( glVertexAttribPointer( 8, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, BlendWeights ) ) );
-            GL( glVertexAttribPointer( 9, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex3D ), (void*)OFFSETOF( Vertex3D, BlendIndices ) ) );
+            GL( glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, Position ) ) );
+            GL( glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, Normal ) ) );
+            GL( glVertexAttribPointer( 2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, Color ) ) );
+            GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, TexCoord ) ) );
+            GL( glVertexAttribPointer( 4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, TexCoord2 ) ) );
+            GL( glVertexAttribPointer( 5, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, TexCoord3 ) ) );
+            GL( glVertexAttribPointer( 6, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, Tangent ) ) );
+            GL( glVertexAttribPointer( 7, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, Bitangent ) ) );
+            GL( glVertexAttribPointer( 8, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, BlendWeights ) ) );
+            GL( glVertexAttribPointer( 9, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void*)OFFSETOF( Vertex3D, BlendIndices ) ) );
             for( uint i = 0; i <= 9; i++ )
                 GL( glEnableVertexAttribArray( i ) );
             GL( glBindVertexArray( 0 ) );
@@ -823,7 +823,7 @@ bool GraphicLoader::IsExtensionSupported( const char* ext )
         "q3s", "mesh", "xml", "irrmesh", "irr", "nff", "nff", "off", "raw", "ter", "mdl", "hmp", "ndo"
     };
 
-    for( int i = 0, j = sizeof( arr ) / sizeof( arr[0] ); i < j; i++ )
+    for( int i = 0, j = sizeof(arr) / sizeof(arr[0]); i < j; i++ )
         if( Str::CompareCase( ext, arr[i] ) )
             return true;
     return false;
@@ -1143,17 +1143,17 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     effect->TimeGame = dxeffect->GetParameterByName( NULL, "TimeGame" );
     effect->TimeGameCurrent = 0.0f;
     effect->TimeGameLastTick = Timer::AccurateTick();
-    effect->IsTime = ( effect->Time || effect->TimeGame );
+    effect->IsTime = (effect->Time || effect->TimeGame);
     effect->Random1Pass = dxeffect->GetParameterByName( NULL, "Random1Pass" );
     effect->Random2Pass = dxeffect->GetParameterByName( NULL, "Random2Pass" );
     effect->Random3Pass = dxeffect->GetParameterByName( NULL, "Random3Pass" );
     effect->Random4Pass = dxeffect->GetParameterByName( NULL, "Random4Pass" );
-    effect->IsRandomPass = ( effect->Random1Pass || effect->Random2Pass || effect->Random3Pass || effect->Random4Pass );
+    effect->IsRandomPass = (effect->Random1Pass || effect->Random2Pass || effect->Random3Pass || effect->Random4Pass);
     effect->Random1Effect = dxeffect->GetParameterByName( NULL, "Random1Effect" );
     effect->Random2Effect = dxeffect->GetParameterByName( NULL, "Random2Effect" );
     effect->Random3Effect = dxeffect->GetParameterByName( NULL, "Random3Effect" );
     effect->Random4Effect = dxeffect->GetParameterByName( NULL, "Random4Effect" );
-    effect->IsRandomEffect = ( effect->Random1Effect || effect->Random2Effect || effect->Random3Effect || effect->Random4Effect );
+    effect->IsRandomEffect = (effect->Random1Effect || effect->Random2Effect || effect->Random3Effect || effect->Random4Effect);
     effect->IsTextures = false;
     for( int i = 0; i < EFFECT_TEXTURES; i++ )
     {
@@ -1174,9 +1174,9 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     }
     effect->AnimPosProc = dxeffect->GetParameterByName( NULL, "AnimPosProc" );
     effect->AnimPosTime = dxeffect->GetParameterByName( NULL, "AnimPosTime" );
-    effect->IsAnimPos = ( effect->AnimPosProc || effect->AnimPosTime );
-    effect->IsNeedProcess = ( effect->PassIndex || effect->IsTime || effect->IsRandomPass || effect->IsRandomEffect ||
-                              effect->IsTextures || effect->IsScriptValues || effect->IsAnimPos );
+    effect->IsAnimPos = (effect->AnimPosProc || effect->AnimPosTime);
+    effect->IsNeedProcess = (effect->PassIndex || effect->IsTime || effect->IsRandomPass || effect->IsRandomEffect ||
+                             effect->IsTextures || effect->IsScriptValues || effect->IsAnimPos);
 
     effect->Defaults = NULL;
     if( defaults )
@@ -1201,7 +1201,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
                     dxeffect->SetString( param, (LPCSTR)def.Data );
                     break;
                 case EffectDefault::Floats:         // pValue points to an array of floats - number of floats is NumBytes / sizeof(float)
-                    dxeffect->SetFloatArray( param, (float*)def.Data, def.Size / sizeof( float ) );
+                    dxeffect->SetFloatArray( param, (float*)def.Data, def.Size / sizeof(float) );
                     break;
                 case EffectDefault::Dword:          // pValue points to a uint
                     dxeffect->SetInt( param, *(uint*)def.Data );
@@ -1282,7 +1282,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
         {
             GLenum  format = file_binary.GetBEUInt();
             GLsizei length = file_binary.GetBEUInt();
-            if( file_binary.GetFsize() >= length + sizeof( uint ) * 3 )
+            if( file_binary.GetFsize() >= length + sizeof(uint) * 3 )
             {
                 GL( program = glCreateProgram() );
                 glProgramBinary( program, format, file_binary.GetCurBuf(), length );
@@ -1456,7 +1456,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
 
     // Create effect instance
     Effect* effect = new Effect();
-    memzero( effect, sizeof( Effect ) );
+    memzero( effect, sizeof(Effect) );
     effect->Name = Str::Duplicate( loaded_fname );
     effect->Defines = Str::Duplicate( defines ? defines : "" );
     effect->Program = program;
@@ -1498,17 +1498,17 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     GL( effect->TimeGame = glGetUniformLocation( program, "TimeGame" ) );
     effect->TimeGameCurrent = 0.0f;
     effect->TimeGameLastTick = Timer::AccurateTick();
-    effect->IsTime = ( effect->Time != -1 || effect->TimeGame != -1 );
+    effect->IsTime = (effect->Time != -1 || effect->TimeGame != -1);
     GL( effect->Random1Pass = glGetUniformLocation( program, "Random1Pass" ) );
     GL( effect->Random2Pass = glGetUniformLocation( program, "Random2Pass" ) );
     GL( effect->Random3Pass = glGetUniformLocation( program, "Random3Pass" ) );
     GL( effect->Random4Pass = glGetUniformLocation( program, "Random4Pass" ) );
-    effect->IsRandomPass = ( effect->Random1Pass != -1 || effect->Random2Pass != -1 || effect->Random3Pass != -1 || effect->Random4Pass != -1 );
+    effect->IsRandomPass = (effect->Random1Pass != -1 || effect->Random2Pass != -1 || effect->Random3Pass != -1 || effect->Random4Pass != -1);
     GL( effect->Random1Effect = glGetUniformLocation( program, "Random1Effect" ) );
     GL( effect->Random2Effect = glGetUniformLocation( program, "Random2Effect" ) );
     GL( effect->Random3Effect = glGetUniformLocation( program, "Random3Effect" ) );
     GL( effect->Random4Effect = glGetUniformLocation( program, "Random4Effect" ) );
-    effect->IsRandomEffect = ( effect->Random1Effect != -1 || effect->Random2Effect != -1 || effect->Random3Effect != -1 || effect->Random4Effect != -1 );
+    effect->IsRandomEffect = (effect->Random1Effect != -1 || effect->Random2Effect != -1 || effect->Random3Effect != -1 || effect->Random4Effect != -1);
     effect->IsTextures = false;
     for( int i = 0; i < EFFECT_TEXTURES; i++ )
     {
@@ -1533,9 +1533,9 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     }
     GL( effect->AnimPosProc = glGetUniformLocation( program, "AnimPosProc" ) );
     GL( effect->AnimPosTime = glGetUniformLocation( program, "AnimPosTime" ) );
-    effect->IsAnimPos = ( effect->AnimPosProc != -1 || effect->AnimPosTime != -1 );
-    effect->IsNeedProcess = ( effect->PassIndex != -1 || effect->IsTime || effect->IsRandomPass || effect->IsRandomEffect ||
-                              effect->IsTextures || effect->IsScriptValues || effect->IsAnimPos );
+    effect->IsAnimPos = (effect->AnimPosProc != -1 || effect->AnimPosTime != -1);
+    effect->IsNeedProcess = (effect->PassIndex != -1 || effect->IsTime || effect->IsRandomPass || effect->IsRandomEffect ||
+                             effect->IsTextures || effect->IsScriptValues || effect->IsAnimPos);
 
     // Defaults
     effect->Defaults = NULL;
@@ -1556,7 +1556,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
                 case EffectDefault::String:
                     break;
                 case EffectDefault::Floats:
-                    GL( glUniform1fv( location, def.Size / sizeof( GLfloat ), (GLfloat*)def.Data ) );
+                    GL( glUniform1fv( location, def.Size / sizeof(GLfloat), (GLfloat*)def.Data ) );
                     something_binded = true;
                     break;
                 case EffectDefault::Dword:
@@ -1589,7 +1589,7 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
             double tick = Timer::AccurateTick();
             if( IS_EFFECT_VALUE( effect->Time ) )
             {
-                effect->TimeCurrent += (float)( tick - effect->TimeLastTick );
+                effect->TimeCurrent += (float)(tick - effect->TimeLastTick);
                 effect->TimeLastTick = tick;
                 if( effect->TimeCurrent >= 120.0f )
                     effect->TimeCurrent = fmod( effect->TimeCurrent, 120.0f );
@@ -1600,7 +1600,7 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
             {
                 if( !Timer::IsGamePaused() )
                 {
-                    effect->TimeGameCurrent += (float)( tick - effect->TimeGameLastTick ) / 1000.0f;
+                    effect->TimeGameCurrent += (float)(tick - effect->TimeGameLastTick) / 1000.0f;
                     effect->TimeGameLastTick = tick;
                     if( effect->TimeGameCurrent >= 120.0f )
                         effect->TimeGameCurrent = fmod( effect->TimeGameCurrent, 120.0f );
@@ -1635,7 +1635,7 @@ void GraphicLoader::EffectProcessVariables( Effect* effect, int pass,  float ani
                     #ifdef FO_D3D
                     effect->DXInstance->SetTexture( effect->Textures[i], textures && textures[i] ? textures[i]->Instance : NULL );
                     #else
-                    GLuint id = ( textures && textures[i] ? textures[i]->Id : 0 );
+                    GLuint id = (textures && textures[i] ? textures[i]->Id : 0);
                     GL( glActiveTexture( GL_TEXTURE2 + i ) );
                     GL( glBindTexture( GL_TEXTURE_2D, id ) );
                     GL( glActiveTexture( GL_TEXTURE0 ) );

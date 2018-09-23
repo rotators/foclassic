@@ -2,9 +2,9 @@
 #include "Debugger.h"
 #include "Mutex.h"
 
-#define MAX_BLOCKS       ( 25 )
-#define MAX_ENTRY        ( 2000 )
-#define MAX_PROCESS      ( 20 )
+#define MAX_BLOCKS       (25)
+#define MAX_ENTRY        (2000)
+#define MAX_PROCESS      (20)
 static double Ticks[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
 static int    Identifiers[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
 static uint   CurTick[MAX_BLOCKS][MAX_ENTRY];
@@ -12,7 +12,7 @@ static int    CurEntry[MAX_BLOCKS];
 
 void Debugger::BeginCycle()
 {
-    memzero( Identifiers, sizeof( Identifiers ) );
+    memzero( Identifiers, sizeof(Identifiers) );
     for( int i = 0; i < MAX_BLOCKS; i++ )
         CurEntry[i] = -1;
 }
@@ -79,7 +79,7 @@ void Debugger::ShowLags( int num_block, double lag_to_show )
     }
 }
 
-#define MAX_MEM_NODES    ( 16 )
+#define MAX_MEM_NODES    (16)
 struct MemNode
 {
     int64 AllocMem;
@@ -143,7 +143,7 @@ struct MemNodeStr
     int64 MaxAlloc;
     bool operator==( const char* str ) const { return Str::Compare( str, Name ); }
 };
-typedef vector< MemNodeStr > MemNodeStrVec;
+typedef vector<MemNodeStr> MemNodeStrVec;
 static MemNodeStrVec MemNodesStr;
 
 void Debugger::MemoryStr( const char* block, int value )
@@ -169,7 +169,7 @@ void Debugger::MemoryStr( const char* block, int value )
         }
         else
         {
-            node = &( *it );
+            node = &(*it);
         }
 
         if( value > 0 )
@@ -269,12 +269,12 @@ struct StackInfo
     uint   Chunks;
     uint   Size;
 };
-static bool                         MemoryTrace;
-typedef pair< StackInfo*, size_t > StackInfoSize;
-static map< size_t, StackInfoSize > PtrStackInfoSize;
-static map< size_t, StackInfo* >    StackHashStackInfo;
-static Mutex                        MemoryAllocLocker;
-static uint                         MemoryAllocRecursion;
+static bool                       MemoryTrace;
+typedef pair<StackInfo*, size_t> StackInfoSize;
+static map<size_t, StackInfoSize> PtrStackInfoSize;
+static map<size_t, StackInfo*>    StackHashStackInfo;
+static Mutex                      MemoryAllocLocker;
+static uint                       MemoryAllocRecursion;
 
 #define ALLOCATE_PTR( ptr, size, param )                                  \
     if( ptr )                                                             \
@@ -290,8 +290,8 @@ static uint                         MemoryAllocRecursion;
         auto it = PtrStackInfoSize.find( (size_t)ptr ); \
         if( it != PtrStackInfoSize.end() )              \
         {                                               \
-            StackInfo* si = ( *it ).second.first;       \
-            si->Size -= ( *it ).second.second;          \
+            StackInfo* si = (*it).second.first;         \
+            si->Size -= (*it).second.second;            \
             si->Chunks--;                               \
             PtrStackInfoSize.erase( it );               \
         }                                               \
@@ -324,16 +324,16 @@ StackInfo* GetStackInfo( HANDLE heap )
 
     auto   it = StackHashStackInfo.find( (size_t)hash );
     if( it != StackHashStackInfo.end() )
-        return ( *it ).second;
+        return (*it).second;
 
     string str;
     str.reserve( 16384 );
 
-    # define STACKWALK_MAX_NAMELEN    ( 2048 )
-    char         symbol_buffer[sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN];
+    # define STACKWALK_MAX_NAMELEN    (2048)
+    char         symbol_buffer[sizeof(SYMBOL_INFO) + STACKWALK_MAX_NAMELEN];
     SYMBOL_INFO* symbol = (SYMBOL_INFO*)symbol_buffer;
-    memset( symbol, 0, sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN );
-    symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+    memset( symbol, 0, sizeof(SYMBOL_INFO) + STACKWALK_MAX_NAMELEN );
+    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
     symbol->MaxNameLen = STACKWALK_MAX_NAMELEN;
 
     for( int frame_num = 0; frame_num < (int)frames - 1; frame_num++ )
@@ -355,7 +355,7 @@ StackInfo* GetStackInfo( HANDLE heap )
             DWORD64 baseOfImage;
             CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
         } callstack;
-        memzero( &callstack, sizeof( callstack ) );
+        memzero( &callstack, sizeof(callstack) );
 
         if( SymFromAddr( ProcessHandle, offset, &callstack.offsetFromSmybol, symbol ) )
         {
@@ -366,8 +366,8 @@ StackInfo* GetStackInfo( HANDLE heap )
         }
 
         IMAGEHLP_LINE64 line;
-        memset( &line, 0, sizeof( line ) );
-        line.SizeOfStruct = sizeof( line );
+        memset( &line, 0, sizeof(line) );
+        line.SizeOfStruct = sizeof(line);
         if( SymGetLineFromAddr64( ProcessHandle, offset, &callstack.offsetFromLine, &line ) )
         {
             callstack.lineNumber = line.LineNumber;
@@ -376,8 +376,8 @@ StackInfo* GetStackInfo( HANDLE heap )
         }
 
         IMAGEHLP_MODULE64 module;
-        memset( &module, 0, sizeof( module ) );
-        module.SizeOfStruct = sizeof( module );
+        memset( &module, 0, sizeof(module) );
+        module.SizeOfStruct = sizeof(module);
         if( SymGetModuleInfo64( ProcessHandle, offset, &module ) )
         {
             strcpy( callstack.moduleName, module.ModuleName );
@@ -426,12 +426,12 @@ StackInfo* GetStackInfo( HANDLE heap )
     return si;
 }
 
-template< class T >
+template<class T>
 class Patch
 {
 public:
-    Patch< T >( ) : Call( NULL ), PatchFunc( NULL ) {}
-    ~Patch< T >( ) { Uninstall(); }
+    Patch<T>() : Call( NULL ), PatchFunc( NULL ) {}
+    ~Patch<T>() { Uninstall(); }
     bool Install( void* orig, void* patch )
     {
         if( orig && patch )
@@ -450,26 +450,26 @@ public:
     T PatchFunc;
 };
 
-# define DECLARE_PATCH( ret, name, args )      \
-    Patch< decltype(& name ) > Patch_ ## name; \
+# define DECLARE_PATCH( ret, name, args )   \
+    Patch<decltype(& name)> Patch_ ## name; \
     ret WINAPI Hooked_ ## name ## args
-# define INSTALL_PATCH( name )                                                                 \
-    if( !Patch_ ## name.Install( GetProcAddress( hkernel32, # name ), &( Hooked_ ## name ) ) ) \
+# define INSTALL_PATCH( name )                                                               \
+    if( !Patch_ ## name.Install( GetProcAddress( hkernel32, # name ), &(Hooked_ ## name) ) ) \
         return false
 # define UNINSTALL_PATCH( name ) \
     Patch_ ## name.Uninstall()
 
-DECLARE_PATCH( HANDLE, HeapCreate, ( DWORD flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize ) )
+DECLARE_PATCH( HANDLE, HeapCreate, (DWORD flOptions, SIZE_T dwInitialSize, SIZE_T dwMaximumSize) )
 {
     return Patch_HeapCreate.Call( flOptions, dwInitialSize, dwMaximumSize );
 }
 
-DECLARE_PATCH( BOOL, HeapDestroy, ( HANDLE hHeap ) )
+DECLARE_PATCH( BOOL, HeapDestroy, (HANDLE hHeap) )
 {
     return Patch_HeapDestroy.Call( hHeap );
 }
 
-DECLARE_PATCH( LPVOID, HeapAlloc, ( HANDLE hHeap, DWORD dwFlags, DWORD_PTR dwBytes ) )
+DECLARE_PATCH( LPVOID, HeapAlloc, (HANDLE hHeap, DWORD dwFlags, DWORD_PTR dwBytes) )
 {
     if( MemoryTrace )
     {
@@ -488,7 +488,7 @@ DECLARE_PATCH( LPVOID, HeapAlloc, ( HANDLE hHeap, DWORD dwFlags, DWORD_PTR dwByt
     return Patch_HeapAlloc.Call( hHeap, dwFlags, dwBytes );
 }
 
-DECLARE_PATCH( LPVOID, HeapReAlloc, ( HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes ) )
+DECLARE_PATCH( LPVOID, HeapReAlloc, (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes) )
 {
     if( MemoryTrace )
     {
@@ -508,7 +508,7 @@ DECLARE_PATCH( LPVOID, HeapReAlloc, ( HANDLE hHeap, DWORD dwFlags, LPVOID lpMem,
     return Patch_HeapReAlloc.Call( hHeap, dwFlags, lpMem, dwBytes );
 }
 
-DECLARE_PATCH( BOOL, HeapFree, ( HANDLE hHeap, DWORD dwFlags, LPVOID lpMem ) )
+DECLARE_PATCH( BOOL, HeapFree, (HANDLE hHeap, DWORD dwFlags, LPVOID lpMem) )
 {
     if( MemoryTrace )
     {
@@ -555,7 +555,7 @@ StackInfo* GetStackInfo( const void* caller )
 {
     auto it = StackHashStackInfo.find( (size_t)caller );
     if( it != StackHashStackInfo.end() )
-        return ( *it ).second;
+        return (*it).second;
 
     string str;
     str.reserve( 16384 );
@@ -660,11 +660,11 @@ string Debugger::GetTraceMemory()
     MemoryAllocRecursion++;
 
     // Sort by chunks count
-    int64                whole_chunks = 0, whole_size = 0;
-    vector< StackInfo* > blocks_chunks;
+    int64              whole_chunks = 0, whole_size = 0;
+    vector<StackInfo*> blocks_chunks;
     for( auto it = StackHashStackInfo.begin(), end = StackHashStackInfo.end(); it != end; ++it )
     {
-        StackInfo* si = ( *it ).second;
+        StackInfo* si = (*it).second;
         if( si->Size )
         {
             blocks_chunks.push_back( si );

@@ -149,7 +149,7 @@ bool NpcAIMngr::LoadNpcBags()
         NpcBag& cur_bag = npcBags[i];
 
         StrVec  comb;
-        Str::ParseLine< StrVec, string ( * )( const char* ) >( bag_str, ' ', comb, ParseBagComb );
+        Str::ParseLine<StrVec, string (*)( const char* )>( bag_str, ' ', comb, ParseBagComb );
 
         for( uint j = 0; j < comb.size(); j++ )
         {
@@ -167,7 +167,7 @@ bool NpcAIMngr::LoadNpcBags()
 
                 // Parse
                 NpcBagCombination items_comb;
-                Str::ParseLine< NpcBagCombination, NpcBagItems ( * )( const char* ) >( bag_str, ' ', items_comb, ParseBagItems );
+                Str::ParseLine<NpcBagCombination, NpcBagItems (*)( const char* )>( bag_str, ' ', items_comb, ParseBagItems );
                 // Check
                 for( uint l = 0; l < items_comb.size(); l++ )
                 {
@@ -188,7 +188,7 @@ bool NpcAIMngr::LoadNpcBags()
                 it = loaded_comb.find( c );
             }
 
-            cur_bag.push_back( ( *it ).second );
+            cur_bag.push_back( (*it).second );
         }
 
         bag_count++;

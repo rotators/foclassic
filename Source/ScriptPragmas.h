@@ -7,10 +7,10 @@
 #include <string>
 using namespace std;
 
-#define PRAGMA_UNKNOWN    ( 0 )
-#define PRAGMA_SERVER     ( 1 )
-#define PRAGMA_CLIENT     ( 2 )
-#define PRAGMA_MAPPER     ( 3 )
+#define PRAGMA_UNKNOWN    (0)
+#define PRAGMA_SERVER     (1)
+#define PRAGMA_CLIENT     (2)
+#define PRAGMA_MAPPER     (3)
 
 class IgnorePragma;
 class GlobalVarPragma;
@@ -22,7 +22,7 @@ class ScriptPragmaCallback: public Preprocessor::PragmaCallback
 {
 private:
     int              pragmaType;
-    set< string >    alreadyProcessed;
+    set<string>      alreadyProcessed;
     IgnorePragma*    ignorePragma;
     GlobalVarPragma* globalVarPragma;
     CrDataPragma*    crDataPragma;

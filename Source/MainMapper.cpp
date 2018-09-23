@@ -19,7 +19,7 @@ int main( int argc, char** argv )
     Thread::SetCurrentName( "GUI" );
 
     // Exceptions
-    #if defined ( FO_D3D )
+    #if defined (FO_D3D)
     CatchExceptions( "MapperDX" );
     #else
     CatchExceptions( "MapperGL" );

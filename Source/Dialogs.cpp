@@ -105,7 +105,7 @@ void DialogManager::SaveList( const char* list_path, const char* list_name )
     fm.SetStr( "**************************************************************************************\n" );
 
     for( auto it = DlgPacksNames.begin(); it != DlgPacksNames.end(); ++it )
-        fm.SetStr( "$\t%u\t%s\n", ( *it ).second, ( *it ).first.c_str() );
+        fm.SetStr( "$\t%u\t%s\n", (*it).second, (*it).first.c_str() );
 
     fm.SetStr( "**************************************************************************************\n" );
     fm.SetStr( "**************************************************************************************\n" );
@@ -129,7 +129,7 @@ bool DialogManager::AddDialogs( DialogPack* pack )
 DialogPack* DialogManager::GetDialogPack( uint num_pack )
 {
     auto it = DialogsPacks.find( num_pack );
-    return it == DialogsPacks.end() ? NULL : ( *it ).second;
+    return it == DialogsPacks.end() ? NULL : (*it).second;
 }
 
 DialogsVec* DialogManager::GetDialogs( uint num_pack )
@@ -137,7 +137,7 @@ DialogsVec* DialogManager::GetDialogs( uint num_pack )
     //	auto it=std::find(DialogsPacks.begin(),DialogsPacks.end(),num_pack);
     //	return it!=DialogsPacks.end()?&(*it):NULL;
     auto it = DialogsPacks.find( num_pack );
-    return it == DialogsPacks.end() ? NULL : &( *it ).second->Dialogs;
+    return it == DialogsPacks.end() ? NULL : &(*it).second->Dialogs;
 }
 
 void DialogManager::EraseDialogs( uint num_pack )
@@ -146,8 +146,8 @@ void DialogManager::EraseDialogs( uint num_pack )
     if( it == DialogsPacks.end() )
         return;
 
-    DlgPacksNames.erase( ( *it ).second->PackName );
-    delete ( *it ).second;
+    DlgPacksNames.erase( (*it).second->PackName );
+    delete (*it).second;
     DialogsPacks.erase( it );
 }
 
@@ -156,7 +156,7 @@ void DialogManager::EraseDialogs( string name_pack )
     auto it = DlgPacksNames.find( name_pack );
     if( it == DlgPacksNames.end() )
         return;
-    EraseDialogs( ( *it ).second );
+    EraseDialogs( (*it).second );
 }
 
 void DialogManager::Finish()
@@ -211,7 +211,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     if( !fodlg.GetStr( "data", "lang", "russ", lang_key ) )
         LOAD_FAIL( "Lang app not found." );
 
-    Str::ParseLine< StrVec, string ( * )( const char* ) >( lang_key, ' ', lang, ParseLangKey );
+    Str::ParseLine<StrVec, string (*)( const char* )>( lang_key, ' ', lang, ParseLangKey );
     if( !lang.size() )
         LOAD_FAIL( "Lang app is empty." );
 
@@ -454,7 +454,7 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             // Name
             input >> name;
-            if( ( id = ConstantsManager::GetParamId( name ) ) < 0 )
+            if( (id = ConstantsManager::GetParamId( name ) ) < 0 )
             {
                 AddError( "Invalid DR parameter<%s>.", name );
                 errors++;
@@ -484,7 +484,7 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             // Name
             input >> name;
-            if( ( id = GetTempVarId( name ) ) == 0 )
+            if( (id = GetTempVarId( name ) ) == 0 )
             {
                 AddError( "Invalid DR var name<%s>.", name );
                 errors++;
@@ -583,7 +583,7 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             else
             {
                 #ifdef USE_STLPORT
-                # if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+                # if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
                 char ch = *input.rdbuf()->_M_gptr();
                 # else
                 char ch = *input.str();
@@ -633,9 +633,9 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             #ifdef FONLINE_SERVER
             // Bind function
             # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
-            # define BIND_R_FUNC( params )                                                                                     \
-                { if( ( id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
-                  } else                                                                                                       \
+            # define BIND_R_FUNC( params )                                                                                    \
+                { if( (id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
+                  } else                                                                                                      \
                       id = Script::Bind( name, "void %s(Critter&,Critter@" params, false ); }
             switch( values_count )
             {

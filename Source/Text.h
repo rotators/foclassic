@@ -5,15 +5,15 @@
 #include <strstream>
 
 #define MAX_FOTEXT      UTF8_BUF_SIZE( 2048 )
-#define BIG_BUF_SIZE    ( 0x100000 )       // 1mb
+#define BIG_BUF_SIZE    (0x100000)         // 1mb
 
 namespace Str
 {
     void Copy( char* to, uint size, const char* from );
-    template< int Size >
+    template<int Size>
     inline void Copy( char(&to)[Size], const char* from ) { return Copy( to, Size, from ); }
     void        Append( char* to, uint size, const char* from );
-    template< int Size >
+    template<int Size>
     inline void Append( char(&to)[Size], const char* from ) { return Append( to, Size, from ); }
 
     char* Duplicate( const char* str );
@@ -78,14 +78,14 @@ namespace Str
 
     // Parse str
     const char* ParseLineDummy( const char* str );
-    template< typename Cont, class Func >
+    template<typename Cont, class Func>
     void ParseLine( const char* str, char divider, Cont& result, Func f )
     {
         result.clear();
         char buf[MAX_FOTEXT];
         for( uint buf_pos = 0; ; str++ )
         {
-            if( *str == divider || *str == 0 || buf_pos >= sizeof( buf ) - 1 )
+            if( *str == divider || *str == 0 || buf_pos >= sizeof(buf) - 1 )
             {
                 if( buf_pos )
                 {

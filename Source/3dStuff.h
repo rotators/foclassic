@@ -4,22 +4,22 @@
 #include "Common.h"
 #include "GraphicStructures.h"
 
-#define LAYERS3D_COUNT         ( 30 )
+#define LAYERS3D_COUNT         (30)
 
-#define ANIMATION_STAY         ( 0x01 )
-#define ANIMATION_ONE_TIME     ( 0x02 )
-#define ANIMATION_PERIOD( proc )    ( 0x04 | ( ( proc ) << 16 ) )
-#define ANIMATION_NO_SMOOTH    ( 0x08 )
-#define ANIMATION_INIT         ( 0x10 )
+#define ANIMATION_STAY         (0x01)
+#define ANIMATION_ONE_TIME     (0x02)
+#define ANIMATION_PERIOD( proc )    (0x04 | ( (proc) << 16 ) )
+#define ANIMATION_NO_SMOOTH    (0x08)
+#define ANIMATION_INIT         (0x10)
 
 class AnimController;
 class AnimSet;
 class Animation3d;
-typedef vector< Animation3d* >       Animation3dVec;
+typedef vector<Animation3d*>       Animation3dVec;
 class Animation3dEntity;
-typedef vector< Animation3dEntity* > Animation3dEntityVec;
+typedef vector<Animation3dEntity*> Animation3dEntityVec;
 class Animation3dXFile;
-typedef vector< Animation3dXFile* >  Animation3dXFileVec;
+typedef vector<Animation3dXFile*>  Animation3dXFileVec;
 
 struct AnimParams
 {
@@ -47,7 +47,7 @@ struct AnimParams
     int*            EffectInstSubset;
     uint            EffectInstCount;
 };
-typedef vector< AnimParams > AnimParamsVec;
+typedef vector<AnimParams> AnimParamsVec;
 
 struct MeshOptions
 {
@@ -59,7 +59,7 @@ struct MeshOptions
     Effect**  EffectSubsets;
     Effect**  DefaultEffectSubsets;
 };
-typedef vector< MeshOptions > MeshOptionsVec;
+typedef vector<MeshOptions> MeshOptionsVec;
 
 class Animation3d
 {

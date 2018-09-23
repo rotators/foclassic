@@ -54,10 +54,10 @@ Fl_Check_Button* GuiCBtnScriptDebug, * GuiCBtnLogging, * GuiCBtnLoggingTime,
 Fl_Text_Display* GuiLog, * GuiInfo;
 int              GUISizeMod = 0;
 
-# define GUI_SIZE1( x )                 ( (int)( x ) * 175 * ( 100 + GUISizeMod ) / 100 / 100 )
+# define GUI_SIZE1( x )                 ( (int)(x) * 175 * (100 + GUISizeMod) / 100 / 100 )
 # define GUI_SIZE2( x1, x2 )            GUI_SIZE1( x1 ), GUI_SIZE1( x2 )
 # define GUI_SIZE4( x1, x2, x3, x4 )    GUI_SIZE1( x1 ), GUI_SIZE1( x2 ), GUI_SIZE1( x3 ), GUI_SIZE1( x4 )
-# define GUI_LABEL_BUF_SIZE    ( 128 )
+# define GUI_LABEL_BUF_SIZE    (128)
 
 // Windows service
 # ifdef FO_WINDOWS
@@ -274,7 +274,7 @@ void GUIInit( IniParser& cfg )
     int wx = cfg.GetInt( "PositionX", 0 );
     int wy = cfg.GetInt( "PositionY", 0 );
     if( !wx && !wy )
-        wx = ( Fl::w() - GUI_SIZE1( 496 ) ) / 2, wy = ( Fl::h() - GUI_SIZE1( 412 ) ) / 2;
+        wx = (Fl::w() - GUI_SIZE1( 496 ) ) / 2, wy = (Fl::h() - GUI_SIZE1( 412 ) ) / 2;
     GuiWindow = new Fl_Window( wx, wy, GUI_SIZE2( 496, 412 ), "FOnline Server" );
     GuiWindow->labelfont( GUISetup.FontType );
     GuiWindow->labelsize( GUISetup.FontSize );
@@ -386,7 +386,7 @@ void GUICallback( Fl_Widget* widget, void* data )
         Timer::GetCurrentDateTime( dt );
         char             log_name[MAX_FOTEXT];
         char             log_name_dir[MAX_FOTEXT];
-        Fl_Text_Display* log = ( widget == GuiBtnSaveLog ? GuiLog : GuiInfo );
+        Fl_Text_Display* log = (widget == GuiBtnSaveLog ? GuiLog : GuiInfo);
         FileManager::GetFullPath( NULL, PT_SERVER_LOGS, log_name_dir );
         log->buffer()->savefile( Str::Format( log_name, "%sFOnlineServer_%s_%04u.%02u.%02u_%02u-%02u-%02u.log", log_name_dir,
                                               log == GuiInfo ? UpdateLogName.c_str() : "Log", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second ) );
@@ -561,7 +561,7 @@ void UpdateInfo()
     Label::Update( GuiLabelUptime, Str::Format( str, "Uptime: %2u:%2u:%2u", seconds / 60 / 60, seconds / 60 % 60, seconds % 60 ) );
     Label::Update( GuiLabelSend, Str::Format( str, "KBytes Send: %u", Server.Statistics.BytesSend / 1024 ) );
     Label::Update( GuiLabelRecv, Str::Format( str, "KBytes Recv: %u", Server.Statistics.BytesRecv / 1024 ) );
-    Label::Update( GuiLabelCompress, Str::Format( str, "Compress ratio: %g", (double)Server.Statistics.DataReal / ( Server.Statistics.DataCompressed ? Server.Statistics.DataCompressed : 1 ) ) );
+    Label::Update( GuiLabelCompress, Str::Format( str, "Compress ratio: %g", (double)Server.Statistics.DataReal / (Server.Statistics.DataCompressed ? Server.Statistics.DataCompressed : 1) ) );
 
     if( FOServer::UpdateIndex == -1 && FOServer::UpdateLastTick && FOServer::UpdateLastTick + 1000 < Timer::FastTick() )
     {
@@ -653,7 +653,7 @@ void CheckTextBoxSize( bool force )
             int  wlog = LogInitRect.W() + wdiff;
             int  hlog = hall * SplitProcent / 100;
             int  winfo = InfoInitRect.W() + wdiff;
-            int  hinfo = hall * ( 100 - SplitProcent ) / 100;
+            int  hinfo = hall * (100 - SplitProcent) / 100;
             int  yinfo = hlog - LogInitRect.H();
 
             GuiLog->position( LogInitRect.L, LogInitRect.T );
@@ -871,7 +871,7 @@ void SetFOServiceStatus( uint state )
 
     if( state == SERVICE_RUNNING )
         srv_status.dwControlsAccepted = SERVICE_ACCEPT_STOP;
-    if( !( state == SERVICE_RUNNING || state == SERVICE_STOPPED ) )
+    if( !(state == SERVICE_RUNNING || state == SERVICE_STOPPED) )
         srv_status.dwCheckPoint = ++check_point;
 
     SetServiceStatus( FOServiceStatusHandle, &srv_status );
@@ -999,7 +999,7 @@ void GameLoopThread( void* )
 /* Admin panel                                                          */
 /************************************************************************/
 
-#define MAX_SESSIONS    ( 10 )
+#define MAX_SESSIONS    (10)
 
 struct Session
 {
@@ -1010,7 +1010,7 @@ struct Session
     DateTime    StartWork;
     bool        Authorized;
 };
-typedef vector< Session* > SessionVec;
+typedef vector<Session*> SessionVec;
 
 void AdminWork( void* );
 void AdminManager( void* );
@@ -1059,12 +1059,12 @@ void AdminManager( void* port_ )
         return;
     }
     const int   opt = 1;
-    setsockopt( listen_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof( opt ) );
+    setsockopt( listen_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt) );
     sockaddr_in sin;
     sin.sin_family = AF_INET;
     sin.sin_port = htons( (ushort)(size_t)port_ );
     sin.sin_addr.s_addr = INADDR_ANY;
-    if( bind( listen_sock, (sockaddr*)&sin, sizeof( sin ) ) == SOCKET_ERROR )
+    if( bind( listen_sock, (sockaddr*)&sin, sizeof(sin) ) == SOCKET_ERROR )
     {
         WriteLog( "Can't bind listen socket for admin manager.\n" );
         closesocket( listen_sock );
@@ -1089,7 +1089,7 @@ void AdminManager( void* port_ )
         if( select( listen_sock + 1, &sock_set, NULL, NULL, &tv ) > 0 )
         {
             sockaddr_in from;
-            socklen_t   len = sizeof( from );
+            socklen_t   len = sizeof(from);
             SOCKET      sock = accept( listen_sock, (sockaddr*)&from, &len );
             if( sock != INVALID_SOCKET )
             {
@@ -1198,8 +1198,8 @@ void AdminWork( void* session_ )
     {
         // Get command
         char cmd[MAX_FOTEXT];
-        memzero( cmd, sizeof( cmd ) );
-        int  len = recv( s->Sock, cmd, sizeof( cmd ), 0 );
+        memzero( cmd, sizeof(cmd) );
+        int  len = recv( s->Sock, cmd, sizeof(cmd), 0 );
         if( len <= 0 || len == MAX_FOTEXT )
         {
             if( !len )

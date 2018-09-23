@@ -18,7 +18,7 @@ void ResourceManager::Refresh()
         StrVec file_names;
         FileManager::GetFolderFileNames( FileManager::GetPath( PT_DATA ), true, NULL, file_names );
         for( auto it = file_names.begin(), end = file_names.end(); it != end; ++it )
-            Str::AddNameHash( ( *it ).c_str() );
+            Str::AddNameHash( (*it).c_str() );
 
         // Splashes
         StrVec splashes;
@@ -38,13 +38,13 @@ void ResourceManager::Refresh()
         char name[MAX_FOPATH];
         for( auto it = sounds.begin(), end = sounds.end(); it != end; ++it )
         {
-            FileManager::ExtractFileName( ( *it ).c_str(), fname );
+            FileManager::ExtractFileName( (*it).c_str(), fname );
             Str::Copy( name, fname );
             Str::Upper( name );
             char* ext = (char*)FileManager::GetExtension( name );
             if( !ext )
                 continue;
-            *( --ext ) = 0;
+            *(--ext) = 0;
             if( name[0] )
                 soundNames.insert( PAIR( string( name ), string( fname ) ) );
         }
@@ -63,7 +63,7 @@ void ResourceManager::Refresh()
             StrVec file_names;
             pfile->GetFileNames( FileManager::GetPath( PT_DATA ), true, NULL, file_names );
             for( auto it = file_names.begin(), end = file_names.end(); it != end; ++it )
-                Str::AddNameHash( ( *it ).c_str() );
+                Str::AddNameHash( (*it).c_str() );
 
             // Splashes
             StrVec splashes;
@@ -83,13 +83,13 @@ void ResourceManager::Refresh()
             char name[MAX_FOPATH];
             for( auto it = sounds.begin(), end = sounds.end(); it != end; ++it )
             {
-                FileManager::ExtractFileName( ( *it ).c_str(), fname );
+                FileManager::ExtractFileName( (*it).c_str(), fname );
                 Str::Copy( name, fname );
                 Str::Upper( name );
                 char* ext = (char*)FileManager::GetExtension( name );
                 if( !ext )
                     continue;
-                *( --ext ) = 0;
+                *(--ext) = 0;
                 if( name[0] )
                     soundNames.insert( PAIR( string( name ), string( fname ) ) );
             }
@@ -113,7 +113,7 @@ void ResourceManager::FreeResources( int type )
         SprMngr.FreeSurfaces( RES_IFACE );
         for( auto it = loadedAnims.begin(); it != loadedAnims.end();)
         {
-            int res_type = ( *it ).second.ResType;
+            int res_type = (*it).second.ResType;
             if( res_type == RES_IFACE )
                 loadedAnims.erase( it++ );
             else
@@ -125,7 +125,7 @@ void ResourceManager::FreeResources( int type )
         SprMngr.FreeSurfaces( RES_IFACE_EXT );
         for( auto it = loadedAnims.begin(); it != loadedAnims.end();)
         {
-            int res_type = ( *it ).second.ResType;
+            int res_type = (*it).second.ResType;
             if( res_type == RES_IFACE_EXT )
                 loadedAnims.erase( it++ );
             else
@@ -135,7 +135,7 @@ void ResourceManager::FreeResources( int type )
     else if( type == RES_CRITTERS )
     {
         for( auto it = critterFrames.begin(), end = critterFrames.end(); it != end; ++it )
-            SAFEDEL( ( *it ).second );
+            SAFEDEL( (*it).second );
         critterFrames.clear();
         SprMngr.FreeSurfaces( RES_CRITTERS );
         SprMngr.ClearSpriteContours();
@@ -145,7 +145,7 @@ void ResourceManager::FreeResources( int type )
         SprMngr.FreeSurfaces( RES_ITEMS );
         for( auto it = loadedAnims.begin(); it != loadedAnims.end();)
         {
-            int res_type = ( *it ).second.ResType;
+            int res_type = (*it).second.ResType;
             if( res_type == RES_ITEMS )
                 loadedAnims.erase( it++ );
             else
@@ -157,7 +157,7 @@ void ResourceManager::FreeResources( int type )
         SprMngr.FreeSurfaces( RES_SCRIPT );
         for( auto it = loadedAnims.begin(); it != loadedAnims.end();)
         {
-            int res_type = ( *it ).second.ResType;
+            int res_type = (*it).second.ResType;
             if( res_type == RES_SCRIPT )
                 loadedAnims.erase( it++ );
             else
@@ -172,7 +172,7 @@ AnyFrames* ResourceManager::GetAnim( uint name_hash, int dir, int res_type )
     uint id = name_hash + dir;
     auto it = loadedAnims.find( id );
     if( it != loadedAnims.end() )
-        return ( *it ).second.Anim;
+        return (*it).second.Anim;
 
     // Load new animation
     const char* fname = Str::GetName( name_hash );
@@ -190,7 +190,7 @@ AnyFrames* ResourceManager::GetAnim( uint name_hash, int dir, int res_type )
 uint AnimMapId( uint crtype, uint anim1, uint anim2, int dir, bool is_fallout )
 {
     uint dw[5] = { crtype, anim1, anim2, (uint)dir, is_fallout ? uint( -1 ) : 1 };
-    return Crypt.Crc32( (uchar*)&dw[0], sizeof( dw ) );
+    return Crypt.Crc32( (uchar*)&dw[0], sizeof(dw) );
 }
 
 AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, int dir )
@@ -211,7 +211,7 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
     // Check already loaded
     auto it = critterFrames.find( id );
     if( it != critterFrames.end() )
-        return ( *it ).second;
+        return (*it).second;
 
     // Process loading
     uint       crtype_base = crtype, anim1_base = anim1, anim2_base = anim2;
@@ -234,8 +234,8 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
             while( Script::PrepareContext( MapperFunctions.CritterAnimation, _FUNC_, "Anim" ) )
             #endif
             {
-                #define ANIM_FLAG_FIRST_FRAME    ( 0x01 )
-                #define ANIM_FLAG_LAST_FRAME     ( 0x02 )
+                #define ANIM_FLAG_FIRST_FRAME    (0x01)
+                #define ANIM_FLAG_LAST_FRAME     (0x02)
 
                 uint pass = pass_base;
                 uint flags = 0;
@@ -279,9 +279,9 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
                                     }
 
                                     // Change size
-                                    uint  spr_id = ( first ? anim->Ind[0] : anim->Ind[anim->CntFrm - 1] );
-                                    short nx = ( first ? anim->NextX[0] : anim->NextX[anim->CntFrm - 1] );
-                                    short ny = ( first ? anim->NextY[0] : anim->NextY[anim->CntFrm - 1] );
+                                    uint  spr_id = (first ? anim->Ind[0] : anim->Ind[anim->CntFrm - 1]);
+                                    short nx = (first ? anim->NextX[0] : anim->NextX[anim->CntFrm - 1]);
+                                    short ny = (first ? anim->NextY[0] : anim->NextY[anim->CntFrm - 1]);
                                     delete[] anim->Ind;
                                     delete[] anim->NextX;
                                     delete[] anim->NextY;
@@ -296,7 +296,7 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
                             }
 
                             // Add offsets
-                            if( anim && ( ox || oy ) && false )
+                            if( anim && (ox || oy) && false )
                             {
                                 for( uint i = 0; i < anim->CntFrm; i++ )
                                 {
@@ -350,7 +350,7 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
             Script::SetArgAddress( &anim1 );
             Script::SetArgAddress( &anim2 );
             if( Script::RunPrepared() && Script::GetReturnedBool() &&
-                ( crtype_ != crtype || anim1 != anim1_ || anim2 != anim2_ ) )
+                (crtype_ != crtype || anim1 != anim1_ || anim2 != anim2_) )
                 continue;
         }
 
@@ -406,12 +406,12 @@ AnyFrames* ResourceManager::LoadFalloutAnim( uint crtype, uint anim1, uint anim2
                 anim_->Ind = new uint[anim_->CntFrm];
                 anim_->NextX = new short[anim_->CntFrm];
                 anim_->NextY = new short[anim_->CntFrm];
-                memcpy( anim_->Ind, anim->Ind, anim->CntFrm * sizeof( uint ) );
-                memcpy( anim_->NextX, anim->NextX, anim->CntFrm * sizeof( short ) );
-                memcpy( anim_->NextY, anim->NextY, anim->CntFrm * sizeof( short ) );
-                memcpy( anim_->Ind + anim->CntFrm, animex->Ind, animex->CntFrm * sizeof( uint ) );
-                memcpy( anim_->NextX + anim->CntFrm, animex->NextX, animex->CntFrm * sizeof( short ) );
-                memcpy( anim_->NextY + anim->CntFrm, animex->NextY, animex->CntFrm * sizeof( short ) );
+                memcpy( anim_->Ind, anim->Ind, anim->CntFrm * sizeof(uint) );
+                memcpy( anim_->NextX, anim->NextX, anim->CntFrm * sizeof(short) );
+                memcpy( anim_->NextY, anim->NextY, anim->CntFrm * sizeof(short) );
+                memcpy( anim_->Ind + anim->CntFrm, animex->Ind, animex->CntFrm * sizeof(uint) );
+                memcpy( anim_->NextX + anim->CntFrm, animex->NextX, animex->CntFrm * sizeof(short) );
+                memcpy( anim_->NextY + anim->CntFrm, animex->NextY, animex->CntFrm * sizeof(short) );
                 short ox = 0, oy = 0;
                 for( uint i = 0; i < anim->CntFrm; i++ )
                 {
@@ -427,16 +427,16 @@ AnyFrames* ResourceManager::LoadFalloutAnim( uint crtype, uint anim1, uint anim2
             if( anim )
             {
                 AnyFrames* anim_ = new AnyFrames();
-                anim_->CntFrm = ( !FLAG( flags, ANIM_FLAG_FIRST_FRAME | ANIM_FLAG_LAST_FRAME ) ? anim->CntFrm : 1 );
+                anim_->CntFrm = (!FLAG( flags, ANIM_FLAG_FIRST_FRAME | ANIM_FLAG_LAST_FRAME ) ? anim->CntFrm : 1);
                 anim_->Ticks = anim->Ticks;
                 anim_->Ind = new uint[anim_->CntFrm];
                 anim_->NextX = new short[anim_->CntFrm];
                 anim_->NextY = new short[anim_->CntFrm];
                 if( !FLAG( flags, ANIM_FLAG_FIRST_FRAME | ANIM_FLAG_LAST_FRAME ) )
                 {
-                    memcpy( anim_->Ind, anim->Ind, anim->CntFrm * sizeof( uint ) );
-                    memcpy( anim_->NextX, anim->NextX, anim->CntFrm * sizeof( short ) );
-                    memcpy( anim_->NextY, anim->NextY, anim->CntFrm * sizeof( short ) );
+                    memcpy( anim_->Ind, anim->Ind, anim->CntFrm * sizeof(uint) );
+                    memcpy( anim_->NextX, anim->NextX, anim->CntFrm * sizeof(short) );
+                    memcpy( anim_->NextY, anim->NextY, anim->CntFrm * sizeof(short) );
                 }
                 else
                 {
@@ -466,7 +466,7 @@ AnyFrames* ResourceManager::LoadFalloutAnimSpr( uint crtype, uint anim1, uint an
 {
     auto it = critterFrames.find( AnimMapId( crtype, anim1, anim2, dir, true ) );
     if( it != critterFrames.end() )
-        return ( *it ).second;
+        return (*it).second;
 
     // Load file
     static char frm_ind[] = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -541,61 +541,61 @@ AnyFrames* ResourceManager::LoadFalloutAnimSpr( uint crtype, uint anim1, uint an
         } while( 0 )
 // ////////////////////////////////////////////////////////////////////////
     // Fallout animations
-    #define ANIM1_FALLOUT_UNARMED               ( 1 )
-    #define ANIM1_FALLOUT_DEAD                  ( 2 )
-    #define ANIM1_FALLOUT_KNOCKOUT              ( 3 )
-    #define ANIM1_FALLOUT_KNIFE                 ( 4 )
-    #define ANIM1_FALLOUT_CLUB                  ( 5 )
-    #define ANIM1_FALLOUT_HAMMER                ( 6 )
-    #define ANIM1_FALLOUT_SPEAR                 ( 7 )
-    #define ANIM1_FALLOUT_PISTOL                ( 8 )
-    #define ANIM1_FALLOUT_UZI                   ( 9 )
-    #define ANIM1_FALLOUT_SHOOTGUN              ( 10 )
-    #define ANIM1_FALLOUT_RIFLE                 ( 11 )
-    #define ANIM1_FALLOUT_MINIGUN               ( 12 )
-    #define ANIM1_FALLOUT_ROCKET_LAUNCHER       ( 13 )
-    #define ANIM1_FALLOUT_AIM                   ( 14 )
-    #define ANIM2_FALLOUT_STAY                  ( 1 )
-    #define ANIM2_FALLOUT_WALK                  ( 2 )
-    #define ANIM2_FALLOUT_SHOW                  ( 3 )
-    #define ANIM2_FALLOUT_HIDE                  ( 4 )
-    #define ANIM2_FALLOUT_DODGE_WEAPON          ( 5 )
-    #define ANIM2_FALLOUT_THRUST                ( 6 )
-    #define ANIM2_FALLOUT_SWING                 ( 7 )
-    #define ANIM2_FALLOUT_PREPARE_WEAPON        ( 8 )
-    #define ANIM2_FALLOUT_TURNOFF_WEAPON        ( 9 )
-    #define ANIM2_FALLOUT_SHOOT                 ( 10 )
-    #define ANIM2_FALLOUT_BURST                 ( 11 )
-    #define ANIM2_FALLOUT_FLAME                 ( 12 )
-    #define ANIM2_FALLOUT_THROW_WEAPON          ( 13 )
-    #define ANIM2_FALLOUT_DAMAGE_FRONT          ( 15 )
-    #define ANIM2_FALLOUT_DAMAGE_BACK           ( 16 )
-    #define ANIM2_FALLOUT_KNOCK_FRONT           ( 1 )  // Only with ANIM1_FALLOUT_DEAD
-    #define ANIM2_FALLOUT_KNOCK_BACK            ( 2 )
-    #define ANIM2_FALLOUT_STANDUP_BACK          ( 8 )  // Only with ANIM1_FALLOUT_KNOCKOUT
-    #define ANIM2_FALLOUT_STANDUP_FRONT         ( 10 )
-    #define ANIM2_FALLOUT_PICKUP                ( 11 ) // Only with ANIM1_FALLOUT_UNARMED
-    #define ANIM2_FALLOUT_USE                   ( 12 )
-    #define ANIM2_FALLOUT_DODGE_EMPTY           ( 14 )
-    #define ANIM2_FALLOUT_PUNCH                 ( 17 )
-    #define ANIM2_FALLOUT_KICK                  ( 18 )
-    #define ANIM2_FALLOUT_THROW_EMPTY           ( 19 )
-    #define ANIM2_FALLOUT_RUN                   ( 20 )
-    #define ANIM2_FALLOUT_DEAD_FRONT            ( 1 ) // Only with ANIM1_FALLOUT_DEAD
-    #define ANIM2_FALLOUT_DEAD_BACK             ( 2 )
-    #define ANIM2_FALLOUT_DEAD_BLOODY_SINGLE    ( 4 )
-    #define ANIM2_FALLOUT_DEAD_BURN             ( 5 )
-    #define ANIM2_FALLOUT_DEAD_BLOODY_BURST     ( 6 )
-    #define ANIM2_FALLOUT_DEAD_BURST            ( 7 )
-    #define ANIM2_FALLOUT_DEAD_PULSE            ( 8 )
-    #define ANIM2_FALLOUT_DEAD_LASER            ( 9 )
-    #define ANIM2_FALLOUT_DEAD_BURN2            ( 10 )
-    #define ANIM2_FALLOUT_DEAD_PULSE_DUST       ( 11 )
-    #define ANIM2_FALLOUT_DEAD_EXPLODE          ( 12 )
-    #define ANIM2_FALLOUT_DEAD_FUSED            ( 13 )
-    #define ANIM2_FALLOUT_DEAD_BURN_RUN         ( 14 )
-    #define ANIM2_FALLOUT_DEAD_FRONT2           ( 15 )
-    #define ANIM2_FALLOUT_DEAD_BACK2            ( 16 )
+    #define ANIM1_FALLOUT_UNARMED               (1)
+    #define ANIM1_FALLOUT_DEAD                  (2)
+    #define ANIM1_FALLOUT_KNOCKOUT              (3)
+    #define ANIM1_FALLOUT_KNIFE                 (4)
+    #define ANIM1_FALLOUT_CLUB                  (5)
+    #define ANIM1_FALLOUT_HAMMER                (6)
+    #define ANIM1_FALLOUT_SPEAR                 (7)
+    #define ANIM1_FALLOUT_PISTOL                (8)
+    #define ANIM1_FALLOUT_UZI                   (9)
+    #define ANIM1_FALLOUT_SHOOTGUN              (10)
+    #define ANIM1_FALLOUT_RIFLE                 (11)
+    #define ANIM1_FALLOUT_MINIGUN               (12)
+    #define ANIM1_FALLOUT_ROCKET_LAUNCHER       (13)
+    #define ANIM1_FALLOUT_AIM                   (14)
+    #define ANIM2_FALLOUT_STAY                  (1)
+    #define ANIM2_FALLOUT_WALK                  (2)
+    #define ANIM2_FALLOUT_SHOW                  (3)
+    #define ANIM2_FALLOUT_HIDE                  (4)
+    #define ANIM2_FALLOUT_DODGE_WEAPON          (5)
+    #define ANIM2_FALLOUT_THRUST                (6)
+    #define ANIM2_FALLOUT_SWING                 (7)
+    #define ANIM2_FALLOUT_PREPARE_WEAPON        (8)
+    #define ANIM2_FALLOUT_TURNOFF_WEAPON        (9)
+    #define ANIM2_FALLOUT_SHOOT                 (10)
+    #define ANIM2_FALLOUT_BURST                 (11)
+    #define ANIM2_FALLOUT_FLAME                 (12)
+    #define ANIM2_FALLOUT_THROW_WEAPON          (13)
+    #define ANIM2_FALLOUT_DAMAGE_FRONT          (15)
+    #define ANIM2_FALLOUT_DAMAGE_BACK           (16)
+    #define ANIM2_FALLOUT_KNOCK_FRONT           (1)    // Only with ANIM1_FALLOUT_DEAD
+    #define ANIM2_FALLOUT_KNOCK_BACK            (2)
+    #define ANIM2_FALLOUT_STANDUP_BACK          (8)    // Only with ANIM1_FALLOUT_KNOCKOUT
+    #define ANIM2_FALLOUT_STANDUP_FRONT         (10)
+    #define ANIM2_FALLOUT_PICKUP                (11)   // Only with ANIM1_FALLOUT_UNARMED
+    #define ANIM2_FALLOUT_USE                   (12)
+    #define ANIM2_FALLOUT_DODGE_EMPTY           (14)
+    #define ANIM2_FALLOUT_PUNCH                 (17)
+    #define ANIM2_FALLOUT_KICK                  (18)
+    #define ANIM2_FALLOUT_THROW_EMPTY           (19)
+    #define ANIM2_FALLOUT_RUN                   (20)
+    #define ANIM2_FALLOUT_DEAD_FRONT            (1)   // Only with ANIM1_FALLOUT_DEAD
+    #define ANIM2_FALLOUT_DEAD_BACK             (2)
+    #define ANIM2_FALLOUT_DEAD_BLOODY_SINGLE    (4)
+    #define ANIM2_FALLOUT_DEAD_BURN             (5)
+    #define ANIM2_FALLOUT_DEAD_BLOODY_BURST     (6)
+    #define ANIM2_FALLOUT_DEAD_BURST            (7)
+    #define ANIM2_FALLOUT_DEAD_PULSE            (8)
+    #define ANIM2_FALLOUT_DEAD_LASER            (9)
+    #define ANIM2_FALLOUT_DEAD_BURN2            (10)
+    #define ANIM2_FALLOUT_DEAD_PULSE_DUST       (11)
+    #define ANIM2_FALLOUT_DEAD_EXPLODE          (12)
+    #define ANIM2_FALLOUT_DEAD_FUSED            (13)
+    #define ANIM2_FALLOUT_DEAD_BURN_RUN         (14)
+    #define ANIM2_FALLOUT_DEAD_FRONT2           (15)
+    #define ANIM2_FALLOUT_DEAD_BACK2            (16)
 // ////////////////////////////////////////////////////////////////////////
 
     if( anim1 == ANIM1_FALLOUT_AIM )
@@ -711,12 +711,12 @@ uint ResourceManager::GetCritSprId( uint crtype, uint anim1, uint anim2, int dir
     if( CritType::GetAnimType( crtype ) != ANIM_TYPE_3D )
     {
         AnyFrames* anim = GetCrit2dAnim( crtype, anim1, anim2, dir );
-        spr_id = ( anim ? anim->GetSprId( 0 ) : 0 );
+        spr_id = (anim ? anim->GetSprId( 0 ) : 0);
     }
     else
     {
         Animation3d* anim = GetCrit3dAnim( crtype, anim1, anim2, dir, layers3d );
-        spr_id = ( anim ? anim->GetSprId() : 0 );
+        spr_id = (anim ? anim->GetSprId() : 0);
     }
     return spr_id;
 }

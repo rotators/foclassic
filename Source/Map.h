@@ -7,25 +7,25 @@
 #include "Critter.h"
 
 // Script events
-#define MAP_EVENT_FINISH                ( 0 )
-#define MAP_EVENT_LOOP_0                ( 1 )
-#define MAP_EVENT_LOOP_1                ( 2 )
-#define MAP_EVENT_LOOP_2                ( 3 )
-#define MAP_EVENT_LOOP_3                ( 4 )
-#define MAP_EVENT_LOOP_4                ( 5 )
-#define MAP_EVENT_IN_CRITTER            ( 6 )
-#define MAP_EVENT_OUT_CRITTER           ( 7 )
-#define MAP_EVENT_CRITTER_DEAD          ( 8 )
-#define MAP_EVENT_TURN_BASED_BEGIN      ( 9 )
-#define MAP_EVENT_TURN_BASED_END        ( 10 )
-#define MAP_EVENT_TURN_BASED_PROCESS    ( 11 )
-#define MAP_EVENT_MAX                   ( 12 )
+#define MAP_EVENT_FINISH                (0)
+#define MAP_EVENT_LOOP_0                (1)
+#define MAP_EVENT_LOOP_1                (2)
+#define MAP_EVENT_LOOP_2                (3)
+#define MAP_EVENT_LOOP_3                (4)
+#define MAP_EVENT_LOOP_4                (5)
+#define MAP_EVENT_IN_CRITTER            (6)
+#define MAP_EVENT_OUT_CRITTER           (7)
+#define MAP_EVENT_CRITTER_DEAD          (8)
+#define MAP_EVENT_TURN_BASED_BEGIN      (9)
+#define MAP_EVENT_TURN_BASED_END        (10)
+#define MAP_EVENT_TURN_BASED_PROCESS    (11)
+#define MAP_EVENT_MAX                   (12)
 extern const char* MapEventFuncName[MAP_EVENT_MAX];
 
 // Loop times
-#define MAP_LOOP_FUNC_MAX               ( 5 )
-#define MAP_LOOP_DEFAULT_TICK           ( 60 * 60000 )
-#define MAP_MAX_DATA                    ( 100 )
+#define MAP_LOOP_FUNC_MAX               (5)
+#define MAP_LOOP_DEFAULT_TICK           (60 * 60000)
+#define MAP_MAX_DATA                    (100)
 
 class Map;
 class Location;
@@ -238,8 +238,8 @@ public:
         if( RefCounter <= 0 ) delete this;
     }
 };
-typedef map< uint, Map* > MapMap;
-typedef vector< Map* >    MapVec;
+typedef map<uint, Map*> MapMap;
+typedef vector<Map*>    MapVec;
 
 class ProtoLocation
 {
@@ -261,12 +261,12 @@ public:
 
     ProtoLocation() : IsInit( false ) {};
 };
-typedef vector< ProtoLocation > ProtoLocVec;
+typedef vector<ProtoLocation> ProtoLocVec;
 
 // Script events
-#define LOCATION_EVENT_FINISH    ( 0 )
-#define LOCATION_EVENT_ENTER     ( 1 )
-#define LOCATION_EVENT_MAX       ( 2 )
+#define LOCATION_EVENT_FINISH    (0)
+#define LOCATION_EVENT_ENTER     (1)
+#define LOCATION_EVENT_MAX       (2)
 extern const char* LocationEventFuncName[LOCATION_EVENT_MAX];
 
 class Location
@@ -300,7 +300,7 @@ public:
     bool       Init( ProtoLocation* proto, ushort wx, ushort wy );
     void       Clear( bool full );
     void       Update();
-    bool       IsVisible()       { return Data.Visible || ( Data.GeckVisible && GeckCount > 0 ); }
+    bool       IsVisible()       { return Data.Visible || (Data.GeckVisible && GeckCount > 0); }
     uint       GetId()           { return Data.LocId; }
     void       SetId( uint _id ) { Data.LocId = _id; }
     ushort     GetPid()          { return Data.LocPid; }
@@ -337,9 +337,9 @@ public:
         RefCounter--;
         if( RefCounter <= 0 ) delete this;
     }
-    Location() : RefCounter( 1 ), Proto( NULL ), IsNotValid( false ) { memzero( (void*)&Data, sizeof( Data ) ); }
+    Location() : RefCounter( 1 ), Proto( NULL ), IsNotValid( false ) { memzero( (void*)&Data, sizeof(Data) ); }
 };
-typedef map< uint, Location* > LocMap;
-typedef vector< Location* >    LocVec;
+typedef map<uint, Location*> LocMap;
+typedef vector<Location*>    LocVec;
 
 #endif // __MAP__

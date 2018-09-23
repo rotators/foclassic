@@ -64,7 +64,7 @@ bool FOServer::TransferAllItems()
     CrMap critters = CrMngr.GetCrittersNoLock();
     for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
     {
-        Critter* cr = ( *it ).second;
+        Critter* cr = (*it).second;
 
         if( !cr->SetDefaultItems( ItemMngr.GetProtoItem( ITEM_DEF_SLOT ), ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) ) )
         {
@@ -163,7 +163,7 @@ bool FOServer::TransferAllItems()
     // Process visible for all npc
     for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
     {
-        Critter* cr = ( *it ).second;
+        Critter* cr = (*it).second;
         cr->ProcessVisibleItems();
     }
 

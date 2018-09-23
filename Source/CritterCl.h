@@ -172,7 +172,7 @@ public:
     uchar       GetUse()      { return ItemSlotMain->Data.Mode & 0xF; }
     uchar       GetFullRate() { return ItemSlotMain->Data.Mode; }
     bool        NextRateItem( bool prev );
-    uchar       GetAim() { return ( ItemSlotMain->Data.Mode >> 4 ) & 0xF; }
+    uchar       GetAim() { return (ItemSlotMain->Data.Mode >> 4) & 0xF; }
     bool        IsAim()  { return GetAim() > 0; }
     void        SetAim( uchar hit_location );
     uint        GetUseApCost( Item* item, uchar rate );
@@ -248,7 +248,7 @@ private:
         CritterAnim( AnyFrames* anim, uint tick, int beg_frm, int end_frm, bool move_text, int dir_offs, uint ind_crtype, uint ind_anim1, uint ind_anim2, Item* item ) : Anim( anim ), AnimTick( tick ), BeginFrm( beg_frm ), EndFrm( end_frm ), MoveText( move_text ), DirOffs( dir_offs ),
             IndCrType( ind_crtype ), IndAnim1( ind_anim1 ), IndAnim2( ind_anim2 ), ActiveItem( item ) {}
     };
-    typedef vector< CritterAnim > CritterAnimVec;
+    typedef vector<CritterAnim> CritterAnimVec;
 
     CritterAnimVec animSequence;
     CritterAnim    stayAnim;
@@ -325,7 +325,7 @@ private:
 
     // Ap cost
 public:
-    int GetApCostCritterMove( bool is_run ) { return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * ( IsDmgTwoLeg() ? 4 : ( IsDmgLeg() ? 2 : 1 ) ) : ( GetParam( TO_BATTLE ) ? ( is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk ) : 0 ); }
+    int GetApCostCritterMove( bool is_run ) { return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * (IsDmgTwoLeg() ? 4 : (IsDmgLeg() ? 2 : 1) ) : (GetParam( TO_BATTLE ) ? (is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk) : 0); }
     int GetApCostMoveItemContainer()        { return IsTurnBased() ? GameOpt.TbApCostMoveItemContainer : GameOpt.RtApCostMoveItemContainer; }
     int GetApCostMoveItemInventory()
     {
@@ -350,8 +350,8 @@ public:
     }
 };
 
-typedef map< uint, CritterCl*, less< uint > > CritMap;
-typedef vector< CritterCl* >                  CritVec;
-typedef CritterCl*                            CritterClPtr;
+typedef map<uint, CritterCl*, less<uint>> CritMap;
+typedef vector<CritterCl*>                CritVec;
+typedef CritterCl*                        CritterClPtr;
 
 #endif // __CRITTER_CL__

@@ -41,26 +41,26 @@ LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx
 
     if( is_square )
     {
-        dir = atan2( (float)( ty - hy ), (float)( tx - hx ) ) + angle;
+        dir = atan2( (float)(ty - hy), (float)(tx - hx) ) + angle;
         dx = cos( dir );
         dy = sin( dir );
         if( fabs( dx ) > fabs( dy ) )
         {
             dy /= fabs( dx );
-            dx = ( dx > 0 ? 1.0f : -1.0f );
+            dx = (dx > 0 ? 1.0f : -1.0f);
         }
         else
         {
             dx /= fabs( dy );
-            dy = ( dy > 0 ? 1.0f : -1.0f );
+            dy = (dy > 0 ? 1.0f : -1.0f);
         }
         x1 = (float)hx + 0.5f;
         y1 = (float)hy + 0.5f;
     }
     else
     {
-        float nx = 3.0f * ( float(tx) - float(hx) );
-        float ny = ( float(ty) - float(hy) ) * SQRT3T2_FLOAT - ( float(tx & 1) - float(hx & 1) ) * SQRT3_FLOAT;
+        float nx = 3.0f * (float(tx) - float(hx) );
+        float ny = (float(ty) - float(hy) ) * SQRT3T2_FLOAT - (float(tx & 1) - float(hx & 1) ) * SQRT3_FLOAT;
         this->dir = 180.0f + RAD2DEG * atan2f( ny, nx );
         if( angle != 0.0f )
         {
@@ -100,9 +100,9 @@ LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx
         }
 
         x1 = 3.0f * float(hx) + BIAS_FLOAT;
-        y1 = SQRT3T2_FLOAT * float(hy) - SQRT3_FLOAT * ( float(hx & 1) ) + BIAS_FLOAT;
+        y1 = SQRT3T2_FLOAT * float(hy) - SQRT3_FLOAT * (float(hx & 1) ) + BIAS_FLOAT;
         x2 = 3.0f * float(tx) + BIAS_FLOAT + BIAS_FLOAT;
-        y2 = SQRT3T2_FLOAT * float(ty) - SQRT3_FLOAT * ( float(tx & 1) ) + BIAS_FLOAT;
+        y2 = SQRT3T2_FLOAT * float(ty) - SQRT3_FLOAT * (float(tx & 1) ) + BIAS_FLOAT;
         if( angle != 0.0f )
         {
             x2 -= x1;
@@ -125,10 +125,10 @@ uchar LineTracer::GetNextHex( ushort& cx, ushort& cy )
     ushort t2y = cy;
     MoveHexByDir( t1x, t1y, dir1, maxHx, maxHy );
     MoveHexByDir( t2x, t2y, dir2, maxHx, maxHy );
-    float dist1 = dx * ( y1 - ( SQRT3T2_FLOAT * float(t1y) - ( float(t1x & 1) ) * SQRT3_FLOAT ) ) - dy * ( x1 - 3 * float(t1x) );
-    float dist2 = dx * ( y1 - ( SQRT3T2_FLOAT * float(t2y) - ( float(t2x & 1) ) * SQRT3_FLOAT ) ) - dy * ( x1 - 3 * float(t2x) );
-    dist1 = ( dist1 > 0 ? dist1 : -dist1 );
-    dist2 = ( dist2 > 0 ? dist2 : -dist2 );
+    float dist1 = dx * (y1 - (SQRT3T2_FLOAT * float(t1y) - (float(t1x & 1) ) * SQRT3_FLOAT) ) - dy * (x1 - 3 * float(t1x) );
+    float dist2 = dx * (y1 - (SQRT3T2_FLOAT * float(t2y) - (float(t2x & 1) ) * SQRT3_FLOAT) ) - dy * (x1 - 3 * float(t2x) );
+    dist1 = (dist1 > 0 ? dist1 : -dist1);
+    dist2 = (dist2 > 0 ? dist2 : -dist2);
     if( dist1 <= dist2 ) // Left hand biased
     {
         cx = t1x;

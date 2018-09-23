@@ -5,14 +5,14 @@
 #include "Assimp/aiTypes.h"
 #include "Assimp/aiScene.h"
 
-typedef aiMatrix4x4          Matrix;
-typedef aiVector3D           Vector;
-typedef aiQuaternion         Quaternion;
-typedef aiColor4D            Color;
-typedef vector< Vector >     VectorVec;
-typedef vector< Quaternion > QuaternionVec;
-typedef vector< Matrix >     MatrixVec;
-typedef vector< Matrix* >    MatrixPtrVec;
+typedef aiMatrix4x4        Matrix;
+typedef aiVector3D         Vector;
+typedef aiQuaternion       Quaternion;
+typedef aiColor4D          Color;
+typedef vector<Vector>     VectorVec;
+typedef vector<Quaternion> QuaternionVec;
+typedef vector<Matrix>     MatrixVec;
+typedef vector<Matrix*>    MatrixPtrVec;
 
 #ifdef FO_D3D
 # define MATRIX_TRANSPOSE( m )    m.Transpose()
@@ -177,10 +177,10 @@ struct Effect
     static Effect* Skinned3dShadow, * Skinned3dShadowDefault;
 };
 #ifdef FO_D3D
-# define IS_EFFECT_VALUE( pos )                 ( ( pos ) != NULL )
+# define IS_EFFECT_VALUE( pos )                 ( (pos) != NULL )
 # define SET_EFFECT_VALUE( eff, pos, value )    eff->DXInstance->SetFloat( pos, value )
 #else
-# define IS_EFFECT_VALUE( pos )                 ( ( pos ) != -1 )
+# define IS_EFFECT_VALUE( pos )                 ( (pos) != -1 )
 # define SET_EFFECT_VALUE( eff, pos, value )    GL( glUniform1f( pos, value ) )
 #endif
 
@@ -204,7 +204,7 @@ struct MeshContainer
     uint            NumPaletteEntries;
     uint            NumInfluences;
 };
-typedef vector< MeshContainer* > MeshContainerVec;
+typedef vector<MeshContainer*> MeshContainerVec;
 
 struct Frame
 {
@@ -232,8 +232,8 @@ struct Frame
         return frame;
     }
 };
-typedef vector< Frame* > FrameVec;
-typedef ID3DXMesh        MeshSubset;
+typedef vector<Frame*> FrameVec;
+typedef ID3DXMesh      MeshSubset;
 #else
 struct Vertex3D
 {
@@ -250,9 +250,9 @@ struct Vertex3D
     float  BlendIndices[4];
     float  Padding[1];
 };
-static_assert( sizeof( Vertex3D ) == 128, "Wrong Vertex3D size." );
-typedef vector< Vertex3D >    Vertex3DVec;
-typedef vector< Vertex3DVec > Vertex3DVecVec;
+static_assert( sizeof(Vertex3D) == 128, "Wrong Vertex3D size." );
+typedef vector<Vertex3D>    Vertex3DVec;
+typedef vector<Vertex3DVec> Vertex3DVecVec;
 
 struct MeshSubset
 {
@@ -272,10 +272,10 @@ struct MeshSubset
     EffectInstance DrawEffect;
     GLuint         VAO, VBO, IBO;
 };
-typedef vector< MeshSubset > MeshSubsetVec;
+typedef vector<MeshSubset> MeshSubsetVec;
 
 struct Frame;
-typedef vector< Frame* >     FrameVec;
+typedef vector<Frame*>     FrameVec;
 struct Frame
 {
     string        Name;
@@ -305,7 +305,7 @@ struct Frame
 };
 #endif
 
-typedef vector< Texture* > TextureVec;
-typedef vector< Effect* >  EffectVec;
+typedef vector<Texture*> TextureVec;
+typedef vector<Effect*>  EffectVec;
 
 #endif // __GRAPHIC_STRUCTURES__

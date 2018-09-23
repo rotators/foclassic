@@ -13,7 +13,7 @@ CryptManager::CryptManager()
     for( i = 0; i < 0x100; i++ )
     {
         for( r = i, j = 0x8; j; j-- )
-            r = ( ( r & 1 ) ? ( r >> 1 ) ^ CRC_POLY : r >> 1 );
+            r = ( (r & 1) ? (r >> 1) ^ CRC_POLY : r >> 1 );
         crcTable[i] = r;
     }
 }
@@ -66,11 +66,11 @@ void CryptManager::TextXOR( char* data, uint len, char* xor_key, uint xor_len )
         if( k >= xor_len )
             k = 0;
 
-        cur_char = ( data[i] - ( i + 5 ) * ( i * 5 ) ) ^ xor_key[k];
+        cur_char = (data[i] - (i + 5) * (i * 5) ) ^ xor_key[k];
 
-        #define TRUECHAR( a )                    \
-            ( ( ( a ) >= 32 && ( a ) <= 126 ) || \
-              ( ( a ) >= -64 && ( a ) <= -1 ) )
+        #define TRUECHAR( a )                \
+            ( ( (a) >= 32 && (a) <= 126 ) || \
+              ( (a) >= -64 && (a) <= -1 ) )
 
         //	WriteLog("%c",cur_char);
 
@@ -84,8 +84,8 @@ void CryptManager::DecryptPassword( char* data, uint len, uint key )
 {
     for( uint i = 10; i < len + 10; i++ )
         Crypt.XOR( &data[i - 10], 1, (char*)&i, 1 );
-    XOR( data, len, (char*)&key, sizeof( key ) );
-    for( uint i = 0; i < ( len - 1 ) / 2; i++ )
+    XOR( data, len, (char*)&key, sizeof(key) );
+    for( uint i = 0; i < (len - 1) / 2; i++ )
         std::swap( data[i], data[len - 1 - i] );
     uint slen = data[len - 1];
     for( uint i = slen; i < len; i++ )
@@ -101,21 +101,21 @@ char* ConvertUTF8ToCP1251( const char* str, uchar* buf, uint buf_len, bool to_lo
         uint length;
         uint ch = Str::DecodeUTF8( str, &length );
         if( ch >= 1072 && 1072 <= 1103 )
-            buf[i] = 224 + ( ch - 1072 );
+            buf[i] = 224 + (ch - 1072);
         else if( ch >= 1040 && 1072 <= 1071 )
-            buf[i] = ( to_lower ? 224 : 192 ) + ( ch - 1040 );
+            buf[i] = (to_lower ? 224 : 192) + (ch - 1040);
         else if( ch == 1105 )
             buf[i] = 184;
         else if( ch == 1025 )
-            buf[i] = ( to_lower ? 184 : 168 );
+            buf[i] = (to_lower ? 184 : 168);
         else if( length >= 4 )
-            buf[i] = *str ^ *( str + 1 ) ^ *( str + 2 ) ^ *( str + 3 );
+            buf[i] = *str ^ *(str + 1) ^ *(str + 2) ^ *(str + 3);
         else if( length == 3 )
-            buf[i] = *str ^ *( str + 1 ) ^ *( str + 2 );
+            buf[i] = *str ^ *(str + 1) ^ *(str + 2);
         else if( length == 2 )
-            buf[i] = *str ^ *( str + 1 );
+            buf[i] = *str ^ *(str + 1);
         else
-            buf[i] = ( to_lower ? tolower( *str ) : *str );
+            buf[i] = (to_lower ? tolower( *str ) : *str);
         if( !buf[i] )
             buf[i] = 0xAA;
         str += length;
@@ -127,9 +127,9 @@ void CryptManager::ClientPassHash( const char* name, const char* pass, char* pas
 {
     // Convert utf8 to cp1251, for backward compatability with older client saves
     uchar name_[MAX_NAME + 1];
-    name = ConvertUTF8ToCP1251( name, name_, sizeof( name_ ), true );
+    name = ConvertUTF8ToCP1251( name, name_, sizeof(name_), true );
     uchar pass_[MAX_NAME + 1];
-    pass = ConvertUTF8ToCP1251( pass, pass_, sizeof( pass_ ), false );
+    pass = ConvertUTF8ToCP1251( pass, pass_, sizeof(pass_), false );
 
     // Calculate hash
     char* bld = new char[MAX_NAME + 1];
@@ -152,14 +152,14 @@ void CryptManager::ClientPassHash( const char* name, const char* pass, char* pas
 
 uchar* CryptManager::Compress( const uchar* data, uint& data_len )
 {
-    uLongf              buf_len = data_len * 110 / 100 + 12;
-    AutoPtrArr< uchar > buf( new uchar[buf_len] );
+    uLongf            buf_len = data_len * 110 / 100 + 12;
+    AutoPtrArr<uchar> buf( new uchar[buf_len] );
     if( !buf.IsValid() )
         return NULL;
 
     if( compress( buf.Get(), &buf_len, data, data_len ) != Z_OK )
         return NULL;
-    XOR( (char*)buf.Get(), buf_len, (char*)&crcTable[1], sizeof( crcTable ) - 4 );
+    XOR( (char*)buf.Get(), buf_len, (char*)&crcTable[1], sizeof(crcTable) - 4 );
     XOR( (char*)buf.Get(), 4, (char*)buf.Get() + 4, 4 );
 
     data_len = buf_len;
@@ -175,14 +175,14 @@ uchar* CryptManager::Uncompress( const uchar* data, uint& data_len, uint mul_app
         return NULL;
     }
 
-    AutoPtrArr< uchar > buf( new uchar[buf_len] );
+    AutoPtrArr<uchar> buf( new uchar[buf_len] );
     if( !buf.IsValid() )
     {
         WriteLog( "Unpack - Bad alloc, size<%u>.\n", buf_len );
         return NULL;
     }
 
-    AutoPtrArr< uchar > data_( new uchar[data_len] );
+    AutoPtrArr<uchar> data_( new uchar[data_len] );
     if( !data_.IsValid() )
     {
         WriteLog( "Unpack - Bad alloc, size<%u>.\n", data_len );
@@ -193,7 +193,7 @@ uchar* CryptManager::Uncompress( const uchar* data, uint& data_len, uint mul_app
     if( *(ushort*)data_.Get() != 0x9C78 )
     {
         XOR( (char*)data_.Get(), 4, (char*)data_.Get() + 4, 4 );
-        XOR( (char*)data_.Get(), data_len, (char*)&crcTable[1], sizeof( crcTable ) - 4 );
+        XOR( (char*)data_.Get(), data_len, (char*)&crcTable[1], sizeof(crcTable) - 4 );
     }
 
     if( *(ushort*)data_.Get() != 0x9C78 )
@@ -253,9 +253,9 @@ uchar* CryptManager::Uncompress( const uchar* data, uint& data_len, uint mul_app
         if(buf) delete[] buf;
    }*/
 
-#define MAX_CACHE_DESCRIPTORS    ( 10000 )
-#define CACHE_DATA_VALID         ( 0x08 )
-#define CACHE_SIZE_VALID         ( 0x10 )
+#define MAX_CACHE_DESCRIPTORS    (10000)
+#define CACHE_DATA_VALID         (0x08)
+#define CACHE_SIZE_VALID         (0x10)
 
 struct CacheDescriptor
 {
@@ -293,7 +293,7 @@ bool CryptManager::CreateCacheTable( const char* cache_fname )
     if( !f )
         return false;
 
-    for( uint i = 0; i < sizeof( CacheTable ); i++ )
+    for( uint i = 0; i < sizeof(CacheTable); i++ )
         ( (uchar*)&CacheTable[0] )[i] = Random( 0, 255 );
     for( uint i = 0; i < MAX_CACHE_DESCRIPTORS; i++ )
     {
@@ -302,8 +302,8 @@ bool CryptManager::CreateCacheTable( const char* cache_fname )
         UNSETFLAG( desc.Flags, CACHE_SIZE_VALID );
         desc.TableSize = MAX_CACHE_DESCRIPTORS;
         CacheDescriptor desc_ = desc;
-        XOR( (char*)&desc_, sizeof( CacheDescriptor ) - 24, (char*)&desc_.XorKey[0], 20 );
-        fwrite( (void*)&desc_, sizeof( uchar ), sizeof( CacheDescriptor ), f );
+        XOR( (char*)&desc_, sizeof(CacheDescriptor) - 24, (char*)&desc_.XorKey[0], 20 );
+        fwrite( (void*)&desc_, sizeof(uchar), sizeof(CacheDescriptor), f );
     }
 
     fclose( f );
@@ -339,8 +339,8 @@ bool CryptManager::SetCacheTable( const char* cache_fname )
             uchar* buf = new uchar[len];
             if( !buf )
                 return false;
-            fread( buf, sizeof( uchar ), len, fr );
-            fwrite( buf, sizeof( uchar ), len, fw );
+            fread( buf, sizeof(uchar), len, fr );
+            fwrite( buf, sizeof(uchar), len, fw );
             delete[] buf;
             fclose( fr );
             fclose( fw );
@@ -356,19 +356,19 @@ bool CryptManager::SetCacheTable( const char* cache_fname )
     uint len = ftell( f );
     fseek( f, 0, SEEK_SET );
 
-    if( len < sizeof( CacheTable ) )
+    if( len < sizeof(CacheTable) )
     {
         fclose( f );
         return CreateCacheTable( cache_fname );
     }
 
-    fread( (void*)&CacheTable[0], sizeof( uchar ), sizeof( CacheTable ), f );
+    fread( (void*)&CacheTable[0], sizeof(uchar), sizeof(CacheTable), f );
     fclose( f );
     CacheTableName = cache_fname;
     for( int i = 0; i < MAX_CACHE_DESCRIPTORS; i++ )
     {
         CacheDescriptor& desc = CacheTable[i];
-        XOR( (char*)&desc, sizeof( CacheDescriptor ) - 24, (char*)&desc.XorKey[0], 20 );
+        XOR( (char*)&desc, sizeof(CacheDescriptor) - 24, (char*)&desc.XorKey[0], 20 );
         if( desc.TableSize != MAX_CACHE_DESCRIPTORS )
             return CreateCacheTable( cache_fname );
     }
@@ -405,9 +405,9 @@ void CryptManager::SetCache( const char* data_name, const uchar* data, uint data
         {
             UNSETFLAG( desc.Flags, CACHE_DATA_VALID );
             CacheDescriptor desc__ = desc;
-            XOR( (char*)&desc__, sizeof( CacheDescriptor ) - 24, (char*)&desc__.XorKey[0], 20 );
-            fseek( f, i * sizeof( CacheDescriptor ), SEEK_SET );
-            fwrite( (void*)&desc__, sizeof( uchar ), sizeof( CacheDescriptor ), f );
+            XOR( (char*)&desc__, sizeof(CacheDescriptor) - 24, (char*)&desc__.XorKey[0], 20 );
+            fseek( f, i * sizeof(CacheDescriptor), SEEK_SET );
+            fwrite( (void*)&desc__, sizeof(uchar), sizeof(CacheDescriptor), f );
             break;
         }
 
@@ -446,7 +446,7 @@ void CryptManager::SetCache( const char* data_name, const uchar* data, uint data
             continue;
 
         fseek( f, 0, SEEK_END );
-        int offset = ftell( f ) - sizeof( CacheTable );
+        int offset = ftell( f ) - sizeof(CacheTable);
         if( offset < 0 )
         {
             fclose( f );
@@ -457,12 +457,12 @@ void CryptManager::SetCache( const char* data_name, const uchar* data, uint data
         if( max_len < 128 )
         {
             max_len = 128;
-            fwrite( (void*)&crcTable[1], sizeof( uchar ), max_len, f );
+            fwrite( (void*)&crcTable[1], sizeof(uchar), max_len, f );
         }
         else
         {
-            fwrite( data, sizeof( uchar ), data_len, f );
-            fwrite( data, sizeof( uchar ), data_len, f );
+            fwrite( data, sizeof(uchar), data_len, f );
+            fwrite( data, sizeof(uchar), data_len, f );
         }
 
         SETFLAG( desc.Flags, CACHE_DATA_VALID );
@@ -481,11 +481,11 @@ void CryptManager::SetCache( const char* data_name, const uchar* data, uint data
 label_PlaceFound:
 
     CacheDescriptor desc__ = desc_;
-    XOR( (char*)&desc__, sizeof( CacheDescriptor ) - 24, (char*)&desc__.XorKey[0], 20 );
-    fseek( f, desc_place * sizeof( CacheDescriptor ), SEEK_SET );
-    fwrite( (void*)&desc__, sizeof( uchar ), sizeof( CacheDescriptor ), f );
-    fseek( f, sizeof( CacheTable ) + desc_.DataOffset, SEEK_SET );
-    fwrite( data, sizeof( uchar ), data_len, f );
+    XOR( (char*)&desc__, sizeof(CacheDescriptor) - 24, (char*)&desc__.XorKey[0], 20 );
+    fseek( f, desc_place * sizeof(CacheDescriptor), SEEK_SET );
+    fwrite( (void*)&desc__, sizeof(uchar), sizeof(CacheDescriptor), f );
+    fseek( f, sizeof(CacheTable) + desc_.DataOffset, SEEK_SET );
+    fwrite( data, sizeof(uchar), data_len, f );
     fclose( f );
 }
 
@@ -523,7 +523,7 @@ uchar* CryptManager::GetCache( const char* data_name, uint& data_len )
         uint file_len = ftell( f ) + 1;
         fseek( f, 0, SEEK_SET );
 
-        if( file_len < sizeof( CacheTable ) + desc.DataOffset + desc.DataCurLen )
+        if( file_len < sizeof(CacheTable) + desc.DataOffset + desc.DataCurLen )
         {
             fclose( f );
             UNSETFLAG( desc.Flags, CACHE_DATA_VALID );
@@ -539,8 +539,8 @@ uchar* CryptManager::GetCache( const char* data_name, uint& data_len )
         }
 
         data_len = desc.DataCurLen;
-        fseek( f, sizeof( CacheTable ) + desc.DataOffset, SEEK_SET );
-        fread( data, sizeof( uchar ), desc.DataCurLen, f );
+        fseek( f, sizeof(CacheTable) + desc.DataOffset, SEEK_SET );
+        fread( data, sizeof(uchar), desc.DataCurLen, f );
         fclose( f );
         return data;
     }

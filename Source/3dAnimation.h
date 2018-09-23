@@ -17,7 +17,7 @@ private:
         FloatVec      translationTime;
         VectorVec     translationValue;
     };
-    typedef vector< Output > OutputVec;
+    typedef vector<Output> OutputVec;
 
     string    animName;
     float     durationTicks;
@@ -61,7 +61,7 @@ public:
         return durationTicks / ticksPerSecond;
     }
 };
-typedef vector< AnimSet* > AnimSetVec;
+typedef vector<AnimSet*> AnimSetVec;
 
 class AnimController
 {
@@ -77,8 +77,8 @@ private:
         QuaternionVec rotation;
         VectorVec     translation;
     };
-    typedef vector< Output >  OutputVec;
-    typedef vector< Output* > OutputPtrVec;
+    typedef vector<Output>  OutputVec;
+    typedef vector<Output*> OutputPtrVec;
     struct Track
     {
         struct Event
@@ -91,7 +91,7 @@ private:
             float startTime;
             float smoothTime;
         };
-        typedef vector< Event > EventVec;
+        typedef vector<Event> EventVec;
 
         bool         enabled;
         float        speed;
@@ -101,7 +101,7 @@ private:
         OutputPtrVec animOutput;
         EventVec     events;
     };
-    typedef vector< Track > TrackVec;
+    typedef vector<Track> TrackVec;
 
     bool        cloned;
     AnimSetVec* sets;
@@ -130,7 +130,7 @@ public:
         controller->sets = new AnimSetVec();
         controller->outputs = new OutputVec();
         controller->tracks.resize( track_count );
-        memzero( &controller->tracks[0], sizeof( Track ) * track_count );
+        memzero( &controller->tracks[0], sizeof(Track) * track_count );
         controller->curTime = 0.0f;
         return controller;
     }
@@ -169,14 +169,14 @@ public:
     {
         if( index >= sets->size() )
             return NULL;
-        return ( *sets )[index];
+        return (*sets)[index];
     }
 
     AnimSet* GetAnimationSetByName( const char* name )
     {
         for( auto it = sets->begin(), end = sets->end(); it != end; ++it )
         {
-            if( ( *it )->animName == name )
+            if( (*it)->animName == name )
                 return *it;
         }
         return NULL;
@@ -204,9 +204,9 @@ public:
             Output*       output = NULL;
             for( uint j = 0; j < outputs->size(); j++ )
             {
-                if( ( *outputs )[j].name == link_name )
+                if( (*outputs)[j].name == link_name )
                 {
-                    output = &( *outputs )[j];
+                    output = &(*outputs)[j];
                     break;
                 }
             }
@@ -280,9 +280,9 @@ public:
                     if( curTime < e.startTime + e.smoothTime )
                     {
                         if( e.valueTo > e.valueFrom )
-                            value = e.valueFrom + ( e.valueTo - e.valueFrom ) / e.smoothTime * ( curTime - e.startTime );
+                            value = e.valueFrom + (e.valueTo - e.valueFrom) / e.smoothTime * (curTime - e.startTime);
                         else
-                            value = e.valueFrom - ( e.valueFrom - e.valueTo ) / e.smoothTime * ( curTime - e.startTime );
+                            value = e.valueFrom - (e.valueFrom - e.valueTo) / e.smoothTime * (curTime - e.startTime);
                     }
                     else
                     {
@@ -290,7 +290,7 @@ public:
                     }
 
                     if( e.type == Track::Event::Enable )
-                        track.enabled = ( value > 0.0f ? true : false );
+                        track.enabled = (value > 0.0f ? true : false);
                     else if( e.type == Track::Event::Speed )
                         track.speed = value;
                     else if( e.type == Track::Event::Weight )
@@ -317,7 +317,7 @@ public:
             Track& track = tracks[i];
 
             for( uint k = 0, l = outputs->size(); k < l; k++ )
-                ( *outputs )[k].valid[i] = false;
+                (*outputs)[k].valid[i] = false;
 
             if( !track.enabled || track.weight <= 0.0f || !track.anim )
                 continue;
@@ -330,9 +330,9 @@ public:
                 AnimSet::Output& o = track.anim->outputs[k];
 
                 float            time = fmod( track.position * track.anim->ticksPerSecond, track.anim->durationTicks );
-                FindSRTValue< Vector >( time, o.scaleTime, o.scaleValue, track.animOutput[k]->scale[i] );
-                FindSRTValue< Quaternion >( time, o.rotationTime, o.rotationValue, track.animOutput[k]->rotation[i] );
-                FindSRTValue< Vector >( time, o.translationTime, o.translationValue, track.animOutput[k]->translation[i] );
+                FindSRTValue<Vector>( time, o.scaleTime, o.scaleValue, track.animOutput[k]->scale[i] );
+                FindSRTValue<Quaternion>( time, o.rotationTime, o.rotationValue, track.animOutput[k]->rotation[i] );
+                FindSRTValue<Vector>( time, o.translationTime, o.translationValue, track.animOutput[k]->translation[i] );
                 track.animOutput[k]->valid[i] = true;
                 track.animOutput[k]->factor[i] = track.weight;
             }
@@ -341,7 +341,7 @@ public:
         // Blend tracks
         for( uint i = 0, j = outputs->size(); i < j; i++ )
         {
-            Output& o = ( *outputs )[i];
+            Output& o = (*outputs)[i];
 
             // Todo: add interpolation for tracks more than two
             if( tracks.size() >= 2 && o.valid[0] && o.valid[1] )
@@ -379,8 +379,8 @@ public:
     }
 
 private:
-    template< class T >
-    void FindSRTValue( float time, FloatVec& times, vector< T >& values, T& result )
+    template<class T>
+    void FindSRTValue( float time, FloatVec& times, vector<T>& values, T& result )
     {
         for( uint n = 0, m = times.size(); n < m; n++ )
         {
@@ -390,7 +390,7 @@ private:
                 {
                     result = values[n];
                     T&    value = values[n + 1];
-                    float factor = ( time - times[n] ) / ( times[n + 1] - times[n] );
+                    float factor = (time - times[n]) / (times[n + 1] - times[n]);
                     Interpolate( result, value, factor );
                     return;
                 }
@@ -409,9 +409,9 @@ private:
 
     void Interpolate( Vector& v1, Vector& v2, float factor )
     {
-        v1.x = v1.x + ( v2.x - v1.x ) * factor;
-        v1.y = v1.y + ( v2.y - v1.y ) * factor;
-        v1.z = v1.z + ( v2.z - v1.z ) * factor;
+        v1.x = v1.x + (v2.x - v1.x) * factor;
+        v1.y = v1.y + (v2.y - v1.y) * factor;
+        v1.z = v1.z + (v2.z - v1.z) * factor;
     }
 };
 

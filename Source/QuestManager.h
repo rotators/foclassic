@@ -16,7 +16,7 @@ struct Quest
     bool operator==( const ushort& _num ) { return _num == num; }
     Quest( uint _num, string _info ) : num( _num ), info( _info ), isInfo( false ) {}
 };
-typedef vector< Quest > QuestVec;
+typedef vector<Quest> QuestVec;
 
 class QuestTab
 {
@@ -61,7 +61,7 @@ public:
     Quest* GetQuest( ushort num )
     {
         auto it = std::find( quests.begin(), quests.end(), num );
-        return it != quests.end() ? &( *it ) : NULL;
+        return it != quests.end() ? &(*it) : NULL;
     }
     void EraseQuest( ushort num )
     {
@@ -73,7 +73,7 @@ public:
     const char* GetText()   { return text.c_str(); }
     QuestTab( FOMsg* _msg ) : msg( _msg ) {}
 };
-typedef map< string, QuestTab, less< string > > QuestTabMap;
+typedef map<string, QuestTab, less<string>> QuestTabMap;
 
 class QuestManager
 {
@@ -107,7 +107,7 @@ public:
         // Try get Tab
         QuestTab* tab = NULL;
         auto      it_tab = tabs.find( tab_name );
-        if( it_tab != tabs.end() ) tab = &( *it_tab ).second;
+        if( it_tab != tabs.end() ) tab = &(*it_tab).second;
 
         // Try get Quest
         Quest* quest = NULL;
@@ -125,7 +125,7 @@ public:
         }
 
         // Add Tab if not exists
-        if( !tab ) tab = &( *( tabs.insert( PAIR( tab_name, QuestTab( msg ) ) ) ).first ).second;
+        if( !tab ) tab = &(*(tabs.insert( PAIR( tab_name, QuestTab( msg ) ) ) ).first).second;
 
         // Add Quest if not exists
         if( !quest ) quest = tab->AddQuest( q_num, string( msg->GetStr( STR_QUEST_INFO_( q_num ) ) ) );
@@ -151,7 +151,7 @@ public:
             if( it == tabs.end() ) return NULL;
         }
 
-        return &( *it ).second;
+        return &(*it).second;
     }
 
     Quest* GetQuest( uint tab_num, ushort quest_num )
@@ -165,7 +165,7 @@ public:
         if( !msg->Count( STR_QUEST_MAP_( num / QUEST_MUL ) ) ) return NULL;
         string tab_name = string( msg->GetStr( STR_QUEST_MAP_( num / QUEST_MUL ) ) );
         auto   it_tab = tabs.find( tab_name );
-        return it_tab != tabs.end() ? ( *it_tab ).second.GetQuest( num / QUEST_MUL ) : NULL;
+        return it_tab != tabs.end() ? (*it_tab).second.GetQuest( num / QUEST_MUL ) : NULL;
     }
 };
 

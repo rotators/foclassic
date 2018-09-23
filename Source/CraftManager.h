@@ -16,7 +16,7 @@
 #define MRFIXIT_AND_S         "&"
 #define MRFIXIT_OR_S          "|"
 
-#define FIXBOY_TIME_OUT       ( GameOpt.TimeMultiplier * 60 ) // 1 minute
+#define FIXBOY_TIME_OUT       (GameOpt.TimeMultiplier * 60)   // 1 minute
 
 struct CraftItem
 {
@@ -71,7 +71,7 @@ public:
     int         SetStr( uint num, const char* str );
     const char* GetStr( bool metadata );
 
-    #if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
+    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
 private:
     int  SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
     int  SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
@@ -80,8 +80,8 @@ private:
     #endif
 };
 
-typedef map< uint, CraftItem*, less< uint > > CraftItemMap;
-typedef vector< CraftItem* >                  CraftItemVec;
+typedef map<uint, CraftItem*, less<uint>> CraftItemMap;
+typedef vector<CraftItem*>                CraftItemVec;
 
 #ifdef FONLINE_SERVER
 class Critter;

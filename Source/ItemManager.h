@@ -27,7 +27,7 @@ public:
     void Finish();
     void Clear();
 
-    #if defined ( FONLINE_SERVER ) || defined ( FONLINE_OBJECT_EDITOR ) || defined ( FONLINE_MAPPER )
+    #if defined (FONLINE_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FONLINE_MAPPER)
     bool LoadProtos();
     bool LoadProtos( ProtoItemVec& protos, const char* fname );
     #endif
@@ -55,7 +55,7 @@ private:
     Mutex      itemLocker;
 
 public:
-    void SaveAllItemsFile( void ( *save_func )( void*, size_t ) );
+    void SaveAllItemsFile( void (*save_func)( void*, size_t ) );
     bool LoadAllItemsFile( void* f, int version );
     bool CheckProtoFunctions();
     void RunInitScriptItems();
@@ -111,7 +111,7 @@ public:
     int64  GetItemStatistics( ushort pid );
     string GetItemsStatistics();
 
-    ItemManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( ItemManager ) ); };
+    ItemManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof(ItemManager) ); };
 };
 
 extern ItemManager ItemMngr;

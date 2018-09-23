@@ -121,8 +121,8 @@ void* FileFindFirst( const char* path, const char* extension, FIND_DATA& fd )
         return NULL;
 
     Str::Copy( fd.FileName, WCtoMB( wfd.cFileName ) );
-    fd.IsDirectory = ( wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0;
-    if( fd.IsDirectory && ( Str::Compare( fd.FileName, "." ) || Str::Compare( fd.FileName, ".." ) ) )
+    fd.IsDirectory = (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    if( fd.IsDirectory && (Str::Compare( fd.FileName, "." ) || Str::Compare( fd.FileName, ".." ) ) )
         if( !FileFindNext( h, fd ) )
             return false;
 
@@ -136,8 +136,8 @@ bool FileFindNext( void* descriptor, FIND_DATA& fd )
         return false;
 
     Str::Copy( fd.FileName, WCtoMB( wfd.cFileName ) );
-    fd.IsDirectory = ( wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0;
-    if( fd.IsDirectory && ( Str::Compare( fd.FileName, "." ) || Str::Compare( fd.FileName, ".." ) ) )
+    fd.IsDirectory = (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+    if( fd.IsDirectory && (Str::Compare( fd.FileName, "." ) || Str::Compare( fd.FileName, ".." ) ) )
         return FileFindNext( (HANDLE)descriptor, fd );
 
     return true;
@@ -221,7 +221,7 @@ void FileClose( void* file )
 
 bool FileRead( void* file, void* buf, uint len, uint* rb /* = NULL */ )
 {
-    uint rb_ = fread( buf, sizeof( char ), len, ( (FileDesc*)file )->f );
+    uint rb_ = fread( buf, sizeof(char), len, ( (FileDesc*)file )->f );
     if( rb )
         *rb = rb_;
     return rb_ == len;
@@ -229,7 +229,7 @@ bool FileRead( void* file, void* buf, uint len, uint* rb /* = NULL */ )
 
 bool FileWrite( void* file, const void* buf, uint len )
 {
-    bool result = ( fwrite( buf, sizeof( char ), len, ( (FileDesc*)file )->f ) == len );
+    bool result = (fwrite( buf, sizeof(char), len, ( (FileDesc*)file )->f ) == len);
     if( result && ( (FileDesc*)file )->writeThrough )
         fflush( ( (FileDesc*)file )->f );
     return result;
@@ -289,7 +289,7 @@ void* FileFindFirst( const char* path, const char* extension, FIND_DATA& fd )
 
     // Create own descriptor
     FileFind* ff = new FileFind;
-    memzero( ff, sizeof( FileFind ) );
+    memzero( ff, sizeof(FileFind) );
     ff->d = h;
     Str::Copy( ff->path, path );
     if( ff->path[Str::Length( ff->path ) - 1] != DIR_SLASH_C )
@@ -349,7 +349,7 @@ bool FileFindNext( void* descriptor, FIND_DATA& fd )
         for( const char* name = ent->d_name; *name; name++ )
             if( *name == '.' )
                 ext = name;
-        if( !ext || !*( ++ext ) || !Str::CompareCase( ext, ff->ext ) )
+        if( !ext || !*(++ext) || !Str::CompareCase( ext, ff->ext ) )
             return FileFindNext( descriptor, fd );
     }
 

@@ -20,7 +20,7 @@ struct ConstCollection
     StrUIntMap NameValue;
     ConstCollection() : Init( false ) {}
 };
-vector< ConstCollection > ConstCollections;
+vector<ConstCollection> ConstCollections;
 
 
 void ConstantsManager::Initialize( int path_type, const char* path /* = NULL */ )
@@ -73,16 +73,16 @@ bool ConstantsManager::AddCollection( int collection, const char* fname, int pat
 
             if( !revert )
             {
-                if( ( str >> num ).fail() )
+                if( (str >> num).fail() )
                     continue;
-                if( ( str >> name ).fail() )
+                if( (str >> name).fail() )
                     continue;
             }
             else
             {
-                if( ( str >> name ).fail() )
+                if( (str >> name).fail() )
                     continue;
-                if( ( str >> num ).fail() )
+                if( (str >> num).fail() )
                     continue;
             }
 
@@ -108,10 +108,10 @@ StrVec ConstantsManager::GetCollection( int collection )
     StrVec  result;
     for( auto it = ConstCollections[collection].ValueName.begin(), end = ConstCollections[collection].ValueName.end(); it != end; ++it )
     {
-        if( collection == CONSTANTS_DEFINE || std::find( val_added.begin(), val_added.end(), ( *it ).first ) == val_added.end() )
+        if( collection == CONSTANTS_DEFINE || std::find( val_added.begin(), val_added.end(), (*it).first ) == val_added.end() )
         {
-            result.push_back( ( *it ).second );
-            val_added.push_back( ( *it ).first );
+            result.push_back( (*it).second );
+            val_added.push_back( (*it).first );
         }
     }
     return result;
@@ -127,7 +127,7 @@ int ConstantsManager::GetValue( int collection, const char* str )
     auto it = ConstCollections[collection].NameValue.find( str );
     if( it == ConstCollections[collection].NameValue.end() )
         return -1;
-    return ( *it ).second;
+    return (*it).second;
 }
 
 const char* ConstantsManager::GetName( int collection, int value )
@@ -135,7 +135,7 @@ const char* ConstantsManager::GetName( int collection, int value )
     auto it = ConstCollections[collection].ValueName.find( value );
     if( it == ConstCollections[collection].ValueName.end() )
         return NULL;
-    return ( *it ).second.c_str();
+    return (*it).second.c_str();
 }
 
 int ConstantsManager::GetParamId( const char* str )
@@ -174,7 +174,7 @@ int ConstantsManager::GetDefineValue( const char* str )
         WriteLogF( _FUNC_, " - Define<%s> not found, taked zero by default.\n", str );
         return 0;
     }
-    return ( *it ).second;
+    return (*it).second;
 }
 
 const char* ConstantsManager::GetPictureName( uint index )

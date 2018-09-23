@@ -63,15 +63,15 @@ public:
     {
         if( x >= width || y >= height ) return;
         uchar& b = data[y * width_b + x / 4];
-        int    bit = ( x % 4 * 2 );
+        int    bit = (x % 4 * 2);
         UNSETFLAG( b, 3 << bit );
-        SETFLAG( b, ( val & 3 ) << bit );
+        SETFLAG( b, (val & 3) << bit );
     }
 
     int Get2Bit( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
-        return ( data[y * width_b + x / 4] >> ( x % 4 * 2 ) ) & 3;
+        return (data[y * width_b + x / 4] >> (x % 4 * 2) ) & 3;
     }
 
     void Fill( int fill )
@@ -101,7 +101,7 @@ public:
     }
 
     uchar* GetData() { return data; }
-    C2BitMask() { memset( this, 0, sizeof( C2BitMask ) ); }
+    C2BitMask() { memset( this, 0, sizeof(C2BitMask) ); }
     C2BitMask( uint width_2bit, uint height_2bit, uchar* ptr ) { Create( width_2bit, height_2bit, ptr ); }
     ~C2BitMask()
     {
@@ -124,8 +124,8 @@ public:
     {
         if( x >= width || y >= height ) return;
         uchar& b = data[y * width_b + x / 2];
-        if( x & 1 ) b = ( b & 0xF0 ) | ( val & 0xF );
-        else b = ( b & 0xF ) | ( val << 4 );
+        if( x & 1 ) b = (b & 0xF0) | (val & 0xF);
+        else b = (b & 0xF) | (val << 4);
     }
 
     uchar Get4Bit( uint x, uint y )

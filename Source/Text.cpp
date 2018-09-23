@@ -193,7 +193,7 @@ uint Str::UpperUTF8( uint ucs )
     static unsigned short* table = NULL;
     if( !table )
     {
-        table = (unsigned short*)malloc( sizeof( unsigned short ) * 0x10000 );
+        table = (unsigned short*)malloc( sizeof(unsigned short) * 0x10000 );
         for( uint i = 0; i < 0x10000; i++ )
         {
             table[i] = (unsigned short)i;
@@ -264,7 +264,7 @@ uint Str::DecodeUTF8( const char* str, uint* length )
     {
         goto FAIL;
     }
-    if( ( str[1] & 0xc0 ) != 0x80 )
+    if( (str[1] & 0xc0) != 0x80 )
     {
         goto FAIL;
     }
@@ -272,8 +272,8 @@ uint Str::DecodeUTF8( const char* str, uint* length )
     {
         if( length )
             *length = 2;
-        return ( ( str[0] & 0x1f ) << 6 ) +
-               ( ( str[1] & 0x3f ) );
+        return ( (str[0] & 0x1f) << 6 ) +
+               ( (str[1] & 0x3f) );
     }
     else if( c == 0xe0 )
     {
@@ -284,13 +284,13 @@ uint Str::DecodeUTF8( const char* str, uint* length )
     else if( c < 0xf0 )
     {
 UTF8_3:
-        if( ( str[2] & 0xc0 ) != 0x80 )
+        if( (str[2] & 0xc0) != 0x80 )
             goto FAIL;
         if( length )
             *length = 3;
-        return ( ( str[0] & 0x0f ) << 12 ) +
-               ( ( str[1] & 0x3f ) << 6 ) +
-               ( ( str[2] & 0x3f ) );
+        return ( (str[0] & 0x0f) << 12 ) +
+               ( (str[1] & 0x3f) << 6 ) +
+               ( (str[2] & 0x3f) );
     }
     else if( c == 0xf0 )
     {
@@ -301,14 +301,14 @@ UTF8_3:
     else if( c < 0xf4 )
     {
 UTF8_4:
-        if( ( str[2] & 0xc0 ) != 0x80 || ( str[3] & 0xc0 ) != 0x80 )
+        if( (str[2] & 0xc0) != 0x80 || (str[3] & 0xc0) != 0x80 )
             goto FAIL;
         if( length )
             *length = 4;
-        return ( ( str[0] & 0x07 ) << 18 ) +
-               ( ( str[1] & 0x3f ) << 12 ) +
-               ( ( str[2] & 0x3f ) << 6 ) +
-               ( ( str[3] & 0x3f ) );
+        return ( (str[0] & 0x07) << 18 ) +
+               ( (str[1] & 0x3f) << 12 ) +
+               ( (str[2] & 0x3f) << 6 ) +
+               ( (str[3] & 0x3f) );
     }
     else if( c == 0xf4 )
     {
@@ -335,23 +335,23 @@ uint Str::EncodeUTF8( uint ucs, char* buf )
     }
     else if( ucs < 0x000800U )
     {
-        buf[0] = 0xc0 | ( ucs >> 6 );
-        buf[1] = 0x80 | ( ucs & 0x3F );
+        buf[0] = 0xc0 | (ucs >> 6);
+        buf[1] = 0x80 | (ucs & 0x3F);
         return 2;
     }
     else if( ucs < 0x010000U )
     {
-        buf[0] = 0xe0 | ( ucs >> 12 );
-        buf[1] = 0x80 | ( ( ucs >> 6 ) & 0x3F );
-        buf[2] = 0x80 | ( ucs & 0x3F );
+        buf[0] = 0xe0 | (ucs >> 12);
+        buf[1] = 0x80 | ( (ucs >> 6) & 0x3F );
+        buf[2] = 0x80 | (ucs & 0x3F);
         return 3;
     }
     else if( ucs <= 0x0010ffffU )
     {
-        buf[0] = 0xf0 | ( ucs >> 18 );
-        buf[1] = 0x80 | ( ( ucs >> 12 ) & 0x3F );
-        buf[2] = 0x80 | ( ( ucs >> 6 ) & 0x3F );
-        buf[3] = 0x80 | ( ucs & 0x3F );
+        buf[0] = 0xf0 | (ucs >> 18);
+        buf[1] = 0x80 | ( (ucs >> 12) & 0x3F );
+        buf[2] = 0x80 | ( (ucs >> 6) & 0x3F );
+        buf[3] = 0x80 | (ucs & 0x3F);
         return 4;
     }
     else
@@ -369,14 +369,14 @@ uint Str::Length( const char* str )
     const char* str_ = str;
     while( *str )
         str++;
-    return (uint)( str - str_ );
+    return (uint)(str - str_);
 }
 
 uint Str::LengthUTF8( const char* str )
 {
     uint len = 0;
     while( *str )
-        len += ( ( *str++ & 0xC0 ) != 0x80 );
+        len += ( (*str++ & 0xC0) != 0x80 );
     return len;
 }
 
@@ -515,7 +515,7 @@ void Str::Insert( char* to, const char* from )
         ++end_to;
 
     for( ; end_to >= to; --end_to )
-        *( end_to + flen ) = *end_to;
+        *(end_to + flen) = *end_to;
 
     while( *from )
     {
@@ -601,7 +601,7 @@ void Str::CopyBack( char* str )
 {
     while( *str )
     {
-        *str = *( str + 1 );
+        *str = *(str + 1);
         str++;
     }
 }
@@ -618,9 +618,9 @@ void Str::Replacement( char* str, char from, char to )
 
 void Str::Replacement( char* str, char from1, char from2, char to )
 {
-    while( *str && *( str + 1 ) )
+    while( *str && *(str + 1) )
     {
-        if( *str == from1 && *( str + 1 ) == from2 )
+        if( *str == from1 && *(str + 1) == from2 )
         {
             CopyBack( str );
             *str = to;
@@ -635,7 +635,7 @@ void Str::Replacement( char* str, char from1, char from2, char to )
 char* Str::EraseFrontBackSpecificChars( char* str )
 {
     char* front = str;
-    while( *front && ( *front == ' ' || *front == '\t' || *front == '\n' || *front == '\r' ) )
+    while( *front && (*front == ' ' || *front == '\t' || *front == '\n' || *front == '\r') )
         front++;
     if( front != str )
     {
@@ -649,9 +649,9 @@ char* Str::EraseFrontBackSpecificChars( char* str )
     while( *back )
         back++;
     back--;
-    while( back >= str && ( *back == ' ' || *back == '\t' || *back == '\n' || *back == '\r' ) )
+    while( back >= str && (*back == ' ' || *back == '\t' || *back == '\n' || *back == '\r') )
         back--;
-    *( back + 1 ) = 0;
+    *(back + 1) = 0;
 
     return str;
 }
@@ -685,7 +685,7 @@ bool Str::IsNumber( const char* str )
         is_number = false;            // Empty string
     for( uint i = pos, j = len; i < j; i++, pos++ )
     {
-        if( !( ( str[i] >= '0' && str[i] <= '9' ) || ( i == 0 && str[i] == '-' ) ) )
+        if( !( (str[i] >= '0' && str[i] <= '9') || (i == 0 && str[i] == '-') ) )
         {
             is_number = false;           // Found not a number
             break;
@@ -723,14 +723,14 @@ const char* Str::UItoA( uint dw )
 
 int Str::AtoI( const char* str )
 {
-    if( str[0] && str[0] == '0' && ( str[1] == 'x' || str[1] == 'X' ) )
+    if( str[0] && str[0] == '0' && (str[1] == 'x' || str[1] == 'X') )
         return strtol( str + 2, NULL, 16 );
     return atoi( str );
 }
 
 int64 Str::AtoI64( const char* str )
 {
-    if( str[0] && str[0] == '0' && ( str[1] == 'x' || str[1] == 'X' ) )
+    if( str[0] && str[0] == '0' && (str[1] == 'x' || str[1] == 'X') )
         return strtol( str + 2, NULL, 16 );
     #ifdef FO_WINDOWS
     return _atoi64( str );
@@ -741,7 +741,7 @@ int64 Str::AtoI64( const char* str )
 
 uint Str::AtoUI( const char* str )
 {
-    if( str[0] && str[0] == '0' && ( str[1] == 'x' || str[1] == 'X' ) )
+    if( str[0] && str[0] == '0' && (str[1] == 'x' || str[1] == 'X') )
         return strtoul( str + 2, NULL, 16 );
     return strtoul( str, NULL, 10 );
 }
@@ -781,7 +781,7 @@ const char* Str::GetName( uint hash )
         return NULL;
 
     auto it = NamesHash.find( hash );
-    return it != NamesHash.end() ? ( *it ).second.c_str() : NULL;
+    return it != NamesHash.end() ? (*it).second.c_str() : NULL;
 }
 
 void Str::AddNameHash( const char* name )
@@ -799,10 +799,10 @@ void Str::AddNameHash( const char* name )
     else
     {
         char name__[MAX_FOPATH];
-        Copy( name__, ( *it ).second.c_str() );
+        Copy( name__, (*it).second.c_str() );
         FormatForHash( name__ );
         if( !Compare( name_, name__ ) )
-            WriteLogF( _FUNC_, " - Found equal hash for different names, name1<%s>, name2<%s>, hash<%u>.\n", name, ( *it ).second.c_str(), hash );
+            WriteLogF( _FUNC_, " - Found equal hash for different names, name1<%s>, name2<%s>, hash<%u>.\n", name, (*it).second.c_str(), hash );
     }
 }
 

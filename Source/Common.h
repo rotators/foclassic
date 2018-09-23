@@ -30,7 +30,7 @@ const char* GetLastSocketError();
 #ifdef FO_WINDOWS
 # include <winsock2.h>
 # define socklen_t            int
-# if defined ( FO_MSVC )
+# if defined (FO_MSVC)
 #  pragma comment( lib, "Ws2_32.lib" )
 # endif
 #else
@@ -40,8 +40,8 @@ const char* GetLastSocketError();
 # include <arpa/inet.h>
 # include <netdb.h>
 # define SOCKET               int
-# define INVALID_SOCKET       ( -1 )
-# define SOCKET_ERROR         ( -1 )
+# define INVALID_SOCKET       (-1)
+# define SOCKET_ERROR         (-1)
 # define closesocket          close
 # define SD_RECEIVE           SHUT_RD
 # define SD_SEND              SHUT_WR
@@ -49,12 +49,12 @@ const char* GetLastSocketError();
 #endif
 
 // FLTK
-#if defined ( FO_MSVC )
-# if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+#if defined (FO_MSVC)
+# if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
 #  pragma comment( lib, "fltk.lib" )
 #  pragma comment( lib, "fltkgl.lib" )
 # endif
-#elif defined ( FO_MACOSX )
+#elif defined (FO_MACOSX)
 # define fl_display           glXGetCurrentDisplay()
 # define fl_window            ( (uint)fl_xid( MainWindow ) )
 #endif
@@ -93,34 +93,34 @@ const char* GetLastSocketError();
 
 #define SAFEREL( x ) \
     { if( x )        \
-          ( x )->Release(); ( x ) = NULL; }
+          (x)->Release(); (x) = NULL; }
 #define SAFEDEL( x ) \
     { if( x )        \
-          delete ( x ); ( x ) = NULL; }
+          delete (x); (x) = NULL; }
 #define SAFEDELA( x ) \
     { if( x )         \
-          delete[] ( x ); ( x ) = NULL; }
+          delete[] (x); (x) = NULL; }
 
 // #define STATIC_ASSERT( a )                { static int static_assert_array__[ ( a ) ? 1 : -1 ]; }
 #define STATIC_ASSERT( a )                static_assert( a, # a )
 
-#define PI_FLOAT              ( 3.14159265f )
-#define PIBY2_FLOAT           ( 1.5707963f )
-#define SQRT3T2_FLOAT         ( 3.4641016151f )
-#define SQRT3_FLOAT           ( 1.732050807568877f )
-#define BIAS_FLOAT            ( 0.02f )
-#define RAD2DEG               ( 57.29577951f )
+#define PI_FLOAT              (3.14159265f)
+#define PIBY2_FLOAT           (1.5707963f)
+#define SQRT3T2_FLOAT         (3.4641016151f)
+#define SQRT3_FLOAT           (1.732050807568877f)
+#define BIAS_FLOAT            (0.02f)
+#define RAD2DEG               (57.29577951f)
 
-#define MAX( a, b )                       ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
-#define MIN( a, b )                       ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+#define MAX( a, b )                       ( ( (a) > (b) ) ? (a) : (b) )
+#define MIN( a, b )                       ( ( (a) < (b) ) ? (a) : (b) )
 
 #define OFFSETOF( type, member )          ( (int)offsetof( type, member ) )
 #define memzero( ptr, size )              memset( ptr, 0, size )
 #define PACKUINT64( u32hi, u32lo )        ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
-#define MAKEUINT( ch0, ch1, ch2, ch3 )    ( (uint)(uchar)( ch0 ) | ( (uint)(uchar)( ch1 ) << 8 ) | ( (uint)(uchar)( ch2 ) << 16 ) | ( (uint)(uchar)( ch3 ) << 24 ) )
+#define MAKEUINT( ch0, ch1, ch2, ch3 )    ( (uint)(uchar)(ch0) | ( (uint)(uchar)(ch1) << 8 ) | ( (uint)(uchar)(ch2) << 16 ) | ( (uint)(uchar)(ch3) << 24 ) )
 
-typedef vector< Rect >  IntRectVec;
-typedef vector< RectF > FltRectVec;
+typedef vector<Rect>  IntRectVec;
+typedef vector<RectF> FltRectVec;
 
 extern char   CommandLine[MAX_FOTEXT];
 extern char** CommandLineArgValues;
@@ -149,11 +149,11 @@ void ShowMessage( const char* message );
 uint GetDoubleClickTicks();
 
 // Containers comparator template
-template< class T >
-inline bool CompareContainers( const T& a, const T& b ) { return a.size() == b.size() && ( a.empty() || !memcmp( &a[0], &b[0], a.size() * sizeof( a[0] ) ) ); }
+template<class T>
+inline bool CompareContainers( const T& a, const T& b ) { return a.size() == b.size() && (a.empty() || !memcmp( &a[0], &b[0], a.size() * sizeof(a[0]) ) ); }
 
 // Hex offsets
-#define MAX_HEX_OFFSET        ( 50 )   // Must be not odd
+#define MAX_HEX_OFFSET        (50)     // Must be not odd
 void GetHexOffsets( bool odd, short*& sx, short*& sy );
 void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int& y );
 
@@ -175,10 +175,10 @@ struct ScoreType
 /************************************************************************/
 /* Client & Mapper                                                      */
 /************************************************************************/
-#if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
+#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
 
-# define PI_VALUE             ( 3.141592654f )
-# define COLOR_ARGB( a, r, g, b )         ( (uint)( ( ( ( a ) & 0xff ) << 24 ) | ( ( ( r ) & 0xff ) << 16 ) | ( ( ( g ) & 0xff ) << 8 ) | ( ( b ) & 0xff ) ) )
+# define PI_VALUE             (3.141592654f)
+# define COLOR_ARGB( a, r, g, b )         ( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
 # define COLOR_XRGB( r, g, b )            COLOR_ARGB( 0xff, r, g, b )
 
 # include "FL/Fl.H"
@@ -225,7 +225,7 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 # include "Assimp/aiTypes.h"
 # define GL( expr )                       { expr; if( GameOpt.OpenGLDebug ) { GLenum err__ = glGetError(); if( err__ != GL_NO_ERROR ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X - %s>.\n", err__, gluErrorString( err__ ) ); ExitProcess( 0 ); } } }
 # ifdef FO_WINDOWS
-#  define WGL( expr )                     { if( !( expr ) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
+#  define WGL( expr )                     { if( !(expr) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
 # endif
 
 # define IL_STATIC_LIB
@@ -235,7 +235,7 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 # pragma comment( lib, "libpng15.lib" )
 
 # ifdef FO_D3D
-#  define COLOR_FIX( c )                  ( c )
+#  define COLOR_FIX( c )                  (c)
 #  define Device_             LPDIRECT3DDEVICE9
 #  define Surface_            LPDIRECT3DSURFACE9
 #  define EffectValue_        D3DXHANDLE
@@ -251,7 +251,7 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 #  define ViewPort_           D3DVIEWPORT9
 #  define LockRect_           D3DLOCKED_RECT
 # else
-#  define COLOR_FIX( c )                  COLOR_ARGB( ( (uchar*)&( c ) )[3], ( (uchar*)&( c ) )[0], ( (uchar*)&( c ) )[1], ( (uchar*)&( c ) )[2] )
+#  define COLOR_FIX( c )                  COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )
 #  define Device_             GLuint
 #  define Surface_            GLuint
 #  define EffectValue_        GLint
@@ -271,8 +271,8 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 // Todo: Complete shadow maps
 // # define SHADOW_MAP
 
-# define MODE_WIDTH           ( GameOpt.ScreenWidth )
-# define MODE_HEIGHT          ( GameOpt.ScreenHeight )
+# define MODE_WIDTH           (GameOpt.ScreenWidth)
+# define MODE_HEIGHT          (GameOpt.ScreenHeight)
 
 # ifdef FONLINE_CLIENT
 #  include "ResourceClient.h"
@@ -420,8 +420,8 @@ struct ServerScriptFunctions
 } extern ServerFunctions;
 
 // Net events
-# if defined ( USE_LIBEVENT )
-#  if defined ( FO_MSVC )
+# if defined (USE_LIBEVENT)
+#  if defined (FO_MSVC)
 #   pragma comment( lib, "libevent_core.lib" )
 #  endif
 # endif
@@ -435,7 +435,7 @@ struct ServerScriptFunctions
 # include <fstream>
 
 # define _CRT_SECURE_NO_DEPRECATE
-# define MAX_TEXT_DIALOG    ( 1000 )
+# define MAX_TEXT_DIALOG    (1000)
 
 # define ScriptString       string
 #endif
@@ -739,7 +739,7 @@ struct GameOptions
 
     int          ( * Random )( int, int );
     uint         ( * GetTick )();
-    void         ( * SetLogCallback )( void ( * )( const char* str ), bool );
+    void         ( * SetLogCallback )( void (*)( const char* str ), bool );
 
     // Callbacks
     uint         ( * GetUseApCost )( void*, void*, uchar );
@@ -750,18 +750,18 @@ struct GameOptions
 } extern GameOpt;
 
 // IndicatorType
-#define INDICATOR_LINES      ( 0 )
-#define INDICATOR_NUMBERS    ( 1 )
-#define INDICATOR_BOTH       ( 2 )
+#define INDICATOR_LINES      (0)
+#define INDICATOR_NUMBERS    (1)
+#define INDICATOR_BOTH       (2)
 // Zoom
-#define MIN_ZOOM             ( 0.2f )
-#define MAX_ZOOM             ( 10.0f )
+#define MIN_ZOOM             (0.2f)
+#define MAX_ZOOM             (10.0f)
 
 /************************************************************************/
 /* Auto pointers                                                        */
 /************************************************************************/
 
-template< class T >
+template<class T>
 class AutoPtr
 {
 public:
@@ -787,7 +787,7 @@ private:
     T* Ptr;
 };
 
-template< class T >
+template<class T>
 class AutoPtrArr
 {
 public:
@@ -872,7 +872,7 @@ extern InterprocessData SingleplayerData;
 /* Threads                                                              */
 /************************************************************************/
 
-#if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+#if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
 
 # ifdef FO_WINDOWS
 #  define PTW32_STATIC_LIB
@@ -881,7 +881,7 @@ extern InterprocessData SingleplayerData;
 #  include <pthread.h>
 # endif
 
-# if defined ( FO_MSVC )
+# if defined (FO_MSVC)
 #  pragma comment( lib, "pthreadVC2.lib" )
 # endif
 
@@ -898,7 +898,7 @@ private:
 public:
     Thread();
     ~Thread();
-    bool Start( void ( *func )( void* ), const char* name, void* arg = NULL );
+    bool Start( void (*func)( void* ), const char* name, void* arg = NULL );
     void Wait();
     void Finish();
 

@@ -3,20 +3,20 @@
 #include "Timer.h"
 #include <stdarg.h>
 
-#if defined ( FONLINE_SERVER ) && !defined ( SERVER_DAEMON )
+#if defined (FONLINE_SERVER) && !defined (SERVER_DAEMON)
 # include "FL/Fl_Text_Display.H"
 #endif
 
-Mutex                LogLocker;
-void*                LogFileHandle = NULL;
-vector< LogFuncPtr > LogFunctions;
-bool                 LogFunctionsInProcess = false;
-void*                LogTextBox = NULL;
-string*              LogBufferStr = NULL;
-bool                 ToDebugOutput = false;
-bool                 LoggingWithTime = false;
-bool                 LoggingWithThread = false;
-uint                 StartLogTime = 0;
+Mutex              LogLocker;
+void*              LogFileHandle = NULL;
+vector<LogFuncPtr> LogFunctions;
+bool               LogFunctionsInProcess = false;
+void*              LogTextBox = NULL;
+string*            LogBufferStr = NULL;
+bool               ToDebugOutput = false;
+bool               LoggingWithTime = false;
+bool               LoggingWithThread = false;
+uint               StartLogTime = 0;
 void WriteLogInternal( const char* func, const char* frmt, va_list& list );
 
 void LogToFile( const char* fname )
@@ -37,7 +37,7 @@ void LogToFunc( LogFuncPtr func_ptr, bool enable )
 
     if( func_ptr )
     {
-        vector< LogFuncPtr >::iterator it = std::find( LogFunctions.begin(), LogFunctions.end(), func_ptr );
+        vector<LogFuncPtr>::iterator it = std::find( LogFunctions.begin(), LogFunctions.end(), func_ptr );
         if( enable && it == LogFunctions.end() )
             LogFunctions.push_back( func_ptr );
         else if( !enable && it != LogFunctions.end() )
@@ -110,7 +110,7 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
         return;
 
     char str_tid[64] = { 0 };
-    #if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+    #if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
     if( LoggingWithThread )
     {
         const char* name = Thread::GetCurrentName();
@@ -161,12 +161,12 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
     {
         LogFunctionsInProcess = true;
         for( size_t i = 0, j = LogFunctions.size(); i < j; i++ )
-            ( *LogFunctions[i] )( str );
+            (*LogFunctions[i])( str );
         LogFunctionsInProcess = false;
     }
     if( LogTextBox )
     {
-        #if defined ( FONLINE_SERVER ) && !defined ( SERVER_DAEMON )
+        #if defined (FONLINE_SERVER) && !defined (SERVER_DAEMON)
         ( (Fl_Text_Display*)LogTextBox )->buffer()->append( str );
         #endif
     }

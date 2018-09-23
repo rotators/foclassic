@@ -34,9 +34,9 @@ bool VarManager::Init( const char* fpath )
 }
 
 #ifdef FONLINE_SERVER
-void VarManager::SaveVarsDataFile( void ( *save_func )( void*, size_t ) )
+void VarManager::SaveVarsDataFile( void (*save_func)( void*, size_t ) )
 {
-    save_func( &varsCount, sizeof( varsCount ) );
+    save_func( &varsCount, sizeof(varsCount) );
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
         TemplateVar* tvar = *it;
@@ -44,19 +44,19 @@ void VarManager::SaveVarsDataFile( void ( *save_func )( void*, size_t ) )
         {
             for( auto it_ = tvar->Vars.begin(), end_ = tvar->Vars.end(); it_ != end_; ++it_ )
             {
-                GameVar* var = ( *it_ ).second;
-                save_func( &var->VarTemplate->TempId, sizeof( var->VarTemplate->TempId ) );
-                save_func( &var->MasterId, sizeof( var->MasterId ) );
-                save_func( &var->SlaveId, sizeof( var->SlaveId ) );
-                save_func( &var->VarValue, sizeof( var->VarValue ) );
+                GameVar* var = (*it_).second;
+                save_func( &var->VarTemplate->TempId, sizeof(var->VarTemplate->TempId) );
+                save_func( &var->MasterId, sizeof(var->MasterId) );
+                save_func( &var->SlaveId, sizeof(var->SlaveId) );
+                save_func( &var->VarValue, sizeof(var->VarValue) );
             }
             for( auto it_ = tvar->VarsUnicum.begin(), end_ = tvar->VarsUnicum.end(); it_ != end_; ++it_ )
             {
-                GameVar* var = ( *it_ ).second;
-                save_func( &var->VarTemplate->TempId, sizeof( var->VarTemplate->TempId ) );
-                save_func( &var->MasterId, sizeof( var->MasterId ) );
-                save_func( &var->SlaveId, sizeof( var->SlaveId ) );
-                save_func( &var->VarValue, sizeof( var->VarValue ) );
+                GameVar* var = (*it_).second;
+                save_func( &var->VarTemplate->TempId, sizeof(var->VarTemplate->TempId) );
+                save_func( &var->MasterId, sizeof(var->MasterId) );
+                save_func( &var->SlaveId, sizeof(var->SlaveId) );
+                save_func( &var->VarValue, sizeof(var->VarValue) );
             }
         }
     }
@@ -70,16 +70,16 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
     UShortUIntMap failed_tvars;
 
     uint          count = 0;
-    FileRead( f, &count, sizeof( count ) );
+    FileRead( f, &count, sizeof(count) );
     for( uint i = 0; i < count; i++ )
     {
         ushort temp_id;
         uint   master_id, slave_id;
         int    val;
-        FileRead( f, &temp_id, sizeof( temp_id ) );
-        FileRead( f, &master_id, sizeof( master_id ) );
-        FileRead( f, &slave_id, sizeof( slave_id ) );
-        FileRead( f, &val, sizeof( val ) );
+        FileRead( f, &temp_id, sizeof(temp_id) );
+        FileRead( f, &master_id, sizeof(master_id) );
+        FileRead( f, &slave_id, sizeof(slave_id) );
+        FileRead( f, &val, sizeof(val) );
 
         TemplateVar* tvar = GetTemplateVar( temp_id );
         if( !tvar )
@@ -87,7 +87,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
             uint failed = failed_tvars[temp_id]++;
             if( failed < 8 )
                 WriteLog( "Template var not found, tid<%u>.\n", temp_id );
-            else if( !( failed & ( failed - 1 ) ) )
+            else if( !(failed & (failed - 1) ) )
                 WriteLog( "Template var not found, tid<%u>, total<%u>.\n", temp_id, failed );
             continue;
         }
@@ -116,7 +116,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
     for( auto it = failed_tvars.begin(), end = failed_tvars.end(); it != end; ++it )
     {
         uint failed = it->second;
-        if( failed > 7 && ( failed & ( failed - 1 ) ) )
+        if( failed > 7 && (failed & (failed - 1) ) )
             WriteLog( "Template var not found, tid<%u>, total<%u>.\n", it->first, failed );
     }
 
@@ -150,10 +150,10 @@ void VarManager::Clear()
         if( tvar )
         {
             for( auto it_ = tvar->Vars.begin(), end_ = tvar->Vars.end(); it_ != end_; ++it_ )
-                ( *it_ ).second->Release();
+                (*it_).second->Release();
             tvar->Vars.clear();
             for( auto it_ = tvar->VarsUnicum.begin(), end_ = tvar->VarsUnicum.end(); it_ != end_; ++it_ )
-                ( *it_ ).second->Release();
+                (*it_).second->Release();
             tvar->VarsUnicum.clear();
         }
     }
@@ -227,10 +227,10 @@ bool VarManager::LoadTemplateVars( const char* str, TempVarVec& vars )
             char* mark2 = strstr( mark, VAR_DESC_MARK );
             if( !mark2 )
                 break;
-            *( mark2 - 1 ) = 0;
+            *(mark2 - 1) = 0;
             Str::Copy( var_desc, mark );
 
-            buf = mark2 + sizeof( VAR_DESC_MARK );
+            buf = mark2 + sizeof(VAR_DESC_MARK);
         }
         while( false );
 
@@ -362,7 +362,7 @@ void VarManager::SaveTemplateVars()
         else
             fm.SetStr( "?VAR_" );
         fm.SetStr( "%s", var->Name.c_str() );
-        int spaces = (uint)var->Name.length() + ( var->Type == VAR_LOCAL_LOCATION || var->Type == VAR_LOCAL_MAP || var->Type == VAR_LOCAL_ITEM ? 1 : 0 );
+        int spaces = (uint)var->Name.length() + (var->Type == VAR_LOCAL_LOCATION || var->Type == VAR_LOCAL_MAP || var->Type == VAR_LOCAL_ITEM ? 1 : 0);
         for( int i = 0, j = MAX( 1, 40 - spaces ); i < j; i++ )
             fm.SetStr( " " );
         fm.SetStr( "(%u)\n", var->TempId );
@@ -564,7 +564,7 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
         }
         else
         {
-            var = ( *it ).second;
+            var = (*it).second;
         }
     }
     else
@@ -584,7 +584,7 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
         }
         else
         {
-            var = ( *it ).second;
+            var = (*it).second;
         }
     }
 
@@ -667,13 +667,13 @@ void VarManager::SwapVars( uint id1, uint id2 )
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
         TemplateVar* tvar = *it;
-        if( tvar && ( tvar->Type == VAR_LOCAL || tvar->Type == VAR_UNICUM ) )
+        if( tvar && (tvar->Type == VAR_LOCAL || tvar->Type == VAR_UNICUM) )
         {
             if( tvar->IsNotUnicum() )
             {
                 for( auto it_ = tvar->Vars.begin(), end_ = tvar->Vars.end(); it_ != end_; ++it_ )
                 {
-                    GameVar* var = ( *it_ ).second;
+                    GameVar* var = (*it_).second;
                     if( var->MasterId == id1 )
                         swap_vars1.push_back( var );
                     else if( var->MasterId == id2 )
@@ -684,9 +684,9 @@ void VarManager::SwapVars( uint id1, uint id2 )
             {
                 for( auto it_ = tvar->VarsUnicum.begin(), end_ = tvar->VarsUnicum.end(); it_ != end_; ++it_ )
                 {
-                    GameVar* var = ( *it_ ).second;
-                    if( ( var->MasterId == id1 && var->SlaveId == id2 ) ||
-                        ( var->MasterId == id2 && var->SlaveId == id1 ) )
+                    GameVar* var = (*it_).second;
+                    if( (var->MasterId == id1 && var->SlaveId == id2) ||
+                        (var->MasterId == id2 && var->SlaveId == id1) )
                         swap_vars_share.push_back( var );
                     else if( var->MasterId == id1 || var->SlaveId == id1 )
                         swap_vars1.push_back( var );
@@ -791,9 +791,9 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
         if( tvar && tvar->Type != VAR_GLOBAL )
         {
             for( auto it_ = tvar->Vars.begin(), end_ = tvar->Vars.end(); it_ != end_; ++it_ )
-                all_vars.push_back( ( *it_ ).second );
+                all_vars.push_back( (*it_).second );
             for( auto it_ = tvar->VarsUnicum.begin(), end_ = tvar->VarsUnicum.end(); it_ != end_; ++it_ )
-                all_vars.push_back( ( *it_ ).second );
+                all_vars.push_back( (*it_).second );
         }
     }
     varsLocker.Unlock();

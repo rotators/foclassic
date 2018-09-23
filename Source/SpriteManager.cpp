@@ -8,11 +8,11 @@ SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;
 
 #define TEX_FRMT             D3DFMT_A8R8G8B8
-#define SPR_BUFFER_COUNT     ( 10000 )
-#define SURF_SPRITES_OFFS    ( 2 )
+#define SPR_BUFFER_COUNT     (10000)
+#define SURF_SPRITES_OFFS    (2)
 
 #ifdef FO_D3D
-# define SURF_POINT( lr, x, y )    ( *( (uint*)( (uchar*)lr.pBits + lr.Pitch * ( y ) + ( x ) * 4 ) ) )
+# define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif
 
 SpriteManager::SpriteManager() : isInit( 0 ), flushSprCnt( 0 ), curSprCnt( 0 ), SurfType( 0 ), SurfFilterNearest( false ),
@@ -25,9 +25,9 @@ SpriteManager::SpriteManager() : isInit( 0 ), flushSprCnt( 0 ), curSprCnt( 0 ), 
     contoursPS( NULL ), contoursCT( NULL ), contoursAdded( false ),
     modeWidth( 0 ), modeHeight( 0 )
 {
-    memzero( &presentParams, sizeof( presentParams ) );
-    memzero( &mngrParams, sizeof( mngrParams ) );
-    memzero( &deviceCaps, sizeof( deviceCaps ) );
+    memzero( &presentParams, sizeof(presentParams) );
+    memzero( &mngrParams, sizeof(mngrParams) );
+    memzero( &deviceCaps, sizeof(deviceCaps) );
     baseColor = COLOR_ARGB( 255, 128, 128, 128 );
     surfList.reserve( 100 );
     dipQueue.reserve( 1000 );
@@ -47,7 +47,7 @@ SpriteManager::SpriteManager() : isInit( 0 ), flushSprCnt( 0 ), curSprCnt( 0 ), 
     vbMain = 0;
     ibMain = 0;
     ibDirect = 0;
-    memzero( projectionMatrix, sizeof( projectionMatrix ) );
+    memzero( projectionMatrix, sizeof(projectionMatrix) );
     # ifdef FO_WINDOWS
     deviceContext = NULL;
     glContext = NULL;
@@ -79,10 +79,10 @@ bool SpriteManager::Init( SpriteMngrParams& params )
         return false;
     }
 
-    memzero( &deviceCaps, sizeof( deviceCaps ) );
+    memzero( &deviceCaps, sizeof(deviceCaps) );
     D3D_HR( direct3D->GetDeviceCaps( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &deviceCaps ) );
 
-    memzero( &presentParams, sizeof( presentParams ) );
+    memzero( &presentParams, sizeof(presentParams) );
     presentParams.BackBufferCount = 1;
     presentParams.Windowed = TRUE;
     presentParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
@@ -152,7 +152,7 @@ bool SpriteManager::Init( SpriteMngrParams& params )
     # define CHECK_EXTENSION( ext_prefix, ext, critical  )                        \
         if( !ext_prefix ## ext )                                                  \
         {                                                                         \
-            const char* msg = ( critical ? "Critical" : "Not critical" );         \
+            const char* msg = (critical ? "Critical" : "Not critical");           \
             WriteLog( "OpenGL extension '" # ext "' not supported. %s.\n", msg ); \
             if( critical )                                                        \
                 extension_errors++;                                               \
@@ -245,7 +245,7 @@ bool SpriteManager::Init( SpriteMngrParams& params )
     // Sprites buffer
     sprData.resize( SPR_BUFFER_COUNT );
     for( auto it = sprData.begin(), end = sprData.end(); it != end; ++it )
-        ( *it ) = NULL;
+        (*it) = NULL;
 
     // Transparent egg
     isInit = true;
@@ -320,10 +320,10 @@ bool SpriteManager::InitBuffers()
     SAFEREL( ibMain );
 
     // Vertex buffer
-    D3D_HR( d3dDevice->CreateVertexBuffer( flushSprCnt * 4 * sizeof( Vertex ), D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFVF_MYVERTEX, D3DPOOL_DEFAULT, &vbMain, NULL ) );
+    D3D_HR( d3dDevice->CreateVertexBuffer( flushSprCnt * 4 * sizeof(Vertex), D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFVF_MYVERTEX, D3DPOOL_DEFAULT, &vbMain, NULL ) );
 
     // Index buffer
-    D3D_HR( d3dDevice->CreateIndexBuffer( flushSprCnt * 6 * sizeof( ushort ), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &ibMain, NULL ) );
+    D3D_HR( d3dDevice->CreateIndexBuffer( flushSprCnt * 6 * sizeof(ushort), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &ibMain, NULL ) );
 
     ushort* ind = new ushort[6 * flushSprCnt];
     if( !ind )
@@ -340,7 +340,7 @@ bool SpriteManager::InitBuffers()
 
     void* buf;
     D3D_HR( ibMain->Lock( 0, 0, (void**)&buf, 0 ) );
-    memcpy( buf, ind, flushSprCnt * 6 * sizeof( ushort ) );
+    memcpy( buf, ind, flushSprCnt * 6 * sizeof(ushort) );
     D3D_HR( ibMain->Unlock() );
     delete[] ind;
 
@@ -363,7 +363,7 @@ bool SpriteManager::InitBuffers()
     vBuffer.resize( flushSprCnt * 4 );
     GL( glGenBuffers( 1, &vbMain ) );
     GL( glBindBuffer( GL_ARRAY_BUFFER, vbMain ) );
-    GL( glBufferData( GL_ARRAY_BUFFER, flushSprCnt * 4 * sizeof( Vertex ), NULL, GL_DYNAMIC_DRAW ) );
+    GL( glBufferData( GL_ARRAY_BUFFER, flushSprCnt * 4 * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW ) );
 
     // Index buffers
     ushort* ind = new ushort[6 * flushSprCnt];
@@ -378,25 +378,25 @@ bool SpriteManager::InitBuffers()
     }
     GL( glGenBuffers( 1, &ibMain ) );
     GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibMain ) );
-    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 6 * sizeof( ushort ), ind, GL_STATIC_DRAW ) );
+    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 6 * sizeof(ushort), ind, GL_STATIC_DRAW ) );
     for( int i = 0; i < flushSprCnt * 4; i++ )
         ind[i] = i;
     GL( glGenBuffers( 1, &ibDirect ) );
     GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibDirect ) );
-    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 4 * sizeof( ushort ), ind, GL_STATIC_DRAW ) );
+    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 4 * sizeof(ushort), ind, GL_STATIC_DRAW ) );
     delete[] ind;
 
     // Vertex array
-    if( GLEW_ARB_vertex_array_object && ( GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object ) )
+    if( GLEW_ARB_vertex_array_object && (GLEW_ARB_framebuffer_object || GLEW_EXT_framebuffer_object) )
     {
         GL( glGenVertexArrays( 1, &vaMain ) );
         GL( glBindVertexArray( vaMain ) );
         GL( glBindBuffer( GL_ARRAY_BUFFER, vbMain ) );
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibMain ) );
-        GL( glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, x ) ) );
-        GL( glVertexAttribPointer( 1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, diffuse ) ) );
-        GL( glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, tu ) ) );
-        GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, tu2 ) ) );
+        GL( glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, x ) ) );
+        GL( glVertexAttribPointer( 1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)OFFSETOF( Vertex, diffuse ) ) );
+        GL( glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, tu ) ) );
+        GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, tu2 ) ) );
         GL( glEnableVertexAttribArray( 0 ) );
         GL( glEnableVertexAttribArray( 1 ) );
         GL( glEnableVertexAttribArray( 2 ) );
@@ -559,7 +559,7 @@ bool SpriteManager::BeginScene( uint clear_color )
 {
     #ifdef FO_D3D
     HRESULT hr = d3dDevice->TestCooperativeLevel();
-    if( hr != D3D_OK && ( hr != D3DERR_DEVICENOTRESET || !Restore() ) )
+    if( hr != D3D_OK && (hr != D3DERR_DEVICENOTRESET || !Restore() ) )
         return false;
 
     if( clear_color )
@@ -621,7 +621,7 @@ bool SpriteManager::Restore()
     #endif
     Animation3d::PreRestore();
     if( PreRestore )
-        ( *PreRestore )();
+        (*PreRestore)();
     GraphicLoader::EffectsPreRestore();
 
     // Reset device
@@ -637,7 +637,7 @@ bool SpriteManager::Restore()
     if( !InitBuffers() )
         return false;
     if( PostRestore )
-        ( *PostRestore )();
+        (*PostRestore)();
     if( !Animation3d::StartUp( d3dDevice ) )
         return false;
 
@@ -648,13 +648,13 @@ bool SpriteManager::Restore()
 bool SpriteManager::CreateRenderTarget( RenderTarget& rt, bool depth_stencil, bool multisampling /* = false */, uint width /* = 0 */, uint height /* = 0 */, bool tex_linear /* = false */ )
 {
     // Zero data
-    memzero( &rt, sizeof( rt ) );
-    width = ( width ? width : modeWidth );
-    height = ( height ? height : modeHeight );
+    memzero( &rt, sizeof(rt) );
+    width = (width ? width : modeWidth);
+    height = (height ? height : modeHeight);
 
     // Multisampling
     static int samples = -1;
-    if( multisampling && samples == -1 && ( GLEW_ARB_framebuffer_object || ( GLEW_EXT_framebuffer_object && GLEW_EXT_framebuffer_multisample ) ) )
+    if( multisampling && samples == -1 && (GLEW_ARB_framebuffer_object || (GLEW_EXT_framebuffer_object && GLEW_EXT_framebuffer_multisample) ) )
     {
         if( GLEW_ARB_texture_multisample && GameOpt.MultiSampling != 0 )
         {
@@ -953,12 +953,12 @@ void SpriteManager::DeleteRenderTarget( RenderTarget& rt )
         # endif
     }
     SAFEDEL( rt.TargetTexture );
-    memzero( &rt, sizeof( rt ) );
+    memzero( &rt, sizeof(rt) );
 }
 
 void SpriteManager::PushRenderTarget( RenderTarget& rt )
 {
-    bool redundant = ( !rtStack.empty() && rtStack.back()->Id == rt.Id );
+    bool redundant = (!rtStack.empty() && rtStack.back()->Id == rt.Id);
     rtStack.push_back( &rt );
     if( !redundant )
     {
@@ -983,7 +983,7 @@ void SpriteManager::PushRenderTarget( RenderTarget& rt )
 
 void SpriteManager::PopRenderTarget()
 {
-    bool redundant = ( rtStack.size() > 2 && rtStack.back()->Id == rtStack[rtStack.size() - 2]->Id );
+    bool redundant = (rtStack.size() > 2 && rtStack.back()->Id == rtStack[rtStack.size() - 2]->Id);
     rtStack.pop_back();
     if( !redundant )
     {
@@ -1051,10 +1051,10 @@ void SpriteManager::DrawRenderTarget( RenderTarget& rt, bool alpha_blend, const 
     }
     else
     {
-        RectF regionf = ( region_from ? *region_from :
-                          Rect( 0, 0, rt.TargetTexture->Width, rt.TargetTexture->Height ) );
-        RectF regiont = ( region_to ? *region_to :
-                          Rect( 0, 0, rtStack.back()->TargetTexture->Width, rtStack.back()->TargetTexture->Height ) );
+        RectF regionf = (region_from ? *region_from :
+                         Rect( 0, 0, rt.TargetTexture->Width, rt.TargetTexture->Height ) );
+        RectF regiont = (region_to ? *region_to :
+                         Rect( 0, 0, rtStack.back()->TargetTexture->Width, rtStack.back()->TargetTexture->Height ) );
         float wf = (float)rt.TargetTexture->Width;
         float hf = (float)rt.TargetTexture->Height;
         uint  mulpos = 0;
@@ -1088,10 +1088,10 @@ void SpriteManager::DrawRenderTarget( RenderTarget& rt, bool alpha_blend, const 
 
 void SpriteManager::ClearCurrentRenderTarget( uint color )
 {
-    float a = (float)( ( color >> 24 ) & 0xFF ) / 255.0f;
-    float r = (float)( ( color >> 16 ) & 0xFF ) / 255.0f;
-    float g = (float)( ( color >>  8 ) & 0xFF ) / 255.0f;
-    float b = (float)( ( color >>  0 ) & 0xFF ) / 255.0f;
+    float a = (float)( (color >> 24) & 0xFF ) / 255.0f;
+    float r = (float)( (color >> 16) & 0xFF ) / 255.0f;
+    float g = (float)( (color >>  8) & 0xFF ) / 255.0f;
+    float b = (float)( (color >>  0) & 0xFF ) / 255.0f;
     GL( glClearColor( r, g, b, a ) );
     GL( glClear( GL_COLOR_BUFFER_BIT ) );
 }
@@ -1099,8 +1099,8 @@ void SpriteManager::ClearCurrentRenderTarget( uint color )
 void SpriteManager::ClearCurrentRenderTargetDS( bool depth, bool stencil )
 {
     int depth_stencil_bit = 0;
-    depth_stencil_bit |= ( depth ? GL_DEPTH_BUFFER_BIT : 0 );     // Clear to value 1
-    depth_stencil_bit |= ( stencil ? GL_STENCIL_BUFFER_BIT : 0 ); // Clear to value 0
+    depth_stencil_bit |= (depth ? GL_DEPTH_BUFFER_BIT : 0);       // Clear to value 1
+    depth_stencil_bit |= (stencil ? GL_STENCIL_BUFFER_BIT : 0);   // Clear to value 0
     GL( glClear( depth_stencil_bit ) );
 }
 
@@ -1123,17 +1123,17 @@ void SpriteManager::EnableVertexArray( GLuint ib, uint count )
         GL( glBindVertexArray( vaMain ) );
         GL( glBindBuffer( GL_ARRAY_BUFFER, vbMain ) );
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ib ) );
-        GL( glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( Vertex ) * count, &vBuffer[0] ) );
+        GL( glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(Vertex) * count, &vBuffer[0] ) );
     }
     else
     {
         GL( glBindBuffer( GL_ARRAY_BUFFER, vbMain ) );
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ib ) );
-        GL( glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof( Vertex ) * count, &vBuffer[0] ) );
-        GL( glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, x ) ) );
-        GL( glVertexAttribPointer( 1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, diffuse ) ) );
-        GL( glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, tu ) ) );
-        GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), (void*)OFFSETOF( Vertex, tu2 ) ) );
+        GL( glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(Vertex) * count, &vBuffer[0] ) );
+        GL( glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, x ) ) );
+        GL( glVertexAttribPointer( 1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)OFFSETOF( Vertex, diffuse ) ) );
+        GL( glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, tu ) ) );
+        GL( glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)OFFSETOF( Vertex, tu2 ) ) );
         GL( glEnableVertexAttribArray( 0 ) );
         GL( glEnableVertexAttribArray( 1 ) );
         GL( glEnableVertexAttribArray( 2 ) );
@@ -1288,7 +1288,7 @@ void SpriteManager::FreeSurfaces( int surf_type )
                 if( si && si->Surf == surf )
                 {
                     delete si;
-                    ( *it_ ) = NULL;
+                    (*it_) = NULL;
                 }
             }
 
@@ -1344,8 +1344,8 @@ void SpriteManager::SaveSufaces()
 void SpriteManager::SaveTexture( Texture* tex, const char* fname, bool flip )
 {
     // Size
-    uint w = ( tex ? tex->Width : MainWindow->w() );
-    uint h = ( tex ? tex->Height : MainWindow->h() );
+    uint w = (tex ? tex->Width : MainWindow->w() );
+    uint h = (tex ? tex->Height : MainWindow->h() );
 
     // Get data
     uchar* data;
@@ -1371,7 +1371,7 @@ void SpriteManager::SaveTexture( Texture* tex, const char* fname, bool flip )
         uint* data4 = (uint*)ilGetData();
         for( uint y = 0; y < h / 2; y++ )
             for( uint x = 0; x < w; x++ )
-                std::swap( data4[y * w + x], data4[( h - y - 1 ) * w + x] );
+                std::swap( data4[y * w + x], data4[(h - y - 1) * w + x] );
     }
 
     // Detect file type
@@ -1442,7 +1442,7 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
     D3D_HR( dst_surf->LockRect( &rdst, &r, 0 ) );
     uchar* ptr = (uchar*)( (uint*)data + 3 );
     for( uint i = 0; i < h; i++ )
-        memcpy( (uchar*)rdst.pBits + rdst.Pitch * ( i + 1 ) + 4, ptr + w * 4 * i, w * 4 );
+        memcpy( (uchar*)rdst.pBits + rdst.Pitch * (i + 1) + 4, ptr + w * 4 * i, w * 4 );
 
     if( GameOpt.DebugSprites )
     {
@@ -1452,9 +1452,9 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
             for( uint xx = 1; xx < w + 1; xx++ )
             {
                 uint& p = SURF_POINT( rdst, xx, yy );
-                if( p && ( !SURF_POINT( rdst, xx - 1, yy - 1 ) || !SURF_POINT( rdst, xx, yy - 1 ) || !SURF_POINT( rdst, xx + 1, yy - 1 ) ||
-                           !SURF_POINT( rdst, xx - 1, yy ) || !SURF_POINT( rdst, xx + 1, yy ) || !SURF_POINT( rdst, xx - 1, yy + 1 ) ||
-                           !SURF_POINT( rdst, xx, yy + 1 ) || !SURF_POINT( rdst, xx + 1, yy + 1 ) ) )
+                if( p && (!SURF_POINT( rdst, xx - 1, yy - 1 ) || !SURF_POINT( rdst, xx, yy - 1 ) || !SURF_POINT( rdst, xx + 1, yy - 1 ) ||
+                          !SURF_POINT( rdst, xx - 1, yy ) || !SURF_POINT( rdst, xx + 1, yy ) || !SURF_POINT( rdst, xx - 1, yy + 1 ) ||
+                          !SURF_POINT( rdst, xx, yy + 1 ) || !SURF_POINT( rdst, xx + 1, yy + 1 ) ) )
                     p = rnd_color;
             }
         }
@@ -1475,9 +1475,9 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
     Texture* tex = surf->TextureOwner;
 
     uint*    ptr_from = (uint*)data + 3;
-    uint*    ptr_to = (uint*)tex->Data + ( y - 1 ) * tex->Width + x - 1;
+    uint*    ptr_to = (uint*)tex->Data + (y - 1) * tex->Width + x - 1;
     for( uint i = 0; i < h; i++ )
-        memcpy( ptr_to + tex->Width * ( i + 1 ) + 1, ptr_from + w * i, w * 4 );
+        memcpy( ptr_to + tex->Width * (i + 1) + 1, ptr_from + w * i, w * 4 );
 
     if( GameOpt.DebugSprites )
     {
@@ -1489,9 +1489,9 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
                 uint  xxx = x + xx - 1;
                 uint  yyy = y + yy - 1;
                 uint& p = tex->Pixel( xxx, yyy );
-                if( p && ( !tex->Pixel( xxx - 1, yyy - 1 ) || !tex->Pixel( xxx, yyy - 1 ) || !tex->Pixel( xxx + 1, yyy - 1 ) ||
-                           !tex->Pixel( xxx - 1, yyy ) || !tex->Pixel( xxx + 1, yyy ) || !tex->Pixel( xxx - 1, yyy + 1 ) ||
-                           !tex->Pixel( xxx, yyy + 1 ) || !tex->Pixel( xxx + 1, yyy + 1 ) ) )
+                if( p && (!tex->Pixel( xxx - 1, yyy - 1 ) || !tex->Pixel( xxx, yyy - 1 ) || !tex->Pixel( xxx + 1, yyy - 1 ) ||
+                          !tex->Pixel( xxx - 1, yyy ) || !tex->Pixel( xxx + 1, yyy ) || !tex->Pixel( xxx - 1, yyy + 1 ) ||
+                          !tex->Pixel( xxx, yyy + 1 ) || !tex->Pixel( xxx + 1, yyy + 1 ) ) )
                     p = rnd_color;
             }
         }
@@ -1539,7 +1539,7 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
 
 AnyFrames* SpriteManager::LoadAnimation( const char* fname, int path_type, int flags )
 {
-    AnyFrames* dummy = ( FLAG( flags, ANIM_USE_DUMMY ) ? DummyAnimation : NULL );
+    AnyFrames* dummy = (FLAG( flags, ANIM_USE_DUMMY ) ? DummyAnimation : NULL);
 
     if( !isInit || !fname || !fname[0] )
         return dummy;
@@ -1551,7 +1551,7 @@ AnyFrames* SpriteManager::LoadAnimation( const char* fname, int path_type, int f
         return dummy;
     }
 
-    int        dir = ( flags & 0xFF );
+    int        dir = (flags & 0xFF);
 
     AnyFrames* result = NULL;
     if( Str::CompareCaseCount( ext, "fr", 2 ) )
@@ -1628,18 +1628,18 @@ AnyFrames* SpriteManager::CreateAnimation( uint frames, uint ticks )
     anim->Ind = new uint[frames];
     if( !anim->Ind )
         return NULL;
-    memzero( anim->Ind, sizeof( uint ) * frames );
+    memzero( anim->Ind, sizeof(uint) * frames );
     anim->NextX = new short[frames];
     if( !anim->NextX )
         return NULL;
-    memzero( anim->NextX, sizeof( short ) * frames );
+    memzero( anim->NextX, sizeof(short) * frames );
     anim->NextY = new short[frames];
     if( !anim->NextY )
         return NULL;
-    memzero( anim->NextY, sizeof( short ) * frames );
+    memzero( anim->NextY, sizeof(short) * frames );
 
     anim->CntFrm = frames;
-    anim->Ticks = ( ticks ? ticks : frames * 100 );
+    anim->Ticks = (ticks ? ticks : frames * 100);
     return anim;
 }
 
@@ -1769,7 +1769,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
         if( !anim_pix_type )
         {
             for( int i = 0, j = w * h; i < j; i++ )
-                *( ptr + i ) = palette[fm.GetUChar()];
+                *(ptr + i) = palette[fm.GetUChar()];
         }
         else
         {
@@ -1810,11 +1810,11 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
                     }
                     else
                     {
-                        *( ptr + i ) = COLOR_XRGB( blinking_red_vals[frm % 10], 0, 0 );
+                        *(ptr + i) = COLOR_XRGB( blinking_red_vals[frm % 10], 0, 0 );
                         continue;
                     }
                 }
-                *( ptr + i ) = palette[index];
+                *(ptr + i) = palette[index];
             }
         }
 
@@ -1877,7 +1877,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
                 frm_num = 4;
                 for( int i = 0; i < 4; i++ )
                 {
-                    if( !( frm_num % divs[i] ) )
+                    if( !(frm_num % divs[i]) )
                         continue;
                     frm_num++;
                     i = -1;
@@ -1944,10 +1944,10 @@ AnyFrames* SpriteManager::LoadAnimationRix( const char* fname, int path_type )
     for( int i = 0, j = w * h; i < j; i++ )
     {
         uint index = fm.GetUChar();
-        uint r = *( palette + index * 3 + 0 ) * 4;
-        uint g = *( palette + index * 3 + 1 ) * 4;
-        uint b = *( palette + index * 3 + 2 ) * 4;
-        *( ptr + i ) = COLOR_XRGB( r, g, b );
+        uint r = *(palette + index * 3 + 0) * 4;
+        uint g = *(palette + index * 3 + 1) * 4;
+        uint b = *(palette + index * 3 + 2) * 4;
+        *(ptr + i) = COLOR_XRGB( r, g, b );
     }
 
     uint result = FillSurfaceFromMemory( si, data, size );
@@ -1988,7 +1988,7 @@ AnyFrames* SpriteManager::LoadAnimationFofrm( const char* fname, int path_type, 
 
     char dir_str[16];
     Str::Format( dir_str, "dir_%d", dir );
-    bool no_app = ( dir == 0 && !fofrm.IsApp( "dir_0" ) );
+    bool no_app = (dir == 0 && !fofrm.IsApp( "dir_0" ) );
 
     if( !no_app )
     {
@@ -2011,7 +2011,7 @@ AnyFrames* SpriteManager::LoadAnimationFofrm( const char* fname, int path_type, 
         anims_offs.push_back( fofrm.GetInt( no_app ? NULL : dir_str, Str::FormatBuf( "next_y_%d", frm ), 0 ) );
 
         if( !fofrm.GetStr( no_app ? NULL : dir_str, Str::FormatBuf( "frm_%d", frm ), "", frm_name ) &&
-            ( frm != 0 || !fofrm.GetStr( no_app ? NULL : dir_str, Str::FormatBuf( "frm", frm ), "", frm_name ) ) )
+            (frm != 0 || !fofrm.GetStr( no_app ? NULL : dir_str, Str::FormatBuf( "frm", frm ), "", frm_name ) ) )
             goto label_Fail;
 
         AnyFrames* anim = LoadAnimation( frm_fname, path_type, ANIM_DIR( dir ) );
@@ -2099,17 +2099,17 @@ label_LoadOneSpr:
     }
 
     // Calculate need information
-    float frame_time = 1.0f / (float)( GameOpt.Animation3dFPS ? GameOpt.Animation3dFPS : 10 );  // 1 second / fps
+    float frame_time = 1.0f / (float)(GameOpt.Animation3dFPS ? GameOpt.Animation3dFPS : 10);    // 1 second / fps
     float period_from = period * (float)proc_from / 100.0f;
     float period_to = period * (float)proc_to / 100.0f;
     float period_len = abs( period_to - period_from );
-    float proc_step = (float)( proc_to - proc_from ) / ( period_len / frame_time );
+    float proc_step = (float)(proc_to - proc_from) / (period_len / frame_time);
     int   frames_count = (int)ceil( period_len / frame_time );
 
     if( frames_count <= 1 )
         goto label_LoadOneSpr;
 
-    AnyFrames* anim = CreateAnimation( frames_count, (uint)( period_len * 1000.0f ) );
+    AnyFrames* anim = CreateAnimation( frames_count, (uint)(period_len * 1000.0f) );
     if( !anim )
         return NULL;
 
@@ -2117,7 +2117,7 @@ label_LoadOneSpr:
     int   prev_cur_proci = -1;
     for( int i = 0; i < frames_count; i++ )
     {
-        int cur_proci = ( proc_to > proc_from ? (int)( 10.0f * cur_proc + 0.5 ) : (int)( 10.0f * cur_proc ) );
+        int cur_proci = (proc_to > proc_from ? (int)(10.0f * cur_proc + 0.5) : (int)(10.0f * cur_proc) );
 
         if( cur_proci != prev_cur_proci ) // Previous frame is different
             anim->Ind[i] = Render3dSprite( anim3d, dir, cur_proci );
@@ -2168,7 +2168,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
     }
     else
     {
-        dir = ( dir + 1 ) % 8;
+        dir = (dir + 1) % 8;
     }
 
     char file_name[MAX_FOPATH];
@@ -2267,14 +2267,14 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
     typedef unsigned int ArtPalette[256];
     ArtPalette palette[4];
 
-    if( !fm.CopyMem( &header, sizeof( header ) ) )
+    if( !fm.CopyMem( &header, sizeof(header) ) )
         return NULL;
     if( header.flags & 0x00000001 )
         header.rotationCount = 1;
 
     // Fix dir
     if( header.rotationCount != 8 )
-        dir = dir * ( header.rotationCount * 100 / 8 ) / 100;
+        dir = dir * (header.rotationCount * 100 / 8) / 100;
     if( (uint)dir >= header.rotationCount )
         dir = 0;
 
@@ -2284,7 +2284,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
     {
         if( header.paletteList[i] )
         {
-            if( !fm.CopyMem( &palette[i], sizeof( ArtPalette ) ) )
+            if( !fm.CopyMem( &palette[i], sizeof(ArtPalette) ) )
                 return NULL;
             palette_count++;
         }
@@ -2309,13 +2309,13 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         return NULL;
 
     // Calculate data offset
-    uint data_offset = sizeof( ArtHeader ) + sizeof( ArtPalette ) * palette_count + sizeof( ArtFrameInfo ) * dir_count * frm_count;
+    uint data_offset = sizeof(ArtHeader) + sizeof(ArtPalette) * palette_count + sizeof(ArtFrameInfo) * dir_count * frm_count;
     for( uint i = 0; i < (uint)dir; i++ )
     {
         for( uint j = 0; j < frm_count; j++ )
         {
-            fm.SetCurPos( sizeof( ArtHeader ) + sizeof( ArtPalette ) * palette_count +
-                          sizeof( ArtFrameInfo ) * i * frm_count + sizeof( ArtFrameInfo ) * j + sizeof( unsigned int ) * 2 );
+            fm.SetCurPos( sizeof(ArtHeader) + sizeof(ArtPalette) * palette_count +
+                          sizeof(ArtFrameInfo) * i * frm_count + sizeof(ArtFrameInfo) * j + sizeof(unsigned int) * 2 );
             data_offset += fm.GetLEUInt();
         }
     }
@@ -2328,14 +2328,14 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         uint data_offset_cur = data_offset;
         for( uint i = 0; i < frm; i++ )
         {
-            fm.SetCurPos( sizeof( ArtHeader ) + sizeof( ArtPalette ) * palette_count +
-                          sizeof( ArtFrameInfo ) * dir * frm_count + sizeof( ArtFrameInfo ) * i + sizeof( uint ) * 2 );
+            fm.SetCurPos( sizeof(ArtHeader) + sizeof(ArtPalette) * palette_count +
+                          sizeof(ArtFrameInfo) * dir * frm_count + sizeof(ArtFrameInfo) * i + sizeof(uint) * 2 );
             uint frame_size = fm.GetLEUInt();
             data_offset_cur += frame_size;
         }
 
-        fm.SetCurPos( sizeof( ArtHeader ) + sizeof( ArtPalette ) * palette_count +
-                      sizeof( ArtFrameInfo ) * dir * frm_count + sizeof( ArtFrameInfo ) * frm );
+        fm.SetCurPos( sizeof(ArtHeader) + sizeof(ArtPalette) * palette_count +
+                      sizeof(ArtFrameInfo) * dir * frm_count + sizeof(ArtFrameInfo) * frm );
 
         SpriteInfo* si = new SpriteInfo();
         if( !si )
@@ -2344,15 +2344,15 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
             return NULL;
         }
 
-        if( !fm.CopyMem( &frame_info, sizeof( frame_info ) ) )
+        if( !fm.CopyMem( &frame_info, sizeof(frame_info) ) )
         {
             delete si;
             delete anim;
             return NULL;
         }
 
-        si->OffsX = ( -frame_info.offsetX + frame_info.frameWidth / 2 ) * ( mirror_hor ? -1 : 1 );
-        si->OffsY = ( -frame_info.offsetY + frame_info.frameHeight ) * ( mirror_ver ? -1 : 1 );
+        si->OffsX = (-frame_info.offsetX + frame_info.frameWidth / 2) * (mirror_hor ? -1 : 1);
+        si->OffsY = (-frame_info.offsetY + frame_info.frameHeight) * (mirror_ver ? -1 : 1);
         anim->NextX[frm_cur] = 0;      // frame_info.deltaX;
         anim->NextY[frm_cur] = 0;      // frame_info.deltaY;
 
@@ -2375,33 +2375,33 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
 
         // Decode
 // =======================================================================
-        #define ART_GET_COLOR                                                                              \
-            uchar index = fm.GetUChar();                                                                   \
-            uint color = palette[palette_index][index];                                                    \
-            if( !index )                                                                                   \
-                color = 0;                                                                                 \
-            else if( transparent )                                                                         \
-                color |= max( ( color >> 16 ) & 0xFF, max( ( color >> 8 ) & 0xFF, color & 0xFF ) ) << 24;  \
-            else                                                                                           \
+        #define ART_GET_COLOR                                                                          \
+            uchar index = fm.GetUChar();                                                               \
+            uint color = palette[palette_index][index];                                                \
+            if( !index )                                                                               \
+                color = 0;                                                                             \
+            else if( transparent )                                                                     \
+                color |= max( (color >> 16) & 0xFF, max( (color >> 8) & 0xFF, color & 0xFF ) ) << 24;  \
+            else                                                                                       \
                 color |= 0xFF000000
-        #define ART_WRITE_COLOR                                                                             \
-            if( mirror )                                                                                    \
-            {                                                                                               \
-                *( ptr + ( ( mirror_ver ? h - y - 1 : y ) * w + ( mirror_hor ? w - x - 1 : x ) ) ) = color; \
-                x++;                                                                                        \
-                if( x >= (int)w )                                                                           \
-                    x = 0, y++;                                                                             \
-            }                                                                                               \
-            else                                                                                            \
-            {                                                                                               \
-                *( ptr + pos ) = color;                                                                     \
-                pos++;                                                                                      \
+        #define ART_WRITE_COLOR                                                                        \
+            if( mirror )                                                                               \
+            {                                                                                          \
+                *(ptr + ( (mirror_ver ? h - y - 1 : y) * w + (mirror_hor ? w - x - 1 : x) ) ) = color; \
+                x++;                                                                                   \
+                if( x >= (int)w )                                                                      \
+                    x = 0, y++;                                                                        \
+            }                                                                                          \
+            else                                                                                       \
+            {                                                                                          \
+                *(ptr + pos) = color;                                                                  \
+                pos++;                                                                                 \
             }
 // =======================================================================
 
         uint pos = 0;
         int  x = 0, y = 0;
-        bool mirror = ( mirror_hor || mirror_ver );
+        bool mirror = (mirror_hor || mirror_ver);
 
         if( w * h == frame_info.frameSize )
         {
@@ -2458,7 +2458,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
     return anim;
 }
 
-#define SPR_CACHED_COUNT    ( 10 )
+#define SPR_CACHED_COUNT    (10)
 AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, int dir )
 {
     if( GameOpt.MapHexagonal )
@@ -2490,7 +2490,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     }
     else
     {
-        dir = ( dir + 2 ) % 8;
+        dir = (dir + 2) % 8;
     }
 
     // Parameters
@@ -2551,7 +2551,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                 }
 
                 // Erase from name and find again
-                Str::EraseInterval( rgb_beg, (uint)( rgb_end - rgb_beg + 1 ) );
+                Str::EraseInterval( rgb_beg, (uint)(rgb_end - rgb_beg + 1) );
                 rgb_beg = Str::Substring( seq_name, "[" );
             }
         }
@@ -2648,8 +2648,8 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     fm.GoForward( 1 );                 // CHAR unknown2  0x64, other values were not observed
 
     float   ta = RAD( 127.0f / 2.0f ); // Tactics grid angle
-    int     center_x_ex = (int)( ( dimension_left * sinf( ta ) + dimension_right * sinf( ta ) ) / 2.0f - dimension_left * sinf( ta ) );
-    int     center_y_ex = (int)( ( dimension_left * cosf( ta ) + dimension_right * cosf( ta ) ) / 2.0f );
+    int     center_x_ex = (int)( (dimension_left * sinf( ta ) + dimension_right * sinf( ta ) ) / 2.0f - dimension_left * sinf( ta ) );
+    int     center_y_ex = (int)( (dimension_left * cosf( ta ) + dimension_right * cosf( ta ) ) / 2.0f );
 
     uint    anim_index = 0;
     UIntVec frames;
@@ -2663,8 +2663,8 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     {
         // Find by name
         uint item_cnt = fm.GetLEUInt();
-        fm.GoForward( sizeof( short ) * item_cnt );
-        fm.GoForward( sizeof( uint ) * item_cnt );   // uint  unknown3[item_cnt]
+        fm.GoForward( sizeof(short) * item_cnt );
+        fm.GoForward( sizeof(uint) * item_cnt );     // uint  unknown3[item_cnt]
 
         uint len = fm.GetLEUInt();
         fm.CopyMem( name, len );
@@ -2677,8 +2677,8 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
             anim_index = index;
 
             // Read frame numbers
-            fm.GoBack( sizeof( ushort ) + len + sizeof( uint ) +
-                       sizeof( uint ) * item_cnt + sizeof( short ) * item_cnt );
+            fm.GoBack( sizeof(ushort) + len + sizeof(uint) +
+                       sizeof(uint) * item_cnt + sizeof(short) * item_cnt );
 
             for( uint i = 0; i < item_cnt; i++ )
             {
@@ -2687,7 +2687,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                     frames.push_back( val );
                 else if( val == -43 )
                 {
-                    fm.GoForward( sizeof( short ) * 3 );
+                    fm.GoForward( sizeof(short) * 3 );
                     i += 3;
                 }
             }
@@ -2715,11 +2715,11 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     uint    dir_cnt = fm.GetLEUInt();
     UIntVec bboxes;
     bboxes.resize( frame_cnt * dir_cnt * 4 );
-    fm.CopyMem( &bboxes[0], sizeof( uint ) * frame_cnt * dir_cnt * 4 );
+    fm.CopyMem( &bboxes[0], sizeof(uint) * frame_cnt * dir_cnt * 4 );
 
     // Fix dir
     if( dir_cnt != 8 )
-        dir = dir * ( dir_cnt * 100 / 8 ) / 100;
+        dir = dir * (dir_cnt * 100 / 8) / 100;
     if( (uint)dir >= dir_cnt )
         dir = 0;
 
@@ -2746,7 +2746,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
         data_len = fm.GetFsize() - cur_pos;
     fm.SetCurPos( cur_pos );
 
-    bool   packed = ( type == 0x32 );
+    bool   packed = (type == 0x32);
     uchar* data = fm.GetCurBuf();
     if( packed )
     {
@@ -2827,7 +2827,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
         uint whole_w = 0, whole_h = 0;
         for( uint part = 0; part < 4; part++ )
         {
-            uint frm_index = ( type == 0x32 ? frame_cnt * dir_cnt * part + dir * frame_cnt + frm : ( ( frm * dir_cnt + dir ) << 2 ) + part );
+            uint frm_index = (type == 0x32 ? frame_cnt * dir_cnt * part + dir * frame_cnt + frm : ( (frm * dir_cnt + dir) << 2 ) + part);
             if( !image_indices[frm_index] )
                 continue;
             fm_images.SetCurPos( image_indices[frm_index] );
@@ -2858,7 +2858,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
 
         for( uint part = 0; part < 4; part++ )
         {
-            uint frm_index = ( type == 0x32 ? frame_cnt * dir_cnt * part + dir * frame_cnt + frm : ( ( frm * dir_cnt + dir ) << 2 ) + part );
+            uint frm_index = (type == 0x32 ? frame_cnt * dir_cnt * part + dir * frame_cnt + frm : ( (frm * dir_cnt + dir) << 2 ) + part);
             if( !image_indices[frm_index] )
                 continue;
             fm_images.SetCurPos( image_indices[frm_index] );
@@ -2878,13 +2878,13 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
             fm_images.GoForward( rle_size );
             uchar  def_color = 0;
 
-            if( zar[5] || strcmp( zar, "<zar>" ) || ( subtype != 0x34 && subtype != 0x35 ) || palette_present == 1 )
+            if( zar[5] || strcmp( zar, "<zar>" ) || (subtype != 0x34 && subtype != 0x35) || palette_present == 1 )
             {
                 delete anim;
                 return NULL;
             }
 
-            uint* ptr = (uint*)img_data + 3 + ( posy * whole_w ) + posx;
+            uint* ptr = (uint*)img_data + 3 + (posy * whole_w) + posx;
             uint  x = posx, y = posy;
             while( rle_size )
             {
@@ -2892,8 +2892,8 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                 rle_buf++;
                 rle_size--;
 
-                int control_mode = ( control & 3 );
-                int control_count = ( control >> 2 );
+                int control_mode = (control & 3);
+                int control_count = (control >> 2);
 
                 for( int i = 0; i < control_count; i++ )
                 {
@@ -2927,7 +2927,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
 
                     if( !part )
                         *ptr = col;
-                    else if( ( col >> 24 ) >= 128 )
+                    else if( (col >> 24) >= 128 )
                         *ptr = col;
                     ptr++;
 
@@ -2935,7 +2935,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                     {
                         x = posx;
                         y++;
-                        ptr = (uint*)img_data + 3 + ( y * whole_w ) + x;
+                        ptr = (uint*)img_data + 3 + (y * whole_w) + x;
                     }
                 }
 
@@ -2992,7 +2992,7 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
         uint palette_count = fm.GetLEUInt();
         if( palette_count > 256 )
             return NULL;
-        fm.CopyMem( palette, sizeof( uint ) * palette_count );
+        fm.CopyMem( palette, sizeof(uint) * palette_count );
         if( type == 0x34 )
             def_color = fm.GetUChar();
     }
@@ -3018,8 +3018,8 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
         rle_buf++;
         rle_size--;
 
-        int control_mode = ( control & 3 );
-        int control_count = ( control >> 2 );
+        int control_mode = (control & 3);
+        int control_count = (control >> 2);
 
         for( int i = 0; i < control_count; i++ )
         {
@@ -3117,7 +3117,7 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
             uint palette_count = fm.GetLEUInt();
             if( palette_count > 256 )
                 return NULL;
-            fm.CopyMem( palette, sizeof( uint ) * palette_count );
+            fm.CopyMem( palette, sizeof(uint) * palette_count );
             if( type == 0x34 )
                 def_color = fm.GetUChar();
         }
@@ -3143,8 +3143,8 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
             rle_buf++;
             rle_size--;
 
-            int control_mode = ( control & 3 );
-            int control_count = ( control >> 2 );
+            int control_mode = (control & 3);
+            int control_count = (control >> 2);
 
             for( int i = 0; i < control_count; i++ )
             {
@@ -3259,8 +3259,8 @@ AnyFrames* SpriteManager::LoadAnimationMos( const char* fname, int path_type )
             fm.SetCurPos( data_offset + fm.GetLEUInt() );
 
             // Calculate current block size
-            uint block_w = ( ( x == col - 1 ) ? w % 64 : 64 );
-            uint block_h = ( ( y == row - 1 ) ? h % 64 : 64 );
+            uint block_w = ( (x == col - 1) ? w % 64 : 64 );
+            uint block_h = ( (y == row - 1) ? h % 64 : 64 );
             if( !block_w )
                 block_w = 64;
             if( !block_h )
@@ -3277,7 +3277,7 @@ AnyFrames* SpriteManager::LoadAnimationMos( const char* fname, int path_type )
                         color = 0;                                 // Green is transparent
                     else
                         color |= 0xFF000000;
-                    *( ptr + pos ) = color;
+                    *(ptr + pos) = color;
                     pos++;
                 }
                 pos += w - block_w;
@@ -3410,7 +3410,7 @@ AnyFrames* SpriteManager::LoadAnimationBam( const char* fname, int path_type )
         int  ox = (ushort)fm.GetLEUShort();
         int  oy = (ushort)fm.GetLEUShort();
         uint data_offset = fm.GetLEUInt();
-        bool rle = ( data_offset & 0x80000000 ? false : true );
+        bool rle = (data_offset & 0x80000000 ? false : true);
         data_offset &= 0x7FFFFFFF;
 
         // Data for FillSurfaceFromMemory
@@ -3733,10 +3733,10 @@ uint SpriteManager::Render3dSprite( Animation3d* anim3d, int dir, int time_proc 
     PopRenderTarget();
 
     // Flip
-    uint* data4 = (uint*)( data + 12 );
+    uint* data4 = (uint*)(data + 12);
     for( uint y = 0; y < h / 2; y++ )
         for( uint x = 0; x < w; x++ )
-            std::swap( data4[y * w + x], data4[( h - y - 1 ) * w + x] );
+            std::swap( data4[y * w + x], data4[(h - y - 1) * w + x] );
 
     // Fill from memory
     SpriteInfo* si = new SpriteInfo();
@@ -3805,11 +3805,11 @@ bool SpriteManager::Flush()
         v.diffuse = COLOR_FIX( v.diffuse );
     }
     void* ptr;
-    D3D_HR( vbMain->Lock( 0, sizeof( Vertex ) * mulpos, (void**)&ptr, D3DLOCK_DISCARD ) );
-    memcpy( ptr, &vBuffer[0], sizeof( Vertex ) * mulpos );
+    D3D_HR( vbMain->Lock( 0, sizeof(Vertex) * mulpos, (void**)&ptr, D3DLOCK_DISCARD ) );
+    memcpy( ptr, &vBuffer[0], sizeof(Vertex) * mulpos );
     D3D_HR( vbMain->Unlock() );
     D3D_HR( d3dDevice->SetIndices( ibMain ) );
-    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof( Vertex ) ) );
+    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof(Vertex) ) );
     D3D_HR( d3dDevice->SetFVF( D3DFVF_MYVERTEX ) );
     #else
     for( int i = 0; i < mulpos; i++ )
@@ -3903,7 +3903,7 @@ bool SpriteManager::Flush()
         {
             if( effect->IsNeedProcess )
                 GraphicLoader::EffectProcessVariables( effect, pass );
-            GL( glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (void*)( rpos * 2 ) ) );
+            GL( glDrawElements( GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (void*)(rpos * 2) ) );
         }
 
         # ifdef FO_WINDOWS
@@ -3944,7 +3944,7 @@ bool SpriteManager::DrawSprite( uint id, int x, int y, uint color /* = 0 */ )
         #endif
     }
 
-    Effect* effect = ( si->DrawEffect ? si->DrawEffect : Effect::Iface );
+    Effect* effect = (si->DrawEffect ? si->DrawEffect : Effect::Iface);
     if( dipQueue.empty() || dipQueue.back().SourceTexture != si->Surf->TextureOwner || dipQueue.back().SourceEffect->Id != effect->Id )
         dipQueue.push_back( DipData( si->Surf->TextureOwner, effect ) );
     else
@@ -4023,10 +4023,10 @@ bool SpriteManager::DrawSpritePattern( uint id, int x, int y, int w, int h, int 
     if( !color )
         color = COLOR_IFACE;
 
-    Effect* effect = ( si->DrawEffect ? si->DrawEffect : Effect::Iface );
+    Effect* effect = (si->DrawEffect ? si->DrawEffect : Effect::Iface);
 
-    float   last_right_offs = ( si->SprRect.R - si->SprRect.L ) / width;
-    float   last_bottom_offs = ( si->SprRect.B - si->SprRect.T ) / height;
+    float   last_right_offs = (si->SprRect.R - si->SprRect.L) / width;
+    float   last_bottom_offs = (si->SprRect.B - si->SprRect.T) / height;
 
     for( float yy = (float)y, end_y = (float)y + h; yy < end_y; yy += height )
     {
@@ -4042,8 +4042,8 @@ bool SpriteManager::DrawSpritePattern( uint id, int x, int y, int w, int h, int 
 
             int   mulpos = curSprCnt * 4;
 
-            float local_width = last_x ? ( end_x - xx ) : width;
-            float local_height = last_y ? ( end_y - yy ) : height;
+            float local_width = last_x ? (end_x - xx) : width;
+            float local_height = last_y ? (end_y - yy) : height;
             float local_right = last_x ? si->SprRect.L + last_right_offs * local_width : si->SprRect.R;
             float local_bottom = last_y ? si->SprRect.T + last_bottom_offs * local_height : si->SprRect.B;
 
@@ -4102,7 +4102,7 @@ bool SpriteManager::DrawSpriteSize( uint id, int x, int y, float w, float h, boo
     float hf = h_real;
     float k = min( w / w_real, h / h_real );
 
-    if( k < 1.0f || ( k > 1.0f && stretch_up ) )
+    if( k < 1.0f || (k > 1.0f && stretch_up) )
     {
         wf *= k;
         hf *= k;
@@ -4110,8 +4110,8 @@ bool SpriteManager::DrawSpriteSize( uint id, int x, int y, float w, float h, boo
 
     if( center )
     {
-        x += (int)( ( w - wf ) / 2.0f );
-        y += (int)( ( h - hf ) / 2.0f );
+        x += (int)( (w - wf) / 2.0f );
+        y += (int)( (h - hf) / 2.0f );
     }
 
     if( si->Anim3d )
@@ -4124,7 +4124,7 @@ bool SpriteManager::DrawSpriteSize( uint id, int x, int y, float w, float h, boo
         #endif
     }
 
-    Effect* effect = ( si->DrawEffect ? si->DrawEffect : Effect::Iface );
+    Effect* effect = (si->DrawEffect ? si->DrawEffect : Effect::Iface);
     if( dipQueue.empty() || dipQueue.back().SourceTexture != si->Surf->TextureOwner || dipQueue.back().SourceEffect->Id != effect->Id )
         dipQueue.push_back( DipData( si->Surf->TextureOwner, effect ) );
     else
@@ -4194,7 +4194,7 @@ uint SpriteManager::PackColor( int r, int g, int b )
 
 void SpriteManager::GetDrawRect( Sprite* prep, Rect& rect )
 {
-    uint id = ( prep->PSprId ? *prep->PSprId : prep->SprId );
+    uint id = (prep->PSprId ? *prep->PSprId : prep->SprId);
     if( id >= sprData.size() )
         return;
     SpriteInfo* si = sprData[id];
@@ -4228,7 +4228,7 @@ bool SpriteManager::CompareHexEgg( ushort hx, ushort hy, int egg_type )
 {
     if( egg_type == EGG_ALWAYS )
         return true;
-    if( eggHy == hy && hx & 1 && !( eggHx & 1 ) )
+    if( eggHy == hy && hx & 1 && !(eggHx & 1) )
         hy--;
     switch( egg_type )
     {
@@ -4259,7 +4259,7 @@ void SpriteManager::SetEgg( ushort hx, ushort hy, Sprite* spr )
     if( !sprEgg )
         return;
 
-    uint        id = ( spr->PSprId ? *spr->PSprId : spr->SprId );
+    uint        id = (spr->PSprId ? *spr->PSprId : spr->SprId);
     SpriteInfo* si = sprData[id];
     if( !si )
         return;
@@ -4314,7 +4314,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         if( spr->DrawOrderType > draw_oder_to )
             break;
 
-        uint        id = ( spr->PSprId ? *spr->PSprId : spr->SprId );
+        uint        id = (spr->PSprId ? *spr->PSprId : spr->SprId);
         SpriteInfo* si = sprData[id];
         if( !si )
             continue;
@@ -4333,7 +4333,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         // Base color
         uint cur_color;
         if( spr->Color )
-            cur_color = ( spr->Color | 0xFF000000 );
+            cur_color = (spr->Color | 0xFF000000);
         else
             cur_color = baseColor;
 
@@ -4341,8 +4341,8 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         if( spr->Light )
         {
             int    lr = *spr->Light;
-            int    lg = *( spr->Light + 1 );
-            int    lb = *( spr->Light + 2 );
+            int    lg = *(spr->Light + 1);
+            int    lb = *(spr->Light + 2);
             uchar& r = ( (uchar*)&cur_color )[2];
             uchar& g = ( (uchar*)&cur_color )[1];
             uchar& b = ( (uchar*)&cur_color )[0];
@@ -4374,7 +4374,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
             static bool add = true;
             if( cur_tick >= tick )
             {
-                cnt += ( add ? 10 : -10 );
+                cnt += (add ? 10 : -10);
                 if( cnt > 40 )
                 {
                     cnt = 40;
@@ -4387,9 +4387,9 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
                 }
                 tick = cur_tick + 100;
             }
-            int r = ( ( cur_color >> 16 ) & 0xFF ) + cnt;
-            int g = ( ( cur_color >> 8 ) & 0xFF ) + cnt;
-            int b = ( cur_color & 0xFF ) + cnt;
+            int r = ( (cur_color >> 16) & 0xFF ) + cnt;
+            int g = ( (cur_color >> 8) & 0xFF ) + cnt;
+            int b = (cur_color & 0xFF) + cnt;
             r = CLAMP( r, 0, 0xFF );
             g = CLAMP( g, 0, 0xFF );
             b = CLAMP( b, 0, 0xFF );
@@ -4403,7 +4403,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         // Check borders
         if( !si->Anim3d )
         {
-            if( x / zoom > modeWidth || ( x + si->Width ) / zoom < 0 || y / zoom > modeHeight || ( y + si->Height ) / zoom < 0 )
+            if( x / zoom > modeWidth || (x + si->Width) / zoom < 0 || y / zoom > modeHeight || (y + si->Height) / zoom < 0 )
                 continue;
         }
 
@@ -4422,7 +4422,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
             }
 
             // Draw 3d animation
-            Render3d( (int)( x / zoom ), (int)( y / zoom ), 1.0f / zoom, si->Anim3d, NULL, cur_color );
+            Render3d( (int)(x / zoom), (int)(y / zoom), 1.0f / zoom, si->Anim3d, NULL, cur_color );
 
             // Process contour effect
             if( collect_contours && spr->ContourType )
@@ -4454,7 +4454,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         }
 
         // Check borders
-        if( x / zoom > modeWidth || ( x + si->Width ) / zoom < 0 || y / zoom > modeHeight || ( y + si->Height ) / zoom < 0 )
+        if( x / zoom > modeWidth || (x + si->Width) / zoom < 0 || y / zoom > modeHeight || (y + si->Height) / zoom < 0 )
             continue;
         #endif
 
@@ -4474,7 +4474,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
                 x2 = x1 + (int)spr->CutW;
             }
 
-            if( !( x1 >= eggSprWidth || y1 >= eggSprHeight || x2 < 0 || y2 < 0 ) )
+            if( !(x1 >= eggSprWidth || y1 >= eggSprHeight || x2 < 0 || y2 < 0) )
             {
                 if( !egg_trans )
                 {
@@ -4491,10 +4491,10 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
                 x2 = min( x2, eggSprWidth );
                 y2 = min( y2, eggSprHeight );
 
-                float x1f = (float)( x1 + SURF_SPRITES_OFFS );
-                float x2f = (float)( x2 + SURF_SPRITES_OFFS );
-                float y1f = (float)( y1 + SURF_SPRITES_OFFS );
-                float y2f = (float)( y2 + SURF_SPRITES_OFFS );
+                float x1f = (float)(x1 + SURF_SPRITES_OFFS);
+                float x2f = (float)(x2 + SURF_SPRITES_OFFS);
+                float y1f = (float)(y1 + SURF_SPRITES_OFFS);
+                float y2f = (float)(y2 + SURF_SPRITES_OFFS);
 
                 int   mulpos = curSprCnt * 4;
                 vBuffer[mulpos + 0].tu2 = x1f / eggSurfWidth;
@@ -4521,9 +4521,9 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         }
 
         // Choose effect
-        Effect* effect = ( spr->DrawEffect ? *spr->DrawEffect : NULL );
+        Effect* effect = (spr->DrawEffect ? *spr->DrawEffect : NULL);
         if( !effect )
-            effect = ( si->DrawEffect ? si->DrawEffect : Effect::Generic );
+            effect = (si->DrawEffect ? si->DrawEffect : Effect::Generic);
 
         // Choose surface
         if( dipQueue.empty() || dipQueue.back().SourceTexture != si->Surf->TextureOwner || dipQueue.back().SourceEffect->Id != effect->Id )
@@ -4567,7 +4567,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         // Cutted sprite
         if( spr->CutType )
         {
-            xf = (float)( x + spr->CutX ) / zoom;
+            xf = (float)(x + spr->CutX) / zoom;
             wf = spr->CutW / zoom;
             vBuffer[mulpos - 4].x = xf;
             vBuffer[mulpos - 4].tu = spr->CutTexL;
@@ -4633,17 +4633,17 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         {
             PointVec cut;
             float    z = zoom;
-            float    oy = ( spr->CutType == SPRITE_CUT_HORIZONTAL ? 3.0f : -5.2f ) / z;
+            float    oy = (spr->CutType == SPRITE_CUT_HORIZONTAL ? 3.0f : -5.2f) / z;
             # ifdef FO_D3D
-            float    x1 = (float)( spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f ) / z - 0.5f;
-            float    y1 = (float)( spr->ScrY + spr->CutOyL + GameOpt.ScrOy ) / z - 0.5f;
-            float    x2 = (float)( spr->ScrX - si->Width / 2 + spr->CutX + spr->CutW + GameOpt.ScrOx - 1.0f ) / z - 0.5f;
-            float    y2 = (float)( spr->ScrY + spr->CutOyR + GameOpt.ScrOy ) / z - 0.5f;
+            float    x1 = (float)(spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f) / z - 0.5f;
+            float    y1 = (float)(spr->ScrY + spr->CutOyL + GameOpt.ScrOy) / z - 0.5f;
+            float    x2 = (float)(spr->ScrX - si->Width / 2 + spr->CutX + spr->CutW + GameOpt.ScrOx - 1.0f) / z - 0.5f;
+            float    y2 = (float)(spr->ScrY + spr->CutOyR + GameOpt.ScrOy) / z - 0.5f;
             # else
-            float    x1 = (float)( spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f ) / z;
-            float    y1 = (float)( spr->ScrY + spr->CutOyL + GameOpt.ScrOy ) / z;
-            float    x2 = (float)( spr->ScrX - si->Width / 2 + spr->CutX + spr->CutW + GameOpt.ScrOx - 1.0f ) / z;
-            float    y2 = (float)( spr->ScrY + spr->CutOyR + GameOpt.ScrOy ) / z;
+            float    x1 = (float)(spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f) / z;
+            float    y1 = (float)(spr->ScrY + spr->CutOyL + GameOpt.ScrOy) / z;
+            float    x2 = (float)(spr->ScrX - si->Width / 2 + spr->CutX + spr->CutW + GameOpt.ScrOx - 1.0f) / z;
+            float    y2 = (float)(spr->ScrY + spr->CutOyR + GameOpt.ScrOy) / z;
             # endif
             PrepareSquare( cut, PointF( x1, y1 - 80.0f / z + oy ), PointF( x2, y2 - 80.0f / z - oy ), PointF( x1, y1 + oy ), PointF( x2, y2 - oy ), 0x4FFFFF00 );
             PrepareSquare( cut, RectF( xf, yf, xf + 1.0f, yf + hf ), 0x4F000000 );
@@ -4659,18 +4659,18 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
 
             if( !spr->CutType )
             {
-                x1 = (int)( ( spr->ScrX + GameOpt.ScrOx ) / z );
-                y1 = (int)( ( spr->ScrY + GameOpt.ScrOy ) / z );
+                x1 = (int)( (spr->ScrX + GameOpt.ScrOx) / z );
+                y1 = (int)( (spr->ScrY + GameOpt.ScrOy) / z );
             }
             else
             {
 
-                x1 = (int)( ( spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f ) / z );
-                y1 = (int)( ( spr->ScrY + spr->CutOyL + GameOpt.ScrOy ) / z );
+                x1 = (int)( (spr->ScrX - si->Width / 2 + spr->CutX + GameOpt.ScrOx + 1.0f) / z );
+                y1 = (int)( (spr->ScrY + spr->CutOyL + GameOpt.ScrOy) / z );
             }
 
             if( spr->DrawOrderType >= DRAW_ORDER_FLAT && spr->DrawOrderType < DRAW_ORDER )
-                y1 -= (int)( 40.0f / z );
+                y1 -= (int)(40.0f / z);
 
             char str[32];
             Str::Format( str, "%u", spr->TreeIndex );
@@ -4700,7 +4700,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
 bool SpriteManager::IsPixNoTransp( uint spr_id, int offs_x, int offs_y, bool with_zoom )
 {
     uint color = GetPixColor( spr_id, offs_x, offs_y, with_zoom );
-    return ( color & 0xFF000000 ) != 0;
+    return (color & 0xFF000000) != 0;
 }
 
 uint SpriteManager::GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_zoom )
@@ -4744,15 +4744,15 @@ uint SpriteManager::GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_
     }
 
     // 2d animation
-    if( with_zoom && ( offs_x > si->Width / GameOpt.SpritesZoom || offs_y > si->Height / GameOpt.SpritesZoom ) )
+    if( with_zoom && (offs_x > si->Width / GameOpt.SpritesZoom || offs_y > si->Height / GameOpt.SpritesZoom) )
         return 0;
-    if( !with_zoom && ( offs_x > si->Width || offs_y > si->Height ) )
+    if( !with_zoom && (offs_x > si->Width || offs_y > si->Height) )
         return 0;
 
     if( with_zoom )
     {
-        offs_x = (int)( offs_x * GameOpt.SpritesZoom );
-        offs_y = (int)( offs_y * GameOpt.SpritesZoom );
+        offs_x = (int)(offs_x * GameOpt.SpritesZoom);
+        offs_y = (int)(offs_y * GameOpt.SpritesZoom);
     }
 
     #ifdef FO_D3D
@@ -4766,20 +4766,20 @@ uint SpriteManager::GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_
     uchar*          ptr = (uchar*)desc.pBits;
     int             pitch = desc.Pitch;
 
-    offs_x += (int)( width * si->SprRect.L );
-    offs_y += (int)( height * si->SprRect.T );
+    offs_x += (int)(width * si->SprRect.L);
+    offs_y += (int)(height * si->SprRect.T);
     int offset = offs_y * pitch + offs_x * 4;
     if( offset < pitch * height )
     {
-        uint color = *(uint*)( ptr + offset );
+        uint color = *(uint*)(ptr + offset);
         D3D_HR( si->Surf->TextureOwner->Instance->UnlockRect( 0 ) );
         return color;
     }
 
     D3D_HR( si->Surf->TextureOwner->Instance->UnlockRect( 0 ) );
     #else
-    offs_x += (int)( si->Surf->TextureOwner->SizeData[0] * si->SprRect.L );
-    offs_y += (int)( si->Surf->TextureOwner->SizeData[1] * si->SprRect.T );
+    offs_x += (int)(si->Surf->TextureOwner->SizeData[0] * si->SprRect.L);
+    offs_y += (int)(si->Surf->TextureOwner->SizeData[1] * si->SprRect.T);
     return si->Surf->TextureOwner->Pixel( offs_x, offs_y );
     #endif
     return 0;
@@ -4792,14 +4792,14 @@ bool SpriteManager::IsEggTransp( int pix_x, int pix_y )
 
     int ex = eggX + GameOpt.ScrOx;
     int ey = eggY + GameOpt.ScrOy;
-    int ox = pix_x - (int)( ex / GameOpt.SpritesZoom );
-    int oy = pix_y - (int)( ey / GameOpt.SpritesZoom );
+    int ox = pix_x - (int)(ex / GameOpt.SpritesZoom);
+    int oy = pix_y - (int)(ey / GameOpt.SpritesZoom);
 
     if( ox < 0 || oy < 0 || ox >= int(eggSurfWidth / GameOpt.SpritesZoom) || oy >= int(eggSurfHeight / GameOpt.SpritesZoom) )
         return false;
 
-    ox = (int)( ox * GameOpt.SpritesZoom );
-    oy = (int)( oy * GameOpt.SpritesZoom );
+    ox = (int)(ox * GameOpt.SpritesZoom);
+    oy = (int)(oy * GameOpt.SpritesZoom);
 
     #ifdef FO_D3D
     D3DSURFACE_DESC sDesc;
@@ -4879,7 +4879,7 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
         D3D_HR( d3dDevice->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE ) );
 
         D3D_HR( d3dDevice->Clear( 0, NULL, D3DCLEAR_STENCIL, 0, 1.0f, 0 ) );
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof( VertexUP ) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetRenderState( D3DRS_STENCILFUNC, D3DCMP_NOTEQUAL ) );
         D3D_HR( d3dDevice->SetRenderState( D3DRS_STENCILREF, 0 ) );
@@ -4891,13 +4891,13 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     {
         SAFEREL( vbPoints );
         vbPointsSize = 0;
-        D3D_HR( d3dDevice->CreateVertexBuffer( count * sizeof( MYVERTEX_PRIMITIVE ), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_MYVERTEX_PRIMITIVE, D3DPOOL_DEFAULT, &vbPoints, NULL ) );
+        D3D_HR( d3dDevice->CreateVertexBuffer( count * sizeof(MYVERTEX_PRIMITIVE), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_MYVERTEX_PRIMITIVE, D3DPOOL_DEFAULT, &vbPoints, NULL ) );
         vbPointsSize = count;
     }
 
     // Copy data
     void* vertices;
-    D3D_HR( vbPoints->Lock( 0, count * sizeof( MYVERTEX_PRIMITIVE ), (void**)&vertices, D3DLOCK_DISCARD ) );
+    D3D_HR( vbPoints->Lock( 0, count * sizeof(MYVERTEX_PRIMITIVE), (void**)&vertices, D3DLOCK_DISCARD ) );
     for( uint i = 0, j = (uint)points.size(); i < j; i++ )
     {
         PrepPoint&          point = points[i];
@@ -4950,7 +4950,7 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     if( count <= 0 )
         return false;
 
-    D3D_HR( d3dDevice->SetStreamSource( 0, vbPoints, 0, sizeof( MYVERTEX_PRIMITIVE ) ) );
+    D3D_HR( d3dDevice->SetStreamSource( 0, vbPoints, 0, sizeof(MYVERTEX_PRIMITIVE) ) );
     D3D_HR( d3dDevice->SetFVF( D3DFVF_MYVERTEX_PRIMITIVE ) );
 
     if( effect )
@@ -5036,14 +5036,14 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
         // Vertex buffer
         vBuffer.resize( count );
         GL( glBindBuffer( GL_ARRAY_BUFFER, vbMain ) );
-        GL( glBufferData( GL_ARRAY_BUFFER, count * sizeof( Vertex ), NULL, GL_DYNAMIC_DRAW ) );
+        GL( glBufferData( GL_ARRAY_BUFFER, count * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW ) );
 
         // Index buffers
         ushort* ind = new ushort[count];
         for( uint i = 0; i < count; i++ )
             ind[i] = i;
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibDirect ) );
-        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, count * sizeof( ushort ), ind, GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, count * sizeof(ushort), ind, GL_STATIC_DRAW ) );
         delete[] ind;
     }
 
@@ -5062,7 +5062,7 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
         if( offset )
             x += offset->X, y += offset->Y;
 
-        memzero( &vBuffer[i], sizeof( Vertex ) );
+        memzero( &vBuffer[i], sizeof(Vertex) );
         vBuffer[i].x = x;
         vBuffer[i].y = y;
         vBuffer[i].diffuse = COLOR_FIX( point.PointColor );
@@ -5143,8 +5143,8 @@ bool SpriteManager::Render3d( int x, int y, float scale, Animation3d* anim3d, Re
     si->Surf->TextureOwner = rt3D.TargetTexture;
     si->Surf->Width = rt3D.TargetTexture->Width;
     si->Surf->Height = rt3D.TargetTexture->Height;
-    int pivx = ( borders.L < 0 ? -borders.L : 0 );
-    int pivy = ( borders.T < 0 ? -borders.T : 0 );
+    int pivx = (borders.L < 0 ? -borders.L : 0);
+    int pivy = (borders.T < 0 ? -borders.T : 0);
     borders.L = CLAMP( borders.L, 0, modeWidth );
     borders.T = CLAMP( borders.T, 0, modeHeight );
     borders.R = CLAMP( borders.R, 0, modeWidth );
@@ -5163,7 +5163,7 @@ bool SpriteManager::Render3d( int x, int y, float scale, Animation3d* anim3d, Re
     #ifdef FO_D3D
     // Restore 2d stream
     D3D_HR( d3dDevice->SetIndices( ibMain ) );
-    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof( Vertex ) ) );
+    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof(Vertex) ) );
     #endif
     return true;
 }
@@ -5180,22 +5180,22 @@ bool SpriteManager::Render3dSize( RectF rect, bool stretch_up, bool center, Anim
         scale = 1.0f;
     if( center )
     {
-        xy.X += (int)( ( rect.W() - w_real * scale ) / 2.0f );
-        xy.Y += (int)( ( rect.H() - h_real * scale ) / 2.0f );
+        xy.X += (int)( (rect.W() - w_real * scale) / 2.0f );
+        xy.Y += (int)( (rect.H() - h_real * scale) / 2.0f );
     }
 
     // Draw model
     #ifdef FO_D3D
     Flush();
-    anim3d->Draw( (int)( rect.L + (float)xy.X * scale ), (int)( rect.T + (float)xy.Y * scale ), scale, stencil, color );
+    anim3d->Draw( (int)(rect.L + (float)xy.X * scale), (int)(rect.T + (float)xy.Y * scale), scale, stencil, color );
     #else
-    Render3d( (int)( rect.L + (float)xy.X * scale ), (int)( rect.T + (float)xy.Y * scale ), scale, anim3d, stencil, 0 );
+    Render3d( (int)(rect.L + (float)xy.X * scale), (int)(rect.T + (float)xy.Y * scale), scale, anim3d, stencil, 0 );
     #endif
 
     #ifdef FO_D3D
     // Restore 2d stream
     D3D_HR( d3dDevice->SetIndices( ibMain ) );
-    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof( Vertex ) ) );
+    D3D_HR( d3dDevice->SetStreamSource( 0, vbMain, 0, sizeof(Vertex) ) );
     #endif
     return true;
 }
@@ -5256,7 +5256,7 @@ bool SpriteManager::DrawContours()
         D3D_HR( d3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG1 ) );
         D3D_HR( d3dDevice->SetTexture( 0, contoursTexture->Instance ) );
 
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof( VertexUP ) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE2X ) );
         contoursAdded = false;
@@ -5322,8 +5322,8 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
     // Shader contour
     Animation3d* anim3d = si->Anim3d;
-    Rect         borders = ( anim3d ? anim3d->GetExtraBorders() : Rect( x - 1, y - 1, x + si->Width + 1, y + si->Height + 1 ) );
-    Texture*     texture = ( anim3d ? contoursMidTexture : si->Surf->TextureOwner );
+    Rect         borders = (anim3d ? anim3d->GetExtraBorders() : Rect( x - 1, y - 1, x + si->Width + 1, y + si->Height + 1 ) );
+    Texture*     texture = (anim3d ? contoursMidTexture : si->Surf->TextureOwner);
     float        ws, hs;
     RectF        tuv, tuvh;
 
@@ -5341,8 +5341,8 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
         }
         else
         {
-            borders( (int)( x / GameOpt.SpritesZoom ), (int)( y / GameOpt.SpritesZoom ),
-                     (int)( ( x + si->Width ) / GameOpt.SpritesZoom ), (int)( ( y + si->Height ) / GameOpt.SpritesZoom ) );
+            borders( (int)(x / GameOpt.SpritesZoom), (int)(y / GameOpt.SpritesZoom),
+                     (int)( (x + si->Width) / GameOpt.SpritesZoom ), (int)( (y + si->Height) / GameOpt.SpritesZoom ) );
             struct VertexUP
             {
                 float x, y, z, rhw;
@@ -5375,7 +5375,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
             D3DRECT clear_r = { borders.L - 1, borders.T - 1, borders.R + 1, borders.B + 1 };
             D3D_HR( d3dDevice->Clear( 1, &clear_r, D3DCLEAR_TARGET, 0, 1.0f, 0 ) );
-            D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof( VertexUP ) ) );
+            D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
             D3D_HR( d3dDevice->SetRenderTarget( 0, old_rt ) );
             D3D_HR( d3dDevice->SetDepthStencilSurface( old_ds ) );
@@ -5459,7 +5459,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
         D3DRECT clear_r = { borders.L - 2, borders.T - 2, borders.R + 2, borders.B + 2 };
         D3D_HR( d3dDevice->Clear( 1, &clear_r, D3DCLEAR_TARGET, 0, 1.0f, 0 ) );
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof( VertexUP ) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetRenderState( D3DRS_ZENABLE, FALSE ) );
         D3D_HR( d3dDevice->SetRenderState( D3DRS_ZFUNC, D3DCMP_LESS ) );
@@ -5547,7 +5547,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
     float sbh[3] = { tuvh.T, tuvh.B, tuvh.B - tuvh.T };
     if( contoursConstSpriteBordersHeight )
         D3D_HR( contoursCT->SetFloatArray( d3dDevice, contoursConstSpriteBordersHeight, sbh, 3 ) );
-    float cc[4] = { float( ( contour_color >> 16 ) & 0xFF ) / 255.0f, float( ( contour_color >> 8 ) & 0xFF ) / 255.0f, float( ( contour_color ) & 0xFF ) / 255.0f, float( ( contour_color >> 24 ) & 0xFF ) / 255.0f };
+    float cc[4] = { float( (contour_color >> 16) & 0xFF ) / 255.0f, float( (contour_color >> 8) & 0xFF ) / 255.0f, float( (contour_color) & 0xFF ) / 255.0f, float( (contour_color >> 24) & 0xFF ) / 255.0f };
     if( contoursConstContourColor )
         D3D_HR( contoursCT->SetFloatArray( d3dDevice, contoursConstContourColor, cc, 4 ) );
     if( contoursConstContourColorOffs )
@@ -5555,7 +5555,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
     if( !contoursAdded )
         D3D_HR( d3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, 0, 0.9f, 0 ) );
-    D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof( VertexUP ) ) );
+    D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
     // Restore 2d stream
     D3D_HR( d3dDevice->SetDepthStencilSurface( ds ) );
@@ -5568,7 +5568,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
     Rect     borders = Rect( x - 1, y - 1, x + si->Width + 1, y + si->Height + 1 );
     Texture* texture = si->Surf->TextureOwner;
     RectF    textureuv, sprite_border;
-    float    zoom = ( si->Anim3d ? 1.0f : GameOpt.SpritesZoom );
+    float    zoom = (si->Anim3d ? 1.0f : GameOpt.SpritesZoom);
 
     if( borders.L >= modeWidth * zoom || borders.R < 0 || borders.T >= modeHeight * zoom || borders.B < 0 )
         return true;
@@ -5601,8 +5601,8 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
     else
     {
         RectF& sr = si->SprRect;
-        borders( (int)( x / zoom ), (int)( y / zoom ),
-                 (int)( ( x + si->Width ) / zoom ), (int)( ( y + si->Height ) / zoom ) );
+        borders( (int)(x / zoom), (int)(y / zoom),
+                 (int)( (x + si->Width) / zoom ), (int)( (y + si->Height) / zoom ) );
         RectF bordersf( (float)borders.L, (float)borders.T, (float)borders.R, (float)borders.B );
         float mid_height = rtContoursMid.TargetTexture->SizeData[1];
 
@@ -5691,10 +5691,10 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 uint SpriteManager::GetSpriteContour( SpriteInfo* si, Sprite* spr )
 {
     // Find created
-    uint spr_id = ( spr->PSprId ? *spr->PSprId : spr->SprId );
+    uint spr_id = (spr->PSprId ? *spr->PSprId : spr->SprId);
     auto it = createdSpriteContours.find( spr_id );
     if( it != createdSpriteContours.end() )
-        return ( *it ).second;
+        return (*it).second;
 
     // Create new
     LPDIRECT3DSURFACE9 surf;
@@ -5703,8 +5703,8 @@ uint SpriteManager::GetSpriteContour( SpriteInfo* si, Sprite* spr )
     D3D_HR( surf->GetDesc( &desc ) );
     RECT               r =
     {
-        (uint)( desc.Width * si->SprRect.L ), (uint)( desc.Height * si->SprRect.T ),
-        (uint)( desc.Width * si->SprRect.R ), (uint)( desc.Height * si->SprRect.B )
+        (uint)(desc.Width * si->SprRect.L), (uint)(desc.Height * si->SprRect.T),
+        (uint)(desc.Width * si->SprRect.R), (uint)(desc.Height * si->SprRect.B)
     };
     LockRect_          lr;
     D3D_HR( surf->LockRect( &lr, &r, D3DLOCK_READONLY ) );
@@ -5739,7 +5739,7 @@ uint SpriteManager::GetSpriteContour( SpriteInfo* si, Sprite* spr )
     return result;
 }
 
-# define SET_IMAGE_POINT( x, y )    *( buf + ( y ) * buf_w + ( x ) ) = color
+# define SET_IMAGE_POINT( x, y )    *(buf + (y) * buf_w + (x) ) = color
 void SpriteManager::WriteContour4( uint* buf, uint buf_w, LockRect_& r, uint w, uint h, uint color )
 {
     for( uint y = 0; y < h; y++ )
@@ -5778,13 +5778,13 @@ void SpriteManager::WriteContour8( uint* buf, uint buf_w, LockRect_& r, uint w, 
                 SET_IMAGE_POINT( x, y - 1 );
             if( y == h - 1 || !SURF_POINT( r, x, y + 1 ) )
                 SET_IMAGE_POINT( x, y + 1 );
-            if( ( !x && !y ) || !SURF_POINT( r, x - 1, y - 1 ) )
+            if( (!x && !y) || !SURF_POINT( r, x - 1, y - 1 ) )
                 SET_IMAGE_POINT( x - 1, y - 1 );
-            if( ( x == w - 1 && !y ) || !SURF_POINT( r, x + 1, y - 1 ) )
+            if( (x == w - 1 && !y) || !SURF_POINT( r, x + 1, y - 1 ) )
                 SET_IMAGE_POINT( x + 1, y - 1 );
-            if( ( x == w - 1 && y == h - 1 ) || !SURF_POINT( r, x + 1, y + 1 ) )
+            if( (x == w - 1 && y == h - 1) || !SURF_POINT( r, x + 1, y + 1 ) )
                 SET_IMAGE_POINT( x + 1, y + 1 );
-            if( ( y == h - 1 && !x ) || !SURF_POINT( r, x - 1, y + 1 ) )
+            if( (y == h - 1 && !x) || !SURF_POINT( r, x - 1, y + 1 ) )
                 SET_IMAGE_POINT( x - 1, y + 1 );
         }
     }

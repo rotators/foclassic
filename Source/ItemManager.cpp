@@ -51,7 +51,7 @@ void ItemManager::Finish()
     ItemPtrMap items = gameItems;
     for( auto it = items.begin(), end = items.end(); it != end; ++it )
     {
-        Item* item = ( *it ).second;
+        Item* item = (*it).second;
         item->EventFinish( false );
         item->Release();
     }
@@ -69,7 +69,7 @@ void ItemManager::Clear()
 {
     #ifdef FONLINE_SERVER
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
-        SAFEREL( ( *it ).second );
+        SAFEREL( (*it).second );
     gameItems.clear();
     radioItems.clear();
     itemToDelete.clear();
@@ -81,9 +81,9 @@ void ItemManager::Clear()
         itemCount[i] = 0;
 }
 
-#if defined ( FONLINE_SERVER ) || defined ( FONLINE_OBJECT_EDITOR ) || defined ( FONLINE_MAPPER )
+#if defined (FONLINE_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FONLINE_MAPPER)
 
-template< class T >
+template<class T>
 T ResolveProtoValue( const char* str )
 {
     if( Str::IsNumber( str ) )
@@ -107,7 +107,7 @@ bool ItemManager::LoadProtos()
     char   buf[256];
     StrVec fnames;
     int    count = 0;
-    while( fm.GetLine( buf, sizeof( buf ) ) )
+    while( fm.GetLine( buf, sizeof(buf) ) )
     {
         fnames.push_back( string( buf ) );
         count++;
@@ -283,7 +283,7 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 if( Str::Compare( name, "BlockLines" ) )
                 {
                     lines = proto_item.BlockLines;
-                    max_count = sizeof( proto_item.BlockLines );
+                    max_count = sizeof(proto_item.BlockLines);
                 }
                 else
                 {
@@ -291,7 +291,7 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                     if( child_index < 0 || child_index >= ITEM_MAX_CHILDS )
                         continue;
                     lines = proto_item.ChildLines[child_index];
-                    max_count = sizeof( proto_item.ChildLines[child_index] );
+                    max_count = sizeof(proto_item.ChildLines[child_index]);
 
                     // Convert dir-dir-dir to dir-1-dir-1-dir-1
                     if( deprecated )
@@ -316,11 +316,11 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 uint svalue_len = Str::Length( svalue );
                 for( uint k = 0; k / 2 < max_count && k + 1 < svalue_len; k += 2 )
                 {
-                    uchar dir = ( svalue[k] - '0' ) & 0xF;
-                    uchar steps = ( svalue[k + 1] - '0' ) & 0xF;
+                    uchar dir = (svalue[k] - '0') & 0xF;
+                    uchar steps = (svalue[k + 1] - '0') & 0xF;
                     if( dir >= DIRS_COUNT || !steps )
                         break;
-                    lines[k / 2] = ( dir << 4 ) | steps;
+                    lines[k / 2] = (dir << 4) | steps;
                 }
             }
             // Resolve value
@@ -329,17 +329,17 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 int size = engine->GetSizeOfPrimitiveType( type_id );
                 switch( size )
                 {
-                    case sizeof( uchar ):
-                        *(uchar*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uchar >( svalue );
+                    case sizeof(uchar):
+                        *(uchar*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<uchar>( svalue );
                         break;
-                    case sizeof( ushort ):
-                        *(ushort*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< ushort >( svalue );
+                    case sizeof(ushort):
+                        *(ushort*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<ushort>( svalue );
                         break;
-                    case sizeof( uint ):
-                        *(uint*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uint >( svalue );
+                    case sizeof(uint):
+                        *(uint*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<uint>( svalue );
                         break;
-                    case sizeof( int64 ):
-                        *(int64*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< int64 >( svalue );
+                    case sizeof(int64):
+                        *(int64*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<int64>( svalue );
                         break;
                     default:
                         break;
@@ -380,7 +380,7 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
             // IsGroundLevel
             proto_item.GroundLevel = true;
             if( proto_item.Type == ITEM_TYPE_CONTAINER )
-                proto_item.GroundLevel = ( proto_item.Container_MagicHandsGrnd ? true : false );
+                proto_item.GroundLevel = (proto_item.Container_MagicHandsGrnd ? true : false);
             else if( proto_item.IsDoor() || proto_item.IsCar() || proto_item.IsScen() ||
                      proto_item.IsGrid() || !proto_item.IsCanPickUp() )
                 proto_item.GroundLevel = false;
@@ -473,7 +473,7 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
         if( typeProto[i].size() )
         {
             std::sort( typeProto[i].begin(), typeProto[i].end(), CompProtoByPid );
-            protoHash[i] = Crypt.Crc32( (uchar*)&typeProto[i][0], sizeof( ProtoItem ) * (uint)typeProto[i].size() );
+            protoHash[i] = Crypt.Crc32( (uchar*)&typeProto[i][0], sizeof(ProtoItem) * (uint)typeProto[i].size() );
         }
     }
 }
@@ -524,7 +524,7 @@ void ItemManager::ClearProtos( int type /* = 0xFF */ )
             protoHash[i] = 0;
             typeProto[i].clear();
         }
-        memzero( allProto, sizeof( allProto ) );
+        memzero( allProto, sizeof(allProto) );
         for( int i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
             SAFEDELA( protoScript[i] );
     }
@@ -532,7 +532,7 @@ void ItemManager::ClearProtos( int type /* = 0xFF */ )
     {
         for( uint i = 0; i < typeProto[type].size(); ++i )
         {
-            ushort pid = ( typeProto[type] )[i].ProtoId;
+            ushort pid = (typeProto[type])[i].ProtoId;
             if( IsInitProto( pid ) )
             {
                 allProto[pid].Clear();
@@ -567,32 +567,32 @@ void ItemManager::ClearProto( ushort pid )
     if( it != protos.end() )
         protos.erase( it );
 
-    hash = Crypt.Crc32( (uchar*)&protos[0], sizeof( ProtoItem ) * (uint)protos.size() );
+    hash = Crypt.Crc32( (uchar*)&protos[0], sizeof(ProtoItem) * (uint)protos.size() );
 }
 
 #ifdef FONLINE_SERVER
-void ItemManager::SaveAllItemsFile( void ( *save_func )( void*, size_t ) )
+void ItemManager::SaveAllItemsFile( void (*save_func)( void*, size_t ) )
 {
     uint count = (uint)gameItems.size();
-    save_func( &count, sizeof( count ) );
+    save_func( &count, sizeof(count) );
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
     {
-        Item* item = ( *it ).second;
-        save_func( &item->Id, sizeof( item->Id ) );
-        save_func( &item->Proto->ProtoId, sizeof( item->Proto->ProtoId ) );
-        save_func( &item->Accessory, sizeof( item->Accessory ) );
-        save_func( &item->AccBuffer[0], sizeof( item->AccBuffer ) );
-        save_func( &item->Data, sizeof( item->Data ) );
+        Item* item = (*it).second;
+        save_func( &item->Id, sizeof(item->Id) );
+        save_func( &item->Proto->ProtoId, sizeof(item->Proto->ProtoId) );
+        save_func( &item->Accessory, sizeof(item->Accessory) );
+        save_func( &item->AccBuffer[0], sizeof(item->AccBuffer) );
+        save_func( &item->Data, sizeof(item->Data) );
         if( item->PLexems )
         {
             uchar lex_len = Str::Length( item->PLexems );
-            save_func( &lex_len, sizeof( lex_len ) );
+            save_func( &lex_len, sizeof(lex_len) );
             save_func( item->PLexems, lex_len );
         }
         else
         {
             uchar zero = 0;
-            save_func( &zero, sizeof( zero ) );
+            save_func( &zero, sizeof(zero) );
         }
     }
 }
@@ -604,7 +604,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
     lastItemId = 0;
 
     uint count;
-    FileRead( f, &count, sizeof( count ) );
+    FileRead( f, &count, sizeof(count) );
     if( !count )
     {
         WriteLog( "items not found.\n" );
@@ -615,20 +615,20 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
     for( uint i = 0; i < count; ++i )
     {
         uint   id;
-        FileRead( f, &id, sizeof( id ) );
+        FileRead( f, &id, sizeof(id) );
         ushort pid;
-        FileRead( f, &pid, sizeof( pid ) );
+        FileRead( f, &pid, sizeof(pid) );
         uchar  acc;
-        FileRead( f, &acc, sizeof( acc ) );
+        FileRead( f, &acc, sizeof(acc) );
         char   acc_buf[8];
-        FileRead( f, &acc_buf[0], sizeof( acc_buf ) );
+        FileRead( f, &acc_buf[0], sizeof(acc_buf) );
 
         Item::ItemData data;
-        FileRead( f, &data, sizeof( data ) );
+        FileRead( f, &data, sizeof(data) );
 
         uchar lex_len;
         char  lexems[1024] = { 0 };
-        FileRead( f, &lex_len, sizeof( lex_len ) );
+        FileRead( f, &lex_len, sizeof(lex_len) );
         if( lex_len )
         {
             FileRead( f, lexems, lex_len );
@@ -646,7 +646,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
             lastItemId = id;
 
         item->Accessory = acc;
-        memcpy( item->AccBuffer, acc_buf, sizeof( acc_buf ) );
+        memcpy( item->AccBuffer, acc_buf, sizeof(acc_buf) );
         item->Data = data;
         if( lexems[0] )
             item->SetLexems( lexems );
@@ -681,7 +681,7 @@ void ItemManager::RunInitScriptItems()
     ItemPtrMap items = gameItems;
     for( auto it = items.begin(), end = items.end(); it != end; ++it )
     {
-        Item* item = ( *it ).second;
+        Item* item = (*it).second;
         if( item->Data.ScriptId )
             item->ParseScript( NULL, false );
     }
@@ -693,7 +693,7 @@ void ItemManager::GetGameItems( ItemPtrVec& items )
     items.reserve( gameItems.size() );
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
     {
-        Item* item = ( *it ).second;
+        Item* item = (*it).second;
         items.push_back( item );
     }
 }
@@ -713,7 +713,7 @@ void ItemManager::SetCritterItems( Critter* cr )
     itemLocker.Lock();
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
     {
-        Item* item = ( *it ).second;
+        Item* item = (*it).second;
         if( item->Accessory == ITEM_ACCESSORY_CRITTER && item->AccCritter.Id == crid )
             items.push_back( item );
     }
@@ -738,7 +738,7 @@ void ItemManager::GetItemIds( UIntSet& item_ids )
     SCOPE_LOCK( itemLocker );
 
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
-        item_ids.insert( ( *it ).second->GetId() );
+        item_ids.insert( (*it).second->GetId() );
 }
 
 Item* ItemManager::CreateItem( ushort pid, uint count, uint item_id /* = 0 */ )
@@ -844,7 +844,7 @@ Item* ItemManager::GetItem( uint item_id, bool sync_lock )
     itemLocker.Lock();
     auto it = gameItems.find( item_id );
     if( it != gameItems.end() )
-        item = ( *it ).second;
+        item = (*it).second;
     itemLocker.Unlock();
 
     if( item && sync_lock )
@@ -883,7 +883,7 @@ void ItemManager::ItemGarbager()
                 itemLocker.Unlock();
                 continue;
             }
-            Item* item = ( *it ).second;
+            Item* item = (*it).second;
             gameItems.erase( it );
             itemLocker.Unlock();
 
@@ -1450,9 +1450,9 @@ void ItemManager::RadioSendTextEx( ushort channel, int broadcast_type, uint from
     // Broadcast
     if( broadcast_type != RADIO_BROADCAST_FORCE_ALL && broadcast_type != RADIO_BROADCAST_WORLD &&
         broadcast_type != RADIO_BROADCAST_MAP && broadcast_type != RADIO_BROADCAST_LOCATION &&
-        !( broadcast_type >= 101 && broadcast_type <= 200 ) /*RADIO_BROADCAST_ZONE*/ )
+        !(broadcast_type >= 101 && broadcast_type <= 200) /*RADIO_BROADCAST_ZONE*/ )
         return;
-    if( ( broadcast_type == RADIO_BROADCAST_MAP || broadcast_type == RADIO_BROADCAST_LOCATION ) && !from_map_id )
+    if( (broadcast_type == RADIO_BROADCAST_MAP || broadcast_type == RADIO_BROADCAST_LOCATION) && !from_map_id )
         return;
 
     int  broadcast = 0;
@@ -1498,7 +1498,7 @@ void ItemManager::RadioSendTextEx( ushort channel, int broadcast_type, uint from
                         broadcast_loc_id = map->GetLocation( false )->GetId();
                     }
                 }
-                else if( !( broadcast >= 101 && broadcast <= 200 ) /*RADIO_BROADCAST_ZONE*/ )
+                else if( !(broadcast >= 101 && broadcast <= 200) /*RADIO_BROADCAST_ZONE*/ )
                     continue;
             }
             else

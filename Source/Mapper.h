@@ -20,17 +20,17 @@
 #include "IniParser.h"
 
 // Fonts
-#define FONT_FO                        ( 0 )
-#define FONT_NUM                       ( 1 )
-#define FONT_BIG_NUM                   ( 2 )
-#define FONT_SAND_NUM                  ( 3 )
-#define FONT_SPECIAL                   ( 4 )
-#define FONT_DEFAULT                   ( 5 )
-#define FONT_THIN                      ( 6 )
-#define FONT_FAT                       ( 7 )
-#define FONT_BIG                       ( 8 )
+#define FONT_FO                        (0)
+#define FONT_NUM                       (1)
+#define FONT_BIG_NUM                   (2)
+#define FONT_SAND_NUM                  (3)
+#define FONT_SPECIAL                   (4)
+#define FONT_DEFAULT                   (5)
+#define FONT_THIN                      (6)
+#define FONT_FAT                       (7)
+#define FONT_BIG                       (8)
 
-typedef vector< CritData* > CritDataVec;
+typedef vector<CritData*> CritDataVec;
 
 class FOMapper
 {
@@ -51,7 +51,7 @@ public:
     void ParseKeyboard();
     void ParseMouse();
 
-    #define DRAW_CR_INFO_MAX           ( 3 )
+    #define DRAW_CR_INFO_MAX           (3)
     int DrawCrExtInfo;
 
     // Game color
@@ -74,7 +74,7 @@ public:
         Rect   EndPos;
         bool operator==( const MapText& r ) { return HexX == r.HexX && HexY == r.HexY; }
     };
-    typedef vector< MapText > MapTextVec;
+    typedef vector<MapText> MapTextVec;
     MapTextVec GameMapTexts;
 
     // Animations
@@ -88,13 +88,13 @@ public:
 
         IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::FastTick() ), ResType( res_type ) {}
     };
-    typedef vector< IfaceAnim* > IfaceAnimVec;
+    typedef vector<IfaceAnim*> IfaceAnimVec;
 
-    #define ANIMRUN_TO_END             ( 0x0001 )
-    #define ANIMRUN_FROM_END           ( 0x0002 )
-    #define ANIMRUN_CYCLE              ( 0x0004 )
-    #define ANIMRUN_STOP               ( 0x0008 )
-    #define ANIMRUN_SET_FRM( frm )    ( ( uint( uchar( ( frm ) + 1 ) ) ) << 16 )
+    #define ANIMRUN_TO_END             (0x0001)
+    #define ANIMRUN_FROM_END           (0x0002)
+    #define ANIMRUN_CYCLE              (0x0004)
+    #define ANIMRUN_STOP               (0x0008)
+    #define ANIMRUN_SET_FRM( frm )    ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
 
@@ -110,9 +110,9 @@ public:
 
     // Cursor
     int CurMode;
-    #define CUR_MODE_DEFAULT           ( 0 )
-    #define CUR_MODE_MOVE_SELECTION    ( 1 )
-    #define CUR_MODE_PLACE_OBJECT      ( 2 )
+    #define CUR_MODE_DEFAULT           (0)
+    #define CUR_MODE_MOVE_SELECTION    (1)
+    #define CUR_MODE_PLACE_OBJECT      (2)
 
     AnyFrames* CurPDef, * CurPHand;
 
@@ -127,34 +127,34 @@ public:
     bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
 
     int IntMode;
-    #define INT_MODE_CUSTOM0           ( 0 )
-    #define INT_MODE_CUSTOM1           ( 1 )
-    #define INT_MODE_CUSTOM2           ( 2 )
-    #define INT_MODE_CUSTOM3           ( 3 )
-    #define INT_MODE_CUSTOM4           ( 4 )
-    #define INT_MODE_CUSTOM5           ( 5 )
-    #define INT_MODE_CUSTOM6           ( 6 )
-    #define INT_MODE_CUSTOM7           ( 7 )
-    #define INT_MODE_CUSTOM8           ( 8 )
-    #define INT_MODE_CUSTOM9           ( 9 )
-    #define INT_MODE_ITEM              ( 10 )
-    #define INT_MODE_TILE              ( 11 )
-    #define INT_MODE_CRIT              ( 12 )
-    #define INT_MODE_FAST              ( 13 )
-    #define INT_MODE_IGNORE            ( 14 )
-    #define INT_MODE_INCONT            ( 15 )
-    #define INT_MODE_MESS              ( 16 )
-    #define INT_MODE_LIST              ( 17 )
-    #define INT_MODE_COUNT             ( 18 )
-    #define TAB_COUNT                  ( 15 )
+    #define INT_MODE_CUSTOM0           (0)
+    #define INT_MODE_CUSTOM1           (1)
+    #define INT_MODE_CUSTOM2           (2)
+    #define INT_MODE_CUSTOM3           (3)
+    #define INT_MODE_CUSTOM4           (4)
+    #define INT_MODE_CUSTOM5           (5)
+    #define INT_MODE_CUSTOM6           (6)
+    #define INT_MODE_CUSTOM7           (7)
+    #define INT_MODE_CUSTOM8           (8)
+    #define INT_MODE_CUSTOM9           (9)
+    #define INT_MODE_ITEM              (10)
+    #define INT_MODE_TILE              (11)
+    #define INT_MODE_CRIT              (12)
+    #define INT_MODE_FAST              (13)
+    #define INT_MODE_IGNORE            (14)
+    #define INT_MODE_INCONT            (15)
+    #define INT_MODE_MESS              (16)
+    #define INT_MODE_LIST              (17)
+    #define INT_MODE_COUNT             (18)
+    #define TAB_COUNT                  (15)
 
     int IntHold;
-    #define INT_NONE                   ( 0 )
-    #define INT_BUTTON                 ( 1 )
-    #define INT_MAIN                   ( 2 )
-    #define INT_SELECT                 ( 3 )
-    #define INT_OBJECT                 ( 4 )
-    #define INT_SUB_TAB                ( 5 )
+    #define INT_NONE                   (0)
+    #define INT_BUTTON                 (1)
+    #define INT_MAIN                   (2)
+    #define INT_SELECT                 (3)
+    #define INT_OBJECT                 (4)
+    #define INT_SUB_TAB                (5)
 
     AnyFrames* IntMainPic, * IntPTab, * IntPSelect, * IntPShow;
     int        IntX, IntY;
@@ -162,8 +162,8 @@ public:
     ushort     SelectHX1, SelectHY1, SelectHX2, SelectHY2;
     int        SelectX, SelectY;
 
-    #define SELECT_TYPE_OLD            ( 0 )
-    #define SELECT_TYPE_NEW            ( 1 )
+    #define SELECT_TYPE_OLD            (0)
+    #define SELECT_TYPE_NEW            (1)
     int  SelectType;
 
     bool IntVisible, IntFix;
@@ -197,7 +197,7 @@ public:
         int          Index, Scroll;
         SubTab() : Index( 0 ), Scroll( 0 ) {}
     };
-    typedef map< string, SubTab > SubTabMap;
+    typedef map<string, SubTab> SubTabMap;
 
     struct TileTab
     {
@@ -272,9 +272,9 @@ public:
         bool operator==( const MapObject* r ) { return MapObj == r; }
         bool IsItem()                         { return MapItem != NULL; }
         bool IsNpc()                          { return MapNpc != NULL; }
-        bool IsContainer()                    { return IsNpc() || ( IsItem() && MapItem->Proto->Type == ITEM_TYPE_CONTAINER ); }
+        bool IsContainer()                    { return IsNpc() || (IsItem() && MapItem->Proto->Type == ITEM_TYPE_CONTAINER); }
     };
-    typedef vector< SelMapObj > SelMapProtoItemVec;
+    typedef vector<SelMapObj> SelMapProtoItemVec;
     SelMapProtoItemVec SelectedObj;
 
     // Select Tile, Roof
@@ -284,14 +284,14 @@ public:
         bool   IsRoof;
 
         SelMapTile( ushort hx, ushort hy, bool is_roof ) : HexX( hx ), HexY( hy ), IsRoof( is_roof ) {}
-        SelMapTile( const SelMapTile& r ) { memcpy( this, &r, sizeof( SelMapTile ) ); }
+        SelMapTile( const SelMapTile& r ) { memcpy( this, &r, sizeof(SelMapTile) ); }
         SelMapTile& operator=( const SelMapTile& r )
         {
-            memcpy( this, &r, sizeof( SelMapTile ) );
+            memcpy( this, &r, sizeof(SelMapTile) );
             return *this;
         }
     };
-    typedef vector< SelMapTile > SelMapTileVec;
+    typedef vector<SelMapTile> SelMapTileVec;
     SelMapTileVec SelectedTile;
 
     // Select methods
@@ -329,7 +329,7 @@ public:
         uchar  Layer;
         bool   IsRoof;
     };
-    typedef vector< TileBuf > TileBufVec;
+    typedef vector<TileBuf> TileBufVec;
 
     MapObjectPtrVec MapObjBuffer;
     TileBufVec      TilesBuffer;
@@ -339,7 +339,7 @@ public:
     void BufferPaste( int hx, int hy );
 
     // Object
-    #define DRAW_NEXT_HEIGHT          ( 12 )
+    #define DRAW_NEXT_HEIGHT          (12)
 
     AnyFrames* ObjWMainPic, * ObjPBToAllDn;
     Rect       ObjWMain, ObjWWork, ObjBToAll;
@@ -354,17 +354,17 @@ public:
     void ObjKeyDownA( MapObject* o, uchar dik, const char* dik_text );
 
     // Console
-    AnyFrames*       ConsolePic;
-    int              ConsolePicX, ConsolePicY, ConsoleTextX, ConsoleTextY;
-    bool             ConsoleEdit;
-    string           ConsoleStr;
-    uint             ConsoleCur;
+    AnyFrames*     ConsolePic;
+    int            ConsolePicX, ConsolePicY, ConsoleTextX, ConsoleTextY;
+    bool           ConsoleEdit;
+    string         ConsoleStr;
+    uint           ConsoleCur;
 
-    vector< string > ConsoleHistory;
-    int              ConsoleHistoryCur;
+    vector<string> ConsoleHistory;
+    int            ConsoleHistoryCur;
 
-    #define CONSOLE_KEY_TICK          ( 500 )
-    #define CONSOLE_MAX_ACCELERATE    ( 460 )
+    #define CONSOLE_KEY_TICK          (500)
+    #define CONSOLE_MAX_ACCELERATE    (460)
     int    ConsoleLastKey;
     string ConsoleLastKeyText;
     uint   ConsoleKeyTick;
@@ -398,7 +398,7 @@ public:
             return *this;
         }
     };
-    typedef vector< MessBoxMessage > MessBoxMessageVec;
+    typedef vector<MessBoxMessage> MessBoxMessageVec;
 
     MessBoxMessageVec MessBox;
     string            MessBoxCurText;
@@ -416,7 +416,7 @@ public:
         uchar Index;
         char* SlotName;
     };
-    typedef map< int, SlotExt > SlotExtMap;
+    typedef map<int, SlotExt> SlotExtMap;
     SlotExtMap SlotsExt;
 
     // Scripts

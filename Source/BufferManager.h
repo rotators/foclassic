@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-#define CRYPT_KEYS_COUNT    ( 50 )
+#define CRYPT_KEYS_COUNT    (50)
 
 class BufferManager
 {
@@ -54,7 +54,7 @@ public:
     bool IsEmpty() const               { return bufReadPos >= bufEndPos; }
     bool IsHaveSize( uint size ) const { return bufReadPos + size <= bufEndPos; }
 
-    #if ( defined ( FONLINE_SERVER ) ) || ( defined ( FONLINE_CLIENT ) )
+    #if (defined (FONLINE_SERVER) ) || (defined (FONLINE_CLIENT) )
     bool NeedProcess();
     void SkipMsg( uint msg );
     void SeekValidMsg();

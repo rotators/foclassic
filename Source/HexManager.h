@@ -9,23 +9,23 @@
 #include "ItemHex.h"
 #include "ProtoMap.h"
 
-#define MAX_FIND_PATH    ( 600 )
-#define TILE_ALPHA       ( 0xFF )
-#define VIEW_WIDTH       ( (int)( ( MODE_WIDTH / GameOpt.MapHexWidth + ( ( MODE_WIDTH % GameOpt.MapHexWidth ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
-#define VIEW_HEIGHT      ( (int)( ( MODE_HEIGHT / GameOpt.MapHexLineHeight + ( ( MODE_HEIGHT % GameOpt.MapHexLineHeight ) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
-#define SCROLL_OX        ( GameOpt.MapHexWidth )
-#define SCROLL_OY        ( GameOpt.MapHexLineHeight * 2 )
-#define HEX_W            ( GameOpt.MapHexWidth )
-#define HEX_LINE_H       ( GameOpt.MapHexLineHeight )
-#define HEX_REAL_H       ( GameOpt.MapHexHeight )
-#define HEX_OX           ( GameOpt.MapHexWidth / 2 )
-#define HEX_OY           ( GameOpt.MapHexHeight / 2 )
-#define TILE_OX          ( GameOpt.MapTileOffsX )
-#define TILE_OY          ( GameOpt.MapTileOffsY )
-#define ROOF_OX          ( GameOpt.MapRoofOffsX )
-#define ROOF_OY          ( GameOpt.MapRoofOffsY )
-#define MAX_MOVE_OX      ( 99 )
-#define MAX_MOVE_OY      ( 99 )
+#define MAX_FIND_PATH    (600)
+#define TILE_ALPHA       (0xFF)
+#define VIEW_WIDTH       ( (int)( (MODE_WIDTH / GameOpt.MapHexWidth + ( (MODE_WIDTH % GameOpt.MapHexWidth) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define VIEW_HEIGHT      ( (int)( (MODE_HEIGHT / GameOpt.MapHexLineHeight + ( (MODE_HEIGHT % GameOpt.MapHexLineHeight) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define SCROLL_OX        (GameOpt.MapHexWidth)
+#define SCROLL_OY        (GameOpt.MapHexLineHeight * 2)
+#define HEX_W            (GameOpt.MapHexWidth)
+#define HEX_LINE_H       (GameOpt.MapHexLineHeight)
+#define HEX_REAL_H       (GameOpt.MapHexHeight)
+#define HEX_OX           (GameOpt.MapHexWidth / 2)
+#define HEX_OY           (GameOpt.MapHexHeight / 2)
+#define TILE_OX          (GameOpt.MapTileOffsX)
+#define TILE_OY          (GameOpt.MapTileOffsY)
+#define ROOF_OX          (GameOpt.MapRoofOffsX)
+#define ROOF_OY          (GameOpt.MapRoofOffsY)
+#define MAX_MOVE_OX      (99)
+#define MAX_MOVE_OY      (99)
 
 /************************************************************************/
 /* ViewField                                                            */
@@ -55,7 +55,7 @@ struct LightSource
 
     LightSource( ushort hx, ushort hy, uint color, uchar distance, int inten, uchar flags ) : HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
 };
-typedef vector< LightSource > LightSourceVec;
+typedef vector<LightSource> LightSourceVec;
 
 /************************************************************************/
 /* Field                                                                */
@@ -70,7 +70,7 @@ struct Field
         short      OffsY;
         uchar      Layer;
     };
-    typedef vector< Tile > TileVec;
+    typedef vector<Tile> TileVec;
 
     CritterCl* Crit;
     CritVec    DeadCrits;
@@ -116,7 +116,7 @@ struct Drop
     Drop() : CurSprId( 0 ), OffsX( 0 ), OffsY( 0 ), DropCnt( 0 ), GroundOffsY( 0 ) {};
     Drop( ushort id, short x, short y, short ground_y ) : CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
 };
-typedef vector< Drop* > DropVec;
+typedef vector<Drop*> DropVec;
 
 /************************************************************************/
 /* HexField                                                             */
@@ -144,8 +144,8 @@ public:
     char&  GetHexTrack( ushort hx, ushort hy )  { return hexTrack[hy * maxHexX + hx]; }
     ushort GetMaxHexX()                         { return maxHexX; }
     ushort GetMaxHexY()                         { return maxHexY; }
-    void   ClearHexToDraw()                     { memzero( hexToDraw, maxHexX * maxHexY * sizeof( bool ) ); }
-    void   ClearHexTrack()                      { memzero( hexTrack, maxHexX * maxHexY * sizeof( char ) ); }
+    void   ClearHexToDraw()                     { memzero( hexToDraw, maxHexX * maxHexY * sizeof(bool) ); }
+    void   ClearHexTrack()                      { memzero( hexTrack, maxHexX * maxHexY * sizeof(char) ); }
     void   SwitchShowTrack();
     bool   IsShowTrack() { return isShowTrack; };
 
@@ -258,13 +258,13 @@ public:
     {
         if( !crid ) return NULL;
         auto it = allCritters.find( crid );
-        return it != allCritters.end() ? ( *it ).second : NULL;
+        return it != allCritters.end() ? (*it).second : NULL;
     }
     CritterCl* GetChosen()
     {
         if( !chosenId ) return NULL;
         auto it = allCritters.find( chosenId );
-        return it != allCritters.end() ? ( *it ).second : NULL;
+        return it != allCritters.end() ? (*it).second : NULL;
     }
     void     AddCrit( CritterCl* cr );
     void     RemoveCrit( CritterCl* cr );
@@ -318,7 +318,7 @@ private:
     void CollectLightSources();
 
 public:
-    void            ClearHexLight()                     { memzero( hexLight, maxHexX * maxHexY * sizeof( uchar ) * 3 ); }
+    void            ClearHexLight()                     { memzero( hexLight, maxHexX * maxHexY * sizeof(uchar) * 3 ); }
     uchar*          GetLightHex( ushort hx, ushort hy ) { return &hexLight[hy * maxHexX * 3 + hx * 3]; }
     void            RebuildLight()                      { requestRebuildLight = true; }
     LightSourceVec& GetLights()                         { return lightSources; }

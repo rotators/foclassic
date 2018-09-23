@@ -9,32 +9,32 @@
 #include "GraphicLoader.h"
 
 // Font flags
-#define FT_NOBREAK                   ( 0x0001 )
-#define FT_NOBREAK_LINE              ( 0x0002 )
-#define FT_CENTERX                   ( 0x0004 )
-#define FT_CENTERY                   ( 0x0008 )
-#define FT_CENTERR                   ( 0x0010 )
-#define FT_BOTTOM                    ( 0x0020 )
-#define FT_UPPER                     ( 0x0040 )
-#define FT_NO_COLORIZE               ( 0x0080 )
-#define FT_ALIGN                     ( 0x0100 )
-#define FT_BORDERED                  ( 0x0200 )
-#define FT_SKIPLINES( l )             ( 0x0400 | ( ( l ) << 16 ) )
-#define FT_SKIPLINES_END( l )         ( 0x0800 | ( ( l ) << 16 ) )
+#define FT_NOBREAK                   (0x0001)
+#define FT_NOBREAK_LINE              (0x0002)
+#define FT_CENTERX                   (0x0004)
+#define FT_CENTERY                   (0x0008)
+#define FT_CENTERR                   (0x0010)
+#define FT_BOTTOM                    (0x0020)
+#define FT_UPPER                     (0x0040)
+#define FT_NO_COLORIZE               (0x0080)
+#define FT_ALIGN                     (0x0100)
+#define FT_BORDERED                  (0x0200)
+#define FT_SKIPLINES( l )             (0x0400 | ( (l) << 16 ) )
+#define FT_SKIPLINES_END( l )         (0x0800 | ( (l) << 16 ) )
 
 // Animation loading
-#define ANIM_DIR( d )                 ( ( d ) & 0xFF )
-#define ANIM_USE_DUMMY               ( 0x100 )
-#define ANIM_FRM_ANIM_PIX            ( 0x200 )
+#define ANIM_DIR( d )                 ( (d) & 0xFF )
+#define ANIM_USE_DUMMY               (0x100)
+#define ANIM_FRM_ANIM_PIX            (0x200)
 
 // Colors
-#define COLOR_CHANGE_ALPHA( v, a )    ( ( ( ( v ) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)( a ) & 0xFF ) << 24 )
+#define COLOR_CHANGE_ALPHA( v, a )    ( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
 #define COLOR_IFACE_FIX              COLOR_XRGB( 103, 95, 86 )
-#define COLOR_IFACE                  SpriteManager::PackColor( ( ( COLOR_IFACE_FIX >> 16 ) & 0xFF ) + GameOpt.Light, ( ( COLOR_IFACE_FIX >> 8 ) & 0xFF ) + GameOpt.Light, ( COLOR_IFACE_FIX & 0xFF ) + GameOpt.Light )
-#define COLOR_IFACE_A( a )            ( ( COLOR_IFACE ^ 0xFF000000 ) | ( ( a ) << 24 ) )
-#define COLOR_GAME_RGB( r, g, b )     SpriteManager::PackColor( ( r ) + GameOpt.Light, ( g ) + GameOpt.Light, ( b ) + GameOpt.Light )
-#define COLOR_IFACE_RED              ( COLOR_IFACE | ( 0xFF << 16 ) )
-#define COLOR_IFACE_GREEN            ( COLOR_IFACE | ( 0xFF << 8 ) )
+#define COLOR_IFACE                  SpriteManager::PackColor( ( (COLOR_IFACE_FIX >> 16) & 0xFF ) + GameOpt.Light, ( (COLOR_IFACE_FIX >> 8) & 0xFF ) + GameOpt.Light, (COLOR_IFACE_FIX & 0xFF) + GameOpt.Light )
+#define COLOR_IFACE_A( a )            ( (COLOR_IFACE ^ 0xFF000000) | ( (a) << 24 ) )
+#define COLOR_GAME_RGB( r, g, b )     SpriteManager::PackColor( (r) + GameOpt.Light, (g) + GameOpt.Light, (b) + GameOpt.Light )
+#define COLOR_IFACE_RED              (COLOR_IFACE | (0xFF << 16) )
+#define COLOR_IFACE_GREEN            (COLOR_IFACE | (0xFF << 8) )
 #define COLOR_CRITTER_NAME           COLOR_XRGB( 0xAD, 0xAD, 0xB9 )
 #define COLOR_TEXT                   COLOR_XRGB( 60, 248, 0 )
 #define COLOR_TEXT_WHITE             COLOR_XRGB( 0xFF, 0xFF, 0xFF )
@@ -57,55 +57,55 @@
 #define COLOR_TEXT_SAND              COLOR_XRGB( 0x8F, 0x6F, 0 )
 
 // Sprite layers
-#define DRAW_ORDER_FLAT              ( 0 )
-#define DRAW_ORDER                   ( 20 )
-#define DRAW_ORDER_TILE              ( DRAW_ORDER_FLAT + 0 )
-#define DRAW_ORDER_TILE_END          ( DRAW_ORDER_FLAT + 4 )
-#define DRAW_ORDER_HEX_GRID          ( DRAW_ORDER_FLAT + 5 )
-#define DRAW_ORDER_FLAT_SCENERY      ( DRAW_ORDER_FLAT + 8 )
-#define DRAW_ORDER_LIGHT             ( DRAW_ORDER_FLAT + 9 )
-#define DRAW_ORDER_DEAD_CRITTER      ( DRAW_ORDER_FLAT + 10 )
-#define DRAW_ORDER_FLAT_ITEM         ( DRAW_ORDER_FLAT + 13 )
-#define DRAW_ORDER_TRACK             ( DRAW_ORDER_FLAT + 16 )
-#define DRAW_ORDER_SCENERY           ( DRAW_ORDER + 3 )
-#define DRAW_ORDER_ITEM              ( DRAW_ORDER + 6 )
-#define DRAW_ORDER_CRITTER           ( DRAW_ORDER + 9 )
-#define DRAW_ORDER_RAIN              ( DRAW_ORDER + 12 )
-#define DRAW_ORDER_LAST              ( 39 )
-#define DRAW_ORDER_ITEM_AUTO( i )     ( i->IsFlat() ? ( i->IsItem() ? DRAW_ORDER_FLAT_ITEM : DRAW_ORDER_FLAT_SCENERY ) : ( i->IsItem() ? DRAW_ORDER_ITEM : DRAW_ORDER_SCENERY ) )
-#define DRAW_ORDER_CRIT_AUTO( c )     ( c->IsDead() && !c->IsRawParam( MODE_NO_FLATTEN ) ? DRAW_ORDER_DEAD_CRITTER : DRAW_ORDER_CRITTER )
+#define DRAW_ORDER_FLAT              (0)
+#define DRAW_ORDER                   (20)
+#define DRAW_ORDER_TILE              (DRAW_ORDER_FLAT + 0)
+#define DRAW_ORDER_TILE_END          (DRAW_ORDER_FLAT + 4)
+#define DRAW_ORDER_HEX_GRID          (DRAW_ORDER_FLAT + 5)
+#define DRAW_ORDER_FLAT_SCENERY      (DRAW_ORDER_FLAT + 8)
+#define DRAW_ORDER_LIGHT             (DRAW_ORDER_FLAT + 9)
+#define DRAW_ORDER_DEAD_CRITTER      (DRAW_ORDER_FLAT + 10)
+#define DRAW_ORDER_FLAT_ITEM         (DRAW_ORDER_FLAT + 13)
+#define DRAW_ORDER_TRACK             (DRAW_ORDER_FLAT + 16)
+#define DRAW_ORDER_SCENERY           (DRAW_ORDER + 3)
+#define DRAW_ORDER_ITEM              (DRAW_ORDER + 6)
+#define DRAW_ORDER_CRITTER           (DRAW_ORDER + 9)
+#define DRAW_ORDER_RAIN              (DRAW_ORDER + 12)
+#define DRAW_ORDER_LAST              (39)
+#define DRAW_ORDER_ITEM_AUTO( i )     (i->IsFlat() ? (i->IsItem() ? DRAW_ORDER_FLAT_ITEM : DRAW_ORDER_FLAT_SCENERY) : (i->IsItem() ? DRAW_ORDER_ITEM : DRAW_ORDER_SCENERY) )
+#define DRAW_ORDER_CRIT_AUTO( c )     (c->IsDead() && !c->IsRawParam( MODE_NO_FLATTEN ) ? DRAW_ORDER_DEAD_CRITTER : DRAW_ORDER_CRITTER)
 
 // Sprites cutting
-#define SPRITE_CUT_HORIZONTAL        ( 1 )
-#define SPRITE_CUT_VERTICAL          ( 2 )
-#define SPRITE_CUT_CUSTOM            ( 3 )             // Todo
+#define SPRITE_CUT_HORIZONTAL        (1)
+#define SPRITE_CUT_VERTICAL          (2)
+#define SPRITE_CUT_CUSTOM            (3)               // Todo
 
 // Egg types
-#define EGG_ALWAYS                   ( 1 )
-#define EGG_X                        ( 2 )
-#define EGG_Y                        ( 3 )
-#define EGG_X_AND_Y                  ( 4 )
-#define EGG_X_OR_Y                   ( 5 )
+#define EGG_ALWAYS                   (1)
+#define EGG_X                        (2)
+#define EGG_Y                        (3)
+#define EGG_X_AND_Y                  (4)
+#define EGG_X_OR_Y                   (5)
 
 // Egg types
-#define EGG_ALWAYS                   ( 1 )
-#define EGG_X                        ( 2 )
-#define EGG_Y                        ( 3 )
-#define EGG_X_AND_Y                  ( 4 )
-#define EGG_X_OR_Y                   ( 5 )
+#define EGG_ALWAYS                   (1)
+#define EGG_X                        (2)
+#define EGG_Y                        (3)
+#define EGG_X_AND_Y                  (4)
+#define EGG_X_OR_Y                   (5)
 
 // Contour types
-#define CONTOUR_RED                  ( 1 )
-#define CONTOUR_YELLOW               ( 2 )
-#define CONTOUR_CUSTOM               ( 3 )
+#define CONTOUR_RED                  (1)
+#define CONTOUR_YELLOW               (2)
+#define CONTOUR_CUSTOM               (3)
 
 // Primitives
-#define PRIMITIVE_POINTLIST          ( 1 )
-#define PRIMITIVE_LINELIST           ( 2 )
-#define PRIMITIVE_LINESTRIP          ( 3 )
-#define PRIMITIVE_TRIANGLELIST       ( 4 )
-#define PRIMITIVE_TRIANGLESTRIP      ( 5 )
-#define PRIMITIVE_TRIANGLEFAN        ( 6 )
+#define PRIMITIVE_POINTLIST          (1)
+#define PRIMITIVE_LINELIST           (2)
+#define PRIMITIVE_LINESTRIP          (3)
+#define PRIMITIVE_TRIANGLELIST       (4)
+#define PRIMITIVE_TRIANGLESTRIP      (5)
+#define PRIMITIVE_TRIANGLEFAN        (6)
 
 struct Surface
 {
@@ -118,7 +118,7 @@ struct Surface
     Surface() : Type( 0 ), TextureOwner( NULL ), Width( 0 ), Height( 0 ), BusyH( 0 ), FreeX( 0 ), FreeY( 0 ) {}
     ~Surface() { SAFEDEL( TextureOwner ); }
 };
-typedef vector< Surface* > SurfaceVec;
+typedef vector<Surface*> SurfaceVec;
 
 struct Vertex
 {
@@ -128,7 +128,7 @@ struct Vertex
     float tu, tv;
     float tu2, tv2;
     Vertex() : x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ), diffuse( 0 ) {}
-    # define D3DFVF_MYVERTEX         ( D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2 )
+    # define D3DFVF_MYVERTEX         (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX2)
     #else
     float x, y;
     uint  diffuse;
@@ -138,7 +138,7 @@ struct Vertex
     Vertex() : x( 0 ), y( 0 ), diffuse( 0 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ) {}
     #endif
 };
-typedef vector< Vertex > VertexVec;
+typedef vector<Vertex> VertexVec;
 
 struct MYVERTEX_PRIMITIVE
 {
@@ -147,7 +147,7 @@ struct MYVERTEX_PRIMITIVE
 
     MYVERTEX_PRIMITIVE() : x( 0 ), y( 0 ), z( 0 ), rhw( 1 ), Diffuse( 0 ) {}
 };
-#define D3DFVF_MYVERTEX_PRIMITIVE    ( D3DFVF_XYZRHW | D3DFVF_DIFFUSE )
+#define D3DFVF_MYVERTEX_PRIMITIVE    (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
 
 struct SpriteInfo
 {
@@ -161,7 +161,7 @@ struct SpriteInfo
     Animation3d* Anim3d;
     SpriteInfo() : Surf( NULL ), Width( 0 ), Height( 0 ), OffsX( 0 ), OffsY( 0 ), DrawEffect( NULL ), Anim3d( NULL ) {}
 };
-typedef vector< SpriteInfo* > SprInfoVec;
+typedef vector<SpriteInfo*> SprInfoVec;
 
 struct DipData
 {
@@ -173,7 +173,7 @@ struct DipData
     #endif
     DipData( Texture* tex, Effect* effect ) : SourceTexture( tex ), SourceEffect( effect ), SpritesCount( 1 ) {}
 };
-typedef vector< DipData > DipDataVec;
+typedef vector<DipData> DipDataVec;
 
 struct AnyFrames
 {
@@ -189,8 +189,8 @@ struct AnyFrames
     short GetNextX( uint num_frm ) { return NextX[num_frm % CntFrm]; }
     short GetNextY( uint num_frm ) { return NextY[num_frm % CntFrm]; }
     uint  GetCnt()                 { return CntFrm; }
-    uint  GetCurSprId()            { return CntFrm > 1 ? Ind[( ( Timer::GameTick() % Ticks ) * 100 / Ticks ) * CntFrm / 100] : Ind[0]; }
-    uint  GetCurSprIndex()         { return CntFrm > 1 ? ( ( Timer::GameTick() % Ticks ) * 100 / Ticks ) * CntFrm / 100 : 0; }
+    uint  GetCurSprId()            { return CntFrm > 1 ? Ind[( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100] : Ind[0]; }
+    uint  GetCurSprIndex()         { return CntFrm > 1 ? ( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100 : 0; }
 
     AnyFrames() : Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 ) {};
     ~AnyFrames()
@@ -200,8 +200,8 @@ struct AnyFrames
         SAFEDELA( NextY );
     }
 };
-typedef map< uint, AnyFrames*, less< uint > > AnimMap;
-typedef vector< AnyFrames* >                  AnimVec;
+typedef map<uint, AnyFrames*, less<uint>> AnimMap;
+typedef vector<AnyFrames*>                AnimVec;
 
 struct PrepPoint
 {
@@ -214,8 +214,8 @@ struct PrepPoint
     PrepPoint() : PointX( 0 ), PointY( 0 ), PointColor( 0 ), PointOffsX( NULL ), PointOffsY( NULL ) {}
     PrepPoint( short x, short y, uint color, short* ox = NULL, short* oy = NULL ) : PointX( x ), PointY( y ), PointColor( color ), PointOffsX( ox ), PointOffsY( oy ) {}
 };
-typedef vector< PrepPoint > PointVec;
-typedef vector< PointVec >  PointVecVec;
+typedef vector<PrepPoint> PointVec;
+typedef vector<PointVec>  PointVecVec;
 
 struct SpriteMngrParams
 {
@@ -238,7 +238,7 @@ struct RenderTarget
     HGLRC       PBufferGLC;
     # endif
 };
-typedef vector< RenderTarget* > RenderTargetVec;
+typedef vector<RenderTarget*> RenderTargetVec;
 #endif
 
 class SpriteManager

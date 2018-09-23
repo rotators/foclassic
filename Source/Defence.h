@@ -34,9 +34,9 @@ uint UIDDUMMY8 = 23423111;
 uint UIDDUMMY9[55];
 uint UIDDUMMY10 = -1;
 
-#define CHECK_UID0( uid )                  ( uid[0] != *UID0 || uid[1] != *UID1 || uid[2] != *UID2 || uid[3] != *UID3 || uid[4] != *UID4 )
-#define CHECK_UID1( uid )                  ( uid[0] != UIDCACHE[0] || uid[1] != UIDCACHE[1] || uid[2] != UIDCACHE[2] || uid[3] != UIDCACHE[3] || uid[4] != UIDCACHE[4] )
-#define CHECK_UID2( uid )                  ( uid[0] != UIDCACHE2[0] || uid[1] != UIDCACHE2[1] || uid[2] != UIDCACHE2[2] || uid[3] != UIDCACHE2[3] || uid[4] != UIDCACHE2[4] )
+#define CHECK_UID0( uid )                  (uid[0] != *UID0 || uid[1] != *UID1 || uid[2] != *UID2 || uid[3] != *UID3 || uid[4] != *UID4)
+#define CHECK_UID1( uid )                  (uid[0] != UIDCACHE[0] || uid[1] != UIDCACHE[1] || uid[2] != UIDCACHE[2] || uid[3] != UIDCACHE[3] || uid[4] != UIDCACHE[4])
+#define CHECK_UID2( uid )                  (uid[0] != UIDCACHE2[0] || uid[1] != UIDCACHE2[1] || uid[2] != UIDCACHE2[2] || uid[3] != UIDCACHE2[3] || uid[4] != UIDCACHE2[4])
 
 #define UID_FLAGS( result, set, unset )    SETFLAG( result, set ); UNSETFLAG( result, unset )
 #define UID_CALC( result )                 UIDXOR ^= result; UIDOR |= result; UIDCALC += result
@@ -61,53 +61,53 @@ uint UIDDUMMY10 = -1;
 #define UID_PREPARE_UID4_5         uid4_str[0] += 27
 #define UID_PREPARE_UID4_6         uid4_str[2] += 2
 
-#define UID_CHANGE                 ( 1 )
+#define UID_CHANGE                 (1)
 
-#if defined ( FO_WINDOWS )
-# define GET_UID0( result )                                                  \
-    SYSTEM_INFO d_sysinfo;                                                   \
-    memzero( &d_sysinfo, sizeof( d_sysinfo ) );                              \
-    UID_DUMMY_CALCS0;                                                        \
-    GetSystemInfo( &d_sysinfo );                                             \
-    result = new uint();                                                     \
-    *result = d_sysinfo.wProcessorArchitecture + UID_CHANGE;                 \
-    UID_DUMMY_CALCS1;                                                        \
-    *result ^= ( d_sysinfo.dwNumberOfProcessors << 8 );                      \
-    *result *= ( d_sysinfo.dwProcessorType << 10 );                          \
-    UID_DUMMY_CALCS2;                                                        \
-    *result ^= ( d_sysinfo.wProcessorLevel << 12 );                          \
-    UID_DUMMY_CALCS3;                                                        \
-    *result += ( d_sysinfo.wProcessorRevision << 16 );                       \
-    UID_DUMMY_CALCS4;                                                        \
-    for( int d_i = 0; d_i < 32; d_i++ )                                      \
-        *result |= ( ( IsProcessorFeaturePresent( d_i ) ? 1 : 0 ) << d_i );  \
-    UID_DUMMY_CALCS1;                                                        \
-    UID_FLAGS( *result, 0x00800000, 0x00000400 );                            \
-    UID_CALC( *result );                                                     \
-    UIDCACHE[0] = *result;                                                   \
-    UID_DUMMY_CALCS4;                                                        \
-    UIDCACHE2[0] = *result
-#elif defined ( FO_LINUX )
+#if defined (FO_WINDOWS)
 # define GET_UID0( result )                                                \
+    SYSTEM_INFO d_sysinfo;                                                 \
+    memzero( &d_sysinfo, sizeof(d_sysinfo) );                              \
+    UID_DUMMY_CALCS0;                                                      \
+    GetSystemInfo( &d_sysinfo );                                           \
     result = new uint();                                                   \
-    *result = 0;                                                           \
-    int fd;                                                                \
-    if( ( fd = open( "/dev/hda", O_RDONLY ) ) != -1 )                      \
-    {                                                                      \
-        struct hd_driveid d_hd;                                            \
-        if( !ioctl( fd, HDIO_GET_IDENTITY, &d_hd ) )                       \
-        {                                                                  \
-            uint d_val = 0;                                                \
-            for( uint i = 0; i < sizeof( d_hd.serial_no ) && i < 32; i++ ) \
-                d_val |= ( ( d_hd.serial_no[i] % 2 ) ? 1 : 0 ) << i;       \
-            *result = d_val;                                               \
-        }                                                                  \
-        close( fd );                                                       \
-    }                                                                      \
-    *result += UID_CHANGE;                                                 \
+    *result = d_sysinfo.wProcessorArchitecture + UID_CHANGE;               \
+    UID_DUMMY_CALCS1;                                                      \
+    *result ^= (d_sysinfo.dwNumberOfProcessors << 8);                      \
+    *result *= (d_sysinfo.dwProcessorType << 10);                          \
+    UID_DUMMY_CALCS2;                                                      \
+    *result ^= (d_sysinfo.wProcessorLevel << 12);                          \
+    UID_DUMMY_CALCS3;                                                      \
+    *result += (d_sysinfo.wProcessorRevision << 16);                       \
+    UID_DUMMY_CALCS4;                                                      \
+    for( int d_i = 0; d_i < 32; d_i++ )                                    \
+        *result |= ( (IsProcessorFeaturePresent( d_i ) ? 1 : 0) << d_i );  \
+    UID_DUMMY_CALCS1;                                                      \
     UID_FLAGS( *result, 0x00800000, 0x00000400 );                          \
     UID_CALC( *result );                                                   \
     UIDCACHE[0] = *result;                                                 \
+    UID_DUMMY_CALCS4;                                                      \
+    UIDCACHE2[0] = *result
+#elif defined (FO_LINUX)
+# define GET_UID0( result )                                              \
+    result = new uint();                                                 \
+    *result = 0;                                                         \
+    int fd;                                                              \
+    if( (fd = open( "/dev/hda", O_RDONLY ) ) != -1 )                     \
+    {                                                                    \
+        struct hd_driveid d_hd;                                          \
+        if( !ioctl( fd, HDIO_GET_IDENTITY, &d_hd ) )                     \
+        {                                                                \
+            uint d_val = 0;                                              \
+            for( uint i = 0; i < sizeof(d_hd.serial_no) && i < 32; i++ ) \
+                d_val |= ( (d_hd.serial_no[i] % 2) ? 1 : 0 ) << i;       \
+            *result = d_val;                                             \
+        }                                                                \
+        close( fd );                                                     \
+    }                                                                    \
+    *result += UID_CHANGE;                                               \
+    UID_FLAGS( *result, 0x00800000, 0x00000400 );                        \
+    UID_CALC( *result );                                                 \
+    UIDCACHE[0] = *result;                                               \
     UIDCACHE2[0] = *result
 #else
 # define GET_UID0( result )                       \
@@ -120,43 +120,43 @@ uint UIDDUMMY10 = -1;
     UIDCACHE2[0] = *result
 #endif
 
-#if defined ( FO_WINDOWS )
-# define GET_UID1( result )                                                      \
-    PIP_ADAPTER_INFO d_ainfo = NULL;                                             \
-    uint d_retv = 0;                                                             \
-    d_ainfo = (IP_ADAPTER_INFO*)malloc( sizeof( IP_ADAPTER_INFO ) );             \
-    UID_DUMMY_CALCS5;                                                            \
-    DWORD d_buf_len = sizeof( IP_ADAPTER_INFO );                                 \
-    UID_DUMMY_CALCS6;                                                            \
-    uint  d_retval = -1;                                                         \
-    if( ( d_retval = GetAdaptersInfo( d_ainfo, &d_buf_len ) ) != ERROR_SUCCESS ) \
-    {                                                                            \
-        free( d_ainfo );                                                         \
-        UID_DUMMY_CALCS7;                                                        \
-        d_ainfo = (IP_ADAPTER_INFO*)malloc( d_buf_len );                         \
-        d_retval = GetAdaptersInfo( d_ainfo, &d_buf_len );                       \
-    }                                                                            \
-    result = new uint();                                                         \
-    if( d_retval == ERROR_SUCCESS )                                              \
-    {                                                                            \
-        uint d_val = 0;                                                          \
-        for( int i = 0; i < 32; i++ )                                            \
-            d_val |= ( ( d_ainfo->AdapterName[i] % 2 ) ? 1 : 0 ) << i;           \
-        UID_DUMMY_CALCS8;                                                        \
-        d_val += UID_CHANGE;                                                     \
-        *result = d_val;                                                         \
-        UID_DUMMY_CALCS9;                                                        \
-    }                                                                            \
-    else                                                                         \
-        *result = 0;                                                             \
-    UID_DUMMY_CALCS3;                                                            \
-    UID_FLAGS( *result, 0x04000000, 0x00200000 );                                \
-    UID_DUMMY_CALCS7;                                                            \
-    UID_CALC( *result );                                                         \
-    UIDCACHE[1] = *result;                                                       \
-    UID_DUMMY_CALCS8;                                                            \
+#if defined (FO_WINDOWS)
+# define GET_UID1( result )                                                     \
+    PIP_ADAPTER_INFO d_ainfo = NULL;                                            \
+    uint d_retv = 0;                                                            \
+    d_ainfo = (IP_ADAPTER_INFO*)malloc( sizeof(IP_ADAPTER_INFO) );              \
+    UID_DUMMY_CALCS5;                                                           \
+    DWORD d_buf_len = sizeof(IP_ADAPTER_INFO);                                  \
+    UID_DUMMY_CALCS6;                                                           \
+    uint  d_retval = -1;                                                        \
+    if( (d_retval = GetAdaptersInfo( d_ainfo, &d_buf_len ) ) != ERROR_SUCCESS ) \
+    {                                                                           \
+        free( d_ainfo );                                                        \
+        UID_DUMMY_CALCS7;                                                       \
+        d_ainfo = (IP_ADAPTER_INFO*)malloc( d_buf_len );                        \
+        d_retval = GetAdaptersInfo( d_ainfo, &d_buf_len );                      \
+    }                                                                           \
+    result = new uint();                                                        \
+    if( d_retval == ERROR_SUCCESS )                                             \
+    {                                                                           \
+        uint d_val = 0;                                                         \
+        for( int i = 0; i < 32; i++ )                                           \
+            d_val |= ( (d_ainfo->AdapterName[i] % 2) ? 1 : 0 ) << i;            \
+        UID_DUMMY_CALCS8;                                                       \
+        d_val += UID_CHANGE;                                                    \
+        *result = d_val;                                                        \
+        UID_DUMMY_CALCS9;                                                       \
+    }                                                                           \
+    else                                                                        \
+        *result = 0;                                                            \
+    UID_DUMMY_CALCS3;                                                           \
+    UID_FLAGS( *result, 0x04000000, 0x00200000 );                               \
+    UID_DUMMY_CALCS7;                                                           \
+    UID_CALC( *result );                                                        \
+    UIDCACHE[1] = *result;                                                      \
+    UID_DUMMY_CALCS8;                                                           \
     UIDCACHE2[1] = *result
-#elif defined ( FO_LINUX )
+#elif defined (FO_LINUX)
 # define GET_UID1( result )                                                                      \
     result = new uint();                                                                         \
     *result = 0;                                                                                 \
@@ -176,7 +176,7 @@ uint UIDDUMMY10 = -1;
             UID_DUMMY_CALCS1;                                                                    \
             if( strcmp( d_iflist->if_name, "eth0" ) )                                            \
             {                                                                                    \
-                if( *(char*)( d_iflist + 1 ) )                                                   \
+                if( *(char*)(d_iflist + 1) )                                                     \
                     continue;                                                                    \
                 else                                                                             \
                     d_iflist = d_iflist_init;                                                    \
@@ -190,7 +190,7 @@ uint UIDDUMMY10 = -1;
             memmove( (void*)&d_macaddr[0], (void*)&d_ifreg.ifr_ifru.ifru_hwaddr.sa_data[0], 6 ); \
             uint d_lo = *(uint*)&d_macaddr[4];                                                   \
             UID_DUMMY_CALCS8;                                                                    \
-            d_lo |= ( d_lo << 16 );                                                              \
+            d_lo |= (d_lo << 16);                                                                \
             *result = *(uint*)&d_macaddr[0] + UID_CHANGE;                                        \
             UID_DUMMY_CALCS9;                                                                    \
             *result ^= d_lo;                                                                     \
@@ -286,37 +286,37 @@ uint UIDDUMMY10 = -1;
     UID_DUMMY_CALCS4;                             \
     UID_DUMMY_CALCS8
 #else
-# define GET_UID3( result )                                              \
-    unsigned int d_cpuid[4] = { 0, 0, 0, 0 };                            \
-    {                                                                    \
-        unsigned int* eax = &d_cpuid[0];                                 \
-        unsigned int* ebx = &d_cpuid[1];                                 \
-        unsigned int* ecx = &d_cpuid[2];                                 \
-        unsigned int* edx = &d_cpuid[3];                                 \
-        *eax = 1;                                                        \
-        __asm volatile                                                   \
-        (                                                                \
-            "mov %%ebx, %%edi;"                                          \
-            "cpuid;"                                                     \
-            "mov %%ebx, %%esi;"                                          \
-            "mov %%edi, %%ebx;"                                          \
-            : "+a" ( *eax ), "=S" ( *ebx ), "=c" ( *ecx ), "=d" ( *edx ) \
-            : : "edi"                                                    \
-        );                                                               \
-    }                                                                    \
-    result = new uint();                                                 \
-    UID_DUMMY_CALCS6;                                                    \
-    *result = d_cpuid[0] + UID_CHANGE;                                   \
-    UID_DUMMY_CALCS4;                                                    \
-    UID_DUMMY_CALCS5;                                                    \
-    UID_FLAGS( *result, 0x80000000, 0x40000000 );                        \
-    UID_DUMMY_CALCS1;                                                    \
-    UID_CALC( *result );                                                 \
-    UIDCACHE[3] = *result;                                               \
-    UID_DUMMY_CALCS1;                                                    \
-    UIDCACHE2[3] = *result;                                              \
-    UID_DUMMY_CALCS9;                                                    \
-    UID_DUMMY_CALCS4;                                                    \
+# define GET_UID3( result )                                      \
+    unsigned int d_cpuid[4] = { 0, 0, 0, 0 };                    \
+    {                                                            \
+        unsigned int* eax = &d_cpuid[0];                         \
+        unsigned int* ebx = &d_cpuid[1];                         \
+        unsigned int* ecx = &d_cpuid[2];                         \
+        unsigned int* edx = &d_cpuid[3];                         \
+        *eax = 1;                                                \
+        __asm volatile                                           \
+        (                                                        \
+            "mov %%ebx, %%edi;"                                  \
+            "cpuid;"                                             \
+            "mov %%ebx, %%esi;"                                  \
+            "mov %%edi, %%ebx;"                                  \
+            : "+a" (*eax), "=S" (*ebx), "=c" (*ecx), "=d" (*edx) \
+            : : "edi"                                            \
+        );                                                       \
+    }                                                            \
+    result = new uint();                                         \
+    UID_DUMMY_CALCS6;                                            \
+    *result = d_cpuid[0] + UID_CHANGE;                           \
+    UID_DUMMY_CALCS4;                                            \
+    UID_DUMMY_CALCS5;                                            \
+    UID_FLAGS( *result, 0x80000000, 0x40000000 );                \
+    UID_DUMMY_CALCS1;                                            \
+    UID_CALC( *result );                                         \
+    UIDCACHE[3] = *result;                                       \
+    UID_DUMMY_CALCS1;                                            \
+    UIDCACHE2[3] = *result;                                      \
+    UID_DUMMY_CALCS9;                                            \
+    UID_DUMMY_CALCS4;                                            \
     UID_DUMMY_CALCS8
 #endif
 

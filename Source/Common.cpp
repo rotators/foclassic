@@ -57,7 +57,7 @@ int Procent( int full, int peace )
 uint NumericalNumber( uint num )
 {
     if( num & 1 )
-        return num * ( num / 2 + 1 );
+        return num * (num / 2 + 1);
     else
         return num * num / 2 + num / 2;
 }
@@ -73,18 +73,18 @@ uint DistGame( int x1, int y1, int x2, int y2 )
 {
     if( GameOpt.MapHexagonal )
     {
-        int dx = ( x1 > x2 ? x1 - x2 : x2 - x1 );
-        if( !( x1 & 1 ) )
+        int dx = (x1 > x2 ? x1 - x2 : x2 - x1);
+        if( !(x1 & 1) )
         {
             if( y2 <= y1 )
             {
                 int rx = y1 - y2 - dx / 2;
-                return dx + ( rx > 0 ? rx : 0 );
+                return dx + (rx > 0 ? rx : 0);
             }
             else
             {
-                int rx = y2 - y1 - ( dx + 1 ) / 2;
-                return dx + ( rx > 0 ? rx : 0 );
+                int rx = y2 - y1 - (dx + 1) / 2;
+                return dx + (rx > 0 ? rx : 0);
             }
         }
         else
@@ -92,12 +92,12 @@ uint DistGame( int x1, int y1, int x2, int y2 )
             if( y2 >= y1 )
             {
                 int rx = y2 - y1 - dx / 2;
-                return dx + ( rx > 0 ? rx : 0 );
+                return dx + (rx > 0 ? rx : 0);
             }
             else
             {
-                int rx = y1 - y2 - ( dx + 1 ) / 2;
-                return dx + ( rx > 0 ? rx : 0 );
+                int rx = y1 - y2 - (dx + 1) / 2;
+                return dx + (rx > 0 ? rx : 0);
             }
         }
     }
@@ -177,8 +177,8 @@ int GetFarDir( int x1, int y1, int x2, int y2 )
         float hy = (float)y1;
         float tx = (float)x2;
         float ty = (float)y2;
-        float nx = 3 * ( tx - hx );
-        float ny = ( ty - hy ) * SQRT3T2_FLOAT - ( float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
+        float nx = 3 * (tx - hx);
+        float ny = (ty - hy) * SQRT3T2_FLOAT - (float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
         float dir = 180.0f + RAD2DEG * atan2f( ny, nx );
 
         if( dir >= 60.0f  && dir < 120.0f )
@@ -195,7 +195,7 @@ int GetFarDir( int x1, int y1, int x2, int y2 )
     }
     else
     {
-        float dir = 180.0f + RAD2DEG * atan2( (float)( x2 - x1 ), (float)( y2 - y1 ) );
+        float dir = 180.0f + RAD2DEG * atan2( (float)(x2 - x1), (float)(y2 - y1) );
 
         if( dir >= 22.5f  && dir < 67.5f )
             return 7;
@@ -223,8 +223,8 @@ int GetFarDir( int x1, int y1, int x2, int y2, float offset )
         float hy = (float)y1;
         float tx = (float)x2;
         float ty = (float)y2;
-        float nx = 3 * ( tx - hx );
-        float ny = ( ty - hy ) * SQRT3T2_FLOAT - ( float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
+        float nx = 3 * (tx - hx);
+        float ny = (ty - hy) * SQRT3T2_FLOAT - (float(x2 & 1) - float(x1 & 1) ) * SQRT3_FLOAT;
         float dir = 180.0f + RAD2DEG * atan2f( ny, nx ) + offset;
         if( dir < 0.0f )
             dir = 360.0f - fmod( -dir, 360.0f );
@@ -245,7 +245,7 @@ int GetFarDir( int x1, int y1, int x2, int y2, float offset )
     }
     else
     {
-        float dir = 180.0f + RAD2DEG * atan2( (float)( x2 - x1 ), (float)( y2 - y1 ) ) + offset;
+        float dir = 180.0f + RAD2DEG * atan2( (float)(x2 - x1), (float)(y2 - y1) ) + offset;
         if( dir < 0.0f )
             dir = 360.0f - fmod( -dir, 360.0f );
         else if( dir >= 360.0f )
@@ -277,7 +277,7 @@ bool CheckDist( ushort x1, ushort y1, ushort x2, ushort y2, uint dist )
 int ReverseDir( int dir )
 {
     int dirs_count = DIRS_COUNT;
-    return ( dir + dirs_count / 2 ) % dirs_count;
+    return (dir + dirs_count / 2) % dirs_count;
 }
 
 void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 )
@@ -326,7 +326,7 @@ void MoveHexByDirUnsafe( int& hx, int& hy, uchar dir )
         {
             case 0:
                 hx--;
-                if( !( hx & 1 ) )
+                if( !(hx & 1) )
                     hy--;
                 break;
             case 1:
@@ -344,7 +344,7 @@ void MoveHexByDirUnsafe( int& hx, int& hy, uchar dir )
                 break;
             case 4:
                 hx++;
-                if( !( hx & 1 ) )
+                if( !(hx & 1) )
                     hy--;
                 break;
             case 5:
@@ -401,7 +401,7 @@ bool IntersectCircleLine( int cx, int cy, int radius, int x1, int y1, int x2, in
     int dx = x02 - x01;
     int dy = y02 - y01;
     int a = dx * dx + dy * dy;
-    int b = 2 * ( x01 * dx + y01 * dy );
+    int b = 2 * (x01 * dx + y01 * dy);
     int c = x01 * x01 + y01 * y01 - radius * radius;
     if( -b < 0 )
         return c < 0;
@@ -467,7 +467,7 @@ uint GetDoubleClickTicks()
 /************************************************************************/
 
 // Hex offset
-#define HEX_OFFSET_SIZE    ( ( MAX_HEX_OFFSET * MAX_HEX_OFFSET / 2 + MAX_HEX_OFFSET / 2 ) * DIRS_COUNT )
+#define HEX_OFFSET_SIZE    ( (MAX_HEX_OFFSET * MAX_HEX_OFFSET / 2 + MAX_HEX_OFFSET / 2) * DIRS_COUNT )
 int           CurHexOffset = 0; // 0 - none, 1 - hexagonal, 2 - square
 static short* SXEven = NULL;
 static short* SYEven = NULL;
@@ -498,7 +498,7 @@ void InitializeHexOffsets()
 
             for( int j = 0; j < 6; j++ )
             {
-                int dir = ( j + 2 ) % 6;
+                int dir = (j + 2) % 6;
                 for( int k = 0; k < i + 1; k++ )
                 {
                     SXEven[pos] = xe;
@@ -535,15 +535,15 @@ void InitializeHexOffsets()
                         break;
                     case 1:
                         dir = 4;
-                        steps = ( i + 1 ) * 2;
+                        steps = (i + 1) * 2;
                         break;
                     case 2:
                         dir = 6;
-                        steps = ( i + 1 ) * 2;
+                        steps = (i + 1) * 2;
                         break;
                     case 3:
                         dir = 0;
-                        steps = ( i + 1 ) * 2;
+                        steps = (i + 1) * 2;
                         break;
                     case 4:
                         dir = 2;
@@ -567,10 +567,10 @@ void InitializeHexOffsets()
 
 void GetHexOffsets( bool odd, short*& sx, short*& sy )
 {
-    if( CurHexOffset != ( GameOpt.MapHexagonal ? 1 : 2 ) )
+    if( CurHexOffset != (GameOpt.MapHexagonal ? 1 : 2) )
         InitializeHexOffsets();
-    sx = ( odd ? SXOdd : SXEven );
-    sy = ( odd ? SYOdd : SYEven );
+    sx = (odd ? SXOdd : SXEven);
+    sy = (odd ? SYOdd : SYEven);
 }
 
 void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int& y )
@@ -579,7 +579,7 @@ void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int
     {
         int dx = to_hx - from_hx;
         int dy = to_hy - from_hy;
-        x = dy * ( GameOpt.MapHexWidth / 2 ) - dx * GameOpt.MapHexWidth;
+        x = dy * (GameOpt.MapHexWidth / 2) - dx * GameOpt.MapHexWidth;
         y = dy * GameOpt.MapHexLineHeight;
         if( from_hx & 1 )
         {
@@ -589,15 +589,15 @@ void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int
         else if( dx < 0 )
             dx--;
         dx /= 2;
-        x += ( GameOpt.MapHexWidth / 2 ) * dx;
+        x += (GameOpt.MapHexWidth / 2) * dx;
         y += GameOpt.MapHexLineHeight * dx;
     }
     else
     {
         int dx = to_hx - from_hx;
         int dy = to_hy - from_hy;
-        x = ( dy - dx ) * GameOpt.MapHexWidth / 2;
-        y = ( dy + dx ) * GameOpt.MapHexLineHeight;
+        x = (dy - dx) * GameOpt.MapHexWidth / 2;
+        y = (dy + dx) * GameOpt.MapHexLineHeight;
     }
 }
 
@@ -608,9 +608,9 @@ void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int
 const char* GetConfigFileName()
 {
     // Default config names
-    #if defined ( FONLINE_SERVER )
+    #if defined (FONLINE_SERVER)
     static char config_name[MAX_FOPATH] = { "FOnlineServer.cfg\0--default-server-config--" };
-    #elif defined ( FONLINE_MAPPER )
+    #elif defined (FONLINE_MAPPER)
     static char config_name[MAX_FOPATH] = { "Mapper.cfg\0--default-mapper-config--" };
     #else // FONLINE_CLIENT and others
     static char config_name[MAX_FOPATH] = { "FOnline.cfg\0--default-client-config--" };
@@ -626,7 +626,7 @@ const char* GetConfigFileName()
         // Get full path
         char module_name[MAX_FOPATH];
         #ifdef FO_WINDOWS
-        if( !GetModuleFileName( NULL, module_name, sizeof( module_name ) ) )
+        if( !GetModuleFileName( NULL, module_name, sizeof(module_name) ) )
             return config_name;
         #else
         // Todo: Linux CommandLineArgValues[0] ?
@@ -664,10 +664,10 @@ const char* GetConfigFileName()
 const char* GetWindowName()
 {
     // Default config names
-    #if defined ( FONLINE_SERVER )
+    #if defined (FONLINE_SERVER)
     static char window_name[MAX_FOPATH] = { "FOnline Server\0--default-server-name--" };
     int         path_type = PT_SERVER_ROOT;
-    #elif defined ( FONLINE_MAPPER )
+    #elif defined (FONLINE_MAPPER)
     static char window_name[MAX_FOPATH] = { "FOnline Mapper\0--default-mapper-name--" };
     int         path_type = PT_MAPPER_ROOT;
     #else // FONLINE_CLIENT and others
@@ -690,7 +690,7 @@ const char* GetWindowName()
 
         // 'WindowName' section
         char str[MAX_FOPATH];
-        #if !defined ( FONLINE_CLIENT )
+        #if !defined (FONLINE_CLIENT)
         if( !cfg.GetStr( "WindowName", "", str ) || !str[0] )
             return window_name;
         #else
@@ -704,7 +704,7 @@ const char* GetWindowName()
             Str::Append( window_name, " Singleplayer" );
 
         // Mapper appendix
-        #if defined ( FONLINE_MAPPER )
+        #if defined (FONLINE_MAPPER)
         Str::Append( window_name, " " );
         Str::Append( window_name, MAPPER_VERSION_STR );
         #endif
@@ -716,7 +716,7 @@ const char* GetWindowName()
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-#if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
+#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
 
 uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light )
 {
@@ -752,29 +752,29 @@ uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light )
             game_time -= day_time[3];
         else
             game_time += 1440 - day_time[3];
-        duration = ( 1440 - day_time[3] ) + day_time[0];
+        duration = (1440 - day_time[3]) + day_time[0];
     }
 
     if( !duration )
         duration = 1;
-    result[0] = color_r[time] + ( color_r[time < 3 ? time + 1 : 0] - color_r[time] ) * game_time / duration;
-    result[1] = color_g[time] + ( color_g[time < 3 ? time + 1 : 0] - color_g[time] ) * game_time / duration;
-    result[2] = color_b[time] + ( color_b[time < 3 ? time + 1 : 0] - color_b[time] ) * game_time / duration;
+    result[0] = color_r[time] + (color_r[time < 3 ? time + 1 : 0] - color_r[time]) * game_time / duration;
+    result[1] = color_g[time] + (color_g[time < 3 ? time + 1 : 0] - color_g[time]) * game_time / duration;
+    result[2] = color_b[time] + (color_b[time < 3 ? time + 1 : 0] - color_b[time]) * game_time / duration;
 
     if( light )
     {
-        int max_light = ( MAX( MAX( MAX( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
-                          MAX( MAX( MAX( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
-                          MAX( MAX( MAX( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
-        int min_light = ( MIN( MIN( MIN( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
-                          MIN( MIN( MIN( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
-                          MIN( MIN( MIN( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
-        int cur_light = ( result[0] + result[1] + result[2] ) / 3;
+        int max_light = (MAX( MAX( MAX( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
+                         MAX( MAX( MAX( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
+                         MAX( MAX( MAX( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
+        int min_light = (MIN( MIN( MIN( color_r[0], color_r[1] ), color_r[2] ), color_r[3] ) +
+                         MIN( MIN( MIN( color_g[0], color_g[1] ), color_g[2] ), color_g[3] ) +
+                         MIN( MIN( MIN( color_b[0], color_b[1] ), color_b[2] ), color_b[3] ) ) / 3;
+        int cur_light = (result[0] + result[1] + result[2]) / 3;
         *light = Procent( max_light - min_light, max_light - cur_light );
         *light = CLAMP( *light, 0, 100 );
     }
 
-    return ( result[0] << 16 ) | ( result[1] << 8 ) | ( result[2] );
+    return (result[0] << 16) | (result[1] << 8) | (result[2]);
 }
 
 void GetClientOptions()
@@ -988,7 +988,7 @@ void GetServerOptions()
     cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
     ServerGameSleep = cfg.GetInt( "GameSleep", 10 );
     Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
-    WorldSaveManager = ( cfg.GetInt( "WorldSaveManager", 1 ) == 1 );
+    WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
 }
 
 ServerScriptFunctions ServerFunctions;
@@ -1354,7 +1354,7 @@ GameOptions::GameOptions()
     SpritesZoom = 1.0f;
     SpritesZoomMax = MAX_ZOOM;
     SpritesZoomMin = MIN_ZOOM;
-    memzero( EffectValues, sizeof( EffectValues ) );
+    memzero( EffectValues, sizeof(EffectValues) );
     AlwaysRun = false;
     AlwaysRunMoveDist = 1;
     AlwaysRunUseDist = 5;
@@ -1456,7 +1456,7 @@ void FileLogger::Write( const char* fmt, ... )
 {
     if( logFile )
     {
-        fprintf( logFile, "%10u) ", ( Timer::FastTick() - startTick ) / 1000 );
+        fprintf( logFile, "%10u) ", (Timer::FastTick() - startTick) / 1000 );
         va_list list;
         va_start( list, fmt );
         vfprintf( logFile, fmt, list );
@@ -1470,12 +1470,12 @@ void FileLogger::Write( const char* fmt, ... )
 
 #ifdef FO_WINDOWS
 
-# define INTERPROCESS_DATA_SIZE    ( OFFSETOF( InterprocessData, mapFileMutex ) )
+# define INTERPROCESS_DATA_SIZE    (OFFSETOF( InterprocessData, mapFileMutex ) )
 
 HANDLE InterprocessData::Init()
 {
-    SECURITY_ATTRIBUTES sa = { sizeof( sa ), NULL, TRUE };
-    mapFile = CreateFileMapping( INVALID_HANDLE_VALUE, &sa, PAGE_READWRITE, 0, INTERPROCESS_DATA_SIZE + sizeof( mapFileMutex ), NULL );
+    SECURITY_ATTRIBUTES sa = { sizeof(sa), NULL, TRUE };
+    mapFile = CreateFileMapping( INVALID_HANDLE_VALUE, &sa, PAGE_READWRITE, 0, INTERPROCESS_DATA_SIZE + sizeof(mapFileMutex), NULL );
     if( !mapFile )
         return NULL;
     mapFilePtr = NULL;
@@ -1567,7 +1567,7 @@ InterprocessData SingleplayerData;
 /* Thread                                                               */
 /************************************************************************/
 
-#if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+#if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
 
 THREAD char Thread::threadName[64] = { 0 };
 UIntStrMap  Thread::threadNames;
@@ -1576,7 +1576,7 @@ Mutex       Thread::threadNamesLocker;
 void* ThreadBeginExecution( void* args )
 {
     void** args_ = (void**)args;
-    void   ( * func )( void* ) = ( void ( * )( void* ) )args_[0];
+    void   ( * func )( void* ) = (void (*)( void* ) )args_[0];
     void*  func_arg = args_[1];
     char*  name = (char*)args_[2];
     Thread::SetCurrentName( name );
@@ -1597,12 +1597,12 @@ Thread::~Thread()
     pthread_attr_destroy( &threadAttr );
 }
 
-bool Thread::Start( void ( *func )( void* ), const char* name, void* arg /* = NULL */ )
+bool Thread::Start( void (*func)( void* ), const char* name, void* arg /* = NULL */ )
 {
-    void** args = (void**)malloc( sizeof( void* ) * 3 );
+    void** args = (void**)malloc( sizeof(void*) * 3 );
     char*  name_ = Str::Duplicate( name );
     args[0] = (void*)func, args[1] = arg, args[2] = name_;
-    isStarted = ( pthread_create( &threadId, &threadAttr, ThreadBeginExecution, args ) == 0 );
+    isStarted = (pthread_create( &threadId, &threadAttr, ThreadBeginExecution, args ) == 0);
     return isStarted;
 }
 
@@ -1662,7 +1662,7 @@ const char* Thread::FindName( uint thread_id )
 {
     SCOPE_LOCK( threadNamesLocker );
     auto it = threadNames.find( thread_id );
-    return it != threadNames.end() ? ( *it ).second.c_str() : NULL;
+    return it != threadNames.end() ? (*it).second.c_str() : NULL;
 }
 
 void Thread::Sleep( uint ms )
@@ -1672,7 +1672,7 @@ void Thread::Sleep( uint ms )
     # else
     struct timespec req;
     req.tv_sec = ms / 1000;
-    req.tv_nsec = ( ms % 1000 ) * 1000000;
+    req.tv_nsec = (ms % 1000) * 1000000;
     while( nanosleep( &req, &req ) == -1 && errno == EINTR )
         continue;
     # endif
@@ -1689,12 +1689,12 @@ void Thread_Sleep( uint ms ) // Used in Mutex.h as extern function
 /* FOWindow                                                             */
 /************************************************************************/
 
-#if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
+#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
 
 FOWindow::FOWindow() : Fl_Window( 0, 0, "" ), Focused( true )
 {
     label( GetWindowName() );
-    position( ( Fl::w() - MODE_WIDTH ) / 2, ( Fl::h() - MODE_HEIGHT ) / 2 );
+    position( (Fl::w() - MODE_WIDTH) / 2, (Fl::h() - MODE_HEIGHT) / 2 );
     size( MODE_WIDTH, MODE_HEIGHT );
 
     // Icon
@@ -1732,7 +1732,7 @@ FOWindow::FOWindow() : Fl_Window( 0, 0, "" ), Focused( true )
 
     // Hide menu
     # ifdef FO_WINDOWS
-    SetWindowLong( fl_xid( this ), GWL_STYLE, GetWindowLong( fl_xid( this ), GWL_STYLE ) & ( ~WS_SYSMENU ) );
+    SetWindowLong( fl_xid( this ), GWL_STYLE, GetWindowLong( fl_xid( this ), GWL_STYLE ) & (~WS_SYSMENU) );
     # endif
 
     // Place on top
@@ -1763,7 +1763,7 @@ int FOWindow::handle( int event )
         return 1;
     }
     // Mouse
-    else if( event == FL_PUSH || event == FL_RELEASE || ( event == FL_MOUSEWHEEL && Fl::event_dy() != 0 ) )
+    else if( event == FL_PUSH || event == FL_RELEASE || (event == FL_MOUSEWHEEL && Fl::event_dy() != 0) )
     {
         MouseEvents.push_back( event );
         MouseEvents.push_back( Fl::event_button() );

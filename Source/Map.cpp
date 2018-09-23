@@ -30,18 +30,18 @@ Map::Map() : RefCounter( 1 ), IsNotValid( false ), hexFlags( NULL ),
     IsTurnBasedTimeout( false ), TurnBasedBeginSecond( 0 ), NeedEndTurnBased( false ),
     TurnBasedRound( 0 ), TurnBasedTurn( 0 ), TurnBasedWholeTurn( 0 )
 {
-    MEMORY_PROCESS( MEMORY_MAP, sizeof( Map ) );
-    memzero( &Data, sizeof( Data ) );
-    memzero( FuncId, sizeof( FuncId ) );
-    memzero( LoopEnabled, sizeof( LoopEnabled ) );
-    memzero( LoopLastTick, sizeof( LoopLastTick ) );
-    memzero( LoopWaitTick, sizeof( LoopWaitTick ) );
+    MEMORY_PROCESS( MEMORY_MAP, sizeof(Map) );
+    memzero( &Data, sizeof(Data) );
+    memzero( FuncId, sizeof(FuncId) );
+    memzero( LoopEnabled, sizeof(LoopEnabled) );
+    memzero( LoopLastTick, sizeof(LoopLastTick) );
+    memzero( LoopWaitTick, sizeof(LoopWaitTick) );
 }
 
 Map::~Map()
 {
-    MEMORY_PROCESS( MEMORY_MAP, -(int)sizeof( Map ) );
-    MEMORY_PROCESS( MEMORY_MAP_FIELD, -( Proto->Header.MaxHexX * Proto->Header.MaxHexY ) );
+    MEMORY_PROCESS( MEMORY_MAP, -(int)sizeof(Map) );
+    MEMORY_PROCESS( MEMORY_MAP_FIELD, -(Proto->Header.MaxHexX * Proto->Header.MaxHexY) );
     SAFEDELA( hexFlags );
 }
 
@@ -55,7 +55,7 @@ bool Map::Init( ProtoMap* proto, Location* location )
     if( !hexFlags )
         return false;
     memzero( hexFlags, proto->Header.MaxHexX * proto->Header.MaxHexY );
-    memzero( &Data, sizeof( Data ) );
+    memzero( &Data, sizeof(Data) );
     Proto = proto;
     mapLocation = location;
     Data.MapTime = Proto->Header.Time;
@@ -114,7 +114,7 @@ struct ItemNpcPtr
     Npc*  npc;
     ItemNpcPtr( Item* i, Npc* n ) : item( i ), npc( n ) {}
 };
-typedef map< uint, ItemNpcPtr > UIDtoPtrMap;
+typedef map<uint, ItemNpcPtr> UIDtoPtrMap;
 
 bool Map::Generate()
 {
@@ -132,7 +132,7 @@ bool Map::Generate()
     // Generate npc
     for( auto it = Proto->CrittersVec.begin(), end = Proto->CrittersVec.end(); it != end; ++it )
     {
-        MapObject& mobj = *( *it );
+        MapObject& mobj = *(*it);
 
         // Make script name
         char script[MAX_SCRIPT_NAME * 2 + 1] = { 0 };
@@ -221,7 +221,7 @@ bool Map::Generate()
     // Generate items
     for( auto it = Proto->ItemsVec.begin(), end = Proto->ItemsVec.end(); it != end; ++it )
     {
-        MapObject& mobj = *( *it );
+        MapObject& mobj = *(*it);
         ushort     pid = mobj.ProtoId;
         ProtoItem* proto = ItemMngr.GetProtoItem( pid );
         if( !proto )
@@ -242,8 +242,8 @@ bool Map::Generate()
             auto it = UIDtoPtr.find( mobj.ContainerUID );
             if( it == UIDtoPtr.end() )
                 continue;
-            cr_cont = ( *it ).second.npc;
-            item_cont = ( *it ).second.item;
+            cr_cont = (*it).second.npc;
+            item_cont = (*it).second.item;
         }
 
         // Create item
@@ -496,7 +496,7 @@ bool Map::GetStartCoordCar( ushort& hx, ushort& hy, ProtoItem* proto_item )
 
 bool Map::FindStartHex( ushort& hx, ushort& hy, uint multihex, uint seek_radius, bool skip_unsafe )
 {
-    if( IsHexesPassed( hx, hy, multihex ) && !( skip_unsafe && ( IsHexTrigger( hx, hy ) || IsHexTrap( hx, hy ) ) ) )
+    if( IsHexesPassed( hx, hy, multihex ) && !(skip_unsafe && (IsHexTrigger( hx, hy ) || IsHexTrap( hx, hy ) ) ) )
         return true;
     if( !seek_radius )
         return false;
@@ -525,7 +525,7 @@ bool Map::FindStartHex( ushort& hx, ushort& hy, uint multihex, uint seek_radius,
             continue;
         if( !IsHexesPassed( nx, ny, multihex ) )
             continue;
-        if( skip_unsafe && ( IsHexTrigger( nx, ny ) || IsHexTrap( nx, ny ) ) )
+        if( skip_unsafe && (IsHexTrigger( nx, ny ) || IsHexTrap( nx, ny ) ) )
             continue;
         break;
     }
@@ -728,7 +728,7 @@ void Map::EraseItem( uint item_id )
     auto it = hexItems.begin();
     auto end = hexItems.end();
     for( ; it != end; ++it )
-        if( ( *it )->GetId() == item_id )
+        if( (*it)->GetId() == item_id )
             break;
     if( it == hexItems.end() )
         return;
@@ -899,8 +899,8 @@ Item* Map::GetItemHex( ushort hx, ushort hy, ushort item_pid, Critter* picker )
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         Item* item = *it;
-        if( item->AccHex.HexX == hx && item->AccHex.HexY == hy && ( item_pid == 0 || item->GetProtoId() == item_pid ) &&
-            ( !picker || ( !item->IsHidden() && picker->CountIdVisItem( item->GetId() ) ) ) )
+        if( item->AccHex.HexX == hx && item->AccHex.HexY == hy && (item_pid == 0 || item->GetProtoId() == item_pid) &&
+            (!picker || (!item->IsHidden() && picker->CountIdVisItem( item->GetId() ) ) ) )
         {
             SYNC_LOCK( item );
             return item;
@@ -984,7 +984,7 @@ void Map::GetItemsHexEx( ushort hx, ushort hy, uint radius, ushort pid, ItemPtrV
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         Item* item = *it;
-        if( ( !pid || item->GetProtoId() == pid ) && DistGame( item->AccHex.HexX, item->AccHex.HexY, hx, hy ) <= radius )
+        if( (!pid || item->GetProtoId() == pid) && DistGame( item->AccHex.HexX, item->AccHex.HexY, hx, hy ) <= radius )
             items.push_back( item );
     }
 
@@ -1109,7 +1109,7 @@ void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
 
 ushort Map::GetHexFlags( ushort hx, ushort hy )
 {
-    return ( hexFlags[hy * GetMaxHexX() + hx] << 8 ) | Proto->HexFlags[hy * GetMaxHexX() + hx];
+    return (hexFlags[hy * GetMaxHexX() + hx] << 8) | Proto->HexFlags[hy * GetMaxHexX() + hx];
 }
 
 void Map::SetHexFlag( ushort hx, ushort hy, uchar flag )
@@ -1173,11 +1173,11 @@ bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
         return false;
 
     // Clock wise hexes
-    bool is_square_corner = ( !GameOpt.MapHexagonal && IS_DIR_CORNER( dir ) );
-    uint steps_count = ( is_square_corner ? multihex * 2 : multihex );
-    int  dir_ = ( GameOpt.MapHexagonal ? ( ( dir + 2 ) % 6 ) : ( ( dir + 2 ) % 8 ) );
+    bool is_square_corner = (!GameOpt.MapHexagonal && IS_DIR_CORNER( dir ) );
+    uint steps_count = (is_square_corner ? multihex * 2 : multihex);
+    int  dir_ = (GameOpt.MapHexagonal ? ( (dir + 2) % 6 ) : ( (dir + 2) % 8 ) );
     if( is_square_corner )
-        dir_ = ( dir_ + 1 ) % 8;
+        dir_ = (dir_ + 1) % 8;
     int hx__ = hx_, hy__ = hy_;
     for( uint k = 0; k < steps_count; k++ )
     {
@@ -1187,9 +1187,9 @@ bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
     }
 
     // Counter clock wise hexes
-    dir_ = ( GameOpt.MapHexagonal ? ( ( dir + 4 ) % 6 ) : ( ( dir + 6 ) % 8 ) );
+    dir_ = (GameOpt.MapHexagonal ? ( (dir + 4) % 6 ) : ( (dir + 6) % 8 ) );
     if( is_square_corner )
-        dir_ = ( dir_ + 7 ) % 8;
+        dir_ = (dir_ + 7) % 8;
     hx__ = hx_, hy__ = hy_;
     for( uint k = 0; k < steps_count; k++ )
     {
@@ -1844,7 +1844,7 @@ uint Map::GetDayTime( uint day_part )
 {
     SCOPE_LOCK( dataLocker );
 
-    uint result = ( day_part < 4 ? Data.MapDayTime[day_part] : 0 );
+    uint result = (day_part < 4 ? Data.MapDayTime[day_part] : 0);
     return result;
 }
 
@@ -1906,7 +1906,7 @@ int Map::GetData( uint index )
 {
     SCOPE_LOCK( dataLocker );
 
-    uint result = ( index < MAP_MAX_DATA ? Data.UserData[index] : 0 );
+    uint result = (index < MAP_MAX_DATA ? Data.UserData[index] : 0);
     return result;
 }
 
@@ -2056,7 +2056,7 @@ void Map::ProcessTurnBased()
     if( !IsTurnBasedTimeout )
     {
         Critter* cr = GetCritter( GetCritterTurnId(), true );
-        if( !cr || ( cr->IsDead() || cr->GetAllAp() <= 0 || cr->GetParam( ST_CURRENT_HP ) <= 0 ) )
+        if( !cr || (cr->IsDead() || cr->GetAllAp() <= 0 || cr->GetParam( ST_CURRENT_HP ) <= 0) )
             EndCritterTurn();
     }
 
@@ -2170,7 +2170,7 @@ void Map::NextCritterTurn()
         {
             cr->ChangeParam( ST_CURRENT_AP );
             cr->Data.Params[ST_CURRENT_AP] += cr->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER;
-            if( cr->GetParam( ST_CURRENT_AP ) < 0 || ( cr->GetParam( ST_CURRENT_AP ) == 0 && !cr->GetParam( ST_MAX_MOVE_AP ) ) )
+            if( cr->GetParam( ST_CURRENT_AP ) < 0 || (cr->GetParam( ST_CURRENT_AP ) == 0 && !cr->GetParam( ST_MAX_MOVE_AP ) ) )
             {
                 TurnBasedTurn++;
                 TurnBasedWholeTurn++;
@@ -2261,8 +2261,8 @@ bool Location::Init( ProtoLocation* proto, ushort wx, ushort wy )
     if( !proto )
         return false;
     Proto = proto;
-    memzero( &Data, sizeof( Data ) );
-    memzero( FuncId, sizeof( FuncId ) );
+    memzero( &Data, sizeof(Data) );
+    memzero( FuncId, sizeof(FuncId) );
     Data.LocPid = Proto->LocPid;
     Data.WX = wx;
     Data.WY = wy;
@@ -2439,7 +2439,7 @@ bool Location::IsCanDelete()
         for( auto it_ = npcs.begin(), end_ = npcs.end(); it_ != end_; ++it_ )
         {
             Npc* npc = *it_;
-            if( npc->IsRawParam( MODE_GECK ) || ( !npc->IsRawParam( MODE_NO_HOME ) && npc->GetHomeMap() != map->GetId() ) || npc->IsHaveGeckItem() )
+            if( npc->IsRawParam( MODE_GECK ) || (!npc->IsRawParam( MODE_NO_HOME ) && npc->GetHomeMap() != map->GetId() ) || npc->IsHaveGeckItem() )
                 return false;
         }
     }

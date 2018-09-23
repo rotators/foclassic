@@ -6,7 +6,7 @@ BIND_ASSERT( engine->SetEngineProperty( asEP_USE_CHARACTER_LITERALS, 1 ) );
 BIND_ASSERT( engine->SetEngineProperty( asEP_AUTO_GARBAGE_COLLECT, false ) );
 BIND_ASSERT( engine->SetEngineProperty( asEP_ALWAYS_IMPL_DEFAULT_CONSTRUCT, true ) );
 
-#if defined ( BIND_CLIENT ) || defined ( BIND_SERVER )
+#if defined (BIND_CLIENT) || defined (BIND_SERVER)
 // Reference value
 BIND_ASSERT( engine->RegisterObjectType( "DataRef", 0, asOBJ_REF | asOBJ_NOHANDLE ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "DataRef", "const int& opIndex(uint) const", asFUNCTION( BIND_CLASS DataRef_Index ), asCALL_CDECL_OBJFIRST ) );
@@ -177,7 +177,7 @@ BIND_ASSERT( engine->RegisterObjectBehaviour( "Location", asBEHAVE_RELEASE, "voi
 /************************************************************************/
 /* Synchronizer                                                         */
 /************************************************************************/
-BIND_ASSERT( engine->RegisterObjectType( "Synchronizer", sizeof( SyncObject ), asOBJ_VALUE ) );
+BIND_ASSERT( engine->RegisterObjectType( "Synchronizer", sizeof(SyncObject), asOBJ_VALUE ) );
 
 BIND_ASSERT( engine->RegisterObjectBehaviour( "Synchronizer", asBEHAVE_CONSTRUCT, "void f()", asFUNCTION( BIND_CLASS Synchronizer_Constructor ), asCALL_CDECL_OBJFIRST ) );
 BIND_ASSERT( engine->RegisterObjectBehaviour( "Synchronizer", asBEHAVE_DESTRUCT, "void f()", asFUNCTION( BIND_CLASS Synchronizer_Destructor ), asCALL_CDECL_OBJFIRST ) );
@@ -192,16 +192,16 @@ BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "int GetMin() const", asME
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "int GetMax() const", asMETHOD( GameVar, GetMax ), asCALL_THISCALL ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "bool IsQuest() const", asMETHOD( GameVar, IsQuest ), asCALL_THISCALL ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "uint GetQuestStr() const", asMETHOD( GameVar, GetQuestStr ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAddAssign(const int)", asMETHODPR( GameVar, operator+=, ( const int ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opSubAssign(const int)", asMETHODPR( GameVar, operator-=, ( const int ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opMulAssign(const int)", asMETHODPR( GameVar, operator*=, ( const int ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opDivAssign(const int)", asMETHODPR( GameVar, operator/=, ( const int ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAssign(const int)", asMETHODPR( GameVar, operator=, ( const int ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAddAssign(const GameVar&)", asMETHODPR( GameVar, operator+=, ( const GameVar & ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opSubAssign(const GameVar&)", asMETHODPR( GameVar, operator-=, ( const GameVar & ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opMulAssign(const GameVar&)", asMETHODPR( GameVar, operator*=, ( const GameVar & ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opDivAssign(const GameVar&)", asMETHODPR( GameVar, operator/=, ( const GameVar & ), GameVar& ), asCALL_THISCALL ) );
-BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAssign(const GameVar&)", asMETHODPR( GameVar, operator=, ( const GameVar & ), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAddAssign(const int)", asMETHODPR( GameVar, operator+=, (const int), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opSubAssign(const int)", asMETHODPR( GameVar, operator-=, (const int), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opMulAssign(const int)", asMETHODPR( GameVar, operator*=, (const int), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opDivAssign(const int)", asMETHODPR( GameVar, operator/=, (const int), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAssign(const int)", asMETHODPR( GameVar, operator=, (const int), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAddAssign(const GameVar&)", asMETHODPR( GameVar, operator+=, (const GameVar &), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opSubAssign(const GameVar&)", asMETHODPR( GameVar, operator-=, (const GameVar &), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opMulAssign(const GameVar&)", asMETHODPR( GameVar, operator*=, (const GameVar &), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opDivAssign(const GameVar&)", asMETHODPR( GameVar, operator/=, (const GameVar &), GameVar& ), asCALL_THISCALL ) );
+BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "GameVar& opAssign(const GameVar&)", asMETHODPR( GameVar, operator=, (const GameVar &), GameVar& ), asCALL_THISCALL ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "int opAdd(const int)", asFUNCTION( GameVarAddInt ), asCALL_CDECL_OBJFIRST ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "int opSub(const int)", asFUNCTION( GameVarSubInt ), asCALL_CDECL_OBJFIRST ) );
 BIND_ASSERT( engine->RegisterObjectMethod( "GameVar", "int opMul(const int)", asFUNCTION( GameVarMulInt ), asCALL_CDECL_OBJFIRST ) );
@@ -1058,7 +1058,7 @@ BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupToY", &BIND_CLASS G
 BIND_ASSERT( engine->RegisterGlobalProperty( "float __GmapGroupSpeed", &BIND_CLASS GmapGroupSpeed ) );
 #endif
 
-#if defined ( BIND_CLIENT ) || defined ( BIND_SERVER )
+#if defined (BIND_CLIENT) || defined (BIND_SERVER)
 BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetFullSecond(uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second)", asFUNCTION( BIND_CLASS Global_GetFullSecond ), asCALL_CDECL ) );
 BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTime(uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds)", asFUNCTION( BIND_CLASS Global_GetTime ), asCALL_CDECL ) );
 BIND_ASSERT( engine->RegisterGlobalFunction( "void GetGameTime(uint fullSecond, uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second)", asFUNCTION( BIND_CLASS Global_GetGameTime ), asCALL_CDECL ) );
@@ -1263,10 +1263,10 @@ for( int i = 0; i < 40 /*MAPOBJ_CRITTER_PARAMS*/; i++ )
 {
     char str[256];
     sprintf( str, "int16 Critter_ParamIndex%d", i );
-    BIND_ASSERT( engine->RegisterObjectProperty( "MapperObject", str, OFFSETOF( MapObject, MCritter.ParamIndex[0] ) + sizeof( short ) * i ) );
+    BIND_ASSERT( engine->RegisterObjectProperty( "MapperObject", str, OFFSETOF( MapObject, MCritter.ParamIndex[0] ) + sizeof(short) * i ) );
 
     sprintf( str, "int Critter_ParamValue%d", i );
-    BIND_ASSERT( engine->RegisterObjectProperty( "MapperObject", str, OFFSETOF( MapObject, MCritter.ParamValue[0] ) + sizeof( int ) * i ) );
+    BIND_ASSERT( engine->RegisterObjectProperty( "MapperObject", str, OFFSETOF( MapObject, MCritter.ParamValue[0] ) + sizeof(int) * i ) );
 
 }
 
@@ -1436,7 +1436,7 @@ BIND_ASSERT( engine->RegisterGlobalProperty( "bool __ShowDrawOrder", &GameOpt.Sh
 BIND_ASSERT( engine->RegisterGlobalProperty( "bool __SplitTilesCollection", &GameOpt.SplitTilesCollection ) );
 #endif
 
-#if defined ( BIND_CLIENT ) || defined ( BIND_MAPPER )
+#if defined (BIND_CLIENT) || defined (BIND_MAPPER)
 BIND_ASSERT( engine->RegisterGlobalProperty( "bool __Quit", &GameOpt.Quit ) );
 BIND_ASSERT( engine->RegisterGlobalProperty( "bool __OpenGLRendering", &GameOpt.OpenGLRendering ) );
 BIND_ASSERT( engine->RegisterGlobalProperty( "bool __OpenGLDebug", &GameOpt.OpenGLDebug ) );

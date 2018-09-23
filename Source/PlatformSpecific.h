@@ -33,29 +33,29 @@
 //
 
 // Detect operating system
-#if defined ( _WIN32 ) || defined ( _WIN64 )
+#if defined (_WIN32) || defined (_WIN64)
 # define FO_WINDOWS
-#elif defined ( __linux__ )
+#elif defined (__linux__)
 # define FO_LINUX
-#elif defined ( __APPLE__ )
+#elif defined (__APPLE__)
 # define FO_MACOSX
 #else
 # error "Unknown operating system."
 #endif
 
 // Detect compiler
-#if defined ( __GNUC__ )
+#if defined (__GNUC__)
 # define FO_GCC
-#elif defined ( _MSC_VER ) && !defined ( __MWERKS__ )
+#elif defined (_MSC_VER) && !defined (__MWERKS__)
 # define FO_MSVC
 #else
 # error "Unknown compiler."
 #endif
 
 // Detect CPU
-#if ( defined ( FO_MSVC ) && defined ( _M_IX86 ) ) || ( defined ( FO_GCC ) && !defined ( __LP64__ ) )
+#if (defined (FO_MSVC) && defined (_M_IX86) ) || (defined (FO_GCC) && !defined (__LP64__) )
 # define FO_X86
-#elif ( defined ( FO_MSVC ) && defined ( _M_X64 ) ) || ( defined ( FO_GCC ) && defined ( __LP64__ ) )
+#elif (defined (FO_MSVC) && defined (_M_X64) ) || (defined (FO_GCC) && defined (__LP64__) )
 # define FO_X64
 # error "X64 CPU not supported for now."
 #else
@@ -63,21 +63,21 @@
 #endif
 
 // TLS
-#if defined ( FO_MSVC )
+#if defined (FO_MSVC)
 # define THREAD    __declspec( thread )
-#elif defined ( FO_GCC )
+#elif defined (FO_GCC)
 # define THREAD    __thread
 #endif
 
 // Function name
-#if defined ( FO_MSVC )
+#if defined (FO_MSVC)
 # define _FUNC_    __FUNCTION__
-#elif defined ( FO_GCC )
+#elif defined (FO_GCC)
 # define _FUNC_    __PRETTY_FUNCTION__
 #endif
 
 // Disable deprecated notification in GCC
-#if defined ( FO_GCC )
+#if defined (FO_GCC)
 # undef __DEPRECATED
 #endif
 

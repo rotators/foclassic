@@ -3,8 +3,8 @@
 
 #include "Common.h"
 
-#define DEFAULT_SPIN_COUNT              ( 4000 )
-#define SCOPE_LOCK( mutex )                               volatile MutexLocker< decltype( mutex ) > scope_lock__( mutex )
+#define DEFAULT_SPIN_COUNT              (4000)
+#define SCOPE_LOCK( mutex )                               volatile MutexLocker<decltype(mutex)> scope_lock__( mutex )
 
 extern void Thread_Sleep( uint ms ); // Definition in Common.cpp
 
@@ -216,7 +216,7 @@ public:
     void Unlock()  { InterlockedExchange( &spinCounter, 0 ); }
 };
 
-template< class T >
+template<class T>
 class MutexLocker
 {
 private:

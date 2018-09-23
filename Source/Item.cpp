@@ -51,7 +51,7 @@ void Item::Init( ProtoItem* proto )
     From = 0;
     #endif
 
-    memzero( &Data, sizeof( Data ) );
+    memzero( &Data, sizeof(Data) );
     Proto = proto;
     Accessory = ITEM_ACCESSORY_NONE;
     Data.SortValue = 0x7FFF;
@@ -119,7 +119,7 @@ Item* Item::Clone()
     clone->Id = Id;
     clone->Proto = Proto;
     clone->Accessory = Accessory;
-    memcpy( clone->AccBuffer, AccBuffer, sizeof( AccBuffer ) );
+    memcpy( clone->AccBuffer, AccBuffer, sizeof(AccBuffer) );
     clone->Data = Data;
 
     #ifdef FONLINE_SERVER
@@ -144,7 +144,7 @@ void Item::FullClear()
 
     if( IsContainer() && ChildItems )
     {
-        MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof( ItemPtrMap ) );
+        MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof(ItemPtrMap) );
 
         ItemPtrVec del_items = *ChildItems;
         ChildItems->clear();
@@ -373,8 +373,8 @@ void Item::SetMode( uchar mode )
     }
     else
     {
-        uchar use = ( mode & 0xF );
-        uchar aim = ( mode >> 4 );
+        uchar use = (mode & 0xF);
+        uchar aim = (mode >> 4);
 
         switch( use )
         {
@@ -416,14 +416,14 @@ void Item::SetMode( uchar mode )
 
         if( use < MAX_USES && aim && !Proto->Weapon_Aim[use] )
             aim = 0;
-        mode = ( aim << 4 ) | ( use & 0xF );
+        mode = (aim << 4) | (use & 0xF);
     }
     Data.Mode = mode;
 }
 
 uint Item::GetCost1st()
 {
-    uint cost = ( Data.Cost ? Data.Cost : Proto->Cost );
+    uint cost = (Data.Cost ? Data.Cost : Proto->Cost);
     // if(IsDeteriorable()) cost-=cost*GetWearProc()/100;
     if( IsWeapon() && Data.AmmoCount )
     {
@@ -485,7 +485,7 @@ void Item::ContAddItem( Item*& item, uint stack_id )
 
     if( !ChildItems )
     {
-        MEMORY_PROCESS( MEMORY_ITEM, sizeof( ItemPtrMap ) );
+        MEMORY_PROCESS( MEMORY_ITEM, sizeof(ItemPtrMap) );
         ChildItems = new ItemPtrVec();
         if( !ChildItems )
             return;
@@ -512,7 +512,7 @@ void Item::ContSetItem( Item* item )
 {
     if( !ChildItems )
     {
-        MEMORY_PROCESS( MEMORY_ITEM, sizeof( ItemPtrMap ) );
+        MEMORY_PROCESS( MEMORY_ITEM, sizeof(ItemPtrMap) );
         ChildItems = new ItemPtrVec();
         if( !ChildItems )
             return;
@@ -605,7 +605,7 @@ Item* Item::ContGetItemByPid( ushort pid, uint stack_id )
     for( auto it = ChildItems->begin(), end = ChildItems->end(); it != end; ++it )
     {
         Item* item = *it;
-        if( item->GetProtoId() == pid && ( stack_id == uint( -1 ) || item->AccContainer.StackId == stack_id ) )
+        if( item->GetProtoId() == pid && (stack_id == uint( -1 ) || item->AccContainer.StackId == stack_id) )
         {
             SYNC_LOCK( item );
             return item;
@@ -684,7 +684,7 @@ Item* Item::GetChild( uint child_index )
 }
 #endif // FONLINE_SERVER
 
-#if defined ( FONLINE_CLIENT ) || defined ( FONLINE_MAPPER )
+#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
 # include "ResourceManager.h"
 # include "SpriteManager.h"
 
@@ -711,7 +711,7 @@ uint ProtoItem::GetCurSprId()
         std::swap( beg, end );
     uint count = end - beg + 1;
     uint ticks = anim->Ticks / anim->CntFrm * count;
-    return anim->Ind[beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100];
+    return anim->Ind[beg + ( (Timer::GameTick() % ticks) * 100 / ticks ) * count / 100];
 }
 
 uint Item::GetCurSprId()
@@ -737,6 +737,6 @@ uint Item::GetCurSprId()
         std::swap( beg, end );
     uint count = end - beg + 1;
     uint ticks = anim->Ticks / anim->CntFrm * count;
-    return anim->Ind[beg + ( ( Timer::GameTick() % ticks ) * 100 / ticks ) * count / 100];
+    return anim->Ind[beg + ( (Timer::GameTick() % ticks) * 100 / ticks ) * count / 100];
 }
 #endif

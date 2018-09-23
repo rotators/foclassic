@@ -10,7 +10,7 @@
 class FalloutDatFile: public DataFile
 {
 private:
-    typedef map< string, uchar* > IndexMap;
+    typedef map<string, uchar*> IndexMap;
 
     IndexMap filesTree;
     string   fileName;
@@ -39,7 +39,7 @@ private:
         unz_file_pos Pos;
         uLong        UncompressedSize;
     };
-    typedef map< string, ZipFileInfo > IndexMap;
+    typedef map<string, ZipFileInfo> IndexMap;
 
     IndexMap filesTree;
     string   fileName;
@@ -178,7 +178,7 @@ bool FalloutDatFile::ReadTree()
         if( !FileRead( datHandle, &files_total, 4 ) )
             return false;
         tree_size -= 28 + 4;     // Subtract information block and files total
-        if( ( memTree = new uchar[tree_size] ) == NULL )
+        if( (memTree = new uchar[tree_size]) == NULL )
             return false;
         memzero( memTree, tree_size );
         if( !FileRead( datHandle, memTree, tree_size ) )
@@ -191,14 +191,14 @@ bool FalloutDatFile::ReadTree()
         while( true )
         {
             uint fnsz = *(uint*)ptr;                             // Include zero
-            uint type = *(uint*)( ptr + 4 + fnsz + 4 );
+            uint type = *(uint*)(ptr + 4 + fnsz + 4);
 
             if( fnsz > 1 && fnsz < MAX_FOPATH && type != 0x400 ) // Not folder
             {
                 memcpy( name, ptr + 4, fnsz );
                 Str::Lower( name );
                 if( type == 2 )
-                    *( ptr + 4 + fnsz + 7 ) = 1;               // Compressed
+                    *(ptr + 4 + fnsz + 7) = 1;                 // Compressed
                 filesTree.insert( PAIR( string( name ), ptr + 4 + fnsz + 7 ) );
             }
 
@@ -241,7 +241,7 @@ bool FalloutDatFile::ReadTree()
     if( !FileRead( datHandle, &files_total, 4 ) )
         return false;
     tree_size -= 4;
-    if( ( memTree = new uchar[tree_size] ) == NULL )
+    if( (memTree = new uchar[tree_size]) == NULL )
         return false;
     memzero( memTree, tree_size );
     if( !FileRead( datHandle, memTree, tree_size ) )
@@ -280,11 +280,11 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
     if( it == filesTree.end() )
         return NULL;
 
-    uchar* ptr = ( *it ).second;
+    uchar* ptr = (*it).second;
     uchar  type = *ptr;
-    uint   real_size = *(uint*)( ptr + 1 );
-    uint   packed_size = *(uint*)( ptr + 5 );
-    uint   offset = *(uint*)( ptr + 9 );
+    uint   real_size = *(uint*)(ptr + 1);
+    uint   packed_size = *(uint*)(ptr + 5);
+    uint   offset = *(uint*)(ptr + 9);
 
     CFile* reader = NULL;
     if( !type )
@@ -323,8 +323,8 @@ void FalloutDatFile::GetFileNames( const char* path, bool include_subdirs, const
     size_t path_len = Str::Length( path );
     for( auto it = filesTree.begin(), end = filesTree.end(); it != end; ++it )
     {
-        const string& fname = ( *it ).first;
-        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len ) )
+        const string& fname = (*it).first;
+        if( !fname.compare( 0, path_len, path ) && (include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len) )
         {
             if( ext && *ext )
             {
@@ -430,7 +430,7 @@ bool ZipFile::ReadTree()
         if( unzGetCurrentFileInfo( zipHandle, &info, name, MAX_FOPATH, NULL, 0, NULL, 0 ) != UNZ_OK )
             return false;
 
-        if( !( info.external_fa & 0x10 ) )   // Not folder
+        if( !(info.external_fa & 0x10) )     // Not folder
         {
             Str::Lower( name );
             for( char* str = name; *str; str++ )
@@ -457,7 +457,7 @@ uchar* ZipFile::OpenFile( const char* fname, uint& len )
     if( it == filesTree.end() )
         return NULL;
 
-    ZipFileInfo& info = ( *it ).second;
+    ZipFileInfo& info = (*it).second;
 
     if( unzGoToFilePos( zipHandle, &info.Pos ) != UNZ_OK )
         return NULL;
@@ -489,8 +489,8 @@ void ZipFile::GetFileNames( const char* path, bool include_subdirs, const char* 
     size_t path_len = Str::Length( path );
     for( auto it = filesTree.begin(), end = filesTree.end(); it != end; ++it )
     {
-        const string& fname = ( *it ).first;
-        if( !fname.compare( 0, path_len, path ) && ( include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len ) )
+        const string& fname = (*it).first;
+        if( !fname.compare( 0, path_len, path ) && (include_subdirs || (int)fname.find_last_of( '\\' ) < (int)path_len) )
         {
             if( ext && *ext )
             {

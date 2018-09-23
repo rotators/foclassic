@@ -4,15 +4,15 @@
 #include "Defines.h"
 
 #define CRTYPE_FILE_NAME       "CritterTypes.cfg"
-#define DEFAULT_CRTYPE         ( 0 )
-#define CRIT_VAULT_MALE        ( 69 )
-#define CRIT_VAULT_FEMALE      ( 74 )
-#define CRIT_DWELLER_MALE      ( 10 )
-#define CRIT_DWELLER_FEMALE    ( 4 )
-#define CRIT_RAT               ( 24 )
+#define DEFAULT_CRTYPE         (0)
+#define CRIT_VAULT_MALE        (69)
+#define CRIT_VAULT_FEMALE      (74)
+#define CRIT_DWELLER_MALE      (10)
+#define CRIT_DWELLER_FEMALE    (4)
+#define CRIT_RAT               (24)
 
-#define ANIM_TYPE_FALLOUT      ( 0 )
-#define ANIM_TYPE_3D           ( 1 )
+#define ANIM_TYPE_FALLOUT      (0)
+#define ANIM_TYPE_3D           (1)
 
 class FOMsg;
 

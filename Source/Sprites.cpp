@@ -141,11 +141,11 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
     // Cutting
     if( cut == SPRITE_CUT_HORIZONTAL || cut == SPRITE_CUT_VERTICAL )
     {
-        bool hor = ( cut == SPRITE_CUT_HORIZONTAL );
+        bool hor = (cut == SPRITE_CUT_HORIZONTAL);
 
         int  stepi = GameOpt.MapHexWidth / 2;
         if( GameOpt.MapHexagonal && hor )
-            stepi = ( GameOpt.MapHexWidth + GameOpt.MapHexWidth / 2 ) / 2;
+            stepi = (GameOpt.MapHexWidth + GameOpt.MapHexWidth / 2) / 2;
         float       stepf = (float)stepi;
 
         SpriteInfo* si = SprMngr.GetSpriteInfo( id_ptr ? *id_ptr : id );
@@ -158,13 +158,13 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
         if( hor )
         {
             h1 = spr->HexX + si->Width / 2 / stepi;
-            h2 = spr->HexX - si->Width / 2 / stepi - ( si->Width / 2 % stepi ? 1 : 0 );
+            h2 = spr->HexX - si->Width / 2 / stepi - (si->Width / 2 % stepi ? 1 : 0);
             spr->HexX = h1;
         }
         else
         {
             h1 = spr->HexY - si->Width / 2 / stepi;
-            h2 = spr->HexY + si->Width / 2 / stepi + ( si->Width / 2 % stepi ? 1 : 0 );
+            h2 = spr->HexY + si->Width / 2 / stepi + (si->Width / 2 % stepi ? 1 : 0);
             spr->HexY = h1;
         }
 
@@ -177,7 +177,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
             if( xx + ww > widthf )
                 ww = widthf - xx;
 
-            Sprite& spr_ = ( i != h1 ? PutSprite( spritesTreeSize, draw_order, hor ? i : hx, hor ? hy : i, 0, x, y, id, id_ptr, ox, oy, alpha, effect, NULL ) : *spr );
+            Sprite& spr_ = (i != h1 ? PutSprite( spritesTreeSize, draw_order, hor ? i : hx, hor ? hy : i, 0, x, y, id, id_ptr, ox, oy, alpha, effect, NULL ) : *spr);
             if( i != h1 )
                 spr_.Parent = parent;
             parent->Child = &spr_;
@@ -185,31 +185,31 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
 
             spr_.CutX = xx;
             spr_.CutW = ww;
-            spr_.CutTexL = si->SprRect.L + ( si->SprRect.R - si->SprRect.L ) * ( xx / widthf );
-            spr_.CutTexR = si->SprRect.L + ( si->SprRect.R - si->SprRect.L ) * ( ( xx + ww ) / widthf );
+            spr_.CutTexL = si->SprRect.L + (si->SprRect.R - si->SprRect.L) * (xx / widthf);
+            spr_.CutTexR = si->SprRect.L + (si->SprRect.R - si->SprRect.L) * ( (xx + ww) / widthf );
             spr_.CutType = cut;
 
             #ifdef FONLINE_MAPPER
-            spr_.CutOyL = ( hor ? -6 : -12 ) * ( ( hor ? hx : hy ) - i );
+            spr_.CutOyL = (hor ? -6 : -12) * ( (hor ? hx : hy) - i );
             spr_.CutOyR = spr_.CutOyL;
             if( ww < stepf )
-                spr_.CutOyR += (int)( ( hor ? 3.6f : -8.0f ) * ( 1.0f - ( ww / stepf ) ) );
+                spr_.CutOyR += (int)( (hor ? 3.6f : -8.0f) * (1.0f - (ww / stepf) ) );
             #endif
 
             xx += stepf;
             if( xx > widthf )
                 break;
 
-            if( ( hor && --i < h2 ) || ( !hor && ++i > h2 ) )
+            if( (hor && --i < h2) || (!hor && ++i > h2) )
                 break;
         }
     }
 
     // Draw order
     spr->DrawOrderType = draw_order;
-    spr->DrawOrderPos = ( draw_order >= DRAW_ORDER_FLAT && draw_order < DRAW_ORDER ?
-                          spr->HexY * MAXHEX_MAX + spr->HexX + MAXHEX_MAX * MAXHEX_MAX * ( draw_order - DRAW_ORDER_FLAT ) :
-                          MAXHEX_MAX * MAXHEX_MAX * DRAW_ORDER + spr->HexY * DRAW_ORDER * MAXHEX_MAX + spr->HexX * DRAW_ORDER + ( draw_order - DRAW_ORDER ) );
+    spr->DrawOrderPos = (draw_order >= DRAW_ORDER_FLAT && draw_order < DRAW_ORDER ?
+                         spr->HexY * MAXHEX_MAX + spr->HexX + MAXHEX_MAX * MAXHEX_MAX * (draw_order - DRAW_ORDER_FLAT) :
+                         MAXHEX_MAX * MAXHEX_MAX * DRAW_ORDER + spr->HexY * DRAW_ORDER * MAXHEX_MAX + spr->HexX * DRAW_ORDER + (draw_order - DRAW_ORDER) );
 
     return *spr;
 }
@@ -231,9 +231,9 @@ Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, i
 
     // Find place
     uint index = 0;
-    uint pos = ( draw_order >= DRAW_ORDER_FLAT && draw_order < DRAW_ORDER ?
-                 hy * MAXHEX_MAX + hx + MAXHEX_MAX * MAXHEX_MAX * ( draw_order - DRAW_ORDER_FLAT ) :
-                 MAXHEX_MAX * MAXHEX_MAX * DRAW_ORDER + hy * DRAW_ORDER * MAXHEX_MAX + hx * DRAW_ORDER + ( draw_order - DRAW_ORDER ) );
+    uint pos = (draw_order >= DRAW_ORDER_FLAT && draw_order < DRAW_ORDER ?
+                hy * MAXHEX_MAX + hx + MAXHEX_MAX * MAXHEX_MAX * (draw_order - DRAW_ORDER_FLAT) :
+                MAXHEX_MAX * MAXHEX_MAX * DRAW_ORDER + hy * DRAW_ORDER * MAXHEX_MAX + hx * DRAW_ORDER + (draw_order - DRAW_ORDER) );
     for( ; index < spritesTreeSize; index++ )
     {
         Sprite* spr = spritesTree[index];
@@ -282,11 +282,11 @@ void Sprites::Resize( uint size )
     {
         uint diff = tree_size - size;
         if( diff > tree_size - spritesTreeSize )
-            spritesTreeSize -= diff - ( tree_size - spritesTreeSize );
+            spritesTreeSize -= diff - (tree_size - spritesTreeSize);
 
         // Unvalidate putted sprites
         for( SpriteVec::reverse_iterator it = spritesTree.rbegin(), end = spritesTree.rbegin() + diff; it != end; ++it )
-            ( *it )->Unvalidate();
+            (*it)->Unvalidate();
 
         // Put
         spritesPool.reserve( pool_size + diff );
@@ -304,10 +304,10 @@ void Sprites::Unvalidate()
 {
     #ifdef USE_STLPORT
     for( auto it = spritesTree.begin(), end = spritesTree.begin() + spritesTreeSize; it != end; ++it )
-        ( *it )->Unvalidate();
+        (*it)->Unvalidate();
     #else
     for( SpriteVec::iterator it = spritesTree.begin(), end = spritesTree.begin() + spritesTreeSize; it != end; ++it )
-        ( *it )->Unvalidate();
+        (*it)->Unvalidate();
     #endif
     spritesTreeSize = 0;
 }
@@ -319,8 +319,8 @@ void Sprites::SortBySurfaces()
     {
         static bool SortBySurfaces( Sprite* spr1, Sprite* spr2 )
         {
-            SpriteInfo* si1 = ( *SortSpritesSurfSprData )[spr1->PSprId ? *spr1->PSprId : spr1->SprId];
-            SpriteInfo* si2 = ( *SortSpritesSurfSprData )[spr2->PSprId ? *spr2->PSprId : spr2->SprId];
+            SpriteInfo* si1 = (*SortSpritesSurfSprData)[spr1->PSprId ? *spr1->PSprId : spr1->SprId];
+            SpriteInfo* si2 = (*SortSpritesSurfSprData)[spr2->PSprId ? *spr2->PSprId : spr2->SprId];
             return si1 && si2 && si1->Surf && si2->Surf && si1->Surf->TextureOwner < si2->Surf->TextureOwner;
         }
     };

@@ -86,8 +86,8 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         fprintf( f, "\tName        %s\n", AppName );
         fprintf( f, "\tVersion     %s\n",  FOCLASSIC_VERSION );
         OSVERSIONINFOA ver;
-        memset( &ver, 0, sizeof( OSVERSIONINFOA ) );
-        ver.dwOSVersionInfoSize = sizeof( ver );
+        memset( &ver, 0, sizeof(OSVERSIONINFOA) );
+        ver.dwOSVersionInfoSize = sizeof(ver);
         if( GetVersionEx( (OSVERSIONINFOA*)&ver ) )
         {
             fprintf( f, "\tOS          %d.%d.%d (%s)\n",
@@ -164,17 +164,17 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         if( snapshot != INVALID_HANDLE_VALUE )
         {
             THREADENTRY32 te;
-            te.dwSize = sizeof( te );
+            te.dwSize = sizeof(te);
             if( Thread32First( snapshot, &te ) )
             {
                 while( true )
                 {
-                    if( te.dwSize >= FIELD_OFFSET( THREADENTRY32, th32OwnerProcessID ) + sizeof( te.th32OwnerProcessID ) )
+                    if( te.dwSize >= FIELD_OFFSET( THREADENTRY32, th32OwnerProcessID ) + sizeof(te.th32OwnerProcessID) )
                     {
                         if( te.th32OwnerProcessID == GetCurrentProcessId() && te.th32ThreadID != threads_ids[0] )
                             threads_ids[threads_ids_count++] = te.th32ThreadID;
                     }
-                    te.dwSize = sizeof( te );
+                    te.dwSize = sizeof(te);
                     if( !Thread32Next( snapshot, &te ) )
                         break;
                 }
@@ -199,14 +199,14 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             fprintf( f, "Thread '%s' (%u%s)\n", tname ? tname : "Unknown", tid, !i ? ", current" : "" );
 
             CONTEXT context;
-            memset( &context, 0, sizeof( context ) );
+            memset( &context, 0, sizeof(context) );
             context.ContextFlags = CONTEXT_FULL;
 
             if( tid == GetCurrentThreadId() )
             {
                 if( except )
                 {
-                    memcpy( &context, except->ContextRecord, sizeof( CONTEXT ) );
+                    memcpy( &context, except->ContextRecord, sizeof(CONTEXT) );
                 }
                 else
                 {
@@ -229,7 +229,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             }
 
             STACKFRAME64 stack;
-            memset( &stack, 0, sizeof( stack ) );
+            memset( &stack, 0, sizeof(stack) );
 
             # ifdef FO_X86
             DWORD machine_type = IMAGE_FILE_MACHINE_I386;
@@ -249,11 +249,11 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             stack.AddrStack.Mode = AddrModeFlat;
             # endif
 
-            # define STACKWALK_MAX_NAMELEN    ( 1024 )
-            char symbol_buffer[sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN];
+            # define STACKWALK_MAX_NAMELEN    (1024)
+            char symbol_buffer[sizeof(SYMBOL_INFO) + STACKWALK_MAX_NAMELEN];
             SYMBOL_INFO* symbol = (SYMBOL_INFO*)symbol_buffer;
-            memset( symbol, 0, sizeof( SYMBOL_INFO ) + STACKWALK_MAX_NAMELEN );
-            symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+            memset( symbol, 0, sizeof(SYMBOL_INFO) + STACKWALK_MAX_NAMELEN );
+            symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
             symbol->MaxNameLen = STACKWALK_MAX_NAMELEN;
 
             struct RPM
@@ -312,12 +312,12 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                 };
 
                 CSE::CallstackEntry callstack;
-                memzero( &callstack, sizeof( callstack ) );
+                memzero( &callstack, sizeof(callstack) );
                 callstack.offset = stack.AddrPC.Offset;
 
                 IMAGEHLP_LINE64 line;
-                memset( &line, 0, sizeof( line ) );
-                line.SizeOfStruct = sizeof( line );
+                memset( &line, 0, sizeof(line) );
+                line.SizeOfStruct = sizeof(line);
 
                 if( stack.AddrPC.Offset == stack.AddrReturn.Offset )
                 {
@@ -342,11 +342,11 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                     }
 
                     IMAGEHLP_MODULE64 module;
-                    memset( &module, 0, sizeof( IMAGEHLP_MODULE64 ) );
-                    module.SizeOfStruct = sizeof( IMAGEHLP_MODULE64 );
+                    memset( &module, 0, sizeof(IMAGEHLP_MODULE64) );
+                    module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
                     if( SymGetModuleInfo64( process, stack.AddrPC.Offset, &module ) ||
-                        ( module.SizeOfStruct = sizeof( IMAGEHLP_MODULE64_V2 ),
-                          SymGetModuleInfo64( process, stack.AddrPC.Offset, &module ) ) )
+                        (module.SizeOfStruct = sizeof(IMAGEHLP_MODULE64_V2),
+                         SymGetModuleInfo64( process, stack.AddrPC.Offset, &module ) ) )
                     {
                         switch( module.SymType )
                         {
@@ -405,12 +405,12 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         HMODULE modules[1024];
         DWORD   needed;
         fprintf( f, "Loaded modules\n" );
-        if( EnumProcessModules( process, modules, sizeof( modules ), &needed ) )
+        if( EnumProcessModules( process, modules, sizeof(modules), &needed ) )
         {
-            for( int i = 0; i < (int)( needed / sizeof( HMODULE ) ); i++ )
+            for( int i = 0; i < (int)(needed / sizeof(HMODULE) ); i++ )
             {
                 char module_name[MAX_PATH] = { 0 };
-                if( GetModuleFileNameEx( process, modules[i], module_name, sizeof( module_name ) ) )
+                if( GetModuleFileNameEx( process, modules[i], module_name, sizeof(module_name) ) )
                     fprintf( f, "\t%s (%p)\n", module_name, modules[i] );
                 else
                     fprintf( f, "\tGetModuleFileNameEx fail\n" );
@@ -503,7 +503,7 @@ void CreateDump( const char* appendix )
 # include <sys/utsname.h>
 # include <string.h>
 
-# define BACKTRACE_BUFFSER_COUNT    ( 100 )
+# define BACKTRACE_BUFFSER_COUNT    (100)
 
 void TerminationHandler( int signum, siginfo_t* siginfo, void* context );
 bool sigactionsSetted = false;
@@ -529,7 +529,7 @@ void CatchExceptions( const char* app_name )
            Description     Invalid memory reference
            Default action  Abnormal termination of the process
          */
-        memset( &act, 0, sizeof( act ) );
+        memset( &act, 0, sizeof(act) );
         act.sa_sigaction = &TerminationHandler;
         act.sa_flags = SA_SIGINFO;
         sigaction( SIGSEGV, &act, &oldSIGSEGV );
@@ -539,7 +539,7 @@ void CatchExceptions( const char* app_name )
            Description     Erroneous arithmetic operation
            Default action  bnormal termination of the process
          */
-        memset( &act, 0, sizeof( act ) );
+        memset( &act, 0, sizeof(act) );
         act.sa_sigaction = &TerminationHandler;
         act.sa_flags = SA_SIGINFO;
         sigaction( SIGFPE, &act, &oldSIGFPE );

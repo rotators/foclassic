@@ -5,8 +5,8 @@
 #include "Item.h"
 #include "SpriteManager.h"
 
-#define EFFECT_0_TIME_PROC    ( 10 )
-#define EFFECT_0_SPEED_MUL    ( 10.0f )
+#define EFFECT_0_TIME_PROC    (10)
+#define EFFECT_0_SPEED_MUL    (10.0f)
 
 struct AnyFrames;
 
@@ -49,15 +49,15 @@ public:
     short  GetOffsetX()         { return Data.OffsetX ? Data.OffsetX : Proto->OffsetX; }
     short  GetOffsetY()         { return Data.OffsetY ? Data.OffsetY : Proto->OffsetY; }
     bool   IsAnimated()         { return isAnimated; }
-    bool   IsCanLook()          { return !( Proto->IsGrid() && Proto->Grid_Type == GRID_EXITGRID ); }
-    bool   IsUsable()           { return !IsWall() && ( IsCanUse() || IsCanUseOnSmth() || IsCanPickUp() || ( IsScenOrGrid() && FLAG( ScenFlags, SCEN_CAN_USE ) ) ); }
-    bool   IsTalkable()         { return !IsWall() && ( IsCanTalk() || ( IsScenOrGrid() && FLAG( ScenFlags, SCEN_CAN_TALK ) ) ); }
+    bool   IsCanLook()          { return !(Proto->IsGrid() && Proto->Grid_Type == GRID_EXITGRID); }
+    bool   IsUsable()           { return !IsWall() && (IsCanUse() || IsCanUseOnSmth() || IsCanPickUp() || (IsScenOrGrid() && FLAG( ScenFlags, SCEN_CAN_USE ) ) ); }
+    bool   IsTalkable()         { return !IsWall() && (IsCanTalk() || (IsScenOrGrid() && FLAG( ScenFlags, SCEN_CAN_TALK ) ) ); }
     bool   IsDrawContour()      { return /*IsFocused && */ IsItem() && !IsNoHighlight() && !IsBadItem(); }
     bool   IsTransparent()      { return maxAlpha < 0xFF; }
     bool   IsFullyTransparent() { return maxAlpha == 0; }
     void   RefreshAnim();
     void   RestoreAlpha() { Alpha = maxAlpha; }
-    void   RefreshAlpha() { maxAlpha = ( IsColorize() ? GetAlpha() : 0xFF ); }
+    void   RefreshAlpha() { maxAlpha = (IsColorize() ? GetAlpha() : 0xFF); }
     void   SetSprite( Sprite* spr );
     int    GetEggType();
 
@@ -89,7 +89,7 @@ public:
     float EffOffsX, EffOffsY;
 
     bool       IsEffect()        { return isEffect; }
-    bool       IsDynamicEffect() { return IsEffect() && ( effSx || effSy ); }
+    bool       IsDynamicEffect() { return IsEffect() && (effSx || effSy); }
     void       SetEffect( float sx, float sy, uint dist );
     UShortPair GetEffectStep();
 
@@ -120,6 +120,6 @@ public: // Move some specific types to end
     UShortPairVec EffSteps;
 };
 
-typedef vector< ItemHex* > ItemHexVec;
+typedef vector<ItemHex*> ItemHexVec;
 
 #endif // __ITEM_HEX__

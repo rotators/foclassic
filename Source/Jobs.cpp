@@ -8,7 +8,7 @@
 
 static Mutex JobLocker; // Defense code from simultaneously execution
 
-typedef deque< Job > JobDeque;
+typedef deque<Job> JobDeque;
 static JobDeque Jobs;
 
 Job::Job() : Type( JOB_NOP ),
@@ -166,7 +166,7 @@ void Job::SetDeferredReleaseCycle( uint cycle )
     DeferredReleaseCycle = cycle;
 }
 
-template< class T1, class T2 >
+template<class T1, class T2>
 void ProcessDeferredReleasing_( T1& cont, T2& cont_cycle )
 {
     uint del_count = 0;

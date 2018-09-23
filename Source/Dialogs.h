@@ -10,27 +10,27 @@
 #define DIALOG_FILE_EXT            ".fodlg"
 
 // Special script
-#define NOT_ANSWER_CLOSE_DIALOG    ( 0 )
-#define NOT_ANSWER_BEGIN_BATTLE    ( 1 )
+#define NOT_ANSWER_CLOSE_DIALOG    (0)
+#define NOT_ANSWER_BEGIN_BATTLE    (1)
 
 // Dialog flags
-#define DIALOG_FLAG_NO_SHUFFLE     ( 1 )
+#define DIALOG_FLAG_NO_SHUFFLE     (1)
 
 // Answers
-#define DIALOG_END                 ( 0 )
-#define DIALOG_BACK                ( 0xFFE1 )
-#define DIALOG_BARTER              ( 0xFFE2 )
-#define DIALOG_ATTACK              ( 0xFFE3 )
+#define DIALOG_END                 (0)
+#define DIALOG_BACK                (0xFFE1)
+#define DIALOG_BARTER              (0xFFE2)
+#define DIALOG_ATTACK              (0xFFE3)
 
 // Types
-#define DR_NONE                    ( 0 )
-#define DR_PARAM                   ( 1 )
-#define DR_ITEM                    ( 2 )
-#define DR_VAR                     ( 3 )
-#define DR_SCRIPT                  ( 4 )
-#define DR_LOCK                    ( 5 )
-#define DR_NO_RECHECK              ( 6 )
-#define DR_OR                      ( 7 )
+#define DR_NONE                    (0)
+#define DR_PARAM                   (1)
+#define DR_ITEM                    (2)
+#define DR_VAR                     (3)
+#define DR_SCRIPT                  (4)
+#define DR_LOCK                    (5)
+#define DR_NO_RECHECK              (6)
+#define DR_OR                      (7)
 
 class DemandResult
 {
@@ -55,16 +55,16 @@ public:
     #ifdef FONLINE_NPCEDITOR
     DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), ValuesCount( 0 ) {}
     #else
-    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DemandResult ) ); }
+    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) ); }
     DemandResult( const DemandResult& r )
     {
         *this = r;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DemandResult ) );
+        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) );
     }
-    ~DemandResult() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( DemandResult ) ); }
+    ~DemandResult() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DemandResult) ); }
     #endif
 };
-typedef vector< DemandResult > DemandResultVec;
+typedef vector<DemandResult> DemandResultVec;
 
 class DialogAnswer
 {
@@ -77,16 +77,16 @@ public:
     #ifdef FONLINE_NPCEDITOR
     DialogAnswer() : Link( 0 ), TextId( 0 ) {}
     #else
-    DialogAnswer() : Link( 0 ), TextId( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DialogAnswer ) ); }
+    DialogAnswer() : Link( 0 ), TextId( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) ); }
     DialogAnswer( const DialogAnswer& r )
     {
         *this = r;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof( DialogAnswer ) );
+        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) );
     }
-    ~DialogAnswer() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( DialogAnswer ) ); }
+    ~DialogAnswer() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DialogAnswer) ); }
     #endif
 };
-typedef vector< DialogAnswer > AnswersVec;
+typedef vector<DialogAnswer> AnswersVec;
 
 class Dialog
 {
@@ -112,18 +112,18 @@ public:
         #else
     {
         DlgScript = NOT_ANSWER_CLOSE_DIALOG;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof( Dialog ) );
+        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(Dialog) );
     }
     Dialog( const Dialog& r )
     {
         *this = r;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof( Dialog ) );
+        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(Dialog) );
     }
-    ~Dialog() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof( Dialog ) ); }
+    ~Dialog() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(Dialog) ); }
         #endif
         bool operator==( const uint& r ) { return Id == r; }
 };
-typedef vector< Dialog > DialogsVec;
+typedef vector<Dialog> DialogsVec;
 
 class DialogPack
 {
@@ -137,14 +137,14 @@ public:
 
     DialogPack( uint id, string name ) : PackId( id ), PackName( name ) {}
 };
-typedef map< uint, DialogPack* > DialogPackMap;
+typedef map<uint, DialogPack*> DialogPackMap;
 
 struct Talking
 {
     int    TalkType;
-    #define TALK_NONE        ( 0 )
-    #define TALK_WITH_NPC    ( 1 )
-    #define TALK_WITH_HEX    ( 2 )
+    #define TALK_NONE        (0)
+    #define TALK_WITH_NPC    (1)
+    #define TALK_WITH_HEX    (2)
     uint   TalkNpc;
     uint   TalkHexMap;
     ushort TalkHexX, TalkHexY;

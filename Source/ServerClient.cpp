@@ -49,7 +49,7 @@ void FOServer::ProcessCritter( Critter* cr )
     if( !cr->CrTimeEvents.empty() )
     {
         uint next_time = cr->CrTimeEvents[0].NextTime;
-        if( !next_time || ( !cr->IsTurnBased() && GameOpt.FullSecond >= next_time ) )
+        if( !next_time || (!cr->IsTurnBased() && GameOpt.FullSecond >= next_time) )
         {
             Critter::CrTimeEvent me = cr->CrTimeEvents[0];
             cr->EraseCrTimeEvent( 0 );
@@ -111,7 +111,7 @@ void FOServer::ProcessCritter( Critter* cr )
         // Cache intelligence for GetSayIntellect, every 3 seconds
         if( tick >= cl->CacheValuesNextTick )
         {
-            cl->IntellectCacheValue = ( tick & 0xFFF0 ) | cl->GetParam( ST_INTELLECT );
+            cl->IntellectCacheValue = (tick & 0xFFF0) | cl->GetParam( ST_INTELLECT );
             cl->LookCacheValue = cl->GetLook();
             cl->CacheValuesNextTick = tick + 3000;
         }
@@ -142,19 +142,19 @@ void FOServer::ProcessCritter( Critter* cr )
 void FOServer::SaveHoloInfoFile()
 {
     uint count = (uint)HolodiskInfo.size();
-    AddWorldSaveData( &count, sizeof( count ) );
+    AddWorldSaveData( &count, sizeof(count) );
     for( auto it = HolodiskInfo.begin(), end = HolodiskInfo.end(); it != end; ++it )
     {
-        uint      id = ( *it ).first;
-        HoloInfo* hi = ( *it ).second;
-        AddWorldSaveData( &id, sizeof( id ) );
-        AddWorldSaveData( &hi->CanRewrite, sizeof( hi->CanRewrite ) );
+        uint      id = (*it).first;
+        HoloInfo* hi = (*it).second;
+        AddWorldSaveData( &id, sizeof(id) );
+        AddWorldSaveData( &hi->CanRewrite, sizeof(hi->CanRewrite) );
         ushort title_len = (ushort)hi->Title.length();
-        AddWorldSaveData( &title_len, sizeof( title_len ) );
+        AddWorldSaveData( &title_len, sizeof(title_len) );
         if( title_len )
             AddWorldSaveData( (void*)hi->Title.c_str(), title_len );
         ushort text_len = (ushort)hi->Text.length();
-        AddWorldSaveData( &text_len, sizeof( text_len ) );
+        AddWorldSaveData( &text_len, sizeof(text_len) );
         if( text_len )
             AddWorldSaveData( (void*)hi->Text.c_str(), text_len );
     }
@@ -165,20 +165,20 @@ bool FOServer::LoadHoloInfoFile( void* f )
     LastHoloId = USER_HOLO_START_NUM;
 
     uint count = 0;
-    if( !FileRead( f, &count, sizeof( count ) ) )
+    if( !FileRead( f, &count, sizeof(count) ) )
         return false;
     for( uint i = 0; i < count; i++ )
     {
         uint id;
-        if( !FileRead( f, &id, sizeof( id ) ) )
+        if( !FileRead( f, &id, sizeof(id) ) )
             return false;
         bool can_rw;
-        if( !FileRead( f, &can_rw, sizeof( can_rw ) ) )
+        if( !FileRead( f, &can_rw, sizeof(can_rw) ) )
             return false;
 
         ushort title_len;
         char   title[USER_HOLO_MAX_TITLE_LEN + 1] = { 0 };
-        if( !FileRead( f, &title_len, sizeof( title_len ) ) )
+        if( !FileRead( f, &title_len, sizeof(title_len) ) )
             return false;
         if( title_len >= USER_HOLO_MAX_TITLE_LEN )
             title_len = USER_HOLO_MAX_TITLE_LEN;
@@ -188,7 +188,7 @@ bool FOServer::LoadHoloInfoFile( void* f )
 
         ushort text_len;
         char   text[USER_HOLO_MAX_LEN + 1] = { 0 };
-        if( !FileRead( f, &text_len, sizeof( text_len ) ) )
+        if( !FileRead( f, &text_len, sizeof(text_len) ) )
             return false;
         if( text_len >= USER_HOLO_MAX_LEN )
             text_len = USER_HOLO_MAX_LEN;
@@ -283,7 +283,7 @@ void FOServer::Send_PlayerHoloInfo( Critter* cr, uint holo_num, bool send_text )
     HoloInfo* hi = GetHoloInfo( holo_num );
     if( hi )
     {
-        string str = ( send_text ? hi->Text : hi->Title ); // Copy
+        string str = (send_text ? hi->Text : hi->Title);   // Copy
 
         HolodiskLocker.Unlock();
 
@@ -334,16 +334,16 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
         int move_ap = cr->Data.Params[ST_MOVE_AP];
         if( ap_cost )
         {
-            if( ( cr->GetParam( ST_CURRENT_AP ) + move_ap ) / ap_cost <= 0 )
+            if( (cr->GetParam( ST_CURRENT_AP ) + move_ap) / ap_cost <= 0 )
             {
                 cr->Send_XY( cr );
                 cr->Send_Param( ST_CURRENT_AP );
                 cr->Send_Param( ST_MOVE_AP );
                 return false;
             }
-            int steps = ( cr->GetParam( ST_CURRENT_AP ) + move_ap ) / ap_cost - 1;
+            int steps = (cr->GetParam( ST_CURRENT_AP ) + move_ap) / ap_cost - 1;
             if( steps < MOVE_PARAM_STEP_COUNT )
-                move_params |= ( MOVE_PARAM_STEP_DISALLOW << ( steps * MOVE_PARAM_STEP_BITS ) );                               // Cut steps
+                move_params |= (MOVE_PARAM_STEP_DISALLOW << (steps * MOVE_PARAM_STEP_BITS) );                                  // Cut steps
             if( move_ap )
             {
                 if( ap_cost > move_ap )
@@ -373,7 +373,7 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
         {
             int steps = cr->GetRealAp() / ap_cost - 1;
             if( steps < MOVE_PARAM_STEP_COUNT )
-                move_params |= ( MOVE_PARAM_STEP_DISALLOW << ( steps * MOVE_PARAM_STEP_BITS ) );                               // Cut steps
+                move_params |= (MOVE_PARAM_STEP_DISALLOW << (steps * MOVE_PARAM_STEP_BITS) );                                  // Cut steps
             cr->Data.Params[ST_CURRENT_AP] -= ap_cost;
             cr->ApRegenerationTick = 0;
         }
@@ -442,7 +442,7 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
             ItemPtrVec traps;
             map->GetItemsTrap( fx, fy, traps, true );
             for( auto it = traps.begin(), end = traps.end(); it != end; ++it )
-                ( *it )->EventWalk( cr, false, dir );
+                (*it)->EventWalk( cr, false, dir );
         }
 
         // In trap
@@ -451,7 +451,7 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
             ItemPtrVec traps;
             map->GetItemsTrap( hx, hy, traps, true );
             for( auto it = traps.begin(), end = traps.end(); it != end; ++it )
-                ( *it )->EventWalk( cr, true, dir );
+                (*it)->EventWalk( cr, true, dir );
         }
 
         // Try transit
@@ -547,7 +547,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         return false;
     }
 
-    if( !( weap->Proto->Weapon_ActiveUses & ( 1 << use ) ) )
+    if( !(weap->Proto->Weapon_ActiveUses & (1 << use) ) )
     {
         WriteLogF( _FUNC_, " - Use<%u> is not aviable, critter<%s>, target critter<%s>.\n", use, cr->GetInfo(), t_cr->GetInfo() );
         return false;
@@ -584,7 +584,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
     }
 
     uint max_dist = cr->GetAttackDist( weap, use ) + t_cr->GetMultihex();
-    if( !CheckDist( hx, hy, tx, ty, max_dist ) && !( Timer::GameTick() < t_cr->PrevHexTick + 500 && CheckDist( hx, hy, t_cr->PrevHexX, t_cr->PrevHexY, max_dist ) ) )
+    if( !CheckDist( hx, hy, tx, ty, max_dist ) && !(Timer::GameTick() < t_cr->PrevHexTick + 500 && CheckDist( hx, hy, t_cr->PrevHexX, t_cr->PrevHexY, max_dist ) ) )
     {
         cr->Send_XY( cr );
         cr->Send_XY( t_cr );
@@ -597,7 +597,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
     trace.BeginHy = hy;
     trace.EndHx = tx;
     trace.EndHy = ty;
-    trace.Dist = ( weap->Proto->Weapon_MaxDist[use] > 2 ? max_dist : 0 );
+    trace.Dist = (weap->Proto->Weapon_MaxDist[use] > 2 ? max_dist : 0);
     trace.FindCr = t_cr;
     MapMngr.TraceBullet( trace );
     if( !trace.IsCritterFounded )
@@ -608,7 +608,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         return false;
     }
 
-    int ap_cost = ( GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, weap, rate_weap ) : 1 );
+    int ap_cost = (GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, weap, rate_weap ) : 1);
     if( cr->GetParam( ST_CURRENT_AP ) < ap_cost && !Singleplayer )
     {
         cr->Send_Param( ST_CURRENT_AP );
@@ -656,7 +656,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         ammo_round = 1;
 
     // Script events
-    bool event_result = ( weap->GetId() ? weap->EventAttack( cr, t_cr ) : false );
+    bool event_result = (weap->GetId() ? weap->EventAttack( cr, t_cr ) : false);
     if( !event_result )
         event_result = cr->EventAttack( t_cr );
     if( event_result )
@@ -716,7 +716,7 @@ bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
         return false;
     }
 
-    int ap_cost = ( GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, weap, USE_RELOAD ) : 1 );
+    int ap_cost = (GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, weap, USE_RELOAD ) : 1);
     if( cr->GetParam( ST_CURRENT_AP ) < ap_cost && !Singleplayer )
     {
         WriteLogF( _FUNC_, " - Not enough AP, critter<%s>.\n", cr->GetInfo() );
@@ -725,7 +725,7 @@ bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
     }
     cr->SubAp( ap_cost );
 
-    Item* ammo = ( ammo_id ? cr->GetItem( ammo_id, true ) : NULL );
+    Item* ammo = (ammo_id ? cr->GetItem( ammo_id, true ) : NULL);
     if( ammo_id && !ammo )
     {
         WriteLogF( _FUNC_, " - Unable to find ammo, id<%u>, critter<%s>.\n", ammo_id, cr->GetInfo() );
@@ -783,7 +783,7 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
         }
     }
 
-    int ap_cost = ( item_id ? ( GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, item, USE_USE ) : 1 ) : cr->GetApCostUseSkill() );
+    int ap_cost = (item_id ? (GameOpt.GetUseApCost ? GameOpt.GetUseApCost( cr, item, USE_USE ) : 1) : cr->GetApCostUseSkill() );
     if( cr->GetParam( ST_CURRENT_AP ) < ap_cost && !Singleplayer )
     {
         cr->Send_Param( ST_CURRENT_AP );
@@ -1381,7 +1381,7 @@ bool FOServer::VerifyTrigger( Map* map, Critter* cr, ushort from_hx, ushort from
     {
         MapObject* out_trigger = map->Proto->GetMapScenery( from_hx, from_hy, SP_SCEN_TRIGGER );
         MapObject* in_trigger = map->Proto->GetMapScenery( to_hx, to_hy, SP_SCEN_TRIGGER );
-        if( !( out_trigger && in_trigger && out_trigger->MScenery.TriggerNum == in_trigger->MScenery.TriggerNum ) )
+        if( !(out_trigger && in_trigger && out_trigger->MScenery.TriggerNum == in_trigger->MScenery.TriggerNum) )
         {
             if( out_trigger && Script::PrepareContext( out_trigger->RunTime.BindScriptId, _FUNC_, cr->GetInfo() ) )
             {
@@ -1448,8 +1448,8 @@ void FOServer::Process_CreateClient( Client* cl )
 
     // Name
     char name[UTF8_BUF_SIZE( MAX_NAME )];
-    cl->Bin.Pop( name, sizeof( name ) );
-    name[sizeof( name ) - 1] = 0;
+    cl->Bin.Pop( name, sizeof(name) );
+    name[sizeof(name) - 1] = 0;
     Str::Copy( cl->Name, name );
 
     // Password hash
@@ -1466,7 +1466,7 @@ void FOServer::Process_CreateClient( Client* cl )
         return;
     }
 
-    memzero( cl->Data.Params, sizeof( cl->Data.Params ) );
+    memzero( cl->Data.Params, sizeof(cl->Data.Params) );
     for( ushort i = 0; i < params_count; i++ )
     {
         ushort index;
@@ -1515,7 +1515,7 @@ void FOServer::Process_CreateClient( Client* cl )
     if( !Singleplayer )
     {
         SaveClientsLocker.Lock();
-        bool exist = ( GetClientData( cl->Name ) != NULL );
+        bool exist = (GetClientData( cl->Name ) != NULL);
         SaveClientsLocker.Unlock();
 
         if( !exist )
@@ -1546,12 +1546,12 @@ void FOServer::Process_CreateClient( Client* cl )
         auto it = RegIp.find( ip );
         if( it != RegIp.end() )
         {
-            uint& last_reg = ( *it ).second;
+            uint& last_reg = (*it).second;
             uint  tick = Timer::FastTick();
             if( tick - last_reg < reg_tick )
             {
                 cl->Send_TextMsg( cl, STR_NET_REGISTRATION_IP_WAIT, SAY_NETMSG, TEXTMSG_GAME );
-                cl->Send_TextMsgLex( cl, STR_NET_TIME_LEFT, SAY_NETMSG, TEXTMSG_GAME, Str::FormatBuf( "$time%u", ( reg_tick - ( tick - last_reg ) ) / 60000 + 1 ) );
+                cl->Send_TextMsgLex( cl, STR_NET_TIME_LEFT, SAY_NETMSG, TEXTMSG_GAME, Str::FormatBuf( "$time%u", (reg_tick - (tick - last_reg) ) / 60000 + 1 ) );
                 cl->Disconnect();
                 return;
             }
@@ -1742,16 +1742,16 @@ void FOServer::Process_LogIn( ClientPtr& cl )
 
     // Login, password hash
     char name[UTF8_BUF_SIZE( MAX_NAME )];
-    cl->Bin.Pop( name, sizeof( name ) );
-    name[sizeof( name ) - 1] = 0;
+    cl->Bin.Pop( name, sizeof(name) );
+    name[sizeof(name) - 1] = 0;
     Str::Copy( cl->Name, name );
     cl->Bin >> uid[1];
     cl->Bin.Pop( cl->PassHash, PASS_HASH_SIZE );
 
     if( Singleplayer )
     {
-        memzero( cl->Name, sizeof( cl->Name ) );
-        memzero( cl->PassHash, sizeof( cl->PassHash ) );
+        memzero( cl->Name, sizeof(cl->Name) );
+        memzero( cl->PassHash, sizeof(cl->PassHash) );
     }
 
     // Bin hashes
@@ -1941,11 +1941,11 @@ void FOServer::Process_LogIn( ClientPtr& cl )
             return;
         }
 
-        if( ( uid[0] && ( !FLAG( uid[0], 0x00800000 ) || FLAG( uid[0], 0x00000400 ) ) ) ||
-            ( uid[1] && ( !FLAG( uid[1], 0x04000000 ) || FLAG( uid[1], 0x00200000 ) ) ) ||
-            ( uid[2] && ( !FLAG( uid[2], 0x00000020 ) || FLAG( uid[2], 0x00000800 ) ) ) ||
-            ( uid[3] && ( !FLAG( uid[3], 0x80000000 ) || FLAG( uid[3], 0x40000000 ) ) ) ||
-            ( uid[4] && ( !FLAG( uid[4], 0x00000800 ) || FLAG( uid[4], 0x00004000 ) ) ) )
+        if( (uid[0] && (!FLAG( uid[0], 0x00800000 ) || FLAG( uid[0], 0x00000400 ) ) ) ||
+            (uid[1] && (!FLAG( uid[1], 0x04000000 ) || FLAG( uid[1], 0x00200000 ) ) ) ||
+            (uid[2] && (!FLAG( uid[2], 0x00000020 ) || FLAG( uid[2], 0x00000800 ) ) ) ||
+            (uid[3] && (!FLAG( uid[3], 0x80000000 ) || FLAG( uid[3], 0x40000000 ) ) ) ||
+            (uid[4] && (!FLAG( uid[4], 0x00000800 ) || FLAG( uid[4], 0x00004000 ) ) ) )
         {
             WriteLogF( _FUNC_, " - Invalid UIDs, client<%s>.\n", cl->Name );
             cl->Send_TextMsg( cl, STR_NET_UID_FAIL, SAY_NETMSG, TEXTMSG_GAME );
@@ -2070,7 +2070,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         BIN_END( cl );
 
         // Swap data that used in NetIO_* functions
-        #if defined ( USE_LIBEVENT )
+        #if defined (USE_LIBEVENT)
         Client::NetIOArg* io_arg = cl->NetIOArgPtr;
         io_arg->Locker.Lock();
         #else // IOCP
@@ -2084,7 +2084,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         // Cancel swapping
         if( cl->Sock == INVALID_SOCKET || cl_old->Sock != INVALID_SOCKET )
         {
-            #if defined ( USE_LIBEVENT )
+            #if defined (USE_LIBEVENT)
             io_arg->Locker.Unlock();
             #else // IOCP
             cl_old->NetIOOut->Locker.Unlock();
@@ -2101,7 +2101,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
 
         // Assign to ConnectedClients
         cl_old->AddRef();
-        ( *it ) = cl_old;
+        (*it) = cl_old;
 
         // Swap net data
         cl_old->Bin = cl->Bin;
@@ -2112,13 +2112,13 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         cl->GameState = STATE_NONE;
         cl_old->Sock = cl->Sock;
         cl->Sock = INVALID_SOCKET;
-        memcpy( &cl_old->From, &cl->From, sizeof( cl_old->From ) );
+        memcpy( &cl_old->From, &cl->From, sizeof(cl_old->From) );
         cl_old->ConnectTime = 0;
         UNSETFLAG( cl_old->Flags, FCRIT_DISCONNECT );
         SETFLAG( cl->Flags, FCRIT_DISCONNECT );
         std::swap( cl_old->Zstrm, cl->Zstrm );
 
-        #if defined ( USE_LIBEVENT )
+        #if defined (USE_LIBEVENT)
         // Assign for net arg old pointer
         // Current client delete NetIOArgPtr in destructor
         cl->Release();
@@ -2137,7 +2137,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         cl->IsNotValid = true;
         cl_old->IsNotValid = false;
 
-        #if defined ( USE_LIBEVENT )
+        #if defined (USE_LIBEVENT)
         io_arg->Locker.Unlock();
         #else // IOCP
         cl->NetIOOut->Locker.Unlock();
@@ -2211,13 +2211,13 @@ void FOServer::Process_LogIn( ClientPtr& cl )
                 cl->SetMaps( 0, 0 );
                 return;
             }
-            memcpy( &cl->Data, &cl_saved->Data, sizeof( cl->Data ) );
-            memcpy( data_ext, cl_saved->GetDataExt(), sizeof( CritDataExt ) );
+            memcpy( &cl->Data, &cl_saved->Data, sizeof(cl->Data) );
+            memcpy( data_ext, cl_saved->GetDataExt(), sizeof(CritDataExt) );
             size_t te_count = cl_saved->CrTimeEvents.size();
             if( te_count )
             {
                 cl->CrTimeEvents.resize( te_count );
-                memcpy( &cl->CrTimeEvents[0], &cl_saved->CrTimeEvents[0], te_count * sizeof( Critter::CrTimeEvent ) );
+                memcpy( &cl->CrTimeEvents[0], &cl_saved->CrTimeEvents[0], te_count * sizeof(Critter::CrTimeEvent) );
             }
         }
 
@@ -2259,9 +2259,9 @@ void FOServer::Process_LogIn( ClientPtr& cl )
             }
         }
 
-        if( !cl->GetMap() && ( cl->GetHexX() || cl->GetHexY() ) )
+        if( !cl->GetMap() && (cl->GetHexX() || cl->GetHexY() ) )
         {
-            uint     rule_id = ( cl->GetHexX() << 16 ) | cl->GetHexY();
+            uint     rule_id = (cl->GetHexX() << 16) | cl->GetHexY();
             Critter* rule = CrMngr.GetCritter( rule_id, false );
             if( !rule || rule->GetMap() || cl->Data.GlobalGroupUid != rule->Data.GlobalGroupUid )
             {
@@ -2641,14 +2641,14 @@ void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
     ushort map_pid = pmap->GetPid();
     ushort maxhx = pmap->Header.MaxHexX;
     ushort maxhy = pmap->Header.MaxHexY;
-    uint   msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( map_pid ) + sizeof( maxhx ) + sizeof( maxhy ) + sizeof( send_info );
+    uint   msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(map_pid) + sizeof(maxhx) + sizeof(maxhy) + sizeof(send_info);
 
     if( FLAG( send_info, SENDMAP_TILES ) )
-        msg_len += sizeof( uint ) + (uint)pmap->Tiles.size() * sizeof( ProtoMap::Tile );
+        msg_len += sizeof(uint) + (uint)pmap->Tiles.size() * sizeof(ProtoMap::Tile);
     if( FLAG( send_info, SENDMAP_WALLS ) )
-        msg_len += sizeof( uint ) + (uint)pmap->WallsToSend.size() * sizeof( SceneryCl );
+        msg_len += sizeof(uint) + (uint)pmap->WallsToSend.size() * sizeof(SceneryCl);
     if( FLAG( send_info, SENDMAP_SCENERY ) )
-        msg_len += sizeof( uint ) + (uint)pmap->SceneriesToSend.size() * sizeof( SceneryCl );
+        msg_len += sizeof(uint) + (uint)pmap->SceneriesToSend.size() * sizeof(SceneryCl);
 
     // Header
     BOUT_BEGIN( cl );
@@ -2664,7 +2664,7 @@ void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
     {
         cl->Bout << (uint)pmap->Tiles.size();
         if( pmap->Tiles.size() )
-            cl->Bout.Push( (char*)&pmap->Tiles[0], (uint)pmap->Tiles.size() * sizeof( ProtoMap::Tile ) );
+            cl->Bout.Push( (char*)&pmap->Tiles[0], (uint)pmap->Tiles.size() * sizeof(ProtoMap::Tile) );
     }
 
     // Walls
@@ -2672,7 +2672,7 @@ void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
     {
         cl->Bout << (uint)pmap->WallsToSend.size();
         if( pmap->WallsToSend.size() )
-            cl->Bout.Push( (char*)&pmap->WallsToSend[0], (uint)pmap->WallsToSend.size() * sizeof( SceneryCl ) );
+            cl->Bout.Push( (char*)&pmap->WallsToSend[0], (uint)pmap->WallsToSend.size() * sizeof(SceneryCl) );
     }
 
     // Scenery
@@ -2680,7 +2680,7 @@ void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
     {
         cl->Bout << (uint)pmap->SceneriesToSend.size();
         if( pmap->SceneriesToSend.size() )
-            cl->Bout.Push( (char*)&pmap->SceneriesToSend[0], (uint)pmap->SceneriesToSend.size() * sizeof( SceneryCl ) );
+            cl->Bout.Push( (char*)&pmap->SceneriesToSend[0], (uint)pmap->SceneriesToSend.size() * sizeof(SceneryCl) );
     }
     BOUT_END( cl );
 }
@@ -2712,8 +2712,8 @@ void FOServer::Process_Move( Client* cl )
     if( is_run )
     {
         if( !cl->IsCanRun() ||
-            ( GameOpt.RunOnCombat ? 0 : cl->GetParam( TO_BATTLE ) ) ||
-            ( GameOpt.RunOnTransfer ? 0 : cl->GetParam( TO_TRANSFER ) ) )
+            (GameOpt.RunOnCombat ? 0 : cl->GetParam( TO_BATTLE ) ) ||
+            (GameOpt.RunOnTransfer ? 0 : cl->GetParam( TO_TRANSFER ) ) )
         {
             // Switch to walk
             move_params ^= MOVE_PARAM_RUN;
@@ -2784,8 +2784,8 @@ void FOServer::Process_ChangeItem( Client* cl )
         return;
     }
 
-    bool is_castling = ( ( from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2 ) || ( from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1 ) );
-    int  ap_cost = ( is_castling ? 0 : cl->GetApCostMoveItemInventory() );
+    bool is_castling = ( (from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2) || (from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1) );
+    int  ap_cost = (is_castling ? 0 : cl->GetApCostMoveItemInventory() );
     if( to_slot == SLOT_GROUND )
         ap_cost = cl->GetApCostDropItem();
     if( cl->GetParam( ST_CURRENT_AP ) < ap_cost && !Singleplayer )
@@ -2866,7 +2866,7 @@ void FOServer::Process_UseItem( Client* cl )
         return;
 
     uchar use = rate & 0xF;
-    Item* item = ( item_id ? cl->GetItem( item_id, true ) : cl->ItemSlotMain );
+    Item* item = (item_id ? cl->GetItem( item_id, true ) : cl->ItemSlotMain);
     if( !item )
     {
         WriteLogF( _FUNC_, " - Item not found, item id<%u>, client<%s>.\n", item_id, cl->GetInfo() );
@@ -2917,7 +2917,7 @@ void FOServer::Process_UseItem( Client* cl )
         if( target_type != TARGET_CRITTER && target_type != TARGET_ITEM && target_type != TARGET_SCENERY &&
             target_type != TARGET_SELF && target_type != TARGET_SELF_ITEM )
             return;
-        if( !cl->GetMap() && ( target_type == TARGET_ITEM || target_type == TARGET_SCENERY ) )
+        if( !cl->GetMap() && (target_type == TARGET_ITEM || target_type == TARGET_SCENERY) )
             return;
         if( !Act_Use( cl, item_id, -1, target_type, target_id, target_pid, param ) )
             cl->Send_TextMsg( cl, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
@@ -3090,8 +3090,8 @@ void FOServer::Process_ContainerItem( Client* cl )
     if( map && map->IsTurnBasedOn && !cl->GetAllAp() )
         map->EndCritterTurn();
 
-    if( !cl->GetMap() && ( transfer_type != TRANSFER_CRIT_STEAL && transfer_type != TRANSFER_FAR_CONT && transfer_type != TRANSFER_FAR_CRIT &&
-                           transfer_type != TRANSFER_CRIT_BARTER && transfer_type != TRANSFER_SELF_CONT ) )
+    if( !cl->GetMap() && (transfer_type != TRANSFER_CRIT_STEAL && transfer_type != TRANSFER_FAR_CONT && transfer_type != TRANSFER_FAR_CRIT &&
+                          transfer_type != TRANSFER_CRIT_BARTER && transfer_type != TRANSFER_SELF_CONT) )
         return;
 
 /************************************************************************/
@@ -3188,14 +3188,14 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Check weight
-                if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                if( cl->GetFreeWeight() < (int)(item->GetWeight1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
                     break;
                 }
 
                 // Check volume
-                if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                if( cl->GetFreeVolume() < (int)(item->GetVolume1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
                     break;
@@ -3317,7 +3317,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Check volume
-                if( cont->ContGetFreeVolume( 0 ) < (int)( item->GetVolume1st() * item_count ) )
+                if( cont->ContGetFreeVolume( 0 ) < (int)(item->GetVolume1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
                     break;
@@ -3366,12 +3366,12 @@ void FOServer::Process_ContainerItem( Client* cl )
 /************************************************************************/
     else if( transfer_type == TRANSFER_CRIT_LOOT || transfer_type == TRANSFER_CRIT_STEAL || transfer_type == TRANSFER_FAR_CRIT )
     {
-        bool is_far = ( transfer_type == TRANSFER_FAR_CRIT );
-        bool is_steal = ( transfer_type == TRANSFER_CRIT_STEAL );
-        bool is_loot = ( transfer_type == TRANSFER_CRIT_LOOT );
+        bool is_far = (transfer_type == TRANSFER_FAR_CRIT);
+        bool is_steal = (transfer_type == TRANSFER_CRIT_STEAL);
+        bool is_loot = (transfer_type == TRANSFER_CRIT_LOOT);
 
         // Get critter target
-        Critter* cr = ( is_far ? CrMngr.GetCritter( cont_id, true ) : ( cl->GetMap() ? cl->GetCritSelf( cont_id, true ) : cl->GroupMove->GetCritter( cont_id ) ) );
+        Critter* cr = (is_far ? CrMngr.GetCritter( cont_id, true ) : (cl->GetMap() ? cl->GetCritSelf( cont_id, true ) : cl->GroupMove->GetCritter( cont_id ) ) );
         if( !cr )
         {
             cl->Send_ContainerInfo();
@@ -3460,14 +3460,14 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Check weight
-                if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                if( cl->GetFreeWeight() < (int)(item->GetWeight1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
                     break;
                 }
 
                 // Check volume
-                if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                if( cl->GetFreeVolume() < (int)(item->GetVolume1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
                     break;
@@ -3602,12 +3602,12 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Check weight, volume
-                if( cr->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                if( cr->GetFreeWeight() < (int)(item->GetWeight1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
                     break;
                 }
-                if( cr->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                if( cr->GetFreeVolume() < (int)(item->GetVolume1st() * item_count) )
                 {
                     cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
                     break;
@@ -3779,7 +3779,7 @@ void FOServer::Process_GetUserHoloStr( Client* cl )
         return;
     }
 
-    Send_PlayerHoloInfo( cl, str_num / 10, ( str_num % 10 ) != 0 );
+    Send_PlayerHoloInfo( cl, str_num / 10, (str_num % 10) != 0 );
 }
 
 void FOServer::Process_LevelUp( Client* cl )
@@ -3864,7 +3864,7 @@ void FOServer::Process_CraftAsk( Client* cl )
 
     uint msg = NETMSG_CRAFT_ASK;
     count = (ushort)numbers.size();
-    msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( count ) + sizeof( uint ) * count;
+    msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(count) + sizeof(uint) * count;
 
     BOUT_BEGIN( cl );
     cl->Bout << msg;
@@ -3960,7 +3960,7 @@ void FOServer::Process_PlayersBarter( Client* cl )
         }
 
         cl->BarterOffer = false;
-        cl->BarterHide = ( param_ext != 0 );
+        cl->BarterHide = (param_ext != 0);
         cl->BarterItems.clear();
 
         if( barter == BARTER_TRY )
@@ -3969,11 +3969,11 @@ void FOServer::Process_PlayersBarter( Client* cl )
         }
         else if( opponent->BarterOpponent == cl->GetId() )     // Accepted
         {
-            param_ext = ( cl->BarterHide ? 1 : 0 ) | ( opponent->BarterHide ? 2 : 0 );
+            param_ext = (cl->BarterHide ? 1 : 0) | (opponent->BarterHide ? 2 : 0);
             cl->Send_PlayersBarter( BARTER_BEGIN, opponent->GetId(), param_ext );
             if( !opponent->BarterHide )
                 cl->Send_ContainerInfo( opponent, TRANSFER_CRIT_BARTER, false );
-            param_ext = ( opponent->BarterHide ? 1 : 0 ) | ( cl->BarterHide ? 2 : 0 );
+            param_ext = (opponent->BarterHide ? 1 : 0) | (cl->BarterHide ? 2 : 0);
             opponent->Send_PlayersBarter( BARTER_BEGIN, cl->GetId(), param_ext );
             if( !cl->BarterHide )
                 opponent->Send_ContainerInfo( cl, TRANSFER_CRIT_BARTER, false );
@@ -3999,7 +3999,7 @@ void FOServer::Process_PlayersBarter( Client* cl )
     }
     else if( barter == BARTER_OFFER )
     {
-        cl->BarterOffer = ( param != 0 );
+        cl->BarterOffer = (param != 0);
         opponent->Send_PlayersBarter( BARTER_OFFER, param, true );
 
         // Deal, try transfer items
@@ -4091,7 +4091,7 @@ label_EndOffer:
         if( !param || !param_ext )
             return;
 
-        bool    is_set = ( barter == BARTER_SET_SELF || barter == BARTER_SET_OPPONENT );
+        bool    is_set = (barter == BARTER_SET_SELF || barter == BARTER_SET_OPPONENT);
         Client* barter_cl;
         if( barter == BARTER_SET_SELF || barter == BARTER_UNSET_SELF )
             barter_cl = cl;
@@ -4110,7 +4110,7 @@ label_EndOffer:
         Item*               item = barter_cl->GetItem( param, true );
         Client::BarterItem* barter_item = barter_cl->BarterGetItem( param );
 
-        if( !item || ( barter_item && barter_item->Count > item->GetCount() ) )
+        if( !item || (barter_item && barter_item->Count > item->GetCount() ) )
         {
             barter_cl->BarterEraseItem( param );
             cl->BarterRefresh( opponent );
@@ -4120,7 +4120,7 @@ label_EndOffer:
 
         if( is_set )
         {
-            if( param_ext > item->GetCount() - ( barter_item ? barter_item->Count : 0 ) )
+            if( param_ext > item->GetCount() - (barter_item ? barter_item->Count : 0) )
             {
                 barter_cl->BarterEraseItem( param );
                 cl->BarterRefresh( opponent );
@@ -4219,7 +4219,7 @@ void FOServer::Process_Combat( Client* cl )
             return;
         }
         if( map->IsTurnBasedOn )
-            cl->Data.Params[MODE_END_COMBAT] = ( val ? 1 : 0 );
+            cl->Data.Params[MODE_END_COMBAT] = (val ? 1 : 0);
     }
     else
     {
@@ -4242,7 +4242,7 @@ void FOServer::Process_RunServerScript( Client* cl )
 
     cl->Bin >> msg_len;
     cl->Bin >> unsafe;
-    if( !unsafe && !( cl->Access == ACCESS_MODER || cl->Access == ACCESS_ADMIN ) )
+    if( !unsafe && !(cl->Access == ACCESS_MODER || cl->Access == ACCESS_ADMIN) )
     {
         WriteLogF( _FUNC_, " - Attempt to execute script without privilege. Client<%s>.\n", cl->GetInfo() );
         cl->Send_Text( cl, "Access denied. Disconnect.", SAY_NETMSG );
@@ -4261,7 +4261,7 @@ void FOServer::Process_RunServerScript( Client* cl )
     char func_name[MAX_SCRIPT_NAME + 1] = { 0 };
     Script::ReparseScriptName( script_name, module_name, func_name );
 
-    if( unsafe && ( Str::Length( func_name ) <= 7 || !Str::CompareCount( func_name, "unsafe_", 7 ) ) ) // Check unsafe_ prefix
+    if( unsafe && (Str::Length( func_name ) <= 7 || !Str::CompareCount( func_name, "unsafe_", 7 ) ) )  // Check unsafe_ prefix
     {
         WriteLogF( _FUNC_, " - Attempt to execute script without \"unsafe_\" prefix. Client<%s>.\n", cl->GetInfo() );
         cl->Send_Text( cl, "Access denied. Disconnect.", SAY_NETMSG );
@@ -4286,7 +4286,7 @@ void FOServer::Process_RunServerScript( Client* cl )
         if( p4 )
         {
             p4->Resize( p4size );
-            cl->Bin.Pop( (char*)p4->At( 0 ), p4size * sizeof( uint ) );
+            cl->Bin.Pop( (char*)p4->At( 0 ), p4size * sizeof(uint) );
         }
     }
 
@@ -4525,7 +4525,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
                 arr->Release();
 
                 uint msg = NETMSG_GLOBAL_ENTRANCES;
-                uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
+                uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uchar) * count;
 
                 BOUT_BEGIN( cl );
                 cl->Bout << msg;
@@ -4540,7 +4540,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
             {
                 uint  msg = NETMSG_GLOBAL_ENTRANCES;
                 uchar count = (uchar)loc->Proto->Entrance.size();
-                uint  msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
+                uint  msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uchar) * count;
 
                 BOUT_BEGIN( cl );
                 cl->Bout << msg;
@@ -4615,7 +4615,7 @@ void FOServer::Send_MsgData( Client* cl, uint lang, ushort num_msg, FOMsg& data_
         return;
 
     uint msg = NETMSG_MSG_DATA;
-    uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( lang ) + sizeof( num_msg ) + sizeof( uint ) + data_msg.GetToSendLen();
+    uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(lang) + sizeof(num_msg) + sizeof(uint) + data_msg.GetToSendLen();
 
     BOUT_BEGIN( cl );
     cl->Bout << msg;
@@ -4633,13 +4633,13 @@ void FOServer::Send_ProtoItemData( Client* cl, uchar type, ProtoItemVec& data, u
         return;
 
     uint msg = NETMSG_ITEM_PROTOS;
-    uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( type ) + sizeof( data_hash ) + (uint)data.size() * sizeof( ProtoItem );
+    uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(type) + sizeof(data_hash) + (uint)data.size() * sizeof(ProtoItem);
 
     BOUT_BEGIN( cl );
     cl->Bout << msg;
     cl->Bout << msg_len;
     cl->Bout << type;
     cl->Bout << data_hash;
-    cl->Bout.Push( (char*)&data[0], (uint)data.size() * sizeof( ProtoItem ) );
+    cl->Bout.Push( (char*)&data[0], (uint)data.size() * sizeof(ProtoItem) );
     BOUT_END( cl );
 }

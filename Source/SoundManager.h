@@ -4,11 +4,11 @@
 #include "Common.h"
 
 #define SOUND_DEFAULT_EXT    ".acm"
-#define MUSIC_REPEAT_TIME    ( Random( 240, 360 ) * 1000 )   // 4-6 minutes
-#define STREAMING_PORTION    ( 0x10000 )
+#define MUSIC_REPEAT_TIME    (Random( 240, 360 ) * 1000)     // 4-6 minutes
+#define STREAMING_PORTION    (0x10000)
 
 class Sound;
-typedef vector< Sound* > SoundVec;
+typedef vector<Sound*> SoundVec;
 
 class SoundManager
 {

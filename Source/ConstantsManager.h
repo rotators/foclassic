@@ -1,11 +1,11 @@
 #ifndef __CONSTANTS_MANAGER__
 #define __CONSTANTS_MANAGER__
 
-#define CONSTANTS_PARAM      ( 0 )
-#define CONSTANTS_ITEM       ( 1 )
-#define CONSTANTS_DEFINE     ( 2 )
-#define CONSTANTS_PICTURE    ( 3 )
-#define CONSTANTS_HASH       ( 4 )
+#define CONSTANTS_PARAM      (0)
+#define CONSTANTS_ITEM       (1)
+#define CONSTANTS_DEFINE     (2)
+#define CONSTANTS_PICTURE    (3)
+#define CONSTANTS_HASH       (4)
 
 namespace ConstantsManager
 {

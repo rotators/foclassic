@@ -1011,7 +1011,7 @@ struct BindClass
     static int  GmapGroupSpeed;
     #endif
 
-    #if defined ( BIND_CLIENT ) || defined ( BIND_SERVER )
+    #if defined (BIND_CLIENT) || defined (BIND_SERVER)
     static void DataRef_Index() {}
     static void DataVal_Index() {}
 
@@ -1114,7 +1114,7 @@ struct BindClass
     static void Global_GetMonitorObject() {}
     #endif
 
-    #if defined ( BIND_CLIENT ) || defined ( BIND_MAPPER )
+    #if defined (BIND_CLIENT) || defined (BIND_MAPPER)
     static void Global_GetHexInPath()       {}
     static void Global_GetPathLengthHex()   {}
     static void Global_GetPathLengthCr()    {}

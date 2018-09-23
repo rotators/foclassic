@@ -14,22 +14,22 @@
 #endif
 
 // Fix boy function call states
-#define FIXBOY_LIST                 ( 0 )
-#define FIXBOY_BUTTON               ( 1 )
-#define FIXBOY_CRAFT                ( 2 )
+#define FIXBOY_LIST                 (0)
+#define FIXBOY_BUTTON               (1)
+#define FIXBOY_CRAFT                (2)
 // Fix boy craft results
-#define FIXBOY_ALLOW_CRAFT          ( 0x0001 )
-#define FIXBOY_CHECK_TIMEOUT        ( 0x0002 )
-#define FIXBOY_SET_TIMEOUT          ( 0x0004 )
-#define FIXBOY_CHECK_PARAMS         ( 0x0008 )
-#define FIXBOY_CHECK_MATERIALS      ( 0x0010 )
-#define FIXBOY_CHECK_TOOLS          ( 0x0020 )
-#define FIXBOY_SUB_MATERIALS        ( 0x0040 )
-#define FIXBOY_ADD_CRAFT_ITEMS      ( 0x0080 )
-#define FIXBOY_ADD_EXPERIENCE       ( 0x0100 )
-#define FIXBOY_SEND_SUCC_MESSAGE    ( 0x0200 )
-#define FIXBOY_SEND_FAIL_MESSAGE    ( 0x0400 )
-#define FIXBOY_DEFAULT              ( 0xFFFF )
+#define FIXBOY_ALLOW_CRAFT          (0x0001)
+#define FIXBOY_CHECK_TIMEOUT        (0x0002)
+#define FIXBOY_SET_TIMEOUT          (0x0004)
+#define FIXBOY_CHECK_PARAMS         (0x0008)
+#define FIXBOY_CHECK_MATERIALS      (0x0010)
+#define FIXBOY_CHECK_TOOLS          (0x0020)
+#define FIXBOY_SUB_MATERIALS        (0x0040)
+#define FIXBOY_ADD_CRAFT_ITEMS      (0x0080)
+#define FIXBOY_ADD_EXPERIENCE       (0x0100)
+#define FIXBOY_SEND_SUCC_MESSAGE    (0x0200)
+#define FIXBOY_SEND_FAIL_MESSAGE    (0x0400)
+#define FIXBOY_DEFAULT              (0xFFFF)
 #define CRAFT_RETURN_FAIL                           \
     { if( FLAG( flags, FIXBOY_SEND_FAIL_MESSAGE ) ) \
           return CRAFT_RESULT_FAIL; return CRAFT_RESULT_NONE; }
@@ -151,7 +151,7 @@ void CraftItem::SetName( FOMsg& msg_game, FOMsg& msg_item )
 }
 #endif // FONLINE_CLIENT
 
-template< class T >
+template<class T>
 void SetStrMetadata( T& v, const char*& str )
 {
     int val;
@@ -169,7 +169,7 @@ void SetStrMetadata( T& v, const char*& str )
     }
 }
 
-template< class T >
+template<class T>
 void GetStrMetadata( T& v, char* str )
 {
     Str::Append( str, MAX_FOTEXT, Str::ItoA( (int)v.size() ) );
@@ -257,7 +257,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
         return 0;
     }
 
-    #if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
+    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
     // Parse show params
     int res = SetStrParam( pstr_in, ShowPNum, ShowPVal, ShowPOr );
     if( res < 0 )
@@ -299,7 +299,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
     return 0;
 }
 
-#if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
+#if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
 int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     char  str[MAX_FOTEXT];
@@ -322,7 +322,7 @@ int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_
         {
             *pstr = '\0';
 
-            if( ( param_num = ConstantsManager::GetParamId( str ) ) < 0 )
+            if( (param_num = ConstantsManager::GetParamId( str ) ) < 0 )
                 return -3;
 
             pstr = str;
@@ -441,7 +441,7 @@ const char* CraftItem::GetStr( bool metadata )
         return str;
     }
 
-    #if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
+    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
     // Name, info
     Str::Format( str, "%s%c%s%c", Name.c_str(), MRFIXIT_NEXT, Info.c_str(), MRFIXIT_NEXT );
 
@@ -481,7 +481,7 @@ const char* CraftItem::GetStr( bool metadata )
     return str;
 }
 
-#if defined ( FONLINE_SERVER ) || defined ( FONLINE_MRFIXIT )
+#if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
 void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
@@ -542,11 +542,11 @@ bool CraftManager::operator==( const CraftManager& r )
     }
 
     auto it = itemCraft.begin(), end = itemCraft.end();
-    auto it_ = const_cast< CraftManager& >( r ).itemCraft.begin(), end_ = const_cast< CraftManager& >( r ).itemCraft.end();
+    auto it_ = const_cast<CraftManager&>(r).itemCraft.begin(), end_ = const_cast<CraftManager&>(r).itemCraft.end();
     for( ; it != end; ++it, ++it_ )
     {
-        CraftItem* craft = ( *it ).second;
-        CraftItem* rcraft = ( *it_ ).second;
+        CraftItem* craft = (*it).second;
+        CraftItem* rcraft = (*it_).second;
 
         #define COMPARE_CRAFT( p )                                                                                              \
             if( craft->p != rcraft->p ) { WriteLogF( _FUNC_, " - Different<" # p ">, craft<%u>.\n", craft->Num ); return false; \
@@ -591,7 +591,7 @@ bool CraftManager::SaveCrafts( const char* path )
     string     str;
     for( ; it != it_end; ++it )
     {
-        craft = ( *it ).second;
+        craft = (*it).second;
         msg.AddStr( craft->Num, string( craft->GetStr( false ) ) );
     }
 
@@ -620,8 +620,8 @@ bool CraftManager::LoadCrafts( FOMsg& msg )
 
     for( ; it != it_end; ++it )
     {
-        uint    num = ( *it ).first;
-        string& str = ( *it ).second;
+        uint    num = (*it).first;
+        string& str = (*it).second;
 
         if( !AddCraft( num, str.c_str() ) )
         {
@@ -650,7 +650,7 @@ void CraftManager::GenerateNames( FOMsg& msg_game, FOMsg& msg_item )
 
     for( ; it != it_end; ++it )
     {
-        ( *it ).second->SetName( msg_game, msg_item );
+        (*it).second->SetName( msg_game, msg_item );
     }
 }
 #endif // FONLINE_CLIENT
@@ -661,7 +661,7 @@ void CraftManager::Finish()
     auto it_end = itemCraft.end();
 
     for( ; it != it_end; ++it )
-        delete ( *it ).second;
+        delete (*it).second;
     itemCraft.clear();
 }
 
@@ -724,7 +724,7 @@ bool CraftManager::AddCraft( CraftItem* craft, bool make_copy )
 CraftItem* CraftManager::GetCraft( uint num )
 {
     auto it = itemCraft.find( num );
-    return it != itemCraft.end() ? ( *it ).second : NULL;
+    return it != itemCraft.end() ? (*it).second : NULL;
 }
 
 bool CraftManager::IsCraftExist( uint num )
@@ -732,7 +732,7 @@ bool CraftManager::IsCraftExist( uint num )
     return itemCraft.count( num ) != 0;
 }
 
-#if defined ( FONLINE_SERVER ) || defined ( FONLINE_CLIENT )
+#if defined (FONLINE_SERVER) || defined (FONLINE_CLIENT)
 # ifdef FONLINE_SERVER
 bool CallFixBoyScript( CraftItem* craft, Critter* cr, uint stage, uint& flags )
 {
@@ -790,8 +790,8 @@ void CraftManager::GetShowCrafts( Critter* cr, CraftItemVec& craft_vec )
     craft_vec.clear();
     for( auto it = itemCraft.begin(), end = itemCraft.end(); it != end; ++it )
     {
-        if( IsShowCraft( cr, ( *it ).first ) )
-            craft_vec.push_back( ( *it ).second );
+        if( IsShowCraft( cr, (*it).first ) )
+            craft_vec.push_back( (*it).second );
     }
 }
 # endif
@@ -801,8 +801,8 @@ void CraftManager::GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec )
     craft_vec.clear();
     for( auto it = itemCraft.begin(), end = itemCraft.end(); it != end; ++it )
     {
-        if( IsShowCraft( cr, ( *it ).first ) )
-            craft_vec.push_back( ( *it ).second );
+        if( IsShowCraft( cr, (*it).first ) )
+            craft_vec.push_back( (*it).second );
     }
 }
 # endif
@@ -838,8 +838,8 @@ void CraftManager::GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec )
     auto it_end = itemCraft.end();
     for( ; it != it_end; ++it )
     {
-        if( IsTrueCraft( cr, ( *it ).first ) )
-            craft_vec.push_back( ( *it ).second );
+        if( IsTrueCraft( cr, (*it).first ) )
+            craft_vec.push_back( (*it).second );
     }
 }
 # endif
@@ -851,8 +851,8 @@ void CraftManager::GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec )
     auto it_end = itemCraft.end();
     for( ; it != it_end; ++it )
     {
-        if( IsTrueCraft( cr, ( *it ).first ) )
-            craft_vec.push_back( ( *it ).second );
+        if( IsTrueCraft( cr, (*it).first ) )
+            craft_vec.push_back( (*it).second );
     }
 }
 # endif
@@ -1004,7 +1004,7 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
     if( !FLAG( flags, FIXBOY_ALLOW_CRAFT ) )
         CRAFT_RETURN_FAIL;
 
-    if( FLAG( flags, FIXBOY_CHECK_TIMEOUT ) && ( cr->GetParam( TO_SK_SCIENCE ) || cr->GetParam( TO_SK_REPAIR ) ) )
+    if( FLAG( flags, FIXBOY_CHECK_TIMEOUT ) && (cr->GetParam( TO_SK_SCIENCE ) || cr->GetParam( TO_SK_REPAIR ) ) )
         CRAFT_RETURN_TIMEOUT;
     if( FLAG( flags, FIXBOY_CHECK_PARAMS ) && !IsTrueParams( cr, craft->NeedPNum, craft->NeedPVal, craft->NeedPOr ) )
         CRAFT_RETURN_FAIL;

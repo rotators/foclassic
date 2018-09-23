@@ -17,7 +17,7 @@
 #include "NetProtocol.h"
 #include "Access.h"
 
-#if defined ( USE_LIBEVENT )
+#if defined (USE_LIBEVENT)
 # include "event2/event.h"
 # include "event2/bufferevent.h"
 # include "event2/buffer.h"
@@ -64,7 +64,7 @@ public:
     static void Process_GiveGlobalInfo( Client* cl );
     static void Process_RuleGlobal( Client* cl );
     static void Process_Text( Client* cl );
-    static void Process_Command( BufferManager& buf, void ( *logcb )( const char* ), Client* cl, const char* admin_panel );
+    static void Process_Command( BufferManager& buf, void (*logcb)( const char* ), Client* cl, const char* admin_panel );
     static void Process_Dialog( Client* cl, bool is_say );
     static void Process_Barter( Client* cl );
     static void Process_GiveMap( Client* cl );
@@ -96,7 +96,7 @@ public:
         string Text;
         HoloInfo( bool can_rw, const char* title, const char* text ) : CanRewrite( can_rw ), Title( title ), Text( text ) {}
     };
-    typedef map< uint, HoloInfo* > HoloInfoMap;
+    typedef map<uint, HoloInfo*> HoloInfoMap;
     static HoloInfoMap HolodiskInfo;
     static Mutex       HolodiskLocker;
     static uint        LastHoloId;
@@ -106,7 +106,7 @@ public:
     static HoloInfo* GetHoloInfo( uint id )
     {
         auto it = HolodiskInfo.find( id );
-        return it != HolodiskInfo.end() ? ( *it ).second : NULL;
+        return it != HolodiskInfo.end() ? (*it).second : NULL;
     }
     static void AddPlayerHoloInfo( Critter* cr, uint holo_num, bool send );
     static void ErasePlayerHoloInfo( Critter* cr, uint index, bool send );
@@ -127,7 +127,7 @@ public:
     static bool VerifyTrigger( Map* map, Critter* cr, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uchar dir );
 
     // Time events
-    #define TIME_EVENTS_PER_CYCLE            ( 10 )
+    #define TIME_EVENTS_PER_CYCLE            (10)
     struct TimeEvent
     {
         uint    Num;
@@ -141,7 +141,7 @@ public:
         uint    InProcess;
         bool    EraseMe;
     };
-    typedef vector< TimeEvent* > TimeEventVec;
+    typedef vector<TimeEvent*> TimeEventVec;
     static TimeEventVec TimeEvents;
     static TimeEventVec TimeEventsInProcess;
     static uint         TimeEventsLastNum;
@@ -163,7 +163,7 @@ public:
     static bool LoadScriptFunctionsFile( void* f );
 
     // Any data
-    typedef map< string, UCharVec > AnyDataMap;
+    typedef map<string, UCharVec> AnyDataMap;
     static AnyDataMap AnyData;
     static Mutex      AnyDataLocker;
 
@@ -197,8 +197,8 @@ public:
     static bool PragmaCallbackCrClData( const char* text );
 
     // Text listen
-    #define TEXT_LISTEN_FIRST_STR_MIN_LEN    ( 2 )
-    #define TEXT_LISTEN_FIRST_STR_MAX_LEN    ( 63 )
+    #define TEXT_LISTEN_FIRST_STR_MIN_LEN    (2)
+    #define TEXT_LISTEN_FIRST_STR_MAX_LEN    (63)
     struct TextListen
     {
         int    FuncId;
@@ -207,7 +207,7 @@ public:
         uint   FirstStrLen;
         ushort Parameter;
     };
-    typedef vector< TextListen > TextListenVec;
+    typedef vector<TextListen> TextListenVec;
     static TextListenVec TextListeners;
     static Mutex         TextListenersLocker;
 
@@ -298,7 +298,7 @@ public:
 
     static void Net_Listen( void* );
 
-    #if defined ( USE_LIBEVENT )
+    #if defined (USE_LIBEVENT)
     static event_base* NetIOEventHandler;
     static Thread      NetIOThread;
     static uint        NetIOThreadsCount;
@@ -332,19 +332,19 @@ public:
 
         void                    Clear()
         {
-            memzero( Name, sizeof( Name ) );
-            memzero( PasswordHash, sizeof( PasswordHash ) );
-            memzero( &Data, sizeof( Data ) );
-            memzero( &DataExt, sizeof( DataExt ) );
+            memzero( Name, sizeof(Name) );
+            memzero( PasswordHash, sizeof(PasswordHash) );
+            memzero( &Data, sizeof(Data) );
+            memzero( &DataExt, sizeof(DataExt) );
             TimeEvents.clear();
         }
     };
-    typedef vector< ClientSaveData > ClientSaveDataVec;
+    typedef vector<ClientSaveData> ClientSaveDataVec;
     static ClientSaveDataVec ClientsSaveData;
     static size_t            ClientsSaveDataCount;
 
-    #define WORLD_SAVE_MAX_INDEX           ( 9999 )
-    #define WORLD_SAVE_DATA_BUFFER_SIZE    ( 10000000 )  // 10mb
+    #define WORLD_SAVE_MAX_INDEX           (9999)
+    #define WORLD_SAVE_DATA_BUFFER_SIZE    (10000000)    // 10mb
     static PUCharVec  WorldSaveData;
     static size_t     WorldSaveDataBufCount, WorldSaveDataBufFreeSize;
 
@@ -383,19 +383,19 @@ public:
 
         const char* GetBanLexems() { return Str::FormatBuf( "$banby%s$time%d$reason%s", BannedBy[0] ? BannedBy : "?", Timer::GetTimeDifference( EndTime, BeginTime ) / 60 / 60, BanInfo[0] ? BanInfo : "just for fun" ); }
     };
-    typedef vector< ClientBanned > ClientBannedVec;
+    typedef vector<ClientBanned> ClientBannedVec;
     static ClientBannedVec Banned;
     static Mutex           BannedLocker;
 
     static ClientBanned* GetBanByName( const char* name )
     {
         auto it = std::find( Banned.begin(), Banned.end(), name );
-        return it != Banned.end() ? &( *it ) : NULL;
+        return it != Banned.end() ? &(*it) : NULL;
     }
     static ClientBanned* GetBanByIp( uint ip )
     {
         auto it = std::find( Banned.begin(), Banned.end(), ip );
-        return it != Banned.end() ? &( *it ) : NULL;
+        return it != Banned.end() ? &(*it) : NULL;
     }
     static uint GetBanTime( ClientBanned& ban );
     static void ProcessBans();
@@ -412,12 +412,12 @@ public:
         uint SaveIndex;
         uint UID[5];
         uint UIDEndTick;
-        void Clear()                        { memzero( this, sizeof( ClientData ) ); }
+        void Clear()                        { memzero( this, sizeof(ClientData) ); }
         bool operator==( const char* name ) { return Str::CompareCaseUTF8( name, ClientName ); }
         bool operator==( const uint id )    { return ClientId == id; }
         ClientData() { Clear(); }
     };
-    typedef vector< ClientData > ClientDataVec;
+    typedef vector<ClientData> ClientDataVec;
     static ClientDataVec ClientsData;
     static Mutex         ClientsDataLocker;
     static volatile uint LastClientId;
@@ -426,12 +426,12 @@ public:
     static ClientData* GetClientData( const char* name )
     {
         auto it = std::find( ClientsData.begin(), ClientsData.end(), name );
-        return it != ClientsData.end() ? &( *it ) : NULL;
+        return it != ClientsData.end() ? &(*it) : NULL;
     }
     static ClientData* GetClientData( uint id )
     {
         auto it = std::find( ClientsData.begin(), ClientsData.end(), id );
-        return it != ClientsData.end() ? &( *it ) : NULL;
+        return it != ClientsData.end() ? &(*it) : NULL;
     }
 
     // Statistics

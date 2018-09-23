@@ -2,9 +2,9 @@
 #define __KEYBOARD__
 
 // Keyboard input flags
-#define KIF_NO_SPEC_SYMBOLS    ( 1 )  // Ignore \n \r \t
-#define KIF_ONLY_NUMBERS       ( 2 )  // Only 0..9
-#define KIF_FILE_NAME          ( 4 )  // Ignore \/:*?\"<>|
+#define KIF_NO_SPEC_SYMBOLS    (1)    // Ignore \n \r \t
+#define KIF_ONLY_NUMBERS       (2)    // Only 0..9
+#define KIF_FILE_NAME          (4)    // Ignore \/:*?\"<>|
 
 namespace Keyb
 {

@@ -17,7 +17,7 @@ private:
     CritData    allProtos[MAX_CRIT_PROTOS];
 
 public:
-    CritterManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof( CritterManager ) ); }
+    CritterManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof(CritterManager) ); }
 
     bool Init();
     bool IsInit() { return isActive; }
@@ -37,7 +37,7 @@ private:
     Mutex   crLocker;
 
 public:
-    void SaveCrittersFile( void ( * save_func )( void*, size_t ) );
+    void SaveCrittersFile( void (* save_func)( void*, size_t ) );
     bool LoadCrittersFile( void* f, uint version );
 
     void RunInitScriptCritters();

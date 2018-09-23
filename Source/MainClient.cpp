@@ -28,7 +28,7 @@ int main( int argc, char** argv )
     #endif
 
     // Exceptions
-    #if defined ( FO_D3D )
+    #if defined (FO_D3D)
     CatchExceptions( "ClientDX" );
     #else
     CatchExceptions( "ClientGL" );
@@ -91,10 +91,10 @@ int main( int argc, char** argv )
 
         // Process attributes
         PROCESS_INFORMATION server;
-        memzero( &server, sizeof( server ) );
+        memzero( &server, sizeof(server) );
         STARTUPINFOA        sui;
-        memzero( &sui, sizeof( sui ) );
-        sui.cb = sizeof( sui );
+        memzero( &sui, sizeof(sui) );
+        sui.cb = sizeof(sui);
         HANDLE client_process = OpenProcess( SYNCHRONIZE, TRUE, GetCurrentProcessId() );
         char   command_line[2048];
 

@@ -1,10 +1,10 @@
 #ifndef __ACCESS__
 #define __ACCESS__
 
-#define ACCESS_CLIENT                ( 0 )
-#define ACCESS_TESTER                ( 1 )
-#define ACCESS_MODER                 ( 2 )
-#define ACCESS_ADMIN                 ( 3 )
+#define ACCESS_CLIENT                (0)
+#define ACCESS_TESTER                (1)
+#define ACCESS_MODER                 (2)
+#define ACCESS_ADMIN                 (3)
 
 #ifdef DEV_VERSION
 # define ACCESS_DEFAULT              ACCESS_ADMIN
@@ -12,42 +12,42 @@
 # define ACCESS_DEFAULT              ACCESS_CLIENT
 #endif
 
-#define CMD_EXIT                     ( 1 )
-#define CMD_MYINFO                   ( 2 )
-#define CMD_GAMEINFO                 ( 3 )
-#define CMD_CRITID                   ( 4 )
-#define CMD_MOVECRIT                 ( 5 )
-#define CMD_KILLCRIT                 ( 6 )
-#define CMD_DISCONCRIT               ( 7 )
-#define CMD_TOGLOBAL                 ( 8 )
-#define CMD_RESPAWN                  ( 9 )
-#define CMD_PARAM                    ( 10 )
-#define CMD_GETACCESS                ( 11 )
-#define CMD_ADDITEM                  ( 12 )
-#define CMD_ADDITEM_SELF             ( 14 )
-#define CMD_ADDNPC                   ( 15 )
-#define CMD_ADDLOCATION              ( 16 )
-#define CMD_RELOADSCRIPTS            ( 17 )
-#define CMD_LOADSCRIPT               ( 18 )
-#define CMD_RELOAD_CLIENT_SCRIPTS    ( 19 )
-#define CMD_RUNSCRIPT                ( 20 )
-#define CMD_RELOADLOCATIONS          ( 21 )
-#define CMD_LOADLOCATION             ( 22 )
-#define CMD_RELOADMAPS               ( 23 )
-#define CMD_LOADMAP                  ( 24 )
-#define CMD_REGENMAP                 ( 25 )
-#define CMD_RELOADDIALOGS            ( 26 )
-#define CMD_LOADDIALOG               ( 27 )
-#define CMD_RELOADTEXTS              ( 28 )
-#define CMD_RELOADAI                 ( 29 )
-#define CMD_CHECKVAR                 ( 30 )
-#define CMD_SETVAR                   ( 31 )
-#define CMD_SETTIME                  ( 32 )
-#define CMD_BAN                      ( 33 )
-#define CMD_DELETE_ACCOUNT           ( 34 )
-#define CMD_CHANGE_PASSWORD          ( 35 )
-#define CMD_DROP_UID                 ( 36 )
-#define CMD_LOG                      ( 37 )
+#define CMD_EXIT                     (1)
+#define CMD_MYINFO                   (2)
+#define CMD_GAMEINFO                 (3)
+#define CMD_CRITID                   (4)
+#define CMD_MOVECRIT                 (5)
+#define CMD_KILLCRIT                 (6)
+#define CMD_DISCONCRIT               (7)
+#define CMD_TOGLOBAL                 (8)
+#define CMD_RESPAWN                  (9)
+#define CMD_PARAM                    (10)
+#define CMD_GETACCESS                (11)
+#define CMD_ADDITEM                  (12)
+#define CMD_ADDITEM_SELF             (14)
+#define CMD_ADDNPC                   (15)
+#define CMD_ADDLOCATION              (16)
+#define CMD_RELOADSCRIPTS            (17)
+#define CMD_LOADSCRIPT               (18)
+#define CMD_RELOAD_CLIENT_SCRIPTS    (19)
+#define CMD_RUNSCRIPT                (20)
+#define CMD_RELOADLOCATIONS          (21)
+#define CMD_LOADLOCATION             (22)
+#define CMD_RELOADMAPS               (23)
+#define CMD_LOADMAP                  (24)
+#define CMD_REGENMAP                 (25)
+#define CMD_RELOADDIALOGS            (26)
+#define CMD_LOADDIALOG               (27)
+#define CMD_RELOADTEXTS              (28)
+#define CMD_RELOADAI                 (29)
+#define CMD_CHECKVAR                 (30)
+#define CMD_SETVAR                   (31)
+#define CMD_SETTIME                  (32)
+#define CMD_BAN                      (33)
+#define CMD_DELETE_ACCOUNT           (34)
+#define CMD_CHANGE_PASSWORD          (35)
+#define CMD_DROP_UID                 (36)
+#define CMD_LOG                      (37)
 
 struct CmdDef
 {
@@ -139,7 +139,7 @@ const CmdDef cmdlist[] =
     { "log", CMD_LOG },
 };
 
-inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( const char* ), const char* name )
+inline void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char* ), const char* name )
 {
     char args[MAX_FOTEXT];
     Str::Copy( args, str );
@@ -155,14 +155,14 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
     }
 
     uchar cmd = 0;
-    for( uint cur_cmd = 0; cur_cmd < sizeof( cmdlist ) / sizeof( CmdDef ); cur_cmd++ )
+    for( uint cur_cmd = 0; cur_cmd < sizeof(cmdlist) / sizeof(CmdDef); cur_cmd++ )
         if( Str::CompareCase( cmd_str, cmdlist[cur_cmd].cmd ) )
             cmd = cmdlist[cur_cmd].id;
     if( !cmd )
         return;
 
     uint msg = NETMSG_SEND_COMMAND;
-    uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( cmd );
+    uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(cmd);
 
     switch( cmd )
     {
@@ -188,7 +188,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~gameinfo type>." );
                 break;
             }
-            msg_len += sizeof( type );
+            msg_len += sizeof(type);
 
             buf << msg;
             buf << msg_len;
@@ -224,7 +224,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~move crid hx hy>." );
                 break;
             }
-            msg_len += sizeof( crid ) + sizeof( hex_x ) + sizeof( hex_y );
+            msg_len += sizeof(crid) + sizeof(hex_x) + sizeof(hex_y);
 
             buf << msg;
             buf << msg_len;
@@ -242,7 +242,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~kill crid>." );
                 break;
             }
-            msg_len += sizeof( crid );
+            msg_len += sizeof(crid);
 
             buf << msg;
             buf << msg_len;
@@ -258,7 +258,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~disconnect crid>." );
                 break;
             }
-            msg_len += sizeof( crid );
+            msg_len += sizeof(crid);
 
             buf << msg;
             buf << msg_len;
@@ -281,7 +281,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~respawn crid>." );
                 break;
             }
-            msg_len += sizeof( crid );
+            msg_len += sizeof(crid);
 
             buf << msg;
             buf << msg_len;
@@ -299,7 +299,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~param crid index value>." );
                 break;
             }
-            msg_len += sizeof( uint ) + sizeof( ushort ) + sizeof( int );
+            msg_len += sizeof(uint) + sizeof(ushort) + sizeof(int);
 
             buf << msg;
             buf << msg_len;
@@ -343,7 +343,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~additem hx hy pid count>." );
                 break;
             }
-            msg_len += sizeof( hex_x ) + sizeof( hex_y ) + sizeof( pid ) + sizeof( count );
+            msg_len += sizeof(hex_x) + sizeof(hex_y) + sizeof(pid) + sizeof(count);
 
             buf << msg;
             buf << msg_len;
@@ -363,7 +363,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~additemself pid count>." );
                 break;
             }
-            msg_len += sizeof( pid ) + sizeof( count );
+            msg_len += sizeof(pid) + sizeof(count);
 
             buf << msg;
             buf << msg_len;
@@ -383,7 +383,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~addnpc hx hy dir pid>." );
                 break;
             }
-            msg_len += sizeof( hex_x ) + sizeof( hex_y ) + sizeof( dir ) + sizeof( pid );
+            msg_len += sizeof(hex_x) + sizeof(hex_y) + sizeof(dir) + sizeof(pid);
 
             buf << msg;
             buf << msg_len;
@@ -404,7 +404,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~addloc wx wy pid>." );
                 break;
             }
-            msg_len += sizeof( wx ) + sizeof( wy ) + sizeof( pid );
+            msg_len += sizeof(wx) + sizeof(wy) + sizeof(pid);
 
             buf << msg;
             buf << msg_len;
@@ -457,7 +457,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
             }
             script_name[MAX_SCRIPT_NAME] = 0;
             func_name[MAX_SCRIPT_NAME] = 0;
-            msg_len += MAX_SCRIPT_NAME * 2 + sizeof( uint ) * 3;
+            msg_len += MAX_SCRIPT_NAME * 2 + sizeof(uint) * 3;
 
             buf << msg;
             buf << msg_len;
@@ -484,7 +484,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~loadlocation pid>." );
                 break;
             }
-            msg_len += sizeof( loc_pid );
+            msg_len += sizeof(loc_pid);
 
             buf << msg;
             buf << msg_len;
@@ -507,7 +507,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~loadmap pid>." );
                 break;
             }
-            msg_len += sizeof( map_pid );
+            msg_len += sizeof(map_pid);
 
             buf << msg;
             buf << msg_len;
@@ -539,7 +539,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 break;
             }
             dlg_name[127] = 0;
-            msg_len += 128 + sizeof( dlg_id );
+            msg_len += 128 + sizeof(dlg_id);
 
             buf << msg;
             buf << msg_len;
@@ -574,7 +574,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~checkvar tid_var master_is_npc master_id slave_id full_info>." );
                 break;
             }
-            msg_len += sizeof( tid_var ) + sizeof( master_is_npc ) + sizeof( master_id ) + sizeof( slave_id ) + sizeof( full_info );
+            msg_len += sizeof(tid_var) + sizeof(master_is_npc) + sizeof(master_id) + sizeof(slave_id) + sizeof(full_info);
 
             buf << msg;
             buf << msg_len;
@@ -598,7 +598,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~setvar tid_var master_is_npc master_id slave_id value>." );
                 break;
             }
-            msg_len += sizeof( tid_var ) + sizeof( master_is_npc ) + sizeof( master_id ) + sizeof( slave_id ) + sizeof( value );
+            msg_len += sizeof(tid_var) + sizeof(master_is_npc) + sizeof(master_id) + sizeof(slave_id) + sizeof(value);
 
             buf << msg;
             buf << msg_len;
@@ -624,7 +624,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
                 logcb( "Invalid arguments. Example: <~settime tmul year month day hour minute second>." );
                 break;
             }
-            msg_len += sizeof( multiplier ) + sizeof( year ) + sizeof( month ) + sizeof( day ) + sizeof( hour ) + sizeof( minute ) + sizeof( second );
+            msg_len += sizeof(multiplier) + sizeof(year) + sizeof(month) + sizeof(day) + sizeof(hour) + sizeof(minute) + sizeof(second);
 
             buf << msg;
             buf << msg_len;
@@ -669,7 +669,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void ( *logcb )( c
             params[params_size_utf8 - 1] = 0;
             info[info_size_utf8 - 1] = 0;
 
-            msg_len += name_size_utf8 + params_size_utf8 + info_size_utf8 + sizeof( ban_hours );
+            msg_len += name_size_utf8 + params_size_utf8 + info_size_utf8 + sizeof(ban_hours);
 
             buf << msg;
             buf << msg_len;

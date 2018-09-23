@@ -97,17 +97,17 @@ bool FOClient::Init()
 {
     WriteLog( "Engine initialization...\n" );
 
-    STATIC_ASSERT( sizeof( char ) == 1 );
-    STATIC_ASSERT( sizeof( short ) == 2 );
-    STATIC_ASSERT( sizeof( int ) == 4 );
-    STATIC_ASSERT( sizeof( int64 ) == 8 );
-    STATIC_ASSERT( sizeof( uchar ) == 1 );
-    STATIC_ASSERT( sizeof( ushort ) == 2 );
-    STATIC_ASSERT( sizeof( uint ) == 4 );
-    STATIC_ASSERT( sizeof( uint64 ) == 8 );
-    STATIC_ASSERT( sizeof( bool ) == 1 );
-    STATIC_ASSERT( sizeof( size_t ) == 4 );
-    STATIC_ASSERT( sizeof( void* ) == 4 );
+    STATIC_ASSERT( sizeof(char) == 1 );
+    STATIC_ASSERT( sizeof(short) == 2 );
+    STATIC_ASSERT( sizeof(int) == 4 );
+    STATIC_ASSERT( sizeof(int64) == 8 );
+    STATIC_ASSERT( sizeof(uchar) == 1 );
+    STATIC_ASSERT( sizeof(ushort) == 2 );
+    STATIC_ASSERT( sizeof(uint) == 4 );
+    STATIC_ASSERT( sizeof(uint64) == 8 );
+    STATIC_ASSERT( sizeof(bool) == 1 );
+    STATIC_ASSERT( sizeof(size_t) == 4 );
+    STATIC_ASSERT( sizeof(void*) == 4 );
 
     GET_UID0( UID0 );
     UID_PREPARE_UID4_0;
@@ -119,7 +119,7 @@ bool FOClient::Init()
         # ifdef FO_WINDOWS
         HANDLE h = CreateEvent( NULL, FALSE, FALSE, "_fcsync_" ); // last change 20.09.2018
         if( !h || h == INVALID_HANDLE_VALUE || GetLastError() == ERROR_ALREADY_EXISTS )
-            memset( MulWndArray, 1, sizeof( MulWndArray ) );
+            memset( MulWndArray, 1, sizeof(MulWndArray) );
         # else
         // Todo: Linux
         # endif
@@ -142,7 +142,7 @@ bool FOClient::Init()
             Sprites& tree = Self->HexMngr.GetDrawTree();
             count = tree.Size();
             if( !count ) return NULL;
-            return &( *tree.Begin() );
+            return &(*tree.Begin() );
         }
     };
     GameOpt.GetDrawingSprites = &GetDrawingSprites_::GetDrawingSprites;
@@ -174,9 +174,9 @@ bool FOClient::Init()
             SpriteInfo* si = SprMngr.GetSpriteInfo( sprite_->PSprId ? *sprite_->PSprId : sprite_->SprId );
             if( !si ) return false;
             if( si->Anim3d ) return si->Anim3d->IsIntersect( x, y );
-            int sx = sprite_->ScrX - si->Width / 2 + si->OffsX + GameOpt.ScrOx + ( sprite_->OffsX ? *sprite_->OffsX : 0 );
-            int sy = sprite_->ScrY - si->Height + si->OffsY + GameOpt.ScrOy + ( sprite_->OffsY ? *sprite_->OffsY : 0 );
-            if( !( sprite_ = sprite_->GetIntersected( x - sx, y - sy ) ) ) return false;
+            int sx = sprite_->ScrX - si->Width / 2 + si->OffsX + GameOpt.ScrOx + (sprite_->OffsX ? *sprite_->OffsX : 0);
+            int sy = sprite_->ScrY - si->Height + si->OffsY + GameOpt.ScrOy + (sprite_->OffsY ? *sprite_->OffsY : 0);
+            if( !(sprite_ = sprite_->GetIntersected( x - sx, y - sy ) ) ) return false;
             if( check_egg && SprMngr.CompareHexEgg( sprite_->HexX, sprite_->HexY, sprite_->EggType ) && SprMngr.IsEggTransp( x, y ) ) return false;
             return true;
         }
@@ -221,7 +221,7 @@ bool FOClient::Init()
     FileManager::GetFullPath( cache_name, PT_CACHE, cache_fname );
     Str::Append( cache_fname, ".cache" );
 
-    bool refresh_cache = ( !Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.IsCacheTable( cache_fname ) );
+    bool refresh_cache = (!Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.IsCacheTable( cache_fname ) );
 
     if( !Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.SetCacheTable( cache_fname ) )
     {
@@ -398,7 +398,7 @@ bool FOClient::Init()
         {
             count = *(uint*)protos_count;
             delete[] protos_count;
-            if( count != protos_len / sizeof( ProtoItem ) )
+            if( count != protos_len / sizeof(ProtoItem) )
                 count = 0;
         }
 
@@ -521,14 +521,14 @@ void FOClient::Finish()
 
     for( auto it = IntellectWords.begin(), end = IntellectWords.end(); it != end; ++it )
     {
-        delete[] ( *it ).first;
-        delete[] ( *it ).second;
+        delete[] (*it).first;
+        delete[] (*it).second;
     }
     IntellectWords.clear();
     for( auto it = IntellectSymbols.begin(), end = IntellectSymbols.end(); it != end; ++it )
     {
-        delete[] ( *it ).first;
-        delete[] ( *it ).second;
+        delete[] (*it).first;
+        delete[] (*it).second;
     }
     IntellectSymbols.clear();
     FileManager::EndOfWork();
@@ -565,7 +565,7 @@ void FOClient::AddCritter( CritterCl* cr )
     if( cr->IsChosen() )
         Chosen = cr;
     HexMngr.AddCrit( cr );
-    cr->FadingTick = Timer::GameTick() + FADING_PERIOD - ( fading > Timer::GameTick() ? fading - Timer::GameTick() : 0 );
+    cr->FadingTick = Timer::GameTick() + FADING_PERIOD - (fading > Timer::GameTick() ? fading - Timer::GameTick() : 0);
 }
 
 void FOClient::EraseCritter( uint remid )
@@ -594,11 +594,11 @@ void FOClient::LookBordersPrepare()
         ushort maxhx = HexMngr.GetMaxHexX();
         ushort maxhy = HexMngr.GetMaxHexY();
         bool   seek_start = true;
-        for( int i = 0; i < ( GameOpt.MapHexagonal ? 6 : 4 ); i++ )
+        for( int i = 0; i < (GameOpt.MapHexagonal ? 6 : 4); i++ )
         {
-            int dir = ( GameOpt.MapHexagonal ? ( i + 2 ) % 6 : ( ( i + 1 ) * 2 ) % 8 );
+            int dir = (GameOpt.MapHexagonal ? (i + 2) % 6 : ( (i + 1) * 2 ) % 8);
 
-            for( uint j = 0, jj = ( GameOpt.MapHexagonal ? dist : dist * 2 ); j < jj; j++ )
+            for( uint j = 0, jj = (GameOpt.MapHexagonal ? dist : dist * 2); j < jj; j++ )
             {
                 if( seek_start )
                 {
@@ -619,7 +619,7 @@ void FOClient::LookBordersPrepare()
                 if( FLAG( GameOpt.LookChecks, LOOK_CHECK_DIR ) )
                 {
                     int dir_ = GetFarDir( base_hx, base_hy, hx_, hy_ );
-                    int ii = ( chosen_dir > dir_ ? chosen_dir - dir_ : dir_ - chosen_dir );
+                    int ii = (chosen_dir > dir_ ? chosen_dir - dir_ : dir_ - chosen_dir);
                     if( ii > DIRS_COUNT / 2 )
                         ii = DIRS_COUNT - ii;
                     uint       dist_ = dist - dist * GameOpt.LookDir[ii] / 100;
@@ -685,7 +685,7 @@ int FOClient::MainLoop()
     // FPS counter
     static uint last_call = Timer::FastTick();
     static uint call_counter = 0;
-    if( ( Timer::FastTick() - last_call ) >= 1000 )
+    if( (Timer::FastTick() - last_call) >= 1000 )
     {
         GameOpt.FPS = call_counter;
         call_counter = 0;
@@ -705,7 +705,7 @@ int FOClient::MainLoop()
         if( !pause )
         {
             int main_screen = GetMainScreen();
-            if( ( main_screen != SCREEN_GAME && main_screen != SCREEN_GLOBAL_MAP && main_screen != SCREEN_WAIT ) ||
+            if( (main_screen != SCREEN_GAME && main_screen != SCREEN_GLOBAL_MAP && main_screen != SCREEN_WAIT) ||
                 IsScreenPresent( SCREEN__MENU_OPTION ) )
                 pause = true;
         }
@@ -913,7 +913,7 @@ void FOClient::ScreenFade( uint time, uint from_color, uint to_color, bool push_
         uint last_tick = 0;
         for( auto it = ScreenEffects.begin(); it != ScreenEffects.end(); ++it )
         {
-            ScreenEffect& e = ( *it );
+            ScreenEffect& e = (*it);
             if( e.BeginTick + e.Time > last_tick )
                 last_tick = e.BeginTick + e.Time;
         }
@@ -929,7 +929,7 @@ void FOClient::ScreenQuake( int noise, uint time )
     ScreenOffsY = Random( 0, 1 ) ? noise : -noise;
     ScreenOffsXf = (float)ScreenOffsX;
     ScreenOffsYf = (float)ScreenOffsY;
-    ScreenOffsStep = fabs( ScreenOffsXf ) / ( time / 30 );
+    ScreenOffsStep = fabs( ScreenOffsXf ) / (time / 30);
     GameOpt.ScrOx += ScreenOffsX;
     GameOpt.ScrOy += ScreenOffsY;
     ScreenOffsNextTick = Timer::GameTick() + 30;
@@ -943,7 +943,7 @@ void FOClient::ProcessScreenEffectFading()
 
     for( auto it = ScreenEffects.begin(); it != ScreenEffects.end();)
     {
-        ScreenEffect& e = ( *it );
+        ScreenEffect& e = (*it);
         if( Timer::FastTick() >= e.BeginTick + e.Time )
         {
             it = ScreenEffects.erase( it );
@@ -974,7 +974,7 @@ void FOClient::ProcessScreenEffectFading()
 
 void FOClient::ProcessScreenEffectQuake()
 {
-    if( ( ScreenOffsX || ScreenOffsY ) && Timer::GameTick() >= ScreenOffsNextTick )
+    if( (ScreenOffsX || ScreenOffsY) && Timer::GameTick() >= ScreenOffsNextTick )
     {
         GameOpt.ScrOx -= ScreenOffsX;
         GameOpt.ScrOy -= ScreenOffsY;
@@ -1142,7 +1142,7 @@ void FOClient::ParseKeyboard()
         #ifndef FO_D3D
         if( IsVideoPlayed() )
         {
-            if( IsCanStopVideo() && ( dikdw == DIK_ESCAPE || dikdw == DIK_SPACE || dikdw == DIK_RETURN || dikdw == DIK_NUMPADENTER ) )
+            if( IsCanStopVideo() && (dikdw == DIK_ESCAPE || dikdw == DIK_SPACE || dikdw == DIK_RETURN || dikdw == DIK_NUMPADENTER) )
             {
                 NextVideo();
                 return;
@@ -1413,7 +1413,7 @@ void FOClient::ParseKeyboard()
         }
 
         // Cursor steps
-        if( HexMngr.IsMapLoaded() && ( dikdw == DIK_RCONTROL || dikdw == DIK_LCONTROL || dikup == DIK_RCONTROL || dikup == DIK_LCONTROL ) )
+        if( HexMngr.IsMapLoaded() && (dikdw == DIK_RCONTROL || dikdw == DIK_LCONTROL || dikup == DIK_RCONTROL || dikup == DIK_LCONTROL) )
             HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
 
         // Other by screens
@@ -1490,24 +1490,24 @@ void FOClient::ParseKeyboard()
     }
 }
 
-#define MOUSE_CLICK_LEFT          ( 0 )
-#define MOUSE_CLICK_RIGHT         ( 1 )
-#define MOUSE_CLICK_MIDDLE        ( 2 )
-#define MOUSE_CLICK_WHEEL_UP      ( 3 )
-#define MOUSE_CLICK_WHEEL_DOWN    ( 4 )
-#define MOUSE_CLICK_EXT0          ( 5 )
-#define MOUSE_CLICK_EXT1          ( 6 )
-#define MOUSE_CLICK_EXT2          ( 7 )
-#define MOUSE_CLICK_EXT3          ( 8 )
-#define MOUSE_CLICK_EXT4          ( 9 )
+#define MOUSE_CLICK_LEFT          (0)
+#define MOUSE_CLICK_RIGHT         (1)
+#define MOUSE_CLICK_MIDDLE        (2)
+#define MOUSE_CLICK_WHEEL_UP      (3)
+#define MOUSE_CLICK_WHEEL_DOWN    (4)
+#define MOUSE_CLICK_EXT0          (5)
+#define MOUSE_CLICK_EXT1          (6)
+#define MOUSE_CLICK_EXT2          (7)
+#define MOUSE_CLICK_EXT3          (8)
+#define MOUSE_CLICK_EXT4          (9)
 void FOClient::ParseMouse()
 {
     // Mouse position
     int mx = 0, my = 0;
     Fl::get_mouse( mx, my );
     #ifdef FO_D3D
-    GameOpt.MouseX = mx - ( !GameOpt.FullScreen ? MainWindow->x() : 0 );
-    GameOpt.MouseY = my - ( !GameOpt.FullScreen ? MainWindow->y() : 0 );
+    GameOpt.MouseX = mx - (!GameOpt.FullScreen ? MainWindow->x() : 0);
+    GameOpt.MouseY = my - (!GameOpt.FullScreen ? MainWindow->y() : 0);
     #else
     GameOpt.MouseX = mx - MainWindow->x();
     GameOpt.MouseY = my - MainWindow->y();
@@ -1717,7 +1717,7 @@ void FOClient::ParseMouse()
         // Stop video
         if( IsVideoPlayed() )
         {
-            if( IsCanStopVideo() && ( event == FL_PUSH && ( event_button == FL_LEFT_MOUSE || event_button == FL_RIGHT_MOUSE ) ) )
+            if( IsCanStopVideo() && (event == FL_PUSH && (event_button == FL_LEFT_MOUSE || event_button == FL_RIGHT_MOUSE) ) )
             {
                 NextVideo();
                 return;
@@ -1774,7 +1774,7 @@ void FOClient::ParseMouse()
             if( !script_result && !GameOpt.DisableMouseEvents && !ConsoleActive && GameOpt.MapZooming && GameOpt.SpritesZoomMin != GameOpt.SpritesZoomMax )
             {
                 int screen = GetActiveScreen();
-                if( IsMainScreen( SCREEN_GAME ) && ( screen == SCREEN_NONE || screen == SCREEN__TOWN_VIEW ) )
+                if( IsMainScreen( SCREEN_GAME ) && (screen == SCREEN_NONE || screen == SCREEN__TOWN_VIEW) )
                 {
                     HexMngr.ChangeZoom( 0 );
                     RebuildLookBorders = true;
@@ -2058,7 +2058,7 @@ void FOClient::ParseMouse()
                 switch( GetMainScreen() )
                 {
                     case SCREEN_GAME:
-                        ( IfaceHold == IFACE_NONE ) ? GameLMouseUp() : IntLMouseUp();
+                        (IfaceHold == IFACE_NONE) ? GameLMouseUp() : IntLMouseUp();
                         break;
                     case SCREEN_GLOBAL_MAP:
                         GmapLMouseUp();
@@ -2421,15 +2421,15 @@ void FOClient::ProcessMouseWheel( int data )
             }
             else
             {
-                float scr_x = ( (float)( PipWMonitor.CX() + PipX ) - AutomapScrX ) * AutomapZoom;
-                float scr_y = ( (float)( PipWMonitor.CY() + PipY ) - AutomapScrY ) * AutomapZoom;
+                float scr_x = ( (float)(PipWMonitor.CX() + PipX) - AutomapScrX ) * AutomapZoom;
+                float scr_y = ( (float)(PipWMonitor.CY() + PipY) - AutomapScrY ) * AutomapZoom;
                 if( data > 0 )
                     AutomapZoom -= 0.1f;
                 else
                     AutomapZoom += 0.1f;
                 AutomapZoom = CLAMP( AutomapZoom, 0.1f, 10.0f );
-                AutomapScrX = (float)( PipWMonitor.CX() + PipX ) - scr_x / AutomapZoom;
-                AutomapScrY = (float)( PipWMonitor.CY() + PipY ) - scr_y / AutomapZoom;
+                AutomapScrX = (float)(PipWMonitor.CX() + PipX) - scr_x / AutomapZoom;
+                AutomapScrY = (float)(PipWMonitor.CY() + PipY) - scr_y / AutomapZoom;
             }
         }
     }
@@ -2438,8 +2438,8 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
     else if( screen == SCREEN__SAVE_LOAD )
     {
-        int ox = ( SaveLoadLoginScreen ? SaveLoadCX : SaveLoadX );
-        int oy = ( SaveLoadLoginScreen ? SaveLoadCY : SaveLoadY );
+        int ox = (SaveLoadLoginScreen ? SaveLoadCX : SaveLoadX);
+        int oy = (SaveLoadLoginScreen ? SaveLoadCY : SaveLoadY);
 
         if( IsCurInRect( SaveLoadSlots, ox, oy ) )
         {
@@ -2450,7 +2450,7 @@ void FOClient::ProcessMouseWheel( int data )
             }
             else
             {
-                int max = (int)SaveLoadDataSlots.size() - SaveLoadSlotsMax + ( SaveLoadSave ? 1 : 0 );
+                int max = (int)SaveLoadDataSlots.size() - SaveLoadSlotsMax + (SaveLoadSave ? 1 : 0);
                 if( SaveLoadSlotScroll < max )
                     SaveLoadSlotScroll++;
             }
@@ -2512,7 +2512,7 @@ bool FOClient::FillSockAddr( sockaddr_in& saddr, const char* host, ushort port )
 {
     saddr.sin_family = AF_INET;
     saddr.sin_port = htons( port );
-    if( ( saddr.sin_addr.s_addr = inet_addr( host ) ) == uint( -1 ) )
+    if( (saddr.sin_addr.s_addr = inet_addr( host ) ) == uint( -1 ) )
     {
         hostent* h = gethostbyname( host );
         if( !h )
@@ -2521,7 +2521,7 @@ bool FOClient::FillSockAddr( sockaddr_in& saddr, const char* host, ushort port )
             return false;
         }
 
-        memcpy( &saddr.sin_addr, h->h_addr, sizeof( in_addr ) );
+        memcpy( &saddr.sin_addr, h->h_addr, sizeof(in_addr) );
     }
     return true;
 }
@@ -2537,9 +2537,9 @@ bool FOClient::NetConnect()
     Bout.SetEncryptKey( 0 );
 
     #ifdef FO_WINDOWS
-    if( ( Sock = WSASocket( AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0 ) ) == INVALID_SOCKET )
+    if( (Sock = WSASocket( AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0 ) ) == INVALID_SOCKET )
     #else
-    if( ( Sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == INVALID_SOCKET )
+    if( (Sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == INVALID_SOCKET )
     #endif
     {
         WriteLog( "Create socket error<%s>.\n", GetLastSocketError() );
@@ -2551,7 +2551,7 @@ bool FOClient::NetConnect()
     if( GameOpt.DisableTcpNagle )
     {
         int optval = 1;
-        if( setsockopt( Sock, IPPROTO_TCP, TCP_NODELAY, (char*)&optval, sizeof( optval ) ) )
+        if( setsockopt( Sock, IPPROTO_TCP, TCP_NODELAY, (char*)&optval, sizeof(optval) ) )
             WriteLog( "Can't set TCP_NODELAY (disable Nagle) to socket, error<%s>.\n", WSAGetLastError() );
     }
     #endif
@@ -2559,7 +2559,7 @@ bool FOClient::NetConnect()
     // Direct connect
     if( !GameOpt.ProxyType || Singleplayer )
     {
-        if( connect( Sock, (sockaddr*)&SockAddr, sizeof( sockaddr_in ) ) )
+        if( connect( Sock, (sockaddr*)&SockAddr, sizeof(sockaddr_in) ) )
         {
             WriteLog( "Can't connect to game server, error<%s>.\n", GetLastSocketError() );
             return false;
@@ -2568,7 +2568,7 @@ bool FOClient::NetConnect()
     // Proxy connect
     else
     {
-        if( connect( Sock, (sockaddr*)&ProxyAddr, sizeof( sockaddr_in ) ) )
+        if( connect( Sock, (sockaddr*)&ProxyAddr, sizeof(sockaddr_in) ) )
         {
             WriteLog( "Can't connect to proxy server, error<%s>.\n", GetLastSocketError() );
             return false;
@@ -2895,7 +2895,7 @@ int FOClient::NetInput( bool unpack )
     uint pos = len;
     while( pos == ComLen )
     {
-        uint  newcomlen = ( ComLen << 1 );
+        uint  newcomlen = (ComLen << 1);
         char* combuf = new char[newcomlen];
         memcpy( combuf, ComBuf, ComLen );
         SAFEDELA( ComBuf );
@@ -2978,8 +2978,8 @@ void FOClient::NetProcess()
         if( GameOpt.DebugNet )
         {
             static uint count = 0;
-            AddMess( FOMB_GAME, Str::FormatBuf( "%04u) Input net message<%u>.", count, ( msg >> 8 ) & 0xFF ) );
-            WriteLog( "%04u) Input net message<%u>.\n", count, ( msg >> 8 ) & 0xFF );
+            AddMess( FOMB_GAME, Str::FormatBuf( "%04u) Input net message<%u>.", count, (msg >> 8) & 0xFF ) );
+            WriteLog( "%04u) Input net message<%u>.\n", count, (msg >> 8) & 0xFF );
             count++;
         }
 
@@ -3217,9 +3217,9 @@ void FOClient::NetProcess()
 
             default:
                 if( GameOpt.DebugNet )
-                    AddMess( FOMB_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", ( msg >> 8 ) & 0xFF ) );
+                    AddMess( FOMB_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", (msg >> 8) & 0xFF ) );
                 WriteLog( "Invalid msg<%u>. Seek valid.\n", msg );
-                Bin.MoveReadPos( sizeof( uint ) );
+                Bin.MoveReadPos( sizeof(uint) );
                 Bin.SeekValidMsg();
                 return;
         }
@@ -3249,7 +3249,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     Bout.SetEncryptKey( *UID4 + 12234 );
     Bin.SetEncryptKey( *UID4 + 12234 );
 
-    Bout.Push( name_, sizeof( name_ ) );
+    Bout.Push( name_, sizeof(name_) );
     Bout << uid1;
     uid4 ^= uid1 * Random( 0, 432157 ) + *UID3;                                                                                                 // UID1
     char pass_hash[PASS_HASH_SIZE];
@@ -3301,7 +3301,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
         if( newcr->ParamsReg[i] && CritterCl::ParamsRegEnabled[i] )
             count++;
 
-    uint msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( ushort ) + UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof( count ) + ( sizeof( ushort ) + sizeof( int ) ) * count;
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(ushort) + UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(count) + (sizeof(ushort) + sizeof(int) ) * count;
 
     Bout << NETMSG_CREATE_CLIENT;
     Bout << msg_len;
@@ -3340,9 +3340,9 @@ void FOClient::Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_dat
 
     uint   msg = NETMSG_SINGLEPLAYER_SAVE_LOAD;
     ushort fname_len = Str::Length( fname );
-    uint   msg_len = sizeof( msg ) + sizeof( save ) + sizeof( fname_len ) + fname_len;
+    uint   msg_len = sizeof(msg) + sizeof(save) + sizeof(fname_len) + fname_len;
     if( save )
-        msg_len += sizeof( uint ) + (uint)pic_data->size();
+        msg_len += sizeof(uint) + (uint)pic_data->size();
 
     Bout << msg;
     Bout << msg_len;
@@ -3353,7 +3353,7 @@ void FOClient::Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_dat
     {
         Bout << (uint)pic_data->size();
         if( pic_data->size() )
-            Bout.Push( (char*)&( *pic_data )[0], (uint)pic_data->size() );
+            Bout.Push( (char*)&(*pic_data)[0], (uint)pic_data->size() );
     }
 
     WriteLog( "complete.\n" );
@@ -3393,7 +3393,7 @@ void FOClient::Net_SendText( const char* send_str, uchar how_say )
     }
 
     ushort len = Str::Length( str );
-    uint   msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( how_say ) + sizeof( len ) + len;
+    uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(how_say) + sizeof(len) + len;
 
     Bout << NETMSG_SEND_TEXT;
     Bout << msg_len;
@@ -3434,8 +3434,8 @@ void FOClient::Net_SendMove( UCharVec steps )
         if( i + 1 >= steps.size() )
             break;                           // Send next steps
 
-        SETFLAG( move_params, steps[i + 1] << ( i * MOVE_PARAM_STEP_BITS ) );
-        SETFLAG( move_params, MOVE_PARAM_STEP_ALLOW << ( i * MOVE_PARAM_STEP_BITS ) );
+        SETFLAG( move_params, steps[i + 1] << (i * MOVE_PARAM_STEP_BITS) );
+        SETFLAG( move_params, MOVE_PARAM_STEP_ALLOW << (i * MOVE_PARAM_STEP_BITS) );
     }
 
     if( Chosen->IsRunning )
@@ -3443,7 +3443,7 @@ void FOClient::Net_SendMove( UCharVec steps )
     if( steps.empty() )
         SETFLAG( move_params, MOVE_PARAM_STEP_DISALLOW );                // Inform about stopping
 
-    Bout << ( Chosen->IsRunning ? NETMSG_SEND_MOVE_RUN : NETMSG_SEND_MOVE_WALK );
+    Bout << (Chosen->IsRunning ? NETMSG_SEND_MOVE_RUN : NETMSG_SEND_MOVE_WALK);
     Bout << move_params;
     Bout << Chosen->HexX;
     Bout << Chosen->HexY;
@@ -3465,7 +3465,7 @@ void FOClient::Net_SendUseSkill( ushort skill, ItemHex* item )
 
     if( item->IsScenOrGrid() )
     {
-        uint hex = ( item->GetHexX() << 16 ) | item->GetHexY();
+        uint hex = (item->GetHexX() << 16) | item->GetHexY();
 
         Bout << (uchar)TARGET_SCENERY;
         Bout << hex;
@@ -3581,8 +3581,8 @@ void FOClient::Net_SendBarter( uint npc_id, ItemVec& cont_sale, ItemVec& cont_bu
 {
     ushort sale_count = (ushort)cont_sale.size();
     ushort buy_count = (ushort)cont_buy.size();
-    uint   msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( sale_count ) + sizeof( buy_count ) +
-                     ( sizeof( uint ) + sizeof( uint ) ) * sale_count + ( sizeof( uint ) + sizeof( uint ) ) * buy_count;
+    uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(sale_count) + sizeof(buy_count) +
+                     (sizeof(uint) + sizeof(uint) ) * sale_count + (sizeof(uint) + sizeof(uint) ) * buy_count;
 
     Bout << NETMSG_SEND_BARTER;
     Bout << msg_len;
@@ -3649,7 +3649,7 @@ void FOClient::Net_SendLevelUp( ushort perk_up )
     for( uint i = 0; i < SKILL_COUNT; i++ )
         if( ChaSkillUp[i] )
             count++;
-    uint msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( count ) + sizeof( ushort ) * 2 * count + sizeof( perk_up );
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(count) + sizeof(ushort) * 2 * count + sizeof(perk_up);
 
     Bout << NETMSG_SEND_LEVELUP;
     Bout << msg_len;
@@ -3676,7 +3676,7 @@ void FOClient::Net_SendLevelUp( ushort perk_up )
 void FOClient::Net_SendCraftAsk( UIntVec numbers )
 {
     ushort count = (ushort)numbers.size();
-    uint   msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( count ) + sizeof( uint ) * count;
+    uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(count) + sizeof(uint) * count;
     Bout << NETMSG_CRAFT_ASK;
     Bout << msg_len;
     Bout << count;
@@ -3708,7 +3708,7 @@ void FOClient::Net_SendPlayersBarter( uchar barter, uint param, uint param_ext )
 void FOClient::Net_SendScreenAnswer( uint answer_i, const char* answer_s )
 {
     char answer_s_buf[MAX_SAY_NPC_TEXT + 1];
-    memzero( answer_s_buf, sizeof( answer_s_buf ) );
+    memzero( answer_s_buf, sizeof(answer_s_buf) );
     Str::Copy( answer_s_buf, MAX_SAY_NPC_TEXT + 1, answer_s );
 
     Bout << NETMSG_SEND_SCREEN_ANSWER;
@@ -3737,7 +3737,7 @@ void FOClient::Net_SendSetUserHoloStr( Item* holodisk, const char* title, const 
         return;
     }
 
-    uint msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( title_len ) + sizeof( text_len ) + title_len + text_len;
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(title_len) + sizeof(text_len) + title_len + text_len;
     Bout << NETMSG_SEND_SET_USER_HOLO_STR;
     Bout << msg_len;
     Bout << holodisk->GetId();
@@ -3768,10 +3768,10 @@ void FOClient::Net_SendCombat( uchar type, int val )
 void FOClient::Net_SendRunScript( bool unsafe, const char* func_name, int p0, int p1, int p2, const char* p3, UIntVec& p4 )
 {
     ushort func_name_len = (ushort)Str::Length( func_name );
-    ushort p3len = ( p3 ? (ushort)Str::Length( p3 ) : 0 );
+    ushort p3len = (p3 ? (ushort)Str::Length( p3 ) : 0);
     ushort p4size = (ushort)p4.size();
-    uint   msg_len = sizeof( uint ) + sizeof( msg_len ) + sizeof( unsafe ) + sizeof( func_name_len ) + func_name_len +
-                     sizeof( p0 ) + sizeof( p1 ) + sizeof( p2 ) + sizeof( p3len ) + p3len + sizeof( p4size ) + p4size * sizeof( uint );
+    uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(unsafe) + sizeof(func_name_len) + func_name_len +
+                     sizeof(p0) + sizeof(p1) + sizeof(p2) + sizeof(p3len) + p3len + sizeof(p4size) + p4size * sizeof(uint);
 
     Bout << NETMSG_SEND_RUN_SERVER_SCRIPT;
     Bout << msg_len;
@@ -3786,7 +3786,7 @@ void FOClient::Net_SendRunScript( bool unsafe, const char* func_name, int p0, in
         Bout.Push( p3, p3len );
     Bout << p4size;
     if( p4size )
-        Bout.Push( (char*)&p4[0], p4size * sizeof( uint ) );
+        Bout.Push( (char*)&p4[0], p4size * sizeof(uint) );
 }
 
 void FOClient::Net_SendKarmaVoting( uint crid, bool val_up )
@@ -3864,13 +3864,13 @@ void FOClient::Net_OnAddCritter( bool is_npc )
     char cl_name[UTF8_BUF_SIZE( MAX_NAME )];
     if( !is_npc )
     {
-        Bin.Pop( cl_name, sizeof( cl_name ) );
-        cl_name[sizeof( cl_name ) - 1] = 0;
+        Bin.Pop( cl_name, sizeof(cl_name) );
+        cl_name[sizeof(cl_name) - 1] = 0;
     }
 
     // Parameters
     int    params[MAX_PARAMS];
-    memzero( params, sizeof( params ) );
+    memzero( params, sizeof(params) );
     ushort count, index;
     Bin >> count;
     for( uint i = 0, j = min( count, ushort( MAX_PARAMS ) ); i < j; i++ )
@@ -3886,7 +3886,7 @@ void FOClient::Net_OnAddCritter( bool is_npc )
 
     if( !crid )
         WriteLogF( _FUNC_, " - CritterCl id is zero.\n" );
-    else if( HexMngr.IsMapLoaded() && ( hx >= HexMngr.GetMaxHexX() || hy >= HexMngr.GetMaxHexY() || dir >= DIRS_COUNT ) )
+    else if( HexMngr.IsMapLoaded() && (hx >= HexMngr.GetMaxHexX() || hy >= HexMngr.GetMaxHexY() || dir >= DIRS_COUNT) )
         WriteLogF( _FUNC_, " - Invalid positions hx<%u>, hy<%u>, dir<%u>.\n", hx, hy, dir );
     else
     {
@@ -3904,7 +3904,7 @@ void FOClient::Net_OnAddCritter( bool is_npc )
         cr->Anim2Dead = anim2dead;
         cr->Flags = flags;
         cr->Multihex = multihex;
-        memcpy( cr->Params, params, sizeof( params ) );
+        memcpy( cr->Params, params, sizeof(params) );
 
         if( is_npc )
         {
@@ -4142,7 +4142,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     if( how_say != SAY_RADIO )
         cr = GetCritter( crid );
 
-    string crit_name = ( cr ? cr->GetName() : "?" );
+    string crit_name = (cr ? cr->GetName() : "?");
 
     // CritterCl on head text
     if( fstr_cr && cr )
@@ -4171,7 +4171,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
             AddMess( mess_type, FmtGameText( fstr_mb, crit_name.c_str(), fstr ) );
         }
 
-        if( IsScreenPlayersBarter() && Chosen && ( crid == BarterOpponentId || crid == Chosen->GetId() ) )
+        if( IsScreenPlayersBarter() && Chosen && (crid == BarterOpponentId || crid == Chosen->GetId() ) )
         {
             if( how_say == SAY_NETMSG || how_say == SAY_RADIO )
                 BarterText += FmtGameText( fstr_mb, fstr );
@@ -4186,7 +4186,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     // Dialog text
     bool is_dialog = IsScreenPresent( SCREEN__DIALOG );
     bool is_barter = IsScreenPresent( SCREEN__BARTER );
-    if( ( how_say == SAY_DIALOG || how_say == SAY_APPEND ) && ( is_dialog || is_barter ) )
+    if( (how_say == SAY_DIALOG || how_say == SAY_APPEND) && (is_dialog || is_barter) )
     {
         CritterCl* npc = GetCritter( DlgNpcId );
         FormatTags( fstr, MAX_FOTEXT, Chosen, npc, "" );
@@ -4289,7 +4289,7 @@ void FOClient::OnMapText( const char* str, ushort hx, ushort hy, uint color, ush
     MapText t;
     t.HexX = hx;
     t.HexY = hy;
-    t.Color = ( color ? color : COLOR_TEXT );
+    t.Color = (color ? color : COLOR_TEXT);
     t.Fade = false;
     t.StartTick = Timer::GameTick();
     t.Tick = text_delay;
@@ -4455,12 +4455,12 @@ void FOClient::Net_OnCritterMove()
             cr->MoveSteps.push_back( PAIR( new_hx, new_hy ) );
         for( int i = 0, j = cr->CurMoveStep + 1; i < MOVE_PARAM_STEP_COUNT; i++, j++ )
         {
-            int  step = ( move_params >> ( i * MOVE_PARAM_STEP_BITS ) ) & ( MOVE_PARAM_STEP_DIR | MOVE_PARAM_STEP_ALLOW | MOVE_PARAM_STEP_DISALLOW );
+            int  step = (move_params >> (i * MOVE_PARAM_STEP_BITS) ) & (MOVE_PARAM_STEP_DIR | MOVE_PARAM_STEP_ALLOW | MOVE_PARAM_STEP_DISALLOW);
             int  dir = step & MOVE_PARAM_STEP_DIR;
-            bool disallow = ( !FLAG( step, MOVE_PARAM_STEP_ALLOW ) || FLAG( step, MOVE_PARAM_STEP_DISALLOW ) );
+            bool disallow = (!FLAG( step, MOVE_PARAM_STEP_ALLOW ) || FLAG( step, MOVE_PARAM_STEP_DISALLOW ) );
             if( disallow )
             {
-                if( j <= 0 && ( cr->GetHexX() != new_hx || cr->GetHexY() != new_hy ) )
+                if( j <= 0 && (cr->GetHexX() != new_hx || cr->GetHexY() != new_hy) )
                 {
                     HexMngr.TransitCritter( cr, new_hx, new_hy, true, true );
                     cr->CurMoveStep = -1;
@@ -4504,7 +4504,7 @@ void FOClient::Net_OnSomeItem()
     Bin >> item_id;
     Bin >> item_pid;
     Bin >> slot;
-    Bin.Pop( (char*)&data, sizeof( data ) );
+    Bin.Pop( (char*)&data, sizeof(data) );
 
     ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
     if( !proto_item )
@@ -4577,11 +4577,11 @@ void FOClient::Net_OnCritterMoveItem()
     Bin >> is_item;
 
     // Slot items
-    UCharVec                 slots_data_slot;
-    UIntVec                  slots_data_id;
-    UShortVec                slots_data_pid;
-    vector< Item::ItemData > slots_data_data;
-    uchar                    slots_data_count;
+    UCharVec               slots_data_slot;
+    UIntVec                slots_data_id;
+    UShortVec              slots_data_pid;
+    vector<Item::ItemData> slots_data_data;
+    uchar                  slots_data_count;
     Bin >> slots_data_count;
     for( uchar i = 0; i < slots_data_count; i++ )
     {
@@ -4592,7 +4592,7 @@ void FOClient::Net_OnCritterMoveItem()
         Bin >> slot;
         Bin >> id;
         Bin >> pid;
-        Bin.Pop( (char*)&data, sizeof( data ) );
+        Bin.Pop( (char*)&data, sizeof(data) );
         slots_data_slot.push_back( slot );
         slots_data_id.push_back( id );
         slots_data_pid.push_back( pid );
@@ -4650,10 +4650,10 @@ void FOClient::Net_OnCritterItemData()
     uint           crid;
     uchar          slot;
     Item::ItemData data;
-    memzero( &data, sizeof( data ) );
+    memzero( &data, sizeof(data) );
     Bin >> crid;
     Bin >> slot;
-    Bin.Pop( (char*)&data, sizeof( data ) );
+    Bin.Pop( (char*)&data, sizeof(data) );
 
     CritterCl* cr = GetCritter( crid );
     if( !cr )
@@ -4887,14 +4887,14 @@ void FOClient::Net_OnChosenParams()
 
     if( !Chosen )
     {
-        char buf[NETMSG_ALL_PARAMS_SIZE - sizeof( uint )];
-        Bin.Pop( buf, NETMSG_ALL_PARAMS_SIZE - sizeof( uint ) );
+        char buf[NETMSG_ALL_PARAMS_SIZE - sizeof(uint)];
+        Bin.Pop( buf, NETMSG_ALL_PARAMS_SIZE - sizeof(uint) );
         WriteLog( "chosen not created, skip.\n" );
         return;
     }
 
     // Params
-    Bin.Pop( (char*)Chosen->Params, sizeof( Chosen->Params ) );
+    Bin.Pop( (char*)Chosen->Params, sizeof(Chosen->Params) );
 
     // Process
     if( Chosen->GetParam( TO_BATTLE ) )
@@ -5026,7 +5026,7 @@ void FOClient::Net_OnChosenParam()
             CritMap crits = HexMngr.GetCritters();
             for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
             {
-                CritterCl* cr = ( *it ).second;
+                CritterCl* cr = (*it).second;
                 if( cr != Chosen )
                     EraseCritter( cr->GetId() );
             }
@@ -5041,7 +5041,7 @@ void FOClient::Net_OnChosenParam()
         break;
         case OTHER_TELEPORT:
         {
-            ushort hx = ( value >> 16 ) & 0xFFFF;
+            ushort hx = (value >> 16) & 0xFFFF;
             ushort hy = value & 0xFFFF;
             if( hx < HexMngr.GetMaxHexX() && hy < HexMngr.GetMaxHexY() )
             {
@@ -5114,11 +5114,11 @@ void FOClient::Net_OnChosenAddItem()
     {
         WriteLogF( _FUNC_, " - Can't create item, pid<%u>.\n", pid );
         Item::ItemData dummy;
-        Bin.Pop( (char*)&dummy, sizeof( dummy ) );
+        Bin.Pop( (char*)&dummy, sizeof(dummy) );
         return;
     }
 
-    Bin.Pop( (char*)&item->Data, sizeof( item->Data ) );
+    Bin.Pop( (char*)&item->Data, sizeof(item->Data) );
     item->Accessory = ITEM_ACCESSORY_CRITTER;
     item->AccCritter.Slot = slot;
     if( item != Chosen->ItemSlotMain || !item->IsWeapon() )
@@ -5133,7 +5133,7 @@ void FOClient::Net_OnChosenAddItem()
 
     if( slot == SLOT_HAND1 || prev_slot == SLOT_HAND1 )
         RebuildLookBorders = true;
-    if( item->LightGetHash() != prev_light_hash && ( slot != SLOT_INV || prev_slot != SLOT_INV ) )
+    if( item->LightGetHash() != prev_light_hash && (slot != SLOT_INV || prev_slot != SLOT_INV) )
         HexMngr.RebuildLight();
     if( item->IsHidden() )
         Chosen->EraseItem( item, true );
@@ -5183,7 +5183,7 @@ void FOClient::Net_OnAddItemOnMap()
     Bin >> item_x;
     Bin >> item_y;
     Bin >> is_added;
-    Bin.Pop( (char*)&data, sizeof( data ) );
+    Bin.Pop( (char*)&data, sizeof(data) );
 
     if( HexMngr.IsMapLoaded() )
     {
@@ -5219,10 +5219,10 @@ void FOClient::Net_OnChangeItemOnMap()
     uint           item_id;
     Item::ItemData data;
     Bin >> item_id;
-    Bin.Pop( (char*)&data, sizeof( data ) );
+    Bin.Pop( (char*)&data, sizeof(data) );
 
     Item* item = HexMngr.GetItemById( item_id );
-    bool  is_raked = ( item && item->IsRaked() );
+    bool  is_raked = (item && item->IsRaked() );
 
     HexMngr.ChangeItem( item_id, data );
 
@@ -5284,12 +5284,12 @@ void FOClient::Net_OnCombatResult()
     UIntVec data_vec;
     Bin >> msg_len;
     Bin >> data_count;
-    if( data_count > GameOpt.FloodSize / sizeof( uint ) )
+    if( data_count > GameOpt.FloodSize / sizeof(uint) )
         return;                                               // Insurance
     if( data_count )
     {
         data_vec.resize( data_count );
-        Bin.Pop( (char*)&data_vec[0], data_count * sizeof( uint ) );
+        Bin.Pop( (char*)&data_vec[0], data_count * sizeof(uint) );
     }
 
     CHECK_IN_BUFF_ERROR;
@@ -5482,7 +5482,7 @@ void FOClient::Net_OnChosenTalk()
     // Find critter
     DlgIsNpc = is_npc;
     DlgNpcId = talk_id;
-    CritterCl* npc = ( is_npc ? GetCritter( talk_id ) : NULL );
+    CritterCl* npc = (is_npc ? GetCritter( talk_id ) : NULL);
 
     // Avatar
     DlgAvatarPic = NULL;
@@ -5616,15 +5616,15 @@ void FOClient::Net_OnGameInfo()
     Bin >> rain;
     Bin >> turn_based;
     Bin >> no_log_out;
-    Bin.Pop( (char*)day_time, sizeof( int ) * 4 );
-    Bin.Pop( (char*)day_color, sizeof( uchar ) * 12 );
+    Bin.Pop( (char*)day_time, sizeof(int) * 4 );
+    Bin.Pop( (char*)day_color, sizeof(uchar) * 12 );
 
     CHECK_IN_BUFF_ERROR;
 
     DateTime dt = { GameOpt.YearStart, 1, 0, 1, 0, 0, 0, 0 };
     uint64   start_ft;
     Timer::DateTimeToFullTime( dt, start_ft );
-    GameOpt.YearStartFTHi = ( start_ft >> 32 ) & 0xFFFFFFFF;
+    GameOpt.YearStartFTHi = (start_ft >> 32) & 0xFFFFFFFF;
     GameOpt.YearStartFTLo = start_ft & 0xFFFFFFFF;
     GameOpt.FullSecond = Timer::GetFullSecond( GameOpt.Year, GameOpt.Month, GameOpt.Day, GameOpt.Hour, GameOpt.Minute, GameOpt.Second );
     GameOpt.FullSecondStart = GameOpt.FullSecond;
@@ -5769,7 +5769,7 @@ void FOClient::Net_OnMap()
         Bin >> count_tiles;
         if( count_tiles )
         {
-            tiles_len = count_tiles * sizeof( ProtoMap::Tile );
+            tiles_len = count_tiles * sizeof(ProtoMap::Tile);
             tiles_data = new char[tiles_len];
             Bin.Pop( tiles_data, tiles_len );
         }
@@ -5783,7 +5783,7 @@ void FOClient::Net_OnMap()
         Bin >> count_walls;
         if( count_walls )
         {
-            walls_len = count_walls * sizeof( SceneryCl );
+            walls_len = count_walls * sizeof(SceneryCl);
             walls_data = new char[walls_len];
             Bin.Pop( walls_data, walls_len );
         }
@@ -5797,7 +5797,7 @@ void FOClient::Net_OnMap()
         Bin >> count_scen;
         if( count_scen )
         {
-            scen_len = count_scen * sizeof( SceneryCl );
+            scen_len = count_scen * sizeof(SceneryCl);
             scen_data = new char[scen_len];
             Bin.Pop( scen_data, scen_len );
         }
@@ -5881,9 +5881,9 @@ void FOClient::Net_OnMap()
         fm.SetBEUInt( 0 );
         fm.SetBEUInt( 0 );
 
-        fm.SetBEUInt( tiles_len / sizeof( ProtoMap::Tile ) );
-        fm.SetBEUInt( walls_len / sizeof( SceneryCl ) );
-        fm.SetBEUInt( scen_len / sizeof( SceneryCl ) );
+        fm.SetBEUInt( tiles_len / sizeof(ProtoMap::Tile) );
+        fm.SetBEUInt( walls_len / sizeof(SceneryCl) );
+        fm.SetBEUInt( scen_len / sizeof(SceneryCl) );
         fm.SetBEUInt( tiles_len );
         fm.SetBEUInt( walls_len );
         fm.SetBEUInt( scen_len );
@@ -6013,8 +6013,8 @@ void FOClient::Net_OnGlobalInfo()
             GmapGroupRealOldY = GmapGroupRealCurY;
             GmapGroupCurX = GmapGroupRealCurX;
             GmapGroupCurY = GmapGroupRealCurY;
-            GmapOffsetX = ( GmapWMap[2] - GmapWMap[0] ) / 2 + GmapWMap[0] - GmapGroupCurX;
-            GmapOffsetY = ( GmapWMap[3] - GmapWMap[1] ) / 2 + GmapWMap[1] - GmapGroupCurY;
+            GmapOffsetX = (GmapWMap[2] - GmapWMap[0]) / 2 + GmapWMap[0] - GmapGroupCurX;
+            GmapOffsetY = (GmapWMap[3] - GmapWMap[1]) / 2 + GmapWMap[1] - GmapGroupCurY;
             GmapTrace.clear();
 
             int w = GM_MAXX;
@@ -6069,7 +6069,7 @@ void FOClient::Net_OnGlobalEntrances()
     uint  loc_id;
     uchar count;
     bool  entrances[0x100];
-    memzero( entrances, sizeof( entrances ) );
+    memzero( entrances, sizeof(entrances) );
     Bin >> msg_len;
     Bin >> loc_id;
     Bin >> count;
@@ -6084,7 +6084,7 @@ void FOClient::Net_OnGlobalEntrances()
     CHECK_IN_BUFF_ERROR;
 
     GmapShowEntrancesLocId = loc_id;
-    memcpy( GmapShowEntrances, entrances, sizeof( entrances ) );
+    memcpy( GmapShowEntrances, entrances, sizeof(entrances) );
 }
 
 void FOClient::Net_OnContainerInfo()
@@ -6098,7 +6098,7 @@ void FOClient::Net_OnContainerInfo()
     Bin >> msg_len;
     Bin >> transfer_type;
 
-    bool open_screen = ( FLAG( transfer_type, 0x80 ) ? true : false );
+    bool open_screen = (FLAG( transfer_type, 0x80 ) ? true : false);
     UNSETFLAG( transfer_type, 0x80 );
 
     if( transfer_type == TRANSFER_CLOSE )
@@ -6123,7 +6123,7 @@ void FOClient::Net_OnContainerInfo()
         Item::ItemData data;
         Bin >> item_id;
         Bin >> item_pid;
-        Bin.Pop( (char*)&data, sizeof( data ) );
+        Bin.Pop( (char*)&data, sizeof(data) );
 
         ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
         if( item_id && proto_item )
@@ -6177,7 +6177,7 @@ void FOClient::Net_OnContainerInfo()
     else
     {
         PupTransferType = transfer_type;
-        PupContPid = ( transfer_type == TRANSFER_HEX_CONT_UP || transfer_type == TRANSFER_HEX_CONT_DOWN || transfer_type == TRANSFER_FAR_CONT ? cont_pid : 0 );
+        PupContPid = (transfer_type == TRANSFER_HEX_CONT_UP || transfer_type == TRANSFER_HEX_CONT_DOWN || transfer_type == TRANSFER_FAR_CONT ? cont_pid : 0);
         PupCount = items_count;
         PupCont2Init.clear();
         PupCont2Init = item_container;
@@ -6276,7 +6276,7 @@ void FOClient::Net_OnPlayersBarter()
             BarterText += "\n";
             DlgMainTextCur = 0;
             DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
-            param_ext = ( FLAG( param_ext, 2 ) ? true : false );
+            param_ext = (FLAG( param_ext, 2 ) ? true : false);
         }
         case BARTER_REFRESH:
         {
@@ -6291,7 +6291,7 @@ void FOClient::Net_OnPlayersBarter()
 
             BarterIsPlayers = true;
             BarterOpponentId = param;
-            BarterOpponentHide = ( param_ext != 0 );
+            BarterOpponentHide = (param_ext != 0);
             BarterOffer = false;
             BarterOpponentOffer = false;
             BarterCont2Init.clear();
@@ -6314,7 +6314,7 @@ void FOClient::Net_OnPlayersBarter()
             ShowScreen( SCREEN__DIALOGBOX );
             DlgboxType = DIALOGBOX_BARTER;
             PBarterPlayerId = param;
-            BarterOpponentHide = ( param_ext != 0 );
+            BarterOpponentHide = (param_ext != 0);
             PBarterHide = BarterOpponentHide;
             Str::Copy( DlgboxText, FmtGameText( STR_BARTER_DIALOGBOX, cr->GetName(), !BarterOpponentHide ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) ) );
             DlgboxWait = Timer::GameTick() + 20000;
@@ -6335,14 +6335,14 @@ void FOClient::Net_OnPlayersBarter()
 
             BarterOffer = false;
             BarterOpponentOffer = false;
-            bool     is_hide = ( barter == BARTER_SET_OPPONENT && BarterOpponentHide );
-            ItemVec& cont = ( barter == BARTER_SET_SELF ? InvContInit : BarterCont2Init );
-            ItemVec& cont_o = ( barter == BARTER_SET_SELF ? BarterCont1oInit : BarterCont2oInit );
+            bool     is_hide = (barter == BARTER_SET_OPPONENT && BarterOpponentHide);
+            ItemVec& cont = (barter == BARTER_SET_SELF ? InvContInit : BarterCont2Init);
+            ItemVec& cont_o = (barter == BARTER_SET_SELF ? BarterCont1oInit : BarterCont2oInit);
 
             if( !is_hide )
             {
                 auto it = std::find( cont.begin(), cont.end(), param );
-                if( it == cont.end() || param_ext > ( *it ).GetCount() )
+                if( it == cont.end() || param_ext > (*it).GetCount() )
                 {
                     Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
                     break;
@@ -6353,9 +6353,9 @@ void FOClient::Net_OnPlayersBarter()
                 {
                     cont_o.push_back( citem );
                     it_ = cont_o.begin() + cont_o.size() - 1;
-                    ( *it_ ).Count_Set( 0 );
+                    (*it_).Count_Set( 0 );
                 }
-                ( *it_ ).Count_Add( param_ext );
+                (*it_).Count_Add( param_ext );
                 citem.Count_Sub( param_ext );
                 if( !citem.GetCount() || !citem.IsStackable() )
                     cont.erase( it );
@@ -6380,14 +6380,14 @@ void FOClient::Net_OnPlayersBarter()
 
             BarterOffer = false;
             BarterOpponentOffer = false;
-            bool     is_hide = ( barter == BARTER_UNSET_OPPONENT && BarterOpponentHide );
-            ItemVec& cont = ( barter == BARTER_UNSET_SELF ? InvContInit : BarterCont2Init );
-            ItemVec& cont_o = ( barter == BARTER_UNSET_SELF ? BarterCont1oInit : BarterCont2oInit );
+            bool     is_hide = (barter == BARTER_UNSET_OPPONENT && BarterOpponentHide);
+            ItemVec& cont = (barter == BARTER_UNSET_SELF ? InvContInit : BarterCont2Init);
+            ItemVec& cont_o = (barter == BARTER_UNSET_SELF ? BarterCont1oInit : BarterCont2oInit);
 
             if( !is_hide )
             {
                 auto it = std::find( cont_o.begin(), cont_o.end(), param );
-                if( it == cont_o.end() || param_ext > ( *it ).GetCount() )
+                if( it == cont_o.end() || param_ext > (*it).GetCount() )
                 {
                     Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
                     break;
@@ -6398,9 +6398,9 @@ void FOClient::Net_OnPlayersBarter()
                 {
                     cont.push_back( citem );
                     it_ = cont.begin() + cont.size() - 1;
-                    ( *it_ ).Count_Set( 0 );
+                    (*it_).Count_Set( 0 );
                 }
-                ( *it_ ).Count_Add( param_ext );
+                (*it_).Count_Add( param_ext );
                 citem.Count_Sub( param_ext );
                 if( !citem.GetCount() || !citem.IsStackable() )
                     cont_o.erase( it );
@@ -6432,9 +6432,9 @@ void FOClient::Net_OnPlayersBarter()
             }
 
             if( !param_ext )
-                BarterOffer = ( param != 0 );
+                BarterOffer = (param != 0);
             else
-                BarterOpponentOffer = ( param != 0 );
+                BarterOpponentOffer = (param != 0);
 
             if( BarterOpponentOffer && !BarterOffer )
             {
@@ -6462,7 +6462,7 @@ void FOClient::Net_OnPlayersBarterSetHide()
     Bin >> id;
     Bin >> pid;
     Bin >> count;
-    Bin.Pop( (char*)&data, sizeof( data ) );
+    Bin.Pop( (char*)&data, sizeof(data) );
 
     if( !IsScreenPlayersBarter() )
     {
@@ -6482,7 +6482,7 @@ void FOClient::Net_OnPlayersBarterSetHide()
     if( !citem )
     {
         Item item;
-        memzero( &item, sizeof( item ) );
+        memzero( &item, sizeof(item) );
         item.Init( proto_item );
         item.Id = id;
         item.Count_Set( count );
@@ -6619,7 +6619,7 @@ void FOClient::Net_OnRunClientScript()
         if( p4 )
         {
             p4->Resize( p4size );
-            Bin.Pop( (char*)p4->At( 0 ), p4size * sizeof( uint ) );
+            Bin.Pop( (char*)p4->At( 0 ), p4size * sizeof(uint) );
         }
     }
 
@@ -6718,7 +6718,7 @@ void FOClient::Net_OnItemLexems()
     if( item )
         item->Lexems = lexems;
     // Find in inventory
-    item = ( Chosen ? Chosen->GetItem( item_id ) : NULL );
+    item = (Chosen ? Chosen->GetItem( item_id ) : NULL);
     if( item )
         item->Lexems = lexems;
     // Find in containers
@@ -6760,7 +6760,7 @@ void FOClient::Net_OnMsgData()
     Bin >> lang;
     Bin >> num_msg;
     Bin >> data_hash;
-    data.resize( msg_len - ( sizeof( uint ) + sizeof( msg_len ) + sizeof( lang ) + sizeof( num_msg ) + sizeof( data_hash ) ) );
+    data.resize( msg_len - (sizeof(uint) + sizeof(msg_len) + sizeof(lang) + sizeof(num_msg) + sizeof(data_hash) ) );
     Bin.Pop( (char*)&data[0], (uint)data.size() );
 
     CHECK_IN_BUFF_ERROR;
@@ -6844,12 +6844,12 @@ void FOClient::Net_OnProtoItemData()
     Bin >> msg_len;
     Bin >> type;
     Bin >> data_hash;
-    data.resize( ( msg_len - sizeof( uint ) - sizeof( msg_len ) - sizeof( type ) - sizeof( data_hash ) ) / sizeof( ProtoItem ) );
-    Bin.Pop( (char*)&data[0], (uint)data.size() * sizeof( ProtoItem ) );
+    data.resize( (msg_len - sizeof(uint) - sizeof(msg_len) - sizeof(type) - sizeof(data_hash) ) / sizeof(ProtoItem) );
+    Bin.Pop( (char*)&data[0], (uint)data.size() * sizeof(ProtoItem) );
 
     CHECK_IN_BUFF_ERROR;
 
-    if( data_hash != Crypt.Crc32( (uchar*)&data[0], (uint)data.size() * sizeof( ProtoItem ) ) )
+    if( data_hash != Crypt.Crc32( (uchar*)&data[0], (uint)data.size() * sizeof(ProtoItem) ) )
     {
         WriteLogF( _FUNC_, " - Hash error.\n" );
         return;
@@ -6860,7 +6860,7 @@ void FOClient::Net_OnProtoItemData()
 
     ProtoItemVec proto_items;
     ItemMngr.GetCopyAllProtos( proto_items );
-    uint         len = (uint)proto_items.size() * sizeof( ProtoItem );
+    uint         len = (uint)proto_items.size() * sizeof(ProtoItem);
     uchar*       proto_data = Crypt.Compress( (uchar*)&proto_items[0], len );
     if( !proto_data )
     {
@@ -6871,7 +6871,7 @@ void FOClient::Net_OnProtoItemData()
     delete[] proto_data;
 
     uint count = (uint)proto_items.size();
-    Crypt.SetCache( "item_protos_count", (uchar*)&count, sizeof( count ) );
+    Crypt.SetCache( "item_protos_count", (uchar*)&count, sizeof(count) );
 
     // Refresh craft names
     MrFixit.GenerateNames( *MsgGame, *MsgItem );
@@ -6895,7 +6895,7 @@ void FOClient::Net_OnQuest( bool many )
         {
             UIntVec quests;
             quests.resize( q_count );
-            Bin.Pop( (char*)&quests[0], q_count * sizeof( uint ) );
+            Bin.Pop( (char*)&quests[0], q_count * sizeof(uint) );
             for( uint i = 0; i < quests.size(); ++i )
                 QuestMngr.OnQuest( quests[i] );
         }
@@ -6927,9 +6927,9 @@ void FOClient::Net_OnHoloInfo()
     Bin >> count;
 
     if( clear )
-        memzero( HoloInfo, sizeof( HoloInfo ) );
+        memzero( HoloInfo, sizeof(HoloInfo) );
     if( count )
-        Bin.Pop( (char*)&HoloInfo[offset], count * sizeof( uint ) );
+        Bin.Pop( (char*)&HoloInfo[offset], count * sizeof(uint) );
 }
 
 void FOClient::Net_OnScores()
@@ -7165,7 +7165,7 @@ bool FOClient::RegCheckData( CritterCl* newcr )
 
         arr->Resize( MAX_PARAMS );
         for( int i = 0; i < MAX_PARAMS; i++ )
-            ( *(int*)arr->At( i ) ) = newcr->ParamsReg[i];
+            (*(int*)arr->At( i ) ) = newcr->ParamsReg[i];
 
         bool result = false;
         Script::SetArgObject( name );
@@ -7182,7 +7182,7 @@ bool FOClient::RegCheckData( CritterCl* newcr )
 
         if( arr->GetSize() == MAX_PARAMS )
             for( int i = 0; i < MAX_PARAMS; i++ )
-                newcr->ParamsReg[i] = ( *(int*)arr->At( i ) );
+                newcr->ParamsReg[i] = (*(int*)arr->At( i ) );
         arr->Release();
     }
 
@@ -7196,7 +7196,7 @@ void FOClient::SetDayTime( bool refresh )
 
     static uint old_color = -1;
     uint        color = GetColorDay( HexMngr.GetMapDayTime(), HexMngr.GetMapDayColor(), HexMngr.GetMapTime(), NULL );
-    color = COLOR_GAME_RGB( ( color >> 16 ) & 0xFF, ( color >> 8 ) & 0xFF, color & 0xFF );
+    color = COLOR_GAME_RGB( (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF );
 
     if( refresh )
         old_color = -1;
@@ -7212,7 +7212,7 @@ Item* FOClient::GetTargetContItem()
     static Item inv_slot;
     #define TRY_SEARCH_IN_CONT( cont )                                                        \
         do { auto it = std::find( cont.begin(), cont.end(), item_id ); if( it != cont.end() ) \
-                 return &( *it );                                                             \
+                 return &(*it);                                                               \
         }                                                                                     \
         while( 0 )
     #define TRY_SEARCH_IN_SLOT( target_item )    do { if( target_item->GetId() == item_id ) { inv_slot = *target_item; return &inv_slot; } } while( 0 )
@@ -7316,7 +7316,7 @@ void FOClient::EraseBackAction()
 
 bool FOClient::IsAction( uint type_action )
 {
-    return ChosenAction.size() && ( *ChosenAction.begin() ).Type == type_action;
+    return ChosenAction.size() && (*ChosenAction.begin() ).Type == type_action;
 }
 
 void FOClient::ChosenChangeSlot()
@@ -7351,7 +7351,7 @@ void FOClient::CrittersProcess()
 /************************************************************************/
     for( auto it = HexMngr.GetCritters().begin(); it != HexMngr.GetCritters().end();)
     {
-        CritterCl* crit = ( *it ).second;
+        CritterCl* crit = (*it).second;
         ++it;
 
         crit->Process();
@@ -7442,7 +7442,7 @@ void FOClient::CrittersProcess()
     if( ChosenAction.empty() )
         return;
 
-    if( !Chosen->IsLife() || ( IsTurnBased && !IsTurnBasedMyTurn() ) )
+    if( !Chosen->IsLife() || (IsTurnBased && !IsTurnBasedMyTurn() ) )
     {
         ChosenAction.clear();
         Chosen->AnimateStay();
@@ -7450,17 +7450,17 @@ void FOClient::CrittersProcess()
     }
 
     ActionEvent act = ChosenAction[0];
-    #define CHECK_NEED_AP( need_ap )                                                                                                                                                                                                                                                                                                     \
-        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                      \
-              break; if( Chosen->GetParam( ST_ACTION_POINTS ) < (int)( need_ap ) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } if( Chosen->GetParam( ST_CURRENT_AP ) < (int)( need_ap ) ) { if( IsTurnBased ) { if( Chosen->GetParam( ST_CURRENT_AP ) )                                               \
-                                                                                                                                                                                                                                                       AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } else \
-                                                                                                                                                                                                                                   return; }                                                                                             \
+    #define CHECK_NEED_AP( need_ap )                                                                                                                                                                                                                                                                                                 \
+        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                  \
+              break; if( Chosen->GetParam( ST_ACTION_POINTS ) < (int)(need_ap) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } if( Chosen->GetParam( ST_CURRENT_AP ) < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetParam( ST_CURRENT_AP ) )                                               \
+                                                                                                                                                                                                                                                   AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } else \
+                                                                                                                                                                                                                               return; }                                                                                             \
         }
-    #define CHECK_NEED_REAL_AP( need_ap )                                                                                                                                                                                                                                                                                                                                 \
-        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                                                       \
-              break; if( Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER < (int)( need_ap ) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, ( need_ap ) / AP_DIVIDER ) ); break; } if( Chosen->GetRealAp() < (int)( need_ap ) ) { if( IsTurnBased ) { if( Chosen->GetRealAp() )                                                                              \
-                                                                                                                                                                                                                                                                       AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, ( need_ap ) / AP_DIVIDER ) ); break; } else \
-                                                                                                                                                                                                                                                   return; } }
+    #define CHECK_NEED_REAL_AP( need_ap )                                                                                                                                                                                                                                                                                                                         \
+        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                                               \
+              break; if( Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER < (int)(need_ap) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } if( Chosen->GetRealAp() < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetRealAp() )                                                                            \
+                                                                                                                                                                                                                                                                 AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } else \
+                                                                                                                                                                                                                                             return; } }
 
     // Force end move
     if( act.Type != CHOSEN_MOVE && act.Type != CHOSEN_MOVE_TO_CRIT && MoveDirs.size() )
@@ -7526,9 +7526,9 @@ void FOClient::CrittersProcess()
                 is_run = false;
             else if( Chosen->IsDmgLeg() || Chosen->IsOverweight() )
                 is_run = false;
-            else if( wait_click && Timer::GameTick() - start_tick < ( GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
+            else if( wait_click && Timer::GameTick() - start_tick < (GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
                 return;
-            else if( is_run && !IsTurnBased && Chosen->GetApCostCritterMove( is_run ) > 0 && Chosen->GetRealAp() < ( GameOpt.RunModMul * Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) / GameOpt.RunModDiv + GameOpt.RunModAdd )
+            else if( is_run && !IsTurnBased && Chosen->GetApCostCritterMove( is_run ) > 0 && Chosen->GetRealAp() < (GameOpt.RunModMul * Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER) / GameOpt.RunModDiv + GameOpt.RunModAdd )
                 is_run = false;
 
             if( is_run && !CritType::IsCanRun( Chosen->GetCrType() ) )
@@ -7536,7 +7536,7 @@ void FOClient::CrittersProcess()
             if( is_run && Chosen->IsRawParam( MODE_NO_RUN ) )
                 is_run = false;
 
-            if( !is_run && ( !CritType::IsCanWalk( Chosen->GetCrType() ) || Chosen->IsRawParam( MODE_NO_WALK ) ) )
+            if( !is_run && (!CritType::IsCanWalk( Chosen->GetCrType() ) || Chosen->IsRawParam( MODE_NO_WALK ) ) )
             {
                 AddMess( FOMB_GAME, MsgGame->GetStr( STR_CRITTER_CANT_MOVE ) );
                 SetAction( CHOSEN_NONE );
@@ -7544,7 +7544,7 @@ void FOClient::CrittersProcess()
             }
 
             ap_cost_real = Chosen->GetApCostCritterMove( is_run );
-            if( !( IsTurnBasedMyTurn() && Chosen->GetAllAp() >= ap_cost_real / AP_DIVIDER ) )
+            if( !(IsTurnBasedMyTurn() && Chosen->GetAllAp() >= ap_cost_real / AP_DIVIDER) )
                 CHECK_NEED_REAL_AP( ap_cost_real );
             Chosen->IsRunning = is_run;
 
@@ -7602,7 +7602,7 @@ void FOClient::CrittersProcess()
             }
 
 label_EndMove:
-            if( IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() / ( ap_cost_real / AP_DIVIDER ) > Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) )
+            if( IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() / (ap_cost_real / AP_DIVIDER) > Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) )
                 MoveDirs.resize( Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) );
             if( !IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() > Chosen->GetRealAp() / ap_cost_real )
                 MoveDirs.resize( Chosen->GetRealAp() / ap_cost_real );
@@ -7672,7 +7672,7 @@ label_EndMove:
         {
             int cw = act.Param[0];
 
-            if( !HexMngr.IsMapLoaded() || ( IsTurnBased && !IsTurnBasedMyTurn() ) )
+            if( !HexMngr.IsMapLoaded() || (IsTurnBased && !IsTurnBasedMyTurn() ) )
                 break;
 
             int dir = Chosen->GetDir();
@@ -7700,14 +7700,14 @@ label_EndMove:
             uint   target_id = act.Param[3];
             uchar  rate = act.Param[4];
             uint   param = act.Param[5];
-            uchar  use = ( rate & 0xF );
-            uchar  aim = ( rate >> 4 );
+            uchar  use = (rate & 0xF);
+            uchar  aim = (rate >> 4);
 
             // Find item
-            Item* item = ( item_id ? Chosen->GetItem( item_id ) : Chosen->DefItemSlotHand );
+            Item* item = (item_id ? Chosen->GetItem( item_id ) : Chosen->DefItemSlotHand);
             if( !item )
                 break;
-            bool is_main_item = ( item == Chosen->ItemSlotMain );
+            bool is_main_item = (item == Chosen->ItemSlotMain);
 
             // Check proto item
             if( !item_pid )
@@ -7758,10 +7758,10 @@ label_EndMove:
                 break;
 
             // Parse use
-            bool is_attack = ( target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < MAX_USES );
-            bool is_reload = ( target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
-            bool is_self = ( target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM );
-            if( !is_attack && !is_reload && ( IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
+            bool is_attack = (target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < MAX_USES);
+            bool is_reload = (target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
+            bool is_self = (target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM);
+            if( !is_attack && !is_reload && (IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
                 SetCurMode( CUR_DEFAULT );
 
             // Aim overriding
@@ -7876,7 +7876,7 @@ label_EndMove:
                     hy = target_item->GetHexY();
                 }
 
-                uint max_dist = ( is_attack ? Chosen->GetAttackDist() : Chosen->GetUseDist() ) + ( target_cr ? target_cr->GetMultihex() : 0 );
+                uint max_dist = (is_attack ? Chosen->GetAttackDist() : Chosen->GetUseDist() ) + (target_cr ? target_cr->GetMultihex() : 0);
 
                 // Target find
                 bool need_move = false;
@@ -7892,7 +7892,7 @@ label_EndMove:
                     {
                         if( IsTurnBased )
                             break;
-                        bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                        bool is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                         if( target_cr )
                             SetAction( CHOSEN_MOVE_TO_CRIT, target_cr->GetId(), 0, is_run, max_dist );
                         else
@@ -7919,7 +7919,7 @@ label_EndMove:
             CHECK_NEED_AP( ap_cost );
 
             if( target_item && target_item->IsScenOrGrid() )
-                Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, ( target_item->GetHexX() << 16 ) | ( target_item->GetHexY() & 0xFFFF ), target_item->GetProtoId(), param );
+                Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, (target_item->GetHexX() << 16) | (target_item->GetHexY() & 0xFFFF), target_item->GetProtoId(), param );
             else
                 Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, target_id, 0, param );  // Item or critter
 
@@ -7945,8 +7945,8 @@ label_EndMove:
             uint  item_id = act.Param[0];
             uint  item_count = act.Param[1];
             int   to_slot = act.Param[2];
-            bool  is_barter_cont = ( act.Param[3] != 0 );
-            bool  is_second_try = ( act.Param[4] != 0 );
+            bool  is_barter_cont = (act.Param[3] != 0);
+            bool  is_second_try = (act.Param[4] != 0);
 
             Item* item = Chosen->GetItem( item_id );
             if( !item )
@@ -7958,7 +7958,7 @@ label_EndMove:
             if( to_slot != SLOT_GROUND && !CritterCl::SlotEnabled[to_slot] )
                 break;
 
-            Item* item_swap = ( ( to_slot != SLOT_INV && to_slot != SLOT_GROUND ) ? Chosen->GetItemSlot( to_slot ) : NULL );
+            Item* item_swap = ( (to_slot != SLOT_INV && to_slot != SLOT_GROUND) ? Chosen->GetItemSlot( to_slot ) : NULL );
             bool  allow = false;
             if( Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
             {
@@ -8011,8 +8011,8 @@ label_EndMove:
             }
 
             // Action points
-            bool is_castling = ( ( from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2 ) || ( from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1 ) );
-            uint ap_cost = ( is_castling ? 0 : Chosen->GetApCostMoveItemInventory() );
+            bool is_castling = ( (from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2) || (from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1) );
+            uint ap_cost = (is_castling ? 0 : Chosen->GetApCostMoveItemInventory() );
             if( to_slot == SLOT_GROUND )
                 ap_cost = Chosen->GetApCostDropItem();
             CHECK_NEED_AP( ap_cost );
@@ -8078,7 +8078,7 @@ label_EndMove:
             // Light
             if( to_slot == SLOT_HAND1 || from_slot == SLOT_HAND1 )
                 RebuildLookBorders = true;
-            if( item->IsLight() && ( to_slot == SLOT_INV || ( from_slot == SLOT_INV && to_slot != SLOT_GROUND ) ) )
+            if( item->IsLight() && (to_slot == SLOT_INV || (from_slot == SLOT_INV && to_slot != SLOT_GROUND) ) )
                 HexMngr.RebuildLight();
 
             // Notice server
@@ -8104,19 +8104,19 @@ label_EndMove:
 
             if( cont == IFACE_PUP_CONT2 )
             {
-                if( Chosen->GetFreeWeight() < (int)( item->GetWeight1st() * count ) )
+                if( Chosen->GetFreeWeight() < (int)(item->GetWeight1st() * count) )
                 {
                     AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT ) );
                     break;
                 }
-                if( Chosen->GetFreeVolume() < (int)( item->GetVolume1st() * count ) )
+                if( Chosen->GetFreeVolume() < (int)(item->GetVolume1st() * count) )
                 {
                     AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERVOLUME ) );
                     break;
                 }
             }
 
-            Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + ( cont == IFACE_PUP_CONT2 ? 0 : 2 ), item );
+            Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + (cont == IFACE_PUP_CONT2 ? 0 : 2), item );
             PupTransfer( item_id, cont, count );
             Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
         }
@@ -8150,7 +8150,7 @@ label_EndMove:
             ushort     skill = act.Param[0];
             uint       crid = act.Param[1];
 
-            CritterCl* cr = ( crid ? GetCritter( crid ) : Chosen );
+            CritterCl* cr = (crid ? GetCritter( crid ) : Chosen);
             if( !cr )
                 break;
 
@@ -8174,7 +8174,7 @@ label_EndMove:
                         {
                             if( IsTurnBased )
                                 break;
-                            bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                            bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                             uint   cut_dist = Chosen->GetUseDist() + cr->GetMultihex();
                             SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, cut_dist );
                             ushort hx = cr->GetHexX(), hy = cr->GetHexY();
@@ -8201,7 +8201,7 @@ label_EndMove:
             }
 
             CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), NULL );
+            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), NULL );
             Net_SendUseSkill( skill, cr );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
@@ -8252,7 +8252,7 @@ label_EndMove:
                     {
                         if( IsTurnBased )
                             break;
-                        bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                        bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                         SetAction( CHOSEN_MOVE, item->GetHexX(), item->GetHexY(), is_run, Chosen->GetUseDist(), 0 );
                         ushort hx = item->GetHexX(), hy = item->GetHexY();
                         if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
@@ -8274,7 +8274,7 @@ label_EndMove:
                 Net_SendUseSkill( skill, item );
             }
 
-            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item_action );
+            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item_action );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
         }
@@ -8298,7 +8298,7 @@ label_EndMove:
             {
                 if( IsTurnBased )
                     break;
-                bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                bool is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
                     AddActionBack( act );
@@ -8315,7 +8315,7 @@ label_EndMove:
                 Net_SendDir();
             }
 
-            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item );
+            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item );
             Net_SendUseSkill( skill, item );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             // WaitPing();
@@ -8347,7 +8347,7 @@ label_EndMove:
             {
                 if( IsTurnBased )
                     break;
-                bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, talk_distance );
                 ushort hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, talk_distance ) )
@@ -8391,7 +8391,7 @@ label_EndMove:
             {
                 if( IsTurnBased )
                     break;
-                bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                bool is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
                     AddActionBack( act );
@@ -8418,7 +8418,7 @@ label_EndMove:
         case CHOSEN_PICK_CRIT:
         {
             uint crid = act.Param[0];
-            bool is_loot = ( act.Param[1] == 0 );
+            bool is_loot = (act.Param[1] == 0);
 
             if( !HexMngr.IsMapLoaded() )
                 break;
@@ -8427,9 +8427,9 @@ label_EndMove:
             if( !cr )
                 break;
 
-            if( is_loot && ( !cr->IsDead() || cr->IsRawParam( MODE_NO_LOOT ) ) )
+            if( is_loot && (!cr->IsDead() || cr->IsRawParam( MODE_NO_LOOT ) ) )
                 break;
-            if( !is_loot && ( !cr->IsLife() || cr->IsRawParam( MODE_NO_PUSH ) ) )
+            if( !is_loot && (!cr->IsLife() || cr->IsRawParam( MODE_NO_PUSH ) ) )
                 break;
 
             uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
@@ -8438,7 +8438,7 @@ label_EndMove:
             {
                 if( IsTurnBased )
                     break;
-                bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, pick_dist );
                 ushort hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, pick_dist ) )
@@ -8480,7 +8480,7 @@ label_EndMove:
                 break;
             const char* old_title = GetHoloText( STR_HOLO_INFO_NAME_( holo->HolodiskGetNum() ) );
             const char* old_text = GetHoloText( STR_HOLO_INFO_DESC_( holo->HolodiskGetNum() ) );
-            if( holo && IboxTitle.length() && IboxText.length() && ( IboxTitle != old_title || IboxText != old_text ) )
+            if( holo && IboxTitle.length() && IboxText.length() && (IboxTitle != old_title || IboxText != old_text) )
             {
                 Net_SendSetUserHoloStr( holo, IboxTitle.c_str(), IboxText.c_str() );
                 Chosen->Action( ACTION_USE_ITEM, 0, holo );
@@ -8827,7 +8827,7 @@ void FOClient::ParseIntellectWords( char* words, PCharPairVec& text )
             continue;
         }
 
-        if( *words == ' ' && *( words + 1 ) == ' ' && parse_in )
+        if( *words == ' ' && *(words + 1) == ' ' && parse_in )
         {
             if( !Str::Length( in ) )
             {
@@ -8852,7 +8852,7 @@ auto FOClient::FindIntellectWord( const char* word, PCharPairVec& text, Randomiz
     auto end = text.end();
     for( ; it != end; ++it )
     {
-        if( Str::CompareCaseUTF8( word, ( *it ).first ) )
+        if( Str::CompareCaseUTF8( word, (*it).first ) )
             break;
     }
 
@@ -8863,7 +8863,7 @@ auto FOClient::FindIntellectWord( const char* word, PCharPairVec& text, Randomiz
         int  cnt = 0;
         for( ; it != end; ++it )
         {
-            if( Str::CompareCaseUTF8( ( *it_ ).first, ( *it ).first ) )
+            if( Str::CompareCaseUTF8( (*it_).first, (*it).first ) )
                 cnt++;
             else
                 break;
@@ -8912,7 +8912,7 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
             break;
     }
 
-    Randomizer rnd( ( intellect << 16 ) | intellect );
+    Randomizer rnd( (intellect << 16) | intellect );
 
     char       word[1024] = { 0 };
     while( true )
@@ -8921,7 +8921,7 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
         {
             uint length;
             Str::DecodeUTF8( str, &length );
-            if( length == 1 && !( ( *str >= 'a' && *str <= 'z' ) || ( *str >= 'A' && *str <= 'Z' ) ) )
+            if( length == 1 && !( (*str >= 'a' && *str <= 'z') || (*str >= 'A' && *str <= 'Z') ) )
                 break;
             strncat( word, str, length );
             str += length;
@@ -8934,8 +8934,8 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
             if( it != IntellectWords.end() && rnd.Random( 1, 100 ) <= word_proc )
             {
                 Str::EraseInterval( str - len, len );
-                Str::Insert( str - len, ( *it ).second );
-                str = str - len + Str::Length( ( *it ).second );
+                Str::Insert( str - len, (*it).second );
+                str = str - len + Str::Length( (*it).second );
             }
             else
             {
@@ -8952,10 +8952,10 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
                     it = FindIntellectWord( word, IntellectSymbols, rnd );
                     if( it != IntellectSymbols.end() )
                     {
-                        uint f_len = Str::Length( ( *it ).first );
-                        uint s_len = Str::Length( ( *it ).second );
+                        uint f_len = Str::Length( (*it).first );
+                        uint s_len = Str::Length( (*it).second );
                         Str::EraseInterval( s, f_len );
-                        Str::Insert( s, ( *it ).second );
+                        Str::Insert( s, (*it).second );
                         str -= f_len;
                         str += s_len;
                     }
@@ -9302,7 +9302,7 @@ void FOClient::RenderVideo()
     double render_time = Timer::AccurateTick();
 
     // Calculate next frame
-    double cur_second = ( render_time - CurVideo->StartTime + CurVideo->AverageRenderTime ) / 1000.0;
+    double cur_second = (render_time - CurVideo->StartTime + CurVideo->AverageRenderTime) / 1000.0;
     uint   new_frame = (uint)floor( cur_second * (double)CurVideo->VideoInfo.fps_numerator / (double)CurVideo->VideoInfo.fps_denominator + 0.5 );
     uint   skip_frames = new_frame - CurVideo->CurFrame;
     if( !skip_frames )
@@ -9389,14 +9389,14 @@ void FOClient::RenderVideo()
         {
             // Get YUV
             th_ycbcr_buffer& cbuf = CurVideo->ColorBuffer;
-            uchar            cy = *( cbuf[0].data + y * cbuf[0].stride + x );
-            uchar            cu = *( cbuf[1].data + y / dj * cbuf[1].stride + x / di );
-            uchar            cv = *( cbuf[2].data + y / dj * cbuf[2].stride + x / di );
+            uchar            cy = *(cbuf[0].data + y * cbuf[0].stride + x);
+            uchar            cu = *(cbuf[1].data + y / dj * cbuf[1].stride + x / di);
+            uchar            cv = *(cbuf[2].data + y / dj * cbuf[2].stride + x / di);
 
             // Convert YUV to RGB
-            float cr = cy + 1.402f * ( cv - 127 );
-            float cg = cy - 0.344f * ( cu - 127 ) - 0.714f * ( cv - 127 );
-            float cb = cy + 1.722f * ( cu - 127 );
+            float cr = cy + 1.402f * (cv - 127);
+            float cg = cy - 0.344f * (cu - 127) - 0.714f * (cv - 127);
+            float cb = cy + 1.722f * (cu - 127);
 
             // Draw
             glColor3f( cr / 255.0f, cg / 255.0f, cb / 255.0f );
@@ -9414,8 +9414,8 @@ void FOClient::RenderVideo()
     float k = min( mw / w, mh / h );
     w = (uint)( (float)w * k );
     h = (uint)( (float)h * k );
-    int x = ( MODE_WIDTH - w ) / 2;
-    int y = ( MODE_HEIGHT - h ) / 2;
+    int x = (MODE_WIDTH - w) / 2;
+    int y = (MODE_HEIGHT - h) / 2;
     if( SprMngr.BeginScene( COLOR_XRGB( 0, 0, 0 ) ) )
     {
         Rect r = Rect( x, y, x + w, y + h );
@@ -9426,7 +9426,7 @@ void FOClient::RenderVideo()
     // Store render time
     render_time = Timer::AccurateTick() - render_time;
     if( CurVideo->AverageRenderTime > 0.0 )
-        CurVideo->AverageRenderTime = ( CurVideo->AverageRenderTime + render_time ) / 2.0;
+        CurVideo->AverageRenderTime = (CurVideo->AverageRenderTime + render_time) / 2.0;
     else
         CurVideo->AverageRenderTime = render_time;
 
@@ -9637,7 +9637,7 @@ void FOClient::AnimFree( int res_type )
         if( anim && anim->ResType == res_type )
         {
             delete anim;
-            ( *it ) = NULL;
+            (*it) = NULL;
         }
     }
 }
@@ -9682,7 +9682,7 @@ bool FOClient::ReloadScripts()
     // Bind stuff
     #define BIND_CLIENT
     #define BIND_CLASS    FOClient::SScriptFunc::
-    #define BIND_ASSERT( x )    if( ( x ) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+    #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
     asIScriptEngine* engine = Script::GetEngine();
     int              bind_errors = 0;
     #include <ScriptBind.h>
@@ -9809,7 +9809,7 @@ bool FOClient::ReloadScripts()
         { &ClientFunctions.CritterCheckMoveItem, "critter_check_move_item", "bool %s(CritterCl&,ItemCl&,uint8,ItemCl@)" },
     };
     const char*            config = msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG );
-    if( !Script::BindReservedFunctions( config, "client", BindGameFunc, sizeof( BindGameFunc ) / sizeof( BindGameFunc[0] ) ) )
+    if( !Script::BindReservedFunctions( config, "client", BindGameFunc, sizeof(BindGameFunc) / sizeof(BindGameFunc[0]) ) )
         errors++;
 
     if( errors )
@@ -9894,7 +9894,7 @@ int* FOClient::SScriptFunc::DataRef_Index( CritterClPtr& cr, uint index )
         SCRIPT_ERROR_RX( "This nulltptr.", &dummy );
     if( index >= MAX_PARAMS )
         SCRIPT_ERROR_RX( "Invalid index arg.", &dummy );
-    uint data_index = ( ( uint ) & cr - ( uint ) & cr->ThisPtr[0] ) / sizeof( cr->ThisPtr[0] );
+    uint data_index = ( (uint) & cr - (uint) & cr->ThisPtr[0] ) / sizeof(cr->ThisPtr[0]);
     if( CritterCl::ParametersOffset[data_index] )
         index += CritterCl::ParametersMin[data_index];
     if( index < CritterCl::ParametersMin[data_index] )
@@ -9910,7 +9910,7 @@ int FOClient::SScriptFunc::DataVal_Index( CritterClPtr& cr, uint index )
         SCRIPT_ERROR_R0( "This nulltptr." );
     if( index >= MAX_PARAMS )
         SCRIPT_ERROR_R0( "Invalid index arg." );
-    uint data_index = ( ( uint ) & cr - ( uint ) & cr->ThisPtr[0] ) / sizeof( cr->ThisPtr[0] );
+    uint data_index = ( (uint) & cr - (uint) & cr->ThisPtr[0] ) / sizeof(cr->ThisPtr[0]);
     if( CritterCl::ParametersOffset[data_index] )
         index += CritterCl::ParametersMin[data_index];
     if( index < CritterCl::ParametersMin[data_index] )
@@ -10087,7 +10087,7 @@ uint FOClient::SScriptFunc::Crit_GetItems( CritterCl* cr, int slot, ScriptArray*
     ItemPtrVec items_;
     cr->GetItemsSlot( slot, items_ );
     if( items )
-        Script::AppendVectorToArrayRef< Item* >( items_, items );
+        Script::AppendVectorToArrayRef<Item*>( items_, items );
     return (uint)items_.size();
 }
 
@@ -10098,7 +10098,7 @@ uint FOClient::SScriptFunc::Crit_GetItemsByType( CritterCl* cr, int type, Script
     ItemPtrVec items_;
     cr->GetItemsType( type, items_ );
     if( items )
-        Script::AppendVectorToArrayRef< Item* >( items_, items );
+        Script::AppendVectorToArrayRef<Item*>( items_, items );
     return (uint)items_.size();
 }
 
@@ -10114,7 +10114,7 @@ ProtoItem* FOClient::SScriptFunc::Crit_GetSlotProto( CritterCl* cr, int slot, uc
             item = cr->ItemSlotMain;
             break;
         case SLOT_HAND2:
-            item = ( cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->DefItemSlotHand );
+            item = (cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->DefItemSlotHand);
             break;
         case SLOT_ARMOR:
             item = cr->ItemSlotArmor;
@@ -10368,7 +10368,7 @@ uint FOClient::SScriptFunc::Global_GetCritters( ushort hx, ushort hy, uint radiu
     CritVec  cr_vec;
     for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
     {
-        CritterCl* cr = ( *it ).second;
+        CritterCl* cr = (*it).second;
         if( cr->CheckFind( find_type ) && CheckDist( hx, hy, cr->GetHexX(), cr->GetHexY(), radius ) )
             cr_vec.push_back( cr );
     }
@@ -10376,7 +10376,7 @@ uint FOClient::SScriptFunc::Global_GetCritters( ushort hx, ushort hy, uint radiu
     if( critters )
     {
         SortCritterByDist( hx, hy, cr_vec );
-        Script::AppendVectorToArrayRef< CritterCl* >( cr_vec, critters );
+        Script::AppendVectorToArrayRef<CritterCl*>( cr_vec, critters );
     }
     return (uint)cr_vec.size();
 }
@@ -10389,7 +10389,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersByPids( ushort pid, int find_type,
     {
         for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
         {
-            CritterCl* cr = ( *it ).second;
+            CritterCl* cr = (*it).second;
             if( cr->CheckFind( find_type ) )
                 cr_vec.push_back( cr );
         }
@@ -10398,7 +10398,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersByPids( ushort pid, int find_type,
     {
         for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
         {
-            CritterCl* cr = ( *it ).second;
+            CritterCl* cr = (*it).second;
             if( cr->IsNpc() && cr->Pid == pid && cr->CheckFind( find_type ) )
                 cr_vec.push_back( cr );
         }
@@ -10406,7 +10406,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersByPids( ushort pid, int find_type,
     if( cr_vec.empty() )
         return 0;
     if( critters )
-        Script::AppendVectorToArrayRef< CritterCl* >( cr_vec, critters );
+        Script::AppendVectorToArrayRef<CritterCl*>( cr_vec, critters );
     return (uint)cr_vec.size();
 }
 
@@ -10415,7 +10415,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersInPath( ushort from_hx, ushort fro
     CritVec cr_vec;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, &cr_vec, FIND_LIFE | FIND_KO, NULL, NULL, NULL, true );
     if( critters )
-        Script::AppendVectorToArrayRef< CritterCl* >( cr_vec, critters );
+        Script::AppendVectorToArrayRef<CritterCl*>( cr_vec, critters );
     return (uint)cr_vec.size();
 }
 
@@ -10425,7 +10425,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersInPathBlock( ushort from_hx, ushor
     UShortPair block, pre_block;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, &cr_vec, FIND_LIFE | FIND_KO, &block, &pre_block, NULL, true );
     if( critters )
-        Script::AppendVectorToArrayRef< CritterCl* >( cr_vec, critters );
+        Script::AppendVectorToArrayRef<CritterCl*>( cr_vec, critters );
     pre_block_hx = pre_block.first;
     pre_block_hy = pre_block.second;
     block_hx = block.first;
@@ -10570,7 +10570,7 @@ void FOClient::SScriptFunc::Global_MapMessage( ScriptString& text, ushort hx, us
     FOClient::MapText t;
     t.HexX = hx;
     t.HexY = hy;
-    t.Color = ( color ? color : COLOR_TEXT );
+    t.Color = (color ? color : COLOR_TEXT);
     t.Fade = fade;
     t.StartTick = Timer::GameTick();
     t.Tick = ms;
@@ -10698,7 +10698,7 @@ void FOClient::SScriptFunc::Global_LockScreenScroll( CritterCl* cr )
 {
     if( cr && cr->IsNotValid )
         SCRIPT_ERROR_R( "CritterCl arg nullptr." );
-    Self->HexMngr.AutoScroll.LockedCritter = ( cr ? cr->GetId() : 0 );
+    Self->HexMngr.AutoScroll.LockedCritter = (cr ? cr->GetId() : 0);
 }
 
 int FOClient::SScriptFunc::Global_GetFog( ushort zone_x, ushort zone_y )
@@ -10744,32 +10744,32 @@ void FOClient::SScriptFunc::Global_RefreshItemsCollection( int collection )
     }
 }
 
-#define SCROLL_MESSBOX                  ( 0 )
-#define SCROLL_INVENTORY                ( 1 )
-#define SCROLL_INVENTORY_ITEM_INFO      ( 2 )
-#define SCROLL_PICKUP                   ( 3 )
-#define SCROLL_PICKUP_FROM              ( 4 )
-#define SCROLL_USE                      ( 5 )
-#define SCROLL_BARTER                   ( 6 )
-#define SCROLL_BARTER_OFFER             ( 7 )
-#define SCROLL_BARTER_OPPONENT          ( 8 )
-#define SCROLL_BARTER_OPPONENT_OFFER    ( 9 )
-#define SCROLL_GLOBAL_MAP_CITIES_X      ( 10 )
-#define SCROLL_GLOBAL_MAP_CITIES_Y      ( 11 )
-#define SCROLL_SPLIT_VALUE              ( 12 )
-#define SCROLL_TIMER_VALUE              ( 13 )
-#define SCROLL_PERK                     ( 14 )
-#define SCROLL_DIALOG_TEXT              ( 15 )
-#define SCROLL_MAP_ZOOM_VALUE           ( 16 )
-#define SCROLL_CHARACTER_PERKS          ( 17 )
-#define SCROLL_CHARACTER_KARMA          ( 18 )
-#define SCROLL_CHARACTER_KILLS          ( 19 )
-#define SCROLL_PIPBOY_STATUS            ( 20 )
-#define SCROLL_PIPBOY_STATUS_QUESTS     ( 21 )
-#define SCROLL_PIPBOY_STATUS_SCORES     ( 22 )
-#define SCROLL_PIPBOY_AUTOMAPS          ( 23 )
-#define SCROLL_PIPBOY_ARCHIVES          ( 24 )
-#define SCROLL_PIPBOY_ARCHIVES_INFO     ( 25 )
+#define SCROLL_MESSBOX                  (0)
+#define SCROLL_INVENTORY                (1)
+#define SCROLL_INVENTORY_ITEM_INFO      (2)
+#define SCROLL_PICKUP                   (3)
+#define SCROLL_PICKUP_FROM              (4)
+#define SCROLL_USE                      (5)
+#define SCROLL_BARTER                   (6)
+#define SCROLL_BARTER_OFFER             (7)
+#define SCROLL_BARTER_OPPONENT          (8)
+#define SCROLL_BARTER_OPPONENT_OFFER    (9)
+#define SCROLL_GLOBAL_MAP_CITIES_X      (10)
+#define SCROLL_GLOBAL_MAP_CITIES_Y      (11)
+#define SCROLL_SPLIT_VALUE              (12)
+#define SCROLL_TIMER_VALUE              (13)
+#define SCROLL_PERK                     (14)
+#define SCROLL_DIALOG_TEXT              (15)
+#define SCROLL_MAP_ZOOM_VALUE           (16)
+#define SCROLL_CHARACTER_PERKS          (17)
+#define SCROLL_CHARACTER_KARMA          (18)
+#define SCROLL_CHARACTER_KILLS          (19)
+#define SCROLL_PIPBOY_STATUS            (20)
+#define SCROLL_PIPBOY_STATUS_QUESTS     (21)
+#define SCROLL_PIPBOY_STATUS_SCORES     (22)
+#define SCROLL_PIPBOY_AUTOMAPS          (23)
+#define SCROLL_PIPBOY_ARCHIVES          (24)
+#define SCROLL_PIPBOY_ARCHIVES_INFO     (25)
 
 int FOClient::SScriptFunc::Global_GetScroll( int scroll_element )
 {
@@ -11119,29 +11119,29 @@ void FOClient::SScriptFunc::Global_SetDefaultFont( int font, uint color )
 bool FOClient::SScriptFunc::Global_SetEffect( int effect_type, int effect_subtype, ScriptString* effect_name, ScriptString* effect_defines )
 {
     // Effect types
-    #define EFFECT_2D_GENERIC                ( 0x00000001 ) // Subtype can be item id, zero for all items
-    #define EFFECT_2D_CRITTER                ( 0x00000002 ) // Subtype can be critter id, zero for all critters
-    #define EFFECT_2D_TILE                   ( 0x00000004 )
-    #define EFFECT_2D_ROOF                   ( 0x00000008 )
-    #define EFFECT_2D_RAIN                   ( 0x00000010 )
-    #define EFFECT_3D_SIMPLE                 ( 0x00000100 ) // Only for OpenGL
-    #define EFFECT_3D_SIMPLE_SHADOW          ( 0x00000200 ) // Only for OpenGL
-    #define EFFECT_3D_SKINNED                ( 0x00000400 )
-    #define EFFECT_3D_SKINNED_SHADOW         ( 0x00000800 ) // Only for OpenGL
-    #define EFFECT_INTERFACE_BASE            ( 0x00001000 )
-    #define EFFECT_INTERFACE_CONTOUR         ( 0x00002000 ) // Only for OpenGL
-    #define EFFECT_FONT                      ( 0x00010000 ) // Subtype is FONT_*, -1 default for all fonts
-    #define EFFECT_PRIMITIVE_GENERIC         ( 0x00100000 )
-    #define EFFECT_PRIMITIVE_LIGHT           ( 0x00200000 )
-    #define EFFECT_FLUSH_RENDER_TARGET       ( 0x01000000 ) // Only for OpenGL
-    #define EFFECT_FLUSH_RENDER_TARGET_MS    ( 0x02000000 ) // Multisample, Only for OpenGL
-    #define EFFECT_FLUSH_PRIMITIVE           ( 0x04000000 ) // Only for OpenGL
-    #define EFFECT_FLUSH_MAP                 ( 0x08000000 ) // Only for OpenGL
+    #define EFFECT_2D_GENERIC                (0x00000001)   // Subtype can be item id, zero for all items
+    #define EFFECT_2D_CRITTER                (0x00000002)   // Subtype can be critter id, zero for all critters
+    #define EFFECT_2D_TILE                   (0x00000004)
+    #define EFFECT_2D_ROOF                   (0x00000008)
+    #define EFFECT_2D_RAIN                   (0x00000010)
+    #define EFFECT_3D_SIMPLE                 (0x00000100)   // Only for OpenGL
+    #define EFFECT_3D_SIMPLE_SHADOW          (0x00000200)   // Only for OpenGL
+    #define EFFECT_3D_SKINNED                (0x00000400)
+    #define EFFECT_3D_SKINNED_SHADOW         (0x00000800)   // Only for OpenGL
+    #define EFFECT_INTERFACE_BASE            (0x00001000)
+    #define EFFECT_INTERFACE_CONTOUR         (0x00002000)   // Only for OpenGL
+    #define EFFECT_FONT                      (0x00010000)   // Subtype is FONT_*, -1 default for all fonts
+    #define EFFECT_PRIMITIVE_GENERIC         (0x00100000)
+    #define EFFECT_PRIMITIVE_LIGHT           (0x00200000)
+    #define EFFECT_FLUSH_RENDER_TARGET       (0x01000000)   // Only for OpenGL
+    #define EFFECT_FLUSH_RENDER_TARGET_MS    (0x02000000)   // Multisample, Only for OpenGL
+    #define EFFECT_FLUSH_PRIMITIVE           (0x04000000)   // Only for OpenGL
+    #define EFFECT_FLUSH_MAP                 (0x08000000)   // Only for OpenGL
 
     Effect* effect = NULL;
     if( effect_name && effect_name->length() )
     {
-        bool use_in_2d = !( effect_type & ( EFFECT_3D_SIMPLE | EFFECT_3D_SKINNED ) );
+        bool use_in_2d = !(effect_type & (EFFECT_3D_SIMPLE | EFFECT_3D_SKINNED) );
         effect = GraphicLoader::LoadEffect( SprMngr.GetDevice(), effect_name->c_str(), use_in_2d, effect_defines ? effect_defines->c_str() : NULL );
         if( !effect )
             SCRIPT_ERROR_R0( "Effect not found or have some errors, see log file." );
@@ -11151,58 +11151,58 @@ bool FOClient::SScriptFunc::Global_SetEffect( int effect_type, int effect_subtyp
     {
         ItemHex* item = Self->GetItem( (uint)effect_subtype );
         if( item )
-            item->DrawEffect = ( effect ? effect : Effect::Generic );
+            item->DrawEffect = (effect ? effect : Effect::Generic);
     }
     if( effect_type & EFFECT_2D_CRITTER && effect_subtype != 0 )
     {
         CritterCl* cr = Self->GetCritter( (uint)effect_subtype );
         if( cr )
-            cr->DrawEffect = ( effect ? effect : Effect::Critter );
+            cr->DrawEffect = (effect ? effect : Effect::Critter);
     }
 
     if( effect_type & EFFECT_2D_GENERIC && effect_subtype == 0 )
-        *Effect::Generic = ( effect ? *effect : *Effect::GenericDefault );
+        *Effect::Generic = (effect ? *effect : *Effect::GenericDefault);
     if( effect_type & EFFECT_2D_CRITTER && effect_subtype == 0 )
-        *Effect::Critter = ( effect ? *effect : *Effect::CritterDefault );
+        *Effect::Critter = (effect ? *effect : *Effect::CritterDefault);
     if( effect_type & EFFECT_2D_TILE )
-        *Effect::Tile = ( effect ? *effect : *Effect::TileDefault );
+        *Effect::Tile = (effect ? *effect : *Effect::TileDefault);
     if( effect_type & EFFECT_2D_ROOF )
-        *Effect::Roof = ( effect ? *effect : *Effect::RoofDefault );
+        *Effect::Roof = (effect ? *effect : *Effect::RoofDefault);
     if( effect_type & EFFECT_2D_RAIN )
-        *Effect::Rain = ( effect ? *effect : *Effect::RainDefault );
+        *Effect::Rain = (effect ? *effect : *Effect::RainDefault);
 
     if( effect_type & EFFECT_3D_SIMPLE )
-        *Effect::Simple3d = ( effect ? *effect : *Effect::Simple3dDefault );
+        *Effect::Simple3d = (effect ? *effect : *Effect::Simple3dDefault);
     if( effect_type & EFFECT_3D_SIMPLE_SHADOW )
-        *Effect::Simple3dShadow = ( effect ? *effect : *Effect::Simple3dShadowDefault );
+        *Effect::Simple3dShadow = (effect ? *effect : *Effect::Simple3dShadowDefault);
     if( effect_type & EFFECT_3D_SKINNED )
-        *Effect::Skinned3d = ( effect ? *effect : *Effect::Skinned3dDefault );
+        *Effect::Skinned3d = (effect ? *effect : *Effect::Skinned3dDefault);
     if( effect_type & EFFECT_3D_SKINNED_SHADOW )
-        *Effect::Skinned3dShadow = ( effect ? *effect : *Effect::Skinned3dShadowDefault );
+        *Effect::Skinned3dShadow = (effect ? *effect : *Effect::Skinned3dShadowDefault);
 
     if( effect_type & EFFECT_INTERFACE_BASE )
-        *Effect::Iface = ( effect ? *effect : *Effect::IfaceDefault );
+        *Effect::Iface = (effect ? *effect : *Effect::IfaceDefault);
     if( effect_type & EFFECT_INTERFACE_CONTOUR )
-        *Effect::Contour = ( effect ? *effect : *Effect::ContourDefault );
+        *Effect::Contour = (effect ? *effect : *Effect::ContourDefault);
 
     if( effect_type & EFFECT_FONT && effect_subtype == -1 )
-        *Effect::Font = ( effect ? *effect : *Effect::ContourDefault );
+        *Effect::Font = (effect ? *effect : *Effect::ContourDefault);
     if( effect_type & EFFECT_FONT && effect_subtype >= 0 )
         SprMngr.SetFontEffect( effect_subtype, effect );
 
     if( effect_type & EFFECT_PRIMITIVE_GENERIC )
-        *Effect::Primitive = ( effect ? *effect : *Effect::PrimitiveDefault );
+        *Effect::Primitive = (effect ? *effect : *Effect::PrimitiveDefault);
     if( effect_type & EFFECT_PRIMITIVE_LIGHT )
-        *Effect::Light = ( effect ? *effect : *Effect::LightDefault );
+        *Effect::Light = (effect ? *effect : *Effect::LightDefault);
 
     if( effect_type & EFFECT_FLUSH_RENDER_TARGET )
-        *Effect::FlushRenderTarget = ( effect ? *effect : *Effect::FlushRenderTargetDefault );
+        *Effect::FlushRenderTarget = (effect ? *effect : *Effect::FlushRenderTargetDefault);
     if( effect_type & EFFECT_FLUSH_RENDER_TARGET_MS )
-        *Effect::FlushRenderTargetMS = ( effect ? *effect : *Effect::FlushRenderTargetMSDefault );
+        *Effect::FlushRenderTargetMS = (effect ? *effect : *Effect::FlushRenderTargetMSDefault);
     if( effect_type & EFFECT_FLUSH_PRIMITIVE )
-        *Effect::FlushPrimitive = ( effect ? *effect : *Effect::FlushPrimitiveDefault );
+        *Effect::FlushPrimitive = (effect ? *effect : *Effect::FlushPrimitiveDefault);
     if( effect_type & EFFECT_FLUSH_MAP )
-        *Effect::FlushMap = ( effect ? *effect : *Effect::FlushMapDefault );
+        *Effect::FlushMap = (effect ? *effect : *Effect::FlushMapDefault);
 
     return true;
 }
@@ -11495,7 +11495,7 @@ void FOClient::SScriptFunc::Global_RunServerScript( ScriptString& func_name, int
 {
     UIntVec dw;
     if( p4 )
-        Script::AssignScriptArrayInVector< uint >( dw, p4 );
+        Script::AssignScriptArrayInVector<uint>( dw, p4 );
     Self->Net_SendRunScript( false, func_name.c_str(), p0, p1, p2, p3 ? p3->c_str() : NULL, dw );
 }
 
@@ -11503,7 +11503,7 @@ void FOClient::SScriptFunc::Global_RunServerScriptUnsafe( ScriptString& func_nam
 {
     UIntVec dw;
     if( p4 )
-        Script::AssignScriptArrayInVector< uint >( dw, p4 );
+        Script::AssignScriptArrayInVector<uint>( dw, p4 );
     Self->Net_SendRunScript( true, func_name.c_str(), p0, p1, p2, p3 ? p3->c_str() : NULL, dw );
 }
 
@@ -11569,7 +11569,7 @@ void FOClient::SScriptFunc::Global_DrawSpriteOffs( uint spr_id, int spr_index, i
     AnyFrames* anim = Self->AnimGetFrames( spr_id );
     if( !anim || spr_index >= (int)anim->GetCnt() )
         return;
-    uint spr_id_ = ( spr_index < 0 ? anim->GetCurSprId() : anim->GetSprId( spr_index ) );
+    uint spr_id_ = (spr_index < 0 ? anim->GetCurSprId() : anim->GetSprId( spr_index ) );
     if( offs )
     {
         SpriteInfo* si = SprMngr.GetSpriteInfo( spr_id_ );
@@ -11608,7 +11608,7 @@ void FOClient::SScriptFunc::Global_DrawSpriteSizeOffs( uint spr_id, int spr_inde
     AnyFrames* anim = Self->AnimGetFrames( spr_id );
     if( !anim || spr_index >= (int)anim->GetCnt() )
         return;
-    uint spr_id_ = ( spr_index < 0 ? anim->GetCurSprId() : anim->GetSprId( spr_index ) );
+    uint spr_id_ = (spr_index < 0 ? anim->GetCurSprId() : anim->GetSprId( spr_index ) );
     if( offs )
     {
         SpriteInfo* si = SprMngr.GetSpriteInfo( spr_id_ );
@@ -11691,15 +11691,15 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
         return;
 
     ProtoItem* proto_item = ItemMngr.GetProtoItem( proto_id );
-    bool       is_flat = ( proto_item ? FLAG( proto_item->Flags, ITEM_FLAT ) : false );
-    bool       is_item = ( proto_item ? proto_item->IsItem() : false );
-    bool       is_wall = ( proto_item ? proto_item->IsWall() : false );
-    bool       no_light = ( is_flat && !is_item );
+    bool       is_flat = (proto_item ? FLAG( proto_item->Flags, ITEM_FLAT ) : false);
+    bool       is_item = (proto_item ? proto_item->IsItem() : false);
+    bool       is_wall = (proto_item ? proto_item->IsWall() : false);
+    bool       no_light = (is_flat && !is_item);
 
     Field&     f = Self->HexMngr.GetField( hx, hy );
     Sprites&   tree = Self->HexMngr.GetDrawTree();
-    Sprite&    spr = tree.InsertSprite( is_flat ? ( is_item ? DRAW_ORDER_FLAT_ITEM : DRAW_ORDER_FLAT_SCENERY ) : ( is_item ? DRAW_ORDER_ITEM : DRAW_ORDER_SCENERY ),
-                                        hx, hy + ( proto_item ? proto_item->DrawOrderOffsetHexY : 0 ), 0,
+    Sprite&    spr = tree.InsertSprite( is_flat ? (is_item ? DRAW_ORDER_FLAT_ITEM : DRAW_ORDER_FLAT_SCENERY) : (is_item ? DRAW_ORDER_ITEM : DRAW_ORDER_SCENERY),
+                                        hx, hy + (proto_item ? proto_item->DrawOrderOffsetHexY : 0), 0,
                                         f.ScrX + HEX_OX + ox, f.ScrY + HEX_OY + oy, spr_index < 0 ? anim->GetCurSprId() : anim->GetSprId( spr_index ), NULL, NULL, NULL, NULL, NULL, NULL );
     if( !no_light )
         spr.SetLight( Self->HexMngr.GetLightHex( 0, 0 ), Self->HexMngr.GetMaxHexX(), Self->HexMngr.GetMaxHexY() );
@@ -11745,7 +11745,7 @@ void FOClient::SScriptFunc::Global_DrawCritter2d( uint crtype, uint anim1, uint 
     {
         AnyFrames* anim = ResMngr.GetCrit2dAnim( crtype, anim1, anim2, dir );
         if( anim )
-            SprMngr.DrawSpriteSize( anim->Ind[0], l, t, (float)( r - l ), (float)( b - t ), scratch, center, color ? color : COLOR_IFACE );
+            SprMngr.DrawSpriteSize( anim->Ind[0], l, t, (float)(r - l), (float)(b - t), scratch, center, color ? color : COLOR_IFACE );
     }
 }
 
@@ -11792,24 +11792,24 @@ void FOClient::SScriptFunc::Global_DrawCritter3d( uint instance, uint crtype, ui
             anim->SetTimer( false );
         }
 
-        uint  count = ( position ? position->GetSize() : 0 );
-        float x = ( count > 0 ? *(float*)position->At( 0 ) : 0.0f );
-        float y = ( count > 1 ? *(float*)position->At( 1 ) : 0.0f );
-        float rx = ( count > 2 ? *(float*)position->At( 2 ) : 0.0f );
-        float ry = ( count > 3 ? *(float*)position->At( 3 ) : 0.0f );
-        float rz = ( count > 4 ? *(float*)position->At( 4 ) : 0.0f );
-        float sx = ( count > 5 ? *(float*)position->At( 5 ) : 1.0f );
-        float sy = ( count > 6 ? *(float*)position->At( 6 ) : 1.0f );
-        float sz = ( count > 7 ? *(float*)position->At( 7 ) : 1.0f );
-        float speed = ( count > 8 ? *(float*)position->At( 8 ) : 1.0f );
+        uint  count = (position ? position->GetSize() : 0);
+        float x = (count > 0 ? *(float*)position->At( 0 ) : 0.0f);
+        float y = (count > 1 ? *(float*)position->At( 1 ) : 0.0f);
+        float rx = (count > 2 ? *(float*)position->At( 2 ) : 0.0f);
+        float ry = (count > 3 ? *(float*)position->At( 3 ) : 0.0f);
+        float rz = (count > 4 ? *(float*)position->At( 4 ) : 0.0f);
+        float sx = (count > 5 ? *(float*)position->At( 5 ) : 1.0f);
+        float sy = (count > 6 ? *(float*)position->At( 6 ) : 1.0f);
+        float sz = (count > 7 ? *(float*)position->At( 7 ) : 1.0f);
+        float speed = (count > 8 ? *(float*)position->At( 8 ) : 1.0f);
         // 9 reserved
-        float stl = ( count > 10 ? *(float*)position->At( 10 ) : 0.0f );
-        float stt = ( count > 11 ? *(float*)position->At( 11 ) : 0.0f );
-        float str = ( count > 12 ? *(float*)position->At( 12 ) : 0.0f );
-        float stb = ( count > 13 ? *(float*)position->At( 13 ) : 0.0f );
+        float stl = (count > 10 ? *(float*)position->At( 10 ) : 0.0f);
+        float stt = (count > 11 ? *(float*)position->At( 11 ) : 0.0f);
+        float str = (count > 12 ? *(float*)position->At( 12 ) : 0.0f);
+        float stb = (count > 13 ? *(float*)position->At( 13 ) : 0.0f);
 
-        memzero( DrawCritter3dLayers, sizeof( DrawCritter3dLayers ) );
-        for( uint i = 0, j = ( layers ? layers->GetSize() : 0 ); i < j && i < LAYERS3D_COUNT; i++ )
+        memzero( DrawCritter3dLayers, sizeof(DrawCritter3dLayers) );
+        for( uint i = 0, j = (layers ? layers->GetSize() : 0); i < j && i < LAYERS3D_COUNT; i++ )
             DrawCritter3dLayers[i] = *(int*)layers->At( i );
 
         anim->SetRotation( rx * PI_VALUE / 180.0f, ry * PI_VALUE / 180.0f, rz * PI_VALUE / 180.0f );
@@ -12073,8 +12073,8 @@ bool FOClient::SScriptFunc::Global_GetHexPos( ushort hx, ushort hy, int& x, int&
         Self->HexMngr.GetHexCurrentPosition( hx, hy, x, y );
         x += GameOpt.ScrOx + HEX_OX;
         y += GameOpt.ScrOy + HEX_OY;
-        x = (int)( x / GameOpt.SpritesZoom );
-        y = (int)( y / GameOpt.SpritesZoom );
+        x = (int)(x / GameOpt.SpritesZoom);
+        y = (int)(y / GameOpt.SpritesZoom);
         return true;
     }
     return false;

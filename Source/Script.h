@@ -9,18 +9,18 @@
 #include <vector>
 #include <string>
 
-#define GLOBAL_CONTEXT_STACK_SIZE    ( 10 )
-#define CONTEXT_BUFFER_SIZE          ( 512 )
+#define GLOBAL_CONTEXT_STACK_SIZE    (10)
+#define CONTEXT_BUFFER_SIZE          (512)
 
 typedef void ( * EndExecutionCallback )();
-typedef std::vector< asIScriptModule* > ScriptModuleVec;
+typedef std::vector<asIScriptModule*> ScriptModuleVec;
 
 struct EngineData
 {
-    ScriptModuleVec                      Modules;
-    Preprocessor::PragmaCallback*        PragmaCB;
-    string                               DllTarget;
-    map< string, pair< string, void* > > LoadedDlls;
+    ScriptModuleVec                  Modules;
+    Preprocessor::PragmaCallback*    PragmaCB;
+    string                           DllTarget;
+    map<string, pair<string, void*>> LoadedDlls;
 };
 
 struct ReservedScriptFunction
@@ -142,13 +142,13 @@ namespace Script
     // Arrays stuff
     ScriptArray* CreateArray( const char* type );
 
-    template< typename Type >
-    void AppendVectorToArray( vector< Type >& vec, ScriptArray* arr )
+    template<typename Type>
+    void AppendVectorToArray( vector<Type>& vec, ScriptArray* arr )
     {
         if( !vec.empty() && arr )
         {
             uint i = (uint)arr->GetSize();
-            arr->Resize( (asUINT)( i + (uint)vec.size() ) );
+            arr->Resize( (asUINT)(i + (uint)vec.size() ) );
             for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
                 Type* p = (Type*)arr->At( i );
@@ -156,23 +156,23 @@ namespace Script
             }
         }
     }
-    template< typename Type >
-    void AppendVectorToArrayRef( vector< Type >& vec, ScriptArray* arr )
+    template<typename Type>
+    void AppendVectorToArrayRef( vector<Type>& vec, ScriptArray* arr )
     {
         if( !vec.empty() && arr )
         {
             uint i = (uint)arr->GetSize();
-            arr->Resize( (asUINT)( i + (uint)vec.size() ) );
+            arr->Resize( (asUINT)(i + (uint)vec.size() ) );
             for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
                 Type* p = (Type*)arr->At( i );
                 *p = vec[k];
-                ( *p )->AddRef();
+                (*p)->AddRef();
             }
         }
     }
-    template< typename Type >
-    void AssignScriptArrayInVector( vector< Type >& vec, ScriptArray* arr )
+    template<typename Type>
+    void AssignScriptArrayInVector( vector<Type>& vec, ScriptArray* arr )
     {
         if( arr )
         {
@@ -193,9 +193,9 @@ namespace Script
 class CBytecodeStream: public asIBinaryStream
 {
 private:
-    int                   readPos;
-    int                   writePos;
-    std::vector< asBYTE > binBuf;
+    int                 readPos;
+    int                 writePos;
+    std::vector<asBYTE> binBuf;
 
 public:
     CBytecodeStream()
@@ -216,7 +216,7 @@ public:
         memcpy( ptr, &binBuf[readPos], size );
         readPos += size;
     }
-    std::vector< asBYTE >& GetBuf() { return binBuf; }
+    std::vector<asBYTE>& GetBuf() { return binBuf; }
 };
 
 #endif // __SCRIPT__

@@ -36,7 +36,7 @@ public:
     void     Clear();
     GlobalMapGroup() { Clear(); }
 };
-typedef vector< GlobalMapGroup* > GMapGroupVec;
+typedef vector<GlobalMapGroup*> GMapGroupVec;
 
 struct TraceData
 {
@@ -62,24 +62,24 @@ struct TraceData
     bool        IsHaveLastPassed;
     bool        IsTeammateFounded;
 
-    TraceData() { memzero( this, sizeof( TraceData ) ); }
+    TraceData() { memzero( this, sizeof(TraceData) ); }
 };
 
 // Path
-#define FPATH_DATA_SIZE              ( 10000 )
-#define FPATH_MAX_PATH               ( 400 )
-#define FPATH_OK                     ( 0 )
-#define FPATH_ALREADY_HERE           ( 2 )
-#define FPATH_MAP_NOT_FOUND          ( 5 )
-#define FPATH_HEX_BUSY               ( 6 )
-#define FPATH_HEX_BUSY_RING          ( 7 )
-#define FPATH_TOOFAR                 ( 8 )
-#define FPATH_DEADLOCK               ( 9 )
-#define FPATH_ERROR                  ( 10 )
-#define FPATH_INVALID_HEXES          ( 11 )
-#define FPATH_TRACE_FAIL             ( 12 )
-#define FPATH_TRACE_TARG_NULL_PTR    ( 13 )
-#define FPATH_ALLOC_FAIL             ( 14 )
+#define FPATH_DATA_SIZE              (10000)
+#define FPATH_MAX_PATH               (400)
+#define FPATH_OK                     (0)
+#define FPATH_ALREADY_HERE           (2)
+#define FPATH_MAP_NOT_FOUND          (5)
+#define FPATH_HEX_BUSY               (6)
+#define FPATH_HEX_BUSY_RING          (7)
+#define FPATH_TOOFAR                 (8)
+#define FPATH_DEADLOCK               (9)
+#define FPATH_ERROR                  (10)
+#define FPATH_INVALID_HEXES          (11)
+#define FPATH_TRACE_FAIL             (12)
+#define FPATH_TRACE_TARG_NULL_PTR    (13)
+#define FPATH_ALLOC_FAIL             (14)
 
 struct PathFindData
 {
@@ -102,7 +102,7 @@ struct PathFindData
 
     void     Clear()
     {
-        memzero( this, sizeof( PathFindData ) );
+        memzero( this, sizeof(PathFindData) );
         MoveParams = 0xFFFF;
     }
 };
@@ -114,7 +114,7 @@ struct PathStep
     uint   MoveParams;
     uchar  Dir;
 };
-typedef vector< PathStep > PathStepVec;
+typedef vector<PathStep> PathStepVec;
 
 class MapManager
 {
@@ -134,7 +134,7 @@ public:
 
     bool   LoadLocationsProtos();
     bool   LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid );
-    void   SaveAllLocationsAndMapsFile( void ( *save_func )( void*, size_t ) );
+    void   SaveAllLocationsAndMapsFile( void (*save_func)( void*, size_t ) );
     bool   LoadAllLocationsAndMapsFile( void* f );
     string GetLocationsMapsStatistics();
     void   RunInitScriptMaps();

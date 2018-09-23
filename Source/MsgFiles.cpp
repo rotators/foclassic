@@ -29,8 +29,8 @@ FOMsg& FOMsg::operator+=( const FOMsg& r )
     it++;     // skip FOMSG_ERRNUM
     for( ; it != end; ++it )
     {
-        EraseStr( ( *it ).first );
-        AddStr( ( *it ).first, ( *it ).second );
+        EraseStr( (*it).first );
+        AddStr( (*it).first, (*it).second );
     }
     CalculateHash();
     return *this;
@@ -96,7 +96,7 @@ const char* FOMsg::GetStr( uint num )
     switch( str_count )
     {
         case 0:
-            return ( *strData.begin() ).second.c_str();   // give FOMSG_ERRNUM
+            return (*strData.begin() ).second.c_str();    // give FOMSG_ERRNUM
         case 1:
             break;
         default:
@@ -105,7 +105,7 @@ const char* FOMsg::GetStr( uint num )
             break;
     }
 
-    return ( *it ).second.c_str();
+    return (*it).second.c_str();
 }
 
 const char* FOMsg::GetStr( uint num, uint skip )
@@ -114,11 +114,11 @@ const char* FOMsg::GetStr( uint num, uint skip )
     auto it = strData.find( num );
 
     if( skip >= str_count )
-        return ( *strData.begin() ).second.c_str();                   // give FOMSG_ERRNUM
+        return (*strData.begin() ).second.c_str();                    // give FOMSG_ERRNUM
     for( uint i = 0; i < skip; i++ )
         ++it;
 
-    return ( *it ).second.c_str();
+    return (*it).second.c_str();
 }
 
 uint FOMsg::GetStrNumUpper( uint num )
@@ -126,7 +126,7 @@ uint FOMsg::GetStrNumUpper( uint num )
     auto it = strData.upper_bound( num );
     if( it == strData.end() )
         return 0;
-    return ( *it ).first;
+    return (*it).first;
 }
 
 uint FOMsg::GetStrNumLower( uint num )
@@ -134,7 +134,7 @@ uint FOMsg::GetStrNumLower( uint num )
     auto it = strData.lower_bound( num );
     if( it == strData.end() )
         return 0;
-    return ( *it ).first;
+    return (*it).first;
 }
 
 int FOMsg::GetInt( uint num )
@@ -154,7 +154,7 @@ int FOMsg::GetInt( uint num )
             break;
     }
 
-    return atoi( ( *it ).second.c_str() );
+    return atoi( (*it).second.c_str() );
 }
 
 const uchar* FOMsg::GetBinary( uint num, uint& len )
@@ -179,7 +179,7 @@ const uchar* FOMsg::GetBinary( uint num, uint& len )
     }
 
     len = (uint)binary->size();
-    return &( *binary )[0];
+    return &(*binary)[0];
 }
 
 int FOMsg::Count( uint num )
@@ -218,19 +218,19 @@ void FOMsg::CalculateHash()
     it++;     // skip FOMSG_ERRNUM
     for( ; it != end; ++it )
     {
-        uint    num = ( *it ).first;
-        string& str = ( *it ).second;
+        uint    num = (*it).first;
+        string& str = (*it).second;
         uint    str_len = (uint)str.size();
 
         #ifdef FONLINE_SERVER
-        toSend.resize( toSend.size() + sizeof( num ) + sizeof( str_len ) + str_len );
-        memcpy( &toSend[toSend.size() - ( sizeof( num ) + sizeof( str_len ) + str_len )], &num, sizeof( num ) );
-        memcpy( &toSend[toSend.size() - ( sizeof( str_len ) + str_len )], &str_len, sizeof( str_len ) );
+        toSend.resize( toSend.size() + sizeof(num) + sizeof(str_len) + str_len );
+        memcpy( &toSend[toSend.size() - (sizeof(num) + sizeof(str_len) + str_len)], &num, sizeof(num) );
+        memcpy( &toSend[toSend.size() - (sizeof(str_len) + str_len)], &str_len, sizeof(str_len) );
         memcpy( &toSend[toSend.size() - str_len], (void*)str.c_str(), str_len );
         #endif
 
-        Crypt.Crc32( (uchar*)&num, sizeof( num ), strDataHash );
-        Crypt.Crc32( (uchar*)&str_len, sizeof( str_len ), strDataHash );
+        Crypt.Crc32( (uchar*)&num, sizeof(num), strDataHash );
+        Crypt.Crc32( (uchar*)&str_len, sizeof(str_len), strDataHash );
         Crypt.Crc32( (uchar*)str.c_str(), str_len, strDataHash );
     }
 }
@@ -271,15 +271,15 @@ int FOMsg::LoadMsgStream( CharVec& stream )
     string str;
     while( true )
     {
-        if( pos + sizeof( num ) > stream.size() )
+        if( pos + sizeof(num) > stream.size() )
             break;
-        memcpy( &num, &stream[pos], sizeof( num ) );
-        pos += sizeof( num );
+        memcpy( &num, &stream[pos], sizeof(num) );
+        pos += sizeof(num);
 
-        if( pos + sizeof( len ) > stream.size() )
+        if( pos + sizeof(len) > stream.size() )
             break;
-        memcpy( &len, &stream[pos], sizeof( len ) );
-        pos += sizeof( len );
+        memcpy( &len, &stream[pos], sizeof(len) );
+        pos += sizeof(len);
 
         if( pos + len > stream.size() )
             break;
@@ -397,9 +397,9 @@ int FOMsg::SaveMsgFile( const char* fname, int path_type )
     for( ; it != strData.end(); it++ )
     {
         str += "{";
-        str += Str::UItoA( ( *it ).first );
+        str += Str::UItoA( (*it).first );
         str += "}{}{";
-        str += ( *it ).second;
+        str += (*it).second;
         str += "}\n";
     }
 

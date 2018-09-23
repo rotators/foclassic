@@ -48,7 +48,7 @@ void Keyb::Lost()
     CtrlDwn = false;
     AltDwn = false;
     ShiftDwn = false;
-    memzero( KeyPressed, sizeof( KeyPressed ) );
+    memzero( KeyPressed, sizeof(KeyPressed) );
 }
 
 void Keyb::GetChar( uchar dik, const char* dik_text, string& str, uint* position, uint max, int flags )
@@ -71,7 +71,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
     if( AltDwn )
         return;
 
-    bool  ctrl_shift = ( CtrlDwn || ShiftDwn );
+    bool  ctrl_shift = (CtrlDwn || ShiftDwn);
 
     uint  dik_text_len_utf8 = Str::LengthUTF8( dik_text );
     uint  dik_text_len = Str::Length( dik_text );
@@ -79,7 +79,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
     uint  str_len = Str::Length( str );
 
     uint  position_ = str_len;
-    uint& pos = ( position ? *position : position_ );
+    uint& pos = (position ? *position : position_);
     if( pos > str_len )
         pos = str_len;
 
@@ -89,7 +89,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         if( pos < str_len )
         {
             pos++;
-            while( pos < str_len && ( str[pos] & 0xC0 ) == 0x80 )
+            while( pos < str_len && (str[pos] & 0xC0) == 0x80 )
                 pos++;
         }
     }
@@ -98,7 +98,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         if( pos > 0 )
         {
             pos--;
-            while( pos && ( str[pos] & 0xC0 ) == 0x80 )
+            while( pos && (str[pos] & 0xC0) == 0x80 )
                 pos--;
         }
     }
@@ -108,7 +108,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         {
             uint letter_len = 1;
             pos--;
-            while( pos && ( str[pos] & 0xC0 ) == 0x80 )
+            while( pos && (str[pos] & 0xC0) == 0x80 )
                 pos--, letter_len++;
 
             for( uint i = pos; str[i + letter_len]; i++ )
@@ -122,7 +122,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         {
             uint letter_len = 1;
             uint pos_ = pos + 1;
-            while( pos_ < str_len && ( str[pos_] & 0xC0 ) == 0x80 )
+            while( pos_ < str_len && (str[pos_] & 0xC0) == 0x80 )
                 pos_++, letter_len++;
 
             for( uint i = pos; str[i + letter_len]; i++ )
@@ -139,7 +139,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
         pos = str_len;
     }
     // Clipboard
-    else if( CtrlDwn && !ShiftDwn && str_len > 0 && ( dik == DIK_C || dik == DIK_X ) )
+    else if( CtrlDwn && !ShiftDwn && str_len > 0 && (dik == DIK_C || dik == DIK_X) )
     {
         Fl::copy( str, Str::Length( str ), 1 );
         if( dik == DIK_X )
@@ -168,7 +168,7 @@ void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* po
             while( erase_len_utf8 )
             {
                 text_pos--;
-                while( text_pos && ( text[text_pos] & 0xC0 ) == 0x80 )
+                while( text_pos && (text[text_pos] & 0xC0) == 0x80 )
                     text_pos--;
                 erase_len_utf8--;
             }
@@ -213,9 +213,9 @@ bool Keyb::IsInvalidChar( const char* str, uint flags )
 {
     if( !Str::IsValidUTF8( str ) )
         return false;
-    if( flags & KIF_NO_SPEC_SYMBOLS && ( *str == '\n' || *str == '\r' || *str == '\t' ) )
+    if( flags & KIF_NO_SPEC_SYMBOLS && (*str == '\n' || *str == '\r' || *str == '\t') )
         return true;
-    if( flags & KIF_ONLY_NUMBERS && !( *str >= '0' && *str <= '9' ) )
+    if( flags & KIF_ONLY_NUMBERS && !(*str >= '0' && *str <= '9') )
         return true;
     if( flags & KIF_FILE_NAME )
     {

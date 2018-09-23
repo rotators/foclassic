@@ -235,23 +235,23 @@ public:
     const char* FmtGameText( uint str_num, ... );
     const char* FmtCombatText( uint str_num, ... );
 
-    #define DESC_INVENTORY_MAIN       ( 0 )
-    #define DESC_INVENTORY_SPECIAL    ( 1 )
-    #define DESC_INVENTORY_STATS      ( 2 )
-    #define DESC_INVENTORY_RESIST     ( 3 )
+    #define DESC_INVENTORY_MAIN       (0)
+    #define DESC_INVENTORY_SPECIAL    (1)
+    #define DESC_INVENTORY_STATS      (2)
+    #define DESC_INVENTORY_RESIST     (3)
     const char* FmtGenericDesc( int desc_type, int& ox, int& oy );
 
-    #define CRITTER_ONLY_NAME         ( 0 )
-    #define CRITTER_LOOK_SHORT        ( 1 )
-    #define CRITTER_LOOK_FULL         ( 2 )
+    #define CRITTER_ONLY_NAME         (0)
+    #define CRITTER_LOOK_SHORT        (1)
+    #define CRITTER_LOOK_FULL         (2)
     const char* FmtCritLook( CritterCl* cr, int look_type );
 
-    #define ITEM_LOOK_DEFAULT         ( 0 )
-    #define ITEM_LOOK_ONLY_NAME       ( 1 )
-    #define ITEM_LOOK_MAP             ( 2 )
-    #define ITEM_LOOK_BARTER          ( 3 )
-    #define ITEM_LOOK_INVENTORY       ( 4 )
-    #define ITEM_LOOK_WM_CAR          ( 5 )
+    #define ITEM_LOOK_DEFAULT         (0)
+    #define ITEM_LOOK_ONLY_NAME       (1)
+    #define ITEM_LOOK_MAP             (2)
+    #define ITEM_LOOK_BARTER          (3)
+    #define ITEM_LOOK_INVENTORY       (4)
+    #define ITEM_LOOK_WM_CAR          (5)
     const char* FmtItemLook( Item* item, int look_type );
 
     // Intellect text
@@ -262,10 +262,10 @@ public:
     auto FindIntellectWord( const char* word, PCharPairVec& text, Randomizer& rnd )->PCharPairVec::iterator;
     void FmtTextIntellect( char* str, ushort intellect );
 
-    #define SMTH_NONE                 ( 0 )
-    #define SMTH_CRITTER              ( 1 )
-    #define SMTH_ITEM                 ( 3 )
-    #define SMTH_CONT_ITEM            ( 4 )
+    #define SMTH_NONE                 (0)
+    #define SMTH_CRITTER              (1)
+    #define SMTH_ITEM                 (3)
+    #define SMTH_CONT_ITEM            (4)
     class SmthSelected
     {
 private:
@@ -324,9 +324,9 @@ public:
             Param[4] = param4;
             Param[5] = param5;
         }
-        ActionEvent( const ActionEvent& r ) { memcpy( this, &r, sizeof( ActionEvent ) ); }
+        ActionEvent( const ActionEvent& r ) { memcpy( this, &r, sizeof(ActionEvent) ); }
     };
-    typedef vector< ActionEvent > ActionEventVec;
+    typedef vector<ActionEvent> ActionEventVec;
 
     ActionEventVec ChosenAction;
     void AddAction( bool to_front, ActionEvent act );
@@ -352,7 +352,7 @@ public:
         string SoundName;
         bool   CanStop;
     };
-    typedef vector< ShowVideo > ShowVideoVec;
+    typedef vector<ShowVideo> ShowVideoVec;
 
     struct VideoContext
     {
@@ -405,13 +405,13 @@ public:
 
         IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::GameTick() ), ResType( res_type ) {}
     };
-    typedef vector< IfaceAnim* > IfaceAnimVec;
+    typedef vector<IfaceAnim*> IfaceAnimVec;
 
-    #define ANIMRUN_TO_END      ( 0x0001 )
-    #define ANIMRUN_FROM_END    ( 0x0002 )
-    #define ANIMRUN_CYCLE       ( 0x0004 )
-    #define ANIMRUN_STOP        ( 0x0008 )
-    #define ANIMRUN_SET_FRM( frm )    ( ( uint( uchar( ( frm ) + 1 ) ) ) << 16 )
+    #define ANIMRUN_TO_END      (0x0001)
+    #define ANIMRUN_FROM_END    (0x0002)
+    #define ANIMRUN_CYCLE       (0x0004)
+    #define ANIMRUN_STOP        (0x0008)
+    #define ANIMRUN_SET_FRM( frm )    ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
 
@@ -436,7 +436,7 @@ public:
         uint EndColor;
         ScreenEffect( uint begin_tick, uint time, uint col, uint end_col ) : BeginTick( begin_tick ), Time( time ), StartColor( col ), EndColor( end_col ) {}
     };
-    typedef vector< ScreenEffect > ScreenEffectVec;
+    typedef vector<ScreenEffect> ScreenEffectVec;
 
     // Fading
     ScreenEffectVec ScreenEffects;
@@ -674,8 +674,8 @@ public:
     void IfaceLoadArray( IntVec& arr, const char* name );
     void IfaceFreeResources();
 
-    bool IsCurInRect( const Rect& rect, int ax, int ay )                { return !rect.IsZero() && ( GameOpt.MouseX >= rect.L + ax && GameOpt.MouseY >= rect.T + ay && GameOpt.MouseX <= rect.R + ax && GameOpt.MouseY <= rect.B + ay ); }
-    bool IsCurInRect( const Rect& rect )                                { return !rect.IsZero() && ( GameOpt.MouseX >= rect.L && GameOpt.MouseY >= rect.T && GameOpt.MouseX <= rect.R && GameOpt.MouseY <= rect.B ); }
+    bool IsCurInRect( const Rect& rect, int ax, int ay )                { return !rect.IsZero() && (GameOpt.MouseX >= rect.L + ax && GameOpt.MouseY >= rect.T + ay && GameOpt.MouseX <= rect.R + ax && GameOpt.MouseY <= rect.B + ay); }
+    bool IsCurInRect( const Rect& rect )                                { return !rect.IsZero() && (GameOpt.MouseX >= rect.L && GameOpt.MouseY >= rect.T && GameOpt.MouseX <= rect.R && GameOpt.MouseY <= rect.B); }
     bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay ) { return IsCurInRect( rect, ax, ay ) && SprMngr.IsPixNoTransp( spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false ); }
     bool IsCurInInterface();
     bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
@@ -720,8 +720,8 @@ public:
 /* Inventory                                                            */
 /************************************************************************/
     int InvFocus;
-    #define INVF_NONE           ( 0 )
-    #define INVF_RAD_CHANNEL    ( 1 )
+    #define INVF_NONE           (0)
+    #define INVF_RAD_CHANNEL    (1)
 
     AnyFrames* InvPWMain, * InvPBOkDw, * InvPBOkUp, * InvPBScrUpDw, * InvPBScrUpUp,
              * InvPBScrUpOff, * InvPBScrDwDw, * InvPBScrDwUp, * InvPBScrDwOff;
@@ -743,7 +743,7 @@ public:
         char* IniName;
         Rect  Region;
     };
-    typedef vector< SlotExt > SlotExtVec;
+    typedef vector<SlotExt> SlotExtVec;
     SlotExtVec SlotsExt;
 
     void InvDraw();
@@ -783,7 +783,7 @@ public:
         Rect   EndPos;
         bool operator==( const MapText& r ) { return HexX == r.HexX && HexY == r.HexY; }
     };
-    typedef vector< MapText > MapTextVec;
+    typedef vector<MapText> MapTextVec;
 
     MapTextVec GameMapTexts;
     uint       GameMouseStay;
@@ -900,13 +900,13 @@ public:
 
         Answer( uint page, Rect pos, string text, uint answer_num ) : Page( page ), Position( pos ), Text( text ), AnswerNum( answer_num ) {}
     };
-    vector< Answer > DlgAllAnswers, DlgAnswers;
+    vector<Answer> DlgAllAnswers, DlgAnswers;
 
-    string           DlgMainText;
-    int              DlgMainTextCur, DlgMainTextLinesReal, DlgMainTextLinesRect;
-    int              DlgX, DlgY;
-    Rect             DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
-                     DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
+    string         DlgMainText;
+    int            DlgMainTextCur, DlgMainTextLinesReal, DlgMainTextLinesRect;
+    int            DlgX, DlgY;
+    Rect           DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
+                   DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
 
     // Barter
     AnyFrames* BarterPMain, * BarterPBOfferDn, * BarterPBTalkDn,
@@ -946,7 +946,7 @@ public:
 /************************************************************************/
 /* Mini-map                                                             */
 /************************************************************************/
-    #define MINIMAP_PREPARE_TICK    ( 1000 )
+    #define MINIMAP_PREPARE_TICK    (1000)
     AnyFrames* LmapPMain, * LmapPBOkDw, * LmapPBScanDw, * LmapPBLoHiDw, * LmapPPix;
     PointVec   LmapPrepPix;
     Rect       LmapMain, LmapWMap, LmapBOk, LmapBScan, LmapBLoHi;
@@ -1014,7 +1014,7 @@ public:
         uint   Color;
         bool operator==( const uint& _right ) { return this->LocId == _right;  }
     };
-    typedef vector< GmapLocation > GmapLocationVec;
+    typedef vector<GmapLocation> GmapLocationVec;
     GmapLocationVec GmapLoc;
     GmapLocation    GmapTownLoc;
 
@@ -1055,16 +1055,16 @@ public:
     uint  GmapGetMouseTabLocId();
     void  GmapFreeResources();
 
-    #define GMAP_CHECK_MAPSCR                                             \
-        do {                                                              \
-            if( GmapOffsetX > GmapWMap[0] )                               \
-                GmapOffsetX = GmapWMap[0];                                \
-            if( GmapOffsetY > GmapWMap[1] )                               \
-                GmapOffsetY = GmapWMap[1];                                \
-            if( GmapOffsetX < GmapWMap[2] - (int)( GM_MAXX / GmapZoom ) ) \
-                GmapOffsetX = GmapWMap[2] - (int)( GM_MAXX / GmapZoom );  \
-            if( GmapOffsetY < GmapWMap[3] - (int)( GM_MAXY / GmapZoom ) ) \
-                GmapOffsetY = GmapWMap[3] - (int)( GM_MAXY / GmapZoom );  \
+    #define GMAP_CHECK_MAPSCR                                           \
+        do {                                                            \
+            if( GmapOffsetX > GmapWMap[0] )                             \
+                GmapOffsetX = GmapWMap[0];                              \
+            if( GmapOffsetY > GmapWMap[1] )                             \
+                GmapOffsetY = GmapWMap[1];                              \
+            if( GmapOffsetX < GmapWMap[2] - (int)(GM_MAXX / GmapZoom) ) \
+                GmapOffsetX = GmapWMap[2] - (int)(GM_MAXX / GmapZoom);  \
+            if( GmapOffsetY < GmapWMap[3] - (int)(GM_MAXY / GmapZoom) ) \
+                GmapOffsetY = GmapWMap[3] - (int)(GM_MAXY / GmapZoom);  \
         } while( 0 )
 
 /************************************************************************/
@@ -1113,9 +1113,9 @@ public:
 /************************************************************************/
     // Switch
     int ChaCurSwitch;
-    #define CHA_SWITCH_PERKS    ( 0 )
-    #define CHA_SWITCH_KARMA    ( 1 )
-    #define CHA_SWITCH_KILLS    ( 2 )
+    #define CHA_SWITCH_PERKS    (0)
+    #define CHA_SWITCH_KARMA    (1)
+    #define CHA_SWITCH_KILLS    (2)
 
     AnyFrames* ChaPBSwitchPerks, * ChaPBSwitchKarma, * ChaPBSwitchKills, * ChaPBSwitchMask,
              * ChaPBSwitchScrUpUp, * ChaPBSwitchScrUpDn, * ChaPBSwitchScrDnUp, * ChaPBSwitchScrDnDn;
@@ -1129,10 +1129,10 @@ public:
         uint   DrawFlags;
         char   Addon[64];
 
-        SwitchElement( uint name, uint desc, ushort pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof( Addon ) ); }
-        SwitchElement( const char* add, uint flags ) : NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof( Addon ) ); }
+        SwitchElement( uint name, uint desc, ushort pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof(Addon) ); }
+        SwitchElement( const char* add, uint flags ) : NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof(Addon) ); }
     };
-    typedef vector< SwitchElement > SwitchElementVec;
+    typedef vector<SwitchElement> SwitchElementVec;
 
     SwitchElementVec ChaSwitchText[3];
     int              ChaSwitchScroll[3];
@@ -1262,8 +1262,8 @@ public:
     int        TViewX, TViewY, TViewVectX, TViewVectY;
     bool       TViewShowCountours;
 
-    #define TOWN_VIEW_FROM_NONE      ( 0 )
-    #define TOWN_VIEW_FROM_GLOBAL    ( 1 )
+    #define TOWN_VIEW_FROM_NONE      (0)
+    #define TOWN_VIEW_FROM_GLOBAL    (1)
     int  TViewType;
     uint TViewGmapLocId, TViewGmapLocEntrance;    // TOWN_VIEW_FROM_GLOBAL
 
@@ -1276,16 +1276,16 @@ public:
 /* PipBoy                                                               */
 /************************************************************************/
     int PipMode;
-    #define PIP__NONE                ( 0 )
-    #define PIP__STATUS              ( 1 )
-    #define PIP__STATUS_QUESTS       ( 2 )
-    #define PIP__STATUS_SCORES       ( 3 )
-    #define PIP__GAMES               ( 4 )
-    #define PIP__AUTOMAPS            ( 5 )
-    #define PIP__AUTOMAPS_LOC        ( 6 )
-    #define PIP__AUTOMAPS_MAP        ( 7 )
-    #define PIP__ARCHIVES            ( 8 )
-    #define PIP__ARCHIVES_INFO       ( 9 )
+    #define PIP__NONE                (0)
+    #define PIP__STATUS              (1)
+    #define PIP__STATUS_QUESTS       (2)
+    #define PIP__STATUS_SCORES       (3)
+    #define PIP__GAMES               (4)
+    #define PIP__AUTOMAPS            (5)
+    #define PIP__AUTOMAPS_LOC        (6)
+    #define PIP__AUTOMAPS_MAP        (7)
+    #define PIP__ARCHIVES            (8)
+    #define PIP__ARCHIVES_INFO       (9)
 
     AnyFrames* PipPMain, * PipPBStatusDn /*,*PipPBGamesDn*/, * PipPBAutomapsDn, * PipPBArchivesDn, * PipPBCloseDn, * PipPWMonitor;
     int        PipX, PipY;
@@ -1322,7 +1322,7 @@ public:
         Automap() : LocId( 0 ), LocPid( 0 ), CurMap( 0 ) {}
         bool operator==( const uint id ) const { return LocId == id; }
     };
-    typedef vector< Automap > AutomapVec;
+    typedef vector<Automap> AutomapVec;
     AutomapVec Automaps;
     Automap    AutomapSelected;
     UShortSet  AutomapWaitPids;
@@ -1390,13 +1390,13 @@ public:
     int        DlgboxX, DlgboxY;
     int        DlgboxVectX, DlgboxVectY;
     uchar      DlgboxType;
-    #define DIALOGBOX_NONE             ( 0 )
-    #define DIALOGBOX_FOLLOW           ( 1 )
-    #define DIALOGBOX_BARTER           ( 2 )
-    #define DIALOGBOX_ENCOUNTER_ANY    ( 3 )
-    #define DIALOGBOX_ENCOUNTER_RT     ( 4 )
-    #define DIALOGBOX_ENCOUNTER_TB     ( 5 )
-    #define DIALOGBOX_MANUAL           ( 6 )
+    #define DIALOGBOX_NONE             (0)
+    #define DIALOGBOX_FOLLOW           (1)
+    #define DIALOGBOX_BARTER           (2)
+    #define DIALOGBOX_ENCOUNTER_ANY    (3)
+    #define DIALOGBOX_ENCOUNTER_RT     (4)
+    #define DIALOGBOX_ENCOUNTER_TB     (5)
+    #define DIALOGBOX_MANUAL           (6)
     uint   DlgboxWait;
     char   DlgboxText[MAX_FOTEXT];
     string DlgboxButtonText[MAX_DLGBOX_BUTTONS];
@@ -1446,9 +1446,9 @@ public:
     Rect       SayWMain, SayWMainText, SayWSay, SayBOk, SayBOkText, SayBCancel, SayBCancelText;
     uchar      SayType;
     bool       SayOnlyNumbers;
-    #define DIALOGSAY_NONE             ( 0 )
-    #define DIALOGSAY_TEXT             ( 1 )
-    #define DIALOGSAY_SAVE             ( 2 )
+    #define DIALOGSAY_NONE             (0)
+    #define DIALOGSAY_TEXT             (1)
+    #define DIALOGSAY_SAVE             (2)
     string SayTitle;
     string SayText;
 
@@ -1468,7 +1468,7 @@ public:
 /************************************************************************/
 /* Split                                                                */
 /************************************************************************/
-    #define MAX_SPLIT_VALUE            ( 100000 )
+    #define MAX_SPLIT_VALUE            (100000)
 
     AnyFrames* SplitMainPic, * SplitPBUpDn, * SplitPBDnDn, * SplitPBAllDn, * SplitPBDoneDn,
              * SplitPBCancelDn, * SplitItemPic;
@@ -1493,8 +1493,8 @@ public:
 /************************************************************************/
 /* Timer                                                                */
 /************************************************************************/
-    #define TIMER_MIN_VALUE            ( 1 )
-    #define TIMER_MAX_VALUE            ( 599 )
+    #define TIMER_MIN_VALUE            (1)
+    #define TIMER_MAX_VALUE            (599)
 
     AnyFrames* TimerMainPic, * TimerBUpPicDown, * TimerBDownPicDown, * TimerBDonePicDown,
              * TimerBCancelPicDown, * TimerItemPic;
@@ -1518,9 +1518,9 @@ public:
 /* FixBoy                                                               */
 /************************************************************************/
     int FixMode;
-    #define FIX_MODE_LIST              ( 0 )
-    #define FIX_MODE_FIXIT             ( 1 )
-    #define FIX_MODE_RESULT            ( 2 )
+    #define FIX_MODE_LIST              (0)
+    #define FIX_MODE_FIXIT             (1)
+    #define FIX_MODE_RESULT            (2)
 
     AnyFrames* FixMainPic, * FixPBDoneDn, * FixPBScrUpDn, * FixPBScrDnDn, * FixPBFixDn;
     Rect       FixWMain, FixBDone, FixBScrUp, FixBScrDn, FixWWin, FixBFix;
@@ -1557,8 +1557,8 @@ public:
             return *this;
         }
     };
-    typedef vector< SCraft >    SCraftVec;
-    typedef vector< SCraftVec > SCraftVecVec;
+    typedef vector<SCraft>    SCraftVec;
+    typedef vector<SCraftVec> SCraftVecVec;
 
     SCraftVecVec FixCraftLst;
     int          FixScrollLst;
@@ -1581,9 +1581,9 @@ public:
         }
         FixDrawComponent( Rect& r, AnyFrames* anim ) : IsText( false ), Anim( anim ) { Place = r; }
     };
-    typedef vector< FixDrawComponent* > FixDrawComponentVec;
-    #define FIX_DRAW_PIC_WIDTH         ( 40 )
-    #define FIX_DRAW_PIC_HEIGHT        ( 40 )
+    typedef vector<FixDrawComponent*> FixDrawComponentVec;
+    #define FIX_DRAW_PIC_WIDTH         (40)
+    #define FIX_DRAW_PIC_HEIGHT        (40)
 
     FixDrawComponentVec FixDrawComp;
     string              FixResultStr;
@@ -1605,8 +1605,8 @@ public:
 /* Input Box                                                            */
 /************************************************************************/
     int IboxMode;
-    #define IBOX_MODE_NONE             ( 0 )
-    #define IBOX_MODE_HOLO             ( 1 )
+    #define IBOX_MODE_NONE             (0)
+    #define IBOX_MODE_HOLO             (1)
 
     AnyFrames* IboxWMainPicNone, * IboxBDonePicDown, * IboxBCancelPicDown;
     Rect       IboxWMain, IboxWTitle, IboxWText, IboxBDone, IboxBDoneText, IboxBCancel, IboxBCancelText;
@@ -1630,8 +1630,8 @@ public:
 /************************************************************************/
 /* Save/Load                                                            */
 /************************************************************************/
-    #define SAVE_LOAD_IMAGE_WIDTH      ( 400 )
-    #define SAVE_LOAD_IMAGE_HEIGHT     ( 300 )
+    #define SAVE_LOAD_IMAGE_WIDTH      (400)
+    #define SAVE_LOAD_IMAGE_HEIGHT     (300)
 
     AnyFrames* SaveLoadMainPic, * SaveLoadScrUpPicDown, * SaveLoadScrDownPicDown,
              * SaveLoadDonePicDown, * SaveLoadBackPicDown;
@@ -1656,7 +1656,7 @@ public:
         uint64   RealTime;
         UCharVec PicData;
     };
-    typedef vector< SaveLoadDataSlot > SaveLoadDataSlotVec;
+    typedef vector<SaveLoadDataSlot> SaveLoadDataSlotVec;
     SaveLoadDataSlotVec SaveLoadDataSlots;
     uint                SaveLoadClickSlotTick;
     int                 SaveLoadSlotIndex, SaveLoadClickSlotIndex;
@@ -1717,10 +1717,10 @@ public:
 /************************************************************************/
 /* MessBox                                                              */
 /************************************************************************/
-    #define FOMB_GAME                  ( 0 )
-    #define FOMB_TALK                  ( 1 )
-    #define FOMB_COMBAT_RESULT         ( 2 )
-    #define FOMB_VIEW                  ( 3 )
+    #define FOMB_GAME                  (0)
+    #define FOMB_TALK                  (1)
+    #define FOMB_COMBAT_RESULT         (2)
+    #define FOMB_VIEW                  (3)
     struct MessBoxMessage
     {
         int    Type;
@@ -1742,7 +1742,7 @@ public:
             return *this;
         }
     };
-    typedef vector< MessBoxMessage > MessBoxMessageVec;
+    typedef vector<MessBoxMessage> MessBoxMessageVec;
 
     MessBoxMessageVec MessBox;
     string            MessBoxCurText;
@@ -1762,360 +1762,360 @@ public:
 };
 
 // Fonts
-#define FONT_FO                        ( 0 )
-#define FONT_NUM                       ( 1 )
-#define FONT_BIG_NUM                   ( 2 )
-#define FONT_SAND_NUM                  ( 3 )
-#define FONT_SPECIAL                   ( 4 )
-#define FONT_DEFAULT                   ( 5 )
-#define FONT_THIN                      ( 6 )
-#define FONT_FAT                       ( 7 )
-#define FONT_BIG                       ( 8 )
+#define FONT_FO                        (0)
+#define FONT_NUM                       (1)
+#define FONT_BIG_NUM                   (2)
+#define FONT_SAND_NUM                  (3)
+#define FONT_SPECIAL                   (4)
+#define FONT_DEFAULT                   (5)
+#define FONT_THIN                      (6)
+#define FONT_FAT                       (7)
+#define FONT_BIG                       (8)
 
 // Screens
-#define SCREEN_NONE                    ( 0 )
+#define SCREEN_NONE                    (0)
 // Primary screens
-#define SCREEN_LOGIN                   ( 1 )
-#define SCREEN_REGISTRATION            ( 2 )
-#define SCREEN_CREDITS                 ( 3 )
-#define SCREEN_OPTIONS                 ( 4 )
-#define SCREEN_GAME                    ( 5 )
-#define SCREEN_GLOBAL_MAP              ( 6 )
-#define SCREEN_WAIT                    ( 7 )
+#define SCREEN_LOGIN                   (1)
+#define SCREEN_REGISTRATION            (2)
+#define SCREEN_CREDITS                 (3)
+#define SCREEN_OPTIONS                 (4)
+#define SCREEN_GAME                    (5)
+#define SCREEN_GLOBAL_MAP              (6)
+#define SCREEN_WAIT                    (7)
 // Secondary screens
-#define SCREEN__INVENTORY              ( 10 )
-#define SCREEN__PICKUP                 ( 11 )
-#define SCREEN__MINI_MAP               ( 12 )
-#define SCREEN__CHARACTER              ( 13 )
-#define SCREEN__DIALOG                 ( 14 )
-#define SCREEN__BARTER                 ( 15 )
-#define SCREEN__PIP_BOY                ( 16 )
-#define SCREEN__FIX_BOY                ( 17 )
-#define SCREEN__MENU_OPTION            ( 18 )
-#define SCREEN__AIM                    ( 19 )
-#define SCREEN__SPLIT                  ( 20 )
-#define SCREEN__TIMER                  ( 21 )
-#define SCREEN__DIALOGBOX              ( 22 )
-#define SCREEN__ELEVATOR               ( 23 )
-#define SCREEN__SAY                    ( 24 )
-#define SCREEN__CHA_NAME               ( 25 )
-#define SCREEN__CHA_AGE                ( 26 )
-#define SCREEN__CHA_SEX                ( 27 )
-#define SCREEN__GM_TOWN                ( 28 )
-#define SCREEN__INPUT_BOX              ( 29 )
-#define SCREEN__SKILLBOX               ( 30 )
-#define SCREEN__USE                    ( 31 )
-#define SCREEN__PERK                   ( 32 )
-#define SCREEN__TOWN_VIEW              ( 33 )
-#define SCREEN__SAVE_LOAD              ( 34 )
+#define SCREEN__INVENTORY              (10)
+#define SCREEN__PICKUP                 (11)
+#define SCREEN__MINI_MAP               (12)
+#define SCREEN__CHARACTER              (13)
+#define SCREEN__DIALOG                 (14)
+#define SCREEN__BARTER                 (15)
+#define SCREEN__PIP_BOY                (16)
+#define SCREEN__FIX_BOY                (17)
+#define SCREEN__MENU_OPTION            (18)
+#define SCREEN__AIM                    (19)
+#define SCREEN__SPLIT                  (20)
+#define SCREEN__TIMER                  (21)
+#define SCREEN__DIALOGBOX              (22)
+#define SCREEN__ELEVATOR               (23)
+#define SCREEN__SAY                    (24)
+#define SCREEN__CHA_NAME               (25)
+#define SCREEN__CHA_AGE                (26)
+#define SCREEN__CHA_SEX                (27)
+#define SCREEN__GM_TOWN                (28)
+#define SCREEN__INPUT_BOX              (29)
+#define SCREEN__SKILLBOX               (30)
+#define SCREEN__USE                    (31)
+#define SCREEN__PERK                   (32)
+#define SCREEN__TOWN_VIEW              (33)
+#define SCREEN__SAVE_LOAD              (34)
 
 // Cur modes
-#define CUR_DEFAULT                    ( 0 )
-#define CUR_MOVE                       ( 1 )
-#define CUR_USE_ITEM                   ( 2 )
-#define CUR_USE_WEAPON                 ( 3 )
-#define CUR_USE_SKILL                  ( 4 )
-#define CUR_WAIT                       ( 5 )
-#define CUR_HAND                       ( 6 )
+#define CUR_DEFAULT                    (0)
+#define CUR_MOVE                       (1)
+#define CUR_USE_ITEM                   (2)
+#define CUR_USE_WEAPON                 (3)
+#define CUR_USE_SKILL                  (4)
+#define CUR_WAIT                       (5)
+#define CUR_HAND                       (6)
 
 // Lmenu
-#define LMENU_SHOW_TIME                ( 400 )
-#define LMENU_OFF                      ( 0 )
-#define LMENU_PLAYER                   ( 1 )
-#define LMENU_NPC                      ( 2 )
-#define LMENU_ITEM                     ( 3 )
-#define LMENU_ITEM_INV                 ( 4 )
-#define LMENU_GMAP_CRIT                ( 5 )
+#define LMENU_SHOW_TIME                (400)
+#define LMENU_OFF                      (0)
+#define LMENU_PLAYER                   (1)
+#define LMENU_NPC                      (2)
+#define LMENU_ITEM                     (3)
+#define LMENU_ITEM_INV                 (4)
+#define LMENU_GMAP_CRIT                (5)
 // Lmenu Nodes
-#define LMENU_NODE_LOOK                ( 0 )
-#define LMENU_NODE_TALK                ( 1 )
-#define LMENU_NODE_BREAK               ( 2 )
-#define LMENU_NODE_PICK                ( 3 )
-#define LMENU_NODE_GMFOLLOW            ( 4 )
-#define LMENU_NODE_ROTATE              ( 5 )
-#define LMENU_NODE_DROP                ( 6 )
-#define LMENU_NODE_UNLOAD              ( 7 )
-#define LMENU_NODE_USE                 ( 8 )
-#define LMENU_NODE_SORT_UP             ( 10 )
-#define LMENU_NODE_SORT_DOWN           ( 11 )
-#define LMENU_NODE_PICK_ITEM           ( 12 )
-#define LMENU_NODE_PUSH                ( 13 )
-#define LMENU_NODE_BAG                 ( 14 )
-#define LMENU_NODE_SKILL               ( 15 )
-#define LMENU_NODE_BARTER_OPEN         ( 16 )
-#define LMENU_NODE_BARTER_HIDE         ( 17 )
-#define LMENU_NODE_GMAP_KICK           ( 18 )
-#define LMENU_NODE_GMAP_RULE           ( 19 )
-#define LMENU_NODE_VOTE_UP             ( 20 )
-#define LMENU_NODE_VOTE_DOWN           ( 21 )
+#define LMENU_NODE_LOOK                (0)
+#define LMENU_NODE_TALK                (1)
+#define LMENU_NODE_BREAK               (2)
+#define LMENU_NODE_PICK                (3)
+#define LMENU_NODE_GMFOLLOW            (4)
+#define LMENU_NODE_ROTATE              (5)
+#define LMENU_NODE_DROP                (6)
+#define LMENU_NODE_UNLOAD              (7)
+#define LMENU_NODE_USE                 (8)
+#define LMENU_NODE_SORT_UP             (10)
+#define LMENU_NODE_SORT_DOWN           (11)
+#define LMENU_NODE_PICK_ITEM           (12)
+#define LMENU_NODE_PUSH                (13)
+#define LMENU_NODE_BAG                 (14)
+#define LMENU_NODE_SKILL               (15)
+#define LMENU_NODE_BARTER_OPEN         (16)
+#define LMENU_NODE_BARTER_HIDE         (17)
+#define LMENU_NODE_GMAP_KICK           (18)
+#define LMENU_NODE_GMAP_RULE           (19)
+#define LMENU_NODE_VOTE_UP             (20)
+#define LMENU_NODE_VOTE_DOWN           (21)
 
 // Chosen actions
-#define CHOSEN_NONE                    ( 0 )  //
-#define CHOSEN_MOVE                    ( 1 )  // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_MOVE_TO_CRIT            ( 2 )  // Critter id, None, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_DIR                     ( 3 )  // 0 (CW) or 1 (CCW)
-#define CHOSEN_SHOW_ITEM               ( 4 )  // Item id
-#define CHOSEN_HIDE_ITEM               ( 5 )  // Item id
-#define CHOSEN_USE_ITEM                ( 6 )  // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
-#define CHOSEN_MOVE_ITEM               ( 7 )  // Item id, Item count, To slot, Is barter container, Is second try
-#define CHOSEN_MOVE_ITEM_CONT          ( 8 )  // From container, Item id, Count
-#define CHOSEN_TAKE_ALL                ( 9 )  //
-#define CHOSEN_USE_SKL_ON_CRITTER      ( 10 ) // Skill, Critter id
-#define CHOSEN_USE_SKL_ON_ITEM         ( 11 ) // Is inventory, Skill index, Item id
-#define CHOSEN_USE_SKL_ON_SCEN         ( 12 ) // Skill, Pid, HexX, HexY
-#define CHOSEN_TALK_NPC                ( 13 ) // Critter id
-#define CHOSEN_PICK_ITEM               ( 14 ) // Pid, HexX, HexY
-#define CHOSEN_PICK_CRIT               ( 15 ) // Critter id, (loot - 0, push - 1)
-#define CHOSEN_WRITE_HOLO              ( 16 ) // Holodisk id
+#define CHOSEN_NONE                    (0)    //
+#define CHOSEN_MOVE                    (1)    // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_MOVE_TO_CRIT            (2)    // Critter id, None, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_DIR                     (3)    // 0 (CW) or 1 (CCW)
+#define CHOSEN_SHOW_ITEM               (4)    // Item id
+#define CHOSEN_HIDE_ITEM               (5)    // Item id
+#define CHOSEN_USE_ITEM                (6)    // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
+#define CHOSEN_MOVE_ITEM               (7)    // Item id, Item count, To slot, Is barter container, Is second try
+#define CHOSEN_MOVE_ITEM_CONT          (8)    // From container, Item id, Count
+#define CHOSEN_TAKE_ALL                (9)    //
+#define CHOSEN_USE_SKL_ON_CRITTER      (10)   // Skill, Critter id
+#define CHOSEN_USE_SKL_ON_ITEM         (11)   // Is inventory, Skill index, Item id
+#define CHOSEN_USE_SKL_ON_SCEN         (12)   // Skill, Pid, HexX, HexY
+#define CHOSEN_TALK_NPC                (13)   // Critter id
+#define CHOSEN_PICK_ITEM               (14)   // Pid, HexX, HexY
+#define CHOSEN_PICK_CRIT               (15)   // Critter id, (loot - 0, push - 1)
+#define CHOSEN_WRITE_HOLO              (16)   // Holodisk id
 
 // Proxy types
-#define PROXY_SOCKS4                   ( 1 )
-#define PROXY_SOCKS5                   ( 2 )
-#define PROXY_HTTP                     ( 3 )
+#define PROXY_SOCKS4                   (1)
+#define PROXY_SOCKS5                   (2)
+#define PROXY_HTTP                     (3)
 
 // InitNetReason
-#define INIT_NET_REASON_NONE           ( 0 )
-#define INIT_NET_REASON_CACHE          ( 1 )
-#define INIT_NET_REASON_LOGIN          ( 2 )
-#define INIT_NET_REASON_REG            ( 3 )
-#define INIT_NET_REASON_LOAD           ( 4 )
+#define INIT_NET_REASON_NONE           (0)
+#define INIT_NET_REASON_CACHE          (1)
+#define INIT_NET_REASON_LOGIN          (2)
+#define INIT_NET_REASON_REG            (3)
+#define INIT_NET_REASON_LOAD           (4)
 
 // Items collections
-#define ITEMS_INVENTORY                ( 0 )
-#define ITEMS_USE                      ( 1 )
-#define ITEMS_BARTER                   ( 2 )
-#define ITEMS_BARTER_OFFER             ( 3 )
-#define ITEMS_BARTER_OPPONENT          ( 4 )
-#define ITEMS_BARTER_OPPONENT_OFFER    ( 5 )
-#define ITEMS_PICKUP                   ( 6 )
-#define ITEMS_PICKUP_FROM              ( 7 )
+#define ITEMS_INVENTORY                (0)
+#define ITEMS_USE                      (1)
+#define ITEMS_BARTER                   (2)
+#define ITEMS_BARTER_OFFER             (3)
+#define ITEMS_BARTER_OPPONENT          (4)
+#define ITEMS_BARTER_OPPONENT_OFFER    (5)
+#define ITEMS_PICKUP                   (6)
+#define ITEMS_PICKUP_FROM              (7)
 
 // Interface elements
-#define IFACE_NONE                     ( 0 )
-#define IFACE_INT_ITEM                 ( 1 )
-#define IFACE_INT_CHSLOT               ( 2 )
-#define IFACE_INT_INV                  ( 3 )
-#define IFACE_INT_MENU                 ( 4 )
-#define IFACE_INT_SKILL                ( 5 )
-#define IFACE_INT_MAP                  ( 6 )
-#define IFACE_INT_CHAR                 ( 7 )
-#define IFACE_INT_PIP                  ( 8 )
-#define IFACE_INT_FIX                  ( 9 )
-#define IFACE_INT_ADDMESS              ( 10 )
-#define IFACE_INT_FILTER1              ( 11 )
-#define IFACE_INT_FILTER2              ( 12 )
-#define IFACE_INT_FILTER3              ( 13 )
-#define IFACE_INT_COMBAT_TURN          ( 14 )
-#define IFACE_INT_COMBAT_END           ( 15 )
-#define IFACE_INT_MAIN                 ( 16 )
-#define IFACE_INV_INV                  ( 20 )
-#define IFACE_INV_SLOT1                ( 21 )
-#define IFACE_INV_SLOT2                ( 22 )
-#define IFACE_INV_ARMOR                ( 23 )
-#define IFACE_INV_SLOTS_EXT            ( 24 )
-#define IFACE_INV_SCRUP                ( 25 )
-#define IFACE_INV_SCRDW                ( 26 )
-#define IFACE_INV_OK                   ( 27 )
-#define IFACE_INV_MAIN                 ( 28 )
-#define IFACE_USE_INV                  ( 40 )
-#define IFACE_USE_SCRUP                ( 41 )
-#define IFACE_USE_SCRDW                ( 42 )
-#define IFACE_USE_CANCEL               ( 43 )
-#define IFACE_USE_MAIN                 ( 44 )
-#define IFACE_GAME_MNEXT               ( 60 )
-#define IFACE_LOG_NAME                 ( 80 )
-#define IFACE_LOG_PASS                 ( 81 )
-#define IFACE_LOG_PLAY__NEWGAME        ( 82 )
-#define IFACE_LOG_REG__LOADGAME        ( 83 )
-#define IFACE_LOG_OPTIONS              ( 84 )
-#define IFACE_LOG_CREDITS              ( 85 )
-#define IFACE_LOG_EXIT                 ( 86 )
-#define IFACE_DLG_MAIN                 ( 100 )
-#define IFACE_DLG_SCR_UP               ( 101 )
-#define IFACE_DLG_SCR_DN               ( 102 )
-#define IFACE_DLG_ANSWER               ( 103 )
-#define IFACE_DLG_BARTER               ( 104 )
-#define IFACE_DLG_SAY                  ( 105 )
-#define IFACE_BARTER_OFFER             ( 106 )
-#define IFACE_BARTER_TALK              ( 107 )
-#define IFACE_BARTER_CONT1             ( 108 )
-#define IFACE_BARTER_CONT2             ( 109 )
-#define IFACE_BARTER_CONT1O            ( 110 )
-#define IFACE_BARTER_CONT2O            ( 111 )
-#define IFACE_BARTER_CONT1SU           ( 112 )
-#define IFACE_BARTER_CONT1SD           ( 113 )
-#define IFACE_BARTER_CONT2SU           ( 114 )
-#define IFACE_BARTER_CONT2SD           ( 115 )
-#define IFACE_BARTER_CONT1OSU          ( 116 )
-#define IFACE_BARTER_CONT1OSD          ( 117 )
-#define IFACE_BARTER_CONT2OSU          ( 118 )
-#define IFACE_BARTER_CONT2OSD          ( 119 )
-#define IFACE_LMAP_OK                  ( 120 )
-#define IFACE_LMAP_SCAN                ( 121 )
-#define IFACE_LMAP_LOHI                ( 122 )
-#define IFACE_LMAP_MAIN                ( 123 )
-#define IFACE_GMAP_MAP                 ( 140 )
-#define IFACE_GMAP_TOWN                ( 141 )
-#define IFACE_GMAP_TABBTN              ( 142 )
-#define IFACE_GMAP_TABSCRUP            ( 143 )
-#define IFACE_GMAP_TABSCRDW            ( 144 )
-#define IFACE_GMAP_TOLOC               ( 145 )
-#define IFACE_GMAP_TOWN_BUT            ( 146 )
-#define IFACE_GMAP_VIEW_BUT            ( 147 )
-#define IFACE_GMAP_INV                 ( 148 )
-#define IFACE_GMAP_MENU                ( 149 )
-#define IFACE_GMAP_CHA                 ( 150 )
-#define IFACE_GMAP_PIP                 ( 151 )
-#define IFACE_GMAP_FIX                 ( 152 )
-#define IFACE_GMAP_MOVE_MAP            ( 153 )
-#define IFACE_SBOX_CANCEL              ( 160 )
-#define IFACE_SBOX_MAIN                ( 161 )
-#define IFACE_SBOX_FIRSTAID            ( 162 )
-#define IFACE_SBOX_DOCTOR              ( 163 )
-#define IFACE_SBOX_SNEAK               ( 164 )
-#define IFACE_SBOX_LOCKPICK            ( 165 )
-#define IFACE_SBOX_STEAL               ( 166 )
-#define IFACE_SBOX_TRAP                ( 167 )
-#define IFACE_SBOX_SCIENCE             ( 168 )
-#define IFACE_SBOX_REPAIR              ( 169 )
-#define IFACE_MOPT_SAVEGAME            ( 180 )
-#define IFACE_MOPT_LOADGAME            ( 181 )
-#define IFACE_MOPT_OPTIONS             ( 182 )
-#define IFACE_MOPT_EXIT                ( 183 )
-#define IFACE_MOPT_RESUME              ( 184 )
-#define IFACE_CHA_PRINT                ( 200 )
-#define IFACE_CHA_OK                   ( 201 )
-#define IFACE_CHA_CANCEL               ( 202 )
-#define IFACE_CHA_PLUS                 ( 203 )
-#define IFACE_CHA_MINUS                ( 204 )
-#define IFACE_CHA_MAIN                 ( 205 )
-#define IFACE_CHA_NAME                 ( 206 )
-#define IFACE_CHA_AGE                  ( 207 )
-#define IFACE_CHA_SEX                  ( 208 )
-#define IFACE_CHA_SW_SCRUP             ( 209 )
-#define IFACE_CHA_SW_SCRDN             ( 210 )
-#define IFACE_REG_SPEC_PL              ( 211 )
-#define IFACE_REG_SPEC_MN              ( 212 )
-#define IFACE_REG_TAGSKILL             ( 213 )
-#define IFACE_REG_TRAIT_L              ( 214 )
-#define IFACE_REG_TRAIT_R              ( 215 )
-#define IFACE_CHA_NAME_NAME            ( 220 )
-#define IFACE_CHA_NAME_PASS            ( 221 )
-#define IFACE_CHA_AGE_UP               ( 222 )
-#define IFACE_CHA_AGE_DOWN             ( 223 )
-#define IFACE_CHA_SEX_MALE             ( 224 )
-#define IFACE_CHA_SEX_FEMALE           ( 225 )
-#define IFACE_PERK_MAIN                ( 240 )
-#define IFACE_PERK_SCRUP               ( 241 )
-#define IFACE_PERK_SCRDN               ( 242 )
-#define IFACE_PERK_OK                  ( 243 )
-#define IFACE_PERK_CANCEL              ( 244 )
-#define IFACE_PERK_PERKS               ( 245 )
-#define IFACE_TOWN_VIEW_MAIN           ( 250 )
-#define IFACE_TOWN_VIEW_BACK           ( 251 )
-#define IFACE_TOWN_VIEW_ENTER          ( 252 )
-#define IFACE_TOWN_VIEW_CONTOUR        ( 253 )
-#define IFACE_PIP_STATUS               ( 260 )
+#define IFACE_NONE                     (0)
+#define IFACE_INT_ITEM                 (1)
+#define IFACE_INT_CHSLOT               (2)
+#define IFACE_INT_INV                  (3)
+#define IFACE_INT_MENU                 (4)
+#define IFACE_INT_SKILL                (5)
+#define IFACE_INT_MAP                  (6)
+#define IFACE_INT_CHAR                 (7)
+#define IFACE_INT_PIP                  (8)
+#define IFACE_INT_FIX                  (9)
+#define IFACE_INT_ADDMESS              (10)
+#define IFACE_INT_FILTER1              (11)
+#define IFACE_INT_FILTER2              (12)
+#define IFACE_INT_FILTER3              (13)
+#define IFACE_INT_COMBAT_TURN          (14)
+#define IFACE_INT_COMBAT_END           (15)
+#define IFACE_INT_MAIN                 (16)
+#define IFACE_INV_INV                  (20)
+#define IFACE_INV_SLOT1                (21)
+#define IFACE_INV_SLOT2                (22)
+#define IFACE_INV_ARMOR                (23)
+#define IFACE_INV_SLOTS_EXT            (24)
+#define IFACE_INV_SCRUP                (25)
+#define IFACE_INV_SCRDW                (26)
+#define IFACE_INV_OK                   (27)
+#define IFACE_INV_MAIN                 (28)
+#define IFACE_USE_INV                  (40)
+#define IFACE_USE_SCRUP                (41)
+#define IFACE_USE_SCRDW                (42)
+#define IFACE_USE_CANCEL               (43)
+#define IFACE_USE_MAIN                 (44)
+#define IFACE_GAME_MNEXT               (60)
+#define IFACE_LOG_NAME                 (80)
+#define IFACE_LOG_PASS                 (81)
+#define IFACE_LOG_PLAY__NEWGAME        (82)
+#define IFACE_LOG_REG__LOADGAME        (83)
+#define IFACE_LOG_OPTIONS              (84)
+#define IFACE_LOG_CREDITS              (85)
+#define IFACE_LOG_EXIT                 (86)
+#define IFACE_DLG_MAIN                 (100)
+#define IFACE_DLG_SCR_UP               (101)
+#define IFACE_DLG_SCR_DN               (102)
+#define IFACE_DLG_ANSWER               (103)
+#define IFACE_DLG_BARTER               (104)
+#define IFACE_DLG_SAY                  (105)
+#define IFACE_BARTER_OFFER             (106)
+#define IFACE_BARTER_TALK              (107)
+#define IFACE_BARTER_CONT1             (108)
+#define IFACE_BARTER_CONT2             (109)
+#define IFACE_BARTER_CONT1O            (110)
+#define IFACE_BARTER_CONT2O            (111)
+#define IFACE_BARTER_CONT1SU           (112)
+#define IFACE_BARTER_CONT1SD           (113)
+#define IFACE_BARTER_CONT2SU           (114)
+#define IFACE_BARTER_CONT2SD           (115)
+#define IFACE_BARTER_CONT1OSU          (116)
+#define IFACE_BARTER_CONT1OSD          (117)
+#define IFACE_BARTER_CONT2OSU          (118)
+#define IFACE_BARTER_CONT2OSD          (119)
+#define IFACE_LMAP_OK                  (120)
+#define IFACE_LMAP_SCAN                (121)
+#define IFACE_LMAP_LOHI                (122)
+#define IFACE_LMAP_MAIN                (123)
+#define IFACE_GMAP_MAP                 (140)
+#define IFACE_GMAP_TOWN                (141)
+#define IFACE_GMAP_TABBTN              (142)
+#define IFACE_GMAP_TABSCRUP            (143)
+#define IFACE_GMAP_TABSCRDW            (144)
+#define IFACE_GMAP_TOLOC               (145)
+#define IFACE_GMAP_TOWN_BUT            (146)
+#define IFACE_GMAP_VIEW_BUT            (147)
+#define IFACE_GMAP_INV                 (148)
+#define IFACE_GMAP_MENU                (149)
+#define IFACE_GMAP_CHA                 (150)
+#define IFACE_GMAP_PIP                 (151)
+#define IFACE_GMAP_FIX                 (152)
+#define IFACE_GMAP_MOVE_MAP            (153)
+#define IFACE_SBOX_CANCEL              (160)
+#define IFACE_SBOX_MAIN                (161)
+#define IFACE_SBOX_FIRSTAID            (162)
+#define IFACE_SBOX_DOCTOR              (163)
+#define IFACE_SBOX_SNEAK               (164)
+#define IFACE_SBOX_LOCKPICK            (165)
+#define IFACE_SBOX_STEAL               (166)
+#define IFACE_SBOX_TRAP                (167)
+#define IFACE_SBOX_SCIENCE             (168)
+#define IFACE_SBOX_REPAIR              (169)
+#define IFACE_MOPT_SAVEGAME            (180)
+#define IFACE_MOPT_LOADGAME            (181)
+#define IFACE_MOPT_OPTIONS             (182)
+#define IFACE_MOPT_EXIT                (183)
+#define IFACE_MOPT_RESUME              (184)
+#define IFACE_CHA_PRINT                (200)
+#define IFACE_CHA_OK                   (201)
+#define IFACE_CHA_CANCEL               (202)
+#define IFACE_CHA_PLUS                 (203)
+#define IFACE_CHA_MINUS                (204)
+#define IFACE_CHA_MAIN                 (205)
+#define IFACE_CHA_NAME                 (206)
+#define IFACE_CHA_AGE                  (207)
+#define IFACE_CHA_SEX                  (208)
+#define IFACE_CHA_SW_SCRUP             (209)
+#define IFACE_CHA_SW_SCRDN             (210)
+#define IFACE_REG_SPEC_PL              (211)
+#define IFACE_REG_SPEC_MN              (212)
+#define IFACE_REG_TAGSKILL             (213)
+#define IFACE_REG_TRAIT_L              (214)
+#define IFACE_REG_TRAIT_R              (215)
+#define IFACE_CHA_NAME_NAME            (220)
+#define IFACE_CHA_NAME_PASS            (221)
+#define IFACE_CHA_AGE_UP               (222)
+#define IFACE_CHA_AGE_DOWN             (223)
+#define IFACE_CHA_SEX_MALE             (224)
+#define IFACE_CHA_SEX_FEMALE           (225)
+#define IFACE_PERK_MAIN                (240)
+#define IFACE_PERK_SCRUP               (241)
+#define IFACE_PERK_SCRDN               (242)
+#define IFACE_PERK_OK                  (243)
+#define IFACE_PERK_CANCEL              (244)
+#define IFACE_PERK_PERKS               (245)
+#define IFACE_TOWN_VIEW_MAIN           (250)
+#define IFACE_TOWN_VIEW_BACK           (251)
+#define IFACE_TOWN_VIEW_ENTER          (252)
+#define IFACE_TOWN_VIEW_CONTOUR        (253)
+#define IFACE_PIP_STATUS               (260)
 // #define IFACE_PIP_GAMES        (261)
-#define IFACE_PIP_AUTOMAPS             ( 262 )
-#define IFACE_PIP_AUTOMAPS_SCR         ( 263 )
-#define IFACE_PIP_ARCHIVES             ( 264 )
-#define IFACE_PIP_CLOSE                ( 265 )
-#define IFACE_PIP_MAIN                 ( 266 )
-#define IFACE_AIM_CANCEL               ( 280 )
-#define IFACE_AIM_HEAD                 ( 281 )
-#define IFACE_AIM_LARM                 ( 282 )
-#define IFACE_AIM_RARM                 ( 283 )
-#define IFACE_AIM_TORSO                ( 284 )
-#define IFACE_AIM_RLEG                 ( 285 )
-#define IFACE_AIM_LLEG                 ( 286 )
-#define IFACE_AIM_EYES                 ( 287 )
-#define IFACE_AIM_GROIN                ( 288 )
-#define IFACE_AIM_MAIN                 ( 289 )
-#define IFACE_PUP_CONT1                ( 300 )
-#define IFACE_PUP_CONT2                ( 301 )
-#define IFACE_PUP_OK                   ( 302 )
-#define IFACE_PUP_SCRUP1               ( 303 )
-#define IFACE_PUP_SCRDOWN1             ( 304 )
-#define IFACE_PUP_SCRUP2               ( 305 )
-#define IFACE_PUP_SCRDOWN2             ( 306 )
-#define IFACE_PUP_TAKEALL              ( 307 )
-#define IFACE_PUP_SCRCR_L              ( 308 )
-#define IFACE_PUP_SCRCR_R              ( 309 )
-#define IFACE_PUP_MAIN                 ( 310 )
-#define IFACE_DIALOG_BTN               ( 320 )
-#define IFACE_DIALOG_MAIN              ( 321 )
-#define IFACE_ELEVATOR_MAIN            ( 330 )
-#define IFACE_ELEVATOR_BTN             ( 331 )
-#define IFACE_SAY_OK                   ( 340 )
-#define IFACE_SAY_CANCEL               ( 341 )
-#define IFACE_SAY_MAIN                 ( 342 )
-#define IFACE_SPLIT_MAIN               ( 360 )
-#define IFACE_SPLIT_UP                 ( 361 )
-#define IFACE_SPLIT_DOWN               ( 362 )
-#define IFACE_SPLIT_ALL                ( 363 )
-#define IFACE_SPLIT_DONE               ( 364 )
-#define IFACE_SPLIT_CANCEL             ( 365 )
-#define IFACE_TIMER_MAIN               ( 380 )
-#define IFACE_TIMER_UP                 ( 381 )
-#define IFACE_TIMER_DOWN               ( 382 )
-#define IFACE_TIMER_DONE               ( 383 )
-#define IFACE_TIMER_CANCEL             ( 384 )
-#define IFACE_FIX_DONE                 ( 400 )
-#define IFACE_FIX_SCRUP                ( 401 )
-#define IFACE_FIX_SCRDN                ( 402 )
-#define IFACE_FIX_CHOOSE               ( 403 )
-#define IFACE_FIX_FIX                  ( 404 )
-#define IFACE_FIX_MAIN                 ( 405 )
-#define IFACE_IBOX_DONE                ( 420 )
-#define IFACE_IBOX_CANCEL              ( 421 )
-#define IFACE_IBOX_TITLE               ( 422 )
-#define IFACE_IBOX_TEXT                ( 423 )
-#define IFACE_IBOX_MAIN                ( 424 )
-#define IFACE_SAVELOAD_MAIN            ( 440 )
-#define IFACE_SAVELOAD_SCR_UP          ( 441 )
-#define IFACE_SAVELOAD_SCR_DN          ( 442 )
-#define IFACE_SAVELOAD_DONE            ( 443 )
-#define IFACE_SAVELOAD_BACK            ( 444 )
+#define IFACE_PIP_AUTOMAPS             (262)
+#define IFACE_PIP_AUTOMAPS_SCR         (263)
+#define IFACE_PIP_ARCHIVES             (264)
+#define IFACE_PIP_CLOSE                (265)
+#define IFACE_PIP_MAIN                 (266)
+#define IFACE_AIM_CANCEL               (280)
+#define IFACE_AIM_HEAD                 (281)
+#define IFACE_AIM_LARM                 (282)
+#define IFACE_AIM_RARM                 (283)
+#define IFACE_AIM_TORSO                (284)
+#define IFACE_AIM_RLEG                 (285)
+#define IFACE_AIM_LLEG                 (286)
+#define IFACE_AIM_EYES                 (287)
+#define IFACE_AIM_GROIN                (288)
+#define IFACE_AIM_MAIN                 (289)
+#define IFACE_PUP_CONT1                (300)
+#define IFACE_PUP_CONT2                (301)
+#define IFACE_PUP_OK                   (302)
+#define IFACE_PUP_SCRUP1               (303)
+#define IFACE_PUP_SCRDOWN1             (304)
+#define IFACE_PUP_SCRUP2               (305)
+#define IFACE_PUP_SCRDOWN2             (306)
+#define IFACE_PUP_TAKEALL              (307)
+#define IFACE_PUP_SCRCR_L              (308)
+#define IFACE_PUP_SCRCR_R              (309)
+#define IFACE_PUP_MAIN                 (310)
+#define IFACE_DIALOG_BTN               (320)
+#define IFACE_DIALOG_MAIN              (321)
+#define IFACE_ELEVATOR_MAIN            (330)
+#define IFACE_ELEVATOR_BTN             (331)
+#define IFACE_SAY_OK                   (340)
+#define IFACE_SAY_CANCEL               (341)
+#define IFACE_SAY_MAIN                 (342)
+#define IFACE_SPLIT_MAIN               (360)
+#define IFACE_SPLIT_UP                 (361)
+#define IFACE_SPLIT_DOWN               (362)
+#define IFACE_SPLIT_ALL                (363)
+#define IFACE_SPLIT_DONE               (364)
+#define IFACE_SPLIT_CANCEL             (365)
+#define IFACE_TIMER_MAIN               (380)
+#define IFACE_TIMER_UP                 (381)
+#define IFACE_TIMER_DOWN               (382)
+#define IFACE_TIMER_DONE               (383)
+#define IFACE_TIMER_CANCEL             (384)
+#define IFACE_FIX_DONE                 (400)
+#define IFACE_FIX_SCRUP                (401)
+#define IFACE_FIX_SCRDN                (402)
+#define IFACE_FIX_CHOOSE               (403)
+#define IFACE_FIX_FIX                  (404)
+#define IFACE_FIX_MAIN                 (405)
+#define IFACE_IBOX_DONE                (420)
+#define IFACE_IBOX_CANCEL              (421)
+#define IFACE_IBOX_TITLE               (422)
+#define IFACE_IBOX_TEXT                (423)
+#define IFACE_IBOX_MAIN                (424)
+#define IFACE_SAVELOAD_MAIN            (440)
+#define IFACE_SAVELOAD_SCR_UP          (441)
+#define IFACE_SAVELOAD_SCR_DN          (442)
+#define IFACE_SAVELOAD_DONE            (443)
+#define IFACE_SAVELOAD_BACK            (444)
 
-#define ACCELERATE_NONE                ( 0 )
-#define ACCELERATE_CONSOLE             ( 1 )
-#define ACCELERATE_IBOX                ( 2 )
-#define ACCELERATE_PAGE_UP             ( 3 )
-#define ACCELERATE_PAGE_DOWN           ( 4 )
-#define ACCELERATE_MESSBOX             ( 5 )
-#define ACCELERATE_SPLIT_UP            ( 6 )
-#define ACCELERATE_SPLIT_DOWN          ( 7 )
-#define ACCELERATE_TIMER_UP            ( 8 )
-#define ACCELERATE_TIMER_DOWN          ( 9 )
-#define ACCELERATE_USE_SCRUP           ( 10 )
-#define ACCELERATE_USE_SCRDOWN         ( 11 )
-#define ACCELERATE_INV_SCRUP           ( 12 )
-#define ACCELERATE_INV_SCRDOWN         ( 13 )
-#define ACCELERATE_PUP_SCRUP1          ( 14 )
-#define ACCELERATE_PUP_SCRDOWN1        ( 15 )
-#define ACCELERATE_PUP_SCRUP2          ( 16 )
-#define ACCELERATE_PUP_SCRDOWN2        ( 17 )
-#define ACCELERATE_CHA_SW_SCRUP        ( 18 )
-#define ACCELERATE_CHA_SW_SCRDOWN      ( 19 )
-#define ACCELERATE_CHA_PLUS            ( 20 )
-#define ACCELERATE_CHA_MINUS           ( 21 )
-#define ACCELERATE_CHA_AGE_UP          ( 22 )
-#define ACCELERATE_CHA_AGE_DOWN        ( 23 )
-#define ACCELERATE_BARTER_CONT1SU      ( 24 )
-#define ACCELERATE_BARTER_CONT1SD      ( 25 )
-#define ACCELERATE_BARTER_CONT2SU      ( 26 )
-#define ACCELERATE_BARTER_CONT2SD      ( 27 )
-#define ACCELERATE_BARTER_CONT1OSU     ( 28 )
-#define ACCELERATE_BARTER_CONT1OSD     ( 29 )
-#define ACCELERATE_BARTER_CONT2OSU     ( 30 )
-#define ACCELERATE_BARTER_CONT2OSD     ( 31 )
-#define ACCELERATE_PERK_SCRUP          ( 32 )
-#define ACCELERATE_PERK_SCRDOWN        ( 33 )
-#define ACCELERATE_DLG_TEXT_UP         ( 34 )
-#define ACCELERATE_DLG_TEXT_DOWN       ( 35 )
-#define ACCELERATE_SAVE_LOAD_SCR_UP    ( 36 )
-#define ACCELERATE_SAVE_LOAD_SCR_DN    ( 37 )
+#define ACCELERATE_NONE                (0)
+#define ACCELERATE_CONSOLE             (1)
+#define ACCELERATE_IBOX                (2)
+#define ACCELERATE_PAGE_UP             (3)
+#define ACCELERATE_PAGE_DOWN           (4)
+#define ACCELERATE_MESSBOX             (5)
+#define ACCELERATE_SPLIT_UP            (6)
+#define ACCELERATE_SPLIT_DOWN          (7)
+#define ACCELERATE_TIMER_UP            (8)
+#define ACCELERATE_TIMER_DOWN          (9)
+#define ACCELERATE_USE_SCRUP           (10)
+#define ACCELERATE_USE_SCRDOWN         (11)
+#define ACCELERATE_INV_SCRUP           (12)
+#define ACCELERATE_INV_SCRDOWN         (13)
+#define ACCELERATE_PUP_SCRUP1          (14)
+#define ACCELERATE_PUP_SCRDOWN1        (15)
+#define ACCELERATE_PUP_SCRUP2          (16)
+#define ACCELERATE_PUP_SCRDOWN2        (17)
+#define ACCELERATE_CHA_SW_SCRUP        (18)
+#define ACCELERATE_CHA_SW_SCRDOWN      (19)
+#define ACCELERATE_CHA_PLUS            (20)
+#define ACCELERATE_CHA_MINUS           (21)
+#define ACCELERATE_CHA_AGE_UP          (22)
+#define ACCELERATE_CHA_AGE_DOWN        (23)
+#define ACCELERATE_BARTER_CONT1SU      (24)
+#define ACCELERATE_BARTER_CONT1SD      (25)
+#define ACCELERATE_BARTER_CONT2SU      (26)
+#define ACCELERATE_BARTER_CONT2SD      (27)
+#define ACCELERATE_BARTER_CONT1OSU     (28)
+#define ACCELERATE_BARTER_CONT1OSD     (29)
+#define ACCELERATE_BARTER_CONT2OSU     (30)
+#define ACCELERATE_BARTER_CONT2OSD     (31)
+#define ACCELERATE_PERK_SCRUP          (32)
+#define ACCELERATE_PERK_SCRDOWN        (33)
+#define ACCELERATE_DLG_TEXT_UP         (34)
+#define ACCELERATE_DLG_TEXT_DOWN       (35)
+#define ACCELERATE_SAVE_LOAD_SCR_UP    (36)
+#define ACCELERATE_SAVE_LOAD_SCR_DN    (37)
 
 // Sounds
 #define SND_BUTTON1_IN                 "BUTIN1"

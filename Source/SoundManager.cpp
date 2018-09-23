@@ -181,7 +181,7 @@ bool SoundManager::ProcessSound( Sound* sound, uchar* output, uint outputSamples
             Streaming( sound );
 
         // Volume
-        int volume = ( sound->IsMusic ? musicVolume : soundVolume );
+        int volume = (sound->IsMusic ? musicVolume : soundVolume);
         if( volume < 100 )
         {
             for( uint i = 0, j = outputSamples * sound->Channels; i < j; i++ )
@@ -200,7 +200,7 @@ bool SoundManager::ProcessSound( Sound* sound, uchar* output, uint outputSamples
         if( !sound->NextPlay )
         {
             // Set next playing time
-            sound->NextPlay = Timer::GameTick() + ( sound->RepeatTime > 1 ? sound->RepeatTime : 0 );
+            sound->NextPlay = Timer::GameTick() + (sound->RepeatTime > 1 ? sound->RepeatTime : 0);
         }
 
         if( Timer::GameTick() >= sound->NextPlay )
@@ -258,9 +258,9 @@ Sound* SoundManager::Load( const char* fname, int path_type )
         return NULL;
     }
 
-    if( !( ( Str::CompareCase( ext, ".wav" ) && LoadWAV( sound, fname_, path_type ) ) ||
-           ( Str::CompareCase( ext, ".acm" ) && LoadACM( sound, fname_, path_type ) ) ||
-           ( Str::CompareCase( ext, ".ogg" ) && LoadOGG( sound, fname_, path_type ) ) ) )
+    if( !( (Str::CompareCase( ext, ".wav" ) && LoadWAV( sound, fname_, path_type ) ) ||
+           (Str::CompareCase( ext, ".acm" ) && LoadACM( sound, fname_, path_type ) ) ||
+           (Str::CompareCase( ext, ".ogg" ) && LoadOGG( sound, fname_, path_type ) ) ) )
     {
         delete sound;
         return NULL;
@@ -386,17 +386,17 @@ bool SoundManager::LoadACM( Sound* sound, const char* fname, int path_type )
     if( !fm.LoadFile( fname, path_type ) )
         return NULL;
 
-    int                     channels = 0;
-    int                     freq = 0;
-    int                     samples = 0;
-    AutoPtr< CACMUnpacker > acm( new CACMUnpacker( fm.GetBuf(), (int)fm.GetFsize(), channels, freq, samples ) );
+    int                   channels = 0;
+    int                   freq = 0;
+    int                   samples = 0;
+    AutoPtr<CACMUnpacker> acm( new CACMUnpacker( fm.GetBuf(), (int)fm.GetFsize(), channels, freq, samples ) );
     if( !acm.IsValid() )
     {
         WriteLogF( _FUNC_, " - ACMUnpacker init fail.\n" );
         return false;
     }
 
-    sound->Channels = ( path_type == PT_SND_MUSIC ? 2 : 1 );
+    sound->Channels = (path_type == PT_SND_MUSIC ? 2 : 1);
     sound->SampleRate = 22050;
     sound->SampleSize = 2;
 
@@ -542,9 +542,9 @@ bool SoundManager::LoadOGG( Sound* sound, const char* fname, int path_type )
 
 bool SoundManager::Streaming( Sound* sound )
 {
-    if( !( ( sound->StreamType == Sound::WAV && StreamingWAV( sound ) ) ||
-           ( sound->StreamType == Sound::ACM && StreamingACM( sound ) ) ||
-           ( sound->StreamType == Sound::OGG && StreamingOGG( sound ) ) ) )
+    if( !( (sound->StreamType == Sound::WAV && StreamingWAV( sound ) ) ||
+           (sound->StreamType == Sound::ACM && StreamingACM( sound ) ) ||
+           (sound->StreamType == Sound::OGG && StreamingOGG( sound ) ) ) )
         return false;
     return true;
 }
@@ -652,7 +652,7 @@ bool SoundManager::PlaySoundType( uchar sound_type, uchar sound_type_ext, uchar 
         return false;
 
     // Play
-    return PlaySound( ( *it ).second.c_str() );
+    return PlaySound( (*it).second.c_str() );
 }
 
 bool SoundManager::PlayMusic( const char* fname, uint pos, uint repeat )

@@ -3,32 +3,32 @@
 
 #include "Common.h"
 
-#define VAR_NAME_LEN          ( 256 )
-#define VAR_DESC_LEN          ( 2048 )
+#define VAR_NAME_LEN          (256)
+#define VAR_DESC_LEN          (2048)
 #define VAR_FNAME_VARS        "_vars.fos"
 #define VAR_DESC_MARK         "**********"
-#define VAR_CALC_QUEST( tid, val )    ( ( tid ) * 1000 + ( val ) )
+#define VAR_CALC_QUEST( tid, val )    ( (tid) * 1000 + (val) )
 
 // Types
-#define VAR_GLOBAL            ( 0 )
-#define VAR_LOCAL             ( 1 )
-#define VAR_UNICUM            ( 2 )
-#define VAR_LOCAL_LOCATION    ( 3 )
-#define VAR_LOCAL_MAP         ( 4 )
-#define VAR_LOCAL_ITEM        ( 5 )
+#define VAR_GLOBAL            (0)
+#define VAR_LOCAL             (1)
+#define VAR_UNICUM            (2)
+#define VAR_LOCAL_LOCATION    (3)
+#define VAR_LOCAL_MAP         (4)
+#define VAR_LOCAL_ITEM        (5)
 
 // Flags
-#define VAR_FLAG_QUEST        ( 0x1 )
-#define VAR_FLAG_RANDOM       ( 0x2 )
-#define VAR_FLAG_NO_CHECK     ( 0x4 )
+#define VAR_FLAG_QUEST        (0x1)
+#define VAR_FLAG_RANDOM       (0x2)
+#define VAR_FLAG_NO_CHECK     (0x4)
 
 // Typedefs
 class TemplateVar;
 class GameVar;
-typedef vector< TemplateVar* >  TempVarVec;
-typedef map< uint, GameVar* >   VarsMap32;
-typedef map< uint64, GameVar* > VarsMap64;
-typedef vector< GameVar* >      VarsVec;
+typedef vector<TemplateVar*>  TempVarVec;
+typedef map<uint, GameVar*>   VarsMap32;
+typedef map<uint64, GameVar*> VarsMap64;
+typedef vector<GameVar*>      VarsVec;
 
 
 class TemplateVar
@@ -47,7 +47,7 @@ public:
     VarsMap64 VarsUnicum;
 
     bool IsNotUnicum() { return Type != VAR_UNICUM; }
-    bool IsError()     { return !TempId || !Name.size() || ( IsNoBorders() && ( MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal ) ) || ( IsQuest() && Type != VAR_LOCAL );  }
+    bool IsError()     { return !TempId || !Name.size() || (IsNoBorders() && (MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal) ) || (IsQuest() && Type != VAR_LOCAL);  }
     bool IsQuest()     { return FLAG( Flags, VAR_FLAG_QUEST ); }
     bool IsRandom()    { return FLAG( Flags, VAR_FLAG_RANDOM ); }
     bool IsNoBorders() { return FLAG( Flags, VAR_FLAG_NO_CHECK ); }
@@ -115,8 +115,8 @@ public:
     void Release() { if( !--RefCount ) delete this; }
 
     GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val ) : MasterId( master_id ), SlaveId( slave_id ), VarTemplate( var_template ), QuestVarIndex( 0 ),
-        Type( var_template->Type ), VarValue( val ), RefCount( 1 ) { MEMORY_PROCESS( MEMORY_VAR, sizeof( GameVar ) ); }
-    ~GameVar() { MEMORY_PROCESS( MEMORY_VAR, -(int)sizeof( GameVar ) ); }
+        Type( var_template->Type ), VarValue( val ), RefCount( 1 ) { MEMORY_PROCESS( MEMORY_VAR, sizeof(GameVar) ); }
+    ~GameVar() { MEMORY_PROCESS( MEMORY_VAR, -(int)sizeof(GameVar) ); }
 private: GameVar() {}
 };
 
@@ -163,7 +163,7 @@ public:
 
     #ifdef FONLINE_SERVER
 public:
-    void     SaveVarsDataFile( void ( * save_func )( void*, size_t ) );
+    void     SaveVarsDataFile( void (* save_func)( void*, size_t ) );
     bool     LoadVarsDataFile( void* f, int version );
     bool     CheckVar( const char* var_name, uint master_id, uint slave_id, char oper, int val );
     bool     CheckVar( ushort temp_id, uint master_id, uint slave_id, char oper, int val );

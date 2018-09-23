@@ -173,7 +173,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
 #define OFFSETOF( type, member )    ( (int)offsetof( type, member ) )
 #define BIND_SERVER
 #define BIND_CLASS    BindClass::
-#define BIND_ASSERT( x )            if( ( x ) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
+#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
 namespace ServerBind
 {
     #include <DummyData.h>
@@ -191,7 +191,7 @@ namespace ServerBind
 #undef BIND_ASSERT
 #define BIND_CLIENT
 #define BIND_CLASS    BindClass::
-#define BIND_ASSERT( x )            if( ( x ) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
+#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
 namespace ClientBind
 {
     #include <DummyData.h>
@@ -209,7 +209,7 @@ namespace ClientBind
 #undef BIND_ASSERT
 #define BIND_MAPPER
 #define BIND_CLASS    BindClass::
-#define BIND_ASSERT( x )            if( ( x ) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
+#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
 namespace MapperBind
 {
     #include <DummyData.h>
@@ -242,10 +242,10 @@ int main( int argc, char* argv[] )
     }
 
     // Parse args
-    char*           str_fname = argv[1];
-    char*           str_prep = NULL;
-    vector< char* > defines;
-    vector< char* > run_func;
+    char*         str_fname = argv[1];
+    char*         str_prep = NULL;
+    vector<char*> defines;
+    vector<char*> run_func;
     for( int i = 2; i < argc; i++ )
     {
         // Server / Client / Mapper
@@ -371,7 +371,7 @@ int main( int argc, char* argv[] )
         {
             string result_formatted = result.String;
             FormatPreprocessorOutput( result_formatted );
-            fwrite( result_formatted.c_str(), sizeof( char ), result_formatted.length(), f );
+            fwrite( result_formatted.c_str(), sizeof(char), result_formatted.length(), f );
             fclose( f );
         }
         else
@@ -423,11 +423,11 @@ int main( int argc, char* argv[] )
             Engine->GetTypeIdByDecl( "CraftItem@" ),
             Engine->GetTypeIdByDecl( "CraftItem@[]" ),
         };
-        int bad_typeids_count = sizeof( bad_typeids ) / sizeof( int );
+        int bad_typeids_count = sizeof(bad_typeids) / sizeof(int);
         for( int k = 0; k < bad_typeids_count; k++ )
             bad_typeids[k] &= asTYPEID_MASK_SEQNBR;
 
-        vector< int > bad_typeids_class;
+        vector<int> bad_typeids_class;
         for( int m = 0, n = module->GetObjectTypeCount(); m < n; m++ )
         {
             asIObjectType* ot = module->GetObjectTypeByIndex( m );

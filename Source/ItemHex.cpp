@@ -131,7 +131,7 @@ void ItemHex::Process()
         }
         else
         {
-            int cur_spr = begSpr + ( ( endSpr - begSpr + ( begSpr < endSpr ? 1 : -1 ) ) * anim_proc ) / 100;
+            int cur_spr = begSpr + ( (endSpr - begSpr + (begSpr < endSpr ? 1 : -1) ) * anim_proc ) / 100;
             if( curSpr != cur_spr )
                 SetSpr( cur_spr );
         }
@@ -176,7 +176,7 @@ void ItemHex::Process()
             fading = false;
         }
 
-        Alpha = ( fadeUp == true ? ( fading_proc * 0xFF ) / 100 : ( ( 100 - fading_proc ) * 0xFF ) / 100 );
+        Alpha = (fadeUp == true ? (fading_proc * 0xFF) / 100 : ( (100 - fading_proc) * 0xFF ) / 100);
         if( Alpha > maxAlpha )
             Alpha = maxAlpha;
     }
@@ -213,14 +213,14 @@ UShortPair ItemHex::GetEffectStep()
 void ItemHex::SetFade( bool fade_up )
 {
     uint tick = Timer::GameTick();
-    fadingTick = tick + FADING_PERIOD - ( fadingTick > tick ? fadingTick - tick : 0 );
+    fadingTick = tick + FADING_PERIOD - (fadingTick > tick ? fadingTick - tick : 0);
     fadeUp = fade_up;
     fading = true;
 }
 
 void ItemHex::RefreshAnim()
 {
-    int  dir = ( Data.Dir ? Data.Dir : Proto->Dir );
+    int  dir = (Data.Dir ? Data.Dir : Proto->Dir);
     uint name_hash = Proto->PicMap;
     if( Data.PicMapHash )
         name_hash = Data.PicMapHash;
@@ -378,8 +378,8 @@ void ItemHex::SetHideAnim()
     if( IsShowAnimExt() )
     {
         SetAnim( Data.AnimHide[0], Data.AnimHide[1] );
-        animBegSpr = ( Data.AnimHide[1] );
-        animEndSpr = ( Data.AnimHide[1] );
+        animBegSpr = (Data.AnimHide[1]);
+        animEndSpr = (Data.AnimHide[1]);
     }
     else
     {

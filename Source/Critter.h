@@ -12,70 +12,70 @@
 #include "DataMask.h"
 #include "NetProtocol.h"
 
-#if defined ( USE_LIBEVENT )
+#if defined (USE_LIBEVENT)
 # include "event2/event.h"
 # include "event2/bufferevent.h"
 # include "event2/buffer.h"
 #endif
 
 // Events
-#define CRITTER_EVENT_IDLE                       ( 0 )
-#define CRITTER_EVENT_FINISH                     ( 1 )
-#define CRITTER_EVENT_DEAD                       ( 2 )
-#define CRITTER_EVENT_RESPAWN                    ( 3 )
-#define CRITTER_EVENT_SHOW_CRITTER               ( 4 )
-#define CRITTER_EVENT_SHOW_CRITTER_1             ( 5 )
-#define CRITTER_EVENT_SHOW_CRITTER_2             ( 6 )
-#define CRITTER_EVENT_SHOW_CRITTER_3             ( 7 )
-#define CRITTER_EVENT_HIDE_CRITTER               ( 8 )
-#define CRITTER_EVENT_HIDE_CRITTER_1             ( 9 )
-#define CRITTER_EVENT_HIDE_CRITTER_2             ( 10 )
-#define CRITTER_EVENT_HIDE_CRITTER_3             ( 11 )
-#define CRITTER_EVENT_SHOW_ITEM_ON_MAP           ( 12 )
-#define CRITTER_EVENT_CHANGE_ITEM_ON_MAP         ( 13 )
-#define CRITTER_EVENT_HIDE_ITEM_ON_MAP           ( 14 )
-#define CRITTER_EVENT_ATTACK                     ( 15 )
-#define CRITTER_EVENT_ATTACKED                   ( 16 )
-#define CRITTER_EVENT_STEALING                   ( 17 )
-#define CRITTER_EVENT_MESSAGE                    ( 18 )
-#define CRITTER_EVENT_USE_ITEM                   ( 19 )
-#define CRITTER_EVENT_USE_ITEM_ON_ME             ( 20 )
-#define CRITTER_EVENT_USE_SKILL                  ( 21 )
-#define CRITTER_EVENT_USE_SKILL_ON_ME            ( 22 )
-#define CRITTER_EVENT_DROP_ITEM                  ( 23 )
-#define CRITTER_EVENT_MOVE_ITEM                  ( 24 )
-#define CRITTER_EVENT_KNOCKOUT                   ( 25 )
-#define CRITTER_EVENT_SMTH_DEAD                  ( 26 )
-#define CRITTER_EVENT_SMTH_STEALING              ( 27 )
-#define CRITTER_EVENT_SMTH_ATTACK                ( 28 )
-#define CRITTER_EVENT_SMTH_ATTACKED              ( 29 )
-#define CRITTER_EVENT_SMTH_USE_ITEM              ( 30 )
-#define CRITTER_EVENT_SMTH_USE_SKILL             ( 31 )
-#define CRITTER_EVENT_SMTH_DROP_ITEM             ( 32 )
-#define CRITTER_EVENT_SMTH_MOVE_ITEM             ( 33 )
-#define CRITTER_EVENT_SMTH_KNOCKOUT              ( 34 )
-#define CRITTER_EVENT_PLANE_BEGIN                ( 35 )
-#define CRITTER_EVENT_PLANE_END                  ( 36 )
-#define CRITTER_EVENT_PLANE_RUN                  ( 37 )
-#define CRITTER_EVENT_BARTER                     ( 38 )
-#define CRITTER_EVENT_TALK                       ( 39 )
-#define CRITTER_EVENT_GLOBAL_PROCESS             ( 40 )
-#define CRITTER_EVENT_GLOBAL_INVITE              ( 41 )
-#define CRITTER_EVENT_TURN_BASED_PROCESS         ( 42 )
-#define CRITTER_EVENT_SMTH_TURN_BASED_PROCESS    ( 43 )
-#define CRITTER_EVENT_MAX                        ( 44 )
+#define CRITTER_EVENT_IDLE                       (0)
+#define CRITTER_EVENT_FINISH                     (1)
+#define CRITTER_EVENT_DEAD                       (2)
+#define CRITTER_EVENT_RESPAWN                    (3)
+#define CRITTER_EVENT_SHOW_CRITTER               (4)
+#define CRITTER_EVENT_SHOW_CRITTER_1             (5)
+#define CRITTER_EVENT_SHOW_CRITTER_2             (6)
+#define CRITTER_EVENT_SHOW_CRITTER_3             (7)
+#define CRITTER_EVENT_HIDE_CRITTER               (8)
+#define CRITTER_EVENT_HIDE_CRITTER_1             (9)
+#define CRITTER_EVENT_HIDE_CRITTER_2             (10)
+#define CRITTER_EVENT_HIDE_CRITTER_3             (11)
+#define CRITTER_EVENT_SHOW_ITEM_ON_MAP           (12)
+#define CRITTER_EVENT_CHANGE_ITEM_ON_MAP         (13)
+#define CRITTER_EVENT_HIDE_ITEM_ON_MAP           (14)
+#define CRITTER_EVENT_ATTACK                     (15)
+#define CRITTER_EVENT_ATTACKED                   (16)
+#define CRITTER_EVENT_STEALING                   (17)
+#define CRITTER_EVENT_MESSAGE                    (18)
+#define CRITTER_EVENT_USE_ITEM                   (19)
+#define CRITTER_EVENT_USE_ITEM_ON_ME             (20)
+#define CRITTER_EVENT_USE_SKILL                  (21)
+#define CRITTER_EVENT_USE_SKILL_ON_ME            (22)
+#define CRITTER_EVENT_DROP_ITEM                  (23)
+#define CRITTER_EVENT_MOVE_ITEM                  (24)
+#define CRITTER_EVENT_KNOCKOUT                   (25)
+#define CRITTER_EVENT_SMTH_DEAD                  (26)
+#define CRITTER_EVENT_SMTH_STEALING              (27)
+#define CRITTER_EVENT_SMTH_ATTACK                (28)
+#define CRITTER_EVENT_SMTH_ATTACKED              (29)
+#define CRITTER_EVENT_SMTH_USE_ITEM              (30)
+#define CRITTER_EVENT_SMTH_USE_SKILL             (31)
+#define CRITTER_EVENT_SMTH_DROP_ITEM             (32)
+#define CRITTER_EVENT_SMTH_MOVE_ITEM             (33)
+#define CRITTER_EVENT_SMTH_KNOCKOUT              (34)
+#define CRITTER_EVENT_PLANE_BEGIN                (35)
+#define CRITTER_EVENT_PLANE_END                  (36)
+#define CRITTER_EVENT_PLANE_RUN                  (37)
+#define CRITTER_EVENT_BARTER                     (38)
+#define CRITTER_EVENT_TALK                       (39)
+#define CRITTER_EVENT_GLOBAL_PROCESS             (40)
+#define CRITTER_EVENT_GLOBAL_INVITE              (41)
+#define CRITTER_EVENT_TURN_BASED_PROCESS         (42)
+#define CRITTER_EVENT_SMTH_TURN_BASED_PROCESS    (43)
+#define CRITTER_EVENT_MAX                        (44)
 extern const char* CritterEventFuncName[CRITTER_EVENT_MAX];
 
 // Plane results
-#define PLANE_RUN_GLOBAL                         ( 0 )
-#define PLANE_KEEP                               ( 1 )
-#define PLANE_DISCARD                            ( 2 )
+#define PLANE_RUN_GLOBAL                         (0)
+#define PLANE_KEEP                               (1)
+#define PLANE_DISCARD                            (2)
 
 // Client game states
-#define STATE_NONE                               ( 0 )
-#define STATE_CONNECTED                          ( 1 )
-#define STATE_PLAYING                            ( 2 )
-#define STATE_TRANSFERRING                       ( 3 )
+#define STATE_NONE                               (0)
+#define STATE_CONNECTED                          (1)
+#define STATE_PLAYING                            (2)
+#define STATE_TRANSFERRING                       (3)
 
 class Critter;
 class Client;
@@ -85,17 +85,17 @@ class Location;
 class MapObject;
 class GlobalMapGroup;
 
-typedef Critter*              CritterPtr;
-typedef Client*               ClientPtr;
-typedef Npc*                  NpcPtr;
+typedef Critter*            CritterPtr;
+typedef Client*             ClientPtr;
+typedef Npc*                NpcPtr;
 
-typedef map< uint, Critter* > CrMap;
-typedef map< uint, Client* >  ClMap;
-typedef map< uint, Npc* >     PcMap;
+typedef map<uint, Critter*> CrMap;
+typedef map<uint, Client*>  ClMap;
+typedef map<uint, Npc*>     PcMap;
 
-typedef vector< Critter* >    CrVec;
-typedef vector< Client* >     ClVec;
-typedef vector< Npc* >        PcVec;
+typedef vector<Critter*>    CrVec;
+typedef vector<Client*>     ClVec;
+typedef vector<Npc*>        PcVec;
 
 class Critter
 {
@@ -323,7 +323,7 @@ public:
     }
     void SetBreakTimeDelta( uint ms )
     {
-        uint dt = ( Timer::GameTick() - startBreakTime );
+        uint dt = (Timer::GameTick() - startBreakTime);
         if( dt > breakTime ) dt -= breakTime;
         else dt = 0;
         if( dt > ms ) dt = 0;
@@ -473,7 +473,7 @@ public:
     // Turn based
     bool IsTurnBased() { return TB_BATTLE_TIMEOUT_CHECK( GetParam( TO_BATTLE ) ); }
     bool CheckMyTurn( Map* map );
-    int  GetApCostCritterMove( bool is_run ) { return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * ( IsDmgTwoLeg() ? 4 : ( IsDmgLeg() ? 2 : 1 ) ) : ( GetParam( TO_BATTLE ) ? ( is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk ) : 0 ); }
+    int  GetApCostCritterMove( bool is_run ) { return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * (IsDmgTwoLeg() ? 4 : (IsDmgLeg() ? 2 : 1) ) : (GetParam( TO_BATTLE ) ? (is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk) : 0); }
     int  GetApCostMoveItemContainer()        { return IsTurnBased() ? GameOpt.TbApCostMoveItemContainer : GameOpt.RtApCostMoveItemContainer; }
     int  GetApCostMoveItemInventory()
     {
@@ -508,7 +508,7 @@ public:
     ushort GetHomeX()   { return Data.HomeX; }
     ushort GetHomeY()   { return Data.HomeY; }
     uchar  GetHomeOri() { return Data.HomeOri; }
-    bool   IsInHome()   { return !GetMap() || ( Data.HomeOri == GetDir() && Data.HomeX == GetHexX() && Data.HomeY == GetHexY() && Data.HomeMap == GetMap() ); }
+    bool   IsInHome()   { return !GetMap() || (Data.HomeOri == GetDir() && Data.HomeX == GetHexX() && Data.HomeY == GetHexY() && Data.HomeMap == GetMap() ); }
 
     // Enemy stack
     void     AddEnemyInStack( uint crid );
@@ -531,7 +531,7 @@ public:
             Identifier = r.Identifier;
         }
     };
-    typedef vector< CrTimeEvent > CrTimeEventVec;
+    typedef vector<CrTimeEvent> CrTimeEventVec;
     CrTimeEventVec CrTimeEvents;
 
     void AddCrTimeEvent( uint func_num, uint rate, uint duration, int identifier );
@@ -575,35 +575,35 @@ public:
     uint          LastSayEqualCount;
     uint          RadioMessageSended;
 
-    #if defined ( USE_LIBEVENT )
+    #if defined (USE_LIBEVENT)
     struct NetIOArg
     {
         Mutex         Locker;
         Client*       PClient;
         bufferevent*  BEV;
-        # if defined ( LIBEVENT_TIMEOUTS_WORKAROUND )
+        # if defined (LIBEVENT_TIMEOUTS_WORKAROUND)
         MutexSpinlock BEVLocker;
         # endif
     }* NetIOArgPtr;
     # define BIN_BEGIN( cl_ )     cl_->Bin.Lock()
     # define BIN_END( cl_ )       cl_->Bin.Unlock()
     # define BOUT_BEGIN( cl_ )    cl_->Bout.Lock()
-    # if defined ( LIBEVENT_TIMEOUTS_WORKAROUND )
+    # if defined (LIBEVENT_TIMEOUTS_WORKAROUND)
     typedef void ( * SendCallback )( bufferevent*, void* );
     static SendCallback SendData;
-    #  define BOUT_END( cl_ )                                                 \
-        cl_->Bout.Unlock();                                                   \
-        cl_->NetIOArgPtr->BEVLocker.Lock();                                   \
-        if( cl_->NetIOArgPtr->BEV )                                           \
-        {                                                                     \
-            bufferevent_lock( cl_->NetIOArgPtr->BEV );                        \
-            cl_->NetIOArgPtr->BEVLocker.Unlock();                             \
-            ( *Client::SendData )( cl_->NetIOArgPtr->BEV, cl_->NetIOArgPtr ); \
-            bufferevent_unlock( cl_->NetIOArgPtr->BEV );                      \
-        }                                                                     \
-        else                                                                  \
-        {                                                                     \
-            cl_->NetIOArgPtr->BEVLocker.Unlock();                             \
+    #  define BOUT_END( cl_ )                                             \
+        cl_->Bout.Unlock();                                               \
+        cl_->NetIOArgPtr->BEVLocker.Lock();                               \
+        if( cl_->NetIOArgPtr->BEV )                                       \
+        {                                                                 \
+            bufferevent_lock( cl_->NetIOArgPtr->BEV );                    \
+            cl_->NetIOArgPtr->BEVLocker.Unlock();                         \
+            (*Client::SendData)(cl_->NetIOArgPtr->BEV, cl_->NetIOArgPtr); \
+            bufferevent_unlock( cl_->NetIOArgPtr->BEV );                  \
+        }                                                                 \
+        else                                                              \
+        {                                                                 \
+            cl_->NetIOArgPtr->BEVLocker.Unlock();                         \
         }
     # else
     #  define BOUT_END( cl_ )     cl_->Bout.Unlock();
@@ -619,10 +619,10 @@ public:
         DWORD         Flags;
         DWORD         Bytes;
     }* NetIOIn, * NetIOOut;
-    # define WSA_BUF_SIZE    ( 4096 )
-    # define WSAOP_FREE      ( 0 )
-    # define WSAOP_SEND      ( 1 )
-    # define WSAOP_RECV      ( 2 )
+    # define WSA_BUF_SIZE    (4096)
+    # define WSAOP_FREE      (0)
+    # define WSAOP_SEND      (1)
+    # define WSAOP_RECV      (2)
     typedef void ( * SendCallback )( NetIOArg* );
     static SendCallback SendData;
     # define BIN_BEGIN( cl_ )     cl_->Bin.Lock()
@@ -630,7 +630,7 @@ public:
     # define BOUT_BEGIN( cl_ )    cl_->Bout.Lock()
     # define BOUT_END( cl_ )                                                                                                                         \
         cl_->Bout.Unlock(); if( !cl_->IsOffline() && InterlockedCompareExchange( &cl_->NetIOOut->Operation, WSAOP_SEND, WSAOP_FREE ) == WSAOP_FREE ) \
-            ( *Client::SendData )( cl_->NetIOOut )
+            (*Client::SendData)(cl_->NetIOOut)
     #endif
     void Shutdown();
 
@@ -745,7 +745,7 @@ public:
         bool operator==( uint id ) { return Id == id; }
         BarterItem( uint id, uint pid, uint count ) : Id( id ), Pid( pid ), Count( count ) {}
     };
-    typedef vector< BarterItem > BarterItemVec;
+    typedef vector<BarterItem> BarterItemVec;
     BarterItemVec BarterItems;
 
     Client*     BarterGetOpponent( uint opponent_id );

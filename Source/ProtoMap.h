@@ -5,13 +5,13 @@
 #include "FileManager.h"
 
 // Generic
-#define MAPOBJ_SCRIPT_NAME       ( 25 )
-#define MAPOBJ_CRITTER_PARAMS    ( 40 )
+#define MAPOBJ_SCRIPT_NAME       (25)
+#define MAPOBJ_CRITTER_PARAMS    (40)
 
 // Map object types
-#define MAP_OBJECT_CRITTER       ( 0 )
-#define MAP_OBJECT_ITEM          ( 1 )
-#define MAP_OBJECT_SCENERY       ( 2 )
+#define MAP_OBJECT_CRITTER       (0)
+#define MAP_OBJECT_ITEM          (1)
+#define MAP_OBJECT_SCENERY       (2)
 
 class ProtoMap;
 class MapObject // Available in fonline.h
@@ -123,17 +123,17 @@ public:
 
     MapObject()
     {
-        memzero( this, sizeof( MapObject ) );
+        memzero( this, sizeof(MapObject) );
         RunTime.RefCounter = 1;
     }
     MapObject( const MapObject& r )
     {
-        memcpy( this, &r, sizeof( MapObject ) );
+        memcpy( this, &r, sizeof(MapObject) );
         RunTime.RefCounter = 1;
     }
     MapObject& operator=( const MapObject& r )
     {
-        memcpy( this, &r, sizeof( MapObject ) );
+        memcpy( this, &r, sizeof(MapObject) );
         RunTime.RefCounter = 1;
         return *this;
     }
@@ -141,8 +141,8 @@ public:
     void AddRef()  { ++RunTime.RefCounter; }
     void Release() { if( !--RunTime.RefCounter ) delete this; }
 };
-typedef vector< MapObject* > MapObjectPtrVec;
-typedef vector< MapObject >  MapObjectVec;
+typedef vector<MapObject*> MapObjectPtrVec;
+typedef vector<MapObject>  MapObjectVec;
 
 struct SceneryCl
 {
@@ -165,7 +165,7 @@ struct SceneryCl
     short  Dir;
     ushort Reserved1;
 };
-typedef vector< SceneryCl > SceneryClVec;
+typedef vector<SceneryCl> SceneryClVec;
 
 class ProtoMap
 {
@@ -205,14 +205,14 @@ public:
         bool   IsSelected;
         #endif
 
-        Tile() { memzero( this, sizeof( Tile ) ); }
+        Tile() { memzero( this, sizeof(Tile) ); }
         Tile( uint name, ushort hx, ushort hy, char ox, char oy, uchar layer, bool is_roof ) : NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
     };
-    typedef vector< Tile >    TileVec;
+    typedef vector<Tile>    TileVec;
     TileVec Tiles;
     #ifdef FONLINE_MAPPER
     // For fast access
-    typedef vector< TileVec > TileVecVec;
+    typedef vector<TileVec> TileVecVec;
     TileVecVec TilesField;
     TileVecVec RoofsField;
     TileVec&   GetTiles( ushort hx, ushort hy, bool is_roof ) { return is_roof ? RoofsField[hy * Header.MaxHexX + hx] : TilesField[hy * Header.MaxHexX + hx]; }
@@ -257,10 +257,10 @@ public:
         ushort HexY;
         uchar  Dir;
 
-        MapEntire() { memzero( this, sizeof( MapEntire ) ); }
+        MapEntire() { memzero( this, sizeof(MapEntire) ); }
         MapEntire( ushort hx, ushort hy, uchar dir, uint type ) : HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
     };
-    typedef vector< MapEntire > EntiresVec;
+    typedef vector<MapEntire> EntiresVec;
 
 private:
     EntiresVec mapEntires;
@@ -304,24 +304,24 @@ public:
     void       GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs );
     void       GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs );
     MapObject* GetMapGrid( ushort hx, ushort hy );
-    ProtoMap() : isInit( false ), pathType( 0 ), HexFlags( NULL ) { MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof( ProtoMap ) ); }
+    ProtoMap() : isInit( false ), pathType( 0 ), HexFlags( NULL ) { MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) ); }
     ProtoMap( const ProtoMap& r )
     {
         *this = r;
-        MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof( ProtoMap ) );
+        MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) );
     }
     ~ProtoMap()
     {
         isInit = false;
         HexFlags = NULL;
-        MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)sizeof( ProtoMap ) );
+        MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)sizeof(ProtoMap) );
     }
     #else
     ProtoMap() : isInit( false ), pathType( 0 ), RefCounter( 1 ) {}
     ~ProtoMap() { isInit = false; }
     #endif
 };
-typedef vector< ProtoMap >  ProtoMapVec;
-typedef vector< ProtoMap* > ProtoMapPtrVec;
+typedef vector<ProtoMap>  ProtoMapVec;
+typedef vector<ProtoMap*> ProtoMapPtrVec;
 
 #endif // __PROTO_MAP__

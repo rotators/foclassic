@@ -3,8 +3,8 @@
 
 #include "GraphicStructures.h"
 
-#define SPRITES_POOL_GROW_SIZE    ( 10000 )
-#define SPRITES_RESIZE_COUNT      ( 100 )
+#define SPRITES_POOL_GROW_SIZE    (10000)
+#define SPRITES_RESIZE_COUNT      (100)
 
 class Sprite
 {
@@ -35,7 +35,7 @@ public:
     int CutOyL, CutOyR;
     #endif
 
-    Sprite() { memzero( this, sizeof( Sprite ) ); }
+    Sprite() { memzero( this, sizeof(Sprite) ); }
     void    Unvalidate();
     Sprite* GetIntersected( int ox, int oy );
 
@@ -47,7 +47,7 @@ public:
     void SetFlash( uint mask );
     void SetLight( uchar* light, int maxhx, int maxhy );
 };
-typedef vector< Sprite* > SpriteVec;
+typedef vector<Sprite*> SpriteVec;
 
 class Sprites
 {
