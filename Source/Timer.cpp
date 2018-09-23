@@ -274,20 +274,20 @@ uint Timer::GameTimeMonthDay( ushort year, ushort month )
 {
     switch( month )
     {
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12:    // 31
-        return 31;
-    case 2:     // 28-29
-        if( year % 400 == 0 || ( year % 4 == 0 && year % 100 != 0 ) )
-            return 29;
-        return 28;
-    default:     // 30
-        return 30;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12: // 31
+            return 31;
+        case 2:  // 28-29
+            if( year % 400 == 0 || ( year % 4 == 0 && year % 100 != 0 ) )
+                return 29;
+            return 28;
+        default: // 30
+            return 30;
     }
     return 0;
 }

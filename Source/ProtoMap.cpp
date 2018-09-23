@@ -911,14 +911,14 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                         {
                             switch( type[len] )
                             {
-                            case 'o':
-                                has_offs = true;
-                                break;
-                            case 'l':
-                                has_layer = true;
-                                break;
-                            default:
-                                break;
+                                case 'o':
+                                    has_offs = true;
+                                    break;
+                                case 'l':
+                                    has_layer = true;
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }
@@ -1607,24 +1607,24 @@ void ProtoMap::BindSceneryScript( MapObject* mobj )
 
     switch( mobj->MScenery.ParamsCount )
     {
-    case 1:
-        BIND_SCENERY_FUNC( ",int)" );
-        break;
-    case 2:
-        BIND_SCENERY_FUNC( ",int,int)" );
-        break;
-    case 3:
-        BIND_SCENERY_FUNC( ",int,int,int)" );
-        break;
-    case 4:
-        BIND_SCENERY_FUNC( ",int,int,int,int)" );
-        break;
-    case 5:
-        BIND_SCENERY_FUNC( ",int,int,int,int,int)" );
-        break;
-    default:
-        BIND_SCENERY_FUNC( ")" );
-        break;
+        case 1:
+            BIND_SCENERY_FUNC( ",int)" );
+            break;
+        case 2:
+            BIND_SCENERY_FUNC( ",int,int)" );
+            break;
+        case 3:
+            BIND_SCENERY_FUNC( ",int,int,int)" );
+            break;
+        case 4:
+            BIND_SCENERY_FUNC( ",int,int,int,int)" );
+            break;
+        case 5:
+            BIND_SCENERY_FUNC( ",int,int,int,int,int)" );
+            break;
+        default:
+            BIND_SCENERY_FUNC( ")" );
+            break;
     }
 
     if( mobj->RunTime.BindScriptId <= 0 )
@@ -1937,144 +1937,144 @@ bool ProtoMap::Refresh()
         int type = proto_item->Type;
         switch( type )
         {
-        case ITEM_TYPE_WALL:
-        {
-            if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-            if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
+            case ITEM_TYPE_WALL:
             {
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
-            }
-
-            SETFLAG( HexFlags[hy * maxhx + hx], FH_WALL );
-
-            // To client
-            SceneryCl cur_wall;
-            memzero( &cur_wall, sizeof( SceneryCl ) );
-
-            cur_wall.ProtoId = mobj.ProtoId;
-            cur_wall.MapX = mobj.MapX;
-            cur_wall.MapY = mobj.MapY;
-            cur_wall.Dir = mobj.Dir;
-            cur_wall.OffsetX = mobj.MScenery.OffsetX;
-            cur_wall.OffsetY = mobj.MScenery.OffsetY;
-            cur_wall.LightColor = mobj.LightColor;
-            cur_wall.LightDistance = mobj.LightDistance;
-            cur_wall.LightFlags = mobj.LightDirOff | ( ( mobj.LightDay & 3 ) << 6 );
-            cur_wall.LightIntensity = mobj.LightIntensity;
-            cur_wall.InfoOffset = mobj.MScenery.InfoOffset;
-            cur_wall.AnimStayBegin = mobj.MScenery.AnimStayBegin;
-            cur_wall.AnimStayEnd = mobj.MScenery.AnimStayEnd;
-            cur_wall.AnimWait = mobj.MScenery.AnimWait;
-            cur_wall.PicMapHash = mobj.MScenery.PicMapHash;
-            cur_wall.SpriteCut = mobj.MScenery.SpriteCut;
-
-            WallsToSend.push_back( cur_wall );
-        }
-        break;
-        case ITEM_TYPE_GENERIC:
-        case ITEM_TYPE_GRID:
-        {
-            if( pid == SP_GRID_ENTIRE )
-            {
-                mapEntires.push_back( MapEntire( hx, hy, mobj.MScenery.ToDir, mobj.MScenery.ToEntire ) );
-                continue;
-            }
-
-            if( type == ITEM_TYPE_GRID )
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN_GRID );
-            if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-            if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
-            {
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
-            }
-            SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN );
-
-            // To server
-            if( pid == SP_MISC_SCRBLOCK )
-            {
-                // Block around
-                for( int k = 0; k < 6; k++ )
+                if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
                 {
-                    ushort hx_ = hx, hy_ = hy;
-                    MoveHexByDir( hx_, hy_, k, Header.MaxHexX, Header.MaxHexY );
-                    SETFLAG( HexFlags[hy_ * maxhx + hx_], FH_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
                 }
+
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_WALL );
+
+                // To client
+                SceneryCl cur_wall;
+                memzero( &cur_wall, sizeof( SceneryCl ) );
+
+                cur_wall.ProtoId = mobj.ProtoId;
+                cur_wall.MapX = mobj.MapX;
+                cur_wall.MapY = mobj.MapY;
+                cur_wall.Dir = mobj.Dir;
+                cur_wall.OffsetX = mobj.MScenery.OffsetX;
+                cur_wall.OffsetY = mobj.MScenery.OffsetY;
+                cur_wall.LightColor = mobj.LightColor;
+                cur_wall.LightDistance = mobj.LightDistance;
+                cur_wall.LightFlags = mobj.LightDirOff | ( ( mobj.LightDay & 3 ) << 6 );
+                cur_wall.LightIntensity = mobj.LightIntensity;
+                cur_wall.InfoOffset = mobj.MScenery.InfoOffset;
+                cur_wall.AnimStayBegin = mobj.MScenery.AnimStayBegin;
+                cur_wall.AnimStayEnd = mobj.MScenery.AnimStayEnd;
+                cur_wall.AnimWait = mobj.MScenery.AnimWait;
+                cur_wall.PicMapHash = mobj.MScenery.PicMapHash;
+                cur_wall.SpriteCut = mobj.MScenery.SpriteCut;
+
+                WallsToSend.push_back( cur_wall );
             }
-            else if( type == ITEM_TYPE_GRID )
+            break;
+            case ITEM_TYPE_GENERIC:
+            case ITEM_TYPE_GRID:
             {
-                mobj.AddRef();
-                GridsVec.push_back( &mobj );
-            }
-            else                     // ITEM_TYPE_GENERIC
-            {
-                // Bind script
-                const char* script = ItemMngr.GetProtoScript( pid );
-                if( script )
+                if( pid == SP_GRID_ENTIRE )
                 {
-                    char script_module[MAX_SCRIPT_NAME + 1];
-                    char script_func[MAX_SCRIPT_NAME + 1];
-                    if( Script::ReparseScriptName( script, script_module, script_func ) )
+                    mapEntires.push_back( MapEntire( hx, hy, mobj.MScenery.ToDir, mobj.MScenery.ToEntire ) );
+                    continue;
+                }
+
+                if( type == ITEM_TYPE_GRID )
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN_GRID );
+                if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
+                {
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
+                }
+                SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN );
+
+                // To server
+                if( pid == SP_MISC_SCRBLOCK )
+                {
+                    // Block around
+                    for( int k = 0; k < 6; k++ )
                     {
-                        Str::Copy( mobj.ScriptName, script_module );
-                        Str::Copy( mobj.FuncName, script_func );
+                        ushort hx_ = hx, hy_ = hy;
+                        MoveHexByDir( hx_, hy_, k, Header.MaxHexX, Header.MaxHexY );
+                        SETFLAG( HexFlags[hy_ * maxhx + hx_], FH_BLOCK );
                     }
                 }
+                else if( type == ITEM_TYPE_GRID )
+                {
+                    mobj.AddRef();
+                    GridsVec.push_back( &mobj );
+                }
+                else                 // ITEM_TYPE_GENERIC
+                {
+                    // Bind script
+                    const char* script = ItemMngr.GetProtoScript( pid );
+                    if( script )
+                    {
+                        char script_module[MAX_SCRIPT_NAME + 1];
+                        char script_func[MAX_SCRIPT_NAME + 1];
+                        if( Script::ReparseScriptName( script, script_module, script_func ) )
+                        {
+                            Str::Copy( mobj.ScriptName, script_module );
+                            Str::Copy( mobj.FuncName, script_func );
+                        }
+                    }
 
-                mobj.RunTime.BindScriptId = 0;
-                if( mobj.ScriptName[0] && mobj.FuncName[0] )
-                    BindSceneryScript( &mobj );
+                    mobj.RunTime.BindScriptId = 0;
+                    if( mobj.ScriptName[0] && mobj.FuncName[0] )
+                        BindSceneryScript( &mobj );
 
-                // Add to collection
-                mobj.AddRef();
-                SceneryVec.push_back( &mobj );
+                    // Add to collection
+                    mobj.AddRef();
+                    SceneryVec.push_back( &mobj );
+                }
+
+                if( pid == SP_SCEN_TRIGGER )
+                {
+                    if( mobj.RunTime.BindScriptId )
+                        SETFLAG( HexFlags[hy * maxhx + hx], FH_TRIGGER );
+                    continue;
+                }
+
+                // To client
+                SceneryCl cur_scen;
+                memzero( &cur_scen, sizeof( SceneryCl ) );
+
+                // Flags
+                if( type == ITEM_TYPE_GENERIC && mobj.MScenery.CanUse )
+                    SETFLAG( cur_scen.Flags, SCEN_CAN_USE );
+                if( type == ITEM_TYPE_GENERIC && mobj.MScenery.CanTalk )
+                    SETFLAG( cur_scen.Flags, SCEN_CAN_TALK );
+                if( type == ITEM_TYPE_GRID && proto_item->Grid_Type != GRID_EXITGRID )
+                    SETFLAG( cur_scen.Flags, SCEN_CAN_USE );
+
+                // Other
+                cur_scen.ProtoId = mobj.ProtoId;
+                cur_scen.MapX = mobj.MapX;
+                cur_scen.MapY = mobj.MapY;
+                cur_scen.Dir = mobj.Dir;
+                cur_scen.OffsetX = mobj.MScenery.OffsetX;
+                cur_scen.OffsetY = mobj.MScenery.OffsetY;
+                cur_scen.LightColor = mobj.LightColor;
+                cur_scen.LightDistance = mobj.LightDistance;
+                cur_scen.LightFlags = mobj.LightDirOff | ( ( mobj.LightDay & 3 ) << 6 );
+                cur_scen.LightIntensity = mobj.LightIntensity;
+                cur_scen.InfoOffset = mobj.MScenery.InfoOffset;
+                cur_scen.AnimStayBegin = mobj.MScenery.AnimStayBegin;
+                cur_scen.AnimStayEnd = mobj.MScenery.AnimStayEnd;
+                cur_scen.AnimWait = mobj.MScenery.AnimWait;
+                cur_scen.PicMapHash = mobj.MScenery.PicMapHash;
+                cur_scen.SpriteCut = mobj.MScenery.SpriteCut;
+
+                SceneriesToSend.push_back( cur_scen );
             }
-
-            if( pid == SP_SCEN_TRIGGER )
-            {
-                if( mobj.RunTime.BindScriptId )
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_TRIGGER );
-                continue;
-            }
-
-            // To client
-            SceneryCl cur_scen;
-            memzero( &cur_scen, sizeof( SceneryCl ) );
-
-            // Flags
-            if( type == ITEM_TYPE_GENERIC && mobj.MScenery.CanUse )
-                SETFLAG( cur_scen.Flags, SCEN_CAN_USE );
-            if( type == ITEM_TYPE_GENERIC && mobj.MScenery.CanTalk )
-                SETFLAG( cur_scen.Flags, SCEN_CAN_TALK );
-            if( type == ITEM_TYPE_GRID && proto_item->Grid_Type != GRID_EXITGRID )
-                SETFLAG( cur_scen.Flags, SCEN_CAN_USE );
-
-            // Other
-            cur_scen.ProtoId = mobj.ProtoId;
-            cur_scen.MapX = mobj.MapX;
-            cur_scen.MapY = mobj.MapY;
-            cur_scen.Dir = mobj.Dir;
-            cur_scen.OffsetX = mobj.MScenery.OffsetX;
-            cur_scen.OffsetY = mobj.MScenery.OffsetY;
-            cur_scen.LightColor = mobj.LightColor;
-            cur_scen.LightDistance = mobj.LightDistance;
-            cur_scen.LightFlags = mobj.LightDirOff | ( ( mobj.LightDay & 3 ) << 6 );
-            cur_scen.LightIntensity = mobj.LightIntensity;
-            cur_scen.InfoOffset = mobj.MScenery.InfoOffset;
-            cur_scen.AnimStayBegin = mobj.MScenery.AnimStayBegin;
-            cur_scen.AnimStayEnd = mobj.MScenery.AnimStayEnd;
-            cur_scen.AnimWait = mobj.MScenery.AnimWait;
-            cur_scen.PicMapHash = mobj.MScenery.PicMapHash;
-            cur_scen.SpriteCut = mobj.MScenery.SpriteCut;
-
-            SceneriesToSend.push_back( cur_scen );
-        }
-        break;
-        default:
             break;
+            default:
+                break;
         }
     }
 

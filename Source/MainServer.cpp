@@ -573,47 +573,47 @@ void UpdateInfo()
     {
         switch( FOServer::UpdateIndex )
         {
-        case 0:         // Memory
-            std_str = Debugger::GetMemoryStatistics();
-            UpdateLogName = "Memory";
-            break;
-        case 1:         // Players
-            if( !Server.Started() )
+            case 0:     // Memory
+                std_str = Debugger::GetMemoryStatistics();
+                UpdateLogName = "Memory";
                 break;
-            std_str = Server.GetIngamePlayersStatistics();
-            UpdateLogName = "Players";
-            break;
-        case 2:         // Locations and maps
-            if( !Server.Started() )
+            case 1:     // Players
+                if( !Server.Started() )
+                    break;
+                std_str = Server.GetIngamePlayersStatistics();
+                UpdateLogName = "Players";
                 break;
-            std_str = MapMngr.GetLocationsMapsStatistics();
-            UpdateLogName = "LocationsAndMaps";
-            break;
-        case 3:         // Time events
-            if( !Server.Started() )
+            case 2:     // Locations and maps
+                if( !Server.Started() )
+                    break;
+                std_str = MapMngr.GetLocationsMapsStatistics();
+                UpdateLogName = "LocationsAndMaps";
                 break;
-            std_str = Server.GetTimeEventsStatistics();
-            UpdateLogName = "TimeEvents";
-            break;
-        case 4:         // Any data
-            if( !Server.Started() )
+            case 3:     // Time events
+                if( !Server.Started() )
+                    break;
+                std_str = Server.GetTimeEventsStatistics();
+                UpdateLogName = "TimeEvents";
                 break;
-            std_str = Server.GetAnyDataStatistics();
-            UpdateLogName = "AnyData";
-            break;
-        case 5:         // Items count
-            if( !Server.Started() )
+            case 4:     // Any data
+                if( !Server.Started() )
+                    break;
+                std_str = Server.GetAnyDataStatistics();
+                UpdateLogName = "AnyData";
                 break;
-            std_str = ItemMngr.GetItemsStatistics();
-            UpdateLogName = "ItemsCount";
-            break;
-        case 6:         // Profiler
-            std_str = Script::Profiler::GetStatistics();
-            UpdateLogName = "Profiler";
-            break;
-        default:
-            UpdateLogName = "";
-            break;
+            case 5:     // Items count
+                if( !Server.Started() )
+                    break;
+                std_str = ItemMngr.GetItemsStatistics();
+                UpdateLogName = "ItemsCount";
+                break;
+            case 6:     // Profiler
+                std_str = Script::Profiler::GetStatistics();
+                UpdateLogName = "Profiler";
+                break;
+            default:
+                UpdateLogName = "";
+                break;
         }
         GuiInfo->buffer()->text( std_str.c_str() );
         if( !GuiBtnSaveInfo->active() )
@@ -832,18 +832,18 @@ VOID WINAPI FOServiceCtrlHandler( DWORD opcode )
 {
     switch( opcode )
     {
-    case SERVICE_CONTROL_STOP:
-        SetFOServiceStatus( SERVICE_STOP_PENDING );
-        FOQuit = true;
+        case SERVICE_CONTROL_STOP:
+            SetFOServiceStatus( SERVICE_STOP_PENDING );
+            FOQuit = true;
 
-        LoopThread.Wait();
-        SetFOServiceStatus( SERVICE_STOPPED );
-        return;
-    case SERVICE_CONTROL_INTERROGATE:
-        // Fall through to send current status
-        break;
-    default:
-        break;
+            LoopThread.Wait();
+            SetFOServiceStatus( SERVICE_STOPPED );
+            return;
+        case SERVICE_CONTROL_INTERROGATE:
+            // Fall through to send current status
+            break;
+        default:
+            break;
     }
 
     // Send current status

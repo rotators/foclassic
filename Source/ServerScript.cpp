@@ -789,46 +789,46 @@ Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
     Map* map = NULL;
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, true );
-        if( !cr )
-            SCRIPT_ERROR_R0( "Critter accessory, critter not found." );
-        if( !cr->GetMap() )
+        case ITEM_ACCESSORY_CRITTER:
         {
-            hx = cr->Data.WorldX;
-            hy = cr->Data.WorldY;
-            return NULL;
+            Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, true );
+            if( !cr )
+                SCRIPT_ERROR_R0( "Critter accessory, critter not found." );
+            if( !cr->GetMap() )
+            {
+                hx = cr->Data.WorldX;
+                hy = cr->Data.WorldY;
+                return NULL;
+            }
+            map = MapMngr.GetMap( cr->GetMap(), true );
+            if( !map )
+                SCRIPT_ERROR_R0( "Critter accessory, map not found." );
+            hx = cr->GetHexX();
+            hy = cr->GetHexY();
         }
-        map = MapMngr.GetMap( cr->GetMap(), true );
-        if( !map )
-            SCRIPT_ERROR_R0( "Critter accessory, map not found." );
-        hx = cr->GetHexX();
-        hy = cr->GetHexY();
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        map = MapMngr.GetMap( item->AccHex.MapId, true );
-        if( !map )
-            SCRIPT_ERROR_R0( "Hex accessory, map not found." );
-        hx = item->AccHex.HexX;
-        hy = item->AccHex.HexY;
-    }
-    break;
-    case ITEM_ACCESSORY_CONTAINER:
-    {
-        if( item->GetId() == item->AccContainer.ContainerId )
-            SCRIPT_ERROR_R0( "Container accessory, crosslink." );
-        Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, false );
-        if( !cont )
-            SCRIPT_ERROR_R0( "Container accessory, container not found." );
-        return Item_GetMapPosition( cont, hx, hy );             // Recursion
-    }
-    break;
-    default:
-        SCRIPT_ERROR_R0( "Unknown accessory." );
         break;
+        case ITEM_ACCESSORY_HEX:
+        {
+            map = MapMngr.GetMap( item->AccHex.MapId, true );
+            if( !map )
+                SCRIPT_ERROR_R0( "Hex accessory, map not found." );
+            hx = item->AccHex.HexX;
+            hy = item->AccHex.HexY;
+        }
+        break;
+        case ITEM_ACCESSORY_CONTAINER:
+        {
+            if( item->GetId() == item->AccContainer.ContainerId )
+                SCRIPT_ERROR_R0( "Container accessory, crosslink." );
+            Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, false );
+            if( !cont )
+                SCRIPT_ERROR_R0( "Container accessory, container not found." );
+            return Item_GetMapPosition( cont, hx, hy );         // Recursion
+        }
+        break;
+        default:
+            SCRIPT_ERROR_R0( "Unknown accessory." );
+            break;
     }
     return map;
 }
@@ -885,30 +885,30 @@ void FOServer::SScriptFunc::Item_Animate( Item* item, uchar from_frm, uchar to_f
         SCRIPT_ERROR_R( "This nullptr." );
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        //	Critter* cr=CrMngr.GetCrit(item->ACC_CRITTER.Id);
-        //	if(cr) cr->Send_AnimateItem(item,from_frm,to_frm);
-        //	else SCRIPT_ERROR("Critter not found, maybe client in offline.");
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        Map* map = MapMngr.GetMap( item->AccHex.MapId );
-        if( !map )
+        case ITEM_ACCESSORY_CRITTER:
         {
-            SCRIPT_ERROR( "Map not found." );
-            break;
+            //	Critter* cr=CrMngr.GetCrit(item->ACC_CRITTER.Id);
+            //	if(cr) cr->Send_AnimateItem(item,from_frm,to_frm);
+            //	else SCRIPT_ERROR("Critter not found, maybe client in offline.");
         }
-        map->AnimateItem( item, from_frm, to_frm );
-    }
-    break;
-    case ITEM_ACCESSORY_CONTAINER:
         break;
-    default:
-        WriteLogF( _FUNC_, " - Unknown accessory<%u>!", item->Accessory );
-        SCRIPT_ERROR( "Unknown accessory." );
-        return;
+        case ITEM_ACCESSORY_HEX:
+        {
+            Map* map = MapMngr.GetMap( item->AccHex.MapId );
+            if( !map )
+            {
+                SCRIPT_ERROR( "Map not found." );
+                break;
+            }
+            map->AnimateItem( item, from_frm, to_frm );
+        }
+        break;
+        case ITEM_ACCESSORY_CONTAINER:
+            break;
+        default:
+            WriteLogF( _FUNC_, " - Unknown accessory<%u>!", item->Accessory );
+            SCRIPT_ERROR( "Unknown accessory." );
+            return;
     }
 }
 
@@ -925,33 +925,10 @@ void FOServer::SScriptFunc::Item_SetLexems( Item* item, ScriptString* lexems )
     // Update
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        Client* cl = CrMngr.GetPlayer( item->AccCritter.Id, false );
-        if( cl && cl->IsOnline() )
+        case ITEM_ACCESSORY_CRITTER:
         {
-            if( item->PLexems )
-                cl->Send_ItemLexems( item );
-            else
-                cl->Send_ItemLexemsNull( item );
-        }
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
-        if( !map )
-        {
-            SCRIPT_ERROR( "Map not found." );
-            break;
-        }
-
-        ClVec players;
-        map->GetPlayers( players, false );
-        for( auto it = players.begin(), end = players.end(); it != end; ++it )
-        {
-            Client* cl = *it;
-            if( cl->IsOnline() && cl->CountIdVisItem( item->GetId() ) )
+            Client* cl = CrMngr.GetPlayer( item->AccCritter.Id, false );
+            if( cl && cl->IsOnline() )
             {
                 if( item->PLexems )
                     cl->Send_ItemLexems( item );
@@ -959,14 +936,37 @@ void FOServer::SScriptFunc::Item_SetLexems( Item* item, ScriptString* lexems )
                     cl->Send_ItemLexemsNull( item );
             }
         }
-    }
-    break;
-    case ITEM_ACCESSORY_CONTAINER:
         break;
-    default:
-        WriteLogF( _FUNC_, " - Unknown accessory<%u>!", item->Accessory );
-        SCRIPT_ERROR( "Unknown accessory." );
-        return;
+        case ITEM_ACCESSORY_HEX:
+        {
+            Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
+            if( !map )
+            {
+                SCRIPT_ERROR( "Map not found." );
+                break;
+            }
+
+            ClVec players;
+            map->GetPlayers( players, false );
+            for( auto it = players.begin(), end = players.end(); it != end; ++it )
+            {
+                Client* cl = *it;
+                if( cl->IsOnline() && cl->CountIdVisItem( item->GetId() ) )
+                {
+                    if( item->PLexems )
+                        cl->Send_ItemLexems( item );
+                    else
+                        cl->Send_ItemLexemsNull( item );
+                }
+            }
+        }
+        break;
+        case ITEM_ACCESSORY_CONTAINER:
+            break;
+        default:
+            WriteLogF( _FUNC_, " - Unknown accessory<%u>!", item->Accessory );
+            SCRIPT_ERROR( "Unknown accessory." );
+            return;
     }
 }
 
@@ -2026,18 +2026,18 @@ void FOServer::SScriptFunc::Crit_SetFavoriteItem( Critter* cr, int slot, ushort 
         SCRIPT_ERROR_R( "This nullptr." );
     switch( slot )
     {
-    case SLOT_HAND1:
-        cr->Data.FavoriteItemPid[SLOT_HAND1] = pid;
-        break;
-    case SLOT_HAND2:
-        cr->Data.FavoriteItemPid[SLOT_HAND2] = pid;
-        break;
-    case SLOT_ARMOR:
-        cr->Data.FavoriteItemPid[SLOT_ARMOR] = pid;
-        break;
-    default:
-        SCRIPT_ERROR( "Invalid slot arg." );
-        break;
+        case SLOT_HAND1:
+            cr->Data.FavoriteItemPid[SLOT_HAND1] = pid;
+            break;
+        case SLOT_HAND2:
+            cr->Data.FavoriteItemPid[SLOT_HAND2] = pid;
+            break;
+        case SLOT_ARMOR:
+            cr->Data.FavoriteItemPid[SLOT_ARMOR] = pid;
+            break;
+        default:
+            SCRIPT_ERROR( "Invalid slot arg." );
+            break;
     }
 }
 
@@ -2047,15 +2047,15 @@ ushort FOServer::SScriptFunc::Crit_GetFavoriteItem( Critter* cr, int slot )
         SCRIPT_ERROR_R0( "This nullptr." );
     switch( slot )
     {
-    case SLOT_HAND1:
-        return cr->Data.FavoriteItemPid[SLOT_HAND1];
-    case SLOT_HAND2:
-        return cr->Data.FavoriteItemPid[SLOT_HAND2];
-    case SLOT_ARMOR:
-        return cr->Data.FavoriteItemPid[SLOT_ARMOR];
-    default:
-        SCRIPT_ERROR( "Invalid slot arg." );
-        break;
+        case SLOT_HAND1:
+            return cr->Data.FavoriteItemPid[SLOT_HAND1];
+        case SLOT_HAND2:
+            return cr->Data.FavoriteItemPid[SLOT_HAND2];
+        case SLOT_ARMOR:
+            return cr->Data.FavoriteItemPid[SLOT_ARMOR];
+        default:
+            SCRIPT_ERROR( "Invalid slot arg." );
+            break;
     }
     return 0;
 }
@@ -2322,18 +2322,18 @@ ProtoItem* FOServer::SScriptFunc::Crit_GetSlotProto( Critter* cr, int slot, ucha
     Item* item = NULL;
     switch( slot )
     {
-    case SLOT_HAND1:
-        item = cr->ItemSlotMain;
-        break;
-    case SLOT_HAND2:
-        item = ( cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->GetDefaultItemSlotMain() );
-        break;
-    case SLOT_ARMOR:
-        item = cr->ItemSlotArmor;
-        break;
-    default:
-        item = cr->GetItemSlot( slot );
-        break;
+        case SLOT_HAND1:
+            item = cr->ItemSlotMain;
+            break;
+        case SLOT_HAND2:
+            item = ( cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->GetDefaultItemSlotMain() );
+            break;
+        case SLOT_ARMOR:
+            item = cr->ItemSlotArmor;
+            break;
+        default:
+            item = cr->GetItemSlot( slot );
+            break;
     }
     if( !item )
         return NULL;
@@ -6382,17 +6382,17 @@ uint FOServer::SScriptFunc::Global_GetImageColor( uint index, uint x, uint y )
     uint  result = *data;
     switch( simg->Depth )
     {
-    case 1:
-        result &= 0xFF;
-        break;
-    case 2:
-        result &= 0xFFFF;
-        break;
-    case 3:
-        result &= 0xFFFFFF;
-        break;
-    default:
-        break;
+        case 1:
+            result &= 0xFF;
+            break;
+        case 2:
+            result &= 0xFFFF;
+            break;
+        case 3:
+            result &= 0xFFFFFF;
+            break;
+        default:
+            break;
     }
     return result;
 }

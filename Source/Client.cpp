@@ -1201,157 +1201,157 @@ void FOClient::ParseKeyboard()
             // F Buttons
             switch( dikdw )
             {
-            case DIK_F1:
-                GameOpt.HelpInfo = !GameOpt.HelpInfo;
-                break;
-            case DIK_F2:
-                if( SaveLogFile() )
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_SAVED ) );
-                else
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_NOT_SAVED ) );
-                break;
-            case DIK_F3:
-                if( SaveScreenshot() )
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_SAVED ) );
-                else
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_NOT_SAVED ) );
-                break;
-            case DIK_F4:
-                IntVisible = !IntVisible;
-                MessBoxGenerate();
-                break;
-            case DIK_F5:
-                IntAddMess = !IntAddMess;
-                MessBoxGenerate();
-                break;
-            case DIK_F6:
-                GameOpt.ShowPlayerNames = !GameOpt.ShowPlayerNames;
-                break;
+                case DIK_F1:
+                    GameOpt.HelpInfo = !GameOpt.HelpInfo;
+                    break;
+                case DIK_F2:
+                    if( SaveLogFile() )
+                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_SAVED ) );
+                    else
+                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_NOT_SAVED ) );
+                    break;
+                case DIK_F3:
+                    if( SaveScreenshot() )
+                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_SAVED ) );
+                    else
+                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_NOT_SAVED ) );
+                    break;
+                case DIK_F4:
+                    IntVisible = !IntVisible;
+                    MessBoxGenerate();
+                    break;
+                case DIK_F5:
+                    IntAddMess = !IntAddMess;
+                    MessBoxGenerate();
+                    break;
+                case DIK_F6:
+                    GameOpt.ShowPlayerNames = !GameOpt.ShowPlayerNames;
+                    break;
 
-            case DIK_F7:
-                if( GameOpt.DebugInfo )
-                    GameOpt.ShowNpcNames = !GameOpt.ShowNpcNames;
-                break;
+                case DIK_F7:
+                    if( GameOpt.DebugInfo )
+                        GameOpt.ShowNpcNames = !GameOpt.ShowNpcNames;
+                    break;
 
-            case DIK_F8:
-                GameOpt.MouseScroll = !GameOpt.MouseScroll;
-                GameOpt.ScrollMouseRight = false;
-                GameOpt.ScrollMouseLeft = false;
-                GameOpt.ScrollMouseDown = false;
-                GameOpt.ScrollMouseUp = false;
-                break;
+                case DIK_F8:
+                    GameOpt.MouseScroll = !GameOpt.MouseScroll;
+                    GameOpt.ScrollMouseRight = false;
+                    GameOpt.ScrollMouseLeft = false;
+                    GameOpt.ScrollMouseDown = false;
+                    GameOpt.ScrollMouseUp = false;
+                    break;
 
-            case DIK_F9:
-                if( GameOpt.DebugInfo )
-                    HexMngr.SwitchShowTrack();
-                break;
-            case DIK_F10:
-                if( GameOpt.DebugInfo )
-                    HexMngr.SwitchShowHex();
-                break;
+                case DIK_F9:
+                    if( GameOpt.DebugInfo )
+                        HexMngr.SwitchShowTrack();
+                    break;
+                case DIK_F10:
+                    if( GameOpt.DebugInfo )
+                        HexMngr.SwitchShowHex();
+                    break;
 
-            // Fullscreen
-            case DIK_F11:
-                if( !GameOpt.FullScreen )
-                {
-                    MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT );
-                    MainWindow->fullscreen();
-                    GameOpt.FullScreen = true;
-                }
-                else
-                {
-                    MainWindow->fullscreen_off();
-                    MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT, MODE_WIDTH, MODE_HEIGHT );
-                    GameOpt.FullScreen = false;
-                }
-                #ifndef FO_D3D
-                SprMngr.RefreshViewPort();
-                #endif
-                continue;
-            // Minimize
-            case DIK_F12:
-                MainWindow->iconize();
-                continue;
+                // Fullscreen
+                case DIK_F11:
+                    if( !GameOpt.FullScreen )
+                    {
+                        MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT );
+                        MainWindow->fullscreen();
+                        GameOpt.FullScreen = true;
+                    }
+                    else
+                    {
+                        MainWindow->fullscreen_off();
+                        MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT, MODE_WIDTH, MODE_HEIGHT );
+                        GameOpt.FullScreen = false;
+                    }
+                    #ifndef FO_D3D
+                    SprMngr.RefreshViewPort();
+                    #endif
+                    continue;
+                // Minimize
+                case DIK_F12:
+                    MainWindow->iconize();
+                    continue;
 
-            // Exit buttons
-            case DIK_TAB:
-                if( GetActiveScreen() == SCREEN__MINI_MAP )
-                {
+                // Exit buttons
+                case DIK_TAB:
+                    if( GetActiveScreen() == SCREEN__MINI_MAP )
+                    {
+                        TryExit();
+                        continue;
+                    }
+                    break;
+                // Mouse wheel emulate
+                case DIK_PRIOR:
+                    ProcessMouseWheel( 1 );
+                    Timer::StartAccelerator( ACCELERATE_PAGE_UP );
+                    break;
+                case DIK_NEXT:
+                    ProcessMouseWheel( -1 );
+                    Timer::StartAccelerator( ACCELERATE_PAGE_DOWN );
+                    break;
+
+                case DIK_ESCAPE:
                     TryExit();
                     continue;
-                }
-                break;
-            // Mouse wheel emulate
-            case DIK_PRIOR:
-                ProcessMouseWheel( 1 );
-                Timer::StartAccelerator( ACCELERATE_PAGE_UP );
-                break;
-            case DIK_NEXT:
-                ProcessMouseWheel( -1 );
-                Timer::StartAccelerator( ACCELERATE_PAGE_DOWN );
-                break;
-
-            case DIK_ESCAPE:
-                TryExit();
-                continue;
-            default:
-                break;
+                default:
+                    break;
             }
 
             if( !ConsoleActive )
             {
                 switch( dikdw )
                 {
-                case DIK_C:
-                    if( GetActiveScreen() == SCREEN__CHARACTER )
-                    {
-                        TryExit();
-                        continue;
-                    }
-                    break;
-                case DIK_P:
-                    if( GetActiveScreen() == SCREEN__PIP_BOY )
-                    {
-                        if( PipMode == PIP__NONE )
-                            PipMode = PIP__STATUS;
-                        else
+                    case DIK_C:
+                        if( GetActiveScreen() == SCREEN__CHARACTER )
+                        {
                             TryExit();
-                        continue;
-                    }
-                case DIK_F:
-                    if( GetActiveScreen() == SCREEN__FIX_BOY )
-                    {
-                        TryExit();
-                        continue;
-                    }
-                    break;
-                case DIK_I:
-                    if( GetActiveScreen() == SCREEN__INVENTORY )
-                    {
-                        TryExit();
-                        continue;
-                    }
-                    break;
-                case DIK_Q:
-                    if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
-                    {
-                        DrawLookBorders = !DrawLookBorders;
-                        RebuildLookBorders = true;
-                    }
-                    break;
-                case DIK_W:
-                    if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
-                    {
-                        DrawShootBorders = !DrawShootBorders;
-                        RebuildLookBorders = true;
-                    }
-                    break;
-                case DIK_SPACE:
-                    if( Singleplayer )
-                        SingleplayerData.Pause = !SingleplayerData.Pause;
-                    break;
-                default:
-                    break;
+                            continue;
+                        }
+                        break;
+                    case DIK_P:
+                        if( GetActiveScreen() == SCREEN__PIP_BOY )
+                        {
+                            if( PipMode == PIP__NONE )
+                                PipMode = PIP__STATUS;
+                            else
+                                TryExit();
+                            continue;
+                        }
+                    case DIK_F:
+                        if( GetActiveScreen() == SCREEN__FIX_BOY )
+                        {
+                            TryExit();
+                            continue;
+                        }
+                        break;
+                    case DIK_I:
+                        if( GetActiveScreen() == SCREEN__INVENTORY )
+                        {
+                            TryExit();
+                            continue;
+                        }
+                        break;
+                    case DIK_Q:
+                        if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
+                        {
+                            DrawLookBorders = !DrawLookBorders;
+                            RebuildLookBorders = true;
+                        }
+                        break;
+                    case DIK_W:
+                        if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
+                        {
+                            DrawShootBorders = !DrawShootBorders;
+                            RebuildLookBorders = true;
+                        }
+                        break;
+                    case DIK_SPACE:
+                        if( Singleplayer )
+                            SingleplayerData.Pause = !SingleplayerData.Pause;
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -1359,49 +1359,49 @@ void FOClient::ParseKeyboard()
         {
             switch( dikdw )
             {
-            case DIK_F6:
-                if( GameOpt.DebugInfo && Keyb::CtrlDwn )
-                    GameOpt.ShowCritId = !GameOpt.ShowCritId;
-                break;
-            case DIK_F7:
-                if( GameOpt.DebugInfo && Keyb::CtrlDwn )
-                    GameOpt.ShowCritId = !GameOpt.ShowCritId;
-                break;
-            case DIK_F11:
-                if( GameOpt.DebugInfo && Keyb::ShiftDwn )
-                    SprMngr.SaveSufaces();
-                break;
+                case DIK_F6:
+                    if( GameOpt.DebugInfo && Keyb::CtrlDwn )
+                        GameOpt.ShowCritId = !GameOpt.ShowCritId;
+                    break;
+                case DIK_F7:
+                    if( GameOpt.DebugInfo && Keyb::CtrlDwn )
+                        GameOpt.ShowCritId = !GameOpt.ShowCritId;
+                    break;
+                case DIK_F11:
+                    if( GameOpt.DebugInfo && Keyb::ShiftDwn )
+                        SprMngr.SaveSufaces();
+                    break;
 
-            // Num Pad
-            case DIK_EQUALS:
-            case DIK_ADD:
-                if( ConsoleActive )
+                // Num Pad
+                case DIK_EQUALS:
+                case DIK_ADD:
+                    if( ConsoleActive )
+                        break;
+                    if( Keyb::CtrlDwn )
+                        SndMngr.SetSoundVolume( SndMngr.GetSoundVolume() + 2 );
+                    else if( Keyb::ShiftDwn )
+                        SndMngr.SetMusicVolume( SndMngr.GetMusicVolume() + 2 );
+                    else if( Keyb::AltDwn && GameOpt.FixedFPS < 10000 )
+                        GameOpt.FixedFPS++;
                     break;
-                if( Keyb::CtrlDwn )
-                    SndMngr.SetSoundVolume( SndMngr.GetSoundVolume() + 2 );
-                else if( Keyb::ShiftDwn )
-                    SndMngr.SetMusicVolume( SndMngr.GetMusicVolume() + 2 );
-                else if( Keyb::AltDwn && GameOpt.FixedFPS < 10000 )
-                    GameOpt.FixedFPS++;
-                break;
-            case DIK_MINUS:
-            case DIK_SUBTRACT:
-                if( ConsoleActive )
+                case DIK_MINUS:
+                case DIK_SUBTRACT:
+                    if( ConsoleActive )
+                        break;
+                    if( Keyb::CtrlDwn )
+                        SndMngr.SetSoundVolume( SndMngr.GetSoundVolume() - 2 );
+                    else if( Keyb::ShiftDwn )
+                        SndMngr.SetMusicVolume( SndMngr.GetMusicVolume() - 2 );
+                    else if( Keyb::AltDwn && GameOpt.FixedFPS > -10000 )
+                        GameOpt.FixedFPS--;
                     break;
-                if( Keyb::CtrlDwn )
-                    SndMngr.SetSoundVolume( SndMngr.GetSoundVolume() - 2 );
-                else if( Keyb::ShiftDwn )
-                    SndMngr.SetMusicVolume( SndMngr.GetMusicVolume() - 2 );
-                else if( Keyb::AltDwn && GameOpt.FixedFPS > -10000 )
-                    GameOpt.FixedFPS--;
-                break;
-            // Escape
-            case DIK_ESCAPE:
-                if( Keyb::ShiftDwn )
-                    GameOpt.Quit = true;
-                break;
-            default:
-                break;
+                // Escape
+                case DIK_ESCAPE:
+                    if( Keyb::ShiftDwn )
+                        GameOpt.Quit = true;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1425,52 +1425,52 @@ void FOClient::ParseKeyboard()
             {
                 switch( active )
                 {
-                case SCREEN__SPLIT:
-                    SplitKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__TIMER:
-                    TimerKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__CHA_NAME:
-                    ChaNameKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__SAY:
-                    SayKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__INPUT_BOX:
-                    IboxKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__DIALOG:
-                    DlgKeyDown( true, dikdw, event_text );
-                    ConsoleKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN__BARTER:
-                    DlgKeyDown( false, dikdw, event_text );
-                    ConsoleKeyDown( dikdw, event_text );
-                    break;
-                default:
-                    ConsoleKeyDown( dikdw, event_text );
-                    break;
+                    case SCREEN__SPLIT:
+                        SplitKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__TIMER:
+                        TimerKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__CHA_NAME:
+                        ChaNameKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__SAY:
+                        SayKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__INPUT_BOX:
+                        IboxKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__DIALOG:
+                        DlgKeyDown( true, dikdw, event_text );
+                        ConsoleKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN__BARTER:
+                        DlgKeyDown( false, dikdw, event_text );
+                        ConsoleKeyDown( dikdw, event_text );
+                        break;
+                    default:
+                        ConsoleKeyDown( dikdw, event_text );
+                        break;
                 }
             }
             else
             {
                 switch( GetMainScreen() )
                 {
-                case SCREEN_LOGIN:
-                    LogKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN_CREDITS:
-                    TryExit();
-                    break;
-                case SCREEN_GAME:
-                    GameKeyDown( dikdw, event_text );
-                    break;
-                case SCREEN_GLOBAL_MAP:
-                    GmapKeyDown( dikdw, event_text );
-                    break;
-                default:
-                    break;
+                    case SCREEN_LOGIN:
+                        LogKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN_CREDITS:
+                        TryExit();
+                        break;
+                    case SCREEN_GAME:
+                        GameKeyDown( dikdw, event_text );
+                        break;
+                    case SCREEN_GLOBAL_MAP:
+                        GmapKeyDown( dikdw, event_text );
+                        break;
+                    default:
+                        break;
                 }
                 ConsoleKeyDown( dikdw, event_text );
             }
@@ -1613,79 +1613,79 @@ void FOClient::ParseMouse()
         {
             switch( GetActiveScreen() )
             {
-            case SCREEN__SPLIT:
-                SplitMouseMove();
-                break;
-            case SCREEN__TIMER:
-                TimerMouseMove();
-                break;
-            case SCREEN__DIALOGBOX:
-                DlgboxMouseMove();
-                break;
-            case SCREEN__ELEVATOR:
-                ElevatorMouseMove();
-                break;
-            case SCREEN__SAY:
-                SayMouseMove();
-                break;
-            case SCREEN__INPUT_BOX:
-                IboxMouseMove();
-                break;
-            case SCREEN__SKILLBOX:
-                SboxMouseMove();
-                break;
-            case SCREEN__USE:
-                UseMouseMove();
-                break;
-            case SCREEN__PERK:
-                PerkMouseMove();
-                break;
-            case SCREEN__TOWN_VIEW:
-                TViewMouseMove();
-                break;
-            case SCREEN__DIALOG:
-                DlgMouseMove( true );
-                break;
-            case SCREEN__BARTER:
-                DlgMouseMove( false );
-                break;
-            case SCREEN__INVENTORY:
-                InvMouseMove();
-                break;
-            case SCREEN__PICKUP:
-                PupMouseMove();
-                break;
-            case SCREEN__MINI_MAP:
-                LmapMouseMove();
-                break;
-            case SCREEN__CHARACTER:
-                ChaMouseMove( false );
-                break;
-            case SCREEN__PIP_BOY:
-                PipMouseMove();
-                break;
-            case SCREEN__FIX_BOY:
-                FixMouseMove();
-                break;
-            case SCREEN__AIM:
-                AimMouseMove();
-                break;
-            case SCREEN__SAVE_LOAD:
-                SaveLoadMouseMove();
-                break;
-            default:
-                break;
+                case SCREEN__SPLIT:
+                    SplitMouseMove();
+                    break;
+                case SCREEN__TIMER:
+                    TimerMouseMove();
+                    break;
+                case SCREEN__DIALOGBOX:
+                    DlgboxMouseMove();
+                    break;
+                case SCREEN__ELEVATOR:
+                    ElevatorMouseMove();
+                    break;
+                case SCREEN__SAY:
+                    SayMouseMove();
+                    break;
+                case SCREEN__INPUT_BOX:
+                    IboxMouseMove();
+                    break;
+                case SCREEN__SKILLBOX:
+                    SboxMouseMove();
+                    break;
+                case SCREEN__USE:
+                    UseMouseMove();
+                    break;
+                case SCREEN__PERK:
+                    PerkMouseMove();
+                    break;
+                case SCREEN__TOWN_VIEW:
+                    TViewMouseMove();
+                    break;
+                case SCREEN__DIALOG:
+                    DlgMouseMove( true );
+                    break;
+                case SCREEN__BARTER:
+                    DlgMouseMove( false );
+                    break;
+                case SCREEN__INVENTORY:
+                    InvMouseMove();
+                    break;
+                case SCREEN__PICKUP:
+                    PupMouseMove();
+                    break;
+                case SCREEN__MINI_MAP:
+                    LmapMouseMove();
+                    break;
+                case SCREEN__CHARACTER:
+                    ChaMouseMove( false );
+                    break;
+                case SCREEN__PIP_BOY:
+                    PipMouseMove();
+                    break;
+                case SCREEN__FIX_BOY:
+                    FixMouseMove();
+                    break;
+                case SCREEN__AIM:
+                    AimMouseMove();
+                    break;
+                case SCREEN__SAVE_LOAD:
+                    SaveLoadMouseMove();
+                    break;
+                default:
+                    break;
             }
         }
         else
         {
             switch( GetMainScreen() )
             {
-            case SCREEN_GLOBAL_MAP:
-                GmapMouseMove();
-                break;
-            default:
-                break;
+                case SCREEN_GLOBAL_MAP:
+                    GmapMouseMove();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1861,107 +1861,107 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                case SCREEN__SPLIT:
-                    SplitLMouseDown();
-                    break;
-                case SCREEN__TIMER:
-                    TimerLMouseDown();
-                    break;
-                case SCREEN__DIALOGBOX:
-                    DlgboxLMouseDown();
-                    break;
-                case SCREEN__ELEVATOR:
-                    ElevatorLMouseDown();
-                    break;
-                case SCREEN__SAY:
-                    SayLMouseDown();
-                    break;
-                case SCREEN__CHA_NAME:
-                    ChaNameLMouseDown();
-                    break;
-                case SCREEN__CHA_AGE:
-                    ChaAgeLMouseDown();
-                    break;
-                case SCREEN__CHA_SEX:
-                    ChaSexLMouseDown();
-                    break;
-                case SCREEN__GM_TOWN:
-                    GmapLMouseDown();
-                    break;
-                case SCREEN__INPUT_BOX:
-                    IboxLMouseDown();
-                    break;
-                case SCREEN__SKILLBOX:
-                    SboxLMouseDown();
-                    break;
-                case SCREEN__USE:
-                    UseLMouseDown();
-                    break;
-                case SCREEN__PERK:
-                    PerkLMouseDown();
-                    break;
-                case SCREEN__TOWN_VIEW:
-                    TViewLMouseDown();
-                    break;
-                case SCREEN__INVENTORY:
-                    InvLMouseDown();
-                    break;
-                case SCREEN__PICKUP:
-                    PupLMouseDown();
-                    break;
-                case SCREEN__DIALOG:
-                    DlgLMouseDown( true );
-                    break;
-                case SCREEN__BARTER:
-                    DlgLMouseDown( false );
-                    break;
-                case SCREEN__MINI_MAP:
-                    LmapLMouseDown();
-                    break;
-                case SCREEN__MENU_OPTION:
-                    MoptLMouseDown();
-                    break;
-                case SCREEN__CHARACTER:
-                    ChaLMouseDown( false );
-                    break;
-                case SCREEN__PIP_BOY:
-                    PipLMouseDown();
-                    break;
-                case SCREEN__FIX_BOY:
-                    FixLMouseDown();
-                    break;
-                case SCREEN__AIM:
-                    AimLMouseDown();
-                    break;
-                case SCREEN__SAVE_LOAD:
-                    SaveLoadLMouseDown();
-                    break;
-                default:
-                    break;
+                    case SCREEN__SPLIT:
+                        SplitLMouseDown();
+                        break;
+                    case SCREEN__TIMER:
+                        TimerLMouseDown();
+                        break;
+                    case SCREEN__DIALOGBOX:
+                        DlgboxLMouseDown();
+                        break;
+                    case SCREEN__ELEVATOR:
+                        ElevatorLMouseDown();
+                        break;
+                    case SCREEN__SAY:
+                        SayLMouseDown();
+                        break;
+                    case SCREEN__CHA_NAME:
+                        ChaNameLMouseDown();
+                        break;
+                    case SCREEN__CHA_AGE:
+                        ChaAgeLMouseDown();
+                        break;
+                    case SCREEN__CHA_SEX:
+                        ChaSexLMouseDown();
+                        break;
+                    case SCREEN__GM_TOWN:
+                        GmapLMouseDown();
+                        break;
+                    case SCREEN__INPUT_BOX:
+                        IboxLMouseDown();
+                        break;
+                    case SCREEN__SKILLBOX:
+                        SboxLMouseDown();
+                        break;
+                    case SCREEN__USE:
+                        UseLMouseDown();
+                        break;
+                    case SCREEN__PERK:
+                        PerkLMouseDown();
+                        break;
+                    case SCREEN__TOWN_VIEW:
+                        TViewLMouseDown();
+                        break;
+                    case SCREEN__INVENTORY:
+                        InvLMouseDown();
+                        break;
+                    case SCREEN__PICKUP:
+                        PupLMouseDown();
+                        break;
+                    case SCREEN__DIALOG:
+                        DlgLMouseDown( true );
+                        break;
+                    case SCREEN__BARTER:
+                        DlgLMouseDown( false );
+                        break;
+                    case SCREEN__MINI_MAP:
+                        LmapLMouseDown();
+                        break;
+                    case SCREEN__MENU_OPTION:
+                        MoptLMouseDown();
+                        break;
+                    case SCREEN__CHARACTER:
+                        ChaLMouseDown( false );
+                        break;
+                    case SCREEN__PIP_BOY:
+                        PipLMouseDown();
+                        break;
+                    case SCREEN__FIX_BOY:
+                        FixLMouseDown();
+                        break;
+                    case SCREEN__AIM:
+                        AimLMouseDown();
+                        break;
+                    case SCREEN__SAVE_LOAD:
+                        SaveLoadLMouseDown();
+                        break;
+                    default:
+                        break;
                 }
             }
             else
             {
                 switch( GetMainScreen() )
                 {
-                case SCREEN_GAME:
-                    if( IntLMouseDown() == IFACE_NONE )
-                        GameLMouseDown();
-                    break;
-                case SCREEN_GLOBAL_MAP:
-                    GmapLMouseDown();
-                    break;
-                case SCREEN_LOGIN:
-                    LogLMouseDown();
-                    break;
-                case SCREEN_REGISTRATION:
-                    ChaLMouseDown( true );
-                    break;
-                case SCREEN_CREDITS:
-                    TryExit();
-                    break;
-                default:
-                    break;
+                    case SCREEN_GAME:
+                        if( IntLMouseDown() == IFACE_NONE )
+                            GameLMouseDown();
+                        break;
+                    case SCREEN_GLOBAL_MAP:
+                        GmapLMouseDown();
+                        break;
+                    case SCREEN_LOGIN:
+                        LogLMouseDown();
+                        break;
+                    case SCREEN_REGISTRATION:
+                        ChaLMouseDown( true );
+                        break;
+                    case SCREEN_CREDITS:
+                        TryExit();
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -1977,100 +1977,100 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                case SCREEN__SPLIT:
-                    SplitLMouseUp();
-                    break;
-                case SCREEN__TIMER:
-                    TimerLMouseUp();
-                    break;
-                case SCREEN__DIALOGBOX:
-                    DlgboxLMouseUp();
-                    break;
-                case SCREEN__ELEVATOR:
-                    ElevatorLMouseUp();
-                    break;
-                case SCREEN__SAY:
-                    SayLMouseUp();
-                    break;
-                case SCREEN__CHA_AGE:
-                    ChaAgeLMouseUp();
-                    break;
-                case SCREEN__CHA_SEX:
-                    ChaSexLMouseUp();
-                    break;
-                case SCREEN__GM_TOWN:
-                    GmapLMouseUp();
-                    break;
-                case SCREEN__INPUT_BOX:
-                    IboxLMouseUp();
-                    break;
-                case SCREEN__SKILLBOX:
-                    SboxLMouseUp();
-                    break;
-                case SCREEN__USE:
-                    UseLMouseUp();
-                    break;
-                case SCREEN__PERK:
-                    PerkLMouseUp();
-                    break;
-                case SCREEN__TOWN_VIEW:
-                    TViewLMouseUp();
-                    break;
-                case SCREEN__INVENTORY:
-                    InvLMouseUp();
-                    break;
-                case SCREEN__PICKUP:
-                    PupLMouseUp();
-                    break;
-                case SCREEN__DIALOG:
-                    DlgLMouseUp( true );
-                    break;
-                case SCREEN__BARTER:
-                    DlgLMouseUp( false );
-                    break;
-                case SCREEN__MINI_MAP:
-                    LmapLMouseUp();
-                    break;
-                case SCREEN__MENU_OPTION:
-                    MoptLMouseUp();
-                    break;
-                case SCREEN__CHARACTER:
-                    ChaLMouseUp( false );
-                    break;
-                case SCREEN__PIP_BOY:
-                    PipLMouseUp();
-                    break;
-                case SCREEN__FIX_BOY:
-                    FixLMouseUp();
-                    break;
-                case SCREEN__AIM:
-                    AimLMouseUp();
-                    break;
-                case SCREEN__SAVE_LOAD:
-                    SaveLoadLMouseUp();
-                    break;
-                default:
-                    break;
+                    case SCREEN__SPLIT:
+                        SplitLMouseUp();
+                        break;
+                    case SCREEN__TIMER:
+                        TimerLMouseUp();
+                        break;
+                    case SCREEN__DIALOGBOX:
+                        DlgboxLMouseUp();
+                        break;
+                    case SCREEN__ELEVATOR:
+                        ElevatorLMouseUp();
+                        break;
+                    case SCREEN__SAY:
+                        SayLMouseUp();
+                        break;
+                    case SCREEN__CHA_AGE:
+                        ChaAgeLMouseUp();
+                        break;
+                    case SCREEN__CHA_SEX:
+                        ChaSexLMouseUp();
+                        break;
+                    case SCREEN__GM_TOWN:
+                        GmapLMouseUp();
+                        break;
+                    case SCREEN__INPUT_BOX:
+                        IboxLMouseUp();
+                        break;
+                    case SCREEN__SKILLBOX:
+                        SboxLMouseUp();
+                        break;
+                    case SCREEN__USE:
+                        UseLMouseUp();
+                        break;
+                    case SCREEN__PERK:
+                        PerkLMouseUp();
+                        break;
+                    case SCREEN__TOWN_VIEW:
+                        TViewLMouseUp();
+                        break;
+                    case SCREEN__INVENTORY:
+                        InvLMouseUp();
+                        break;
+                    case SCREEN__PICKUP:
+                        PupLMouseUp();
+                        break;
+                    case SCREEN__DIALOG:
+                        DlgLMouseUp( true );
+                        break;
+                    case SCREEN__BARTER:
+                        DlgLMouseUp( false );
+                        break;
+                    case SCREEN__MINI_MAP:
+                        LmapLMouseUp();
+                        break;
+                    case SCREEN__MENU_OPTION:
+                        MoptLMouseUp();
+                        break;
+                    case SCREEN__CHARACTER:
+                        ChaLMouseUp( false );
+                        break;
+                    case SCREEN__PIP_BOY:
+                        PipLMouseUp();
+                        break;
+                    case SCREEN__FIX_BOY:
+                        FixLMouseUp();
+                        break;
+                    case SCREEN__AIM:
+                        AimLMouseUp();
+                        break;
+                    case SCREEN__SAVE_LOAD:
+                        SaveLoadLMouseUp();
+                        break;
+                    default:
+                        break;
                 }
             }
             else
             {
                 switch( GetMainScreen() )
                 {
-                case SCREEN_GAME:
-                    ( IfaceHold == IFACE_NONE ) ? GameLMouseUp() : IntLMouseUp();
-                    break;
-                case SCREEN_GLOBAL_MAP:
-                    GmapLMouseUp();
-                    break;
-                case SCREEN_LOGIN:
-                    LogLMouseUp();
-                    break;
-                case SCREEN_REGISTRATION:
-                    ChaLMouseUp( true );
-                    break;
-                default:
-                    break;
+                    case SCREEN_GAME:
+                        ( IfaceHold == IFACE_NONE ) ? GameLMouseUp() : IntLMouseUp();
+                        break;
+                    case SCREEN_GLOBAL_MAP:
+                        GmapLMouseUp();
+                        break;
+                    case SCREEN_LOGIN:
+                        LogLMouseUp();
+                        break;
+                    case SCREEN_REGISTRATION:
+                        ChaLMouseUp( true );
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -2086,41 +2086,41 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                case SCREEN__USE:
-                    UseRMouseDown();
-                    break;
-                case SCREEN__INVENTORY:
-                    InvRMouseDown();
-                    break;
-                case SCREEN__DIALOG:
-                    DlgRMouseDown( true );
-                    break;
-                case SCREEN__BARTER:
-                    DlgRMouseDown( false );
-                    break;
-                case SCREEN__PICKUP:
-                    PupRMouseDown();
-                    break;
-                case SCREEN__PIP_BOY:
-                    PipRMouseDown();
-                    break;
-                default:
-                    break;
+                    case SCREEN__USE:
+                        UseRMouseDown();
+                        break;
+                    case SCREEN__INVENTORY:
+                        InvRMouseDown();
+                        break;
+                    case SCREEN__DIALOG:
+                        DlgRMouseDown( true );
+                        break;
+                    case SCREEN__BARTER:
+                        DlgRMouseDown( false );
+                        break;
+                    case SCREEN__PICKUP:
+                        PupRMouseDown();
+                        break;
+                    case SCREEN__PIP_BOY:
+                        PipRMouseDown();
+                        break;
+                    default:
+                        break;
                 }
             }
             else
             {
                 switch( GetMainScreen() )
                 {
-                case SCREEN_GAME:
-                    IntRMouseDown();
-                    GameRMouseDown();
-                    break;
-                case SCREEN_GLOBAL_MAP:
-                    GmapRMouseDown();
-                    break;
-                default:
-                    break;
+                    case SCREEN_GAME:
+                        IntRMouseDown();
+                        GameRMouseDown();
+                        break;
+                    case SCREEN_GLOBAL_MAP:
+                        GmapRMouseDown();
+                        break;
+                    default:
+                        break;
                 }
             }
             continue;
@@ -2133,14 +2133,14 @@ void FOClient::ParseMouse()
             {
                 switch( GetMainScreen() )
                 {
-                case SCREEN_GAME:
-                    GameRMouseUp();
-                    break;
-                case SCREEN_GLOBAL_MAP:
-                    GmapRMouseUp();
-                    break;
-                default:
-                    break;
+                    case SCREEN_GAME:
+                        GameRMouseUp();
+                        break;
+                    case SCREEN_GLOBAL_MAP:
+                        GmapRMouseUp();
+                        break;
+                    default:
+                        break;
                 }
             }
             continue;
@@ -2623,18 +2623,18 @@ bool FOClient::NetConnect()
             {
                 switch( b2 )
                 {
-                case 0x5B:
-                    WriteLog( "Proxy connection error, request rejected or failed.\n" );
-                    break;
-                case 0x5C:
-                    WriteLog( "Proxy connection error, request failed because client is not running identd (or not reachable from the server).\n" );
-                    break;
-                case 0x5D:
-                    WriteLog( "Proxy connection error, request failed because client's identd could not confirm the user ID string in the request.\n" );
-                    break;
-                default:
-                    WriteLog( "Proxy connection error, Unknown error<%u>.\n", b2 );
-                    break;
+                    case 0x5B:
+                        WriteLog( "Proxy connection error, request rejected or failed.\n" );
+                        break;
+                    case 0x5C:
+                        WriteLog( "Proxy connection error, request failed because client is not running identd (or not reachable from the server).\n" );
+                        break;
+                    case 0x5D:
+                        WriteLog( "Proxy connection error, request failed because client's identd could not confirm the user ID string in the request.\n" );
+                        break;
+                    default:
+                        WriteLog( "Proxy connection error, Unknown error<%u>.\n", b2 );
+                        break;
                 }
                 return false;
             }
@@ -2682,33 +2682,33 @@ bool FOClient::NetConnect()
             {
                 switch( b2 )
                 {
-                case 1:
-                    WriteLog( "Proxy connection error, SOCKS-server error.\n" );
-                    break;
-                case 2:
-                    WriteLog( "Proxy connection error, connections fail by proxy rules.\n" );
-                    break;
-                case 3:
-                    WriteLog( "Proxy connection error, network is not aviable.\n" );
-                    break;
-                case 4:
-                    WriteLog( "Proxy connection error, host is not aviable.\n" );
-                    break;
-                case 5:
-                    WriteLog( "Proxy connection error, connection denied.\n" );
-                    break;
-                case 6:
-                    WriteLog( "Proxy connection error, TTL expired.\n" );
-                    break;
-                case 7:
-                    WriteLog( "Proxy connection error, command not supported.\n" );
-                    break;
-                case 8:
-                    WriteLog( "Proxy connection error, address type not supported.\n" );
-                    break;
-                default:
-                    WriteLog( "Proxy connection error, unknown error<%u>.\n", b2 );
-                    break;
+                    case 1:
+                        WriteLog( "Proxy connection error, SOCKS-server error.\n" );
+                        break;
+                    case 2:
+                        WriteLog( "Proxy connection error, connections fail by proxy rules.\n" );
+                        break;
+                    case 3:
+                        WriteLog( "Proxy connection error, network is not aviable.\n" );
+                        break;
+                    case 4:
+                        WriteLog( "Proxy connection error, host is not aviable.\n" );
+                        break;
+                    case 5:
+                        WriteLog( "Proxy connection error, connection denied.\n" );
+                        break;
+                    case 6:
+                        WriteLog( "Proxy connection error, TTL expired.\n" );
+                        break;
+                    case 7:
+                        WriteLog( "Proxy connection error, command not supported.\n" );
+                        break;
+                    case 8:
+                        WriteLog( "Proxy connection error, address type not supported.\n" );
+                        break;
+                    default:
+                        WriteLog( "Proxy connection error, unknown error<%u>.\n", b2 );
+                        break;
                 }
                 return false;
             }
@@ -2985,243 +2985,243 @@ void FOClient::NetProcess()
 
         switch( msg )
         {
-        case NETMSG_LOGIN_SUCCESS:
-            Net_OnLoginSuccess();
-            break;
-        case NETMSG_REGISTER_SUCCESS:
-            if( !Singleplayer )
-            {
-                WriteLog( "Registration success.\n" );
-                if( RegNewCr )
+            case NETMSG_LOGIN_SUCCESS:
+                Net_OnLoginSuccess();
+                break;
+            case NETMSG_REGISTER_SUCCESS:
+                if( !Singleplayer )
                 {
-                    GameOpt.Name = RegNewCr->Name;
-                    Password = RegNewCr->Pass;
-                    SAFEDEL( RegNewCr );
+                    WriteLog( "Registration success.\n" );
+                    if( RegNewCr )
+                    {
+                        GameOpt.Name = RegNewCr->Name;
+                        Password = RegNewCr->Pass;
+                        SAFEDEL( RegNewCr );
+                    }
                 }
-            }
-            else
-            {
-                WriteLog( "World loaded, enter to it.\n" );
-                LogTryConnect();
-            }
-            break;
+                else
+                {
+                    WriteLog( "World loaded, enter to it.\n" );
+                    LogTryConnect();
+                }
+                break;
 
-        case NETMSG_PING:
-            Net_OnPing();
-            break;
-        case NETMSG_CHECK_UID0:
-            Net_OnCheckUID0();
-            break;
+            case NETMSG_PING:
+                Net_OnPing();
+                break;
+            case NETMSG_CHECK_UID0:
+                Net_OnCheckUID0();
+                break;
 
-        case NETMSG_ADD_PLAYER:
-            Net_OnAddCritter( false );
-            break;
-        case NETMSG_ADD_NPC:
-            Net_OnAddCritter( true );
-            break;
-        case NETMSG_REMOVE_CRITTER:
-            Net_OnRemoveCritter();
-            break;
-        case NETMSG_SOME_ITEM:
-            Net_OnSomeItem();
-            break;
-        case NETMSG_CRITTER_ACTION:
-            Net_OnCritterAction();
-            break;
-        case NETMSG_CRITTER_KNOCKOUT:
-            Net_OnCritterKnockout();
-            break;
-        case NETMSG_CRITTER_MOVE_ITEM:
-            Net_OnCritterMoveItem();
-            break;
-        case NETMSG_CRITTER_ITEM_DATA:
-            Net_OnCritterItemData();
-            break;
-        case NETMSG_CRITTER_ANIMATE:
-            Net_OnCritterAnimate();
-            break;
-        case NETMSG_CRITTER_SET_ANIMS:
-            Net_OnCritterSetAnims();
-            break;
-        case NETMSG_CRITTER_PARAM:
-            Net_OnCritterParam();
-            break;
-        case NETMSG_CRITTER_MOVE:
-            Net_OnCritterMove();
-            break;
-        case NETMSG_CRITTER_DIR:
-            Net_OnCritterDir();
-            break;
-        case NETMSG_CRITTER_XY:
-            Net_OnCritterXY();
-            break;
-        case NETMSG_CHECK_UID1:
-            Net_OnCheckUID1();
-            break;
+            case NETMSG_ADD_PLAYER:
+                Net_OnAddCritter( false );
+                break;
+            case NETMSG_ADD_NPC:
+                Net_OnAddCritter( true );
+                break;
+            case NETMSG_REMOVE_CRITTER:
+                Net_OnRemoveCritter();
+                break;
+            case NETMSG_SOME_ITEM:
+                Net_OnSomeItem();
+                break;
+            case NETMSG_CRITTER_ACTION:
+                Net_OnCritterAction();
+                break;
+            case NETMSG_CRITTER_KNOCKOUT:
+                Net_OnCritterKnockout();
+                break;
+            case NETMSG_CRITTER_MOVE_ITEM:
+                Net_OnCritterMoveItem();
+                break;
+            case NETMSG_CRITTER_ITEM_DATA:
+                Net_OnCritterItemData();
+                break;
+            case NETMSG_CRITTER_ANIMATE:
+                Net_OnCritterAnimate();
+                break;
+            case NETMSG_CRITTER_SET_ANIMS:
+                Net_OnCritterSetAnims();
+                break;
+            case NETMSG_CRITTER_PARAM:
+                Net_OnCritterParam();
+                break;
+            case NETMSG_CRITTER_MOVE:
+                Net_OnCritterMove();
+                break;
+            case NETMSG_CRITTER_DIR:
+                Net_OnCritterDir();
+                break;
+            case NETMSG_CRITTER_XY:
+                Net_OnCritterXY();
+                break;
+            case NETMSG_CHECK_UID1:
+                Net_OnCheckUID1();
+                break;
 
-        case NETMSG_CRITTER_TEXT:
-            Net_OnText();
-            break;
-        case NETMSG_MSG:
-            Net_OnTextMsg( false );
-            break;
-        case NETMSG_MSG_LEX:
-            Net_OnTextMsg( true );
-            break;
-        case NETMSG_MAP_TEXT:
-            Net_OnMapText();
-            break;
-        case NETMSG_MAP_TEXT_MSG:
-            Net_OnMapTextMsg();
-            break;
-        case NETMSG_MAP_TEXT_MSG_LEX:
-            Net_OnMapTextMsgLex();
-            break;
-        case NETMSG_CHECK_UID2:
-            Net_OnCheckUID2();
-            break;
+            case NETMSG_CRITTER_TEXT:
+                Net_OnText();
+                break;
+            case NETMSG_MSG:
+                Net_OnTextMsg( false );
+                break;
+            case NETMSG_MSG_LEX:
+                Net_OnTextMsg( true );
+                break;
+            case NETMSG_MAP_TEXT:
+                Net_OnMapText();
+                break;
+            case NETMSG_MAP_TEXT_MSG:
+                Net_OnMapTextMsg();
+                break;
+            case NETMSG_MAP_TEXT_MSG_LEX:
+                Net_OnMapTextMsgLex();
+                break;
+            case NETMSG_CHECK_UID2:
+                Net_OnCheckUID2();
+                break;
 
-            break;
-        case NETMSG_ALL_PARAMS:
-            Net_OnChosenParams();
-            break;
-        case NETMSG_PARAM:
-            Net_OnChosenParam();
-            break;
-        case NETMSG_CRAFT_ASK:
-            Net_OnCraftAsk();
-            break;
-        case NETMSG_CRAFT_RESULT:
-            Net_OnCraftResult();
-            break;
-        case NETMSG_CLEAR_ITEMS:
-            Net_OnChosenClearItems();
-            break;
-        case NETMSG_ADD_ITEM:
-            Net_OnChosenAddItem();
-            break;
-        case NETMSG_REMOVE_ITEM:
-            Net_OnChosenEraseItem();
-            break;
-        case NETMSG_CHECK_UID3:
-            Net_OnCheckUID3();
-            break;
+                break;
+            case NETMSG_ALL_PARAMS:
+                Net_OnChosenParams();
+                break;
+            case NETMSG_PARAM:
+                Net_OnChosenParam();
+                break;
+            case NETMSG_CRAFT_ASK:
+                Net_OnCraftAsk();
+                break;
+            case NETMSG_CRAFT_RESULT:
+                Net_OnCraftResult();
+                break;
+            case NETMSG_CLEAR_ITEMS:
+                Net_OnChosenClearItems();
+                break;
+            case NETMSG_ADD_ITEM:
+                Net_OnChosenAddItem();
+                break;
+            case NETMSG_REMOVE_ITEM:
+                Net_OnChosenEraseItem();
+                break;
+            case NETMSG_CHECK_UID3:
+                Net_OnCheckUID3();
+                break;
 
-        case NETMSG_TALK_NPC:
-            Net_OnChosenTalk();
-            break;
+            case NETMSG_TALK_NPC:
+                Net_OnChosenTalk();
+                break;
 
-        case NETMSG_GAME_INFO:
-            Net_OnGameInfo();
-            break;
+            case NETMSG_GAME_INFO:
+                Net_OnGameInfo();
+                break;
 
-        case NETMSG_QUEST:
-            Net_OnQuest( false );
-            break;
-        case NETMSG_QUESTS:
-            Net_OnQuest( true );
-            break;
-        case NETMSG_HOLO_INFO:
-            Net_OnHoloInfo();
-            break;
-        case NETMSG_SCORES:
-            Net_OnScores();
-            break;
-        case NETMSG_USER_HOLO_STR:
-            Net_OnUserHoloStr();
-            break;
-        case NETMSG_AUTOMAPS_INFO:
-            Net_OnAutomapsInfo();
-            break;
-        case NETMSG_CHECK_UID4:
-            Net_OnCheckUID4();
-            break;
-        case NETMSG_VIEW_MAP:
-            Net_OnViewMap();
-            break;
+            case NETMSG_QUEST:
+                Net_OnQuest( false );
+                break;
+            case NETMSG_QUESTS:
+                Net_OnQuest( true );
+                break;
+            case NETMSG_HOLO_INFO:
+                Net_OnHoloInfo();
+                break;
+            case NETMSG_SCORES:
+                Net_OnScores();
+                break;
+            case NETMSG_USER_HOLO_STR:
+                Net_OnUserHoloStr();
+                break;
+            case NETMSG_AUTOMAPS_INFO:
+                Net_OnAutomapsInfo();
+                break;
+            case NETMSG_CHECK_UID4:
+                Net_OnCheckUID4();
+                break;
+            case NETMSG_VIEW_MAP:
+                Net_OnViewMap();
+                break;
 
-        case NETMSG_LOADMAP:
-            Net_OnLoadMap();
-            break;
-        case NETMSG_MAP:
-            Net_OnMap();
-            break;
-        case NETMSG_GLOBAL_INFO:
-            Net_OnGlobalInfo();
-            break;
-        case NETMSG_GLOBAL_ENTRANCES:
-            Net_OnGlobalEntrances();
-            break;
-        case NETMSG_CONTAINER_INFO:
-            Net_OnContainerInfo();
-            break;
-        case NETMSG_FOLLOW:
-            Net_OnFollow();
-            break;
-        case NETMSG_PLAYERS_BARTER:
-            Net_OnPlayersBarter();
-            break;
-        case NETMSG_PLAYERS_BARTER_SET_HIDE:
-            Net_OnPlayersBarterSetHide();
-            break;
-        case NETMSG_SHOW_SCREEN:
-            Net_OnShowScreen();
-            break;
-        case NETMSG_RUN_CLIENT_SCRIPT:
-            Net_OnRunClientScript();
-            break;
-        case NETMSG_DROP_TIMERS:
-            Net_OnDropTimers();
-            break;
-        case NETMSG_CRITTER_LEXEMS:
-            Net_OnCritterLexems();
-            break;
-        case NETMSG_ITEM_LEXEMS:
-            Net_OnItemLexems();
-            break;
+            case NETMSG_LOADMAP:
+                Net_OnLoadMap();
+                break;
+            case NETMSG_MAP:
+                Net_OnMap();
+                break;
+            case NETMSG_GLOBAL_INFO:
+                Net_OnGlobalInfo();
+                break;
+            case NETMSG_GLOBAL_ENTRANCES:
+                Net_OnGlobalEntrances();
+                break;
+            case NETMSG_CONTAINER_INFO:
+                Net_OnContainerInfo();
+                break;
+            case NETMSG_FOLLOW:
+                Net_OnFollow();
+                break;
+            case NETMSG_PLAYERS_BARTER:
+                Net_OnPlayersBarter();
+                break;
+            case NETMSG_PLAYERS_BARTER_SET_HIDE:
+                Net_OnPlayersBarterSetHide();
+                break;
+            case NETMSG_SHOW_SCREEN:
+                Net_OnShowScreen();
+                break;
+            case NETMSG_RUN_CLIENT_SCRIPT:
+                Net_OnRunClientScript();
+                break;
+            case NETMSG_DROP_TIMERS:
+                Net_OnDropTimers();
+                break;
+            case NETMSG_CRITTER_LEXEMS:
+                Net_OnCritterLexems();
+                break;
+            case NETMSG_ITEM_LEXEMS:
+                Net_OnItemLexems();
+                break;
 
-        case NETMSG_ADD_ITEM_ON_MAP:
-            Net_OnAddItemOnMap();
-            break;
-        case NETMSG_CHANGE_ITEM_ON_MAP:
-            Net_OnChangeItemOnMap();
-            break;
-        case NETMSG_ERASE_ITEM_FROM_MAP:
-            Net_OnEraseItemFromMap();
-            break;
-        case NETMSG_ANIMATE_ITEM:
-            Net_OnAnimateItem();
-            break;
-        case NETMSG_COMBAT_RESULTS:
-            Net_OnCombatResult();
-            break;
-        case NETMSG_EFFECT:
-            Net_OnEffect();
-            break;
-        case NETMSG_FLY_EFFECT:
-            Net_OnFlyEffect();
-            break;
-        case NETMSG_PLAY_SOUND:
-            Net_OnPlaySound( false );
-            break;
-        case NETMSG_PLAY_SOUND_TYPE:
-            Net_OnPlaySound( true );
-            break;
+            case NETMSG_ADD_ITEM_ON_MAP:
+                Net_OnAddItemOnMap();
+                break;
+            case NETMSG_CHANGE_ITEM_ON_MAP:
+                Net_OnChangeItemOnMap();
+                break;
+            case NETMSG_ERASE_ITEM_FROM_MAP:
+                Net_OnEraseItemFromMap();
+                break;
+            case NETMSG_ANIMATE_ITEM:
+                Net_OnAnimateItem();
+                break;
+            case NETMSG_COMBAT_RESULTS:
+                Net_OnCombatResult();
+                break;
+            case NETMSG_EFFECT:
+                Net_OnEffect();
+                break;
+            case NETMSG_FLY_EFFECT:
+                Net_OnFlyEffect();
+                break;
+            case NETMSG_PLAY_SOUND:
+                Net_OnPlaySound( false );
+                break;
+            case NETMSG_PLAY_SOUND_TYPE:
+                Net_OnPlaySound( true );
+                break;
 
-        case NETMSG_MSG_DATA:
-            Net_OnMsgData();
-            break;
-        case NETMSG_ITEM_PROTOS:
-            Net_OnProtoItemData();
-            break;
+            case NETMSG_MSG_DATA:
+                Net_OnMsgData();
+                break;
+            case NETMSG_ITEM_PROTOS:
+                Net_OnProtoItemData();
+                break;
 
-        default:
-            if( GameOpt.DebugNet )
-                AddMess( FOMB_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", ( msg >> 8 ) & 0xFF ) );
-            WriteLog( "Invalid msg<%u>. Seek valid.\n", msg );
-            Bin.MoveReadPos( sizeof( uint ) );
-            Bin.SeekValidMsg();
-            return;
+            default:
+                if( GameOpt.DebugNet )
+                    AddMess( FOMB_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", ( msg >> 8 ) & 0xFF ) );
+                WriteLog( "Invalid msg<%u>. Seek valid.\n", msg );
+                Bin.MoveReadPos( sizeof( uint ) );
+                Bin.SeekValidMsg();
+                return;
         }
 
         if( !IsConnected )
@@ -4101,41 +4101,41 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
 
     switch( how_say )
     {
-    case SAY_NORM:
-        fstr_mb = STR_MBNORM;
-    case SAY_NORM_ON_HEAD:
-        fstr_cr = STR_CRNORM;
-        break;
-    case SAY_SHOUT:
-        fstr_mb = STR_MBSHOUT;
-    case SAY_SHOUT_ON_HEAD:
-        fstr_cr = STR_CRSHOUT;
-        Str::UpperUTF8( fstr );
-        break;
-    case SAY_EMOTE:
-        fstr_mb = STR_MBEMOTE;
-    case SAY_EMOTE_ON_HEAD:
-        fstr_cr = STR_CREMOTE;
-        break;
-    case SAY_WHISP:
-        fstr_mb = STR_MBWHISP;
-    case SAY_WHISP_ON_HEAD:
-        fstr_cr = STR_CRWHISP;
-        Str::LowerUTF8( fstr );
-        break;
-    case SAY_SOCIAL:
-        fstr_cr = STR_CRSOCIAL;
-        fstr_mb = STR_MBSOCIAL;
-        break;
-    case SAY_RADIO:
-        fstr_mb = STR_MBRADIO;
-        break;
-    case SAY_NETMSG:
-        mess_type = FOMB_GAME;
-        fstr_mb = STR_MBNET;
-        break;
-    default:
-        break;
+        case SAY_NORM:
+            fstr_mb = STR_MBNORM;
+        case SAY_NORM_ON_HEAD:
+            fstr_cr = STR_CRNORM;
+            break;
+        case SAY_SHOUT:
+            fstr_mb = STR_MBSHOUT;
+        case SAY_SHOUT_ON_HEAD:
+            fstr_cr = STR_CRSHOUT;
+            Str::UpperUTF8( fstr );
+            break;
+        case SAY_EMOTE:
+            fstr_mb = STR_MBEMOTE;
+        case SAY_EMOTE_ON_HEAD:
+            fstr_cr = STR_CREMOTE;
+            break;
+        case SAY_WHISP:
+            fstr_mb = STR_MBWHISP;
+        case SAY_WHISP_ON_HEAD:
+            fstr_cr = STR_CRWHISP;
+            Str::LowerUTF8( fstr );
+            break;
+        case SAY_SOCIAL:
+            fstr_cr = STR_CRSOCIAL;
+            fstr_mb = STR_MBSOCIAL;
+            break;
+        case SAY_RADIO:
+            fstr_mb = STR_MBRADIO;
+            break;
+        case SAY_NETMSG:
+            mess_type = FOMB_GAME;
+            fstr_mb = STR_MBNET;
+            break;
+        default:
+            break;
     }
 
     CritterCl* cr = NULL;
@@ -4950,116 +4950,116 @@ void FOClient::Net_OnChosenParam()
 
     switch( index )
     {
-    case ST_CURRENT_AP:
-    {
-        Chosen->ApRegenerationTick = 0;
-    }
-    break;
-    case TO_BATTLE:
-    {
-        if( Chosen->GetParam( TO_BATTLE ) )
+        case ST_CURRENT_AP:
         {
-            AnimRun( IntWCombatAnim, ANIMRUN_TO_END );
-            if( AnimGetCurSprCnt( IntWCombatAnim ) == 0 )
-                SndMngr.PlaySound( SND_COMBAT_MODE_ON );
+            Chosen->ApRegenerationTick = 0;
         }
-        else
-        {
-            AnimRun( IntWCombatAnim, ANIMRUN_FROM_END );
-            if( AnimGetCurSprCnt( IntWCombatAnim ) == AnimGetSprCount( IntWCombatAnim ) - 1 )
-                SndMngr.PlaySound( SND_COMBAT_MODE_OFF );
-        }
-    }
-    break;
-    case OTHER_BREAK_TIME:
-    {
-        if( value < 0 )
-            value = 0;
-        Chosen->TickStart( value );
-        SetAction( CHOSEN_NONE );
-        MoveDirs.clear();
-        Chosen->MoveSteps.clear();
-    }
-    break;
-    case OTHER_FLAGS:
-    {
-        Chosen->Flags = value;
-    }
-    break;
-    case OTHER_BASE_TYPE:
-    {
-        if( Chosen->Multihex < 0 && CritType::GetMultihex( Chosen->GetCrType() ) != CritType::GetMultihex( value ) )
-        {
-            HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), CritType::GetMultihex( Chosen->GetCrType() ), false );
-            HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), CritType::GetMultihex( value ), true );
-        }
-
-        Chosen->SetBaseType( value );
-        if( !Chosen->IsAnim() )
-            Chosen->Action( ACTION_REFRESH, 0, NULL, false );
-    }
-    break;
-    case OTHER_MULTIHEX:
-    {
-        int old_mh = Chosen->GetMultihex();
-        Chosen->Multihex = value;
-        if( old_mh != (int)Chosen->GetMultihex() )
-        {
-            HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), old_mh, false );
-            HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), Chosen->GetMultihex(), true );
-        }
-    }
-    break;
-    case OTHER_YOU_TURN:
-    {
-        if( value < 0 )
-            value = 0;
-        ChosenAction.clear();
-        TurnBasedTime = Timer::GameTick() + value;
-        TurnBasedCurCritterId = Chosen->GetId();
-        HexMngr.SetCritterContour( 0, 0 );
-        FlashGameWindow();
-    }
-    break;
-    case OTHER_CLEAR_MAP:
-    {
-        CritMap crits = HexMngr.GetCritters();
-        for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
-        {
-            CritterCl* cr = ( *it ).second;
-            if( cr != Chosen )
-                EraseCritter( cr->GetId() );
-        }
-        ItemHexVec items = HexMngr.GetItems();
-        for( auto it = items.begin(), end = items.end(); it != end; ++it )
-        {
-            ItemHex* item = *it;
-            if( item->IsItem() )
-                HexMngr.DeleteItem( *it, true );
-        }
-    }
-    break;
-    case OTHER_TELEPORT:
-    {
-        ushort hx = ( value >> 16 ) & 0xFFFF;
-        ushort hy = value & 0xFFFF;
-        if( hx < HexMngr.GetMaxHexX() && hy < HexMngr.GetMaxHexY() )
-        {
-            CritterCl* cr = HexMngr.GetField( hx, hy ).Crit;
-            if( Chosen == cr )
-                break;
-            if( !Chosen->IsDead() && cr )
-                EraseCritter( cr->GetId() );
-            HexMngr.RemoveCrit( Chosen );
-            Chosen->HexX = hx;
-            Chosen->HexY = hy;
-            HexMngr.SetCrit( Chosen );
-            HexMngr.ScrollToHex( Chosen->GetHexX(), Chosen->GetHexY(), 0.1, true );
-        }
-    }
-    break;
-    default:
         break;
+        case TO_BATTLE:
+        {
+            if( Chosen->GetParam( TO_BATTLE ) )
+            {
+                AnimRun( IntWCombatAnim, ANIMRUN_TO_END );
+                if( AnimGetCurSprCnt( IntWCombatAnim ) == 0 )
+                    SndMngr.PlaySound( SND_COMBAT_MODE_ON );
+            }
+            else
+            {
+                AnimRun( IntWCombatAnim, ANIMRUN_FROM_END );
+                if( AnimGetCurSprCnt( IntWCombatAnim ) == AnimGetSprCount( IntWCombatAnim ) - 1 )
+                    SndMngr.PlaySound( SND_COMBAT_MODE_OFF );
+            }
+        }
+        break;
+        case OTHER_BREAK_TIME:
+        {
+            if( value < 0 )
+                value = 0;
+            Chosen->TickStart( value );
+            SetAction( CHOSEN_NONE );
+            MoveDirs.clear();
+            Chosen->MoveSteps.clear();
+        }
+        break;
+        case OTHER_FLAGS:
+        {
+            Chosen->Flags = value;
+        }
+        break;
+        case OTHER_BASE_TYPE:
+        {
+            if( Chosen->Multihex < 0 && CritType::GetMultihex( Chosen->GetCrType() ) != CritType::GetMultihex( value ) )
+            {
+                HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), CritType::GetMultihex( Chosen->GetCrType() ), false );
+                HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), CritType::GetMultihex( value ), true );
+            }
+
+            Chosen->SetBaseType( value );
+            if( !Chosen->IsAnim() )
+                Chosen->Action( ACTION_REFRESH, 0, NULL, false );
+        }
+        break;
+        case OTHER_MULTIHEX:
+        {
+            int old_mh = Chosen->GetMultihex();
+            Chosen->Multihex = value;
+            if( old_mh != (int)Chosen->GetMultihex() )
+            {
+                HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), old_mh, false );
+                HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), Chosen->GetMultihex(), true );
+            }
+        }
+        break;
+        case OTHER_YOU_TURN:
+        {
+            if( value < 0 )
+                value = 0;
+            ChosenAction.clear();
+            TurnBasedTime = Timer::GameTick() + value;
+            TurnBasedCurCritterId = Chosen->GetId();
+            HexMngr.SetCritterContour( 0, 0 );
+            FlashGameWindow();
+        }
+        break;
+        case OTHER_CLEAR_MAP:
+        {
+            CritMap crits = HexMngr.GetCritters();
+            for( auto it = crits.begin(), end = crits.end(); it != end; ++it )
+            {
+                CritterCl* cr = ( *it ).second;
+                if( cr != Chosen )
+                    EraseCritter( cr->GetId() );
+            }
+            ItemHexVec items = HexMngr.GetItems();
+            for( auto it = items.begin(), end = items.end(); it != end; ++it )
+            {
+                ItemHex* item = *it;
+                if( item->IsItem() )
+                    HexMngr.DeleteItem( *it, true );
+            }
+        }
+        break;
+        case OTHER_TELEPORT:
+        {
+            ushort hx = ( value >> 16 ) & 0xFFFF;
+            ushort hy = value & 0xFFFF;
+            if( hx < HexMngr.GetMaxHexX() && hy < HexMngr.GetMaxHexY() )
+            {
+                CritterCl* cr = HexMngr.GetField( hx, hy ).Crit;
+                if( Chosen == cr )
+                    break;
+                if( !Chosen->IsDead() && cr )
+                    EraseCritter( cr->GetId() );
+                HexMngr.RemoveCrit( Chosen );
+                Chosen->HexX = hx;
+                Chosen->HexY = hy;
+                HexMngr.SetCrit( Chosen );
+                HexMngr.ScrollToHex( Chosen->GetHexX(), Chosen->GetHexY(), 0.1, true );
+            }
+        }
+        break;
+        default:
+            break;
     }
 
     if( IsScreenPresent( SCREEN__CHARACTER ) )
@@ -6237,16 +6237,16 @@ void FOClient::Net_OnFollow()
 
     switch( FollowType )
     {
-    case FOLLOW_PREP:
-        Str::Copy( DlgboxText, FmtGameText( STR_FOLLOW_PREP, cr_name, map_name ) );
-        break;
-    case FOLLOW_FORCE:
-        Str::Copy( DlgboxText, FmtGameText( STR_FOLLOW_FORCE, cr_name, map_name ) );
-        break;
-    default:
-        WriteLogF( _FUNC_, " - Error FollowType\n" );
-        Str::Copy( DlgboxText, "ERROR!" );
-        break;
+        case FOLLOW_PREP:
+            Str::Copy( DlgboxText, FmtGameText( STR_FOLLOW_PREP, cr_name, map_name ) );
+            break;
+        case FOLLOW_FORCE:
+            Str::Copy( DlgboxText, FmtGameText( STR_FOLLOW_FORCE, cr_name, map_name ) );
+            break;
+        default:
+            WriteLogF( _FUNC_, " - Error FollowType\n" );
+            Str::Copy( DlgboxText, "ERROR!" );
+            break;
     }
 
     DlgboxButtonText[0] = MsgGame->GetStr( STR_DIALOGBOX_FOLLOW );
@@ -6265,191 +6265,191 @@ void FOClient::Net_OnPlayersBarter()
 
     switch( barter )
     {
-    case BARTER_BEGIN:
-    {
-        CritterCl* cr = GetCritter( param );
-        if( !cr )
-            break;
-        BarterText = FmtGameText( STR_BARTER_BEGIN, cr->GetName(),
-                                  !FLAG( param_ext, 1 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ),
-                                  !FLAG( param_ext, 2 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) );
-        BarterText += "\n";
-        DlgMainTextCur = 0;
-        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
-        param_ext = ( FLAG( param_ext, 2 ) ? true : false );
-    }
-    case BARTER_REFRESH:
-    {
-        CritterCl* cr = GetCritter( param );
-        if( !cr )
-            break;
-
-        if( IsScreenPresent( SCREEN__DIALOG ) )
-            HideScreen( SCREEN__DIALOG );
-        if( !IsScreenPresent( SCREEN__BARTER ) )
-            ShowScreen( SCREEN__BARTER );
-
-        BarterIsPlayers = true;
-        BarterOpponentId = param;
-        BarterOpponentHide = ( param_ext != 0 );
-        BarterOffer = false;
-        BarterOpponentOffer = false;
-        BarterCont2Init.clear();
-        BarterCont1oInit.clear();
-        BarterCont2oInit.clear();
-        CollectContItems();
-    }
-    break;
-    case BARTER_END:
-    {
-        if( IsScreenPlayersBarter() )
-            ShowScreen( 0 );
-    }
-    break;
-    case BARTER_TRY:
-    {
-        CritterCl* cr = GetCritter( param );
-        if( !cr )
-            break;
-        ShowScreen( SCREEN__DIALOGBOX );
-        DlgboxType = DIALOGBOX_BARTER;
-        PBarterPlayerId = param;
-        BarterOpponentHide = ( param_ext != 0 );
-        PBarterHide = BarterOpponentHide;
-        Str::Copy( DlgboxText, FmtGameText( STR_BARTER_DIALOGBOX, cr->GetName(), !BarterOpponentHide ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) ) );
-        DlgboxWait = Timer::GameTick() + 20000;
-        DlgboxButtonText[0] = MsgGame->GetStr( STR_DIALOGBOX_BARTER_OPEN );
-        DlgboxButtonText[1] = MsgGame->GetStr( STR_DIALOGBOX_BARTER_HIDE );
-        DlgboxButtonText[2] = MsgGame->GetStr( STR_DIALOGBOX_CANCEL );
-        DlgboxButtonsCount = 3;
-    }
-    break;
-    case BARTER_SET_SELF:
-    case BARTER_SET_OPPONENT:
-    {
-        if( !IsScreenPlayersBarter() )
+        case BARTER_BEGIN:
         {
-            Net_SendPlayersBarter( BARTER_END, 0, 0 );
-            break;
-        }
-
-        BarterOffer = false;
-        BarterOpponentOffer = false;
-        bool     is_hide = ( barter == BARTER_SET_OPPONENT && BarterOpponentHide );
-        ItemVec& cont = ( barter == BARTER_SET_SELF ? InvContInit : BarterCont2Init );
-        ItemVec& cont_o = ( barter == BARTER_SET_SELF ? BarterCont1oInit : BarterCont2oInit );
-
-        if( !is_hide )
-        {
-            auto it = std::find( cont.begin(), cont.end(), param );
-            if( it == cont.end() || param_ext > ( *it ).GetCount() )
-            {
-                Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
-                break;
-            }
-            Item& citem = *it;
-            auto  it_ = std::find( cont_o.begin(), cont_o.end(), param );
-            if( it_ == cont_o.end() )
-            {
-                cont_o.push_back( citem );
-                it_ = cont_o.begin() + cont_o.size() - 1;
-                ( *it_ ).Count_Set( 0 );
-            }
-            ( *it_ ).Count_Add( param_ext );
-            citem.Count_Sub( param_ext );
-            if( !citem.GetCount() || !citem.IsStackable() )
-                cont.erase( it );
-        }
-        else                 // Hide
-        {
-            WriteLogF( _FUNC_, " - Invalid argument.\n" );
-            Net_SendPlayersBarter( BARTER_END, 0, 0 );
-            // See void FOClient::Net_OnPlayersBarterSetHide()
-        }
-        CollectContItems();
-    }
-    break;
-    case BARTER_UNSET_SELF:
-    case BARTER_UNSET_OPPONENT:
-    {
-        if( !IsScreenPlayersBarter() )
-        {
-            Net_SendPlayersBarter( BARTER_END, 0, 0 );
-            break;
-        }
-
-        BarterOffer = false;
-        BarterOpponentOffer = false;
-        bool     is_hide = ( barter == BARTER_UNSET_OPPONENT && BarterOpponentHide );
-        ItemVec& cont = ( barter == BARTER_UNSET_SELF ? InvContInit : BarterCont2Init );
-        ItemVec& cont_o = ( barter == BARTER_UNSET_SELF ? BarterCont1oInit : BarterCont2oInit );
-
-        if( !is_hide )
-        {
-            auto it = std::find( cont_o.begin(), cont_o.end(), param );
-            if( it == cont_o.end() || param_ext > ( *it ).GetCount() )
-            {
-                Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
-                break;
-            }
-            Item& citem = *it;
-            auto  it_ = std::find( cont.begin(), cont.end(), param );
-            if( it_ == cont.end() )
-            {
-                cont.push_back( citem );
-                it_ = cont.begin() + cont.size() - 1;
-                ( *it_ ).Count_Set( 0 );
-            }
-            ( *it_ ).Count_Add( param_ext );
-            citem.Count_Sub( param_ext );
-            if( !citem.GetCount() || !citem.IsStackable() )
-                cont_o.erase( it );
-        }
-        else                 // Hide
-        {
-            Item* citem = GetContainerItem( cont_o, param );
-            if( !citem || param_ext > citem->GetCount() )
-            {
-                Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
-                break;
-            }
-            citem->Count_Sub( param_ext );
-            if( !citem->GetCount() || !citem->IsStackable() )
-            {
-                auto it = std::find( cont_o.begin(), cont_o.end(), param );
-                cont_o.erase( it );
-            }
-        }
-        CollectContItems();
-    }
-    break;
-    case BARTER_OFFER:
-    {
-        if( !IsScreenPlayersBarter() )
-        {
-            Net_SendPlayersBarter( BARTER_END, 0, 0 );
-            break;
-        }
-
-        if( !param_ext )
-            BarterOffer = ( param != 0 );
-        else
-            BarterOpponentOffer = ( param != 0 );
-
-        if( BarterOpponentOffer && !BarterOffer )
-        {
-            CritterCl* cr = GetCritter( BarterOpponentId );
+            CritterCl* cr = GetCritter( param );
             if( !cr )
                 break;
-            BarterText += FmtGameText( STR_BARTER_READY_OFFER, cr->GetName() );
+            BarterText = FmtGameText( STR_BARTER_BEGIN, cr->GetName(),
+                                      !FLAG( param_ext, 1 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ),
+                                      !FLAG( param_ext, 2 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) );
             BarterText += "\n";
+            DlgMainTextCur = 0;
             DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            param_ext = ( FLAG( param_ext, 2 ) ? true : false );
         }
-    }
-    break;
-    default:
-        Net_SendPlayersBarter( BARTER_END, 0, 0 );
+        case BARTER_REFRESH:
+        {
+            CritterCl* cr = GetCritter( param );
+            if( !cr )
+                break;
+
+            if( IsScreenPresent( SCREEN__DIALOG ) )
+                HideScreen( SCREEN__DIALOG );
+            if( !IsScreenPresent( SCREEN__BARTER ) )
+                ShowScreen( SCREEN__BARTER );
+
+            BarterIsPlayers = true;
+            BarterOpponentId = param;
+            BarterOpponentHide = ( param_ext != 0 );
+            BarterOffer = false;
+            BarterOpponentOffer = false;
+            BarterCont2Init.clear();
+            BarterCont1oInit.clear();
+            BarterCont2oInit.clear();
+            CollectContItems();
+        }
         break;
+        case BARTER_END:
+        {
+            if( IsScreenPlayersBarter() )
+                ShowScreen( 0 );
+        }
+        break;
+        case BARTER_TRY:
+        {
+            CritterCl* cr = GetCritter( param );
+            if( !cr )
+                break;
+            ShowScreen( SCREEN__DIALOGBOX );
+            DlgboxType = DIALOGBOX_BARTER;
+            PBarterPlayerId = param;
+            BarterOpponentHide = ( param_ext != 0 );
+            PBarterHide = BarterOpponentHide;
+            Str::Copy( DlgboxText, FmtGameText( STR_BARTER_DIALOGBOX, cr->GetName(), !BarterOpponentHide ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) ) );
+            DlgboxWait = Timer::GameTick() + 20000;
+            DlgboxButtonText[0] = MsgGame->GetStr( STR_DIALOGBOX_BARTER_OPEN );
+            DlgboxButtonText[1] = MsgGame->GetStr( STR_DIALOGBOX_BARTER_HIDE );
+            DlgboxButtonText[2] = MsgGame->GetStr( STR_DIALOGBOX_CANCEL );
+            DlgboxButtonsCount = 3;
+        }
+        break;
+        case BARTER_SET_SELF:
+        case BARTER_SET_OPPONENT:
+        {
+            if( !IsScreenPlayersBarter() )
+            {
+                Net_SendPlayersBarter( BARTER_END, 0, 0 );
+                break;
+            }
+
+            BarterOffer = false;
+            BarterOpponentOffer = false;
+            bool     is_hide = ( barter == BARTER_SET_OPPONENT && BarterOpponentHide );
+            ItemVec& cont = ( barter == BARTER_SET_SELF ? InvContInit : BarterCont2Init );
+            ItemVec& cont_o = ( barter == BARTER_SET_SELF ? BarterCont1oInit : BarterCont2oInit );
+
+            if( !is_hide )
+            {
+                auto it = std::find( cont.begin(), cont.end(), param );
+                if( it == cont.end() || param_ext > ( *it ).GetCount() )
+                {
+                    Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
+                    break;
+                }
+                Item& citem = *it;
+                auto  it_ = std::find( cont_o.begin(), cont_o.end(), param );
+                if( it_ == cont_o.end() )
+                {
+                    cont_o.push_back( citem );
+                    it_ = cont_o.begin() + cont_o.size() - 1;
+                    ( *it_ ).Count_Set( 0 );
+                }
+                ( *it_ ).Count_Add( param_ext );
+                citem.Count_Sub( param_ext );
+                if( !citem.GetCount() || !citem.IsStackable() )
+                    cont.erase( it );
+            }
+            else             // Hide
+            {
+                WriteLogF( _FUNC_, " - Invalid argument.\n" );
+                Net_SendPlayersBarter( BARTER_END, 0, 0 );
+                // See void FOClient::Net_OnPlayersBarterSetHide()
+            }
+            CollectContItems();
+        }
+        break;
+        case BARTER_UNSET_SELF:
+        case BARTER_UNSET_OPPONENT:
+        {
+            if( !IsScreenPlayersBarter() )
+            {
+                Net_SendPlayersBarter( BARTER_END, 0, 0 );
+                break;
+            }
+
+            BarterOffer = false;
+            BarterOpponentOffer = false;
+            bool     is_hide = ( barter == BARTER_UNSET_OPPONENT && BarterOpponentHide );
+            ItemVec& cont = ( barter == BARTER_UNSET_SELF ? InvContInit : BarterCont2Init );
+            ItemVec& cont_o = ( barter == BARTER_UNSET_SELF ? BarterCont1oInit : BarterCont2oInit );
+
+            if( !is_hide )
+            {
+                auto it = std::find( cont_o.begin(), cont_o.end(), param );
+                if( it == cont_o.end() || param_ext > ( *it ).GetCount() )
+                {
+                    Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
+                    break;
+                }
+                Item& citem = *it;
+                auto  it_ = std::find( cont.begin(), cont.end(), param );
+                if( it_ == cont.end() )
+                {
+                    cont.push_back( citem );
+                    it_ = cont.begin() + cont.size() - 1;
+                    ( *it_ ).Count_Set( 0 );
+                }
+                ( *it_ ).Count_Add( param_ext );
+                citem.Count_Sub( param_ext );
+                if( !citem.GetCount() || !citem.IsStackable() )
+                    cont_o.erase( it );
+            }
+            else             // Hide
+            {
+                Item* citem = GetContainerItem( cont_o, param );
+                if( !citem || param_ext > citem->GetCount() )
+                {
+                    Net_SendPlayersBarter( BARTER_REFRESH, 0, 0 );
+                    break;
+                }
+                citem->Count_Sub( param_ext );
+                if( !citem->GetCount() || !citem->IsStackable() )
+                {
+                    auto it = std::find( cont_o.begin(), cont_o.end(), param );
+                    cont_o.erase( it );
+                }
+            }
+            CollectContItems();
+        }
+        break;
+        case BARTER_OFFER:
+        {
+            if( !IsScreenPlayersBarter() )
+            {
+                Net_SendPlayersBarter( BARTER_END, 0, 0 );
+                break;
+            }
+
+            if( !param_ext )
+                BarterOffer = ( param != 0 );
+            else
+                BarterOpponentOffer = ( param != 0 );
+
+            if( BarterOpponentOffer && !BarterOffer )
+            {
+                CritterCl* cr = GetCritter( BarterOpponentId );
+                if( !cr )
+                    break;
+                BarterText += FmtGameText( STR_BARTER_READY_OFFER, cr->GetName() );
+                BarterText += "\n";
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            }
+        }
+        break;
+        default:
+            Net_SendPlayersBarter( BARTER_END, 0, 0 );
+            break;
     }
 }
 
@@ -6508,74 +6508,74 @@ void FOClient::Net_OnShowScreen()
     // Close current
     switch( screen_type )
     {
-    case SHOW_SCREEN_TIMER:
-    case SHOW_SCREEN_DIALOGBOX:
-    case SHOW_SCREEN_SKILLBOX:
-    case SHOW_SCREEN_BAG:
-    case SHOW_SCREEN_SAY:
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        ShowScreen( SCREEN_NONE );
-        break;
+        case SHOW_SCREEN_TIMER:
+        case SHOW_SCREEN_DIALOGBOX:
+        case SHOW_SCREEN_SKILLBOX:
+        case SHOW_SCREEN_BAG:
+        case SHOW_SCREEN_SAY:
+            ShowScreen( SCREEN_NONE );
+            break;
+        default:
+            ShowScreen( SCREEN_NONE );
+            break;
     }
 
     // Open new
     switch( screen_type )
     {
-    case SHOW_SCREEN_TIMER:
-        TimerStart( 0, ResMngr.GetInvAnim( param ), 0 );
-        break;
-    case SHOW_SCREEN_DIALOGBOX:
-        ShowScreen( SCREEN__DIALOGBOX );
-        DlgboxWait = 0;
-        DlgboxText[0] = 0;
-        DlgboxType = DIALOGBOX_MANUAL;
-        if( param >= MAX_DLGBOX_BUTTONS )
-            param = MAX_DLGBOX_BUTTONS - 1;
-        DlgboxButtonsCount = param + 1;
-        for( uint i = 0; i < DlgboxButtonsCount; i++ )
-            DlgboxButtonText[i] = "";
-        DlgboxButtonText[param] = MsgGame->GetStr( STR_DIALOGBOX_CANCEL );
-        break;
-    case SHOW_SCREEN_SKILLBOX:
-        SboxUseOn.Clear();
-        ShowScreen( SCREEN__SKILLBOX );
-        break;
-    case SHOW_SCREEN_BAG:
-        UseSelect.Clear();
-        ShowScreen( SCREEN__USE );
-        break;
-    case SHOW_SCREEN_SAY:
-        ShowScreen( SCREEN__SAY );
-        SayType = DIALOGSAY_TEXT;
-        SayText = "";
-        if( param )
-            SayOnlyNumbers = true;
-        break;
-    case SHOW_ELEVATOR:
-        ElevatorGenerate( param );
-        break;
-    // Just open
-    case SHOW_SCREEN_INVENTORY:
-        ShowScreen( SCREEN__INVENTORY );
-        return;
-    case SHOW_SCREEN_CHARACTER:
-        ShowScreen( SCREEN__CHARACTER );
-        return;
-    case SHOW_SCREEN_FIXBOY:
-        ShowScreen( SCREEN__FIX_BOY );
-        return;
-    case SHOW_SCREEN_PIPBOY:
-        ShowScreen( SCREEN__PIP_BOY );
-        return;
-    case SHOW_SCREEN_MINIMAP:
-        ShowScreen( SCREEN__MINI_MAP );
-        return;
-    case SHOW_SCREEN_CLOSE:
-        return;
-    default:
-        return;
+        case SHOW_SCREEN_TIMER:
+            TimerStart( 0, ResMngr.GetInvAnim( param ), 0 );
+            break;
+        case SHOW_SCREEN_DIALOGBOX:
+            ShowScreen( SCREEN__DIALOGBOX );
+            DlgboxWait = 0;
+            DlgboxText[0] = 0;
+            DlgboxType = DIALOGBOX_MANUAL;
+            if( param >= MAX_DLGBOX_BUTTONS )
+                param = MAX_DLGBOX_BUTTONS - 1;
+            DlgboxButtonsCount = param + 1;
+            for( uint i = 0; i < DlgboxButtonsCount; i++ )
+                DlgboxButtonText[i] = "";
+            DlgboxButtonText[param] = MsgGame->GetStr( STR_DIALOGBOX_CANCEL );
+            break;
+        case SHOW_SCREEN_SKILLBOX:
+            SboxUseOn.Clear();
+            ShowScreen( SCREEN__SKILLBOX );
+            break;
+        case SHOW_SCREEN_BAG:
+            UseSelect.Clear();
+            ShowScreen( SCREEN__USE );
+            break;
+        case SHOW_SCREEN_SAY:
+            ShowScreen( SCREEN__SAY );
+            SayType = DIALOGSAY_TEXT;
+            SayText = "";
+            if( param )
+                SayOnlyNumbers = true;
+            break;
+        case SHOW_ELEVATOR:
+            ElevatorGenerate( param );
+            break;
+        // Just open
+        case SHOW_SCREEN_INVENTORY:
+            ShowScreen( SCREEN__INVENTORY );
+            return;
+        case SHOW_SCREEN_CHARACTER:
+            ShowScreen( SCREEN__CHARACTER );
+            return;
+        case SHOW_SCREEN_FIXBOY:
+            ShowScreen( SCREEN__FIX_BOY );
+            return;
+        case SHOW_SCREEN_PIPBOY:
+            ShowScreen( SCREEN__PIP_BOY );
+            return;
+        case SHOW_SCREEN_MINIMAP:
+            ShowScreen( SCREEN__MINI_MAP );
+            return;
+        case SHOW_SCREEN_CLOSE:
+            return;
+        default:
+            return;
     }
 
     ShowScreenType = screen_type;
@@ -6801,37 +6801,37 @@ void FOClient::Net_OnMsgData()
 
     switch( num_msg )
     {
-    case TEXTMSG_ITEM:
-        MrFixit.GenerateNames( *MsgGame, *MsgItem );
-        break;
-    case TEXTMSG_CRAFT:
-        // Reload crafts
-        MrFixit.Finish();
-        MrFixit.LoadCrafts( *MsgCraft );
-        MrFixit.GenerateNames( *MsgGame, *MsgItem );
-        break;
-    case TEXTMSG_INTERNAL:
-        // Reload critter types
-        CritType::InitFromMsg( MsgInternal );
-        ResMngr.FreeResources( RES_CRITTERS );       // Free animations, maybe critters table is changed
+        case TEXTMSG_ITEM:
+            MrFixit.GenerateNames( *MsgGame, *MsgItem );
+            break;
+        case TEXTMSG_CRAFT:
+            // Reload crafts
+            MrFixit.Finish();
+            MrFixit.LoadCrafts( *MsgCraft );
+            MrFixit.GenerateNames( *MsgGame, *MsgItem );
+            break;
+        case TEXTMSG_INTERNAL:
+            // Reload critter types
+            CritType::InitFromMsg( MsgInternal );
+            ResMngr.FreeResources( RES_CRITTERS );   // Free animations, maybe critters table is changed
 
-        // Reload scripts
-        if( !ReloadScripts() )
-            IsConnected = false;
+            // Reload scripts
+            if( !ReloadScripts() )
+                IsConnected = false;
 
-        // Names
-        ConstantsManager::Initialize( PT_DATA );
+            // Names
+            ConstantsManager::Initialize( PT_DATA );
 
-        // Reload interface
-        if( int res = InitIface() )
-        {
-            WriteLog( "Init interface fail, error<%d>.\n", res );
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_TO_LOAD_IFACE ) );
-            IsConnected = false;
-        }
-        break;
-    default:
-        break;
+            // Reload interface
+            if( int res = InitIface() )
+            {
+                WriteLog( "Init interface fail, error<%d>.\n", res );
+                AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_TO_LOAD_IFACE ) );
+                IsConnected = false;
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -7225,34 +7225,34 @@ Item* FOClient::GetTargetContItem()
     {
         switch( GetActiveScreen() )
         {
-        case SCREEN__USE:
-            TRY_SEARCH_IN_CONT( UseCont );
-            break;
-        case SCREEN__INVENTORY:
-            TRY_SEARCH_IN_CONT( InvCont );
-            if( Chosen )
-            {
-                Item* item = Chosen->GetItem( item_id );
-                if( item )
-                    TRY_SEARCH_IN_SLOT( item );
-            }
-            break;
-        case SCREEN__PICKUP:
-            TRY_SEARCH_IN_CONT( PupCont1 );
-            TRY_SEARCH_IN_CONT( PupCont2 );
-            break;
-        case SCREEN__BARTER:
-            if( TargetSmth.GetParam() == 0 )
-                TRY_SEARCH_IN_CONT( BarterCont1 );
-            if( TargetSmth.GetParam() == 0 )
-                TRY_SEARCH_IN_CONT( BarterCont2 );
-            if( TargetSmth.GetParam() == 1 )
-                TRY_SEARCH_IN_CONT( BarterCont1o );
-            if( TargetSmth.GetParam() == 1 )
-                TRY_SEARCH_IN_CONT( BarterCont2o );
-            break;
-        default:
-            break;
+            case SCREEN__USE:
+                TRY_SEARCH_IN_CONT( UseCont );
+                break;
+            case SCREEN__INVENTORY:
+                TRY_SEARCH_IN_CONT( InvCont );
+                if( Chosen )
+                {
+                    Item* item = Chosen->GetItem( item_id );
+                    if( item )
+                        TRY_SEARCH_IN_SLOT( item );
+                }
+                break;
+            case SCREEN__PICKUP:
+                TRY_SEARCH_IN_CONT( PupCont1 );
+                TRY_SEARCH_IN_CONT( PupCont2 );
+                break;
+            case SCREEN__BARTER:
+                if( TargetSmth.GetParam() == 0 )
+                    TRY_SEARCH_IN_CONT( BarterCont1 );
+                if( TargetSmth.GetParam() == 0 )
+                    TRY_SEARCH_IN_CONT( BarterCont2 );
+                if( TargetSmth.GetParam() == 1 )
+                    TRY_SEARCH_IN_CONT( BarterCont1o );
+                if( TargetSmth.GetParam() == 1 )
+                    TRY_SEARCH_IN_CONT( BarterCont2o );
+                break;
+            default:
+                break;
         }
     }
     TargetSmth.Clear();
@@ -7476,1017 +7476,1017 @@ void FOClient::CrittersProcess()
 
     switch( act.Type )
     {
-    case CHOSEN_NONE:
-        break;
-    case CHOSEN_MOVE_TO_CRIT:
-    case CHOSEN_MOVE:
-    {
-        ushort hx = act.Param[0];
-        ushort hy = act.Param[1];
-        bool   is_run = act.Param[2] != 0;
-        int    cut = act.Param[3];
-        bool   wait_click = act.Param[4] != 0;
-        uint   start_tick = act.Param[5];
-
-        ushort from_hx = 0;
-        ushort from_hy = 0;
-        int    ap_cost_real = 0;
-        bool   skip_find = false;
-
-        if( !HexMngr.IsMapLoaded() )
+        case CHOSEN_NONE:
             break;
-
-        if( act.Type == CHOSEN_MOVE_TO_CRIT )
+        case CHOSEN_MOVE_TO_CRIT:
+        case CHOSEN_MOVE:
         {
-            CritterCl* cr = GetCritter( act.Param[0] );
-            if( !cr )
+            ushort hx = act.Param[0];
+            ushort hy = act.Param[1];
+            bool   is_run = act.Param[2] != 0;
+            int    cut = act.Param[3];
+            bool   wait_click = act.Param[4] != 0;
+            uint   start_tick = act.Param[5];
+
+            ushort from_hx = 0;
+            ushort from_hy = 0;
+            int    ap_cost_real = 0;
+            bool   skip_find = false;
+
+            if( !HexMngr.IsMapLoaded() )
+                break;
+
+            if( act.Type == CHOSEN_MOVE_TO_CRIT )
+            {
+                CritterCl* cr = GetCritter( act.Param[0] );
+                if( !cr )
+                    goto label_EndMove;
+                hx = cr->GetHexX();
+                hy = cr->GetHexY();
+            }
+
+            from_hx = Chosen->GetHexX();
+            from_hy = Chosen->GetHexY();
+
+            if( Chosen->IsDoubleOverweight() )
+            {
+                AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT_TITLE ) );
+                SetAction( CHOSEN_NONE );
                 goto label_EndMove;
-            hx = cr->GetHexX();
-            hy = cr->GetHexY();
-        }
+            }
 
-        from_hx = Chosen->GetHexX();
-        from_hy = Chosen->GetHexY();
+            if( CheckDist( from_hx, from_hy, hx, hy, cut ) )
+                goto label_EndMove;
 
-        if( Chosen->IsDoubleOverweight() )
-        {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT_TITLE ) );
-            SetAction( CHOSEN_NONE );
-            goto label_EndMove;
-        }
+            if( !GameOpt.RunOnCombat && Chosen->GetParam( TO_BATTLE ) )
+                is_run = false;
+            else if( !GameOpt.RunOnTransfer && Chosen->GetParam( TO_TRANSFER ) )
+                is_run = false;
+            else if( IsTurnBased )
+                is_run = false;
+            else if( Chosen->IsDmgLeg() || Chosen->IsOverweight() )
+                is_run = false;
+            else if( wait_click && Timer::GameTick() - start_tick < ( GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
+                return;
+            else if( is_run && !IsTurnBased && Chosen->GetApCostCritterMove( is_run ) > 0 && Chosen->GetRealAp() < ( GameOpt.RunModMul * Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) / GameOpt.RunModDiv + GameOpt.RunModAdd )
+                is_run = false;
 
-        if( CheckDist( from_hx, from_hy, hx, hy, cut ) )
-            goto label_EndMove;
+            if( is_run && !CritType::IsCanRun( Chosen->GetCrType() ) )
+                is_run = false;
+            if( is_run && Chosen->IsRawParam( MODE_NO_RUN ) )
+                is_run = false;
 
-        if( !GameOpt.RunOnCombat && Chosen->GetParam( TO_BATTLE ) )
-            is_run = false;
-        else if( !GameOpt.RunOnTransfer && Chosen->GetParam( TO_TRANSFER ) )
-            is_run = false;
-        else if( IsTurnBased )
-            is_run = false;
-        else if( Chosen->IsDmgLeg() || Chosen->IsOverweight() )
-            is_run = false;
-        else if( wait_click && Timer::GameTick() - start_tick < ( GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
-            return;
-        else if( is_run && !IsTurnBased && Chosen->GetApCostCritterMove( is_run ) > 0 && Chosen->GetRealAp() < ( GameOpt.RunModMul * Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER ) / GameOpt.RunModDiv + GameOpt.RunModAdd )
-            is_run = false;
+            if( !is_run && ( !CritType::IsCanWalk( Chosen->GetCrType() ) || Chosen->IsRawParam( MODE_NO_WALK ) ) )
+            {
+                AddMess( FOMB_GAME, MsgGame->GetStr( STR_CRITTER_CANT_MOVE ) );
+                SetAction( CHOSEN_NONE );
+                goto label_EndMove;
+            }
 
-        if( is_run && !CritType::IsCanRun( Chosen->GetCrType() ) )
-            is_run = false;
-        if( is_run && Chosen->IsRawParam( MODE_NO_RUN ) )
-            is_run = false;
+            ap_cost_real = Chosen->GetApCostCritterMove( is_run );
+            if( !( IsTurnBasedMyTurn() && Chosen->GetAllAp() >= ap_cost_real / AP_DIVIDER ) )
+                CHECK_NEED_REAL_AP( ap_cost_real );
+            Chosen->IsRunning = is_run;
 
-        if( !is_run && ( !CritType::IsCanWalk( Chosen->GetCrType() ) || Chosen->IsRawParam( MODE_NO_WALK ) ) )
-        {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_CRITTER_CANT_MOVE ) );
-            SetAction( CHOSEN_NONE );
-            goto label_EndMove;
-        }
-
-        ap_cost_real = Chosen->GetApCostCritterMove( is_run );
-        if( !( IsTurnBasedMyTurn() && Chosen->GetAllAp() >= ap_cost_real / AP_DIVIDER ) )
-            CHECK_NEED_REAL_AP( ap_cost_real );
-        Chosen->IsRunning = is_run;
-
-        if( hx == MoveLastHx && hy == MoveLastHy && MoveDirs.size() )
-        {
-            ushort hx_ = from_hx;
-            ushort hy_ = from_hy;
-            MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
-            if( !HexMngr.GetField( hx_, hy_ ).IsNotPassed )
-                skip_find = true;
-        }
-
-        // Find steps
-        if( !skip_find )
-        {
-            // MoveDirs.resize(min(MoveDirs.size(),4)); // TODO:
-            MoveDirs.clear();
-            if( !IsTurnBased && MoveDirs.size() )
+            if( hx == MoveLastHx && hy == MoveLastHy && MoveDirs.size() )
             {
                 ushort hx_ = from_hx;
                 ushort hy_ = from_hy;
                 MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
                 if( !HexMngr.GetField( hx_, hy_ ).IsNotPassed )
+                    skip_find = true;
+            }
+
+            // Find steps
+            if( !skip_find )
+            {
+                // MoveDirs.resize(min(MoveDirs.size(),4)); // TODO:
+                MoveDirs.clear();
+                if( !IsTurnBased && MoveDirs.size() )
                 {
-                    for( uint i = 1; i < MoveDirs.size() && i < 4; i++ )
-                        MoveHexByDir( hx_, hy_, MoveDirs[i], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
-                    from_hx = hx_;
-                    from_hy = hy_;
+                    ushort hx_ = from_hx;
+                    ushort hy_ = from_hy;
+                    MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
+                    if( !HexMngr.GetField( hx_, hy_ ).IsNotPassed )
+                    {
+                        for( uint i = 1; i < MoveDirs.size() && i < 4; i++ )
+                            MoveHexByDir( hx_, hy_, MoveDirs[i], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
+                        from_hx = hx_;
+                        from_hy = hy_;
+                    }
+                    else
+                        MoveDirs.clear();
                 }
                 else
                     MoveDirs.clear();
-            }
-            else
-                MoveDirs.clear();
 
-            ushort hx_ = hx;
-            ushort hy_ = hy;
-            bool   result = HexMngr.CutPath( Chosen, from_hx, from_hy, hx_, hy_, cut );
-            if( !result )
-            {
-                int max_cut = (int)DistGame( from_hx, from_hy, hx_, hy_ );
-                if( max_cut > cut + 1 )
-                    result = HexMngr.CutPath( Chosen, from_hx, from_hy, hx_, hy_, ++cut );
+                ushort hx_ = hx;
+                ushort hy_ = hy;
+                bool   result = HexMngr.CutPath( Chosen, from_hx, from_hy, hx_, hy_, cut );
                 if( !result )
-                    goto label_EndMove;
-            }
+                {
+                    int max_cut = (int)DistGame( from_hx, from_hy, hx_, hy_ );
+                    if( max_cut > cut + 1 )
+                        result = HexMngr.CutPath( Chosen, from_hx, from_hy, hx_, hy_, ++cut );
+                    if( !result )
+                        goto label_EndMove;
+                }
 
-            ChosenAction[0].Param[3] = cut;
-            UCharVec steps;
-            if( HexMngr.FindPath( Chosen, from_hx, from_hy, hx_, hy_, steps, -1 ) )
-            {
-                for( uint i = 0, j = (uint)steps.size(); i < j; i++ )
-                    MoveDirs.push_back( steps[i] );
+                ChosenAction[0].Param[3] = cut;
+                UCharVec steps;
+                if( HexMngr.FindPath( Chosen, from_hx, from_hy, hx_, hy_, steps, -1 ) )
+                {
+                    for( uint i = 0, j = (uint)steps.size(); i < j; i++ )
+                        MoveDirs.push_back( steps[i] );
+                }
             }
-        }
 
 label_EndMove:
-        if( IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() / ( ap_cost_real / AP_DIVIDER ) > Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) )
-            MoveDirs.resize( Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) );
-        if( !IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() > Chosen->GetRealAp() / ap_cost_real )
-            MoveDirs.resize( Chosen->GetRealAp() / ap_cost_real );
-        if( MoveDirs.size() > 1 && Chosen->IsDmgTwoLeg() )
-            MoveDirs.resize( 1 );
+            if( IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() / ( ap_cost_real / AP_DIVIDER ) > Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) )
+                MoveDirs.resize( Chosen->GetParam( ST_CURRENT_AP ) + Chosen->GetParam( ST_MOVE_AP ) );
+            if( !IsTurnBased && ap_cost_real > 0 && (int)MoveDirs.size() > Chosen->GetRealAp() / ap_cost_real )
+                MoveDirs.resize( Chosen->GetRealAp() / ap_cost_real );
+            if( MoveDirs.size() > 1 && Chosen->IsDmgTwoLeg() )
+                MoveDirs.resize( 1 );
 
-        // Transit
-        if( MoveDirs.size() )
-        {
-            ushort hx_ = Chosen->GetHexX();
-            ushort hy_ = Chosen->GetHexY();
-            MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
-            HexMngr.TransitCritter( Chosen, hx_, hy_, true, false );
-            if( IsTurnBased )
+            // Transit
+            if( MoveDirs.size() )
             {
-                int ap_cost = ap_cost_real / AP_DIVIDER;
-                int move_ap = Chosen->GetParam( ST_MOVE_AP );
-                if( move_ap )
+                ushort hx_ = Chosen->GetHexX();
+                ushort hy_ = Chosen->GetHexY();
+                MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
+                HexMngr.TransitCritter( Chosen, hx_, hy_, true, false );
+                if( IsTurnBased )
                 {
-                    if( ap_cost > move_ap )
+                    int ap_cost = ap_cost_real / AP_DIVIDER;
+                    int move_ap = Chosen->GetParam( ST_MOVE_AP );
+                    if( move_ap )
                     {
-                        Chosen->SubMoveAp( move_ap );
-                        Chosen->SubAp( ap_cost - move_ap );
+                        if( ap_cost > move_ap )
+                        {
+                            Chosen->SubMoveAp( move_ap );
+                            Chosen->SubAp( ap_cost - move_ap );
+                        }
+                        else
+                            Chosen->SubMoveAp( ap_cost );
                     }
                     else
-                        Chosen->SubMoveAp( ap_cost );
+                    {
+                        Chosen->SubAp( ap_cost );
+                    }
+                }
+                else if( Chosen->GetParam( TO_BATTLE ) )
+                {
+                    Chosen->Params[ST_CURRENT_AP] -= ap_cost_real;
+                }
+                Chosen->ApRegenerationTick = 0;
+                HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
+                RebuildLookBorders = true;
+            }
+
+            // Send about move
+            Net_SendMove( MoveDirs );
+            if( MoveDirs.size() )
+                MoveDirs.erase( MoveDirs.begin() );
+
+            // End move
+            if( MoveDirs.empty() )
+            {
+                MoveLastHx = -1;
+                MoveLastHy = -1;
+                Chosen->MoveSteps.clear();
+                if( !Chosen->IsAnim() )
+                    Chosen->AnimateStay();
+            }
+            // Continue move
+            else
+            {
+                MoveLastHx = hx;
+                MoveLastHy = hy;
+                Chosen->MoveSteps.resize( 1 );
+                return;
+            }
+        }
+        break;
+        case CHOSEN_DIR:
+        {
+            int cw = act.Param[0];
+
+            if( !HexMngr.IsMapLoaded() || ( IsTurnBased && !IsTurnBasedMyTurn() ) )
+                break;
+
+            int dir = Chosen->GetDir();
+            if( cw == 0 )
+            {
+                dir++;
+                if( dir >= DIRS_COUNT )
+                    dir = 0;
+            }
+            else
+            {
+                dir--;
+                if( dir < 0 )
+                    dir = DIRS_COUNT - 1;
+            }
+            Chosen->SetDir( dir );
+            Net_SendDir();
+        }
+        break;
+        case CHOSEN_USE_ITEM:
+        {
+            uint   item_id = act.Param[0];
+            ushort item_pid = act.Param[1];
+            uchar  target_type = act.Param[2];
+            uint   target_id = act.Param[3];
+            uchar  rate = act.Param[4];
+            uint   param = act.Param[5];
+            uchar  use = ( rate & 0xF );
+            uchar  aim = ( rate >> 4 );
+
+            // Find item
+            Item* item = ( item_id ? Chosen->GetItem( item_id ) : Chosen->DefItemSlotHand );
+            if( !item )
+                break;
+            bool is_main_item = ( item == Chosen->ItemSlotMain );
+
+            // Check proto item
+            if( !item_pid )
+                item_pid = item->GetProtoId();
+            ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
+            if( !proto_item )
+                break;
+            if( item->GetProtoId() != item_pid )         // Unarmed proto
+            {
+                static Item      temp_item;
+                static ProtoItem temp_proto_item;
+                temp_item = *item;
+                temp_proto_item = *proto_item;
+                item = &temp_item;
+                proto_item = &temp_proto_item;
+                item->Init( proto_item );
+            }
+
+            // Find target
+            CritterCl* target_cr = NULL;
+            ItemHex*   target_item = NULL;
+            Item*      target_item_self = NULL;
+            if( target_type == TARGET_SELF )
+                target_cr = Chosen;
+            else if( target_type == TARGET_SELF_ITEM )
+                target_item_self = Chosen->GetItem( target_id );
+            else if( target_type == TARGET_CRITTER )
+                target_cr = GetCritter( target_id );
+            else if( target_type == TARGET_ITEM )
+                target_item = GetItem( target_id );
+            else if( target_type == TARGET_SCENERY )
+                target_item = GetItem( target_id );
+            else
+                break;
+            if( target_type == TARGET_CRITTER && Chosen == target_cr )
+                target_type = TARGET_SELF;
+            if( target_type == TARGET_SELF )
+                target_id = Chosen->GetId();
+
+            // Check
+            if( target_type == TARGET_CRITTER && !target_cr )
+                break;
+            else if( target_type == TARGET_ITEM && !target_item )
+                break;
+            else if( target_type == TARGET_SCENERY && !target_item )
+                break;
+            if( target_type != TARGET_CRITTER && !item->GetId() )
+                break;
+
+            // Parse use
+            bool is_attack = ( target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < MAX_USES );
+            bool is_reload = ( target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
+            bool is_self = ( target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM );
+            if( !is_attack && !is_reload && ( IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
+                SetCurMode( CUR_DEFAULT );
+
+            // Aim overriding
+            if( is_attack && ClientFunctions.HitAim && Script::PrepareContext( ClientFunctions.HitAim, _FUNC_, "Game" ) )
+            {
+                uchar new_aim = aim;
+                Script::SetArgAddress( &new_aim );
+                if( Script::RunPrepared() && new_aim != aim )
+                {
+                    aim = new_aim;
+                    rate = MAKE_ITEM_MODE( use, aim );
+                }
+            }
+
+            // Calculate ap cost
+            int ap_cost = Chosen->GetUseApCost( item, rate );
+
+            // Check weapon
+            if( is_attack )
+            {
+                if( !HexMngr.IsMapLoaded() )
+                    break;
+                if( is_self )
+                    break;
+                if( !item->IsWeapon() )
+                    break;
+                if( target_cr->IsDead() )
+                    break;
+                if( !Chosen->IsRawParam( MODE_UNLIMITED_AMMO ) && item->WeapGetMaxAmmoCount() && item->WeapIsEmpty() )
+                {
+                    SndMngr.PlaySoundType( 'W', 'O', item->Proto->Weapon_SoundId[use], '1' );
+                    break;
+                }
+                if( item->IsTwoHands() && Chosen->IsDmgArm() )
+                {
+                    AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_ARM ) );
+                    break;
+                }
+                if( Chosen->IsDmgTwoArm() && item->GetId() )
+                {
+                    AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_TWO_ARMS ) );
+                    break;
+                }
+                if( item->IsDeteriorable() && item->IsBroken() )
+                {
+                    AddMess( FOMB_GAME, FmtGameText( STR_INV_WEAR_WEAPON_BROKEN ) );
+                    break;
+                }
+            }
+            else if( is_reload )
+            {
+                if( !is_self )
+                    break;
+
+                CHECK_NEED_AP( ap_cost );
+
+                if( is_main_item )
+                {
+                    item->SetMode( USE_PRIMARY );
+                    Net_SendRateItem();
+                    if( GetActiveScreen() == SCREEN_NONE )
+                        SetCurMode( CUR_USE_WEAPON );
+                }
+
+                if( !item->WeapGetMaxAmmoCount() )
+                    break;                        // No have holder
+
+                if( target_id == uint( -1 ) )     // Unload
+                {
+                    if( item->WeapIsEmpty() )
+                        break;                    // Is empty
+                    target_id = 0;
+                }
+                else if( !target_item_self )      // Reload
+                {
+                    if( item->WeapIsFull() )
+                        break;                    // Is full
+                    if( item->WeapGetAmmoCaliber() )
+                    {
+                        target_item_self = Chosen->GetAmmoAvialble( item );
+                        if( !target_item_self )
+                            break;
+                        target_id = target_item_self->GetId();
+                    }
+                }
+                else            // Load
+                {
+                    if( item->WeapGetAmmoCaliber() != target_item_self->AmmoGetCaliber() )
+                        break;  // Different caliber
+                    if( item->WeapGetAmmoPid() == target_item_self->GetProtoId() && item->WeapIsFull() )
+                        break;  // Is full
+                }
+            }
+            else                // Use
+            {
+                if( use != USE_USE )
+                    break;
+            }
+
+            // Find Target
+            if( !is_self && HexMngr.IsMapLoaded() )
+            {
+                ushort hx, hy;
+                if( target_cr )
+                {
+                    hx = target_cr->GetHexX();
+                    hy = target_cr->GetHexY();
                 }
                 else
                 {
-                    Chosen->SubAp( ap_cost );
+                    hx = target_item->GetHexX();
+                    hy = target_item->GetHexY();
+                }
+
+                uint max_dist = ( is_attack ? Chosen->GetAttackDist() : Chosen->GetUseDist() ) + ( target_cr ? target_cr->GetMultihex() : 0 );
+
+                // Target find
+                bool need_move = false;
+                if( is_attack )
+                    need_move = !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist, 0.0f, target_cr, false, NULL, 0, NULL, NULL, NULL, true );
+                else
+                    need_move = !CheckDist( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist );
+                if( need_move )
+                {
+                    // If target too far, then move to it
+                    uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+                    if( dist > max_dist )
+                    {
+                        if( IsTurnBased )
+                            break;
+                        bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                        if( target_cr )
+                            SetAction( CHOSEN_MOVE_TO_CRIT, target_cr->GetId(), 0, is_run, max_dist );
+                        else
+                            SetAction( CHOSEN_MOVE, hx, hy, is_run, max_dist, 0 );
+                        if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist ) )
+                            AddActionBack( act );
+                        return;
+                    }
+                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
+                    break;
+                }
+
+                // Refresh orientation
+                CHECK_NEED_AP( ap_cost );
+                uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+                if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy ) >= 1 && Chosen->GetDir() != dir )
+                {
+                    Chosen->SetDir( dir );
+                    Net_SendDir();
                 }
             }
-            else if( Chosen->GetParam( TO_BATTLE ) )
-            {
-                Chosen->Params[ST_CURRENT_AP] -= ap_cost_real;
-            }
-            Chosen->ApRegenerationTick = 0;
-            HexMngr.SetCursorPos( GameOpt.MouseX, GameOpt.MouseY, Keyb::CtrlDwn, true );
-            RebuildLookBorders = true;
-        }
 
-        // Send about move
-        Net_SendMove( MoveDirs );
-        if( MoveDirs.size() )
-            MoveDirs.erase( MoveDirs.begin() );
-
-        // End move
-        if( MoveDirs.empty() )
-        {
-            MoveLastHx = -1;
-            MoveLastHy = -1;
-            Chosen->MoveSteps.clear();
-            if( !Chosen->IsAnim() )
-                Chosen->AnimateStay();
-        }
-        // Continue move
-        else
-        {
-            MoveLastHx = hx;
-            MoveLastHy = hy;
-            Chosen->MoveSteps.resize( 1 );
-            return;
-        }
-    }
-    break;
-    case CHOSEN_DIR:
-    {
-        int cw = act.Param[0];
-
-        if( !HexMngr.IsMapLoaded() || ( IsTurnBased && !IsTurnBasedMyTurn() ) )
-            break;
-
-        int dir = Chosen->GetDir();
-        if( cw == 0 )
-        {
-            dir++;
-            if( dir >= DIRS_COUNT )
-                dir = 0;
-        }
-        else
-        {
-            dir--;
-            if( dir < 0 )
-                dir = DIRS_COUNT - 1;
-        }
-        Chosen->SetDir( dir );
-        Net_SendDir();
-    }
-    break;
-    case CHOSEN_USE_ITEM:
-    {
-        uint   item_id = act.Param[0];
-        ushort item_pid = act.Param[1];
-        uchar  target_type = act.Param[2];
-        uint   target_id = act.Param[3];
-        uchar  rate = act.Param[4];
-        uint   param = act.Param[5];
-        uchar  use = ( rate & 0xF );
-        uchar  aim = ( rate >> 4 );
-
-        // Find item
-        Item* item = ( item_id ? Chosen->GetItem( item_id ) : Chosen->DefItemSlotHand );
-        if( !item )
-            break;
-        bool is_main_item = ( item == Chosen->ItemSlotMain );
-
-        // Check proto item
-        if( !item_pid )
-            item_pid = item->GetProtoId();
-        ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
-        if( !proto_item )
-            break;
-        if( item->GetProtoId() != item_pid )             // Unarmed proto
-        {
-            static Item      temp_item;
-            static ProtoItem temp_proto_item;
-            temp_item = *item;
-            temp_proto_item = *proto_item;
-            item = &temp_item;
-            proto_item = &temp_proto_item;
-            item->Init( proto_item );
-        }
-
-        // Find target
-        CritterCl* target_cr = NULL;
-        ItemHex*   target_item = NULL;
-        Item*      target_item_self = NULL;
-        if( target_type == TARGET_SELF )
-            target_cr = Chosen;
-        else if( target_type == TARGET_SELF_ITEM )
-            target_item_self = Chosen->GetItem( target_id );
-        else if( target_type == TARGET_CRITTER )
-            target_cr = GetCritter( target_id );
-        else if( target_type == TARGET_ITEM )
-            target_item = GetItem( target_id );
-        else if( target_type == TARGET_SCENERY )
-            target_item = GetItem( target_id );
-        else
-            break;
-        if( target_type == TARGET_CRITTER && Chosen == target_cr )
-            target_type = TARGET_SELF;
-        if( target_type == TARGET_SELF )
-            target_id = Chosen->GetId();
-
-        // Check
-        if( target_type == TARGET_CRITTER && !target_cr )
-            break;
-        else if( target_type == TARGET_ITEM && !target_item )
-            break;
-        else if( target_type == TARGET_SCENERY && !target_item )
-            break;
-        if( target_type != TARGET_CRITTER && !item->GetId() )
-            break;
-
-        // Parse use
-        bool is_attack = ( target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < MAX_USES );
-        bool is_reload = ( target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
-        bool is_self = ( target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM );
-        if( !is_attack && !is_reload && ( IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
-            SetCurMode( CUR_DEFAULT );
-
-        // Aim overriding
-        if( is_attack && ClientFunctions.HitAim && Script::PrepareContext( ClientFunctions.HitAim, _FUNC_, "Game" ) )
-        {
-            uchar new_aim = aim;
-            Script::SetArgAddress( &new_aim );
-            if( Script::RunPrepared() && new_aim != aim )
-            {
-                aim = new_aim;
-                rate = MAKE_ITEM_MODE( use, aim );
-            }
-        }
-
-        // Calculate ap cost
-        int ap_cost = Chosen->GetUseApCost( item, rate );
-
-        // Check weapon
-        if( is_attack )
-        {
-            if( !HexMngr.IsMapLoaded() )
-                break;
-            if( is_self )
-                break;
-            if( !item->IsWeapon() )
-                break;
-            if( target_cr->IsDead() )
-                break;
-            if( !Chosen->IsRawParam( MODE_UNLIMITED_AMMO ) && item->WeapGetMaxAmmoCount() && item->WeapIsEmpty() )
-            {
-                SndMngr.PlaySoundType( 'W', 'O', item->Proto->Weapon_SoundId[use], '1' );
-                break;
-            }
-            if( item->IsTwoHands() && Chosen->IsDmgArm() )
-            {
-                AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_ARM ) );
-                break;
-            }
-            if( Chosen->IsDmgTwoArm() && item->GetId() )
-            {
-                AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_TWO_ARMS ) );
-                break;
-            }
-            if( item->IsDeteriorable() && item->IsBroken() )
-            {
-                AddMess( FOMB_GAME, FmtGameText( STR_INV_WEAR_WEAPON_BROKEN ) );
-                break;
-            }
-        }
-        else if( is_reload )
-        {
-            if( !is_self )
-                break;
-
+            // Use
             CHECK_NEED_AP( ap_cost );
 
-            if( is_main_item )
-            {
-                item->SetMode( USE_PRIMARY );
-                Net_SendRateItem();
-                if( GetActiveScreen() == SCREEN_NONE )
-                    SetCurMode( CUR_USE_WEAPON );
-            }
+            if( target_item && target_item->IsScenOrGrid() )
+                Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, ( target_item->GetHexX() << 16 ) | ( target_item->GetHexY() & 0xFFFF ), target_item->GetProtoId(), param );
+            else
+                Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, target_id, 0, param );  // Item or critter
 
-            if( !item->WeapGetMaxAmmoCount() )
-                break;                            // No have holder
+            int usei = use;                                                                             // Avoid 'warning: comparison is always true due to limited range of data type' for GCC
+            if( usei >= USE_PRIMARY && use <= USE_THIRD )
+                Chosen->Action( ACTION_USE_WEAPON, rate, item );
+            else if( use == USE_RELOAD )
+                Chosen->Action( ACTION_RELOAD_WEAPON, 0, item );
+            else
+                Chosen->Action( ACTION_USE_ITEM, 0, item );
 
-            if( target_id == uint( -1 ) )         // Unload
+            Chosen->SubAp( ap_cost );
+
+            if( is_attack && !aim && Keyb::ShiftDwn )           // Continue battle after attack
             {
-                if( item->WeapIsEmpty() )
-                    break;                        // Is empty
-                target_id = 0;
-            }
-            else if( !target_item_self )          // Reload
-            {
-                if( item->WeapIsFull() )
-                    break;                        // Is full
-                if( item->WeapGetAmmoCaliber() )
-                {
-                    target_item_self = Chosen->GetAmmoAvialble( item );
-                    if( !target_item_self )
-                        break;
-                    target_id = target_item_self->GetId();
-                }
-            }
-            else                // Load
-            {
-                if( item->WeapGetAmmoCaliber() != target_item_self->AmmoGetCaliber() )
-                    break;      // Different caliber
-                if( item->WeapGetAmmoPid() == target_item_self->GetProtoId() && item->WeapIsFull() )
-                    break;      // Is full
+                AddActionBack( act );
+                return;
             }
         }
-        else                    // Use
+        break;
+        case CHOSEN_MOVE_ITEM:
         {
-            if( use != USE_USE )
+            uint  item_id = act.Param[0];
+            uint  item_count = act.Param[1];
+            int   to_slot = act.Param[2];
+            bool  is_barter_cont = ( act.Param[3] != 0 );
+            bool  is_second_try = ( act.Param[4] != 0 );
+
+            Item* item = Chosen->GetItem( item_id );
+            if( !item )
                 break;
-        }
 
-        // Find Target
-        if( !is_self && HexMngr.IsMapLoaded() )
-        {
-            ushort hx, hy;
-            if( target_cr )
+            uchar from_slot = item->AccCritter.Slot;
+            if( item->AccCritter.Slot != from_slot || from_slot == to_slot )
+                break;
+            if( to_slot != SLOT_GROUND && !CritterCl::SlotEnabled[to_slot] )
+                break;
+
+            Item* item_swap = ( ( to_slot != SLOT_INV && to_slot != SLOT_GROUND ) ? Chosen->GetItemSlot( to_slot ) : NULL );
+            bool  allow = false;
+            if( Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
             {
-                hx = target_cr->GetHexX();
-                hy = target_cr->GetHexY();
+                Script::SetArgObject( Chosen );
+                Script::SetArgObject( item );
+                Script::SetArgUChar( to_slot );
+                Script::SetArgObject( item_swap );
+                if( Script::RunPrepared() )
+                    allow = Script::GetReturnedBool();
             }
-            else
+            if( !allow )
             {
-                hx = target_item->GetHexX();
-                hy = target_item->GetHexY();
-            }
-
-            uint max_dist = ( is_attack ? Chosen->GetAttackDist() : Chosen->GetUseDist() ) + ( target_cr ? target_cr->GetMultihex() : 0 );
-
-            // Target find
-            bool need_move = false;
-            if( is_attack )
-                need_move = !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist, 0.0f, target_cr, false, NULL, 0, NULL, NULL, NULL, true );
-            else
-                need_move = !CheckDist( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist );
-            if( need_move )
-            {
-                // If target too far, then move to it
-                uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
-                if( dist > max_dist )
+                // Gameplay swap workaround
+                if( item_swap && !is_second_try )
                 {
-                    if( IsTurnBased )
-                        break;
-                    bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-                    if( target_cr )
-                        SetAction( CHOSEN_MOVE_TO_CRIT, target_cr->GetId(), 0, is_run, max_dist );
-                    else
-                        SetAction( CHOSEN_MOVE, hx, hy, is_run, max_dist, 0 );
-                    if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist ) )
-                        AddActionBack( act );
-                    return;
+                    // Hindering item to inventory
+                    bool allow1 = false;
+                    if( Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
+                    {
+                        Script::SetArgObject( Chosen );
+                        Script::SetArgObject( item_swap );
+                        Script::SetArgUChar( SLOT_INV );
+                        Script::SetArgObject( NULL );
+                        if( Script::RunPrepared() )
+                            allow1 = Script::GetReturnedBool();
+                    }
+
+                    // Current item to empty slot
+                    bool allow2 = false;
+                    if( allow1 && Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
+                    {
+                        Script::SetArgObject( Chosen );
+                        Script::SetArgObject( item );
+                        Script::SetArgUChar( to_slot );
+                        Script::SetArgObject( NULL );
+                        if( Script::RunPrepared() )
+                            allow2 = Script::GetReturnedBool();
+                    }
+
+                    // Add actions
+                    if( allow1 && allow2 )
+                    {
+                        EraseFrontAction();
+                        AddActionFront( CHOSEN_MOVE_ITEM, item_id, item_count, to_slot, is_barter_cont, true );                        // Second
+                        AddActionFront( CHOSEN_MOVE_ITEM, item_swap->GetId(), item_swap->GetCount(), SLOT_INV, is_barter_cont, true ); // First
+                        return;
+                    }
                 }
+                break;
+            }
+
+            // Action points
+            bool is_castling = ( ( from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2 ) || ( from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1 ) );
+            uint ap_cost = ( is_castling ? 0 : Chosen->GetApCostMoveItemInventory() );
+            if( to_slot == SLOT_GROUND )
+                ap_cost = Chosen->GetApCostDropItem();
+            CHECK_NEED_AP( ap_cost );
+
+            // Move
+            if( to_slot == SLOT_GROUND )
+            {
+                Chosen->Action( ACTION_DROP_ITEM, from_slot, item );
+                if( item_count < item->GetCount() )
+                    item->Count_Sub( item_count );
+                else
+                    Chosen->EraseItem( item, true );
+            }
+            else
+            {
+                if( from_slot == SLOT_HAND1 || to_slot == SLOT_HAND1 )
+                    Chosen->ItemSlotMain = Chosen->DefItemSlotHand;
+                if( from_slot == SLOT_HAND2 || to_slot == SLOT_HAND2 )
+                    Chosen->ItemSlotExt = Chosen->DefItemSlotHand;
+                if( from_slot == SLOT_ARMOR || to_slot == SLOT_ARMOR )
+                    Chosen->ItemSlotArmor = Chosen->DefItemSlotArmor;
+
+                if( to_slot == SLOT_HAND1 )
+                    Chosen->ItemSlotMain = item;
+                else if( to_slot == SLOT_HAND2 )
+                    Chosen->ItemSlotExt = item;
+                else if( to_slot == SLOT_ARMOR )
+                    Chosen->ItemSlotArmor = item;
+                if( item_swap )
+                {
+                    if( from_slot == SLOT_HAND1 )
+                        Chosen->ItemSlotMain = item_swap;
+                    else if( from_slot == SLOT_HAND2 )
+                        Chosen->ItemSlotExt = item_swap;
+                    else if( from_slot == SLOT_ARMOR )
+                        Chosen->ItemSlotArmor = item_swap;
+                }
+
+                item->AccCritter.Slot = to_slot;
+                if( item_swap )
+                    item_swap->AccCritter.Slot = from_slot;
+
+                Chosen->Action( ACTION_MOVE_ITEM, from_slot, item );
+                if( item_swap )
+                    Chosen->Action( ACTION_MOVE_ITEM_SWAP, to_slot, item_swap );
+            }
+
+            // Affect barter screen
+            if( to_slot == SLOT_GROUND && is_barter_cont && IsScreenPresent( SCREEN__BARTER ) )
+            {
+                auto it = std::find( BarterCont1oInit.begin(), BarterCont1oInit.end(), item_id );
+                if( it != BarterCont1oInit.end() )
+                {
+                    Item& item_ = *it;
+                    if( item_count >= item_.GetCount() )
+                        BarterCont1oInit.erase( it );
+                    else
+                        item_.Count_Sub( item_count );
+                }
+                CollectContItems();
+            }
+
+            // Light
+            if( to_slot == SLOT_HAND1 || from_slot == SLOT_HAND1 )
+                RebuildLookBorders = true;
+            if( item->IsLight() && ( to_slot == SLOT_INV || ( from_slot == SLOT_INV && to_slot != SLOT_GROUND ) ) )
+                HexMngr.RebuildLight();
+
+            // Notice server
+            Net_SendChangeItem( ap_cost, item_id, from_slot, to_slot, item_count );
+
+            // Spend AP
+            Chosen->SubAp( ap_cost );
+        }
+        break;
+        case CHOSEN_MOVE_ITEM_CONT:
+        {
+            uint item_id = act.Param[0];
+            uint cont = act.Param[1];
+            uint count = act.Param[2];
+
+            CHECK_NEED_AP( Chosen->GetApCostMoveItemContainer() );
+
+            Item* item = GetContainerItem( cont == IFACE_PUP_CONT1 ? InvContInit : PupCont2Init, item_id );
+            if( !item )
+                break;
+            if( count > item->GetCount() )
+                break;
+
+            if( cont == IFACE_PUP_CONT2 )
+            {
+                if( Chosen->GetFreeWeight() < (int)( item->GetWeight1st() * count ) )
+                {
+                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT ) );
+                    break;
+                }
+                if( Chosen->GetFreeVolume() < (int)( item->GetVolume1st() * count ) )
+                {
+                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERVOLUME ) );
+                    break;
+                }
+            }
+
+            Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + ( cont == IFACE_PUP_CONT2 ? 0 : 2 ), item );
+            PupTransfer( item_id, cont, count );
+            Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
+        }
+        break;
+        case CHOSEN_TAKE_ALL:
+        {
+            CHECK_NEED_AP( Chosen->GetApCostMoveItemContainer() );
+
+            if( PupCont2Init.empty() )
+                break;
+
+            uint c, w, v;
+            ContainerCalcInfo( PupCont2Init, c, w, v, MAX_INT, false );
+            if( Chosen->GetFreeWeight() < (int)w )
+                AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERWEIGHT ) );
+            else if( Chosen->GetFreeVolume() < (int)v )
+                AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERSIZE ) );
+            else
+            {
+                PupCont2Init.clear();
+                PupCount = 0;
+                Net_SendItemCont( PupTransferType, PupContId, PupHoldId, 0, CONT_GETALL );
+                Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + 1, NULL );
+                Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
+                CollectContItems();
+            }
+        }
+        break;
+        case CHOSEN_USE_SKL_ON_CRITTER:
+        {
+            ushort     skill = act.Param[0];
+            uint       crid = act.Param[1];
+
+            CritterCl* cr = ( crid ? GetCritter( crid ) : Chosen );
+            if( !cr )
+                break;
+
+            if( skill == SK_STEAL && cr->IsRawParam( MODE_NO_STEAL ) )
+                break;
+
+            if( cr != Chosen && HexMngr.IsMapLoaded() )
+            {
+                // Check distantance
+                uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+                switch( skill )
+                {
+                    case SK_LOCKPICK:
+                    case SK_STEAL:
+                    case SK_TRAPS:
+                    case SK_FIRST_AID:
+                    case SK_DOCTOR:
+                    case SK_SCIENCE:
+                    case SK_REPAIR:
+                        if( dist > Chosen->GetUseDist() + cr->GetMultihex() )
+                        {
+                            if( IsTurnBased )
+                                break;
+                            bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                            uint   cut_dist = Chosen->GetUseDist() + cr->GetMultihex();
+                            SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, cut_dist );
+                            ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                            if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, cut_dist ) )
+                                AddActionBack( act );
+                            return;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                if( cr != Chosen )
+                {
+                    // Refresh orientation
+                    CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+                    uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+                    if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
+                    {
+                        Chosen->SetDir( dir );
+                        Net_SendDir();
+                    }
+                }
+            }
+
+            CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), NULL );
+            Net_SendUseSkill( skill, cr );
+            Chosen->SubAp( Chosen->GetApCostUseSkill() );
+            WaitPing();
+        }
+        break;
+        case CHOSEN_USE_SKL_ON_ITEM:
+        {
+            bool   is_inv = act.Param[0] != 0;
+            ushort skill = act.Param[1];
+            uint   item_id = act.Param[2];
+
+            Item*  item_action;
+            if( is_inv )
+            {
+                Item* item = Chosen->GetItem( item_id );
+                if( !item )
+                    break;
+                item_action = item;
+
+                if( skill == SK_SCIENCE && item->IsHolodisk() )
+                {
+                    ShowScreen( SCREEN__INPUT_BOX );
+                    IboxMode = IBOX_MODE_HOLO;
+                    IboxHolodiskId = item->GetId();
+                    IboxTitle = GetHoloText( STR_HOLO_INFO_NAME_( item->HolodiskGetNum() ) );
+                    IboxText = GetHoloText( STR_HOLO_INFO_DESC_( item->HolodiskGetNum() ) );
+                    if( IboxTitle.length() > USER_HOLO_MAX_TITLE_LEN )
+                        IboxTitle.resize( USER_HOLO_MAX_TITLE_LEN );
+                    if( IboxText.length() > USER_HOLO_MAX_LEN )
+                        IboxText.resize( USER_HOLO_MAX_LEN );
+                    break;
+                }
+
+                CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+                Net_SendUseSkill( skill, item );
+            }
+            else
+            {
+                ItemHex* item = HexMngr.GetItemById( item_id );
+                if( !item )
+                    break;
+                item_action = item;
+
+                if( HexMngr.IsMapLoaded() )
+                {
+                    uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
+                    if( dist > Chosen->GetUseDist() )
+                    {
+                        if( IsTurnBased )
+                            break;
+                        bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                        SetAction( CHOSEN_MOVE, item->GetHexX(), item->GetHexY(), is_run, Chosen->GetUseDist(), 0 );
+                        ushort hx = item->GetHexX(), hy = item->GetHexY();
+                        if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
+                            AddActionBack( act );
+                        return;
+                    }
+
+                    // Refresh orientation
+                    CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+                    uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
+                    if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
+                    {
+                        Chosen->SetDir( dir );
+                        Net_SendDir();
+                    }
+                }
+
+                CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+                Net_SendUseSkill( skill, item );
+            }
+
+            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item_action );
+            Chosen->SubAp( Chosen->GetApCostUseSkill() );
+            WaitPing();
+        }
+        break;
+        case CHOSEN_USE_SKL_ON_SCEN:
+        {
+            ushort skill = act.Param[0];
+            ushort pid = act.Param[1];
+            ushort hx = act.Param[2];
+            ushort hy = act.Param[3];
+
+            if( !HexMngr.IsMapLoaded() )
+                break;
+
+            ItemHex* item = HexMngr.GetItem( hx, hy, pid );
+            if( !item )
+                break;
+
+            uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+            if( dist > Chosen->GetUseDist() )
+            {
+                if( IsTurnBased )
+                    break;
+                bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
+                if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
+                    AddActionBack( act );
+                return;
+            }
+
+            CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
+
+            // Refresh orientation
+            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
+            if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
+            {
+                Chosen->SetDir( dir );
+                Net_SendDir();
+            }
+
+            Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item );
+            Net_SendUseSkill( skill, item );
+            Chosen->SubAp( Chosen->GetApCostUseSkill() );
+            // WaitPing();
+        }
+        break;
+        case CHOSEN_TALK_NPC:
+        {
+            uint crid = act.Param[0];
+
+            if( !HexMngr.IsMapLoaded() )
+                break;
+
+            CritterCl* cr = GetCritter( crid );
+            if( !cr )
+                break;
+
+            if( IsTurnBased )
+                break;
+
+            if( cr->IsDead() )
+            {
+                // TODO: AddMess Dead CritterCl
+                break;
+            }
+
+            uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+            uint talk_distance = cr->GetTalkDistance() + Chosen->GetMultihex();
+            if( dist > talk_distance )
+            {
+                if( IsTurnBased )
+                    break;
+                bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, talk_distance );
+                ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, talk_distance ) )
+                    AddActionBack( act );
+                return;
+            }
+
+            if( !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), talk_distance + Chosen->GetMultihex(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true ) )
+            {
                 AddMess( FOMB_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
                 break;
             }
 
             // Refresh orientation
-            CHECK_NEED_AP( ap_cost );
+            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+            if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
+            {
+                Chosen->SetDir( dir );
+                Net_SendDir();
+            }
+
+            Net_SendTalk( true, cr->GetId(), ANSWER_BEGIN );
+            WaitPing();
+        }
+        break;
+        case CHOSEN_PICK_ITEM:
+        {
+            ushort pid = act.Param[0];
+            ushort hx = act.Param[1];
+            ushort hy = act.Param[2];
+
+            if( !HexMngr.IsMapLoaded() )
+                break;
+
+            ItemHex* item = HexMngr.GetItem( hx, hy, pid );
+            if( !item )
+                break;
+
+            uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+            if( dist > Chosen->GetUseDist() )
+            {
+                if( IsTurnBased )
+                    break;
+                bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
+                if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
+                    AddActionBack( act );
+                AddActionBack( act );
+                return;
+            }
+
+            CHECK_NEED_AP( Chosen->GetApCostPickItem() );
+
+            // Refresh orientation
             uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
             if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy ) >= 1 && Chosen->GetDir() != dir )
             {
                 Chosen->SetDir( dir );
                 Net_SendDir();
             }
+
+            Net_SendPickItem( hx, hy, pid );
+            Chosen->Action( ACTION_PICK_ITEM, 0, item );
+            Chosen->SubAp( Chosen->GetApCostPickItem() );
+            // WaitPing();
         }
-
-        // Use
-        CHECK_NEED_AP( ap_cost );
-
-        if( target_item && target_item->IsScenOrGrid() )
-            Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, ( target_item->GetHexX() << 16 ) | ( target_item->GetHexY() & 0xFFFF ), target_item->GetProtoId(), param );
-        else
-            Net_SendUseItem( ap_cost, item_id, item_pid, rate, target_type, target_id, 0, param );  // Item or critter
-
-        int usei = use;                                                                             // Avoid 'warning: comparison is always true due to limited range of data type' for GCC
-        if( usei >= USE_PRIMARY && use <= USE_THIRD )
-            Chosen->Action( ACTION_USE_WEAPON, rate, item );
-        else if( use == USE_RELOAD )
-            Chosen->Action( ACTION_RELOAD_WEAPON, 0, item );
-        else
-            Chosen->Action( ACTION_USE_ITEM, 0, item );
-
-        Chosen->SubAp( ap_cost );
-
-        if( is_attack && !aim && Keyb::ShiftDwn )               // Continue battle after attack
+        break;
+        case CHOSEN_PICK_CRIT:
         {
-            AddActionBack( act );
-            return;
-        }
-    }
-    break;
-    case CHOSEN_MOVE_ITEM:
-    {
-        uint  item_id = act.Param[0];
-        uint  item_count = act.Param[1];
-        int   to_slot = act.Param[2];
-        bool  is_barter_cont = ( act.Param[3] != 0 );
-        bool  is_second_try = ( act.Param[4] != 0 );
+            uint crid = act.Param[0];
+            bool is_loot = ( act.Param[1] == 0 );
 
-        Item* item = Chosen->GetItem( item_id );
-        if( !item )
-            break;
-
-        uchar from_slot = item->AccCritter.Slot;
-        if( item->AccCritter.Slot != from_slot || from_slot == to_slot )
-            break;
-        if( to_slot != SLOT_GROUND && !CritterCl::SlotEnabled[to_slot] )
-            break;
-
-        Item* item_swap = ( ( to_slot != SLOT_INV && to_slot != SLOT_GROUND ) ? Chosen->GetItemSlot( to_slot ) : NULL );
-        bool  allow = false;
-        if( Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
-        {
-            Script::SetArgObject( Chosen );
-            Script::SetArgObject( item );
-            Script::SetArgUChar( to_slot );
-            Script::SetArgObject( item_swap );
-            if( Script::RunPrepared() )
-                allow = Script::GetReturnedBool();
-        }
-        if( !allow )
-        {
-            // Gameplay swap workaround
-            if( item_swap && !is_second_try )
-            {
-                // Hindering item to inventory
-                bool allow1 = false;
-                if( Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
-                {
-                    Script::SetArgObject( Chosen );
-                    Script::SetArgObject( item_swap );
-                    Script::SetArgUChar( SLOT_INV );
-                    Script::SetArgObject( NULL );
-                    if( Script::RunPrepared() )
-                        allow1 = Script::GetReturnedBool();
-                }
-
-                // Current item to empty slot
-                bool allow2 = false;
-                if( allow1 && Script::PrepareContext( ClientFunctions.CritterCheckMoveItem, _FUNC_, "Game" ) )
-                {
-                    Script::SetArgObject( Chosen );
-                    Script::SetArgObject( item );
-                    Script::SetArgUChar( to_slot );
-                    Script::SetArgObject( NULL );
-                    if( Script::RunPrepared() )
-                        allow2 = Script::GetReturnedBool();
-                }
-
-                // Add actions
-                if( allow1 && allow2 )
-                {
-                    EraseFrontAction();
-                    AddActionFront( CHOSEN_MOVE_ITEM, item_id, item_count, to_slot, is_barter_cont, true );                        // Second
-                    AddActionFront( CHOSEN_MOVE_ITEM, item_swap->GetId(), item_swap->GetCount(), SLOT_INV, is_barter_cont, true ); // First
-                    return;
-                }
-            }
-            break;
-        }
-
-        // Action points
-        bool is_castling = ( ( from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2 ) || ( from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1 ) );
-        uint ap_cost = ( is_castling ? 0 : Chosen->GetApCostMoveItemInventory() );
-        if( to_slot == SLOT_GROUND )
-            ap_cost = Chosen->GetApCostDropItem();
-        CHECK_NEED_AP( ap_cost );
-
-        // Move
-        if( to_slot == SLOT_GROUND )
-        {
-            Chosen->Action( ACTION_DROP_ITEM, from_slot, item );
-            if( item_count < item->GetCount() )
-                item->Count_Sub( item_count );
-            else
-                Chosen->EraseItem( item, true );
-        }
-        else
-        {
-            if( from_slot == SLOT_HAND1 || to_slot == SLOT_HAND1 )
-                Chosen->ItemSlotMain = Chosen->DefItemSlotHand;
-            if( from_slot == SLOT_HAND2 || to_slot == SLOT_HAND2 )
-                Chosen->ItemSlotExt = Chosen->DefItemSlotHand;
-            if( from_slot == SLOT_ARMOR || to_slot == SLOT_ARMOR )
-                Chosen->ItemSlotArmor = Chosen->DefItemSlotArmor;
-
-            if( to_slot == SLOT_HAND1 )
-                Chosen->ItemSlotMain = item;
-            else if( to_slot == SLOT_HAND2 )
-                Chosen->ItemSlotExt = item;
-            else if( to_slot == SLOT_ARMOR )
-                Chosen->ItemSlotArmor = item;
-            if( item_swap )
-            {
-                if( from_slot == SLOT_HAND1 )
-                    Chosen->ItemSlotMain = item_swap;
-                else if( from_slot == SLOT_HAND2 )
-                    Chosen->ItemSlotExt = item_swap;
-                else if( from_slot == SLOT_ARMOR )
-                    Chosen->ItemSlotArmor = item_swap;
-            }
-
-            item->AccCritter.Slot = to_slot;
-            if( item_swap )
-                item_swap->AccCritter.Slot = from_slot;
-
-            Chosen->Action( ACTION_MOVE_ITEM, from_slot, item );
-            if( item_swap )
-                Chosen->Action( ACTION_MOVE_ITEM_SWAP, to_slot, item_swap );
-        }
-
-        // Affect barter screen
-        if( to_slot == SLOT_GROUND && is_barter_cont && IsScreenPresent( SCREEN__BARTER ) )
-        {
-            auto it = std::find( BarterCont1oInit.begin(), BarterCont1oInit.end(), item_id );
-            if( it != BarterCont1oInit.end() )
-            {
-                Item& item_ = *it;
-                if( item_count >= item_.GetCount() )
-                    BarterCont1oInit.erase( it );
-                else
-                    item_.Count_Sub( item_count );
-            }
-            CollectContItems();
-        }
-
-        // Light
-        if( to_slot == SLOT_HAND1 || from_slot == SLOT_HAND1 )
-            RebuildLookBorders = true;
-        if( item->IsLight() && ( to_slot == SLOT_INV || ( from_slot == SLOT_INV && to_slot != SLOT_GROUND ) ) )
-            HexMngr.RebuildLight();
-
-        // Notice server
-        Net_SendChangeItem( ap_cost, item_id, from_slot, to_slot, item_count );
-
-        // Spend AP
-        Chosen->SubAp( ap_cost );
-    }
-    break;
-    case CHOSEN_MOVE_ITEM_CONT:
-    {
-        uint item_id = act.Param[0];
-        uint cont = act.Param[1];
-        uint count = act.Param[2];
-
-        CHECK_NEED_AP( Chosen->GetApCostMoveItemContainer() );
-
-        Item* item = GetContainerItem( cont == IFACE_PUP_CONT1 ? InvContInit : PupCont2Init, item_id );
-        if( !item )
-            break;
-        if( count > item->GetCount() )
-            break;
-
-        if( cont == IFACE_PUP_CONT2 )
-        {
-            if( Chosen->GetFreeWeight() < (int)( item->GetWeight1st() * count ) )
-            {
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT ) );
+            if( !HexMngr.IsMapLoaded() )
                 break;
-            }
-            if( Chosen->GetFreeVolume() < (int)( item->GetVolume1st() * count ) )
-            {
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERVOLUME ) );
+
+            CritterCl* cr = GetCritter( crid );
+            if( !cr )
                 break;
-            }
-        }
 
-        Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + ( cont == IFACE_PUP_CONT2 ? 0 : 2 ), item );
-        PupTransfer( item_id, cont, count );
-        Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
-    }
-    break;
-    case CHOSEN_TAKE_ALL:
-    {
-        CHECK_NEED_AP( Chosen->GetApCostMoveItemContainer() );
+            if( is_loot && ( !cr->IsDead() || cr->IsRawParam( MODE_NO_LOOT ) ) )
+                break;
+            if( !is_loot && ( !cr->IsLife() || cr->IsRawParam( MODE_NO_PUSH ) ) )
+                break;
 
-        if( PupCont2Init.empty() )
-            break;
-
-        uint c, w, v;
-        ContainerCalcInfo( PupCont2Init, c, w, v, MAX_INT, false );
-        if( Chosen->GetFreeWeight() < (int)w )
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERWEIGHT ) );
-        else if( Chosen->GetFreeVolume() < (int)v )
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERSIZE ) );
-        else
-        {
-            PupCont2Init.clear();
-            PupCount = 0;
-            Net_SendItemCont( PupTransferType, PupContId, PupHoldId, 0, CONT_GETALL );
-            Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + 1, NULL );
-            Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
-            CollectContItems();
-        }
-    }
-    break;
-    case CHOSEN_USE_SKL_ON_CRITTER:
-    {
-        ushort     skill = act.Param[0];
-        uint       crid = act.Param[1];
-
-        CritterCl* cr = ( crid ? GetCritter( crid ) : Chosen );
-        if( !cr )
-            break;
-
-        if( skill == SK_STEAL && cr->IsRawParam( MODE_NO_STEAL ) )
-            break;
-
-        if( cr != Chosen && HexMngr.IsMapLoaded() )
-        {
-            // Check distantance
             uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-            switch( skill )
+            uint pick_dist = Chosen->GetUseDist() + cr->GetMultihex();
+            if( dist > pick_dist )
             {
-            case SK_LOCKPICK:
-            case SK_STEAL:
-            case SK_TRAPS:
-            case SK_FIRST_AID:
-            case SK_DOCTOR:
-            case SK_SCIENCE:
-            case SK_REPAIR:
-                if( dist > Chosen->GetUseDist() + cr->GetMultihex() )
-                {
-                    if( IsTurnBased )
-                        break;
-                    bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-                    uint   cut_dist = Chosen->GetUseDist() + cr->GetMultihex();
-                    SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, cut_dist );
-                    ushort hx = cr->GetHexX(), hy = cr->GetHexY();
-                    if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, cut_dist ) )
-                        AddActionBack( act );
-                    return;
-                }
-                break;
-            default:
-                break;
+                if( IsTurnBased )
+                    break;
+                bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
+                SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, pick_dist );
+                ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, pick_dist ) )
+                    AddActionBack( act );
+                return;
             }
 
-            if( cr != Chosen )
+            CHECK_NEED_AP( Chosen->GetApCostPickCritter() );
+
+            // Refresh orientation
+            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+            if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
             {
-                // Refresh orientation
-                CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-                uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-                if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
-                {
-                    Chosen->SetDir( dir );
-                    Net_SendDir();
-                }
-            }
-        }
-
-        CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-        Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), NULL );
-        Net_SendUseSkill( skill, cr );
-        Chosen->SubAp( Chosen->GetApCostUseSkill() );
-        WaitPing();
-    }
-    break;
-    case CHOSEN_USE_SKL_ON_ITEM:
-    {
-        bool   is_inv = act.Param[0] != 0;
-        ushort skill = act.Param[1];
-        uint   item_id = act.Param[2];
-
-        Item*  item_action;
-        if( is_inv )
-        {
-            Item* item = Chosen->GetItem( item_id );
-            if( !item )
-                break;
-            item_action = item;
-
-            if( skill == SK_SCIENCE && item->IsHolodisk() )
-            {
-                ShowScreen( SCREEN__INPUT_BOX );
-                IboxMode = IBOX_MODE_HOLO;
-                IboxHolodiskId = item->GetId();
-                IboxTitle = GetHoloText( STR_HOLO_INFO_NAME_( item->HolodiskGetNum() ) );
-                IboxText = GetHoloText( STR_HOLO_INFO_DESC_( item->HolodiskGetNum() ) );
-                if( IboxTitle.length() > USER_HOLO_MAX_TITLE_LEN )
-                    IboxTitle.resize( USER_HOLO_MAX_TITLE_LEN );
-                if( IboxText.length() > USER_HOLO_MAX_LEN )
-                    IboxText.resize( USER_HOLO_MAX_LEN );
-                break;
+                Chosen->SetDir( dir );
+                Net_SendDir();
             }
 
-            CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-            Net_SendUseSkill( skill, item );
-        }
-        else
-        {
-            ItemHex* item = HexMngr.GetItemById( item_id );
-            if( !item )
-                break;
-            item_action = item;
-
-            if( HexMngr.IsMapLoaded() )
+            if( is_loot )
             {
-                uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
-                if( dist > Chosen->GetUseDist() )
-                {
-                    if( IsTurnBased )
-                        break;
-                    bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-                    SetAction( CHOSEN_MOVE, item->GetHexX(), item->GetHexY(), is_run, Chosen->GetUseDist(), 0 );
-                    ushort hx = item->GetHexX(), hy = item->GetHexY();
-                    if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
-                        AddActionBack( act );
-                    return;
-                }
-
-                // Refresh orientation
-                CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-                uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
-                if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
-                {
-                    Chosen->SetDir( dir );
-                    Net_SendDir();
-                }
+                Net_SendPickCritter( cr->GetId(), PICK_CRIT_LOOT );
+                Chosen->Action( ACTION_PICK_CRITTER, 0, NULL );
             }
-
-            CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-            Net_SendUseSkill( skill, item );
+            else if( cr->IsLife() )
+            {
+                Net_SendPickCritter( cr->GetId(), PICK_CRIT_PUSH );
+                Chosen->Action( ACTION_PICK_CRITTER, 2, NULL );
+            }
+            Chosen->SubAp( Chosen->GetApCostPickCritter() );
+            WaitPing();
         }
-
-        Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item_action );
-        Chosen->SubAp( Chosen->GetApCostUseSkill() );
-        WaitPing();
-    }
-    break;
-    case CHOSEN_USE_SKL_ON_SCEN:
-    {
-        ushort skill = act.Param[0];
-        ushort pid = act.Param[1];
-        ushort hx = act.Param[2];
-        ushort hy = act.Param[3];
-
-        if( !HexMngr.IsMapLoaded() )
-            break;
-
-        ItemHex* item = HexMngr.GetItem( hx, hy, pid );
-        if( !item )
-            break;
-
-        uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
-        if( dist > Chosen->GetUseDist() )
+        break;
+        case CHOSEN_WRITE_HOLO:
         {
-            if( IsTurnBased )
+            uint holodisk_id = act.Param[0];
+            if( holodisk_id != IboxHolodiskId )
                 break;
-            bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-            SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
-            if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
-                AddActionBack( act );
-            return;
-        }
-
-        CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-
-        // Refresh orientation
-        uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
-        if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
-        {
-            Chosen->SetDir( dir );
-            Net_SendDir();
-        }
-
-        Chosen->Action( ACTION_USE_SKILL, skill - ( GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN ), item );
-        Net_SendUseSkill( skill, item );
-        Chosen->SubAp( Chosen->GetApCostUseSkill() );
-        // WaitPing();
-    }
-    break;
-    case CHOSEN_TALK_NPC:
-    {
-        uint crid = act.Param[0];
-
-        if( !HexMngr.IsMapLoaded() )
-            break;
-
-        CritterCl* cr = GetCritter( crid );
-        if( !cr )
-            break;
-
-        if( IsTurnBased )
-            break;
-
-        if( cr->IsDead() )
-        {
-            // TODO: AddMess Dead CritterCl
-            break;
-        }
-
-        uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-        uint talk_distance = cr->GetTalkDistance() + Chosen->GetMultihex();
-        if( dist > talk_distance )
-        {
-            if( IsTurnBased )
+            Item* holo = Chosen->GetItem( IboxHolodiskId );
+            if( !holo->IsHolodisk() )
                 break;
-            bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-            SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, talk_distance );
-            ushort hx = cr->GetHexX(), hy = cr->GetHexY();
-            if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, talk_distance ) )
-                AddActionBack( act );
-            return;
+            const char* old_title = GetHoloText( STR_HOLO_INFO_NAME_( holo->HolodiskGetNum() ) );
+            const char* old_text = GetHoloText( STR_HOLO_INFO_DESC_( holo->HolodiskGetNum() ) );
+            if( holo && IboxTitle.length() && IboxText.length() && ( IboxTitle != old_title || IboxText != old_text ) )
+            {
+                Net_SendSetUserHoloStr( holo, IboxTitle.c_str(), IboxText.c_str() );
+                Chosen->Action( ACTION_USE_ITEM, 0, holo );
+            }
         }
-
-        if( !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), talk_distance + Chosen->GetMultihex(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true ) )
-        {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
-            break;
-        }
-
-        // Refresh orientation
-        uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-        if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
-        {
-            Chosen->SetDir( dir );
-            Net_SendDir();
-        }
-
-        Net_SendTalk( true, cr->GetId(), ANSWER_BEGIN );
-        WaitPing();
-    }
-    break;
-    case CHOSEN_PICK_ITEM:
-    {
-        ushort pid = act.Param[0];
-        ushort hx = act.Param[1];
-        ushort hy = act.Param[2];
-
-        if( !HexMngr.IsMapLoaded() )
-            break;
-
-        ItemHex* item = HexMngr.GetItem( hx, hy, pid );
-        if( !item )
-            break;
-
-        uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
-        if( dist > Chosen->GetUseDist() )
-        {
-            if( IsTurnBased )
-                break;
-            bool is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-            SetAction( CHOSEN_MOVE, hx, hy, is_run, Chosen->GetUseDist(), 0 );
-            if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
-                AddActionBack( act );
-            AddActionBack( act );
-            return;
-        }
-
-        CHECK_NEED_AP( Chosen->GetApCostPickItem() );
-
-        // Refresh orientation
-        uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
-        if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy ) >= 1 && Chosen->GetDir() != dir )
-        {
-            Chosen->SetDir( dir );
-            Net_SendDir();
-        }
-
-        Net_SendPickItem( hx, hy, pid );
-        Chosen->Action( ACTION_PICK_ITEM, 0, item );
-        Chosen->SubAp( Chosen->GetApCostPickItem() );
-        // WaitPing();
-    }
-    break;
-    case CHOSEN_PICK_CRIT:
-    {
-        uint crid = act.Param[0];
-        bool is_loot = ( act.Param[1] == 0 );
-
-        if( !HexMngr.IsMapLoaded() )
-            break;
-
-        CritterCl* cr = GetCritter( crid );
-        if( !cr )
-            break;
-
-        if( is_loot && ( !cr->IsDead() || cr->IsRawParam( MODE_NO_LOOT ) ) )
-            break;
-        if( !is_loot && ( !cr->IsLife() || cr->IsRawParam( MODE_NO_PUSH ) ) )
-            break;
-
-        uint dist = DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-        uint pick_dist = Chosen->GetUseDist() + cr->GetMultihex();
-        if( dist > pick_dist )
-        {
-            if( IsTurnBased )
-                break;
-            bool   is_run = ( GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist );
-            SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, pick_dist );
-            ushort hx = cr->GetHexX(), hy = cr->GetHexY();
-            if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, pick_dist ) )
-                AddActionBack( act );
-            return;
-        }
-
-        CHECK_NEED_AP( Chosen->GetApCostPickCritter() );
-
-        // Refresh orientation
-        uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
-        if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
-        {
-            Chosen->SetDir( dir );
-            Net_SendDir();
-        }
-
-        if( is_loot )
-        {
-            Net_SendPickCritter( cr->GetId(), PICK_CRIT_LOOT );
-            Chosen->Action( ACTION_PICK_CRITTER, 0, NULL );
-        }
-        else if( cr->IsLife() )
-        {
-            Net_SendPickCritter( cr->GetId(), PICK_CRIT_PUSH );
-            Chosen->Action( ACTION_PICK_CRITTER, 2, NULL );
-        }
-        Chosen->SubAp( Chosen->GetApCostPickCritter() );
-        WaitPing();
-    }
-    break;
-    case CHOSEN_WRITE_HOLO:
-    {
-        uint holodisk_id = act.Param[0];
-        if( holodisk_id != IboxHolodiskId )
-            break;
-        Item* holo = Chosen->GetItem( IboxHolodiskId );
-        if( !holo->IsHolodisk() )
-            break;
-        const char* old_title = GetHoloText( STR_HOLO_INFO_NAME_( holo->HolodiskGetNum() ) );
-        const char* old_text = GetHoloText( STR_HOLO_INFO_DESC_( holo->HolodiskGetNum() ) );
-        if( holo && IboxTitle.length() && IboxText.length() && ( IboxTitle != old_title || IboxText != old_text ) )
-        {
-            Net_SendSetUserHoloStr( holo, IboxTitle.c_str(), IboxText.c_str() );
-            Chosen->Action( ACTION_USE_ITEM, 0, holo );
-        }
-    }
-    break;
+        break;
     }
 
     EraseFrontAction();
@@ -8519,65 +8519,65 @@ void FOClient::TryExit()
     {
         switch( active )
         {
-        case SCREEN__TIMER:
-            TimerClose( false );
-            break;
-        case SCREEN__SPLIT:
-            SplitClose( false );
-            break;
-        case SCREEN__TOWN_VIEW:
-            Net_SendRefereshMe();
-            break;
-        case SCREEN__DIALOG:
-            DlgKeyDown( true, DIK_ESCAPE, "" );
-            break;
-        case SCREEN__BARTER:
-            DlgKeyDown( false, DIK_ESCAPE, "" );
-            break;
-        case SCREEN__DIALOGBOX:
-            if( DlgboxType >= DIALOGBOX_ENCOUNTER_ANY && DlgboxType <= DIALOGBOX_ENCOUNTER_TB )
-                Net_SendRuleGlobal( GM_CMD_ANSWER, -1 );
-        case SCREEN__PERK:
-        case SCREEN__ELEVATOR:
-        case SCREEN__SAY:
-        case SCREEN__SKILLBOX:
-        case SCREEN__USE:
-        case SCREEN__AIM:
-        case SCREEN__INVENTORY:
-        case SCREEN__PICKUP:
-        case SCREEN__MINI_MAP:
-        case SCREEN__CHARACTER:
-        case SCREEN__PIP_BOY:
-        case SCREEN__FIX_BOY:
-        case SCREEN__MENU_OPTION:
-        case SCREEN__SAVE_LOAD:
-        default:
-            ShowScreen( SCREEN_NONE );
-            break;
+            case SCREEN__TIMER:
+                TimerClose( false );
+                break;
+            case SCREEN__SPLIT:
+                SplitClose( false );
+                break;
+            case SCREEN__TOWN_VIEW:
+                Net_SendRefereshMe();
+                break;
+            case SCREEN__DIALOG:
+                DlgKeyDown( true, DIK_ESCAPE, "" );
+                break;
+            case SCREEN__BARTER:
+                DlgKeyDown( false, DIK_ESCAPE, "" );
+                break;
+            case SCREEN__DIALOGBOX:
+                if( DlgboxType >= DIALOGBOX_ENCOUNTER_ANY && DlgboxType <= DIALOGBOX_ENCOUNTER_TB )
+                    Net_SendRuleGlobal( GM_CMD_ANSWER, -1 );
+            case SCREEN__PERK:
+            case SCREEN__ELEVATOR:
+            case SCREEN__SAY:
+            case SCREEN__SKILLBOX:
+            case SCREEN__USE:
+            case SCREEN__AIM:
+            case SCREEN__INVENTORY:
+            case SCREEN__PICKUP:
+            case SCREEN__MINI_MAP:
+            case SCREEN__CHARACTER:
+            case SCREEN__PIP_BOY:
+            case SCREEN__FIX_BOY:
+            case SCREEN__MENU_OPTION:
+            case SCREEN__SAVE_LOAD:
+            default:
+                ShowScreen( SCREEN_NONE );
+                break;
         }
     }
     else
     {
         switch( GetMainScreen() )
         {
-        case SCREEN_LOGIN:
-            GameOpt.Quit = true;
-            break;
-        case SCREEN_REGISTRATION:
-        case SCREEN_CREDITS:
-            ShowMainScreen( SCREEN_LOGIN );
-            break;
-        case SCREEN_WAIT:
-            NetDisconnect();
-            break;
-        case SCREEN_GLOBAL_MAP:
-            ShowScreen( SCREEN__MENU_OPTION );
-            break;
-        case SCREEN_GAME:
-            ShowScreen( SCREEN__MENU_OPTION );
-            break;
-        default:
-            break;
+            case SCREEN_LOGIN:
+                GameOpt.Quit = true;
+                break;
+            case SCREEN_REGISTRATION:
+            case SCREEN_CREDITS:
+                ShowMainScreen( SCREEN_LOGIN );
+                break;
+            case SCREEN_WAIT:
+                NetDisconnect();
+                break;
+            case SCREEN_GLOBAL_MAP:
+                ShowScreen( SCREEN__MENU_OPTION );
+                break;
+            case SCREEN_GAME:
+                ShowScreen( SCREEN__MENU_OPTION );
+                break;
+            default:
+                break;
         }
     }
 }
@@ -8615,20 +8615,20 @@ void FOClient::ProcessKeybScroll( bool down, uchar dik )
 
     switch( dik )
     {
-    case DIK_LEFT:
-        GameOpt.ScrollKeybLeft = down;
-        break;
-    case DIK_RIGHT:
-        GameOpt.ScrollKeybRight = down;
-        break;
-    case DIK_UP:
-        GameOpt.ScrollKeybUp = down;
-        break;
-    case DIK_DOWN:
-        GameOpt.ScrollKeybDown = down;
-        break;
-    default:
-        break;
+        case DIK_LEFT:
+            GameOpt.ScrollKeybLeft = down;
+            break;
+        case DIK_RIGHT:
+            GameOpt.ScrollKeybRight = down;
+            break;
+        case DIK_UP:
+            GameOpt.ScrollKeybUp = down;
+            break;
+        case DIK_DOWN:
+            GameOpt.ScrollKeybDown = down;
+            break;
+        default:
+            break;
     }
 }
 
@@ -8893,23 +8893,23 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
     int symbol_proc;
     switch( intellegence )
     {
-    default:
-    case 1:
-        word_proc = 100;
-        symbol_proc = 20;
-        break;
-    case 2:
-        word_proc = 80;
-        symbol_proc = 15;
-        break;
-    case 3:
-        word_proc = 60;
-        symbol_proc = 10;
-        break;
-    case 4:
-        word_proc = 30;
-        symbol_proc = 5;
-        break;
+        default:
+        case 1:
+            word_proc = 100;
+            symbol_proc = 20;
+            break;
+        case 2:
+            word_proc = 80;
+            symbol_proc = 15;
+            break;
+        case 3:
+            word_proc = 60;
+            symbol_proc = 10;
+            break;
+        case 4:
+            word_proc = 30;
+            symbol_proc = 5;
+            break;
     }
 
     Randomizer rnd( ( intellect << 16 ) | intellect );
@@ -9236,11 +9236,11 @@ int FOClient::VideoDecodePacket()
         int a = ogg_stream_packetout( &streams[i], packet );
         switch( a )
         {
-        case  1:
-            b = i + 1;
-        case  0:
-        case -1:
-            break;
+            case  1:
+                b = i + 1;
+            case  0:
+            case -1:
+                break;
         }
     }
     if( b )
@@ -9282,12 +9282,12 @@ int FOClient::VideoDecodePacket()
             int a = ogg_stream_packetout( &streams[i], packet );
             switch( a )
             {
-            case  1:
-                rv = i;
-                b = i + 1;
-            case  0:
-            case -1:
-                break;
+                case  1:
+                    rv = i;
+                    b = i + 1;
+                case  0:
+                case -1:
+                    break;
             }
         }
     }
@@ -9353,22 +9353,22 @@ void FOClient::RenderVideo()
     char di, dj;
     switch( CurVideo->VideoInfo.pixel_fmt )
     {
-    case TH_PF_420:
-        di = 2;
-        dj = 2;
-        break;
-    case TH_PF_422:
-        di = 2;
-        dj = 1;
-        break;
-    case TH_PF_444:
-        di = 1;
-        dj = 1;
-        break;
-    default:
-        WriteLogF( _FUNC_, " - Wrong pixel format.\n" );
-        NextVideo();
-        return;
+        case TH_PF_420:
+            di = 2;
+            dj = 2;
+            break;
+        case TH_PF_422:
+            di = 2;
+            dj = 1;
+            break;
+        case TH_PF_444:
+            di = 1;
+            dj = 1;
+            break;
+        default:
+            WriteLogF( _FUNC_, " - Wrong pixel format.\n" );
+            NextVideo();
+            return;
     }
 
     // Render
@@ -10110,18 +10110,18 @@ ProtoItem* FOClient::SScriptFunc::Crit_GetSlotProto( CritterCl* cr, int slot, uc
     Item* item = NULL;
     switch( slot )
     {
-    case SLOT_HAND1:
-        item = cr->ItemSlotMain;
-        break;
-    case SLOT_HAND2:
-        item = ( cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->DefItemSlotHand );
-        break;
-    case SLOT_ARMOR:
-        item = cr->ItemSlotArmor;
-        break;
-    default:
-        item = cr->GetItemSlot( slot );
-        break;
+        case SLOT_HAND1:
+            item = cr->ItemSlotMain;
+            break;
+        case SLOT_HAND2:
+            item = ( cr->ItemSlotExt->GetId() ? cr->ItemSlotExt : cr->DefItemSlotHand );
+            break;
+        case SLOT_ARMOR:
+            item = cr->ItemSlotArmor;
+            break;
+        default:
+            item = cr->GetItemSlot( slot );
+            break;
     }
     if( !item )
         return NULL;
@@ -10225,35 +10225,35 @@ bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
         SCRIPT_ERROR_R0( "Map is not loaded." );
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        CritterCl* cr = Self->GetCritter( item->AccCritter.Id );
-        if( !cr )
-            SCRIPT_ERROR_R0( "CritterCl accessory, CritterCl not found." );
-        hx = cr->GetHexX();
-        hy = cr->GetHexY();
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        hx = item->AccHex.HexX;
-        hy = item->AccHex.HexY;
-    }
-    break;
-    case ITEM_ACCESSORY_CONTAINER:
-    {
+        case ITEM_ACCESSORY_CRITTER:
+        {
+            CritterCl* cr = Self->GetCritter( item->AccCritter.Id );
+            if( !cr )
+                SCRIPT_ERROR_R0( "CritterCl accessory, CritterCl not found." );
+            hx = cr->GetHexX();
+            hy = cr->GetHexY();
+        }
+        break;
+        case ITEM_ACCESSORY_HEX:
+        {
+            hx = item->AccHex.HexX;
+            hy = item->AccHex.HexY;
+        }
+        break;
+        case ITEM_ACCESSORY_CONTAINER:
+        {
 
-        if( item->GetId() == item->AccContainer.ContainerId )
-            SCRIPT_ERROR_R0( "Container accessory, Crosslinks." );
-        Item* cont = Self->GetItem( item->AccContainer.ContainerId );
-        if( !cont )
-            SCRIPT_ERROR_R0( "Container accessory, Container not found." );
-        return Item_GetMapPosition( cont, hx, hy );             // Recursion
-    }
-    break;
-    default:
-        SCRIPT_ERROR_R0( "Unknown accessory." );
-        return false;
+            if( item->GetId() == item->AccContainer.ContainerId )
+                SCRIPT_ERROR_R0( "Container accessory, Crosslinks." );
+            Item* cont = Self->GetItem( item->AccContainer.ContainerId );
+            if( !cont )
+                SCRIPT_ERROR_R0( "Container accessory, Container not found." );
+            return Item_GetMapPosition( cont, hx, hy );         // Recursion
+        }
+        break;
+        default:
+            SCRIPT_ERROR_R0( "Unknown accessory." );
+            return false;
     }
     return true;
 }
@@ -10675,9 +10675,9 @@ int FOClient::SScriptFunc::Global_GetSomeValue( int var )
 {
     switch( var )
     {
-    case 0:
-    case 1:
-        break;
+        case 0:
+        case 1:
+            break;
     }
     return 0;
 }
@@ -10714,33 +10714,33 @@ void FOClient::SScriptFunc::Global_RefreshItemsCollection( int collection )
 {
     switch( collection )
     {
-    case ITEMS_INVENTORY:
-        Self->ProcessItemsCollection( ITEMS_INVENTORY, Self->InvContInit, Self->InvCont );
-        break;
-    case ITEMS_USE:
-        Self->ProcessItemsCollection( ITEMS_USE, Self->InvContInit, Self->UseCont );
-        break;
-    case ITEMS_BARTER:
-        Self->ProcessItemsCollection( ITEMS_BARTER, Self->InvContInit, Self->BarterCont1 );
-        break;
-    case ITEMS_BARTER_OFFER:
-        Self->ProcessItemsCollection( ITEMS_BARTER_OFFER, Self->BarterCont1oInit, Self->BarterCont1o );
-        break;
-    case ITEMS_BARTER_OPPONENT:
-        Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT, Self->BarterCont2Init, Self->BarterCont2 );
-        break;
-    case ITEMS_BARTER_OPPONENT_OFFER:
-        Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT_OFFER, Self->BarterCont2oInit, Self->BarterCont2o );
-        break;
-    case ITEMS_PICKUP:
-        Self->ProcessItemsCollection( ITEMS_PICKUP, Self->InvContInit, Self->PupCont1 );
-        break;
-    case ITEMS_PICKUP_FROM:
-        Self->ProcessItemsCollection( ITEMS_PICKUP_FROM, Self->PupCont2Init, Self->PupCont2 );
-        break;
-    default:
-        SCRIPT_ERROR( "Invalid items collection." );
-        break;
+        case ITEMS_INVENTORY:
+            Self->ProcessItemsCollection( ITEMS_INVENTORY, Self->InvContInit, Self->InvCont );
+            break;
+        case ITEMS_USE:
+            Self->ProcessItemsCollection( ITEMS_USE, Self->InvContInit, Self->UseCont );
+            break;
+        case ITEMS_BARTER:
+            Self->ProcessItemsCollection( ITEMS_BARTER, Self->InvContInit, Self->BarterCont1 );
+            break;
+        case ITEMS_BARTER_OFFER:
+            Self->ProcessItemsCollection( ITEMS_BARTER_OFFER, Self->BarterCont1oInit, Self->BarterCont1o );
+            break;
+        case ITEMS_BARTER_OPPONENT:
+            Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT, Self->BarterCont2Init, Self->BarterCont2 );
+            break;
+        case ITEMS_BARTER_OPPONENT_OFFER:
+            Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT_OFFER, Self->BarterCont2oInit, Self->BarterCont2o );
+            break;
+        case ITEMS_PICKUP:
+            Self->ProcessItemsCollection( ITEMS_PICKUP, Self->InvContInit, Self->PupCont1 );
+            break;
+        case ITEMS_PICKUP_FROM:
+            Self->ProcessItemsCollection( ITEMS_PICKUP_FROM, Self->PupCont2Init, Self->PupCont2 );
+            break;
+        default:
+            SCRIPT_ERROR( "Invalid items collection." );
+            break;
     }
 }
 
@@ -10775,60 +10775,60 @@ int FOClient::SScriptFunc::Global_GetScroll( int scroll_element )
 {
     switch( scroll_element )
     {
-    case SCROLL_MESSBOX:
-        return Self->MessBoxScroll;
-    case SCROLL_INVENTORY:
-        return Self->InvScroll;
-    case SCROLL_INVENTORY_ITEM_INFO:
-        return Self->InvItemInfoScroll;
-    case SCROLL_PICKUP:
-        return Self->PupScroll1;
-    case SCROLL_PICKUP_FROM:
-        return Self->PupScroll2;
-    case SCROLL_USE:
-        return Self->UseScroll;
-    case SCROLL_BARTER:
-        return Self->BarterScroll1;
-    case SCROLL_BARTER_OFFER:
-        return Self->BarterScroll1o;
-    case SCROLL_BARTER_OPPONENT:
-        return Self->BarterScroll2;
-    case SCROLL_BARTER_OPPONENT_OFFER:
-        return Self->BarterScroll2o;
-    case SCROLL_GLOBAL_MAP_CITIES_X:
-        return Self->GmapTabsScrX;
-    case SCROLL_GLOBAL_MAP_CITIES_Y:
-        return Self->GmapTabsScrY;
-    case SCROLL_SPLIT_VALUE:
-        return Self->SplitValue;
-    case SCROLL_TIMER_VALUE:
-        return Self->TimerValue;
-    case SCROLL_PERK:
-        return Self->PerkScroll;
-    case SCROLL_DIALOG_TEXT:
-        return Self->DlgMainTextCur;
-    case SCROLL_MAP_ZOOM_VALUE:
-        return Self->LmapZoom;
-    case SCROLL_CHARACTER_PERKS:
-        return Self->ChaSwitchScroll[CHA_SWITCH_PERKS];
-    case SCROLL_CHARACTER_KARMA:
-        return Self->ChaSwitchScroll[CHA_SWITCH_KARMA];
-    case SCROLL_CHARACTER_KILLS:
-        return Self->ChaSwitchScroll[CHA_SWITCH_KILLS];
-    case SCROLL_PIPBOY_STATUS:
-        return Self->PipScroll[PIP__STATUS];
-    case SCROLL_PIPBOY_STATUS_QUESTS:
-        return Self->PipScroll[PIP__STATUS_QUESTS];
-    case SCROLL_PIPBOY_STATUS_SCORES:
-        return Self->PipScroll[PIP__STATUS_SCORES];
-    case SCROLL_PIPBOY_AUTOMAPS:
-        return Self->PipScroll[PIP__AUTOMAPS];
-    case SCROLL_PIPBOY_ARCHIVES:
-        return Self->PipScroll[PIP__ARCHIVES];
-    case SCROLL_PIPBOY_ARCHIVES_INFO:
-        return Self->PipScroll[PIP__ARCHIVES_INFO];
-    default:
-        break;
+        case SCROLL_MESSBOX:
+            return Self->MessBoxScroll;
+        case SCROLL_INVENTORY:
+            return Self->InvScroll;
+        case SCROLL_INVENTORY_ITEM_INFO:
+            return Self->InvItemInfoScroll;
+        case SCROLL_PICKUP:
+            return Self->PupScroll1;
+        case SCROLL_PICKUP_FROM:
+            return Self->PupScroll2;
+        case SCROLL_USE:
+            return Self->UseScroll;
+        case SCROLL_BARTER:
+            return Self->BarterScroll1;
+        case SCROLL_BARTER_OFFER:
+            return Self->BarterScroll1o;
+        case SCROLL_BARTER_OPPONENT:
+            return Self->BarterScroll2;
+        case SCROLL_BARTER_OPPONENT_OFFER:
+            return Self->BarterScroll2o;
+        case SCROLL_GLOBAL_MAP_CITIES_X:
+            return Self->GmapTabsScrX;
+        case SCROLL_GLOBAL_MAP_CITIES_Y:
+            return Self->GmapTabsScrY;
+        case SCROLL_SPLIT_VALUE:
+            return Self->SplitValue;
+        case SCROLL_TIMER_VALUE:
+            return Self->TimerValue;
+        case SCROLL_PERK:
+            return Self->PerkScroll;
+        case SCROLL_DIALOG_TEXT:
+            return Self->DlgMainTextCur;
+        case SCROLL_MAP_ZOOM_VALUE:
+            return Self->LmapZoom;
+        case SCROLL_CHARACTER_PERKS:
+            return Self->ChaSwitchScroll[CHA_SWITCH_PERKS];
+        case SCROLL_CHARACTER_KARMA:
+            return Self->ChaSwitchScroll[CHA_SWITCH_KARMA];
+        case SCROLL_CHARACTER_KILLS:
+            return Self->ChaSwitchScroll[CHA_SWITCH_KILLS];
+        case SCROLL_PIPBOY_STATUS:
+            return Self->PipScroll[PIP__STATUS];
+        case SCROLL_PIPBOY_STATUS_QUESTS:
+            return Self->PipScroll[PIP__STATUS_QUESTS];
+        case SCROLL_PIPBOY_STATUS_SCORES:
+            return Self->PipScroll[PIP__STATUS_SCORES];
+        case SCROLL_PIPBOY_AUTOMAPS:
+            return Self->PipScroll[PIP__AUTOMAPS];
+        case SCROLL_PIPBOY_ARCHIVES:
+            return Self->PipScroll[PIP__ARCHIVES];
+        case SCROLL_PIPBOY_ARCHIVES_INFO:
+            return Self->PipScroll[PIP__ARCHIVES_INFO];
+        default:
+            break;
     }
     return 0;
 }
@@ -10848,103 +10848,103 @@ void FOClient::SScriptFunc::Global_SetScroll( int scroll_element, int value )
     int  max_value = 1000000000;
     switch( scroll_element )
     {
-    case SCROLL_MESSBOX:
-        scroll = &Self->MessBoxScroll;
-        max_value = Self->MessBoxMaxScroll;
-        break;
-    case SCROLL_INVENTORY:
-        scroll = &Self->InvScroll;
-        max_value = ContainerMaxScroll( (int)Self->InvCont.size(), Self->InvWInv.H(), Self->InvHeightItem );
-        break;
-    case SCROLL_INVENTORY_ITEM_INFO:
-        scroll = &Self->InvItemInfoScroll;
-        max_value = Self->InvItemInfoMaxScroll;
-        break;
-    case SCROLL_PICKUP:
-        scroll = &Self->PupScroll1;
-        max_value = ContainerMaxScroll( (int)Self->PupCont1.size(), Self->PupWCont1.H(), Self->PupHeightItem1 );
-        break;
-    case SCROLL_PICKUP_FROM:
-        scroll = &Self->PupScroll2;
-        max_value = ContainerMaxScroll( (int)Self->PupCont2.size(), Self->PupWCont2.H(), Self->PupHeightItem2 );
-        break;
-    case SCROLL_USE:
-        scroll = &Self->UseScroll;
-        max_value = ContainerMaxScroll( (int)Self->UseCont.size(), Self->UseWInv.H(), Self->UseHeightItem );
-        break;
-    case SCROLL_BARTER:
-        scroll = &Self->BarterScroll1;
-        max_value = ContainerMaxScroll( (int)Self->BarterCont1.size(), Self->BarterWCont1.H(), Self->BarterCont1HeightItem );
-        break;
-    case SCROLL_BARTER_OFFER:
-        scroll = &Self->BarterScroll1o;
-        max_value = ContainerMaxScroll( (int)Self->BarterCont1o.size(), Self->BarterWCont1o.H(), Self->BarterCont1oHeightItem );
-        break;
-    case SCROLL_BARTER_OPPONENT:
-        scroll = &Self->BarterScroll2;
-        max_value = ContainerMaxScroll( (int)Self->BarterCont2.size(), Self->BarterWCont2.H(), Self->BarterCont2HeightItem );
-        break;
-    case SCROLL_BARTER_OPPONENT_OFFER:
-        scroll = &Self->BarterScroll2o;
-        max_value = ContainerMaxScroll( (int)Self->BarterCont2o.size(), Self->BarterWCont2o.H(), Self->BarterCont2oHeightItem );
-        break;
-    case SCROLL_GLOBAL_MAP_CITIES_X:
-        scroll = &Self->GmapTabsScrX;
-        break;
-    case SCROLL_GLOBAL_MAP_CITIES_Y:
-        scroll = &Self->GmapTabsScrY;
-        break;
-    case SCROLL_SPLIT_VALUE:
-        scroll = &Self->SplitValue;
-        max_value = MAX_SPLIT_VALUE - 1;
-        break;
-    case SCROLL_TIMER_VALUE:
-        scroll = &Self->TimerValue;
-        min_value = TIMER_MIN_VALUE;
-        max_value = TIMER_MAX_VALUE;
-        break;
-    case SCROLL_PERK:
-        scroll = &Self->PerkScroll;
-        max_value = (int)Self->PerkCollection.size() - 1;
-        break;
-    case SCROLL_DIALOG_TEXT:
-        scroll = &Self->DlgMainTextCur;
-        max_value = Self->DlgMainTextLinesReal - Self->DlgMainTextLinesRect;
-        break;
-    case SCROLL_MAP_ZOOM_VALUE:
-        scroll = &Self->LmapZoom;
-        min_value = 2;
-        max_value = 13;
-        break;
-    case SCROLL_CHARACTER_PERKS:
-        scroll = &Self->ChaSwitchScroll[CHA_SWITCH_PERKS];
-        break;
-    case SCROLL_CHARACTER_KARMA:
-        scroll = &Self->ChaSwitchScroll[CHA_SWITCH_KARMA];
-        break;
-    case SCROLL_CHARACTER_KILLS:
-        scroll = &Self->ChaSwitchScroll[CHA_SWITCH_KILLS];
-        break;
-    case SCROLL_PIPBOY_STATUS:
-        scroll = &Self->PipScroll[PIP__STATUS];
-        break;
-    case SCROLL_PIPBOY_STATUS_QUESTS:
-        scroll = &Self->PipScroll[PIP__STATUS_QUESTS];
-        break;
-    case SCROLL_PIPBOY_STATUS_SCORES:
-        scroll = &Self->PipScroll[PIP__STATUS_SCORES];
-        break;
-    case SCROLL_PIPBOY_AUTOMAPS:
-        scroll = &Self->PipScroll[PIP__AUTOMAPS];
-        break;
-    case SCROLL_PIPBOY_ARCHIVES:
-        scroll = &Self->PipScroll[PIP__ARCHIVES];
-        break;
-    case SCROLL_PIPBOY_ARCHIVES_INFO:
-        scroll = &Self->PipScroll[PIP__ARCHIVES_INFO];
-        break;
-    default:
-        return;
+        case SCROLL_MESSBOX:
+            scroll = &Self->MessBoxScroll;
+            max_value = Self->MessBoxMaxScroll;
+            break;
+        case SCROLL_INVENTORY:
+            scroll = &Self->InvScroll;
+            max_value = ContainerMaxScroll( (int)Self->InvCont.size(), Self->InvWInv.H(), Self->InvHeightItem );
+            break;
+        case SCROLL_INVENTORY_ITEM_INFO:
+            scroll = &Self->InvItemInfoScroll;
+            max_value = Self->InvItemInfoMaxScroll;
+            break;
+        case SCROLL_PICKUP:
+            scroll = &Self->PupScroll1;
+            max_value = ContainerMaxScroll( (int)Self->PupCont1.size(), Self->PupWCont1.H(), Self->PupHeightItem1 );
+            break;
+        case SCROLL_PICKUP_FROM:
+            scroll = &Self->PupScroll2;
+            max_value = ContainerMaxScroll( (int)Self->PupCont2.size(), Self->PupWCont2.H(), Self->PupHeightItem2 );
+            break;
+        case SCROLL_USE:
+            scroll = &Self->UseScroll;
+            max_value = ContainerMaxScroll( (int)Self->UseCont.size(), Self->UseWInv.H(), Self->UseHeightItem );
+            break;
+        case SCROLL_BARTER:
+            scroll = &Self->BarterScroll1;
+            max_value = ContainerMaxScroll( (int)Self->BarterCont1.size(), Self->BarterWCont1.H(), Self->BarterCont1HeightItem );
+            break;
+        case SCROLL_BARTER_OFFER:
+            scroll = &Self->BarterScroll1o;
+            max_value = ContainerMaxScroll( (int)Self->BarterCont1o.size(), Self->BarterWCont1o.H(), Self->BarterCont1oHeightItem );
+            break;
+        case SCROLL_BARTER_OPPONENT:
+            scroll = &Self->BarterScroll2;
+            max_value = ContainerMaxScroll( (int)Self->BarterCont2.size(), Self->BarterWCont2.H(), Self->BarterCont2HeightItem );
+            break;
+        case SCROLL_BARTER_OPPONENT_OFFER:
+            scroll = &Self->BarterScroll2o;
+            max_value = ContainerMaxScroll( (int)Self->BarterCont2o.size(), Self->BarterWCont2o.H(), Self->BarterCont2oHeightItem );
+            break;
+        case SCROLL_GLOBAL_MAP_CITIES_X:
+            scroll = &Self->GmapTabsScrX;
+            break;
+        case SCROLL_GLOBAL_MAP_CITIES_Y:
+            scroll = &Self->GmapTabsScrY;
+            break;
+        case SCROLL_SPLIT_VALUE:
+            scroll = &Self->SplitValue;
+            max_value = MAX_SPLIT_VALUE - 1;
+            break;
+        case SCROLL_TIMER_VALUE:
+            scroll = &Self->TimerValue;
+            min_value = TIMER_MIN_VALUE;
+            max_value = TIMER_MAX_VALUE;
+            break;
+        case SCROLL_PERK:
+            scroll = &Self->PerkScroll;
+            max_value = (int)Self->PerkCollection.size() - 1;
+            break;
+        case SCROLL_DIALOG_TEXT:
+            scroll = &Self->DlgMainTextCur;
+            max_value = Self->DlgMainTextLinesReal - Self->DlgMainTextLinesRect;
+            break;
+        case SCROLL_MAP_ZOOM_VALUE:
+            scroll = &Self->LmapZoom;
+            min_value = 2;
+            max_value = 13;
+            break;
+        case SCROLL_CHARACTER_PERKS:
+            scroll = &Self->ChaSwitchScroll[CHA_SWITCH_PERKS];
+            break;
+        case SCROLL_CHARACTER_KARMA:
+            scroll = &Self->ChaSwitchScroll[CHA_SWITCH_KARMA];
+            break;
+        case SCROLL_CHARACTER_KILLS:
+            scroll = &Self->ChaSwitchScroll[CHA_SWITCH_KILLS];
+            break;
+        case SCROLL_PIPBOY_STATUS:
+            scroll = &Self->PipScroll[PIP__STATUS];
+            break;
+        case SCROLL_PIPBOY_STATUS_QUESTS:
+            scroll = &Self->PipScroll[PIP__STATUS_QUESTS];
+            break;
+        case SCROLL_PIPBOY_STATUS_SCORES:
+            scroll = &Self->PipScroll[PIP__STATUS_SCORES];
+            break;
+        case SCROLL_PIPBOY_AUTOMAPS:
+            scroll = &Self->PipScroll[PIP__AUTOMAPS];
+            break;
+        case SCROLL_PIPBOY_ARCHIVES:
+            scroll = &Self->PipScroll[PIP__ARCHIVES];
+            break;
+        case SCROLL_PIPBOY_ARCHIVES_INFO:
+            scroll = &Self->PipScroll[PIP__ARCHIVES_INFO];
+            break;
+        default:
+            return;
     }
     *scroll = CLAMP( value, min_value, max_value );
 }
@@ -11640,26 +11640,26 @@ void FOClient::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     int prim;
     switch( primitive_type )
     {
-    case 0:
-        prim = PRIMITIVE_POINTLIST;
-        break;
-    case 1:
-        prim = PRIMITIVE_LINELIST;
-        break;
-    case 2:
-        prim = PRIMITIVE_LINESTRIP;
-        break;
-    case 3:
-        prim = PRIMITIVE_TRIANGLELIST;
-        break;
-    case 4:
-        prim = PRIMITIVE_TRIANGLESTRIP;
-        break;
-    case 5:
-        prim = PRIMITIVE_TRIANGLEFAN;
-        break;
-    default:
-        return;
+        case 0:
+            prim = PRIMITIVE_POINTLIST;
+            break;
+        case 1:
+            prim = PRIMITIVE_LINELIST;
+            break;
+        case 2:
+            prim = PRIMITIVE_LINESTRIP;
+            break;
+        case 3:
+            prim = PRIMITIVE_TRIANGLELIST;
+            break;
+        case 4:
+            prim = PRIMITIVE_TRIANGLESTRIP;
+            break;
+        case 5:
+            prim = PRIMITIVE_TRIANGLEFAN;
+            break;
+        default:
+            return;
     }
 
     static PointVec points;
@@ -11711,19 +11711,19 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
             int egg_type = 0;
             switch( proto_item->Corner )
             {
-            case CORNER_SOUTH:
-                egg_type = EGG_X_OR_Y;
-                break;
-            case CORNER_NORTH:
-                egg_type = EGG_X_AND_Y;
-                break;
-            case CORNER_EAST_WEST:
-            case CORNER_WEST:
-                egg_type = EGG_Y;
-                break;
-            default:
-                egg_type = EGG_X;
-                break;                                  // CORNER_NORTH_SOUTH, CORNER_EAST
+                case CORNER_SOUTH:
+                    egg_type = EGG_X_OR_Y;
+                    break;
+                case CORNER_NORTH:
+                    egg_type = EGG_X_AND_Y;
+                    break;
+                case CORNER_EAST_WEST:
+                case CORNER_WEST:
+                    egg_type = EGG_Y;
+                    break;
+                default:
+                    egg_type = EGG_X;
+                    break;                              // CORNER_NORTH_SOUTH, CORNER_EAST
             }
             spr.SetEgg( egg_type );
         }
@@ -11838,126 +11838,126 @@ void FOClient::SScriptFunc::Global_GetHardcodedScreenPos( int screen, int& x, in
 {
     switch( screen )
     {
-    case SCREEN_LOGIN:
-        x = Self->LogX;
-        y = Self->LogY;
-        break;
-    case SCREEN_REGISTRATION:
-        x = Self->ChaX;
-        y = Self->ChaY;
-        break;
-    case SCREEN_GAME:
-        x = Self->IntX;
-        y = Self->IntY;
-        break;
-    case SCREEN_GLOBAL_MAP:
-        x = Self->GmapX;
-        y = Self->GmapY;
-        break;
-    case SCREEN_WAIT:
-        x = 0;
-        y = 0;
-        break;
-    case SCREEN__INVENTORY:
-        x = Self->InvX;
-        y = Self->InvY;
-        break;
-    case SCREEN__PICKUP:
-        x = Self->PupX;
-        y = Self->PupY;
-        break;
-    case SCREEN__MINI_MAP:
-        x = Self->LmapX;
-        y = Self->LmapY;
-        break;
-    case SCREEN__CHARACTER:
-        x = Self->ChaX;
-        y = Self->ChaY;
-        break;
-    case SCREEN__DIALOG:
-        x = Self->DlgX;
-        y = Self->DlgY;
-        break;
-    case SCREEN__BARTER:
-        x = Self->DlgX;
-        y = Self->DlgY;
-        break;
-    case SCREEN__PIP_BOY:
-        x = Self->PipX;
-        y = Self->PipY;
-        break;
-    case SCREEN__FIX_BOY:
-        x = Self->FixX;
-        y = Self->FixY;
-        break;
-    case SCREEN__MENU_OPTION:
-        x = Self->MoptX;
-        y = Self->MoptY;
-        break;
-    case SCREEN__AIM:
-        x = Self->AimX;
-        y = Self->AimY;
-        break;
-    case SCREEN__SPLIT:
-        x = Self->SplitX;
-        y = Self->SplitY;
-        break;
-    case SCREEN__TIMER:
-        x = Self->TimerX;
-        y = Self->TimerY;
-        break;
-    case SCREEN__DIALOGBOX:
-        x = Self->DlgboxX;
-        y = Self->DlgboxY;
-        break;
-    case SCREEN__ELEVATOR:
-        x = Self->ElevatorX;
-        y = Self->ElevatorY;
-        break;
-    case SCREEN__SAY:
-        x = Self->SayX;
-        y = Self->SayY;
-        break;
-    case SCREEN__CHA_NAME:
-        x = Self->ChaNameX;
-        y = Self->ChaNameY;
-        break;
-    case SCREEN__CHA_AGE:
-        x = Self->ChaAgeX;
-        y = Self->ChaAgeY;
-        break;
-    case SCREEN__CHA_SEX:
-        x = Self->ChaSexX;
-        y = Self->ChaSexY;
-        break;
-    case SCREEN__GM_TOWN:
-        x = 0;
-        y = 0;
-        break;
-    case SCREEN__INPUT_BOX:
-        x = Self->IboxX;
-        y = Self->IboxY;
-        break;
-    case SCREEN__SKILLBOX:
-        x = Self->SboxX;
-        y = Self->SboxY;
-        break;
-    case SCREEN__USE:
-        x = Self->UseX;
-        y = Self->UseY;
-        break;
-    case SCREEN__PERK:
-        x = Self->PerkX;
-        y = Self->PerkY;
-        break;
-    case SCREEN__SAVE_LOAD:
-        x = Self->SaveLoadX;
-        y = Self->SaveLoadY;
-        break;
-    default:
-        x = 0;
-        y = 0;
-        break;
+        case SCREEN_LOGIN:
+            x = Self->LogX;
+            y = Self->LogY;
+            break;
+        case SCREEN_REGISTRATION:
+            x = Self->ChaX;
+            y = Self->ChaY;
+            break;
+        case SCREEN_GAME:
+            x = Self->IntX;
+            y = Self->IntY;
+            break;
+        case SCREEN_GLOBAL_MAP:
+            x = Self->GmapX;
+            y = Self->GmapY;
+            break;
+        case SCREEN_WAIT:
+            x = 0;
+            y = 0;
+            break;
+        case SCREEN__INVENTORY:
+            x = Self->InvX;
+            y = Self->InvY;
+            break;
+        case SCREEN__PICKUP:
+            x = Self->PupX;
+            y = Self->PupY;
+            break;
+        case SCREEN__MINI_MAP:
+            x = Self->LmapX;
+            y = Self->LmapY;
+            break;
+        case SCREEN__CHARACTER:
+            x = Self->ChaX;
+            y = Self->ChaY;
+            break;
+        case SCREEN__DIALOG:
+            x = Self->DlgX;
+            y = Self->DlgY;
+            break;
+        case SCREEN__BARTER:
+            x = Self->DlgX;
+            y = Self->DlgY;
+            break;
+        case SCREEN__PIP_BOY:
+            x = Self->PipX;
+            y = Self->PipY;
+            break;
+        case SCREEN__FIX_BOY:
+            x = Self->FixX;
+            y = Self->FixY;
+            break;
+        case SCREEN__MENU_OPTION:
+            x = Self->MoptX;
+            y = Self->MoptY;
+            break;
+        case SCREEN__AIM:
+            x = Self->AimX;
+            y = Self->AimY;
+            break;
+        case SCREEN__SPLIT:
+            x = Self->SplitX;
+            y = Self->SplitY;
+            break;
+        case SCREEN__TIMER:
+            x = Self->TimerX;
+            y = Self->TimerY;
+            break;
+        case SCREEN__DIALOGBOX:
+            x = Self->DlgboxX;
+            y = Self->DlgboxY;
+            break;
+        case SCREEN__ELEVATOR:
+            x = Self->ElevatorX;
+            y = Self->ElevatorY;
+            break;
+        case SCREEN__SAY:
+            x = Self->SayX;
+            y = Self->SayY;
+            break;
+        case SCREEN__CHA_NAME:
+            x = Self->ChaNameX;
+            y = Self->ChaNameY;
+            break;
+        case SCREEN__CHA_AGE:
+            x = Self->ChaAgeX;
+            y = Self->ChaAgeY;
+            break;
+        case SCREEN__CHA_SEX:
+            x = Self->ChaSexX;
+            y = Self->ChaSexY;
+            break;
+        case SCREEN__GM_TOWN:
+            x = 0;
+            y = 0;
+            break;
+        case SCREEN__INPUT_BOX:
+            x = Self->IboxX;
+            y = Self->IboxY;
+            break;
+        case SCREEN__SKILLBOX:
+            x = Self->SboxX;
+            y = Self->SboxY;
+            break;
+        case SCREEN__USE:
+            x = Self->UseX;
+            y = Self->UseY;
+            break;
+        case SCREEN__PERK:
+            x = Self->PerkX;
+            y = Self->PerkY;
+            break;
+        case SCREEN__SAVE_LOAD:
+            x = Self->SaveLoadX;
+            y = Self->SaveLoadY;
+            break;
+        default:
+            x = 0;
+            y = 0;
+            break;
     }
 }
 
@@ -11965,103 +11965,103 @@ void FOClient::SScriptFunc::Global_DrawHardcodedScreen( int screen )
 {
     switch( screen )
     {
-    case SCREEN_LOGIN:
-        Self->LogDraw();
-        break;
-    case SCREEN_REGISTRATION:
-        Self->ChaDraw( true );
-        break;
-    case SCREEN_CREDITS:
-        Self->CreditsDraw();
-        break;
-    case SCREEN_OPTIONS:
-        break;
-    case SCREEN_GAME:
-        Self->IntDraw();
-        break;
-    case SCREEN_GLOBAL_MAP:
-        Self->GmapDraw();
-        break;
-    case SCREEN_WAIT:
-        Self->WaitDraw();
-        break;
-    case SCREEN__INVENTORY:
-        Self->InvDraw();
-        break;
-    case SCREEN__PICKUP:
-        Self->PupDraw();
-        break;
-    case SCREEN__MINI_MAP:
-        Self->LmapDraw();
-        break;
-    case SCREEN__DIALOG:
-        Self->DlgDraw( true );
-        break;
-    case SCREEN__BARTER:
-        Self->DlgDraw( false );
-        break;
-    case SCREEN__PIP_BOY:
-        Self->PipDraw();
-        break;
-    case SCREEN__FIX_BOY:
-        Self->FixDraw();
-        break;
-    case SCREEN__MENU_OPTION:
-        Self->MoptDraw();
-        break;
-    case SCREEN__CHARACTER:
-        Self->ChaDraw( false );
-        break;
-    case SCREEN__AIM:
-        Self->AimDraw();
-        break;
-    case SCREEN__SPLIT:
-        Self->SplitDraw();
-        break;
-    case SCREEN__TIMER:
-        Self->TimerDraw();
-        break;
-    case SCREEN__DIALOGBOX:
-        Self->DlgboxDraw();
-        break;
-    case SCREEN__ELEVATOR:
-        Self->ElevatorDraw();
-        break;
-    case SCREEN__SAY:
-        Self->SayDraw();
-        break;
-    case SCREEN__CHA_NAME:
-        Self->ChaNameDraw();
-        break;
-    case SCREEN__CHA_AGE:
-        Self->ChaAgeDraw();
-        break;
-    case SCREEN__CHA_SEX:
-        Self->ChaSexDraw();
-        break;
-    case SCREEN__GM_TOWN:
-        Self->GmapTownDraw();
-        break;
-    case SCREEN__INPUT_BOX:
-        Self->IboxDraw();
-        break;
-    case SCREEN__SKILLBOX:
-        Self->SboxDraw();
-        break;
-    case SCREEN__USE:
-        Self->UseDraw();
-        break;
-    case SCREEN__PERK:
-        Self->PerkDraw();
-        break;
-    case SCREEN__TOWN_VIEW:
-        Self->TViewDraw();
-        break;
-    case SCREEN__SAVE_LOAD:
-        Self->SaveLoadDraw();
-        break;
-    default:
-        break;
+        case SCREEN_LOGIN:
+            Self->LogDraw();
+            break;
+        case SCREEN_REGISTRATION:
+            Self->ChaDraw( true );
+            break;
+        case SCREEN_CREDITS:
+            Self->CreditsDraw();
+            break;
+        case SCREEN_OPTIONS:
+            break;
+        case SCREEN_GAME:
+            Self->IntDraw();
+            break;
+        case SCREEN_GLOBAL_MAP:
+            Self->GmapDraw();
+            break;
+        case SCREEN_WAIT:
+            Self->WaitDraw();
+            break;
+        case SCREEN__INVENTORY:
+            Self->InvDraw();
+            break;
+        case SCREEN__PICKUP:
+            Self->PupDraw();
+            break;
+        case SCREEN__MINI_MAP:
+            Self->LmapDraw();
+            break;
+        case SCREEN__DIALOG:
+            Self->DlgDraw( true );
+            break;
+        case SCREEN__BARTER:
+            Self->DlgDraw( false );
+            break;
+        case SCREEN__PIP_BOY:
+            Self->PipDraw();
+            break;
+        case SCREEN__FIX_BOY:
+            Self->FixDraw();
+            break;
+        case SCREEN__MENU_OPTION:
+            Self->MoptDraw();
+            break;
+        case SCREEN__CHARACTER:
+            Self->ChaDraw( false );
+            break;
+        case SCREEN__AIM:
+            Self->AimDraw();
+            break;
+        case SCREEN__SPLIT:
+            Self->SplitDraw();
+            break;
+        case SCREEN__TIMER:
+            Self->TimerDraw();
+            break;
+        case SCREEN__DIALOGBOX:
+            Self->DlgboxDraw();
+            break;
+        case SCREEN__ELEVATOR:
+            Self->ElevatorDraw();
+            break;
+        case SCREEN__SAY:
+            Self->SayDraw();
+            break;
+        case SCREEN__CHA_NAME:
+            Self->ChaNameDraw();
+            break;
+        case SCREEN__CHA_AGE:
+            Self->ChaAgeDraw();
+            break;
+        case SCREEN__CHA_SEX:
+            Self->ChaSexDraw();
+            break;
+        case SCREEN__GM_TOWN:
+            Self->GmapTownDraw();
+            break;
+        case SCREEN__INPUT_BOX:
+            Self->IboxDraw();
+            break;
+        case SCREEN__SKILLBOX:
+            Self->SboxDraw();
+            break;
+        case SCREEN__USE:
+            Self->UseDraw();
+            break;
+        case SCREEN__PERK:
+            Self->PerkDraw();
+            break;
+        case SCREEN__TOWN_VIEW:
+            Self->TViewDraw();
+            break;
+        case SCREEN__SAVE_LOAD:
+            Self->SaveLoadDraw();
+            break;
+        default:
+            break;
     }
 }
 

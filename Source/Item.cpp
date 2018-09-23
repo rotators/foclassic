@@ -70,25 +70,25 @@ void Item::Init( ProtoItem* proto )
 
     switch( GetType() )
     {
-    case ITEM_TYPE_WEAPON:
-        Data.AmmoCount = Proto->Weapon_MaxAmmoCount;
-        Data.AmmoPid = Proto->Weapon_DefaultAmmoPid;
-        break;
-    case ITEM_TYPE_DOOR:
-        SETFLAG( Data.Flags, ITEM_GAG );
-        if( !Proto->Door_NoBlockMove )
-            UNSETFLAG( Data.Flags, ITEM_NO_BLOCK );
-        if( !Proto->Door_NoBlockShoot )
-            UNSETFLAG( Data.Flags, ITEM_SHOOT_THRU );
-        if( !Proto->Door_NoBlockLight )
-            UNSETFLAG( Data.Flags, ITEM_LIGHT_THRU );
-        Data.LockerCondition = Proto->Locker_Condition;
-        break;
-    case  ITEM_TYPE_CONTAINER:
-        Data.LockerCondition = Proto->Locker_Condition;
-        break;
-    default:
-        break;
+        case ITEM_TYPE_WEAPON:
+            Data.AmmoCount = Proto->Weapon_MaxAmmoCount;
+            Data.AmmoPid = Proto->Weapon_DefaultAmmoPid;
+            break;
+        case ITEM_TYPE_DOOR:
+            SETFLAG( Data.Flags, ITEM_GAG );
+            if( !Proto->Door_NoBlockMove )
+                UNSETFLAG( Data.Flags, ITEM_NO_BLOCK );
+            if( !Proto->Door_NoBlockShoot )
+                UNSETFLAG( Data.Flags, ITEM_SHOOT_THRU );
+            if( !Proto->Door_NoBlockLight )
+                UNSETFLAG( Data.Flags, ITEM_LIGHT_THRU );
+            Data.LockerCondition = Proto->Locker_Condition;
+            break;
+        case  ITEM_TYPE_CONTAINER:
+            Data.LockerCondition = Proto->Locker_Condition;
+            break;
+        default:
+            break;
     }
 
     if( IsRadio() )
@@ -378,40 +378,40 @@ void Item::SetMode( uchar mode )
 
         switch( use )
         {
-        case USE_PRIMARY:
-            if( Proto->Weapon_ActiveUses & 0x1 )
+            case USE_PRIMARY:
+                if( Proto->Weapon_ActiveUses & 0x1 )
+                    break;
+                use = 0xF;
+                aim = 0;
                 break;
-            use = 0xF;
-            aim = 0;
-            break;
-        case USE_SECONDARY:
-            if( Proto->Weapon_ActiveUses & 0x2 )
+            case USE_SECONDARY:
+                if( Proto->Weapon_ActiveUses & 0x2 )
+                    break;
+                use = USE_PRIMARY;
+                aim = 0;
                 break;
-            use = USE_PRIMARY;
-            aim = 0;
-            break;
-        case USE_THIRD:
-            if( Proto->Weapon_ActiveUses & 0x4 )
+            case USE_THIRD:
+                if( Proto->Weapon_ActiveUses & 0x4 )
+                    break;
+                use = USE_PRIMARY;
+                aim = 0;
                 break;
-            use = USE_PRIMARY;
-            aim = 0;
-            break;
-        case USE_RELOAD:
-            aim = 0;
-            if( Proto->Weapon_MaxAmmoCount )
+            case USE_RELOAD:
+                aim = 0;
+                if( Proto->Weapon_MaxAmmoCount )
+                    break;
+                use = USE_PRIMARY;
                 break;
-            use = USE_PRIMARY;
-            break;
-        case USE_USE:
-            aim = 0;
-            if( IsCanUseOnSmth() )
+            case USE_USE:
+                aim = 0;
+                if( IsCanUseOnSmth() )
+                    break;
+                use = USE_PRIMARY;
                 break;
-            use = USE_PRIMARY;
-            break;
-        default:
-            use = USE_PRIMARY;
-            aim = 0;
-            break;
+            default:
+                use = USE_PRIMARY;
+                aim = 0;
+                break;
         }
 
         if( use < MAX_USES && aim && !Proto->Weapon_Aim[use] )

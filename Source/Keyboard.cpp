@@ -221,21 +221,21 @@ bool Keyb::IsInvalidChar( const char* str, uint flags )
     {
         switch( *str )
         {
-        case '\\':
-        case '/':
-        case ':':
-        case '*':
-        case '?':
-        case '"':
-        case '<':
-        case '>':
-        case '|':
-        case '\n':
-        case '\r':
-        case '\t':
-            return true;
-        default:
-            break;
+            case '\\':
+            case '/':
+            case ':':
+            case '*':
+            case '?':
+            case '"':
+            case '<':
+            case '>':
+            case '|':
+            case '\n':
+            case '\r':
+            case '\t':
+                return true;
+            default:
+                break;
         }
     }
     return !SprMngr.HaveLetter( -1, str );

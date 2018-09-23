@@ -1197,17 +1197,17 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
 
             switch( def.Type )
             {
-            case EffectDefault::String:             // pValue points to a null terminated ASCII string
-                dxeffect->SetString( param, (LPCSTR)def.Data );
-                break;
-            case EffectDefault::Floats:             // pValue points to an array of floats - number of floats is NumBytes / sizeof(float)
-                dxeffect->SetFloatArray( param, (float*)def.Data, def.Size / sizeof( float ) );
-                break;
-            case EffectDefault::Dword:              // pValue points to a uint
-                dxeffect->SetInt( param, *(uint*)def.Data );
-                break;
-            default:
-                break;
+                case EffectDefault::String:         // pValue points to a null terminated ASCII string
+                    dxeffect->SetString( param, (LPCSTR)def.Data );
+                    break;
+                case EffectDefault::Floats:         // pValue points to an array of floats - number of floats is NumBytes / sizeof(float)
+                    dxeffect->SetFloatArray( param, (float*)def.Data, def.Size / sizeof( float ) );
+                    break;
+                case EffectDefault::Dword:          // pValue points to a uint
+                    dxeffect->SetInt( param, *(uint*)def.Data );
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1553,18 +1553,18 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
 
             switch( def.Type )
             {
-            case EffectDefault::String:
-                break;
-            case EffectDefault::Floats:
-                GL( glUniform1fv( location, def.Size / sizeof( GLfloat ), (GLfloat*)def.Data ) );
-                something_binded = true;
-                break;
-            case EffectDefault::Dword:
-                GL( glUniform1i( location, *(GLint*)def.Data ) );
-                something_binded = true;
-                break;
-            default:
-                break;
+                case EffectDefault::String:
+                    break;
+                case EffectDefault::Floats:
+                    GL( glUniform1fv( location, def.Size / sizeof( GLfloat ), (GLfloat*)def.Data ) );
+                    something_binded = true;
+                    break;
+                case EffectDefault::Dword:
+                    GL( glUniform1i( location, *(GLint*)def.Data ) );
+                    something_binded = true;
+                    break;
+                default:
+                    break;
             }
         }
         if( something_binded )

@@ -37,16 +37,16 @@ struct FlexRect
     {
         switch( index )
         {
-        case 0:
-            return L;
-        case 1:
-            return T;
-        case 2:
-            return R;
-        case 3:
-            return B;
-        default:
-            break;
+            case 0:
+                return L;
+            case 1:
+                return T;
+            case 2:
+                return R;
+            case 3:
+                return B;
+            default:
+                break;
         }
         return L;
     }
@@ -107,12 +107,12 @@ struct FlexPoint
     {
         switch( index )
         {
-        case 0:
-            return X;
-        case 1:
-            return Y;
-        default:
-            break;
+            case 0:
+                return X;
+            case 1:
+                return Y;
+            default:
+                break;
         }
         return X;
     }

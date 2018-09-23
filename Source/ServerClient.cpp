@@ -1161,22 +1161,22 @@ bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
     {
         switch( proto->Grid_Type )
         {
-        case GRID_STAIRS:
-        case GRID_LADDERBOT:
-        case GRID_LADDERTOP:
-        case GRID_ELEVATOR:
-        {
-            Item pick_item;
-            pick_item.Id = uint( -1 );
-            pick_item.Init( proto );
-            cr->SendAA_Action( ACTION_PICK_ITEM, 0, &pick_item );
+            case GRID_STAIRS:
+            case GRID_LADDERBOT:
+            case GRID_LADDERTOP:
+            case GRID_ELEVATOR:
+            {
+                Item pick_item;
+                pick_item.Id = uint( -1 );
+                pick_item.Init( proto );
+                cr->SendAA_Action( ACTION_PICK_ITEM, 0, &pick_item );
 
-            MapMngr.TryTransitCrGrid( cr, map, hx, hy, false );
-        }
-        break;
-        default:
-            cr->Send_TextMsg( cr, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
+                MapMngr.TryTransitCrGrid( cr, map, hx, hy, false );
+            }
             break;
+            default:
+                cr->Send_TextMsg( cr, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
+                break;
         }
     }
     else if( proto->IsWall() )
@@ -2877,37 +2877,37 @@ void FOServer::Process_UseItem( Client* cl )
     {
         switch( use )
         {
-        case USE_PRIMARY:
-        case USE_SECONDARY:
-        case USE_THIRD:
-            if( !cl->GetMap() )
-                break;
-            if( item != cl->ItemSlotMain )
-                break;
+            case USE_PRIMARY:
+            case USE_SECONDARY:
+            case USE_THIRD:
+                if( !cl->GetMap() )
+                    break;
+                if( item != cl->ItemSlotMain )
+                    break;
 
-            // Unarmed
-            if( !item->GetId() )
-            {
-                if( use != USE_PRIMARY )
-                    break;
-                ProtoItem* unarmed = ItemMngr.GetProtoItem( item_pid );
-                if( !unarmed || !unarmed->IsWeapon() || !unarmed->Weapon_IsUnarmed )
-                    break;
-                if( cl->GetParam( ST_STRENGTH ) < unarmed->Weapon_MinStrength || cl->GetParam( ST_AGILITY ) < unarmed->Weapon_UnarmedMinAgility )
-                    break;
-                if( cl->Data.Params[ST_LEVEL] < unarmed->Weapon_UnarmedMinLevel || cl->GetRawParam( SK_UNARMED ) < unarmed->Weapon_UnarmedMinUnarmed )
-                    break;
-                cl->ItemSlotMain->Init( unarmed );
-            }
+                // Unarmed
+                if( !item->GetId() )
+                {
+                    if( use != USE_PRIMARY )
+                        break;
+                    ProtoItem* unarmed = ItemMngr.GetProtoItem( item_pid );
+                    if( !unarmed || !unarmed->IsWeapon() || !unarmed->Weapon_IsUnarmed )
+                        break;
+                    if( cl->GetParam( ST_STRENGTH ) < unarmed->Weapon_MinStrength || cl->GetParam( ST_AGILITY ) < unarmed->Weapon_UnarmedMinAgility )
+                        break;
+                    if( cl->Data.Params[ST_LEVEL] < unarmed->Weapon_UnarmedMinLevel || cl->GetRawParam( SK_UNARMED ) < unarmed->Weapon_UnarmedMinUnarmed )
+                        break;
+                    cl->ItemSlotMain->Init( unarmed );
+                }
 
-            Act_Attack( cl, rate, target_id );
-            break;
-        case USE_RELOAD:
-            Act_Reload( cl, item->GetId(), target_id );
-            break;
-        default:
-            cl->Send_TextMsg( cl, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
-            break;
+                Act_Attack( cl, rate, target_id );
+                break;
+            case USE_RELOAD:
+                Act_Reload( cl, item->GetId(), target_id );
+                break;
+            default:
+                cl->Send_TextMsg( cl, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
+                break;
         }
     }
     else if( use == USE_USE )
@@ -2979,67 +2979,67 @@ void FOServer::Process_PickCritter( Client* cl )
 
     switch( pick_type )
     {
-    case PICK_CRIT_LOOT:
-        if( !cr->IsDead() )
-            break;
-        if( cr->IsRawParam( MODE_NO_LOOT ) )
-            break;
-        if( !CheckDist( cl->GetHexX(), cl->GetHexY(), cr->GetHexX(), cr->GetHexY(), cl->GetUseDist() + cr->GetMultihex() ) )
-        {
-            cl->Send_XY( cl );
-            cl->Send_XY( cr );
-            break;
-        }
+        case PICK_CRIT_LOOT:
+            if( !cr->IsDead() )
+                break;
+            if( cr->IsRawParam( MODE_NO_LOOT ) )
+                break;
+            if( !CheckDist( cl->GetHexX(), cl->GetHexY(), cr->GetHexX(), cr->GetHexY(), cl->GetUseDist() + cr->GetMultihex() ) )
+            {
+                cl->Send_XY( cl );
+                cl->Send_XY( cr );
+                break;
+            }
 
-        // Script events
-        if( cl->EventUseSkill( SKILL_LOOT_CRITTER, cr, NULL, NULL ) )
-            return;
-        if( cr->EventUseSkillOnMe( cl, SKILL_LOOT_CRITTER ) )
-            return;
-        if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-        {
-            Script::SetArgObject( cl );
-            Script::SetArgUInt( SKILL_LOOT_CRITTER );
-            Script::SetArgObject( cr );
-            Script::SetArgObject( NULL );
-            Script::SetArgObject( NULL );
-            if( Script::RunPrepared() && Script::GetReturnedBool() )
+            // Script events
+            if( cl->EventUseSkill( SKILL_LOOT_CRITTER, cr, NULL, NULL ) )
                 return;
-        }
-
-        // Default process
-        cl->Send_ContainerInfo( cr, TRANSFER_CRIT_LOOT, true );
-        break;
-    case PICK_CRIT_PUSH:
-        if( !cr->IsLife() )
-            break;
-        if( cr->IsRawParam( MODE_NO_PUSH ) )
-            break;
-        if( !CheckDist( cl->GetHexX(), cl->GetHexY(), cr->GetHexX(), cr->GetHexY(), cl->GetUseDist() + cr->GetMultihex() ) )
-        {
-            cl->Send_XY( cl );
-            cl->Send_XY( cr );
-            break;
-        }
-
-        // Script events
-        if( cl->EventUseSkill( SKILL_PUSH_CRITTER, cr, NULL, NULL ) )
-            return;
-        if( cr->EventUseSkillOnMe( cl, SKILL_PUSH_CRITTER ) )
-            return;
-        if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-        {
-            Script::SetArgObject( cl );
-            Script::SetArgUInt( SKILL_PUSH_CRITTER );
-            Script::SetArgObject( cr );
-            Script::SetArgObject( NULL );
-            Script::SetArgObject( NULL );
-            if( Script::RunPrepared() && Script::GetReturnedBool() )
+            if( cr->EventUseSkillOnMe( cl, SKILL_LOOT_CRITTER ) )
                 return;
-        }
-        break;
-    default:
-        break;
+            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+            {
+                Script::SetArgObject( cl );
+                Script::SetArgUInt( SKILL_LOOT_CRITTER );
+                Script::SetArgObject( cr );
+                Script::SetArgObject( NULL );
+                Script::SetArgObject( NULL );
+                if( Script::RunPrepared() && Script::GetReturnedBool() )
+                    return;
+            }
+
+            // Default process
+            cl->Send_ContainerInfo( cr, TRANSFER_CRIT_LOOT, true );
+            break;
+        case PICK_CRIT_PUSH:
+            if( !cr->IsLife() )
+                break;
+            if( cr->IsRawParam( MODE_NO_PUSH ) )
+                break;
+            if( !CheckDist( cl->GetHexX(), cl->GetHexY(), cr->GetHexX(), cr->GetHexY(), cl->GetUseDist() + cr->GetMultihex() ) )
+            {
+                cl->Send_XY( cl );
+                cl->Send_XY( cr );
+                break;
+            }
+
+            // Script events
+            if( cl->EventUseSkill( SKILL_PUSH_CRITTER, cr, NULL, NULL ) )
+                return;
+            if( cr->EventUseSkillOnMe( cl, SKILL_PUSH_CRITTER ) )
+                return;
+            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+            {
+                Script::SetArgObject( cl );
+                Script::SetArgUInt( SKILL_PUSH_CRITTER );
+                Script::SetArgObject( cr );
+                Script::SetArgObject( NULL );
+                Script::SetArgObject( NULL );
+                if( Script::RunPrepared() && Script::GetReturnedBool() )
+                    return;
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -3165,197 +3165,197 @@ void FOServer::Process_ContainerItem( Client* cl )
         // Process
         switch( take_flags )
         {
-        case CONT_GET:
-        {
-            // Get item
-            Item* item = cont->ContGetItem( item_id, true );
-            if( !item )
+            case CONT_GET:
             {
-                cl->Send_ContainerInfo( cont, transfer_type, false );
-                cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
-                return;
-            }
-
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
-
-            // Check count
-            if( !item_count || item->GetCount() < item_count )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Error count.", SAY_NETMSG );
-                return;
-            }
-
-            // Check weight
-            if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Check volume
-            if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Script events
-            if( item->EventSkill( cl, SKILL_TAKE_CONT ) )
-                return;
-            if( cl->EventUseSkill( SKILL_TAKE_CONT, NULL, item, NULL ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_TAKE_CONT );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( item );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
-                    return;
-            }
-
-            // Transfer
-            if( !ItemMngr.MoveItemCritterFromCont( cont, cl, item->GetId(), item_count ) )
-                WriteLogF( _FUNC_, " - Transfer item, from container to player (get), fail.\n" );
-        }
-        break;
-        case CONT_GETALL:
-        {
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
-
-            // Get items
-            ItemPtrVec items;
-            cont->ContGetAllItems( items, true, true );
-            if( items.empty() )
-            {
-                cl->Send_ContainerInfo();
-                return;
-            }
-
-            // Check weight, volume
-            uint weight = 0, volume = 0;
-            for( auto it = items.begin(), end = items.end(); it != end; ++it )
-            {
-                Item* item = *it;
-                weight += item->GetWeight();
-                volume += item->GetVolume();
-            }
-
-            if( cl->GetFreeWeight() < (int)weight )
-            {
-                cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            if( cl->GetFreeVolume() < (int)volume )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Script events
-            if( cont->EventSkill( cl, SKILL_TAKE_ALL_CONT ) )
-                return;
-            if( cl->EventUseSkill( SKILL_TAKE_ALL_CONT, NULL, cont, NULL ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_TAKE_ALL_CONT );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( cont );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
-                    return;
-            }
-
-            // Transfer
-            for( auto it = items.begin(), end = items.end(); it != end; ++it )
-            {
-                Item* item = *it;
-                if( !item->EventSkill( cl, SKILL_TAKE_CONT ) )
+                // Get item
+                Item* item = cont->ContGetItem( item_id, true );
+                if( !item )
                 {
-                    cont->ContEraseItem( item );
-                    cl->AddItem( item, true );
+                    cl->Send_ContainerInfo( cont, transfer_type, false );
+                    cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
+                    return;
+                }
+
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
+
+                // Check count
+                if( !item_count || item->GetCount() < item_count )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Error count.", SAY_NETMSG );
+                    return;
+                }
+
+                // Check weight
+                if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Check volume
+                if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Script events
+                if( item->EventSkill( cl, SKILL_TAKE_CONT ) )
+                    return;
+                if( cl->EventUseSkill( SKILL_TAKE_CONT, NULL, item, NULL ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_TAKE_CONT );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( item );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
+
+                // Transfer
+                if( !ItemMngr.MoveItemCritterFromCont( cont, cl, item->GetId(), item_count ) )
+                    WriteLogF( _FUNC_, " - Transfer item, from container to player (get), fail.\n" );
+            }
+            break;
+            case CONT_GETALL:
+            {
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
+
+                // Get items
+                ItemPtrVec items;
+                cont->ContGetAllItems( items, true, true );
+                if( items.empty() )
+                {
+                    cl->Send_ContainerInfo();
+                    return;
+                }
+
+                // Check weight, volume
+                uint weight = 0, volume = 0;
+                for( auto it = items.begin(), end = items.end(); it != end; ++it )
+                {
+                    Item* item = *it;
+                    weight += item->GetWeight();
+                    volume += item->GetVolume();
+                }
+
+                if( cl->GetFreeWeight() < (int)weight )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                if( cl->GetFreeVolume() < (int)volume )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Script events
+                if( cont->EventSkill( cl, SKILL_TAKE_ALL_CONT ) )
+                    return;
+                if( cl->EventUseSkill( SKILL_TAKE_ALL_CONT, NULL, cont, NULL ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_TAKE_ALL_CONT );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( cont );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
+
+                // Transfer
+                for( auto it = items.begin(), end = items.end(); it != end; ++it )
+                {
+                    Item* item = *it;
+                    if( !item->EventSkill( cl, SKILL_TAKE_CONT ) )
+                    {
+                        cont->ContEraseItem( item );
+                        cl->AddItem( item, true );
+                    }
                 }
             }
-        }
-        break;
-        case CONT_PUT:
-        {
-            // Get item
-            Item* item = cl->GetItem( item_id, true );
-            if( !item || item->AccCritter.Slot != SLOT_INV )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
-                return;
-            }
-
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
-
-            // Check count
-            if( !item_count || item->GetCount() < item_count )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Error count.", SAY_NETMSG );
-                return;
-            }
-
-            // Check slot
-            if( item->AccCritter.Slot != SLOT_INV )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Cheat detected.", SAY_NETMSG );
-                WriteLogF( _FUNC_, " - Attempting to put in a container not from the inventory, client<%s>.", cl->GetInfo() );
-                return;
-            }
-
-            // Check volume
-            if( cont->ContGetFreeVolume( 0 ) < (int)( item->GetVolume1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Script events
-            if( item->EventSkill( cl, SKILL_PUT_CONT ) )
-                return;
-            if( cl->EventUseSkill( SKILL_PUT_CONT, NULL, item, NULL ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_PUT_CONT );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( item );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
-                    return;
-            }
-
-            // Transfer
-            if( !ItemMngr.MoveItemCritterToCont( cl, cont, item->GetId(), item_count, 0 ) )
-                WriteLogF( _FUNC_, " - Transfer item, from player to container (put), fail.\n" );
-        }
-        break;
-        case CONT_PUTALL:
-        {
-            cl->Send_ContainerInfo();
-        }
-        break;
-        //	case CONT_UNLOAD:
-        //		{
-        //			//TODO:
-        //		}
-        //		break;
-        default:
             break;
+            case CONT_PUT:
+            {
+                // Get item
+                Item* item = cl->GetItem( item_id, true );
+                if( !item || item->AccCritter.Slot != SLOT_INV )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
+                    return;
+                }
+
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
+
+                // Check count
+                if( !item_count || item->GetCount() < item_count )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Error count.", SAY_NETMSG );
+                    return;
+                }
+
+                // Check slot
+                if( item->AccCritter.Slot != SLOT_INV )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Cheat detected.", SAY_NETMSG );
+                    WriteLogF( _FUNC_, " - Attempting to put in a container not from the inventory, client<%s>.", cl->GetInfo() );
+                    return;
+                }
+
+                // Check volume
+                if( cont->ContGetFreeVolume( 0 ) < (int)( item->GetVolume1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Script events
+                if( item->EventSkill( cl, SKILL_PUT_CONT ) )
+                    return;
+                if( cl->EventUseSkill( SKILL_PUT_CONT, NULL, item, NULL ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_PUT_CONT );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( item );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
+
+                // Transfer
+                if( !ItemMngr.MoveItemCritterToCont( cl, cont, item->GetId(), item_count, 0 ) )
+                    WriteLogF( _FUNC_, " - Transfer item, from player to container (put), fail.\n" );
+            }
+            break;
+            case CONT_PUTALL:
+            {
+                cl->Send_ContainerInfo();
+            }
+            break;
+            //	case CONT_UNLOAD:
+            //		{
+            //			//TODO:
+            //		}
+            //		break;
+            default:
+                break;
         }
 
         cl->Send_ContainerInfo( cont, transfer_type, false );
@@ -3437,221 +3437,221 @@ void FOServer::Process_ContainerItem( Client* cl )
         // Process
         switch( take_flags )
         {
-        case CONT_GET:
-        {
-            // Get item
-            Item* item = cr->GetInvItem( item_id, transfer_type );
-            if( !item )
+            case CONT_GET:
             {
-                cl->Send_ContainerInfo();
-                cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
-                return;
-            }
-
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
-
-            // Check count
-            if( !item_count || item->GetCount() < item_count )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Incorrect count.", SAY_NETMSG );
-                return;
-            }
-
-            // Check weight
-            if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Check volume
-            if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Process steal
-            if( transfer_type == TRANSFER_CRIT_STEAL )
-            {
-                if( !cr->EventStealing( cl, item, item_count ) )
+                // Get item
+                Item* item = cr->GetInvItem( item_id, transfer_type );
+                if( !item )
                 {
-                    cr->Send_TextMsg( cl, STR_SKILL_STEAL_TRIED_GET, SAY_NETMSG, TEXTMSG_GAME );
                     cl->Send_ContainerInfo();
+                    cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
                     return;
                 }
-            }
 
-            // Script events
-            if( item->EventSkill( cl, SKILL_TAKE_CONT ) )
-                return;
-            if( cl->EventUseSkill( SKILL_TAKE_CONT, NULL, item, NULL ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_TAKE_CONT );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( item );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
-                    return;
-            }
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
 
-            // Transfer
-            if( !ItemMngr.MoveItemCritters( cr, cl, item->GetId(), item_count ) )
-                WriteLogF( _FUNC_, " - Transfer item, from player to player (get), fail.\n" );
-        }
-        break;
-        case CONT_GETALL:
-        {
-            // Check for steal
-            if( is_steal )
-            {
-                cl->Send_ContainerInfo();
-                return;
-            }
-
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
-
-            // Get items
-            ItemPtrVec items;
-            cr->GetInvItems( items, transfer_type, true );
-            if( items.empty() )
-                return;
-
-            // Check weight, volume
-            uint weight = 0, volume = 0;
-            for( uint i = 0, j = (uint)items.size(); i < j; ++i )
-            {
-                weight += items[i]->GetWeight();
-                volume += items[i]->GetVolume();
-            }
-
-            if( cl->GetFreeWeight() < (int)weight )
-            {
-                cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            if( cl->GetFreeVolume() < (int)volume )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Script events
-            if( cl->EventUseSkill( SKILL_TAKE_ALL_CONT, cr, NULL, NULL ) )
-                return;
-            if( cr->EventUseSkillOnMe( cl, SKILL_TAKE_ALL_CONT ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_TAKE_ALL_CONT );
-                Script::SetArgObject( cr );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
-                    return;
-            }
-
-            // Transfer
-            for( uint i = 0, j = (uint)items.size(); i < j; ++i )
-            {
-                if( !items[i]->EventSkill( cl, SKILL_TAKE_CONT ) )
+                // Check count
+                if( !item_count || item->GetCount() < item_count )
                 {
-                    cr->EraseItem( items[i], true );
-                    cl->AddItem( items[i], true );
-                }
-            }
-        }
-        break;
-        case CONT_PUT:
-        {
-            // Get item
-            Item* item = cl->GetItem( item_id, true );
-            if( !item || item->AccCritter.Slot != SLOT_INV )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
-                return;
-            }
-
-            // Send
-            cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
-
-            // Check count
-            if( !item_count || item->GetCount() < item_count )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Incorrect count.", SAY_NETMSG );
-                return;
-            }
-
-            // Check slot
-            if( item->AccCritter.Slot != SLOT_INV )
-            {
-                cl->Send_ContainerInfo();
-                cl->Send_Text( cl, "Cheat detected.", SAY_NETMSG );
-                WriteLogF( _FUNC_, " - Attempting to put in a container not from the inventory2, client<%s>.", cl->GetInfo() );
-                return;
-            }
-
-            // Check weight, volume
-            if( cr->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-            if( cr->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
-            {
-                cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
-                break;
-            }
-
-            // Steal process
-            if( transfer_type == TRANSFER_CRIT_STEAL )
-            {
-                if( !cr->EventStealing( cl, item, item_count ) )
-                {
-                    cr->Send_TextMsg( cl, STR_SKILL_STEAL_TRIED_PUT, SAY_NETMSG, TEXTMSG_GAME );
                     cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Incorrect count.", SAY_NETMSG );
                     return;
                 }
-            }
 
-            // Script events
-            if( item->EventSkill( cl, SKILL_PUT_CONT ) )
-                return;
-            if( cl->EventUseSkill( SKILL_PUT_CONT, NULL, item, NULL ) )
-                return;
-            if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
-            {
-                Script::SetArgObject( cl );
-                Script::SetArgUInt( SKILL_PUT_CONT );
-                Script::SetArgObject( NULL );
-                Script::SetArgObject( item );
-                Script::SetArgObject( NULL );
-                if( Script::RunPrepared() && Script::GetReturnedBool() )
+                // Check weight
+                if( cl->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Check volume
+                if( cl->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Process steal
+                if( transfer_type == TRANSFER_CRIT_STEAL )
+                {
+                    if( !cr->EventStealing( cl, item, item_count ) )
+                    {
+                        cr->Send_TextMsg( cl, STR_SKILL_STEAL_TRIED_GET, SAY_NETMSG, TEXTMSG_GAME );
+                        cl->Send_ContainerInfo();
+                        return;
+                    }
+                }
+
+                // Script events
+                if( item->EventSkill( cl, SKILL_TAKE_CONT ) )
                     return;
-            }
+                if( cl->EventUseSkill( SKILL_TAKE_CONT, NULL, item, NULL ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_TAKE_CONT );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( item );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
 
-            // Transfer
-            if( !ItemMngr.MoveItemCritters( cl, cr, item->GetId(), item_count ) )
-                WriteLogF( _FUNC_, " - transfer item, from player to player (put), fail.\n" );
-        }
-        break;
-        case CONT_PUTALL:
-        {
-            cl->Send_ContainerInfo();
-        }
-        break;
-        default:
+                // Transfer
+                if( !ItemMngr.MoveItemCritters( cr, cl, item->GetId(), item_count ) )
+                    WriteLogF( _FUNC_, " - Transfer item, from player to player (get), fail.\n" );
+            }
             break;
+            case CONT_GETALL:
+            {
+                // Check for steal
+                if( is_steal )
+                {
+                    cl->Send_ContainerInfo();
+                    return;
+                }
+
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
+
+                // Get items
+                ItemPtrVec items;
+                cr->GetInvItems( items, transfer_type, true );
+                if( items.empty() )
+                    return;
+
+                // Check weight, volume
+                uint weight = 0, volume = 0;
+                for( uint i = 0, j = (uint)items.size(); i < j; ++i )
+                {
+                    weight += items[i]->GetWeight();
+                    volume += items[i]->GetVolume();
+                }
+
+                if( cl->GetFreeWeight() < (int)weight )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                if( cl->GetFreeVolume() < (int)volume )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Script events
+                if( cl->EventUseSkill( SKILL_TAKE_ALL_CONT, cr, NULL, NULL ) )
+                    return;
+                if( cr->EventUseSkillOnMe( cl, SKILL_TAKE_ALL_CONT ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_TAKE_ALL_CONT );
+                    Script::SetArgObject( cr );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
+
+                // Transfer
+                for( uint i = 0, j = (uint)items.size(); i < j; ++i )
+                {
+                    if( !items[i]->EventSkill( cl, SKILL_TAKE_CONT ) )
+                    {
+                        cr->EraseItem( items[i], true );
+                        cl->AddItem( items[i], true );
+                    }
+                }
+            }
+            break;
+            case CONT_PUT:
+            {
+                // Get item
+                Item* item = cl->GetItem( item_id, true );
+                if( !item || item->AccCritter.Slot != SLOT_INV )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_TextMsg( cl, STR_ITEM_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
+                    return;
+                }
+
+                // Send
+                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
+
+                // Check count
+                if( !item_count || item->GetCount() < item_count )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Incorrect count.", SAY_NETMSG );
+                    return;
+                }
+
+                // Check slot
+                if( item->AccCritter.Slot != SLOT_INV )
+                {
+                    cl->Send_ContainerInfo();
+                    cl->Send_Text( cl, "Cheat detected.", SAY_NETMSG );
+                    WriteLogF( _FUNC_, " - Attempting to put in a container not from the inventory2, client<%s>.", cl->GetInfo() );
+                    return;
+                }
+
+                // Check weight, volume
+                if( cr->GetFreeWeight() < (int)( item->GetWeight1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERWEIGHT, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+                if( cr->GetFreeVolume() < (int)( item->GetVolume1st() * item_count ) )
+                {
+                    cl->Send_TextMsg( cl, STR_OVERVOLUME, SAY_NETMSG, TEXTMSG_GAME );
+                    break;
+                }
+
+                // Steal process
+                if( transfer_type == TRANSFER_CRIT_STEAL )
+                {
+                    if( !cr->EventStealing( cl, item, item_count ) )
+                    {
+                        cr->Send_TextMsg( cl, STR_SKILL_STEAL_TRIED_PUT, SAY_NETMSG, TEXTMSG_GAME );
+                        cl->Send_ContainerInfo();
+                        return;
+                    }
+                }
+
+                // Script events
+                if( item->EventSkill( cl, SKILL_PUT_CONT ) )
+                    return;
+                if( cl->EventUseSkill( SKILL_PUT_CONT, NULL, item, NULL ) )
+                    return;
+                if( Script::PrepareContext( ServerFunctions.CritterUseSkill, _FUNC_, cl->GetInfo() ) )
+                {
+                    Script::SetArgObject( cl );
+                    Script::SetArgUInt( SKILL_PUT_CONT );
+                    Script::SetArgObject( NULL );
+                    Script::SetArgObject( item );
+                    Script::SetArgObject( NULL );
+                    if( Script::RunPrepared() && Script::GetReturnedBool() )
+                        return;
+                }
+
+                // Transfer
+                if( !ItemMngr.MoveItemCritters( cl, cr, item->GetId(), item_count ) )
+                    WriteLogF( _FUNC_, " - transfer item, from player to player (put), fail.\n" );
+            }
+            break;
+            case CONT_PUTALL:
+            {
+                cl->Send_ContainerInfo();
+            }
+            break;
+            default:
+                break;
         }
 
         cl->Send_ContainerInfo( cr, transfer_type, false );
@@ -4358,251 +4358,251 @@ void FOServer::Process_RuleGlobal( Client* cl )
 
     switch( command )
     {
-    case GM_CMD_FOLLOW_CRIT:
-    {
-        if( !param1 )
-            break;
-
-        Critter* cr = cl->GetCritSelf( param1, false );
-        if( !cr )
-            break;
-
-        if( cl->GetFollowCrId() == cr->GetId() )
-            cl->SetFollowCrId( 0 );
-        else
-            cl->SetFollowCrId( cr->GetId() );
-    }
-    break;
-    case GM_CMD_SETMOVE:
-        if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
-            break;
-        if( param1 >= GM_MAXX || param2 >= GM_MAXY )
-            break;
-        if( cl->GroupMove->EncounterDescriptor )
-            break;
-        cl->GroupMove->ToX = (float)param1;
-        cl->GroupMove->ToY = (float)param2;
-        MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_SET_MOVE );
-        break;
-    case GM_CMD_STOP:
-        break;
-    case GM_CMD_TOLOCAL:
-        if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
-            break;
-        if( cl->GroupMove->EncounterDescriptor )
-            break;
-        if( cl->GetParam( TO_TRANSFER ) )
+        case GM_CMD_FOLLOW_CRIT:
         {
-            cl->Send_TextMsg( cl, STR_TIMEOUT_TRANSFER_WAIT, SAY_NETMSG, TEXTMSG_GAME );
-            break;
+            if( !param1 )
+                break;
+
+            Critter* cr = cl->GetCritSelf( param1, false );
+            if( !cr )
+                break;
+
+            if( cl->GetFollowCrId() == cr->GetId() )
+                cl->SetFollowCrId( 0 );
+            else
+                cl->SetFollowCrId( cr->GetId() );
         }
-
-        if( !param1 )
-        {
+        break;
+        case GM_CMD_SETMOVE:
             if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
                 break;
-            cl->GroupMove->EncounterDescriptor = 0;
-            MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_ENTER );
-        }
-        else
-        {
-            MapMngr.GM_GroupToLoc( cl, param1, param2 );
-        }
-        return;
-    case GM_CMD_ANSWER:
-        if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
-            break;
-        if( !cl->GroupMove->EncounterDescriptor || cl->GroupMove->EncounterForce )
-            break;
-
-        if( (int)param1 >= 0 )     // Yes
-        {
-            MapMngr.GM_GlobalInvite( cl->GroupMove, param1 );
-            return;
-        }
-        else if( cl->GroupMove->EncounterDescriptor )       // No
-        {
-            cl->GroupMove->EncounterDescriptor = 0;
-            cl->SendA_GlobalInfo( cl->GroupMove, GM_INFO_GROUP_PARAM );
-        }
-        break;
-    case GM_CMD_FOLLOW:
-    {
-        // Find rule
-        Critter* rule = CrMngr.GetCritter( param1, true );
-        if( !rule || rule->GetMap() || !rule->GroupMove || rule != rule->GroupMove->Rule )
-            break;
-
-        // Check for follow
-        if( !rule->GroupMove->CheckForFollow( cl ) )
-            break;
-        if( !CheckDist( rule->Data.LastHexX, rule->Data.LastHexY, cl->GetHexX(), cl->GetHexY(), FOLLOW_DIST + rule->GetMultihex() + cl->GetMultihex() ) )
-            break;
-
-        // Transit
-        if( cl->LockMapTransfers )
-        {
-            WriteLogF( _FUNC_, " - Transfers locked, critter<%s>.\n", cl->GetInfo() );
-            return;
-        }
-        if( !MapMngr.TransitToGlobal( cl, param1, 0, false ) )
-            break;
-    }
-        return;
-    case GM_CMD_KICKCRIT:
-    {
-        if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->GetSize() < 2 || cl->GroupMove->EncounterDescriptor )
-            break;
-
-        GlobalMapGroup* group = cl->GroupMove;
-        Critter*        kick_cr;
-
-        if( cl->GetId() == param1 )             // Kick self
-        {
-            if( cl == group->Rule )
+            if( param1 >= GM_MAXX || param2 >= GM_MAXY )
                 break;
-            kick_cr = cl;
-        }
-        else                 // Kick other
-        {
-            if( cl != group->Rule )
+            if( cl->GroupMove->EncounterDescriptor )
                 break;
-            kick_cr = group->GetCritter( param1 );
-            if( !kick_cr )
+            cl->GroupMove->ToX = (float)param1;
+            cl->GroupMove->ToY = (float)param2;
+            MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_SET_MOVE );
+            break;
+        case GM_CMD_STOP:
+            break;
+        case GM_CMD_TOLOCAL:
+            if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
                 break;
-        }
-
-        MapMngr.GM_GlobalProcess( kick_cr, cl->GroupMove, GLOBAL_PROCESS_KICK );
-    }
-    break;
-    case GM_CMD_GIVE_RULE:
-    {
-        // Check
-        if( cl->GetId() == param1 || cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule || cl->GroupMove->EncounterDescriptor )
-            break;
-        Critter* new_rule = cl->GroupMove->GetCritter( param1 );
-        if( !new_rule || !new_rule->IsPlayer() || !( (Client*)new_rule )->IsOnline() )
-            break;
-
-        MapMngr.GM_GiveRule( cl, new_rule );
-        MapMngr.GM_StopGroup( cl );
-    }
-    break;
-    case GM_CMD_ENTRANCES:
-    {
-        if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
-            break;
-
-        uint      loc_id = param1;
-        Location* loc = MapMngr.GetLocation( loc_id );
-        if( !loc || DistSqrt( (int)cl->GroupMove->CurX, (int)cl->GroupMove->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
-            break;
-
-        uint tick = Timer::FastTick();
-        if( cl->LastSendEntrancesLocId == loc_id && tick < cl->LastSendEntrancesTick + GM_ENTRANCES_SEND_TIME )
-        {
-            WriteLogF( _FUNC_, " - Client<%s> ignore send entrances timeout.\n", cl->GetInfo() );
-            break;
-        }
-        cl->LastSendEntrancesLocId = loc_id;
-        cl->LastSendEntrancesTick = tick;
-
-        if( loc->Proto->ScriptBindId > 0 )
-        {
-            uchar        count = 0;
-            uchar        show[0x100];
-            ScriptArray* arr = MapMngr.GM_CreateGroupArray( cl->GroupMove );
-            if( !arr )
+            if( cl->GroupMove->EncounterDescriptor )
                 break;
-            for( uchar i = 0, j = (uchar)loc->Proto->Entrance.size(); i < j; i++ )
+            if( cl->GetParam( TO_TRANSFER ) )
             {
-                if( MapMngr.GM_CheckEntrance( loc, arr, i ) )
-                {
-                    show[count] = i;
-                    count++;
-                }
+                cl->Send_TextMsg( cl, STR_TIMEOUT_TRANSFER_WAIT, SAY_NETMSG, TEXTMSG_GAME );
+                break;
             }
-            arr->Release();
 
-            uint msg = NETMSG_GLOBAL_ENTRANCES;
-            uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
-
-            BOUT_BEGIN( cl );
-            cl->Bout << msg;
-            cl->Bout << msg_len;
-            cl->Bout << loc_id;
-            cl->Bout << count;
-            for( uchar i = 0; i < count; i++ )
-                cl->Bout << show[i];
-            BOUT_END( cl );
-        }
-        else
-        {
-            uint  msg = NETMSG_GLOBAL_ENTRANCES;
-            uchar count = (uchar)loc->Proto->Entrance.size();
-            uint  msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
-
-            BOUT_BEGIN( cl );
-            cl->Bout << msg;
-            cl->Bout << msg_len;
-            cl->Bout << loc_id;
-            cl->Bout << count;
-            for( uchar i = 0; i < count; i++ )
-                cl->Bout << i;
-            BOUT_END( cl );
-        }
-    }
-    break;
-    case GM_CMD_VIEW_MAP:
-    {
-        if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
-            break;
-
-        uint      loc_id = param1;
-        Location* loc = MapMngr.GetLocation( loc_id );
-        if( !loc || DistSqrt( (int)cl->GroupMove->CurX, (int)cl->GroupMove->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
-            break;
-
-        uint entrance = param2;
-        if( entrance >= loc->Proto->Entrance.size() )
-            break;
-        if( loc->Proto->ScriptBindId > 0 )
-        {
-            ScriptArray* arr = MapMngr.GM_CreateGroupArray( cl->GroupMove );
-            if( !arr )
+            if( !param1 )
+            {
+                if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
+                    break;
+                cl->GroupMove->EncounterDescriptor = 0;
+                MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_ENTER );
+            }
+            else
+            {
+                MapMngr.GM_GroupToLoc( cl, param1, param2 );
+            }
+            return;
+        case GM_CMD_ANSWER:
+            if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
                 break;
-            bool result = MapMngr.GM_CheckEntrance( loc, arr, entrance );
-            arr->Release();
-            if( !result )
+            if( !cl->GroupMove->EncounterDescriptor || cl->GroupMove->EncounterForce )
+                break;
+
+            if( (int)param1 >= 0 ) // Yes
+            {
+                MapMngr.GM_GlobalInvite( cl->GroupMove, param1 );
+                return;
+            }
+            else if( cl->GroupMove->EncounterDescriptor )   // No
+            {
+                cl->GroupMove->EncounterDescriptor = 0;
+                cl->SendA_GlobalInfo( cl->GroupMove, GM_INFO_GROUP_PARAM );
+            }
+            break;
+        case GM_CMD_FOLLOW:
+        {
+            // Find rule
+            Critter* rule = CrMngr.GetCritter( param1, true );
+            if( !rule || rule->GetMap() || !rule->GroupMove || rule != rule->GroupMove->Rule )
+                break;
+
+            // Check for follow
+            if( !rule->GroupMove->CheckForFollow( cl ) )
+                break;
+            if( !CheckDist( rule->Data.LastHexX, rule->Data.LastHexY, cl->GetHexX(), cl->GetHexY(), FOLLOW_DIST + rule->GetMultihex() + cl->GetMultihex() ) )
+                break;
+
+            // Transit
+            if( cl->LockMapTransfers )
+            {
+                WriteLogF( _FUNC_, " - Transfers locked, critter<%s>.\n", cl->GetInfo() );
+                return;
+            }
+            if( !MapMngr.TransitToGlobal( cl, param1, 0, false ) )
                 break;
         }
+            return;
+        case GM_CMD_KICKCRIT:
+        {
+            if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->GetSize() < 2 || cl->GroupMove->EncounterDescriptor )
+                break;
 
-        Map* map = loc->GetMap( loc->Proto->Entrance[entrance].first );
-        if( !map )
-            break;
+            GlobalMapGroup* group = cl->GroupMove;
+            Critter*        kick_cr;
 
-        uchar  dir;
-        ushort hx, hy;
-        if( !map->GetStartCoord( hx, hy, dir, loc->Proto->Entrance[entrance].second ) )
-            break;
+            if( cl->GetId() == param1 )         // Kick self
+            {
+                if( cl == group->Rule )
+                    break;
+                kick_cr = cl;
+            }
+            else             // Kick other
+            {
+                if( cl != group->Rule )
+                    break;
+                kick_cr = group->GetCritter( param1 );
+                if( !kick_cr )
+                    break;
+            }
 
-        cl->Data.HexX = hx;
-        cl->Data.HexY = hy;
-        cl->Data.Dir = dir;
-        cl->ViewMapId = map->GetId();
-        cl->ViewMapPid = map->GetPid();
-        cl->ViewMapLook = cl->GetLook();
-        cl->ViewMapHx = hx;
-        cl->ViewMapHy = hy;
-        cl->ViewMapDir = dir;
-        cl->ViewMapLocId = loc_id;
-        cl->ViewMapLocEnt = entrance;
-        cl->Send_LoadMap( map );
-    }
-    break;
-    default:
-        WriteLogF( _FUNC_, " - Unknown command<%u>, from client<%s>.\n", cl->GetInfo() );
+            MapMngr.GM_GlobalProcess( kick_cr, cl->GroupMove, GLOBAL_PROCESS_KICK );
+        }
         break;
+        case GM_CMD_GIVE_RULE:
+        {
+            // Check
+            if( cl->GetId() == param1 || cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule || cl->GroupMove->EncounterDescriptor )
+                break;
+            Critter* new_rule = cl->GroupMove->GetCritter( param1 );
+            if( !new_rule || !new_rule->IsPlayer() || !( (Client*)new_rule )->IsOnline() )
+                break;
+
+            MapMngr.GM_GiveRule( cl, new_rule );
+            MapMngr.GM_StopGroup( cl );
+        }
+        break;
+        case GM_CMD_ENTRANCES:
+        {
+            if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
+                break;
+
+            uint      loc_id = param1;
+            Location* loc = MapMngr.GetLocation( loc_id );
+            if( !loc || DistSqrt( (int)cl->GroupMove->CurX, (int)cl->GroupMove->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
+                break;
+
+            uint tick = Timer::FastTick();
+            if( cl->LastSendEntrancesLocId == loc_id && tick < cl->LastSendEntrancesTick + GM_ENTRANCES_SEND_TIME )
+            {
+                WriteLogF( _FUNC_, " - Client<%s> ignore send entrances timeout.\n", cl->GetInfo() );
+                break;
+            }
+            cl->LastSendEntrancesLocId = loc_id;
+            cl->LastSendEntrancesTick = tick;
+
+            if( loc->Proto->ScriptBindId > 0 )
+            {
+                uchar        count = 0;
+                uchar        show[0x100];
+                ScriptArray* arr = MapMngr.GM_CreateGroupArray( cl->GroupMove );
+                if( !arr )
+                    break;
+                for( uchar i = 0, j = (uchar)loc->Proto->Entrance.size(); i < j; i++ )
+                {
+                    if( MapMngr.GM_CheckEntrance( loc, arr, i ) )
+                    {
+                        show[count] = i;
+                        count++;
+                    }
+                }
+                arr->Release();
+
+                uint msg = NETMSG_GLOBAL_ENTRANCES;
+                uint msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
+
+                BOUT_BEGIN( cl );
+                cl->Bout << msg;
+                cl->Bout << msg_len;
+                cl->Bout << loc_id;
+                cl->Bout << count;
+                for( uchar i = 0; i < count; i++ )
+                    cl->Bout << show[i];
+                BOUT_END( cl );
+            }
+            else
+            {
+                uint  msg = NETMSG_GLOBAL_ENTRANCES;
+                uchar count = (uchar)loc->Proto->Entrance.size();
+                uint  msg_len = sizeof( msg ) + sizeof( msg_len ) + sizeof( loc_id ) + sizeof( count ) + sizeof( uchar ) * count;
+
+                BOUT_BEGIN( cl );
+                cl->Bout << msg;
+                cl->Bout << msg_len;
+                cl->Bout << loc_id;
+                cl->Bout << count;
+                for( uchar i = 0; i < count; i++ )
+                    cl->Bout << i;
+                BOUT_END( cl );
+            }
+        }
+        break;
+        case GM_CMD_VIEW_MAP:
+        {
+            if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
+                break;
+
+            uint      loc_id = param1;
+            Location* loc = MapMngr.GetLocation( loc_id );
+            if( !loc || DistSqrt( (int)cl->GroupMove->CurX, (int)cl->GroupMove->CurY, loc->Data.WX, loc->Data.WY ) > loc->GetRadius() )
+                break;
+
+            uint entrance = param2;
+            if( entrance >= loc->Proto->Entrance.size() )
+                break;
+            if( loc->Proto->ScriptBindId > 0 )
+            {
+                ScriptArray* arr = MapMngr.GM_CreateGroupArray( cl->GroupMove );
+                if( !arr )
+                    break;
+                bool result = MapMngr.GM_CheckEntrance( loc, arr, entrance );
+                arr->Release();
+                if( !result )
+                    break;
+            }
+
+            Map* map = loc->GetMap( loc->Proto->Entrance[entrance].first );
+            if( !map )
+                break;
+
+            uchar  dir;
+            ushort hx, hy;
+            if( !map->GetStartCoord( hx, hy, dir, loc->Proto->Entrance[entrance].second ) )
+                break;
+
+            cl->Data.HexX = hx;
+            cl->Data.HexY = hy;
+            cl->Data.Dir = dir;
+            cl->ViewMapId = map->GetId();
+            cl->ViewMapPid = map->GetPid();
+            cl->ViewMapLook = cl->GetLook();
+            cl->ViewMapHx = hx;
+            cl->ViewMapHy = hy;
+            cl->ViewMapDir = dir;
+            cl->ViewMapLocId = loc_id;
+            cl->ViewMapLocEnt = entrance;
+            cl->Send_LoadMap( map );
+        }
+        break;
+        default:
+            WriteLogF( _FUNC_, " - Unknown command<%u>, from client<%s>.\n", cl->GetInfo() );
+            break;
     }
 
     cl->SetBreakTime( GameOpt.Breaktime );

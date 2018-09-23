@@ -329,20 +329,20 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 int size = engine->GetSizeOfPrimitiveType( type_id );
                 switch( size )
                 {
-                case sizeof( uchar ):
-                    *(uchar*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uchar >( svalue );
-                    break;
-                case sizeof( ushort ):
-                    *(ushort*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< ushort >( svalue );
-                    break;
-                case sizeof( uint ):
-                    *(uint*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uint >( svalue );
-                    break;
-                case sizeof( int64 ):
-                    *(int64*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< int64 >( svalue );
-                    break;
-                default:
-                    break;
+                    case sizeof( uchar ):
+                        *(uchar*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uchar >( svalue );
+                        break;
+                    case sizeof( ushort ):
+                        *(ushort*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< ushort >( svalue );
+                        break;
+                    case sizeof( uint ):
+                        *(uint*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< uint >( svalue );
+                        break;
+                    case sizeof( int64 ):
+                        *(int64*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue< int64 >( svalue );
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -933,22 +933,22 @@ void ItemManager::NotifyChangeItem( Item* item )
 {
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, false );
-        if( cr )
-            cr->SendAA_ItemData( item );
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
-        if( map )
-            map->ChangeDataItem( item );
-    }
-    break;
-    default:
+        case ITEM_ACCESSORY_CRITTER:
+        {
+            Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, false );
+            if( cr )
+                cr->SendAA_ItemData( item );
+        }
         break;
+        case ITEM_ACCESSORY_HEX:
+        {
+            Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
+            if( map )
+                map->ChangeDataItem( item );
+        }
+        break;
+        default:
+            break;
     }
 }
 
@@ -956,31 +956,31 @@ void ItemManager::EraseItemHolder( Item* item )
 {
     switch( item->Accessory )
     {
-    case ITEM_ACCESSORY_CRITTER:
-    {
-        Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, true );
-        if( cr )
-            cr->EraseItem( item, true );
-        else if( item->IsRadio() )
-            ItemMngr.RadioRegister( item, true );
-    }
-    break;
-    case ITEM_ACCESSORY_HEX:
-    {
-        Map* map = MapMngr.GetMap( item->AccHex.MapId, true );
-        if( map )
-            map->EraseItem( item->GetId() );
-    }
-    break;
-    case ITEM_ACCESSORY_CONTAINER:
-    {
-        Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, true );
-        if( cont )
-            cont->ContEraseItem( item );
-    }
-    break;
-    default:
+        case ITEM_ACCESSORY_CRITTER:
+        {
+            Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, true );
+            if( cr )
+                cr->EraseItem( item, true );
+            else if( item->IsRadio() )
+                ItemMngr.RadioRegister( item, true );
+        }
         break;
+        case ITEM_ACCESSORY_HEX:
+        {
+            Map* map = MapMngr.GetMap( item->AccHex.MapId, true );
+            if( map )
+                map->EraseItem( item->GetId() );
+        }
+        break;
+        case ITEM_ACCESSORY_CONTAINER:
+        {
+            Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, true );
+            if( cont )
+                cont->ContEraseItem( item );
+        }
+        break;
+        default:
+            break;
     }
     item->Accessory = 45;
 }

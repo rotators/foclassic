@@ -725,21 +725,21 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
         int x_advance;
         switch( letter )
         {
-        case '\r':
-            continue;
-        case ' ':
-            x_advance = font->SpaceWidth;
-            break;
-        case '\t':
-            x_advance = font->SpaceWidth * 4;
-            break;
-        default:
-            LetterMapIt it = font->Letters.find( letter );
-            if( it != font->Letters.end() )
-                x_advance = ( *it ).second.XAdvance;
-            else
-                x_advance = 0;
-            break;
+            case '\r':
+                continue;
+            case ' ':
+                x_advance = font->SpaceWidth;
+                break;
+            case '\t':
+                x_advance = font->SpaceWidth * 4;
+                break;
+            default:
+                LetterMapIt it = font->Letters.find( letter );
+                if( it != font->Letters.end() )
+                    x_advance = ( *it ).second.XAdvance;
+                else
+                    x_advance = 0;
+                break;
         }
 
         if( curx + x_advance > r.R )
@@ -817,54 +817,54 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
 
         switch( letter )
         {
-        case '\n':
-            if( !skip_line )
-            {
-                cury += font->LineHeight + font->YAdvance;
-                if( cury + font->LineHeight > r.B && !fi.LinesInRect )
-                    fi.LinesInRect = fi.LinesAll;
-
-                if( fmt_type == FORMAT_TYPE_DRAW )
+            case '\n':
+                if( !skip_line )
                 {
-                    if( fi.LinesInRect && !FLAG( flags, FT_UPPER ) )
+                    cury += font->LineHeight + font->YAdvance;
+                    if( cury + font->LineHeight > r.B && !fi.LinesInRect )
+                        fi.LinesInRect = fi.LinesAll;
+
+                    if( fmt_type == FORMAT_TYPE_DRAW )
                     {
-                        // fi.LinesAll++;
-                        str[i] = '\0';
-                        break;
+                        if( fi.LinesInRect && !FLAG( flags, FT_UPPER ) )
+                        {
+                            // fi.LinesAll++;
+                            str[i] = '\0';
+                            break;
+                        }
                     }
+                    else if( fmt_type == FORMAT_TYPE_SPLIT )
+                    {
+                        if( fi.LinesInRect && !( fi.LinesAll % fi.LinesInRect ) )
+                        {
+                            str[i] = '\0';
+                            ( *fi.StrLines ).push_back( str );
+                            str = &str[i + i_advance];
+                            i = -i_advance;
+                        }
+                    }
+
+                    if( str[i + i_advance] )
+                        fi.LinesAll++;
                 }
-                else if( fmt_type == FORMAT_TYPE_SPLIT )
+                else
                 {
-                    if( fi.LinesInRect && !( fi.LinesAll % fi.LinesInRect ) )
-                    {
-                        str[i] = '\0';
-                        ( *fi.StrLines ).push_back( str );
-                        str = &str[i + i_advance];
-                        i = -i_advance;
-                    }
+                    skip_line--;
+                    Str::EraseInterval( str, i + i_advance );
+                    offs_col += i + i_advance;
+                    //	if(fmt_type==FORMAT_TYPE_DRAW)
+                    //		for(int k=0,l=MAX_FOTEXT-(i+1);k<l;k++) fi.ColorDots[k]=fi.ColorDots[k+i+1];
+                    i = 0;
+                    i_advance = 0;
                 }
 
-                if( str[i + i_advance] )
-                    fi.LinesAll++;
-            }
-            else
-            {
-                skip_line--;
-                Str::EraseInterval( str, i + i_advance );
-                offs_col += i + i_advance;
-                //	if(fmt_type==FORMAT_TYPE_DRAW)
-                //		for(int k=0,l=MAX_FOTEXT-(i+1);k<l;k++) fi.ColorDots[k]=fi.ColorDots[k+i+1];
-                i = 0;
-                i_advance = 0;
-            }
-
-            curx = r.L;
-            continue;
-        case '\0':
-            break;
-        default:
-            curx += x_advance;
-            continue;
+                curx = r.L;
+                continue;
+            case '\0':
+                break;
+            default:
+                curx += x_advance;
+                continue;
         }
 
         if( !str[i] )
@@ -972,50 +972,50 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
 
         switch( letter )
         {
-        case ' ':
-            curx += font->SpaceWidth;
-            if( can_count )
-                spaces++;
-            break;
-        case '\t':
-            curx += font->SpaceWidth * 4;
-            break;
-        case '\0':
-        case '\n':
-            fi.LineWidth[curstr] = curx;
-            cury += font->LineHeight + font->YAdvance;
-            curx = r.L;
+            case ' ':
+                curx += font->SpaceWidth;
+                if( can_count )
+                    spaces++;
+                break;
+            case '\t':
+                curx += font->SpaceWidth * 4;
+                break;
+            case '\0':
+            case '\n':
+                fi.LineWidth[curstr] = curx;
+                cury += font->LineHeight + font->YAdvance;
+                curx = r.L;
 
-            // Erase last spaces
-            /*for(int j=i-1;spaces>0 && j>=0;j--)
-               {
-               if(str[j]==' ')
-               {
-               spaces--;
-               str[j]='\r';
-               }
-               else if(str[j]!='\r') break;
-               }*/
+                // Erase last spaces
+                /*for(int j=i-1;spaces>0 && j>=0;j--)
+                   {
+                   if(str[j]==' ')
+                   {
+                   spaces--;
+                   str[j]='\r';
+                   }
+                   else if(str[j]!='\r') break;
+                   }*/
 
-            // Align
-            if( fi.LineSpaceWidth[curstr] == 1 && spaces > 0 )
-                fi.LineSpaceWidth[curstr] = font->SpaceWidth + ( r.R - fi.LineWidth[curstr] ) / spaces;
-            else
-                fi.LineSpaceWidth[curstr] = font->SpaceWidth;
+                // Align
+                if( fi.LineSpaceWidth[curstr] == 1 && spaces > 0 )
+                    fi.LineSpaceWidth[curstr] = font->SpaceWidth + ( r.R - fi.LineWidth[curstr] ) / spaces;
+                else
+                    fi.LineSpaceWidth[curstr] = font->SpaceWidth;
 
-            curstr++;
-            can_count = false;
-            spaces = 0;
-            break;
-        case '\r':
-            break;
-        default:
-            LetterMapIt it = font->Letters.find( letter );
-            if( it != font->Letters.end() )
-                curx += ( *it ).second.XAdvance;
-            // if(curx>fi.LineWidth[curstr]) fi.LineWidth[curstr]=curx;
-            can_count = true;
-            break;
+                curstr++;
+                can_count = false;
+                spaces = 0;
+                break;
+            case '\r':
+                break;
+            default:
+                LetterMapIt it = font->Letters.find( letter );
+                if( it != font->Letters.end() )
+                    curx += ( *it ).second.XAdvance;
+                // if(curx>fi.LineWidth[curstr]) fi.LineWidth[curstr]=curx;
+                can_count = true;
+                break;
         }
 
         if( !str[i] )
@@ -1105,76 +1105,76 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
 
         switch( letter )
         {
-        case ' ':
-            curx += ( variable_space ? fi.LineSpaceWidth[curstr] : font->SpaceWidth );
-            continue;
-        case '\t':
-            curx += font->SpaceWidth * 4;
-            continue;
-        case '\n':
-            cury += font->LineHeight + font->YAdvance;
-            curx = r.L;
-            curstr++;
-            variable_space = false;
-            if( FLAG( flags, FT_CENTERX ) )
-                curx += ( r.R - fi.LineWidth[curstr] ) / 2;
-            else if( FLAG( flags, FT_CENTERR ) )
-                curx += r.R - fi.LineWidth[curstr];
-            continue;
-        case '\r':
-            continue;
-        default:
-            LetterMapIt it = font->Letters.find( letter );
-            if( it == font->Letters.end() )
+            case ' ':
+                curx += ( variable_space ? fi.LineSpaceWidth[curstr] : font->SpaceWidth );
                 continue;
+            case '\t':
+                curx += font->SpaceWidth * 4;
+                continue;
+            case '\n':
+                cury += font->LineHeight + font->YAdvance;
+                curx = r.L;
+                curstr++;
+                variable_space = false;
+                if( FLAG( flags, FT_CENTERX ) )
+                    curx += ( r.R - fi.LineWidth[curstr] ) / 2;
+                else if( FLAG( flags, FT_CENTERR ) )
+                    curx += r.R - fi.LineWidth[curstr];
+                continue;
+            case '\r':
+                continue;
+            default:
+                LetterMapIt it = font->Letters.find( letter );
+                if( it == font->Letters.end() )
+                    continue;
 
-            Letter& l = ( *it ).second;
+                Letter& l = ( *it ).second;
 
-            int     mulpos = curSprCnt * 4;
-            int     x = curx - l.OffsX - 1;
-            int     y = cury - l.OffsY - 1;
-            int     w = l.W + 2;
-            int     h = l.H + 2;
+                int     mulpos = curSprCnt * 4;
+                int     x = curx - l.OffsX - 1;
+                int     y = cury - l.OffsY - 1;
+                int     w = l.W + 2;
+                int     h = l.H + 2;
 
-            RectF&  texture_uv = ( FLAG( flags, FT_BORDERED ) ? l.TexBorderedUV : l.TexUV );
-            float   x1 = texture_uv[0];
-            float   y1 = texture_uv[1];
-            float   x2 = texture_uv[2];
-            float   y2 = texture_uv[3];
+                RectF&  texture_uv = ( FLAG( flags, FT_BORDERED ) ? l.TexBorderedUV : l.TexUV );
+                float   x1 = texture_uv[0];
+                float   y1 = texture_uv[1];
+                float   x2 = texture_uv[2];
+                float   y2 = texture_uv[3];
 
-            vBuffer[mulpos].x = (float)x;
-            vBuffer[mulpos].y = (float)y + h;
-            vBuffer[mulpos].tu = x1;
-            vBuffer[mulpos].tv = y2;
-            vBuffer[mulpos++].diffuse = color;
+                vBuffer[mulpos].x = (float)x;
+                vBuffer[mulpos].y = (float)y + h;
+                vBuffer[mulpos].tu = x1;
+                vBuffer[mulpos].tv = y2;
+                vBuffer[mulpos++].diffuse = color;
 
-            vBuffer[mulpos].x = (float)x;
-            vBuffer[mulpos].y = (float)y;
-            vBuffer[mulpos].tu = x1;
-            vBuffer[mulpos].tv = y1;
-            vBuffer[mulpos++].diffuse = color;
+                vBuffer[mulpos].x = (float)x;
+                vBuffer[mulpos].y = (float)y;
+                vBuffer[mulpos].tu = x1;
+                vBuffer[mulpos].tv = y1;
+                vBuffer[mulpos++].diffuse = color;
 
-            vBuffer[mulpos].x = (float)x + w;
-            vBuffer[mulpos].y = (float)y;
-            vBuffer[mulpos].tu = x2;
-            vBuffer[mulpos].tv = y1;
-            vBuffer[mulpos++].diffuse = color;
+                vBuffer[mulpos].x = (float)x + w;
+                vBuffer[mulpos].y = (float)y;
+                vBuffer[mulpos].tu = x2;
+                vBuffer[mulpos].tv = y1;
+                vBuffer[mulpos++].diffuse = color;
 
-            vBuffer[mulpos].x = (float)x + w;
-            vBuffer[mulpos].y = (float)y + h;
-            vBuffer[mulpos].tu = x2;
-            vBuffer[mulpos].tv = y2;
-            vBuffer[mulpos].diffuse = color;
+                vBuffer[mulpos].x = (float)x + w;
+                vBuffer[mulpos].y = (float)y + h;
+                vBuffer[mulpos].tu = x2;
+                vBuffer[mulpos].tv = y2;
+                vBuffer[mulpos].diffuse = color;
 
-            if( ++curSprCnt == flushSprCnt )
-            {
-                dipQueue.push_back( DipData( texture, font->DrawEffect ) );
-                dipQueue.back().SpritesCount = curSprCnt;
-                Flush();
-            }
+                if( ++curSprCnt == flushSprCnt )
+                {
+                    dipQueue.push_back( DipData( texture, font->DrawEffect ) );
+                    dipQueue.back().SpritesCount = curSprCnt;
+                    Flush();
+                }
 
-            curx += l.XAdvance;
-            variable_space = true;
+                curx += l.XAdvance;
+                variable_space = true;
         }
     }
 

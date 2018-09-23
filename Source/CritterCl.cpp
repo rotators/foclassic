@@ -150,25 +150,25 @@ void CritterCl::AddItem( Item* item )
     bool anim_stay = true;
     switch( item->AccCritter.Slot )
     {
-    case SLOT_HAND1:
-        ItemSlotMain = item;
-        break;
-    case SLOT_HAND2:
-        ItemSlotExt = item;
-        break;
-    case SLOT_ARMOR:
-        ItemSlotArmor = item;
-        break;
-    default:
-        if( item == ItemSlotMain )
-            ItemSlotMain = DefItemSlotHand;
-        else if( item == ItemSlotExt )
-            ItemSlotExt = DefItemSlotHand;
-        else if( item == ItemSlotArmor )
-            ItemSlotArmor = DefItemSlotArmor;
-        else
-            anim_stay = false;
-        break;
+        case SLOT_HAND1:
+            ItemSlotMain = item;
+            break;
+        case SLOT_HAND2:
+            ItemSlotExt = item;
+            break;
+        case SLOT_ARMOR:
+            ItemSlotArmor = item;
+            break;
+        default:
+            if( item == ItemSlotMain )
+                ItemSlotMain = DefItemSlotHand;
+            else if( item == ItemSlotExt )
+                ItemSlotExt = DefItemSlotHand;
+            else if( item == ItemSlotArmor )
+                ItemSlotArmor = DefItemSlotArmor;
+            else
+                anim_stay = false;
+            break;
     }
 
     InvItems.push_back( item );
@@ -441,21 +441,21 @@ Item* CritterCl::GetSlotUse( uchar num_slot, uchar& use )
     Item* item = NULL;
     switch( num_slot )
     {
-    case SLOT_HAND1:
-        item = ItemSlotMain;
-        use = GetUse();
-        break;
-    case SLOT_HAND2:
-        item = ItemSlotExt;
-        if( item->IsWeapon() )
-            use = USE_PRIMARY;
-        else if( item->IsCanUse() || item->IsCanUseOnSmth() )
-            use = USE_USE;
-        else
-            use = 0xF;
-        break;
-    default:
-        break;
+        case SLOT_HAND1:
+            item = ItemSlotMain;
+            use = GetUse();
+            break;
+        case SLOT_HAND2:
+            item = ItemSlotExt;
+            if( item->IsWeapon() )
+                use = USE_PRIMARY;
+            else if( item->IsCanUse() || item->IsCanUseOnSmth() )
+                use = USE_USE;
+            else
+                use = 0xF;
+            break;
+        default:
+            break;
     }
     return item;
 }
@@ -815,29 +815,29 @@ bool CritterCl::NextRateItem( bool prev )
 
                 switch( GetUse() )
                 {
-                case USE_PRIMARY:
-                    if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x1 )
+                    case USE_PRIMARY:
+                        if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x1 )
+                            break;
+                        continue;
+                    case USE_SECONDARY:
+                        if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x2 )
+                            break;
+                        continue;
+                    case USE_THIRD:
+                        if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x4 )
+                            break;
+                        continue;
+                    case USE_RELOAD:
+                        if( ItemSlotMain->Proto->Weapon_MaxAmmoCount )
+                            break;
+                        continue;
+                    case USE_USE:
+                        if( ItemSlotMain->IsCanUseOnSmth() )
+                            break;
+                        continue;
+                    default:
+                        ItemSlotMain->Data.Mode = USE_PRIMARY;
                         break;
-                    continue;
-                case USE_SECONDARY:
-                    if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x2 )
-                        break;
-                    continue;
-                case USE_THIRD:
-                    if( ItemSlotMain->Proto->Weapon_ActiveUses & 0x4 )
-                        break;
-                    continue;
-                case USE_RELOAD:
-                    if( ItemSlotMain->Proto->Weapon_MaxAmmoCount )
-                        break;
-                    continue;
-                case USE_USE:
-                    if( ItemSlotMain->IsCanUseOnSmth() )
-                        break;
-                    continue;
-                default:
-                    ItemSlotMain->Data.Mode = USE_PRIMARY;
-                    break;
                 }
                 break;
             }
@@ -995,27 +995,27 @@ void CritterCl::Move( int dir )
             {
                 switch( curSpr )
                 {
-                default:
-                case 0:
-                    beg_spr = 0;
-                    end_spr = 1;
-                    step = 1;
-                    break;
-                case 1:
-                    beg_spr = 2;
-                    end_spr = 3;
-                    step = 2;
-                    break;
-                case 3:
-                    beg_spr = 4;
-                    end_spr = 6;
-                    step = 3;
-                    break;
-                case 6:
-                    beg_spr = 7;
-                    end_spr = anim->CntFrm - 1;
-                    step = 4;
-                    break;
+                    default:
+                    case 0:
+                        beg_spr = 0;
+                        end_spr = 1;
+                        step = 1;
+                        break;
+                    case 1:
+                        beg_spr = 2;
+                        end_spr = 3;
+                        step = 2;
+                        break;
+                    case 3:
+                        beg_spr = 4;
+                        end_spr = 6;
+                        step = 3;
+                        break;
+                    case 6:
+                        beg_spr = 7;
+                        end_spr = anim->CntFrm - 1;
+                        step = 4;
+                        break;
                 }
             }
 
@@ -1105,42 +1105,42 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
 
     switch( action )
     {
-    case ACTION_KNOCKOUT:
-        Cond = COND_KNOCKOUT;
-        Anim2Knockout = action_ext;
+        case ACTION_KNOCKOUT:
+            Cond = COND_KNOCKOUT;
+            Anim2Knockout = action_ext;
+            break;
+        case ACTION_STANDUP:
+            Cond = COND_LIFE;
+            break;
+        case ACTION_DEAD:
+        {
+            Cond = COND_DEAD;
+            Anim2Dead = action_ext;
+            CritterAnim* anim = GetCurAnim();
+            needReSet = true;
+            reSetTick = Timer::GameTick() + ( anim && anim->Anim ? anim->Anim->Ticks : 1000 );
+        }
         break;
-    case ACTION_STANDUP:
-        Cond = COND_LIFE;
-        break;
-    case ACTION_DEAD:
-    {
-        Cond = COND_DEAD;
-        Anim2Dead = action_ext;
-        CritterAnim* anim = GetCurAnim();
-        needReSet = true;
-        reSetTick = Timer::GameTick() + ( anim && anim->Anim ? anim->Anim->Ticks : 1000 );
-    }
-    break;
-    case ACTION_CONNECT:
-        UNSETFLAG( Flags, FCRIT_DISCONNECT );
-        break;
-    case ACTION_DISCONNECT:
-        SETFLAG( Flags, FCRIT_DISCONNECT );
-        break;
-    case ACTION_RESPAWN:
-        Cond = COND_LIFE;
-        Alpha = 0;
-        SetFade( true );
-        AnimateStay();
-        needReSet = true;
-        reSetTick = Timer::GameTick();       // Fast
-        break;
-    case ACTION_REFRESH:
-        if( !IsAnim() )
+        case ACTION_CONNECT:
+            UNSETFLAG( Flags, FCRIT_DISCONNECT );
+            break;
+        case ACTION_DISCONNECT:
+            SETFLAG( Flags, FCRIT_DISCONNECT );
+            break;
+        case ACTION_RESPAWN:
+            Cond = COND_LIFE;
+            Alpha = 0;
+            SetFade( true );
             AnimateStay();
-        break;
-    default:
-        break;
+            needReSet = true;
+            reSetTick = Timer::GameTick();   // Fast
+            break;
+        case ACTION_REFRESH:
+            if( !IsAnim() )
+                AnimateStay();
+            break;
+        default:
+            break;
     }
 
     if( !IsAnim() )
@@ -1324,14 +1324,14 @@ uint CritterCl::GetAnim1( Item* anim_item /* = NULL */ )
 
     switch( Cond )
     {
-    case COND_LIFE:
-        return ( Anim1Life ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
-    case COND_KNOCKOUT:
-        return ( Anim1Knockout ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
-    case COND_DEAD:
-        return ( Anim1Dead ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
-    default:
-        break;
+        case COND_LIFE:
+            return ( Anim1Life ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
+        case COND_KNOCKOUT:
+            return ( Anim1Knockout ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
+        case COND_DEAD:
+            return ( Anim1Dead ) | ( anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED );
+        default:
+            break;
     }
     return ANIM1_UNARMED;
 }
@@ -1340,14 +1340,14 @@ uint CritterCl::GetAnim2()
 {
     switch( Cond )
     {
-    case COND_LIFE:
-        return Anim2Life ? Anim2Life : ( ( IsCombatMode() && GameOpt.Anim2CombatIdle ) ? GameOpt.Anim2CombatIdle : ANIM2_IDLE );
-    case COND_KNOCKOUT:
-        return Anim2Knockout ? Anim2Knockout : ANIM2_IDLE_PRONE_FRONT;
-    case COND_DEAD:
-        return Anim2Dead ? Anim2Dead : ANIM2_DEAD_FRONT;
-    default:
-        break;
+        case COND_LIFE:
+            return Anim2Life ? Anim2Life : ( ( IsCombatMode() && GameOpt.Anim2CombatIdle ) ? GameOpt.Anim2CombatIdle : ANIM2_IDLE );
+        case COND_KNOCKOUT:
+            return Anim2Knockout ? Anim2Knockout : ANIM2_IDLE_PRONE_FRONT;
+        case COND_DEAD:
+            return Anim2Dead ? Anim2Dead : ANIM2_DEAD_FRONT;
+        default:
+            break;
     }
     return ANIM2_IDLE;
 }

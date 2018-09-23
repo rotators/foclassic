@@ -1784,25 +1784,25 @@ void FOClient::InvLMouseUp()
         int from_slot = -1;
         switch( IfaceHold )
         {
-        case IFACE_INV_INV:
-            from_slot = SLOT_INV;
+            case IFACE_INV_INV:
+                from_slot = SLOT_INV;
+                break;
+            case IFACE_INV_SLOT1:
+                from_slot = SLOT_HAND1;
+                break;
+            case IFACE_INV_SLOT2:
+                from_slot = SLOT_HAND2;
+                break;
+            case IFACE_INV_ARMOR:
+                from_slot = SLOT_ARMOR;
+                break;
+            default:     // IFACE_INV_SLOTS_EXT:
+            {
+                Item* item = Chosen->GetItem( InvHoldId );
+                if( item )
+                    from_slot = item->AccCritter.Slot;
+            }
             break;
-        case IFACE_INV_SLOT1:
-            from_slot = SLOT_HAND1;
-            break;
-        case IFACE_INV_SLOT2:
-            from_slot = SLOT_HAND2;
-            break;
-        case IFACE_INV_ARMOR:
-            from_slot = SLOT_ARMOR;
-            break;
-        default:         // IFACE_INV_SLOTS_EXT:
-        {
-            Item* item = Chosen->GetItem( InvHoldId );
-            if( item )
-                from_slot = item->AccCritter.Slot;
-        }
-        break;
         }
         IfaceHold = IFACE_NONE;
 
@@ -1971,48 +1971,48 @@ void FOClient::UseLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_USE_INV:
-        if( !IsCurInRect( UseWInv, UseX, UseY ) || !IsCurMode( CUR_HAND ) || !UseHoldId )
-            break;
+        case IFACE_USE_INV:
+            if( !IsCurInRect( UseWInv, UseX, UseY ) || !IsCurMode( CUR_HAND ) || !UseHoldId )
+                break;
 
-        if( ShowScreenType )
-        {
-            if( ShowScreenNeedAnswer )
-                Net_SendScreenAnswer( UseHoldId, "" );
-        }
-        else
-        {
-            if( UseSelect.IsCritter() )
+            if( ShowScreenType )
             {
-                AddActionBack( CHOSEN_USE_ITEM, UseHoldId, 0, TARGET_CRITTER, UseSelect.GetId(), USE_USE );
+                if( ShowScreenNeedAnswer )
+                    Net_SendScreenAnswer( UseHoldId, "" );
             }
-            else if( UseSelect.IsItem() )
+            else
             {
-                ItemHex* item = GetItem( UseSelect.GetId() );
-                if( item )
-                    AddActionBack( CHOSEN_USE_ITEM, UseHoldId, 0, item->IsItem() ? TARGET_ITEM : TARGET_SCENERY, UseSelect.GetId(), USE_USE );
+                if( UseSelect.IsCritter() )
+                {
+                    AddActionBack( CHOSEN_USE_ITEM, UseHoldId, 0, TARGET_CRITTER, UseSelect.GetId(), USE_USE );
+                }
+                else if( UseSelect.IsItem() )
+                {
+                    ItemHex* item = GetItem( UseSelect.GetId() );
+                    if( item )
+                        AddActionBack( CHOSEN_USE_ITEM, UseHoldId, 0, item->IsItem() ? TARGET_ITEM : TARGET_SCENERY, UseSelect.GetId(), USE_USE );
+                }
             }
-        }
 
-        ShowScreen( SCREEN_NONE );
-        break;
-    case IFACE_USE_SCRUP:
-        if( !IsCurInRect( UseBScrUp, UseX, UseY ) || UseScroll <= 0 )
+            ShowScreen( SCREEN_NONE );
             break;
-        UseScroll--;
-        break;
-    case IFACE_USE_SCRDW:
-        if( !IsCurInRect( UseBScrDown, UseX, UseY ) || UseScroll >= (int)UseCont.size() - UseWInv.H() / UseHeightItem )
+        case IFACE_USE_SCRUP:
+            if( !IsCurInRect( UseBScrUp, UseX, UseY ) || UseScroll <= 0 )
+                break;
+            UseScroll--;
             break;
-        UseScroll++;
-        break;
-    case IFACE_USE_CANCEL:
-        if( !IsCurInRect( UseBCancel, UseX, UseY ) )
+        case IFACE_USE_SCRDW:
+            if( !IsCurInRect( UseBScrDown, UseX, UseY ) || UseScroll >= (int)UseCont.size() - UseWInv.H() / UseHeightItem )
+                break;
+            UseScroll++;
             break;
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        break;
+        case IFACE_USE_CANCEL:
+            if( !IsCurInRect( UseBCancel, UseX, UseY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
+            break;
+        default:
+            break;
     }
 
     UseHoldId = 0;
@@ -2179,33 +2179,33 @@ void FOClient::ConsoleKeyDown( uchar dik, const char* dik_text )
 
     switch( dik )
     {
-    case DIK_UP:
-        if( ConsoleHistoryCur - 1 < 0 )
+        case DIK_UP:
+            if( ConsoleHistoryCur - 1 < 0 )
+                return;
+            ConsoleHistoryCur--;
+            ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
+            ConsoleCur = (uint)ConsoleStr.length();
             return;
-        ConsoleHistoryCur--;
-        ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
-        ConsoleCur = (uint)ConsoleStr.length();
-        return;
-    case DIK_DOWN:
-        if( ConsoleHistoryCur + 1 >= (int)ConsoleHistory.size() )
-        {
-            ConsoleHistoryCur = (int)ConsoleHistory.size();
-            ConsoleStr = "";
-            ConsoleCur = 0;
+        case DIK_DOWN:
+            if( ConsoleHistoryCur + 1 >= (int)ConsoleHistory.size() )
+            {
+                ConsoleHistoryCur = (int)ConsoleHistory.size();
+                ConsoleStr = "";
+                ConsoleCur = 0;
+                return;
+            }
+            ConsoleHistoryCur++;
+            ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
+            ConsoleCur = (uint)ConsoleStr.length();
             return;
-        }
-        ConsoleHistoryCur++;
-        ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
-        ConsoleCur = (uint)ConsoleStr.length();
-        return;
-    default:
-        Keyb::GetChar( dik, dik_text, ConsoleStr, &ConsoleCur, MAX_CHAT_MESSAGE, KIF_NO_SPEC_SYMBOLS );
-        if( dik == DIK_PAUSE )
-            break;
-        ConsoleLastKey = dik;
-        ConsoleLastKeyText = dik_text;
-        Timer::StartAccelerator( ACCELERATE_CONSOLE );
-        return;
+        default:
+            Keyb::GetChar( dik, dik_text, ConsoleStr, &ConsoleCur, MAX_CHAT_MESSAGE, KIF_NO_SPEC_SYMBOLS );
+            if( dik == DIK_PAUSE )
+                break;
+            ConsoleLastKey = dik;
+            ConsoleLastKeyText = dik_text;
+            Timer::StartAccelerator( ACCELERATE_CONSOLE );
+            return;
     }
 }
 
@@ -2335,104 +2335,104 @@ void FOClient::GameKeyDown( uchar dik, const char* dik_text )
             #define CHOSEN_ANIMATE( anim2 ) \
                 if( Chosen )                \
                     Chosen->Animate( 0, anim_offs + ( anim2 ), NULL )
-        case DIK_0:
-            if( Keyb::CtrlDwn )
-                anim_offs = 0;
-            else
-                CHOSEN_ANIMATE( 0 );
-            break;
-        case DIK_1:
-            if( Keyb::CtrlDwn )
-                anim_offs = 10;
-            else
-                CHOSEN_ANIMATE( 1 );
-            break;
-        case DIK_2:
-            if( Keyb::CtrlDwn )
-                anim_offs = 20;
-            else
-                CHOSEN_ANIMATE( 2 );
-            break;
-        case DIK_3:
-            if( Keyb::CtrlDwn )
-                anim_offs = 30;
-            else
-                CHOSEN_ANIMATE( 3 );
-            break;
-        case DIK_4:
-            if( Keyb::CtrlDwn )
-                anim_offs = 40;
-            else
-                CHOSEN_ANIMATE( 4 );
-            break;
-        case DIK_5:
-            if( Keyb::CtrlDwn )
-                anim_offs = 50;
-            else
-                CHOSEN_ANIMATE( 5 );
-            break;
-        case DIK_6:
-            if( Keyb::CtrlDwn )
-                anim_offs = 60;
-            else
-                CHOSEN_ANIMATE( 6 );
-            break;
-        case DIK_7:
-            if( Keyb::CtrlDwn )
-                anim_offs = 70;
-            else
-                CHOSEN_ANIMATE( 7 );
-            break;
-        case DIK_8:
-            if( Keyb::CtrlDwn )
-                anim_offs = 80;
-            else
-                CHOSEN_ANIMATE( 8 );
-            break;
-        case DIK_9:
-            if( Keyb::CtrlDwn )
-                anim_offs = 90;
-            else
-                CHOSEN_ANIMATE( 9 );
-            break;
-        case DIK_A:
-            if( Keyb::CtrlDwn )
-                anim_offs = 100;
-            else
-                CHOSEN_ANIMATE( 10 );
-            break;
-        case DIK_B:
-            if( Keyb::CtrlDwn )
-                anim_offs = 110;
-            else
-                CHOSEN_ANIMATE( 11 );
-            break;
-        case DIK_C:
-            if( Keyb::CtrlDwn )
-                anim_offs = 120;
-            else
-                CHOSEN_ANIMATE( 12 );
-            break;
-        case DIK_D:
-            if( Keyb::CtrlDwn )
-                anim_offs = 130;
-            else
-                CHOSEN_ANIMATE( 13 );
-            break;
-        case DIK_E:
-            if( Keyb::CtrlDwn )
-                anim_offs = 140;
-            else
-                CHOSEN_ANIMATE( 14 );
-            break;
-        case DIK_F:
-            if( Keyb::CtrlDwn )
-                anim_offs = 150;
-            else
-                CHOSEN_ANIMATE( 15 );
-            break;
-        default:
-            break;
+            case DIK_0:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 0;
+                else
+                    CHOSEN_ANIMATE( 0 );
+                break;
+            case DIK_1:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 10;
+                else
+                    CHOSEN_ANIMATE( 1 );
+                break;
+            case DIK_2:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 20;
+                else
+                    CHOSEN_ANIMATE( 2 );
+                break;
+            case DIK_3:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 30;
+                else
+                    CHOSEN_ANIMATE( 3 );
+                break;
+            case DIK_4:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 40;
+                else
+                    CHOSEN_ANIMATE( 4 );
+                break;
+            case DIK_5:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 50;
+                else
+                    CHOSEN_ANIMATE( 5 );
+                break;
+            case DIK_6:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 60;
+                else
+                    CHOSEN_ANIMATE( 6 );
+                break;
+            case DIK_7:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 70;
+                else
+                    CHOSEN_ANIMATE( 7 );
+                break;
+            case DIK_8:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 80;
+                else
+                    CHOSEN_ANIMATE( 8 );
+                break;
+            case DIK_9:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 90;
+                else
+                    CHOSEN_ANIMATE( 9 );
+                break;
+            case DIK_A:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 100;
+                else
+                    CHOSEN_ANIMATE( 10 );
+                break;
+            case DIK_B:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 110;
+                else
+                    CHOSEN_ANIMATE( 11 );
+                break;
+            case DIK_C:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 120;
+                else
+                    CHOSEN_ANIMATE( 12 );
+                break;
+            case DIK_D:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 130;
+                else
+                    CHOSEN_ANIMATE( 13 );
+                break;
+            case DIK_E:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 140;
+                else
+                    CHOSEN_ANIMATE( 14 );
+                break;
+            case DIK_F:
+                if( Keyb::CtrlDwn )
+                    anim_offs = 150;
+                else
+                    CHOSEN_ANIMATE( 15 );
+                break;
+            default:
+                break;
         }
 
         return;
@@ -2443,127 +2443,127 @@ void FOClient::GameKeyDown( uchar dik, const char* dik_text )
 
     switch( dik )
     {
-    case DIK_EQUALS:
-    case DIK_ADD:
-        GameOpt.Light += 5;
-        if( GameOpt.Light > 50 )
-            GameOpt.Light = 50;
-        SetDayTime( true );
-        break;
-    case DIK_MINUS:
-    case DIK_SUBTRACT:
-        GameOpt.Light -= 5;
-        if( GameOpt.Light < 0 )
-            GameOpt.Light = 0;
-        SetDayTime( true );
-        break;
-    default:
-        break;
+        case DIK_EQUALS:
+        case DIK_ADD:
+            GameOpt.Light += 5;
+            if( GameOpt.Light > 50 )
+                GameOpt.Light = 50;
+            SetDayTime( true );
+            break;
+        case DIK_MINUS:
+        case DIK_SUBTRACT:
+            GameOpt.Light -= 5;
+            if( GameOpt.Light < 0 )
+                GameOpt.Light = 0;
+            SetDayTime( true );
+            break;
+        default:
+            break;
     }
 
     if( Chosen )
     {
         switch( dik )
         {
-        // Hot keys
-        case DIK_A:
-            if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES )
-                SetCurMode( CUR_USE_WEAPON );
-            break;
-        case DIK_C:
-            ShowScreen( SCREEN__CHARACTER );
-            if( Chosen->Params[ST_UNSPENT_PERKS] )
-                ShowScreen( SCREEN__PERK );
-            break;
-        case DIK_G:
-            TryPickItemOnGround();
-            break;
-        case DIK_T:
-            GameOpt.ShowGroups = !GameOpt.ShowGroups;
-            break;
-        case DIK_I:
-            ShowScreen( SCREEN__INVENTORY );
-            break;
-        case DIK_P:
-            ShowScreen( SCREEN__PIP_BOY );
-            break;
-        case DIK_F:
-            ShowScreen( SCREEN__FIX_BOY );
-            break;
-        // case DIK_Z: PipBoy clock
-        case DIK_O:
-            ShowScreen( SCREEN__MENU_OPTION );
-            break;
-        case DIK_B:
-            ChosenChangeSlot();
-            break;
-        case DIK_M:
-            IfaceHold = IFACE_GAME_MNEXT;
-            GameRMouseUp();
-            break;
-        case DIK_N:
-            if( Chosen->NextRateItem( false ) )
-                Net_SendRateItem();
-            break;
-        case DIK_S:
-            SboxUseOn.Clear();
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case DIK_SLASH:
-            AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
-            break;
-        case DIK_COMMA:
-            SetAction( CHOSEN_DIR, 1 /*CW*/ );
-            break;
-        case DIK_PERIOD:
-            SetAction( CHOSEN_DIR, 0 /*CCW*/ );
-            break;
-        case DIK_TAB:
-            ShowScreen( SCREEN__MINI_MAP );
-            break;
-        case DIK_HOME:
-            HexMngr.ScrollToHex( Chosen->HexX, Chosen->HexY, 0.1, true );
-            break;
-        case DIK_SCROLL:
-            if( HexMngr.AutoScroll.LockedCritter )
-                HexMngr.AutoScroll.LockedCritter = 0;
-            else
-                HexMngr.AutoScroll.LockedCritter = Chosen->GetId();
-            break;
-        // Skills
-        case DIK_1:
-            SetAction( CHOSEN_USE_SKL_ON_CRITTER, SK_SNEAK );
-            break;
-        case DIK_2:
-            CurSkill = SK_LOCKPICK;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_3:
-            CurSkill = SK_STEAL;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_4:
-            CurSkill = SK_TRAPS;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_5:
-            CurSkill = SK_FIRST_AID;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_6:
-            CurSkill = SK_DOCTOR;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_7:
-            CurSkill = SK_SCIENCE;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        case DIK_8:
-            CurSkill = SK_REPAIR;
-            SetCurMode( CUR_USE_SKILL );
-            break;
-        default:
-            break;
+            // Hot keys
+            case DIK_A:
+                if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES )
+                    SetCurMode( CUR_USE_WEAPON );
+                break;
+            case DIK_C:
+                ShowScreen( SCREEN__CHARACTER );
+                if( Chosen->Params[ST_UNSPENT_PERKS] )
+                    ShowScreen( SCREEN__PERK );
+                break;
+            case DIK_G:
+                TryPickItemOnGround();
+                break;
+            case DIK_T:
+                GameOpt.ShowGroups = !GameOpt.ShowGroups;
+                break;
+            case DIK_I:
+                ShowScreen( SCREEN__INVENTORY );
+                break;
+            case DIK_P:
+                ShowScreen( SCREEN__PIP_BOY );
+                break;
+            case DIK_F:
+                ShowScreen( SCREEN__FIX_BOY );
+                break;
+            // case DIK_Z: PipBoy clock
+            case DIK_O:
+                ShowScreen( SCREEN__MENU_OPTION );
+                break;
+            case DIK_B:
+                ChosenChangeSlot();
+                break;
+            case DIK_M:
+                IfaceHold = IFACE_GAME_MNEXT;
+                GameRMouseUp();
+                break;
+            case DIK_N:
+                if( Chosen->NextRateItem( false ) )
+                    Net_SendRateItem();
+                break;
+            case DIK_S:
+                SboxUseOn.Clear();
+                ShowScreen( SCREEN__SKILLBOX );
+                break;
+            case DIK_SLASH:
+                AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
+                break;
+            case DIK_COMMA:
+                SetAction( CHOSEN_DIR, 1 /*CW*/ );
+                break;
+            case DIK_PERIOD:
+                SetAction( CHOSEN_DIR, 0 /*CCW*/ );
+                break;
+            case DIK_TAB:
+                ShowScreen( SCREEN__MINI_MAP );
+                break;
+            case DIK_HOME:
+                HexMngr.ScrollToHex( Chosen->HexX, Chosen->HexY, 0.1, true );
+                break;
+            case DIK_SCROLL:
+                if( HexMngr.AutoScroll.LockedCritter )
+                    HexMngr.AutoScroll.LockedCritter = 0;
+                else
+                    HexMngr.AutoScroll.LockedCritter = Chosen->GetId();
+                break;
+            // Skills
+            case DIK_1:
+                SetAction( CHOSEN_USE_SKL_ON_CRITTER, SK_SNEAK );
+                break;
+            case DIK_2:
+                CurSkill = SK_LOCKPICK;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_3:
+                CurSkill = SK_STEAL;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_4:
+                CurSkill = SK_TRAPS;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_5:
+                CurSkill = SK_FIRST_AID;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_6:
+                CurSkill = SK_DOCTOR;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_7:
+                CurSkill = SK_SCIENCE;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            case DIK_8:
+                CurSkill = SK_REPAIR;
+                SetCurMode( CUR_USE_SKILL );
+                break;
+            default:
+                break;
         }
     }
 }
@@ -2677,27 +2677,27 @@ void FOClient::GameRMouseUp()
     {
         switch( GetCurMode() )
         {
-        case CUR_DEFAULT:
-            SetCurMode( CUR_MOVE );
-            break;
-        case CUR_MOVE:
-            if( Chosen->GetParam( TO_BATTLE ) && Chosen->ItemSlotMain->IsWeapon() )
-                SetCurMode( CUR_USE_WEAPON );
-            else
+            case CUR_DEFAULT:
+                SetCurMode( CUR_MOVE );
+                break;
+            case CUR_MOVE:
+                if( Chosen->GetParam( TO_BATTLE ) && Chosen->ItemSlotMain->IsWeapon() )
+                    SetCurMode( CUR_USE_WEAPON );
+                else
+                    SetCurMode( CUR_DEFAULT );
+                break;
+            case CUR_USE_ITEM:
                 SetCurMode( CUR_DEFAULT );
-            break;
-        case CUR_USE_ITEM:
-            SetCurMode( CUR_DEFAULT );
-            break;
-        case CUR_USE_WEAPON:
-            SetCurMode( CUR_DEFAULT );
-            break;
-        case CUR_USE_SKILL:
-            SetCurMode( CUR_MOVE );
-            break;
-        default:
-            SetCurMode( CUR_DEFAULT );
-            break;
+                break;
+            case CUR_USE_WEAPON:
+                SetCurMode( CUR_DEFAULT );
+                break;
+            case CUR_USE_SKILL:
+                SetCurMode( CUR_MOVE );
+                break;
+            default:
+                SetCurMode( CUR_DEFAULT );
+                break;
         }
     }
     IfaceHold = IFACE_NONE;
@@ -2740,53 +2740,53 @@ void FOClient::IntDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_INT_CHSLOT:
-        SprMngr.DrawSprite( IntPBSlotsDn, IntBChangeSlot[0], IntBChangeSlot[1] );
-        break;
-    case IFACE_INT_INV:
-        SprMngr.DrawSprite( IntPBInvDn, IntBInv[0], IntBInv[1] );
-        break;
-    case IFACE_INT_MENU:
-        SprMngr.DrawSprite( IntPBMenuDn, IntBMenu[0], IntBMenu[1] );
-        break;
-    case IFACE_INT_SKILL:
-        SprMngr.DrawSprite( IntPBSkillDn, IntBSkill[0], IntBSkill[1] );
-        break;
-    case IFACE_INT_MAP:
-        SprMngr.DrawSprite( IntPBMapDn, IntBMap[0], IntBMap[1] );
-        break;
-    case IFACE_INT_CHAR:
-        SprMngr.DrawSprite( IntPBChaDn, IntBChar[0], IntBChar[1] );
-        break;
-    case IFACE_INT_PIP:
-        SprMngr.DrawSprite( IntPBPipDn, IntBPip[0], IntBPip[1] );
-        break;
-    case IFACE_INT_FIX:
-        SprMngr.DrawSprite( IntPBFixDn, IntBFix[0], IntBFix[1] );
-        break;
-    case IFACE_INT_ITEM:
-        SprMngr.DrawSprite( IntBItemPicDn, IntBItem[0], IntBItem[1] );
-        break;
-    case IFACE_INT_ADDMESS:
-        SprMngr.DrawSprite( IntPBAddMessDn, IntBAddMess[0], IntBAddMess[1] );
-        break;
-    case IFACE_INT_FILTER1:
-        SprMngr.DrawSprite( IntPBMessFilter1Dn, IntBMessFilter1[0], IntBMessFilter1[1] );
-        break;
-    case IFACE_INT_FILTER2:
-        SprMngr.DrawSprite( IntPBMessFilter2Dn, IntBMessFilter2[0], IntBMessFilter2[1] );
-        break;
-    case IFACE_INT_FILTER3:
-        SprMngr.DrawSprite( IntPBMessFilter3Dn, IntBMessFilter3[0], IntBMessFilter3[1] );
-        break;
-    case IFACE_INT_COMBAT_TURN:
-        SprMngr.DrawSprite( IntBCombatTurnPicDown, IntBCombatTurn[0], IntBCombatTurn[1] );
-        break;
-    case IFACE_INT_COMBAT_END:
-        SprMngr.DrawSprite( IntBCombatEndPicDown, IntBCombatEnd[0], IntBCombatEnd[1] );
-        break;
-    default:
-        break;
+        case IFACE_INT_CHSLOT:
+            SprMngr.DrawSprite( IntPBSlotsDn, IntBChangeSlot[0], IntBChangeSlot[1] );
+            break;
+        case IFACE_INT_INV:
+            SprMngr.DrawSprite( IntPBInvDn, IntBInv[0], IntBInv[1] );
+            break;
+        case IFACE_INT_MENU:
+            SprMngr.DrawSprite( IntPBMenuDn, IntBMenu[0], IntBMenu[1] );
+            break;
+        case IFACE_INT_SKILL:
+            SprMngr.DrawSprite( IntPBSkillDn, IntBSkill[0], IntBSkill[1] );
+            break;
+        case IFACE_INT_MAP:
+            SprMngr.DrawSprite( IntPBMapDn, IntBMap[0], IntBMap[1] );
+            break;
+        case IFACE_INT_CHAR:
+            SprMngr.DrawSprite( IntPBChaDn, IntBChar[0], IntBChar[1] );
+            break;
+        case IFACE_INT_PIP:
+            SprMngr.DrawSprite( IntPBPipDn, IntBPip[0], IntBPip[1] );
+            break;
+        case IFACE_INT_FIX:
+            SprMngr.DrawSprite( IntPBFixDn, IntBFix[0], IntBFix[1] );
+            break;
+        case IFACE_INT_ITEM:
+            SprMngr.DrawSprite( IntBItemPicDn, IntBItem[0], IntBItem[1] );
+            break;
+        case IFACE_INT_ADDMESS:
+            SprMngr.DrawSprite( IntPBAddMessDn, IntBAddMess[0], IntBAddMess[1] );
+            break;
+        case IFACE_INT_FILTER1:
+            SprMngr.DrawSprite( IntPBMessFilter1Dn, IntBMessFilter1[0], IntBMessFilter1[1] );
+            break;
+        case IFACE_INT_FILTER2:
+            SprMngr.DrawSprite( IntPBMessFilter2Dn, IntBMessFilter2[0], IntBMessFilter2[1] );
+            break;
+        case IFACE_INT_FILTER3:
+            SprMngr.DrawSprite( IntPBMessFilter3Dn, IntBMessFilter3[0], IntBMessFilter3[1] );
+            break;
+        case IFACE_INT_COMBAT_TURN:
+            SprMngr.DrawSprite( IntBCombatTurnPicDown, IntBCombatTurn[0], IntBCombatTurn[1] );
+            break;
+        case IFACE_INT_COMBAT_END:
+            SprMngr.DrawSprite( IntBCombatEndPicDown, IntBCombatEnd[0], IntBCombatEnd[1] );
+            break;
+        default:
+            break;
     }
 
     if( IsTurnBased && Chosen->IsRawParam( MODE_END_COMBAT ) )
@@ -3480,14 +3480,14 @@ void FOClient::DlgDraw( bool is_dialog )
     {
         switch( IfaceHold )
         {
-        case IFACE_DLG_BARTER:
-            SprMngr.DrawSprite( DlgPBBarter, DlgBBarter[0] + DlgX, DlgBBarter[1] + DlgY );
-            break;
-        case IFACE_DLG_SAY:
-            SprMngr.DrawSprite( DlgPBSay, DlgBSay[0] + DlgX, DlgBSay[1] + DlgY );
-            break;
-        default:
-            break;
+            case IFACE_DLG_BARTER:
+                SprMngr.DrawSprite( DlgPBBarter, DlgBBarter[0] + DlgX, DlgBBarter[1] + DlgY );
+                break;
+            case IFACE_DLG_SAY:
+                SprMngr.DrawSprite( DlgPBSay, DlgBSay[0] + DlgX, DlgBSay[1] + DlgY );
+                break;
+            default:
+                break;
         }
 
         // Texts
@@ -3519,38 +3519,38 @@ void FOClient::DlgDraw( bool is_dialog )
 
         switch( IfaceHold )
         {
-        case IFACE_BARTER_OFFER:
-            SprMngr.DrawSprite( BarterPBOfferDn, BarterBOffer[0] + DlgX, BarterBOffer[1] + DlgY );
-            break;
-        case IFACE_BARTER_TALK:
-            SprMngr.DrawSprite( BarterPBTalkDn, BarterBTalk[0] + DlgX, BarterBTalk[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT1SU:
-            SprMngr.DrawSprite( BarterPBC1ScrUpDn, BarterBCont1ScrUp[0] + DlgX, BarterBCont1ScrUp[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT1SD:
-            SprMngr.DrawSprite( BarterPBC1ScrDnDn, BarterBCont1ScrDn[0] + DlgX, BarterBCont1ScrDn[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT2SU:
-            SprMngr.DrawSprite( BarterPBC2ScrUpDn, BarterBCont2ScrUp[0] + DlgX, BarterBCont2ScrUp[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT2SD:
-            SprMngr.DrawSprite( BarterPBC2ScrDnDn, BarterBCont2ScrDn[0] + DlgX, BarterBCont2ScrDn[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT1OSU:
-            SprMngr.DrawSprite( BarterPBC1oScrUpDn, BarterBCont1oScrUp[0] + DlgX, BarterBCont1oScrUp[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT1OSD:
-            SprMngr.DrawSprite( BarterPBC1oScrDnDn, BarterBCont1oScrDn[0] + DlgX, BarterBCont1oScrDn[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT2OSU:
-            SprMngr.DrawSprite( BarterPBC2oScrUpDn, BarterBCont2oScrUp[0] + DlgX, BarterBCont2oScrUp[1] + DlgY );
-            break;
-        case IFACE_BARTER_CONT2OSD:
-            SprMngr.DrawSprite( BarterPBC2oScrDnDn, BarterBCont2oScrDn[0] + DlgX, BarterBCont2oScrDn[1] + DlgY );
-            break;
-        default:
-            break;
+            case IFACE_BARTER_OFFER:
+                SprMngr.DrawSprite( BarterPBOfferDn, BarterBOffer[0] + DlgX, BarterBOffer[1] + DlgY );
+                break;
+            case IFACE_BARTER_TALK:
+                SprMngr.DrawSprite( BarterPBTalkDn, BarterBTalk[0] + DlgX, BarterBTalk[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT1SU:
+                SprMngr.DrawSprite( BarterPBC1ScrUpDn, BarterBCont1ScrUp[0] + DlgX, BarterBCont1ScrUp[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT1SD:
+                SprMngr.DrawSprite( BarterPBC1ScrDnDn, BarterBCont1ScrDn[0] + DlgX, BarterBCont1ScrDn[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT2SU:
+                SprMngr.DrawSprite( BarterPBC2ScrUpDn, BarterBCont2ScrUp[0] + DlgX, BarterBCont2ScrUp[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT2SD:
+                SprMngr.DrawSprite( BarterPBC2ScrDnDn, BarterBCont2ScrDn[0] + DlgX, BarterBCont2ScrDn[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT1OSU:
+                SprMngr.DrawSprite( BarterPBC1oScrUpDn, BarterBCont1oScrUp[0] + DlgX, BarterBCont1oScrUp[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT1OSD:
+                SprMngr.DrawSprite( BarterPBC1oScrDnDn, BarterBCont1oScrDn[0] + DlgX, BarterBCont1oScrDn[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT2OSU:
+                SprMngr.DrawSprite( BarterPBC2oScrUpDn, BarterBCont2oScrUp[0] + DlgX, BarterBCont2oScrUp[1] + DlgY );
+                break;
+            case IFACE_BARTER_CONT2OSD:
+                SprMngr.DrawSprite( BarterPBC2oScrDnDn, BarterBCont2oScrDn[0] + DlgX, BarterBCont2oScrDn[1] + DlgY );
+                break;
+            default:
+                break;
         }
 
         Chosen->DrawStay( Rect( BarterWChosen, DlgX, DlgY ) );
@@ -3982,68 +3982,68 @@ void FOClient::DlgKeyDown( bool is_dialog, uchar dik, const char* dik_text )
     int num = -1;
     switch( dik )
     {
-    case DIK_ESCAPE:
-    case DIK_0:
-    case DIK_NUMPAD0:
-        if( BarterIsPlayers )
-        {
-            Net_SendPlayersBarter( BARTER_END, 0, 0 );
-            ShowScreen( SCREEN_NONE );
-        }
-        else
-        {
-            Net_SendTalk( DlgIsNpc, DlgNpcId, ANSWER_END );
-            WaitPing();
-        }
-        CollectContItems();
-        return;
-    case DIK_INSERT:
-        BarterTryOffer();
-        return;
-    case DIK_1:
-    case DIK_NUMPAD1:
-        num = 0;
-        break;
-    case DIK_2:
-    case DIK_NUMPAD2:
-        num = 1;
-        break;
-    case DIK_3:
-    case DIK_NUMPAD3:
-        num = 2;
-        break;
-    case DIK_4:
-    case DIK_NUMPAD4:
-        num = 3;
-        break;
-    case DIK_5:
-    case DIK_NUMPAD5:
-        num = 4;
-        break;
-    case DIK_6:
-    case DIK_NUMPAD6:
-        num = 5;
-        break;
-    case DIK_7:
-    case DIK_NUMPAD7:
-        num = 6;
-        break;
-    case DIK_8:
-    case DIK_NUMPAD8:
-        num = 7;
-        break;
-    case DIK_9:
-    case DIK_NUMPAD9:
-        num = 8;
-        break;
-    case DIK_UP:
-        DlgCollectAnswers( false );
-        return;
-    case DIK_DOWN:
-        DlgCollectAnswers( true );
-        return;
-    default:
-        return;
+        case DIK_ESCAPE:
+        case DIK_0:
+        case DIK_NUMPAD0:
+            if( BarterIsPlayers )
+            {
+                Net_SendPlayersBarter( BARTER_END, 0, 0 );
+                ShowScreen( SCREEN_NONE );
+            }
+            else
+            {
+                Net_SendTalk( DlgIsNpc, DlgNpcId, ANSWER_END );
+                WaitPing();
+            }
+            CollectContItems();
+            return;
+        case DIK_INSERT:
+            BarterTryOffer();
+            return;
+        case DIK_1:
+        case DIK_NUMPAD1:
+            num = 0;
+            break;
+        case DIK_2:
+        case DIK_NUMPAD2:
+            num = 1;
+            break;
+        case DIK_3:
+        case DIK_NUMPAD3:
+            num = 2;
+            break;
+        case DIK_4:
+        case DIK_NUMPAD4:
+            num = 3;
+            break;
+        case DIK_5:
+        case DIK_NUMPAD5:
+            num = 4;
+            break;
+        case DIK_6:
+        case DIK_NUMPAD6:
+            num = 5;
+            break;
+        case DIK_7:
+        case DIK_NUMPAD7:
+            num = 6;
+            break;
+        case DIK_8:
+        case DIK_NUMPAD8:
+            num = 7;
+            break;
+        case DIK_9:
+        case DIK_NUMPAD9:
+            num = 8;
+            break;
+        case DIK_UP:
+            DlgCollectAnswers( false );
+            return;
+        case DIK_DOWN:
+            DlgCollectAnswers( true );
+            return;
+        default:
+            return;
     }
 
     if( is_dialog && num < (int)DlgAnswers.size() )
@@ -4126,24 +4126,24 @@ void FOClient::BarterTransfer( uint item_id, int item_cont, uint item_count )
 
     switch( item_cont )
     {
-    case IFACE_BARTER_CONT1:
-        from_cont = &InvContInit;
-        to_cont = &BarterCont1oInit;
-        break;
-    case IFACE_BARTER_CONT2:
-        from_cont = &BarterCont2Init;
-        to_cont = &BarterCont2oInit;
-        break;
-    case IFACE_BARTER_CONT1O:
-        from_cont = &BarterCont1oInit;
-        to_cont = &InvContInit;
-        break;
-    case IFACE_BARTER_CONT2O:
-        from_cont = &BarterCont2oInit;
-        to_cont = &BarterCont2Init;
-        break;
-    default:
-        return;
+        case IFACE_BARTER_CONT1:
+            from_cont = &InvContInit;
+            to_cont = &BarterCont1oInit;
+            break;
+        case IFACE_BARTER_CONT2:
+            from_cont = &BarterCont2Init;
+            to_cont = &BarterCont2oInit;
+            break;
+        case IFACE_BARTER_CONT1O:
+            from_cont = &BarterCont1oInit;
+            to_cont = &InvContInit;
+            break;
+        case IFACE_BARTER_CONT2O:
+            from_cont = &BarterCont2oInit;
+            to_cont = &BarterCont2Init;
+            break;
+        default:
+            return;
     }
 
     auto it = std::find( from_cont->begin(), from_cont->end(), item_id );
@@ -4181,24 +4181,24 @@ void FOClient::BarterTransfer( uint item_id, int item_cont, uint item_count )
 
     switch( item_cont )
     {
-    case IFACE_BARTER_CONT1:
-        if( BarterIsPlayers )
-            Net_SendPlayersBarter( BARTER_SET_SELF, item_id, item_count );
-        break;
-    case IFACE_BARTER_CONT2:
-        if( BarterIsPlayers )
-            Net_SendPlayersBarter( BARTER_SET_OPPONENT, item_id, item_count );
-        break;
-    case IFACE_BARTER_CONT1O:
-        if( BarterIsPlayers )
-            Net_SendPlayersBarter( BARTER_UNSET_SELF, item_id, item_count );
-        break;
-    case IFACE_BARTER_CONT2O:
-        if( BarterIsPlayers )
-            Net_SendPlayersBarter( BARTER_UNSET_OPPONENT, item_id, item_count );
-        break;
-    default:
-        break;
+        case IFACE_BARTER_CONT1:
+            if( BarterIsPlayers )
+                Net_SendPlayersBarter( BARTER_SET_SELF, item_id, item_count );
+            break;
+        case IFACE_BARTER_CONT2:
+            if( BarterIsPlayers )
+                Net_SendPlayersBarter( BARTER_SET_OPPONENT, item_id, item_count );
+            break;
+        case IFACE_BARTER_CONT1O:
+            if( BarterIsPlayers )
+                Net_SendPlayersBarter( BARTER_UNSET_SELF, item_id, item_count );
+            break;
+        case IFACE_BARTER_CONT2O:
+            if( BarterIsPlayers )
+                Net_SendPlayersBarter( BARTER_UNSET_OPPONENT, item_id, item_count );
+            break;
+        default:
+            break;
     }
 }
 
@@ -4262,137 +4262,137 @@ void FOClient::FormatTags( char* text, size_t text_len, CritterCl* player, Critt
     {
         switch( str[i] )
         {
-        case '#':
-        {
-            str[i] = '\n';
-        }
-        break;
-        case '|':
-        {
-            if( sex_tags )
+            case '#':
             {
-                Str::CopyWord( tag, &str[i + 1], '|', false );
+                str[i] = '\n';
+            }
+            break;
+            case '|':
+            {
+                if( sex_tags )
+                {
+                    Str::CopyWord( tag, &str[i + 1], '|', false );
+                    Str::EraseInterval( &str[i], Str::Length( tag ) + 2 );
+
+                    if( sex )
+                    {
+                        if( sex == 1 )
+                        {
+                            if( Str::Length( str ) + Str::Length( tag ) < text_len )
+                                Str::Insert( &str[i], tag );
+                            // i+=strlen(tag);
+                        }
+                        sex--;
+                    }
+                    continue;
+                }
+            }
+            break;
+            case '@':
+            {
+                if( str[i + 1] == '@' )
+                {
+                    str[i] = 0;
+                    dialogs.push_back( str );
+                    str = &str[i + 2];
+                    i = 0;
+                    continue;
+                }
+
+                tag[0] = 0;
+                Str::CopyWord( tag, &str[i + 1], '@', false );
                 Str::EraseInterval( &str[i], Str::Length( tag ) + 2 );
 
-                if( sex )
+                if( !Str::Length( tag ) )
+                    break;
+
+                // Player name
+                if( Str::CompareCase( tag, "pname" ) )
                 {
-                    if( sex == 1 )
+                    Str::Copy( tag, player ? player->GetName() : "" );
+                }
+                // Npc name
+                else if( Str::CompareCase( tag, "nname" ) )
+                {
+                    Str::Copy( tag, npc ? npc->GetName() : "" );
+                }
+                // Sex
+                else if( Str::CompareCase( tag, "sex" ) )
+                {
+                    sex = ( player ? player->GetParam( ST_GENDER ) + 1 : 1 );
+                    sex_tags = true;
+                    continue;
+                }
+                // Lexems
+                else if( Str::Length( tag ) > 4 && tag[0] == 'l' && tag[1] == 'e' && tag[2] == 'x' && tag[3] == ' ' )
+                {
+                    const char* s = Str::Substring( lexems ? lexems : "", Str::FormatBuf( "$%s", &tag[4] ) );
+                    if( s )
                     {
-                        if( Str::Length( str ) + Str::Length( tag ) < text_len )
-                            Str::Insert( &str[i], tag );
-                        // i+=strlen(tag);
+                        s += Str::Length( &tag[4] ) + 1;
+                        if( *s == ' ' )
+                            s++;
+                        Str::CopyWord( tag, s, '$', false );
                     }
-                    sex--;
-                }
-                continue;
-            }
-        }
-        break;
-        case '@':
-        {
-            if( str[i + 1] == '@' )
-            {
-                str[i] = 0;
-                dialogs.push_back( str );
-                str = &str[i + 2];
-                i = 0;
-                continue;
-            }
-
-            tag[0] = 0;
-            Str::CopyWord( tag, &str[i + 1], '@', false );
-            Str::EraseInterval( &str[i], Str::Length( tag ) + 2 );
-
-            if( !Str::Length( tag ) )
-                break;
-
-            // Player name
-            if( Str::CompareCase( tag, "pname" ) )
-            {
-                Str::Copy( tag, player ? player->GetName() : "" );
-            }
-            // Npc name
-            else if( Str::CompareCase( tag, "nname" ) )
-            {
-                Str::Copy( tag, npc ? npc->GetName() : "" );
-            }
-            // Sex
-            else if( Str::CompareCase( tag, "sex" ) )
-            {
-                sex = ( player ? player->GetParam( ST_GENDER ) + 1 : 1 );
-                sex_tags = true;
-                continue;
-            }
-            // Lexems
-            else if( Str::Length( tag ) > 4 && tag[0] == 'l' && tag[1] == 'e' && tag[2] == 'x' && tag[3] == ' ' )
-            {
-                const char* s = Str::Substring( lexems ? lexems : "", Str::FormatBuf( "$%s", &tag[4] ) );
-                if( s )
-                {
-                    s += Str::Length( &tag[4] ) + 1;
-                    if( *s == ' ' )
-                        s++;
-                    Str::CopyWord( tag, s, '$', false );
-                }
-                else
-                {
-                    Str::Copy( tag, "<lexem not found>" );
-                }
-            }
-            // Msg text
-            else if( Str::Length( tag ) > 4 && tag[0] == 'm' && tag[1] == 's' && tag[2] == 'g' && tag[3] == ' ' )
-            {
-                char msg_type_name[64];
-                uint str_num;
-                Str::EraseChars( &tag[4], '(' );
-                Str::EraseChars( &tag[4], ')' );
-                if( sscanf( &tag[4], "%s %u", msg_type_name, &str_num ) != 2 )
-                {
-                    Str::Copy( tag, "<msg tag parse fail>" );
-                }
-                else
-                {
-                    int msg_type = FOMsg::GetMsgType( msg_type_name );
-                    if( msg_type < 0 || msg_type >= TEXTMSG_COUNT )
-                        Str::Copy( tag, "<msg tag, unknown type>" );
-                    else if( !CurLang.Msg[msg_type].Count( str_num ) )
-                        Str::Copy( tag, Str::FormatBuf( "<msg tag, string %u not found>", str_num ) );
                     else
-                        Str::Copy( tag, CurLang.Msg[msg_type].GetStr( str_num ) );
-                }
-            }
-            // Script
-            else if( Str::Length( tag ) > 7 && tag[0] == 's' && tag[1] == 'c' && tag[2] == 'r' && tag[3] == 'i' && tag[4] == 'p' && tag[5] == 't' && tag[6] == ' ' )
-            {
-                char func_name[MAX_FOTEXT];
-                Str::CopyWord( func_name, &tag[7], '$', false );
-                int bind_id = Script::Bind( "client_main", func_name, "string %s(string&)", true );
-                Str::Copy( tag, "<script function not found>" );
-                if( bind_id > 0 && Script::PrepareContext( bind_id, _FUNC_, "Game" ) )
-                {
-                    ScriptString* script_lexems = new ScriptString( lexems ? lexems : "" );
-                    Script::SetArgObject( script_lexems );
-                    if( Script::RunPrepared() )
                     {
-                        ScriptString* result = (ScriptString*)Script::GetReturnedObject();
-                        if( result )
-                            Str::Copy( tag, result->c_str() );
+                        Str::Copy( tag, "<lexem not found>" );
                     }
-                    script_lexems->Release();
                 }
-            }
-            // Error
-            else
-            {
-                Str::Copy( tag, "<error>" );
-            }
+                // Msg text
+                else if( Str::Length( tag ) > 4 && tag[0] == 'm' && tag[1] == 's' && tag[2] == 'g' && tag[3] == ' ' )
+                {
+                    char msg_type_name[64];
+                    uint str_num;
+                    Str::EraseChars( &tag[4], '(' );
+                    Str::EraseChars( &tag[4], ')' );
+                    if( sscanf( &tag[4], "%s %u", msg_type_name, &str_num ) != 2 )
+                    {
+                        Str::Copy( tag, "<msg tag parse fail>" );
+                    }
+                    else
+                    {
+                        int msg_type = FOMsg::GetMsgType( msg_type_name );
+                        if( msg_type < 0 || msg_type >= TEXTMSG_COUNT )
+                            Str::Copy( tag, "<msg tag, unknown type>" );
+                        else if( !CurLang.Msg[msg_type].Count( str_num ) )
+                            Str::Copy( tag, Str::FormatBuf( "<msg tag, string %u not found>", str_num ) );
+                        else
+                            Str::Copy( tag, CurLang.Msg[msg_type].GetStr( str_num ) );
+                    }
+                }
+                // Script
+                else if( Str::Length( tag ) > 7 && tag[0] == 's' && tag[1] == 'c' && tag[2] == 'r' && tag[3] == 'i' && tag[4] == 'p' && tag[5] == 't' && tag[6] == ' ' )
+                {
+                    char func_name[MAX_FOTEXT];
+                    Str::CopyWord( func_name, &tag[7], '$', false );
+                    int bind_id = Script::Bind( "client_main", func_name, "string %s(string&)", true );
+                    Str::Copy( tag, "<script function not found>" );
+                    if( bind_id > 0 && Script::PrepareContext( bind_id, _FUNC_, "Game" ) )
+                    {
+                        ScriptString* script_lexems = new ScriptString( lexems ? lexems : "" );
+                        Script::SetArgObject( script_lexems );
+                        if( Script::RunPrepared() )
+                        {
+                            ScriptString* result = (ScriptString*)Script::GetReturnedObject();
+                            if( result )
+                                Str::Copy( tag, result->c_str() );
+                        }
+                        script_lexems->Release();
+                    }
+                }
+                // Error
+                else
+                {
+                    Str::Copy( tag, "<error>" );
+                }
 
-            if( Str::Length( str ) + Str::Length( tag ) < text_len )
-                Str::Insert( str + i, tag );
-        }
-            continue;
-        default:
-            break;
+                if( Str::Length( str ) + Str::Length( tag ) < text_len )
+                    Str::Insert( str + i, tag );
+            }
+                continue;
+            default:
+                break;
         }
 
         ++i;
@@ -4555,134 +4555,134 @@ void FOClient::LMenuCollect()
     {
         switch( screen )
         {
-        case SCREEN__USE:
-        {
-            uint item_id = GetCurContainerItemId( Rect( UseWInv, UseX, UseY ), UseHeightItem, UseScroll, UseCont );
-            if( item_id )
+            case SCREEN__USE:
             {
-                TargetSmth.SetContItem( item_id, 0 );
-                LMenuSet( LMENU_ITEM_INV );
-            }
-        }
-        break;
-        case SCREEN__INVENTORY:
-        {
-            if( !Chosen )
-                break;
-            uint item_id = GetCurContainerItemId( Rect( InvWInv, InvX, InvY ), InvHeightItem, InvScroll, InvCont );
-            if( !item_id && IsCurInRect( InvWSlot1, InvX, InvY ) )
-                item_id = Chosen->ItemSlotMain->GetId();
-            if( !item_id && IsCurInRect( InvWSlot2, InvX, InvY ) )
-                item_id = Chosen->ItemSlotExt->GetId();
-            if( !item_id && IsCurInRect( InvWArmor, InvX, InvY ) )
-                item_id = Chosen->ItemSlotArmor->GetId();
-            if( !item_id )
-            {
-                // Find in extended slots
-                for( auto it = SlotsExt.begin(), end = SlotsExt.end(); it != end; ++it )
+                uint item_id = GetCurContainerItemId( Rect( UseWInv, UseX, UseY ), UseHeightItem, UseScroll, UseCont );
+                if( item_id )
                 {
-                    SlotExt& se = *it;
-                    if( !se.Region.IsZero() && IsCurInRect( se.Region, InvX, InvY ) )
+                    TargetSmth.SetContItem( item_id, 0 );
+                    LMenuSet( LMENU_ITEM_INV );
+                }
+            }
+            break;
+            case SCREEN__INVENTORY:
+            {
+                if( !Chosen )
+                    break;
+                uint item_id = GetCurContainerItemId( Rect( InvWInv, InvX, InvY ), InvHeightItem, InvScroll, InvCont );
+                if( !item_id && IsCurInRect( InvWSlot1, InvX, InvY ) )
+                    item_id = Chosen->ItemSlotMain->GetId();
+                if( !item_id && IsCurInRect( InvWSlot2, InvX, InvY ) )
+                    item_id = Chosen->ItemSlotExt->GetId();
+                if( !item_id && IsCurInRect( InvWArmor, InvX, InvY ) )
+                    item_id = Chosen->ItemSlotArmor->GetId();
+                if( !item_id )
+                {
+                    // Find in extended slots
+                    for( auto it = SlotsExt.begin(), end = SlotsExt.end(); it != end; ++it )
                     {
-                        Item* item = Chosen->GetItemSlot( se.Index );
-                        if( item )
+                        SlotExt& se = *it;
+                        if( !se.Region.IsZero() && IsCurInRect( se.Region, InvX, InvY ) )
                         {
-                            item_id = item->GetId();
-                            break;
+                            Item* item = Chosen->GetItemSlot( se.Index );
+                            if( item )
+                            {
+                                item_id = item->GetId();
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            if( !item_id )
-                break;
-
-            TargetSmth.SetContItem( item_id, 0 );
-            LMenuSet( LMENU_ITEM_INV );
-        }
-        break;
-        case SCREEN__BARTER:
-        {
-            int cont_type = 0;
-            uint item_id = GetCurContainerItemId( Rect( BarterWCont1, DlgX, DlgY ), BarterCont1HeightItem, BarterScroll1, BarterCont1 );
-            if( !item_id )
-                item_id = GetCurContainerItemId( Rect( BarterWCont2, DlgX, DlgY ), BarterCont2HeightItem, BarterScroll2, BarterCont2 );
-            if( !item_id )
-            {
-                cont_type = 1;
-                item_id = GetCurContainerItemId( Rect( BarterWCont1o, DlgX, DlgY ), BarterCont1oHeightItem, BarterScroll1o, BarterCont1o );
                 if( !item_id )
-                    item_id = GetCurContainerItemId( Rect( BarterWCont2o, DlgX, DlgY ), BarterCont2oHeightItem, BarterScroll2o, BarterCont2o );
+                    break;
+
+                TargetSmth.SetContItem( item_id, 0 );
+                LMenuSet( LMENU_ITEM_INV );
             }
-            if( !item_id )
-                break;
-
-            TargetSmth.SetContItem( item_id, cont_type );
-            LMenuSet( LMENU_ITEM_INV );
-        }
-        break;
-        case SCREEN__PICKUP:
-        {
-            uint item_id = GetCurContainerItemId( Rect( PupWCont1, PupX, PupY ), PupHeightItem1, PupScroll1, PupCont1 );
-            if( !item_id )
-                item_id = GetCurContainerItemId( Rect( PupWCont2, PupX, PupY ), PupHeightItem2, PupScroll2, PupCont2 );
-            if( !item_id )
-                break;
-
-            TargetSmth.SetContItem( item_id, 0 );
-            LMenuSet( LMENU_ITEM_INV );
-        }
-        break;
-        default:
             break;
+            case SCREEN__BARTER:
+            {
+                int cont_type = 0;
+                uint item_id = GetCurContainerItemId( Rect( BarterWCont1, DlgX, DlgY ), BarterCont1HeightItem, BarterScroll1, BarterCont1 );
+                if( !item_id )
+                    item_id = GetCurContainerItemId( Rect( BarterWCont2, DlgX, DlgY ), BarterCont2HeightItem, BarterScroll2, BarterCont2 );
+                if( !item_id )
+                {
+                    cont_type = 1;
+                    item_id = GetCurContainerItemId( Rect( BarterWCont1o, DlgX, DlgY ), BarterCont1oHeightItem, BarterScroll1o, BarterCont1o );
+                    if( !item_id )
+                        item_id = GetCurContainerItemId( Rect( BarterWCont2o, DlgX, DlgY ), BarterCont2oHeightItem, BarterScroll2o, BarterCont2o );
+                }
+                if( !item_id )
+                    break;
+
+                TargetSmth.SetContItem( item_id, cont_type );
+                LMenuSet( LMENU_ITEM_INV );
+            }
+            break;
+            case SCREEN__PICKUP:
+            {
+                uint item_id = GetCurContainerItemId( Rect( PupWCont1, PupX, PupY ), PupHeightItem1, PupScroll1, PupCont1 );
+                if( !item_id )
+                    item_id = GetCurContainerItemId( Rect( PupWCont2, PupX, PupY ), PupHeightItem2, PupScroll2, PupCont2 );
+                if( !item_id )
+                    break;
+
+                TargetSmth.SetContItem( item_id, 0 );
+                LMenuSet( LMENU_ITEM_INV );
+            }
+            break;
+            default:
+                break;
         }
     }
     else
     {
         switch( GetMainScreen() )
         {
-        case SCREEN_GAME:
-        {
-            if( IntVisible )
+            case SCREEN_GAME:
             {
-                if( IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
-                    break;
-                if( IntAddMess && IsCurInRectNoTransp( IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0 ) )
-                    break;
-            }
+                if( IntVisible )
+                {
+                    if( IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
+                        break;
+                    if( IntAddMess && IsCurInRectNoTransp( IntPWAddMess->GetCurSprId(), IntWAddMess, 0, 0 ) )
+                        break;
+                }
 
-            CritterCl* cr;
-            ItemHex* item;
-            HexMngr.GetSmthPixel( GameOpt.MouseX, GameOpt.MouseY, item, cr );
+                CritterCl* cr;
+                ItemHex* item;
+                HexMngr.GetSmthPixel( GameOpt.MouseX, GameOpt.MouseY, item, cr );
 
-            if( cr )
-            {
-                TargetSmth.SetCritter( cr->GetId() );
-                if( cr->IsPlayer() )
-                    LMenuSet( LMENU_PLAYER );
-                else if( cr->IsNpc() )
-                    LMenuSet( LMENU_NPC );
+                if( cr )
+                {
+                    TargetSmth.SetCritter( cr->GetId() );
+                    if( cr->IsPlayer() )
+                        LMenuSet( LMENU_PLAYER );
+                    else if( cr->IsNpc() )
+                        LMenuSet( LMENU_NPC );
+                }
+                else if( item )
+                {
+                    TargetSmth.SetItem( item->GetId() );
+                    LMenuSet( LMENU_ITEM );
+                }
             }
-            else if( item )
+            break;
+            case SCREEN_GLOBAL_MAP:
             {
-                TargetSmth.SetItem( item->GetId() );
-                LMenuSet( LMENU_ITEM );
+                int pos = 0;
+                for( auto it = HexMngr.GetCritters().begin(); it != HexMngr.GetCritters().end(); it++, pos++ )
+                {
+                    CritterCl* cr = ( *it ).second;
+                    if( !IsCurInRect( Rect( GmapWName, GmapWNameStepX * pos, GmapWNameStepY * pos ) ) )
+                        continue;
+                    TargetSmth.SetCritter( cr->GetId() );
+                    LMenuSet( LMENU_GMAP_CRIT );
+                    break;
+                }
             }
-        }
-        break;
-        case SCREEN_GLOBAL_MAP:
-        {
-            int pos = 0;
-            for( auto it = HexMngr.GetCritters().begin(); it != HexMngr.GetCritters().end(); it++, pos++ )
-            {
-                CritterCl* cr = ( *it ).second;
-                if( !IsCurInRect( Rect( GmapWName, GmapWNameStepX * pos, GmapWNameStepY * pos ) ) )
-                    continue;
-                TargetSmth.SetCritter( cr->GetId() );
-                LMenuSet( LMENU_GMAP_CRIT );
-                break;
-            }
-        }
-        break;
+            break;
         }
     }
 
@@ -4698,46 +4698,33 @@ void FOClient::LMenuSet( uchar set_lmenu )
 
     switch( LMenuMode )
     {
-    case LMENU_OFF:
-    {
-        LMenuActive = false;
-        LMenuStayOff();
-        LMenuTryActivated = false;
-        GameMouseStay = Timer::FastTick();
-        LMenuStartTime = Timer::FastTick();
-    }
-    break;
-    case LMENU_PLAYER:
-    case LMENU_NPC:
-    {
-        if( !TargetSmth.IsCritter() )
-            break;
-        CritterCl* cr = GetCritter( TargetSmth.GetId() );
-        if( !cr || !Chosen )
-            break;
-
-        LMenuCritNodes.clear();
-
-        if( Chosen->IsLife() )
+        case LMENU_OFF:
         {
-            if( LMenuMode == LMENU_NPC )
+            LMenuActive = false;
+            LMenuStayOff();
+            LMenuTryActivated = false;
+            GameMouseStay = Timer::FastTick();
+            LMenuStartTime = Timer::FastTick();
+        }
+        break;
+        case LMENU_PLAYER:
+        case LMENU_NPC:
+        {
+            if( !TargetSmth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( TargetSmth.GetId() );
+            if( !cr || !Chosen )
+                break;
+
+            LMenuCritNodes.clear();
+
+            if( Chosen->IsLife() )
             {
-                // Npc
-                if( cr->IsCanTalk() )
-                    LMenuCritNodes.push_back( LMENU_NODE_TALK );
-                if( cr->IsDead() && !cr->IsRawParam( MODE_NO_LOOT ) )
-                    LMenuCritNodes.push_back( LMENU_NODE_USE );
-                LMenuCritNodes.push_back( LMENU_NODE_LOOK );
-                if( cr->IsLife() && !cr->IsRawParam( MODE_NO_PUSH ) )
-                    LMenuCritNodes.push_back( LMENU_NODE_PUSH );
-                LMenuCritNodes.push_back( LMENU_NODE_BAG );
-                LMenuCritNodes.push_back( LMENU_NODE_SKILL );
-            }
-            else
-            {
-                if( cr != Chosen )
+                if( LMenuMode == LMENU_NPC )
                 {
-                    // Player
+                    // Npc
+                    if( cr->IsCanTalk() )
+                        LMenuCritNodes.push_back( LMENU_NODE_TALK );
                     if( cr->IsDead() && !cr->IsRawParam( MODE_NO_LOOT ) )
                         LMenuCritNodes.push_back( LMENU_NODE_USE );
                     LMenuCritNodes.push_back( LMENU_NODE_LOOK );
@@ -4745,150 +4732,163 @@ void FOClient::LMenuSet( uchar set_lmenu )
                         LMenuCritNodes.push_back( LMENU_NODE_PUSH );
                     LMenuCritNodes.push_back( LMENU_NODE_BAG );
                     LMenuCritNodes.push_back( LMENU_NODE_SKILL );
-                    LMenuCritNodes.push_back( LMENU_NODE_GMFOLLOW );
-                    if( cr->IsLife() && cr->IsPlayer() && cr->IsOnline() && CheckDist( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), BARTER_DIST ) )
-                    {
-                        LMenuCritNodes.push_back( LMENU_NODE_BARTER_OPEN );
-                        LMenuCritNodes.push_back( LMENU_NODE_BARTER_HIDE );
-                    }
-                    if( !Chosen->GetParam( TO_KARMA_VOTING ) )
-                    {
-                        LMenuCritNodes.push_back( LMENU_NODE_VOTE_UP );
-                        LMenuCritNodes.push_back( LMENU_NODE_VOTE_DOWN );
-                    }
                 }
                 else
                 {
-                    // Self
-                    LMenuCritNodes.push_back( LMENU_NODE_ROTATE );
-                    LMenuCritNodes.push_back( LMENU_NODE_LOOK );
-                    LMenuCritNodes.push_back( LMENU_NODE_BAG );
-                    LMenuCritNodes.push_back( LMENU_NODE_SKILL );
-                    LMenuCritNodes.push_back( LMENU_NODE_PICK_ITEM );
+                    if( cr != Chosen )
+                    {
+                        // Player
+                        if( cr->IsDead() && !cr->IsRawParam( MODE_NO_LOOT ) )
+                            LMenuCritNodes.push_back( LMENU_NODE_USE );
+                        LMenuCritNodes.push_back( LMENU_NODE_LOOK );
+                        if( cr->IsLife() && !cr->IsRawParam( MODE_NO_PUSH ) )
+                            LMenuCritNodes.push_back( LMENU_NODE_PUSH );
+                        LMenuCritNodes.push_back( LMENU_NODE_BAG );
+                        LMenuCritNodes.push_back( LMENU_NODE_SKILL );
+                        LMenuCritNodes.push_back( LMENU_NODE_GMFOLLOW );
+                        if( cr->IsLife() && cr->IsPlayer() && cr->IsOnline() && CheckDist( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), BARTER_DIST ) )
+                        {
+                            LMenuCritNodes.push_back( LMENU_NODE_BARTER_OPEN );
+                            LMenuCritNodes.push_back( LMENU_NODE_BARTER_HIDE );
+                        }
+                        if( !Chosen->GetParam( TO_KARMA_VOTING ) )
+                        {
+                            LMenuCritNodes.push_back( LMENU_NODE_VOTE_UP );
+                            LMenuCritNodes.push_back( LMENU_NODE_VOTE_DOWN );
+                        }
+                    }
+                    else
+                    {
+                        // Self
+                        LMenuCritNodes.push_back( LMENU_NODE_ROTATE );
+                        LMenuCritNodes.push_back( LMENU_NODE_LOOK );
+                        LMenuCritNodes.push_back( LMENU_NODE_BAG );
+                        LMenuCritNodes.push_back( LMENU_NODE_SKILL );
+                        LMenuCritNodes.push_back( LMENU_NODE_PICK_ITEM );
+                    }
                 }
             }
-        }
-        else
-        {
-            LMenuCritNodes.push_back( LMENU_NODE_LOOK );
-            if( LMenuMode != LMENU_NPC && cr != Chosen && !Chosen->GetParam( TO_KARMA_VOTING ) )
+            else
             {
-                LMenuCritNodes.push_back( LMENU_NODE_VOTE_UP );
-                LMenuCritNodes.push_back( LMENU_NODE_VOTE_DOWN );
-            }
-        }
-
-        LMenuCritNodes.push_back( LMENU_NODE_BREAK );
-        LMenuCurNodes = &LMenuCritNodes;
-    }
-    break;
-    case LMENU_ITEM:
-    {
-        if( !TargetSmth.IsItem() )
-            break;
-        ItemHex* item = GetItem( TargetSmth.GetId() );
-        if( !item )
-            break;
-
-        LMenuNodes.clear();
-
-        if( item->IsUsable() )
-            LMenuNodes.push_back( LMENU_NODE_PICK );
-        LMenuNodes.push_back( LMENU_NODE_LOOK );
-        if( item->IsCanUseSkill() )
-            LMenuNodes.push_back( LMENU_NODE_BAG );
-        if( item->IsCanUseSkill() )
-            LMenuNodes.push_back( LMENU_NODE_SKILL );
-        LMenuNodes.push_back( LMENU_NODE_BREAK );
-
-        LMenuCurNodes = &LMenuNodes;
-    }
-    break;
-    case LMENU_ITEM_INV:
-    {
-        Item* cont_item = GetTargetContItem();
-        if( !cont_item || !Chosen )
-            break;
-        Item* inv_item = Chosen->GetItem( cont_item->GetId() );
-
-        LMenuNodes.clear();
-        LMenuNodes.push_back( LMENU_NODE_LOOK );
-
-        if( inv_item )
-        {
-            if( inv_item->IsWeapon() && inv_item->WeapGetMaxAmmoCount() && !inv_item->WeapIsEmpty() && inv_item->WeapGetAmmoCaliber() )
-                LMenuNodes.push_back( LMENU_NODE_UNLOAD );
-            if( inv_item->IsCanUse() || inv_item->IsCanUseOnSmth() )
-                LMenuNodes.push_back( LMENU_NODE_USE );
-            LMenuNodes.push_back( LMENU_NODE_SKILL );
-            if( inv_item->AccCritter.Slot == SLOT_INV && Chosen->IsCanSortItems() )
-            {
-                LMenuNodes.push_back( LMENU_NODE_SORT_UP );
-                LMenuNodes.push_back( LMENU_NODE_SORT_DOWN );
-            }
-            LMenuNodes.push_back( LMENU_NODE_DROP );
-        }
-        else
-        {
-            // Items in another containers
-        }
-
-        LMenuNodes.push_back( LMENU_NODE_BREAK );
-        LMenuCurNodes = &LMenuNodes;
-    }
-    break;
-    case LMENU_GMAP_CRIT:
-    {
-        if( !TargetSmth.IsCritter() )
-            break;
-        CritterCl* cr = GetCritter( TargetSmth.GetId() );
-        if( !cr || !Chosen )
-            break;
-
-        LMenuNodes.clear();
-        LMenuNodes.push_back( LMENU_NODE_LOOK );
-        LMenuNodes.push_back( LMENU_NODE_SKILL );
-        LMenuNodes.push_back( LMENU_NODE_BAG );
-
-        if( cr->GetId() != Chosen->GetId() )             // Another critters
-        {
-            if( cr->IsPlayer() && cr->IsLife() )
-            {
-                // Kick and give rule
-                if( Chosen->IsGmapRule() )
+                LMenuCritNodes.push_back( LMENU_NODE_LOOK );
+                if( LMenuMode != LMENU_NPC && cr != Chosen && !Chosen->GetParam( TO_KARMA_VOTING ) )
                 {
-                    LMenuNodes.push_back( LMENU_NODE_GMAP_KICK );
-                    if( !cr->IsOffline() )
-                        LMenuNodes.push_back( LMENU_NODE_GMAP_RULE );
-                }
-
-                // Barter
-                if( !cr->IsOffline() )
-                {
-                    LMenuNodes.push_back( LMENU_NODE_BARTER_OPEN );
-                    LMenuNodes.push_back( LMENU_NODE_BARTER_HIDE );
+                    LMenuCritNodes.push_back( LMENU_NODE_VOTE_UP );
+                    LMenuCritNodes.push_back( LMENU_NODE_VOTE_DOWN );
                 }
             }
-        }
-        else                 // Self
-        {
-            // Kick self
-            if( !Chosen->IsGmapRule() && HexMngr.GetCritters().size() > 1 )
-                LMenuNodes.push_back( LMENU_NODE_GMAP_KICK );
-        }
 
-        if( cr->IsPlayer() && cr->GetId() != Chosen->GetId() && !Chosen->GetParam( TO_KARMA_VOTING ) )
-        {
-            LMenuNodes.push_back( LMENU_NODE_VOTE_UP );
-            LMenuNodes.push_back( LMENU_NODE_VOTE_DOWN );
+            LMenuCritNodes.push_back( LMENU_NODE_BREAK );
+            LMenuCurNodes = &LMenuCritNodes;
         }
-
-        LMenuNodes.push_back( LMENU_NODE_BREAK );
-        LMenuCurNodes = &LMenuNodes;
-    }
-    break;
-    default:
         break;
+        case LMENU_ITEM:
+        {
+            if( !TargetSmth.IsItem() )
+                break;
+            ItemHex* item = GetItem( TargetSmth.GetId() );
+            if( !item )
+                break;
+
+            LMenuNodes.clear();
+
+            if( item->IsUsable() )
+                LMenuNodes.push_back( LMENU_NODE_PICK );
+            LMenuNodes.push_back( LMENU_NODE_LOOK );
+            if( item->IsCanUseSkill() )
+                LMenuNodes.push_back( LMENU_NODE_BAG );
+            if( item->IsCanUseSkill() )
+                LMenuNodes.push_back( LMENU_NODE_SKILL );
+            LMenuNodes.push_back( LMENU_NODE_BREAK );
+
+            LMenuCurNodes = &LMenuNodes;
+        }
+        break;
+        case LMENU_ITEM_INV:
+        {
+            Item* cont_item = GetTargetContItem();
+            if( !cont_item || !Chosen )
+                break;
+            Item* inv_item = Chosen->GetItem( cont_item->GetId() );
+
+            LMenuNodes.clear();
+            LMenuNodes.push_back( LMENU_NODE_LOOK );
+
+            if( inv_item )
+            {
+                if( inv_item->IsWeapon() && inv_item->WeapGetMaxAmmoCount() && !inv_item->WeapIsEmpty() && inv_item->WeapGetAmmoCaliber() )
+                    LMenuNodes.push_back( LMENU_NODE_UNLOAD );
+                if( inv_item->IsCanUse() || inv_item->IsCanUseOnSmth() )
+                    LMenuNodes.push_back( LMENU_NODE_USE );
+                LMenuNodes.push_back( LMENU_NODE_SKILL );
+                if( inv_item->AccCritter.Slot == SLOT_INV && Chosen->IsCanSortItems() )
+                {
+                    LMenuNodes.push_back( LMENU_NODE_SORT_UP );
+                    LMenuNodes.push_back( LMENU_NODE_SORT_DOWN );
+                }
+                LMenuNodes.push_back( LMENU_NODE_DROP );
+            }
+            else
+            {
+                // Items in another containers
+            }
+
+            LMenuNodes.push_back( LMENU_NODE_BREAK );
+            LMenuCurNodes = &LMenuNodes;
+        }
+        break;
+        case LMENU_GMAP_CRIT:
+        {
+            if( !TargetSmth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( TargetSmth.GetId() );
+            if( !cr || !Chosen )
+                break;
+
+            LMenuNodes.clear();
+            LMenuNodes.push_back( LMENU_NODE_LOOK );
+            LMenuNodes.push_back( LMENU_NODE_SKILL );
+            LMenuNodes.push_back( LMENU_NODE_BAG );
+
+            if( cr->GetId() != Chosen->GetId() )         // Another critters
+            {
+                if( cr->IsPlayer() && cr->IsLife() )
+                {
+                    // Kick and give rule
+                    if( Chosen->IsGmapRule() )
+                    {
+                        LMenuNodes.push_back( LMENU_NODE_GMAP_KICK );
+                        if( !cr->IsOffline() )
+                            LMenuNodes.push_back( LMENU_NODE_GMAP_RULE );
+                    }
+
+                    // Barter
+                    if( !cr->IsOffline() )
+                    {
+                        LMenuNodes.push_back( LMENU_NODE_BARTER_OPEN );
+                        LMenuNodes.push_back( LMENU_NODE_BARTER_HIDE );
+                    }
+                }
+            }
+            else             // Self
+            {
+                // Kick self
+                if( !Chosen->IsGmapRule() && HexMngr.GetCritters().size() > 1 )
+                    LMenuNodes.push_back( LMENU_NODE_GMAP_KICK );
+            }
+
+            if( cr->IsPlayer() && cr->GetId() != Chosen->GetId() && !Chosen->GetParam( TO_KARMA_VOTING ) )
+            {
+                LMenuNodes.push_back( LMENU_NODE_VOTE_UP );
+                LMenuNodes.push_back( LMENU_NODE_VOTE_DOWN );
+            }
+
+            LMenuNodes.push_back( LMENU_NODE_BREAK );
+            LMenuCurNodes = &LMenuNodes;
+        }
+        break;
+        default:
+            break;
     }
 }
 
@@ -4902,13 +4902,13 @@ void FOClient::LMenuDraw()
         int num_node = ( *LMenuCurNodes )[i];
 
 // ==================================================================================
-        #define LMENU_DRAW_CASE( node, pic_up, pic_down )                              \
-        case node:                                                                     \
-            if( i == (uint)LMenuCurNode && IsLMenu() )                                 \
-                SprMngr.DrawSprite( pic_down, LMenuX, LMenuY + LMenuNodeHeight * i );  \
-            else                                                                       \
-                SprMngr.DrawSprite( pic_up, LMenuX, LMenuY + LMenuNodeHeight * i );    \
-            break
+        #define LMENU_DRAW_CASE( node, pic_up, pic_down )                                  \
+            case node:                                                                     \
+                if( i == (uint)LMenuCurNode && IsLMenu() )                                 \
+                    SprMngr.DrawSprite( pic_down, LMenuX, LMenuY + LMenuNodeHeight * i );  \
+                else                                                                       \
+                    SprMngr.DrawSprite( pic_up, LMenuX, LMenuY + LMenuNodeHeight * i );    \
+                break
 // ==================================================================================
 
         switch( num_node )
@@ -4934,9 +4934,9 @@ void FOClient::LMenuDraw()
             LMENU_DRAW_CASE( LMENU_NODE_GMAP_RULE, LmenuPGmapRuleOff, LmenuPGmapRuleOn );
             LMENU_DRAW_CASE( LMENU_NODE_VOTE_UP, LmenuPVoteUpOff, LmenuPVoteUpOn );
             LMENU_DRAW_CASE( LMENU_NODE_VOTE_DOWN, LmenuPVoteDownOff, LmenuPVoteDownOn );
-        default:
-            WriteLogF( _FUNC_, " - Unknown node<%d>.\n", num_node );
-            break;
+            default:
+                WriteLogF( _FUNC_, " - Unknown node<%d>.\n", num_node );
+                break;
         }
         if( !IsLMenu() )
             break;
@@ -4978,290 +4978,290 @@ void FOClient::LMenuMouseUp()
 
     switch( LMenuMode )
     {
-    case LMENU_PLAYER:
-    {
-        if( !TargetSmth.IsCritter() )
-            break;
-        CritterCl* cr = GetCritter( TargetSmth.GetId() );
-        if( !cr )
-            break;
-
-        switch( *it_l )
+        case LMENU_PLAYER:
         {
-        case LMENU_NODE_LOOK:
-            AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
-            break;
-        case LMENU_NODE_GMFOLLOW:
-            Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
-            break;
-        case LMENU_NODE_USE:
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
-            break;
-        case LMENU_NODE_ROTATE:
-            SetAction( CHOSEN_DIR, 0 );
-            break;
-        case LMENU_NODE_PICK_ITEM:
-            TryPickItemOnGround();
-            break;
-        case LMENU_NODE_PUSH:
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
-            break;
-        case LMENU_NODE_BAG:
-            UseSelect = TargetSmth;
-            ShowScreen( SCREEN__USE );
-            break;
-        case LMENU_NODE_SKILL:
-            SboxUseOn = TargetSmth;
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case LMENU_NODE_BARTER_OPEN:
-            Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), false );
-            break;
-        case LMENU_NODE_BARTER_HIDE:
-            Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), true );
-            break;
-        case LMENU_NODE_VOTE_UP:
-            Net_SendKarmaVoting( cr->GetId(), true );
-            break;
-        case LMENU_NODE_VOTE_DOWN:
-            Net_SendKarmaVoting( cr->GetId(), false );
-            break;
-        case LMENU_NODE_BREAK:
-            break;
-        default:
-            break;
-        }
-    }
-    break;
-    case LMENU_NPC:
-    {
-        if( !TargetSmth.IsCritter() )
-            break;
-        CritterCl* cr = GetCritter( TargetSmth.GetId() );
-        if( !cr )
-            break;
+            if( !TargetSmth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( TargetSmth.GetId() );
+            if( !cr )
+                break;
 
-        switch( *it_l )
-        {
-        case LMENU_NODE_LOOK:
-            AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
-            break;
-        case LMENU_NODE_TALK:
-            SetAction( CHOSEN_TALK_NPC, cr->GetId() );
-            break;
-        case LMENU_NODE_GMFOLLOW:
-            Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
-            break;
-        case LMENU_NODE_USE:
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
-            break;
-        case LMENU_NODE_PUSH:
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
-            break;
-        case LMENU_NODE_BAG:
-            UseSelect = TargetSmth;
-            ShowScreen( SCREEN__USE );
-            break;
-        case LMENU_NODE_SKILL:
-            SboxUseOn = TargetSmth;
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case LMENU_NODE_BREAK:
-            break;
-        default:
-            break;
-        }
-    }
-    break;
-    case LMENU_ITEM:
-    {
-        if( !TargetSmth.IsItem() )
-            break;
-        ItemHex* item = GetItem( TargetSmth.GetId() );
-        if( !item )
-            break;
-
-        switch( *it_l )
-        {
-        case LMENU_NODE_LOOK:
-            AddMess( FOMB_VIEW, FmtItemLook( item, ITEM_LOOK_MAP ) );
-            break;
-        case LMENU_NODE_PICK:
-            SetAction( CHOSEN_PICK_ITEM, item->GetProtoId(), item->HexX, item->HexY );
-            break;
-        case LMENU_NODE_BAG:
-            UseSelect = TargetSmth;
-            ShowScreen( SCREEN__USE );
-            break;
-        case LMENU_NODE_SKILL:
-            SboxUseOn = TargetSmth;
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case LMENU_NODE_BREAK:
-            break;
-        default:
-            break;
-        }
-    }
-    break;
-    case LMENU_ITEM_INV:
-    {
-        Item* cont_item = GetTargetContItem();
-        if( !cont_item )
-            break;
-        Item* inv_item = Chosen->GetItem( cont_item->GetId() );
-
-        switch( *it_l )
-        {
-        case LMENU_NODE_LOOK:
-            if( GetActiveScreen() == SCREEN__INVENTORY )
+            switch( *it_l )
             {
-                if( !inv_item )
+                case LMENU_NODE_LOOK:
+                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
                     break;
-                const char* str = FmtItemLook( inv_item, ITEM_LOOK_INVENTORY );
-                if( str )
-                {
-                    InvItemInfo = str;
-                    InvItemInfoScroll = 0;
-                    InvItemInfoMaxScroll = SprMngr.GetLinesCount( InvWText.W(), 0, str ) - SprMngr.GetLinesCount( 0, InvWText.H(), NULL );
-                }
+                case LMENU_NODE_GMFOLLOW:
+                    Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
+                    break;
+                case LMENU_NODE_USE:
+                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+                    break;
+                case LMENU_NODE_ROTATE:
+                    SetAction( CHOSEN_DIR, 0 );
+                    break;
+                case LMENU_NODE_PICK_ITEM:
+                    TryPickItemOnGround();
+                    break;
+                case LMENU_NODE_PUSH:
+                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
+                    break;
+                case LMENU_NODE_BAG:
+                    UseSelect = TargetSmth;
+                    ShowScreen( SCREEN__USE );
+                    break;
+                case LMENU_NODE_SKILL:
+                    SboxUseOn = TargetSmth;
+                    ShowScreen( SCREEN__SKILLBOX );
+                    break;
+                case LMENU_NODE_BARTER_OPEN:
+                    Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), false );
+                    break;
+                case LMENU_NODE_BARTER_HIDE:
+                    Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), true );
+                    break;
+                case LMENU_NODE_VOTE_UP:
+                    Net_SendKarmaVoting( cr->GetId(), true );
+                    break;
+                case LMENU_NODE_VOTE_DOWN:
+                    Net_SendKarmaVoting( cr->GetId(), false );
+                    break;
+                case LMENU_NODE_BREAK:
+                    break;
+                default:
+                    break;
             }
-            else if( GetActiveScreen() == SCREEN__BARTER )
+        }
+        break;
+        case LMENU_NPC:
+        {
+            if( !TargetSmth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( TargetSmth.GetId() );
+            if( !cr )
+                break;
+
+            switch( *it_l )
             {
-                if( BarterIsPlayers )
-                {
-                    const char* str = FmtItemLook( cont_item, ITEM_LOOK_DEFAULT );
-                    if( str )
-                    {
-                        BarterText += str;
-                        BarterText += "\n";
-                        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
-                    }
-                }
-                else
-                {
-                    const char* str = FmtItemLook( cont_item, ITEM_LOOK_BARTER );
-                    if( str )
-                    {
-                        BarterText = str;
-                        DlgMainTextCur = 0;
-                        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
-                    }
-                }
+                case LMENU_NODE_LOOK:
+                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
+                    break;
+                case LMENU_NODE_TALK:
+                    SetAction( CHOSEN_TALK_NPC, cr->GetId() );
+                    break;
+                case LMENU_NODE_GMFOLLOW:
+                    Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
+                    break;
+                case LMENU_NODE_USE:
+                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+                    break;
+                case LMENU_NODE_PUSH:
+                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
+                    break;
+                case LMENU_NODE_BAG:
+                    UseSelect = TargetSmth;
+                    ShowScreen( SCREEN__USE );
+                    break;
+                case LMENU_NODE_SKILL:
+                    SboxUseOn = TargetSmth;
+                    ShowScreen( SCREEN__SKILLBOX );
+                    break;
+                case LMENU_NODE_BREAK:
+                    break;
+                default:
+                    break;
             }
-            else if( GetActiveScreen() == SCREEN__PICKUP )
-                AddMess( FOMB_VIEW, FmtItemLook( cont_item, ITEM_LOOK_DEFAULT ) );
-            break;
-        case LMENU_NODE_DROP:
+        }
+        break;
+        case LMENU_ITEM:
+        {
+            if( !TargetSmth.IsItem() )
+                break;
+            ItemHex* item = GetItem( TargetSmth.GetId() );
+            if( !item )
+                break;
+
+            switch( *it_l )
+            {
+                case LMENU_NODE_LOOK:
+                    AddMess( FOMB_VIEW, FmtItemLook( item, ITEM_LOOK_MAP ) );
+                    break;
+                case LMENU_NODE_PICK:
+                    SetAction( CHOSEN_PICK_ITEM, item->GetProtoId(), item->HexX, item->HexY );
+                    break;
+                case LMENU_NODE_BAG:
+                    UseSelect = TargetSmth;
+                    ShowScreen( SCREEN__USE );
+                    break;
+                case LMENU_NODE_SKILL:
+                    SboxUseOn = TargetSmth;
+                    ShowScreen( SCREEN__SKILLBOX );
+                    break;
+                case LMENU_NODE_BREAK:
+                    break;
+                default:
+                    break;
+            }
+        }
+        break;
+        case LMENU_ITEM_INV:
+        {
+            Item* cont_item = GetTargetContItem();
             if( !cont_item )
                 break;
-            if( !Chosen->IsLife() || !Chosen->IsFree() )
-                break;
-            if( cont_item->IsStackable() && cont_item->GetCount() > 1 )
-                SplitStart( cont_item, SLOT_GROUND | ( ( TargetSmth.GetParam() ? 1 : 0 ) << 16 ) );
-            else
-                AddActionBack( CHOSEN_MOVE_ITEM, cont_item->GetId(), cont_item->GetCount(), SLOT_GROUND, TargetSmth.GetParam() ? 1 : 0 );
-            break;
-        case LMENU_NODE_UNLOAD:
-            if( !inv_item )
-                break;
-            SetAction( CHOSEN_USE_ITEM, cont_item->GetId(), 0, TARGET_SELF_ITEM, -1, USE_RELOAD );
-            break;
-        case LMENU_NODE_USE:
-            if( !inv_item )
-                break;
-            if( inv_item->IsHasTimer() )
-                TimerStart( inv_item->GetId(), ResMngr.GetInvAnim( inv_item->GetPicInv() ), inv_item->GetInvColor() );
-            else
-                SetAction( CHOSEN_USE_ITEM, inv_item->GetId(), 0, TARGET_SELF, 0, USE_USE );
-            break;
-        case LMENU_NODE_SKILL:
-            if( !inv_item )
-                break;
-            SboxUseOn.SetContItem( inv_item->GetId(), 0 );
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case LMENU_NODE_SORT_UP:
-        {
-            if( !inv_item )
-                break;
-            Item* item = Chosen->GetItemLowSortValue();
-            if( !item || inv_item == item )
-                break;
-            if( inv_item->GetSortValue() < item->GetSortValue() )
-                break;
-            inv_item->Data.SortValue = item->GetSortValue() - 1;
-            Net_SendSortValueItem( inv_item );
-        }
-        break;
-        case LMENU_NODE_SORT_DOWN:
-        {
-            if( !inv_item )
-                break;
-            Item* item = Chosen->GetItemHighSortValue();
-            if( !item || inv_item == item )
-                break;
-            if( inv_item->GetSortValue() > item->GetSortValue() )
-                break;
-            inv_item->Data.SortValue = item->GetSortValue() + 1;
-            Net_SendSortValueItem( inv_item );
-        }
-        break;
-        case LMENU_NODE_BREAK:
-            break;
-        default:
-            break;
-        }
-    }
-    break;
-    case LMENU_GMAP_CRIT:
-    {
-        if( !TargetSmth.IsCritter() )
-            break;
-        CritterCl* cr = GetCritter( TargetSmth.GetId() );
-        if( !cr )
-            break;
+            Item* inv_item = Chosen->GetItem( cont_item->GetId() );
 
-        switch( *it_l )
+            switch( *it_l )
+            {
+                case LMENU_NODE_LOOK:
+                    if( GetActiveScreen() == SCREEN__INVENTORY )
+                    {
+                        if( !inv_item )
+                            break;
+                        const char* str = FmtItemLook( inv_item, ITEM_LOOK_INVENTORY );
+                        if( str )
+                        {
+                            InvItemInfo = str;
+                            InvItemInfoScroll = 0;
+                            InvItemInfoMaxScroll = SprMngr.GetLinesCount( InvWText.W(), 0, str ) - SprMngr.GetLinesCount( 0, InvWText.H(), NULL );
+                        }
+                    }
+                    else if( GetActiveScreen() == SCREEN__BARTER )
+                    {
+                        if( BarterIsPlayers )
+                        {
+                            const char* str = FmtItemLook( cont_item, ITEM_LOOK_DEFAULT );
+                            if( str )
+                            {
+                                BarterText += str;
+                                BarterText += "\n";
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                            }
+                        }
+                        else
+                        {
+                            const char* str = FmtItemLook( cont_item, ITEM_LOOK_BARTER );
+                            if( str )
+                            {
+                                BarterText = str;
+                                DlgMainTextCur = 0;
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                            }
+                        }
+                    }
+                    else if( GetActiveScreen() == SCREEN__PICKUP )
+                        AddMess( FOMB_VIEW, FmtItemLook( cont_item, ITEM_LOOK_DEFAULT ) );
+                    break;
+                case LMENU_NODE_DROP:
+                    if( !cont_item )
+                        break;
+                    if( !Chosen->IsLife() || !Chosen->IsFree() )
+                        break;
+                    if( cont_item->IsStackable() && cont_item->GetCount() > 1 )
+                        SplitStart( cont_item, SLOT_GROUND | ( ( TargetSmth.GetParam() ? 1 : 0 ) << 16 ) );
+                    else
+                        AddActionBack( CHOSEN_MOVE_ITEM, cont_item->GetId(), cont_item->GetCount(), SLOT_GROUND, TargetSmth.GetParam() ? 1 : 0 );
+                    break;
+                case LMENU_NODE_UNLOAD:
+                    if( !inv_item )
+                        break;
+                    SetAction( CHOSEN_USE_ITEM, cont_item->GetId(), 0, TARGET_SELF_ITEM, -1, USE_RELOAD );
+                    break;
+                case LMENU_NODE_USE:
+                    if( !inv_item )
+                        break;
+                    if( inv_item->IsHasTimer() )
+                        TimerStart( inv_item->GetId(), ResMngr.GetInvAnim( inv_item->GetPicInv() ), inv_item->GetInvColor() );
+                    else
+                        SetAction( CHOSEN_USE_ITEM, inv_item->GetId(), 0, TARGET_SELF, 0, USE_USE );
+                    break;
+                case LMENU_NODE_SKILL:
+                    if( !inv_item )
+                        break;
+                    SboxUseOn.SetContItem( inv_item->GetId(), 0 );
+                    ShowScreen( SCREEN__SKILLBOX );
+                    break;
+                case LMENU_NODE_SORT_UP:
+                {
+                    if( !inv_item )
+                        break;
+                    Item* item = Chosen->GetItemLowSortValue();
+                    if( !item || inv_item == item )
+                        break;
+                    if( inv_item->GetSortValue() < item->GetSortValue() )
+                        break;
+                    inv_item->Data.SortValue = item->GetSortValue() - 1;
+                    Net_SendSortValueItem( inv_item );
+                }
+                break;
+                case LMENU_NODE_SORT_DOWN:
+                {
+                    if( !inv_item )
+                        break;
+                    Item* item = Chosen->GetItemHighSortValue();
+                    if( !item || inv_item == item )
+                        break;
+                    if( inv_item->GetSortValue() > item->GetSortValue() )
+                        break;
+                    inv_item->Data.SortValue = item->GetSortValue() + 1;
+                    Net_SendSortValueItem( inv_item );
+                }
+                break;
+                case LMENU_NODE_BREAK:
+                    break;
+                default:
+                    break;
+            }
+        }
+        break;
+        case LMENU_GMAP_CRIT:
         {
-        case LMENU_NODE_LOOK:
-            AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
-            break;
-        case LMENU_NODE_SKILL:
-            SboxUseOn = TargetSmth;
-            ShowScreen( SCREEN__SKILLBOX );
-            break;
-        case LMENU_NODE_BAG:
-            UseSelect = TargetSmth;
-            ShowScreen( SCREEN__USE );
-            break;
-        case LMENU_NODE_GMAP_KICK:
-            Net_SendRuleGlobal( GM_CMD_KICKCRIT, cr->GetId() );
-            break;
-        case LMENU_NODE_GMAP_RULE:
-            Net_SendRuleGlobal( GM_CMD_GIVE_RULE, cr->GetId() );
-            break;
-        case LMENU_NODE_BARTER_OPEN:
-            Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), false );
-            break;
-        case LMENU_NODE_BARTER_HIDE:
-            Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), true );
-            break;
-        case LMENU_NODE_VOTE_UP:
-            Net_SendKarmaVoting( cr->GetId(), true );
-            break;
-        case LMENU_NODE_VOTE_DOWN:
-            Net_SendKarmaVoting( cr->GetId(), false );
-            break;
-        case LMENU_NODE_BREAK:
-            break;
+            if( !TargetSmth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( TargetSmth.GetId() );
+            if( !cr )
+                break;
+
+            switch( *it_l )
+            {
+                case LMENU_NODE_LOOK:
+                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
+                    break;
+                case LMENU_NODE_SKILL:
+                    SboxUseOn = TargetSmth;
+                    ShowScreen( SCREEN__SKILLBOX );
+                    break;
+                case LMENU_NODE_BAG:
+                    UseSelect = TargetSmth;
+                    ShowScreen( SCREEN__USE );
+                    break;
+                case LMENU_NODE_GMAP_KICK:
+                    Net_SendRuleGlobal( GM_CMD_KICKCRIT, cr->GetId() );
+                    break;
+                case LMENU_NODE_GMAP_RULE:
+                    Net_SendRuleGlobal( GM_CMD_GIVE_RULE, cr->GetId() );
+                    break;
+                case LMENU_NODE_BARTER_OPEN:
+                    Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), false );
+                    break;
+                case LMENU_NODE_BARTER_HIDE:
+                    Net_SendPlayersBarter( BARTER_TRY, cr->GetId(), true );
+                    break;
+                case LMENU_NODE_VOTE_UP:
+                    Net_SendKarmaVoting( cr->GetId(), true );
+                    break;
+                case LMENU_NODE_VOTE_DOWN:
+                    Net_SendKarmaVoting( cr->GetId(), false );
+                    break;
+                case LMENU_NODE_BREAK:
+                    break;
+                default:
+                    break;
+            }
+        }
+        break;
         default:
             break;
-        }
-    }
-    break;
-    default:
-        break;
     }
 
     LMenuSet( LMENU_OFF );
@@ -5285,51 +5285,51 @@ void FOClient::ShowMainScreen( int new_screen )
 
     switch( GetMainScreen() )
     {
-    case SCREEN_LOGIN:
-        SetCurMode( CUR_DEFAULT );
-        LogFocus = IFACE_LOG_NAME;
-        ScreenFadeOut();
-        break;
-    case SCREEN_REGISTRATION:
-        SetCurMode( CUR_DEFAULT );
-        if( !RegNewCr )
-        {
-            RegNewCr = new CritterCl();
-            RegNewCr->InitForRegistration();
-        }
-        memzero( ChaSkillUp, sizeof( ChaSkillUp ) );
-        ChaUnspentSkillPoints = RegNewCr->Params[ST_UNSPENT_SKILL_POINTS];
-        ChaX = ( MODE_WIDTH - RegWMain.W() ) / 2;
-        ChaY = ( MODE_HEIGHT - RegWMain.H() ) / 2;
-        ChaMouseMove( true );
-        ScreenFadeOut();
-        break;
-    case SCREEN_CREDITS:
-        CreditsNextTick = Timer::FastTick();
-        CreditsYPos = MODE_HEIGHT;
-        CreaditsExt = Keyb::ShiftDwn;
-        break;
-    case SCREEN_GAME:
-        SetCurMode( CUR_DEFAULT );
-        if( Singleplayer )
-            SingleplayerData.Pause = false;
-        break;
-    case SCREEN_GLOBAL_MAP:
-        SetCurMode( CUR_DEFAULT );
-        GmapMouseMove();
-        if( Singleplayer )
-            SingleplayerData.Pause = false;
-        break;
-    case SCREEN_WAIT:
-        SetCurMode( CUR_WAIT );
-        if( prev_main_screen != SCREEN_WAIT )
-        {
-            ScreenEffects.clear();
-            WaitPic = ResMngr.GetRandomSplash();
-        }
-        break;
-    default:
-        break;
+        case SCREEN_LOGIN:
+            SetCurMode( CUR_DEFAULT );
+            LogFocus = IFACE_LOG_NAME;
+            ScreenFadeOut();
+            break;
+        case SCREEN_REGISTRATION:
+            SetCurMode( CUR_DEFAULT );
+            if( !RegNewCr )
+            {
+                RegNewCr = new CritterCl();
+                RegNewCr->InitForRegistration();
+            }
+            memzero( ChaSkillUp, sizeof( ChaSkillUp ) );
+            ChaUnspentSkillPoints = RegNewCr->Params[ST_UNSPENT_SKILL_POINTS];
+            ChaX = ( MODE_WIDTH - RegWMain.W() ) / 2;
+            ChaY = ( MODE_HEIGHT - RegWMain.H() ) / 2;
+            ChaMouseMove( true );
+            ScreenFadeOut();
+            break;
+        case SCREEN_CREDITS:
+            CreditsNextTick = Timer::FastTick();
+            CreditsYPos = MODE_HEIGHT;
+            CreaditsExt = Keyb::ShiftDwn;
+            break;
+        case SCREEN_GAME:
+            SetCurMode( CUR_DEFAULT );
+            if( Singleplayer )
+                SingleplayerData.Pause = false;
+            break;
+        case SCREEN_GLOBAL_MAP:
+            SetCurMode( CUR_DEFAULT );
+            GmapMouseMove();
+            if( Singleplayer )
+                SingleplayerData.Pause = false;
+            break;
+        case SCREEN_WAIT:
+            SetCurMode( CUR_WAIT );
+            if( prev_main_screen != SCREEN_WAIT )
+            {
+                ScreenEffects.clear();
+                WaitPic = ResMngr.GetRandomSplash();
+            }
+            break;
+        default:
+            break;
     }
 
     MessBoxGenerate();
@@ -5408,218 +5408,218 @@ void FOClient::ShowScreen( int screen, int p0, int p1, int p2 )
 
     switch( screen )
     {
-    case SCREEN__INVENTORY:
-        SetCurMode( CUR_HAND );
-        CollectContItems();
-        InvHoldId = 0;
-        InvScroll = 0;
-        InvItemInfo = "";
-        InvMouseMove();
-        break;
-    case SCREEN__PICKUP:
-        SetCurMode( CUR_HAND );
-        CollectContItems();
-        PupScroll1 = 0;
-        PupScroll2 = 0;
-        PupMouseMove();
-        break;
-    case SCREEN__MINI_MAP:
-        SetCurMode( CUR_DEFAULT );
-        //	LmapHold=LMAP_NONE;
-        LmapPrepareMap();
-        LmapMouseMove();
-        break;
-    case SCREEN__CHARACTER:
-        SetCurMode( CUR_DEFAULT );
-        memzero( ChaSkillUp, sizeof( ChaSkillUp ) );
-        if( Chosen )
-            ChaUnspentSkillPoints = Chosen->Params[ST_UNSPENT_SKILL_POINTS];
-        memzero( ChaSwitchScroll, sizeof( ChaSwitchScroll ) );
-        if( !Chosen || ( ChaSkilldexPic >= (int)SKILLDEX_PARAM( PERK_BEGIN ) && ChaSkilldexPic <= (int)SKILLDEX_PARAM( PERK_END ) && !Chosen->IsRawParam( ChaSkilldexPic ) ) )
-        {
-            ChaSkilldexPic = -1;
-            ChaName[0] = 0;
-            ChaDesc[0] = 0;
-        }
-        ChaPrepareSwitch();
-        ChaMouseMove( false );
-        break;
-    case SCREEN__DIALOG:
-        SetCurMode( CUR_DEFAULT );
-        DlgMouseMove( true );
-        break;
-    case SCREEN__BARTER:
-        SetCurMode( CUR_DEFAULT );
-        BarterHoldId = 0;
-        BarterIsPlayers = false;
-        break;
-    case SCREEN__PIP_BOY:
-        SetCurMode( CUR_DEFAULT );
-        PipMode = PIP__NONE;
-        PipMouseMove();
-        break;
-    case SCREEN__FIX_BOY:
-        SetCurMode( CUR_DEFAULT );
-        FixMode = FIX_MODE_LIST;
-        FixCurCraft = -1;
-        FixGenerate( FIX_MODE_LIST );
-        FixMouseMove();
-        break;
-    case SCREEN__MENU_OPTION:
-        SetCurMode( CUR_DEFAULT );
-        break;
-    case SCREEN__AIM:
-    {
-        AimTargetId = 0;
-        if( !smth.IsCritter() )
+        case SCREEN__INVENTORY:
+            SetCurMode( CUR_HAND );
+            CollectContItems();
+            InvHoldId = 0;
+            InvScroll = 0;
+            InvItemInfo = "";
+            InvMouseMove();
             break;
-        CritterCl* cr = GetCritter( smth.GetId() );
-        if( !cr )
+        case SCREEN__PICKUP:
+            SetCurMode( CUR_HAND );
+            CollectContItems();
+            PupScroll1 = 0;
+            PupScroll2 = 0;
+            PupMouseMove();
             break;
-        AimTargetId = cr->GetId();
-        SetCurMode( CUR_DEFAULT );
-        AimPic = AimGetPic( cr, "frm" );
-        if( !AimPic )
-            AimPic = AimGetPic( cr, "png" );
-        if( !AimPic )
-            AimPic = AimGetPic( cr, "bmp" );
-        AimMouseMove();
-    }
-    break;
-    case SCREEN__SAY:
-        SetCurMode( CUR_DEFAULT );
-        SayType = DIALOGSAY_NONE;
-        SayTitle = MsgGame->GetStr( STR_SAY_TITLE );
-        SayOnlyNumbers = false;
-        break;
-    case SCREEN__SPLIT:
-        SetCurMode( CUR_DEFAULT );
-        break;
-    case SCREEN__TIMER:
-        SetCurMode( CUR_DEFAULT );
-        break;
-    case SCREEN__DIALOGBOX:
-        SetCurMode( CUR_DEFAULT );
-        DlgboxType = DIALOGBOX_NONE;
-        DlgboxWait = 0;
-        Str::Copy( DlgboxText, "" );
-        DlgboxButtonsCount = 0;
-        DlgboxSelectedButton = 0;
-        break;
-    case SCREEN__ELEVATOR:
-        SetCurMode( CUR_DEFAULT );
-        break;
-    case SCREEN__CHA_NAME:
-        SetCurMode( CUR_DEFAULT );
-        IfaceHold = IFACE_CHA_NAME_NAME;
-        ChaNameX = ChaX + ChaNameWMain[0];
-        ChaNameY = ChaY + ChaNameWMain[1];
-        break;
-    case SCREEN__CHA_AGE:
-        SetCurMode( CUR_DEFAULT );
-        ChaAgeX = ChaX + ChaAgeWMain[0];
-        ChaAgeY = ChaY + ChaAgeWMain[1];
-        if( !IsMainScreen( SCREEN_REGISTRATION ) )
-            ShowScreen( SCREEN_NONE );
-        break;
-    case SCREEN__CHA_SEX:
-        SetCurMode( CUR_DEFAULT );
-        ChaSexX = ChaX + ChaSexWMain[0];
-        ChaSexY = ChaY + ChaSexWMain[1];
-        if( !IsMainScreen( SCREEN_REGISTRATION ) )
-            ShowScreen( SCREEN_NONE );
-        break;
-    case SCREEN__GM_TOWN:
-    {
-        SetCurMode( CUR_DEFAULT );
-        GmapTownTextPos.clear();
-        GmapTownText.clear();
-
-        GmapTownPic = NULL;
-        GmapTownPicPos[0] = 0;
-        GmapTownPicPos[1] = 0;
-        GmapTownPicPos[2] = MODE_WIDTH;
-        GmapTownPicPos[3] = MODE_HEIGHT;
-        int pic_offsx = 0;
-        int pic_offsy = 0;
-        ushort loc_pid = GmapTownLoc.LocPid;
-
-        AnyFrames* anim = ResMngr.GetIfaceAnim( Str::GetHash( MsgGM->GetStr( STR_GM_PIC_( loc_pid ) ) ) );
-        if( !anim )
-        {
-            RunScreenScript( true, screen, p0, p1, p2 );
-            ShowScreen( SCREEN_NONE );
-            return;
-        }
-        SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
-
-        GmapTownPic = anim;
-        pic_offsx = ( MODE_WIDTH - si->Width ) / 2;
-        pic_offsy = ( MODE_HEIGHT - si->Height ) / 2;
-        GmapTownPicPos[0] = pic_offsx;
-        GmapTownPicPos[1] = pic_offsy;
-        GmapTownPicPos[2] = pic_offsx + si->Width;
-        GmapTownPicPos[3] = pic_offsy + si->Height;
-
-        uint entrance = MsgGM->GetInt( STR_GM_ENTRANCE_COUNT_( loc_pid ) );
-        if( !entrance )
+        case SCREEN__MINI_MAP:
+            SetCurMode( CUR_DEFAULT );
+            //	LmapHold=LMAP_NONE;
+            LmapPrepareMap();
+            LmapMouseMove();
             break;
-
-        for( uint i = 0; i < entrance; i++ )
+        case SCREEN__CHARACTER:
+            SetCurMode( CUR_DEFAULT );
+            memzero( ChaSkillUp, sizeof( ChaSkillUp ) );
+            if( Chosen )
+                ChaUnspentSkillPoints = Chosen->Params[ST_UNSPENT_SKILL_POINTS];
+            memzero( ChaSwitchScroll, sizeof( ChaSwitchScroll ) );
+            if( !Chosen || ( ChaSkilldexPic >= (int)SKILLDEX_PARAM( PERK_BEGIN ) && ChaSkilldexPic <= (int)SKILLDEX_PARAM( PERK_END ) && !Chosen->IsRawParam( ChaSkilldexPic ) ) )
+            {
+                ChaSkilldexPic = -1;
+                ChaName[0] = 0;
+                ChaDesc[0] = 0;
+            }
+            ChaPrepareSwitch();
+            ChaMouseMove( false );
+            break;
+        case SCREEN__DIALOG:
+            SetCurMode( CUR_DEFAULT );
+            DlgMouseMove( true );
+            break;
+        case SCREEN__BARTER:
+            SetCurMode( CUR_DEFAULT );
+            BarterHoldId = 0;
+            BarterIsPlayers = false;
+            break;
+        case SCREEN__PIP_BOY:
+            SetCurMode( CUR_DEFAULT );
+            PipMode = PIP__NONE;
+            PipMouseMove();
+            break;
+        case SCREEN__FIX_BOY:
+            SetCurMode( CUR_DEFAULT );
+            FixMode = FIX_MODE_LIST;
+            FixCurCraft = -1;
+            FixGenerate( FIX_MODE_LIST );
+            FixMouseMove();
+            break;
+        case SCREEN__MENU_OPTION:
+            SetCurMode( CUR_DEFAULT );
+            break;
+        case SCREEN__AIM:
         {
-            int x = MsgGM->GetInt( STR_GM_ENTRANCE_PICX_( loc_pid, i ) ) + pic_offsx;
-            int y = MsgGM->GetInt( STR_GM_ENTRANCE_PICY_( loc_pid, i ) ) + pic_offsy;
-
-            GmapTownTextPos.push_back( Rect( x, y, MODE_WIDTH, MODE_HEIGHT ) );
-            GmapTownText.push_back( string( MsgGM->GetStr( STR_GM_ENTRANCE_NAME_( loc_pid, i ) ) ) );
+            AimTargetId = 0;
+            if( !smth.IsCritter() )
+                break;
+            CritterCl* cr = GetCritter( smth.GetId() );
+            if( !cr )
+                break;
+            AimTargetId = cr->GetId();
+            SetCurMode( CUR_DEFAULT );
+            AimPic = AimGetPic( cr, "frm" );
+            if( !AimPic )
+                AimPic = AimGetPic( cr, "png" );
+            if( !AimPic )
+                AimPic = AimGetPic( cr, "bmp" );
+            AimMouseMove();
         }
-
-        if( GmapTownLoc.LocId != GmapShowEntrancesLocId || Timer::FastTick() >= GmapNextShowEntrancesTick )
+        break;
+        case SCREEN__SAY:
+            SetCurMode( CUR_DEFAULT );
+            SayType = DIALOGSAY_NONE;
+            SayTitle = MsgGame->GetStr( STR_SAY_TITLE );
+            SayOnlyNumbers = false;
+            break;
+        case SCREEN__SPLIT:
+            SetCurMode( CUR_DEFAULT );
+            break;
+        case SCREEN__TIMER:
+            SetCurMode( CUR_DEFAULT );
+            break;
+        case SCREEN__DIALOGBOX:
+            SetCurMode( CUR_DEFAULT );
+            DlgboxType = DIALOGBOX_NONE;
+            DlgboxWait = 0;
+            Str::Copy( DlgboxText, "" );
+            DlgboxButtonsCount = 0;
+            DlgboxSelectedButton = 0;
+            break;
+        case SCREEN__ELEVATOR:
+            SetCurMode( CUR_DEFAULT );
+            break;
+        case SCREEN__CHA_NAME:
+            SetCurMode( CUR_DEFAULT );
+            IfaceHold = IFACE_CHA_NAME_NAME;
+            ChaNameX = ChaX + ChaNameWMain[0];
+            ChaNameY = ChaY + ChaNameWMain[1];
+            break;
+        case SCREEN__CHA_AGE:
+            SetCurMode( CUR_DEFAULT );
+            ChaAgeX = ChaX + ChaAgeWMain[0];
+            ChaAgeY = ChaY + ChaAgeWMain[1];
+            if( !IsMainScreen( SCREEN_REGISTRATION ) )
+                ShowScreen( SCREEN_NONE );
+            break;
+        case SCREEN__CHA_SEX:
+            SetCurMode( CUR_DEFAULT );
+            ChaSexX = ChaX + ChaSexWMain[0];
+            ChaSexY = ChaY + ChaSexWMain[1];
+            if( !IsMainScreen( SCREEN_REGISTRATION ) )
+                ShowScreen( SCREEN_NONE );
+            break;
+        case SCREEN__GM_TOWN:
         {
-            Net_SendRuleGlobal( GM_CMD_ENTRANCES, GmapTownLoc.LocId );
-            GmapShowEntrancesLocId = GmapTownLoc.LocId;
-            GmapNextShowEntrancesTick = Timer::FastTick() + GM_ENTRANCES_SEND_TIME;
+            SetCurMode( CUR_DEFAULT );
+            GmapTownTextPos.clear();
+            GmapTownText.clear();
+
+            GmapTownPic = NULL;
+            GmapTownPicPos[0] = 0;
+            GmapTownPicPos[1] = 0;
+            GmapTownPicPos[2] = MODE_WIDTH;
+            GmapTownPicPos[3] = MODE_HEIGHT;
+            int pic_offsx = 0;
+            int pic_offsy = 0;
+            ushort loc_pid = GmapTownLoc.LocPid;
+
+            AnyFrames* anim = ResMngr.GetIfaceAnim( Str::GetHash( MsgGM->GetStr( STR_GM_PIC_( loc_pid ) ) ) );
+            if( !anim )
+            {
+                RunScreenScript( true, screen, p0, p1, p2 );
+                ShowScreen( SCREEN_NONE );
+                return;
+            }
+            SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
+
+            GmapTownPic = anim;
+            pic_offsx = ( MODE_WIDTH - si->Width ) / 2;
+            pic_offsy = ( MODE_HEIGHT - si->Height ) / 2;
+            GmapTownPicPos[0] = pic_offsx;
+            GmapTownPicPos[1] = pic_offsy;
+            GmapTownPicPos[2] = pic_offsx + si->Width;
+            GmapTownPicPos[3] = pic_offsy + si->Height;
+
+            uint entrance = MsgGM->GetInt( STR_GM_ENTRANCE_COUNT_( loc_pid ) );
+            if( !entrance )
+                break;
+
+            for( uint i = 0; i < entrance; i++ )
+            {
+                int x = MsgGM->GetInt( STR_GM_ENTRANCE_PICX_( loc_pid, i ) ) + pic_offsx;
+                int y = MsgGM->GetInt( STR_GM_ENTRANCE_PICY_( loc_pid, i ) ) + pic_offsy;
+
+                GmapTownTextPos.push_back( Rect( x, y, MODE_WIDTH, MODE_HEIGHT ) );
+                GmapTownText.push_back( string( MsgGM->GetStr( STR_GM_ENTRANCE_NAME_( loc_pid, i ) ) ) );
+            }
+
+            if( GmapTownLoc.LocId != GmapShowEntrancesLocId || Timer::FastTick() >= GmapNextShowEntrancesTick )
+            {
+                Net_SendRuleGlobal( GM_CMD_ENTRANCES, GmapTownLoc.LocId );
+                GmapShowEntrancesLocId = GmapTownLoc.LocId;
+                GmapNextShowEntrancesTick = Timer::FastTick() + GM_ENTRANCES_SEND_TIME;
+            }
         }
-    }
-    break;
-    case SCREEN__INPUT_BOX:
-        SetCurMode( CUR_DEFAULT );
-        IboxMode = IBOX_MODE_NONE;
-        IboxHolodiskId = 0;
-        IboxTitleCur = 0;
-        IboxTextCur = 0;
         break;
-    case SCREEN__SKILLBOX:
-        SetCurMode( CUR_DEFAULT );
-        break;
-    case SCREEN__USE:
-        SetCurMode( CUR_HAND );
-        CollectContItems();
-        UseHoldId = 0;
-        UseScroll = 0;
-        UseMouseMove();
-        break;
-    case SCREEN__PERK:
-        SetCurMode( CUR_DEFAULT );
-        PerkScroll = 0;
-        PerkCurPerk = -1;
-        PerkPrepare();
-        PerkMouseMove();
-        break;
-    case SCREEN__TOWN_VIEW:
-        SetCurMode( CUR_DEFAULT );
-        TViewShowCountours = false;
-        TViewType = TOWN_VIEW_FROM_NONE;
-        TViewGmapLocId = 0;
-        TViewGmapLocEntrance = 0;
-        break;
-    case SCREEN__SAVE_LOAD:
-        SaveLoadCollect();
-        if( SaveLoadLoginScreen )
-            ScreenFadeOut();
-        break;
-    default:
-        break;
+        case SCREEN__INPUT_BOX:
+            SetCurMode( CUR_DEFAULT );
+            IboxMode = IBOX_MODE_NONE;
+            IboxHolodiskId = 0;
+            IboxTitleCur = 0;
+            IboxTextCur = 0;
+            break;
+        case SCREEN__SKILLBOX:
+            SetCurMode( CUR_DEFAULT );
+            break;
+        case SCREEN__USE:
+            SetCurMode( CUR_HAND );
+            CollectContItems();
+            UseHoldId = 0;
+            UseScroll = 0;
+            UseMouseMove();
+            break;
+        case SCREEN__PERK:
+            SetCurMode( CUR_DEFAULT );
+            PerkScroll = 0;
+            PerkCurPerk = -1;
+            PerkPrepare();
+            PerkMouseMove();
+            break;
+        case SCREEN__TOWN_VIEW:
+            SetCurMode( CUR_DEFAULT );
+            TViewShowCountours = false;
+            TViewType = TOWN_VIEW_FROM_NONE;
+            TViewGmapLocId = 0;
+            TViewGmapLocEntrance = 0;
+            break;
+        case SCREEN__SAVE_LOAD:
+            SaveLoadCollect();
+            if( SaveLoadLoginScreen )
+                ScreenFadeOut();
+            break;
+        default:
+            break;
     }
     RunScreenScript( true, screen, p0, p1, p2 );
 }
@@ -6178,32 +6178,32 @@ void FOClient::GmapDraw()
     // Buttons
     switch( IfaceHold )
     {
-    case IFACE_GMAP_TOWN:
-        SprMngr.DrawSprite( GmapPBTownDw, GmapBTown[0], GmapBTown[1] );
-        break;
-    case IFACE_GMAP_TABSCRUP:
-        SprMngr.DrawSprite( GmapPTabScrUpDw, GmapBTabsScrUp[0], GmapBTabsScrUp[1] );
-        break;
-    case IFACE_GMAP_TABSCRDW:
-        SprMngr.DrawSprite( GmapPTabScrDwDw, GmapBTabsScrDn[0], GmapBTabsScrDn[1] );
-        break;
-    case IFACE_GMAP_INV:
-        SprMngr.DrawSprite( GmapBInvPicDown, GmapBInv[0], GmapBInv[1] );
-        break;
-    case IFACE_GMAP_MENU:
-        SprMngr.DrawSprite( GmapBMenuPicDown, GmapBMenu[0], GmapBMenu[1] );
-        break;
-    case IFACE_GMAP_CHA:
-        SprMngr.DrawSprite( GmapBChaPicDown, GmapBCha[0], GmapBCha[1] );
-        break;
-    case IFACE_GMAP_PIP:
-        SprMngr.DrawSprite( GmapBPipPicDown, GmapBPip[0], GmapBPip[1] );
-        break;
-    case IFACE_GMAP_FIX:
-        SprMngr.DrawSprite( GmapBFixPicDown, GmapBFix[0], GmapBFix[1] );
-        break;
-    default:
-        break;
+        case IFACE_GMAP_TOWN:
+            SprMngr.DrawSprite( GmapPBTownDw, GmapBTown[0], GmapBTown[1] );
+            break;
+        case IFACE_GMAP_TABSCRUP:
+            SprMngr.DrawSprite( GmapPTabScrUpDw, GmapBTabsScrUp[0], GmapBTabsScrUp[1] );
+            break;
+        case IFACE_GMAP_TABSCRDW:
+            SprMngr.DrawSprite( GmapPTabScrDwDw, GmapBTabsScrDn[0], GmapBTabsScrDn[1] );
+            break;
+        case IFACE_GMAP_INV:
+            SprMngr.DrawSprite( GmapBInvPicDown, GmapBInv[0], GmapBInv[1] );
+            break;
+        case IFACE_GMAP_MENU:
+            SprMngr.DrawSprite( GmapBMenuPicDown, GmapBMenu[0], GmapBMenu[1] );
+            break;
+        case IFACE_GMAP_CHA:
+            SprMngr.DrawSprite( GmapBChaPicDown, GmapBCha[0], GmapBCha[1] );
+            break;
+        case IFACE_GMAP_PIP:
+            SprMngr.DrawSprite( GmapBPipPicDown, GmapBPip[0], GmapBPip[1] );
+            break;
+        case IFACE_GMAP_FIX:
+            SprMngr.DrawSprite( GmapBFixPicDown, GmapBFix[0], GmapBFix[1] );
+            break;
+        default:
+            break;
     }
 
     // Car
@@ -6598,47 +6598,47 @@ void FOClient::GmapKeyDown( uchar dik, const char* dik_text )
 
     switch( dik )
     {
-    case DIK_HOME:
-        GmapOffsetX = GmapWMap.W() / 2 + GmapWMap[0] - (int)( GmapGroupCurX / GmapZoom );
-        GmapOffsetY = GmapWMap.H() / 2 + GmapWMap[1] - (int)( GmapGroupCurY / GmapZoom );
-        GMAP_CHECK_MAPSCR;
-        break;
-    case DIK_C:
-        ShowScreen( SCREEN__CHARACTER );
-        if( Chosen && Chosen->Params[ST_UNSPENT_PERKS] )
-            ShowScreen( SCREEN__PERK );
-        break;
-    case DIK_I:
-        ShowScreen( SCREEN__INVENTORY );
-        break;
-    case DIK_P:
-        ShowScreen( SCREEN__PIP_BOY );
-        break;
-    case DIK_F:
-        ShowScreen( SCREEN__FIX_BOY );
-        break;
-    case DIK_O:
-        ShowScreen( SCREEN__MENU_OPTION );
-        break;
-    case DIK_SLASH:
-        AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
-        break;
-    case DIK_EQUALS:
-    case DIK_ADD:
-        GameOpt.Light += 5;
-        if( GameOpt.Light > 50 )
-            GameOpt.Light = 50;
-        SetDayTime( true );
-        break;
-    case DIK_MINUS:
-    case DIK_SUBTRACT:
-        GameOpt.Light -= 5;
-        if( GameOpt.Light < 0 )
-            GameOpt.Light = 0;
-        SetDayTime( true );
-        break;
-    default:
-        break;
+        case DIK_HOME:
+            GmapOffsetX = GmapWMap.W() / 2 + GmapWMap[0] - (int)( GmapGroupCurX / GmapZoom );
+            GmapOffsetY = GmapWMap.H() / 2 + GmapWMap[1] - (int)( GmapGroupCurY / GmapZoom );
+            GMAP_CHECK_MAPSCR;
+            break;
+        case DIK_C:
+            ShowScreen( SCREEN__CHARACTER );
+            if( Chosen && Chosen->Params[ST_UNSPENT_PERKS] )
+                ShowScreen( SCREEN__PERK );
+            break;
+        case DIK_I:
+            ShowScreen( SCREEN__INVENTORY );
+            break;
+        case DIK_P:
+            ShowScreen( SCREEN__PIP_BOY );
+            break;
+        case DIK_F:
+            ShowScreen( SCREEN__FIX_BOY );
+            break;
+        case DIK_O:
+            ShowScreen( SCREEN__MENU_OPTION );
+            break;
+        case DIK_SLASH:
+            AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
+            break;
+        case DIK_EQUALS:
+        case DIK_ADD:
+            GameOpt.Light += 5;
+            if( GameOpt.Light > 50 )
+                GameOpt.Light = 50;
+            SetDayTime( true );
+            break;
+        case DIK_MINUS:
+        case DIK_SUBTRACT:
+            GameOpt.Light -= 5;
+            if( GameOpt.Light < 0 )
+                GameOpt.Light = 0;
+            SetDayTime( true );
+            break;
+        default:
+            break;
     }
 }
 
@@ -7144,26 +7144,26 @@ void FOClient::ChaDraw( bool is_reg )
 
     switch( IfaceHold )
     {
-    case IFACE_CHA_PRINT:
-        SprMngr.DrawSprite( ChaPBPrintDn, ChaBPrint[0] + ChaX, ChaBPrint[1] + ChaY );
-        break;
-    case IFACE_CHA_OK:
-        SprMngr.DrawSprite( ChaPBOkDn, ChaBOk[0] + ChaX, ChaBOk[1] + ChaY );
-        break;
-    case IFACE_CHA_CANCEL:
-        SprMngr.DrawSprite( ChaPBCancelDn, ChaBCancel[0] + ChaX, ChaBCancel[1] + ChaY );
-        break;
-    case IFACE_CHA_NAME:
-        SprMngr.DrawSprite( ChaPBNameDn, ChaBName[0] + ChaX, ChaBName[1] + ChaY );
-        break;
-    case IFACE_CHA_AGE:
-        SprMngr.DrawSprite( ChaPBAgeDn, ChaBAge[0] + ChaX, ChaBAge[1] + ChaY );
-        break;
-    case IFACE_CHA_SEX:
-        SprMngr.DrawSprite( ChaPBSexDn, ChaBSex[0] + ChaX, ChaBSex[1] + ChaY );
-        break;
-    default:
-        break;
+        case IFACE_CHA_PRINT:
+            SprMngr.DrawSprite( ChaPBPrintDn, ChaBPrint[0] + ChaX, ChaBPrint[1] + ChaY );
+            break;
+        case IFACE_CHA_OK:
+            SprMngr.DrawSprite( ChaPBOkDn, ChaBOk[0] + ChaX, ChaBOk[1] + ChaY );
+            break;
+        case IFACE_CHA_CANCEL:
+            SprMngr.DrawSprite( ChaPBCancelDn, ChaBCancel[0] + ChaX, ChaBCancel[1] + ChaY );
+            break;
+        case IFACE_CHA_NAME:
+            SprMngr.DrawSprite( ChaPBNameDn, ChaBName[0] + ChaX, ChaBName[1] + ChaY );
+            break;
+        case IFACE_CHA_AGE:
+            SprMngr.DrawSprite( ChaPBAgeDn, ChaBAge[0] + ChaX, ChaBAge[1] + ChaY );
+            break;
+        case IFACE_CHA_SEX:
+            SprMngr.DrawSprite( ChaPBSexDn, ChaBSex[0] + ChaX, ChaBSex[1] + ChaY );
+            break;
+        default:
+            break;
     }
 
     if( ChaSkilldexPic >= 0 )
@@ -7190,17 +7190,17 @@ void FOClient::ChaDraw( bool is_reg )
     {
         switch( ChaCurSwitch )
         {
-        case CHA_SWITCH_PERKS:
-            SprMngr.DrawSprite( ChaPBSwitchPerks, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
-            break;
-        case CHA_SWITCH_KARMA:
-            SprMngr.DrawSprite( ChaPBSwitchKarma, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
-            break;
-        case CHA_SWITCH_KILLS:
-            SprMngr.DrawSprite( ChaPBSwitchKills, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
-            break;
-        default:
-            break;
+            case CHA_SWITCH_PERKS:
+                SprMngr.DrawSprite( ChaPBSwitchPerks, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
+                break;
+            case CHA_SWITCH_KARMA:
+                SprMngr.DrawSprite( ChaPBSwitchKarma, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
+                break;
+            case CHA_SWITCH_KILLS:
+                SprMngr.DrawSprite( ChaPBSwitchKills, ChaBSwitch[0] + ChaX, ChaBSwitch[1] + ChaY );
+                break;
+            default:
+                break;
         }
 
         if( IfaceHold == IFACE_CHA_SW_SCRUP )
@@ -7374,16 +7374,16 @@ void FOClient::ChaDraw( bool is_reg )
         const char* str;
         switch( ShowStats[i] )
         {
-        case ST_CARRY_WEIGHT:
-            str = Str::FormatBuf( "%d", val / 1000 );
-            break;
-        case ST_NORMAL_RESIST:
-        case ST_CRITICAL_CHANCE:
-            str = Str::FormatBuf( "%d%%", val );
-            break;
-        default:
-            str = Str::FormatBuf( "%d", val );
-            break;
+            case ST_CARRY_WEIGHT:
+                str = Str::FormatBuf( "%d", val / 1000 );
+                break;
+            case ST_NORMAL_RESIST:
+            case ST_CRITICAL_CHANCE:
+                str = Str::FormatBuf( "%d%%", val );
+                break;
+            default:
+                str = Str::FormatBuf( "%d", val );
+                break;
         }
         SprMngr.DrawStr( Rect( ChaWStatsValue, ChaX + ChaWStatsNextX * i, ChaY + ChaWStatsNextY * i ), str, FT_NOBREAK, COLOR_TEXT );
     }
@@ -7407,31 +7407,31 @@ void FOClient::ChaDraw( bool is_reg )
 
         switch( IfaceHold )
         {
-        case IFACE_CHA_PLUS:
-            SprMngr.DrawSprite( ChaPBSliderPlusDn, ChaBSliderPlus[0] + ChaCurSkill * ChaWSkillNextX + ChaX, ChaBSliderPlus[1] + ChaCurSkill * ChaWSkillNextY + ChaY );
-            break;
-        case IFACE_CHA_MINUS:
-            SprMngr.DrawSprite( ChaPBSliderMinusDn, ChaBSliderMinus[0] + ChaCurSkill * ChaWSkillNextX + ChaX, ChaBSliderMinus[1] + ChaCurSkill * ChaWSkillNextY + ChaY );
-            break;
-        default:
-            break;
+            case IFACE_CHA_PLUS:
+                SprMngr.DrawSprite( ChaPBSliderPlusDn, ChaBSliderPlus[0] + ChaCurSkill * ChaWSkillNextX + ChaX, ChaBSliderPlus[1] + ChaCurSkill * ChaWSkillNextY + ChaY );
+                break;
+            case IFACE_CHA_MINUS:
+                SprMngr.DrawSprite( ChaPBSliderMinusDn, ChaBSliderMinus[0] + ChaCurSkill * ChaWSkillNextX + ChaX, ChaBSliderMinus[1] + ChaCurSkill * ChaWSkillNextY + ChaY );
+                break;
+            default:
+                break;
         }
     }
     else
     {
         switch( IfaceHold )
         {
-        case IFACE_REG_SPEC_PL:
-            SprMngr.DrawSprite( RegPBSpecialPlusDn, RegBSpecialPlus[0] + RegCurSpecial * RegBSpecialNextX + ChaX, RegBSpecialPlus[1] + RegCurSpecial * RegBSpecialNextY + ChaY );
-            break;
-        case IFACE_REG_SPEC_MN:
-            SprMngr.DrawSprite( RegPBSpecialMinusDn, RegBSpecialMinus[0] + RegCurSpecial * RegBSpecialNextX + ChaX, RegBSpecialMinus[1] + RegCurSpecial * RegBSpecialNextY + ChaY );
-            break;
-        case IFACE_REG_TAGSKILL:
-            SprMngr.DrawSprite( RegPBTagSkillDn, RegBTagSkill[0] + ( RegCurTagSkill - SKILL_BEGIN ) * RegBTagSkillNextX + ChaX, RegBTagSkill[1] + ( RegCurTagSkill - SKILL_BEGIN ) * RegBTagSkillNextY + ChaY );
-            break;
-        default:
-            break;
+            case IFACE_REG_SPEC_PL:
+                SprMngr.DrawSprite( RegPBSpecialPlusDn, RegBSpecialPlus[0] + RegCurSpecial * RegBSpecialNextX + ChaX, RegBSpecialPlus[1] + RegCurSpecial * RegBSpecialNextY + ChaY );
+                break;
+            case IFACE_REG_SPEC_MN:
+                SprMngr.DrawSprite( RegPBSpecialMinusDn, RegBSpecialMinus[0] + RegCurSpecial * RegBSpecialNextX + ChaX, RegBSpecialMinus[1] + RegCurSpecial * RegBSpecialNextY + ChaY );
+                break;
+            case IFACE_REG_TAGSKILL:
+                SprMngr.DrawSprite( RegPBTagSkillDn, RegBTagSkill[0] + ( RegCurTagSkill - SKILL_BEGIN ) * RegBTagSkillNextX + ChaX, RegBTagSkill[1] + ( RegCurTagSkill - SKILL_BEGIN ) * RegBTagSkillNextY + ChaY );
+                break;
+            default:
+                break;
         }
     }
 }
@@ -7578,26 +7578,26 @@ label_DrawTrait:
             int sw = ( GameOpt.MouseX - ChaX - ChaBSwitch[0] ) / ( ( ChaBSwitch[2] - ChaBSwitch[0] ) / 3 );
             switch( sw )
             {
-            case 0:
-                ChaCurSwitch = CHA_SWITCH_PERKS;
-                Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_PERKS_NAME ) );
-                Str::Copy( ChaDesc, MsgGame->GetStr( STR_PERKS_DESC ) );
-                ChaSkilldexPic = SKILLDEX_PERKS;
-                break;
-            case 1:
-                ChaCurSwitch = CHA_SWITCH_KARMA;
-                Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_KARMA_NAME ) );
-                Str::Copy( ChaDesc, MsgGame->GetStr( STR_KARMA_DESC ) );
-                ChaSkilldexPic = SKILLDEX_KARMA;
-                break;
-            case 2:
-                ChaCurSwitch = CHA_SWITCH_KILLS;
-                Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_KILLS_NAME ) );
-                Str::Copy( ChaDesc, MsgGame->GetStr( STR_KILLS_DESC ) );
-                ChaSkilldexPic = SKILLDEX_KILLS;
-                break;
-            default:
-                break;
+                case 0:
+                    ChaCurSwitch = CHA_SWITCH_PERKS;
+                    Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_PERKS_NAME ) );
+                    Str::Copy( ChaDesc, MsgGame->GetStr( STR_PERKS_DESC ) );
+                    ChaSkilldexPic = SKILLDEX_PERKS;
+                    break;
+                case 1:
+                    ChaCurSwitch = CHA_SWITCH_KARMA;
+                    Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_KARMA_NAME ) );
+                    Str::Copy( ChaDesc, MsgGame->GetStr( STR_KARMA_DESC ) );
+                    ChaSkilldexPic = SKILLDEX_KARMA;
+                    break;
+                case 2:
+                    ChaCurSwitch = CHA_SWITCH_KILLS;
+                    Str::Copy( ChaName, MsgGame->GetStr( STR_SWITCH_KILLS_NAME ) );
+                    Str::Copy( ChaDesc, MsgGame->GetStr( STR_KILLS_DESC ) );
+                    ChaSkilldexPic = SKILLDEX_KILLS;
+                    break;
+                default:
+                    break;
             }
             return;
         }
@@ -7687,230 +7687,230 @@ void FOClient::ChaLMouseUp( bool is_reg )
 
     switch( IfaceHold )
     {
-    case IFACE_CHA_PRINT:
-        if( !IsCurInRect( ChaBPrint, ChaX, ChaY ) )
+        case IFACE_CHA_PRINT:
+            if( !IsCurInRect( ChaBPrint, ChaX, ChaY ) )
+                break;
             break;
-        break;
-    case IFACE_CHA_OK:
-        if( !IsCurInRect( ChaBOk, ChaX, ChaY ) )
-            break;
-        if( is_reg )
-        {
-            if( RegCheckData( RegNewCr ) )
+        case IFACE_CHA_OK:
+            if( !IsCurInRect( ChaBOk, ChaX, ChaY ) )
+                break;
+            if( is_reg )
             {
-                InitNetReason = INIT_NET_REASON_REG;
-                SetCurMode( CUR_WAIT );
+                if( RegCheckData( RegNewCr ) )
+                {
+                    InitNetReason = INIT_NET_REASON_REG;
+                    SetCurMode( CUR_WAIT );
+                }
             }
-        }
-        else
+            else
+            {
+                if( ChaUnspentSkillPoints < cr->Params[ST_UNSPENT_SKILL_POINTS] )
+                    Net_SendLevelUp( 0xFFFF );
+                ShowScreen( SCREEN_NONE );
+            }
+            break;
+        case IFACE_CHA_CANCEL:
         {
-            if( ChaUnspentSkillPoints < cr->Params[ST_UNSPENT_SKILL_POINTS] )
-                Net_SendLevelUp( 0xFFFF );
-            ShowScreen( SCREEN_NONE );
+            if( !IsCurInRect( ChaBCancel, ChaX, ChaY ) )
+                break;
+            if( is_reg )
+                ShowMainScreen( SCREEN_LOGIN );
+            else
+                ShowScreen( SCREEN_NONE );
         }
         break;
-    case IFACE_CHA_CANCEL:
-    {
-        if( !IsCurInRect( ChaBCancel, ChaX, ChaY ) )
-            break;
-        if( is_reg )
-            ShowMainScreen( SCREEN_LOGIN );
-        else
-            ShowScreen( SCREEN_NONE );
-    }
-    break;
-    case IFACE_CHA_SW_SCRUP:
-    {
-        if( is_reg )
-            break;
-        if( !IsCurInRect( ChaBSwitchScrUp, ChaX, ChaY ) )
-            break;
-        if( ChaSwitchScroll[ChaCurSwitch] > 0 )
-            ChaSwitchScroll[ChaCurSwitch]--;
-    }
-    break;
-    case IFACE_CHA_SW_SCRDN:
-    {
-        if( is_reg )
-            break;
-        if( !IsCurInRect( ChaBSwitchScrDn, ChaX, ChaY ) )
-            break;
-        int max_lines = ( ChaTSwitch[3] - ChaTSwitch[1] ) / 11;
-        SwitchElementVec& text = ChaSwitchText[ChaCurSwitch];
-        int& scroll = ChaSwitchScroll[ChaCurSwitch];
-        if( scroll + max_lines < (int)text.size() )
-            scroll++;
-    }
-    break;
-    case IFACE_CHA_PLUS:
-    {
-        if( is_reg )
-            break;
-        if( !IsCurInRect( ChaBSliderPlus, ChaCurSkill * ChaWSkillNextX + ChaX, ChaCurSkill * ChaWSkillNextY + ChaY ) )
-            break;
-        if( !ChaUnspentSkillPoints )
-            break;
+        case IFACE_CHA_SW_SCRUP:
+        {
+            if( is_reg )
+                break;
+            if( !IsCurInRect( ChaBSwitchScrUp, ChaX, ChaY ) )
+                break;
+            if( ChaSwitchScroll[ChaCurSwitch] > 0 )
+                ChaSwitchScroll[ChaCurSwitch]--;
+        }
+        break;
+        case IFACE_CHA_SW_SCRDN:
+        {
+            if( is_reg )
+                break;
+            if( !IsCurInRect( ChaBSwitchScrDn, ChaX, ChaY ) )
+                break;
+            int max_lines = ( ChaTSwitch[3] - ChaTSwitch[1] ) / 11;
+            SwitchElementVec& text = ChaSwitchText[ChaCurSwitch];
+            int& scroll = ChaSwitchScroll[ChaCurSwitch];
+            if( scroll + max_lines < (int)text.size() )
+                scroll++;
+        }
+        break;
+        case IFACE_CHA_PLUS:
+        {
+            if( is_reg )
+                break;
+            if( !IsCurInRect( ChaBSliderPlus, ChaCurSkill * ChaWSkillNextX + ChaX, ChaCurSkill * ChaWSkillNextY + ChaY ) )
+                break;
+            if( !ChaUnspentSkillPoints )
+                break;
 
-        int skill_val = cr->GetRawParam( ChaCurSkill + SKILL_BEGIN ) + ChaSkillUp[ChaCurSkill];
-        if( skill_val >= MAX_SKILL_VAL )
-            break;
+            int skill_val = cr->GetRawParam( ChaCurSkill + SKILL_BEGIN ) + ChaSkillUp[ChaCurSkill];
+            if( skill_val >= MAX_SKILL_VAL )
+                break;
 
-        int need_sp = 1;
-        if( skill_val > GameOpt.SkillModAdd6 )
-            need_sp = 6;
-        else if( skill_val > GameOpt.SkillModAdd5 )
-            need_sp = 5;
-        else if( skill_val > GameOpt.SkillModAdd4 )
-            need_sp = 4;
-        else if( skill_val > GameOpt.SkillModAdd3 )
-            need_sp = 3;
-        else if( skill_val > GameOpt.SkillModAdd2 )
-            need_sp = 2;
+            int need_sp = 1;
+            if( skill_val > GameOpt.SkillModAdd6 )
+                need_sp = 6;
+            else if( skill_val > GameOpt.SkillModAdd5 )
+                need_sp = 5;
+            else if( skill_val > GameOpt.SkillModAdd4 )
+                need_sp = 4;
+            else if( skill_val > GameOpt.SkillModAdd3 )
+                need_sp = 3;
+            else if( skill_val > GameOpt.SkillModAdd2 )
+                need_sp = 2;
 
-        if( ChaUnspentSkillPoints < need_sp )
-            break;
+            if( ChaUnspentSkillPoints < need_sp )
+                break;
 
-        ChaUnspentSkillPoints -= need_sp;
-        ChaSkillUp[ChaCurSkill]++;
-        if( cr->IsTagSkill( ChaCurSkill + SKILL_BEGIN ) )
+            ChaUnspentSkillPoints -= need_sp;
             ChaSkillUp[ChaCurSkill]++;
-    }
-    break;
-    case IFACE_CHA_MINUS:
-    {
-        if( is_reg )
-            break;
-        if( !IsCurInRect( ChaBSliderMinus, ChaCurSkill * ChaWSkillNextX + ChaX, ChaCurSkill * ChaWSkillNextY + ChaY ) )
-            break;
-        if( !ChaSkillUp[ChaCurSkill] )
-            break;
-
-        ChaSkillUp[ChaCurSkill]--;
-        if( cr->IsTagSkill( ChaCurSkill + SKILL_BEGIN ) )
-            ChaSkillUp[ChaCurSkill]--;
-        int skill_val = cr->GetRawParam( ChaCurSkill + SKILL_BEGIN ) + ChaSkillUp[ChaCurSkill];
-
-        if( skill_val > GameOpt.SkillModAdd6 )
-            ChaUnspentSkillPoints += 6;
-        else if( skill_val > GameOpt.SkillModAdd5 )
-            ChaUnspentSkillPoints += 5;
-        else if( skill_val > GameOpt.SkillModAdd4 )
-            ChaUnspentSkillPoints += 4;
-        else if( skill_val > GameOpt.SkillModAdd3 )
-            ChaUnspentSkillPoints += 3;
-        else if( skill_val > GameOpt.SkillModAdd2 )
-            ChaUnspentSkillPoints += 2;
-        else
-            ChaUnspentSkillPoints += 1;
-    }
-    break;
-    case IFACE_REG_SPEC_PL:
-    {
-        if( !is_reg )
-            break;
-        if( !IsCurInRect( RegBSpecialPlus, RegCurSpecial * RegBSpecialNextX + ChaX, RegCurSpecial * RegBSpecialNextY + ChaY ) )
-            break;
-        int cur_count = cr->Params[ChaSpecialParams[RegCurSpecial]];
-        int unspent = GameOpt.StartSpecialPoints;
-        for( uint i = 0, j = (uint)ChaSpecialParams.size(); i < j; i++ )
-            unspent -= cr->ParamsReg[ChaSpecialParams[i]];
-        if( unspent <= 0 || cur_count >= 10 )
-            break;
-        cr->ParamsReg[ChaSpecialParams[RegCurSpecial]]++;
-        cr->GenParams();
-    }
-    break;
-    case IFACE_REG_SPEC_MN:
-    {
-        if( !is_reg )
-            break;
-        if( !IsCurInRect( RegBSpecialMinus, RegCurSpecial * RegBSpecialNextX + ChaX, RegCurSpecial * RegBSpecialNextY + ChaY ) )
-            break;
-        int cur_count = cr->Params[ChaSpecialParams[RegCurSpecial]];
-        if( cur_count <= 1 )
-            break;
-        cr->ParamsReg[ChaSpecialParams[RegCurSpecial]]--;
-        cr->GenParams();
-    }
-    break;
-    case IFACE_REG_TAGSKILL:
-    {
-        if( !is_reg )
-            break;
-        int offs = RegCurTagSkill - SKILL_BEGIN;
-        if( !IsCurInRect( RegBTagSkill, offs * RegBTagSkillNextX + ChaX, offs * RegBTagSkillNextY + ChaY ) )
-            break;
-
-        int free_tag_skill = GameOpt.StartTagSkillPoints - ( cr->ParamsReg[TAG_SKILL1] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL2] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL3] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL4] ? 1 : 0 );
-
-        if( cr->ParamsReg[TAG_SKILL1] == RegCurTagSkill )
-            cr->ParamsReg[TAG_SKILL1] = 0;
-        else if( cr->ParamsReg[TAG_SKILL2] == RegCurTagSkill )
-            cr->ParamsReg[TAG_SKILL2] = 0;
-        else if( cr->ParamsReg[TAG_SKILL3] == RegCurTagSkill )
-            cr->ParamsReg[TAG_SKILL3] = 0;
-        else if( cr->ParamsReg[TAG_SKILL4] == RegCurTagSkill )
-            cr->ParamsReg[TAG_SKILL4] = 0;
-        else if( !cr->ParamsReg[TAG_SKILL1] && free_tag_skill > 0 )
-            cr->ParamsReg[TAG_SKILL1] = RegCurTagSkill;
-        else if( !cr->ParamsReg[TAG_SKILL2] && free_tag_skill > 0 )
-            cr->ParamsReg[TAG_SKILL2] = RegCurTagSkill;
-        else if( !cr->ParamsReg[TAG_SKILL3] && free_tag_skill > 0 )
-            cr->ParamsReg[TAG_SKILL3] = RegCurTagSkill;
-        else if( !cr->ParamsReg[TAG_SKILL4] && free_tag_skill > 0 )
-            cr->ParamsReg[TAG_SKILL4] = RegCurTagSkill;
-
-        cr->GenParams();
-    }
-    break;
-    case IFACE_REG_TRAIT_L:
-    case IFACE_REG_TRAIT_R:
-    {
-        if( !is_reg )
-            break;
-        if( IfaceHold == IFACE_REG_TRAIT_L && !IsCurInRect( RegBTraitL, RegTraitNum * RegTraitNextX + ChaX, RegTraitNum * RegTraitNextY + ChaY ) )
-            break;
-        if( IfaceHold == IFACE_REG_TRAIT_R && !IsCurInRect( RegBTraitR, RegTraitNum * RegTraitNextX + ChaX, RegTraitNum * RegTraitNextY + ChaY ) )
-            break;
-
-        int trait = RegTraitNum + TRAIT_BEGIN;
-        if( IfaceHold == IFACE_REG_TRAIT_R )
-            trait += TRAIT_COUNT / 2;
-
-        if( cr->Params[trait] )
-        {
-            cr->ParamsReg[trait] = 0;
+            if( cr->IsTagSkill( ChaCurSkill + SKILL_BEGIN ) )
+                ChaSkillUp[ChaCurSkill]++;
         }
-        else
-        {
-            uint j = 0;
-            for( uint i = TRAIT_BEGIN; i <= TRAIT_END; ++i )
-                if( cr->Params[i] )
-                    j++;
-            if( j < 2 )
-                cr->ParamsReg[trait] = 1;
-        }
-
-        cr->GenParams();
-    }
-    break;
-    case IFACE_CHA_NAME:
-        if( !is_reg || !IsCurInRect( ChaBName, ChaX, ChaY ) )
-            break;
-        ShowScreen( SCREEN__CHA_NAME );
-        return;
-    case IFACE_CHA_AGE:
-        if( !is_reg || !IsCurInRect( ChaBAge, ChaX, ChaY ) )
-            break;
-        ShowScreen( SCREEN__CHA_AGE );
-        return;
-    case IFACE_CHA_SEX:
-        if( !is_reg || !IsCurInRect( ChaBSex, ChaX, ChaY ) )
-            break;
-        ShowScreen( SCREEN__CHA_SEX );
-        return;
-    default:
         break;
+        case IFACE_CHA_MINUS:
+        {
+            if( is_reg )
+                break;
+            if( !IsCurInRect( ChaBSliderMinus, ChaCurSkill * ChaWSkillNextX + ChaX, ChaCurSkill * ChaWSkillNextY + ChaY ) )
+                break;
+            if( !ChaSkillUp[ChaCurSkill] )
+                break;
+
+            ChaSkillUp[ChaCurSkill]--;
+            if( cr->IsTagSkill( ChaCurSkill + SKILL_BEGIN ) )
+                ChaSkillUp[ChaCurSkill]--;
+            int skill_val = cr->GetRawParam( ChaCurSkill + SKILL_BEGIN ) + ChaSkillUp[ChaCurSkill];
+
+            if( skill_val > GameOpt.SkillModAdd6 )
+                ChaUnspentSkillPoints += 6;
+            else if( skill_val > GameOpt.SkillModAdd5 )
+                ChaUnspentSkillPoints += 5;
+            else if( skill_val > GameOpt.SkillModAdd4 )
+                ChaUnspentSkillPoints += 4;
+            else if( skill_val > GameOpt.SkillModAdd3 )
+                ChaUnspentSkillPoints += 3;
+            else if( skill_val > GameOpt.SkillModAdd2 )
+                ChaUnspentSkillPoints += 2;
+            else
+                ChaUnspentSkillPoints += 1;
+        }
+        break;
+        case IFACE_REG_SPEC_PL:
+        {
+            if( !is_reg )
+                break;
+            if( !IsCurInRect( RegBSpecialPlus, RegCurSpecial * RegBSpecialNextX + ChaX, RegCurSpecial * RegBSpecialNextY + ChaY ) )
+                break;
+            int cur_count = cr->Params[ChaSpecialParams[RegCurSpecial]];
+            int unspent = GameOpt.StartSpecialPoints;
+            for( uint i = 0, j = (uint)ChaSpecialParams.size(); i < j; i++ )
+                unspent -= cr->ParamsReg[ChaSpecialParams[i]];
+            if( unspent <= 0 || cur_count >= 10 )
+                break;
+            cr->ParamsReg[ChaSpecialParams[RegCurSpecial]]++;
+            cr->GenParams();
+        }
+        break;
+        case IFACE_REG_SPEC_MN:
+        {
+            if( !is_reg )
+                break;
+            if( !IsCurInRect( RegBSpecialMinus, RegCurSpecial * RegBSpecialNextX + ChaX, RegCurSpecial * RegBSpecialNextY + ChaY ) )
+                break;
+            int cur_count = cr->Params[ChaSpecialParams[RegCurSpecial]];
+            if( cur_count <= 1 )
+                break;
+            cr->ParamsReg[ChaSpecialParams[RegCurSpecial]]--;
+            cr->GenParams();
+        }
+        break;
+        case IFACE_REG_TAGSKILL:
+        {
+            if( !is_reg )
+                break;
+            int offs = RegCurTagSkill - SKILL_BEGIN;
+            if( !IsCurInRect( RegBTagSkill, offs * RegBTagSkillNextX + ChaX, offs * RegBTagSkillNextY + ChaY ) )
+                break;
+
+            int free_tag_skill = GameOpt.StartTagSkillPoints - ( cr->ParamsReg[TAG_SKILL1] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL2] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL3] ? 1 : 0 ) - ( cr->ParamsReg[TAG_SKILL4] ? 1 : 0 );
+
+            if( cr->ParamsReg[TAG_SKILL1] == RegCurTagSkill )
+                cr->ParamsReg[TAG_SKILL1] = 0;
+            else if( cr->ParamsReg[TAG_SKILL2] == RegCurTagSkill )
+                cr->ParamsReg[TAG_SKILL2] = 0;
+            else if( cr->ParamsReg[TAG_SKILL3] == RegCurTagSkill )
+                cr->ParamsReg[TAG_SKILL3] = 0;
+            else if( cr->ParamsReg[TAG_SKILL4] == RegCurTagSkill )
+                cr->ParamsReg[TAG_SKILL4] = 0;
+            else if( !cr->ParamsReg[TAG_SKILL1] && free_tag_skill > 0 )
+                cr->ParamsReg[TAG_SKILL1] = RegCurTagSkill;
+            else if( !cr->ParamsReg[TAG_SKILL2] && free_tag_skill > 0 )
+                cr->ParamsReg[TAG_SKILL2] = RegCurTagSkill;
+            else if( !cr->ParamsReg[TAG_SKILL3] && free_tag_skill > 0 )
+                cr->ParamsReg[TAG_SKILL3] = RegCurTagSkill;
+            else if( !cr->ParamsReg[TAG_SKILL4] && free_tag_skill > 0 )
+                cr->ParamsReg[TAG_SKILL4] = RegCurTagSkill;
+
+            cr->GenParams();
+        }
+        break;
+        case IFACE_REG_TRAIT_L:
+        case IFACE_REG_TRAIT_R:
+        {
+            if( !is_reg )
+                break;
+            if( IfaceHold == IFACE_REG_TRAIT_L && !IsCurInRect( RegBTraitL, RegTraitNum * RegTraitNextX + ChaX, RegTraitNum * RegTraitNextY + ChaY ) )
+                break;
+            if( IfaceHold == IFACE_REG_TRAIT_R && !IsCurInRect( RegBTraitR, RegTraitNum * RegTraitNextX + ChaX, RegTraitNum * RegTraitNextY + ChaY ) )
+                break;
+
+            int trait = RegTraitNum + TRAIT_BEGIN;
+            if( IfaceHold == IFACE_REG_TRAIT_R )
+                trait += TRAIT_COUNT / 2;
+
+            if( cr->Params[trait] )
+            {
+                cr->ParamsReg[trait] = 0;
+            }
+            else
+            {
+                uint j = 0;
+                for( uint i = TRAIT_BEGIN; i <= TRAIT_END; ++i )
+                    if( cr->Params[i] )
+                        j++;
+                if( j < 2 )
+                    cr->ParamsReg[trait] = 1;
+            }
+
+            cr->GenParams();
+        }
+        break;
+        case IFACE_CHA_NAME:
+            if( !is_reg || !IsCurInRect( ChaBName, ChaX, ChaY ) )
+                break;
+            ShowScreen( SCREEN__CHA_NAME );
+            return;
+        case IFACE_CHA_AGE:
+            if( !is_reg || !IsCurInRect( ChaBAge, ChaX, ChaY ) )
+                break;
+            ShowScreen( SCREEN__CHA_AGE );
+            return;
+        case IFACE_CHA_SEX:
+            if( !is_reg || !IsCurInRect( ChaBSex, ChaX, ChaY ) )
+                break;
+            ShowScreen( SCREEN__CHA_SEX );
+            return;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -7989,15 +7989,15 @@ void FOClient::ChaNameKeyDown( uchar dik, const char* dik_text )
     {
         switch( IfaceHold )
         {
-        case IFACE_CHA_NAME_NAME:
-            IfaceHold = IFACE_CHA_NAME_PASS;
-            return;
-        case IFACE_CHA_NAME_PASS:
-            IfaceHold = IFACE_CHA_NAME_NAME;
-            return;
-        default:
-            IfaceHold = IFACE_CHA_NAME_NAME;
-            return;
+            case IFACE_CHA_NAME_NAME:
+                IfaceHold = IFACE_CHA_NAME_PASS;
+                return;
+            case IFACE_CHA_NAME_PASS:
+                IfaceHold = IFACE_CHA_NAME_NAME;
+                return;
+            default:
+                IfaceHold = IFACE_CHA_NAME_NAME;
+                return;
         }
     }
 
@@ -8009,20 +8009,20 @@ void FOClient::ChaNameKeyDown( uchar dik, const char* dik_text )
 
     switch( IfaceHold )
     {
-    case IFACE_CHA_NAME_NAME:
-    {
-        string tmp_str = RegNewCr->Name.c_std_str();
-        Keyb::GetChar( dik, dik_text, tmp_str, NULL, min( GameOpt.MaxNameLength, (uint)MAX_NAME ), KIF_NO_SPEC_SYMBOLS );
-        RegNewCr->Name = tmp_str;
-    }
-    break;
-    case IFACE_CHA_NAME_PASS:
-    {
-        Keyb::GetChar( dik, dik_text, RegNewCr->Pass, NULL, min( GameOpt.MaxNameLength, (uint)MAX_NAME ), KIF_NO_SPEC_SYMBOLS );
-    }
-    break;
-    default:
+        case IFACE_CHA_NAME_NAME:
+        {
+            string tmp_str = RegNewCr->Name.c_std_str();
+            Keyb::GetChar( dik, dik_text, tmp_str, NULL, min( GameOpt.MaxNameLength, (uint)MAX_NAME ), KIF_NO_SPEC_SYMBOLS );
+            RegNewCr->Name = tmp_str;
+        }
         break;
+        case IFACE_CHA_NAME_PASS:
+        {
+            Keyb::GetChar( dik, dik_text, RegNewCr->Pass, NULL, min( GameOpt.MaxNameLength, (uint)MAX_NAME ), KIF_NO_SPEC_SYMBOLS );
+        }
+        break;
+        default:
+            break;
     }
 }
 
@@ -8036,14 +8036,14 @@ void FOClient::ChaAgeDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_CHA_AGE_UP:
-        SprMngr.DrawSprite( ChaAgeBUpDn, ChaAgeBUp[0] + ChaAgeX, ChaAgeBUp[1] + ChaAgeY );
-        break;
-    case IFACE_CHA_AGE_DOWN:
-        SprMngr.DrawSprite( ChaAgeBDownDn, ChaAgeBDown[0] + ChaAgeX, ChaAgeBDown[1] + ChaAgeY );
-        break;
-    default:
-        break;
+        case IFACE_CHA_AGE_UP:
+            SprMngr.DrawSprite( ChaAgeBUpDn, ChaAgeBUp[0] + ChaAgeX, ChaAgeBUp[1] + ChaAgeY );
+            break;
+        case IFACE_CHA_AGE_DOWN:
+            SprMngr.DrawSprite( ChaAgeBDownDn, ChaAgeBDown[0] + ChaAgeX, ChaAgeBDown[1] + ChaAgeY );
+            break;
+        default:
+            break;
     }
 
     if( !IsMainScreen( SCREEN_REGISTRATION ) || !RegNewCr )
@@ -8079,28 +8079,28 @@ void FOClient::ChaAgeLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_CHA_AGE_UP:
-        if( !IsCurInRect( ChaAgeBUp, ChaAgeX, ChaAgeY ) )
+        case IFACE_CHA_AGE_UP:
+            if( !IsCurInRect( ChaAgeBUp, ChaAgeX, ChaAgeY ) )
+                break;
+            if( !RegNewCr )
+                break;
+            if( RegNewCr->ParamsReg[ST_AGE] >= AGE_MAX )
+                RegNewCr->ParamsReg[ST_AGE] = AGE_MIN;
+            else
+                RegNewCr->ParamsReg[ST_AGE]++;
+            RegNewCr->GenParams();
+        case IFACE_CHA_AGE_DOWN:
+            if( !IsCurInRect( ChaAgeBDown, ChaAgeX, ChaAgeY ) )
+                break;
+            if( !RegNewCr )
+                break;
+            if( RegNewCr->ParamsReg[ST_AGE] <= AGE_MIN )
+                RegNewCr->ParamsReg[ST_AGE] = AGE_MAX;
+            else
+                RegNewCr->ParamsReg[ST_AGE]--;
+            RegNewCr->GenParams();
+        default:
             break;
-        if( !RegNewCr )
-            break;
-        if( RegNewCr->ParamsReg[ST_AGE] >= AGE_MAX )
-            RegNewCr->ParamsReg[ST_AGE] = AGE_MIN;
-        else
-            RegNewCr->ParamsReg[ST_AGE]++;
-        RegNewCr->GenParams();
-    case IFACE_CHA_AGE_DOWN:
-        if( !IsCurInRect( ChaAgeBDown, ChaAgeX, ChaAgeY ) )
-            break;
-        if( !RegNewCr )
-            break;
-        if( RegNewCr->ParamsReg[ST_AGE] <= AGE_MIN )
-            RegNewCr->ParamsReg[ST_AGE] = AGE_MAX;
-        else
-            RegNewCr->ParamsReg[ST_AGE]--;
-        RegNewCr->GenParams();
-    default:
-        break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -8143,24 +8143,24 @@ void FOClient::ChaSexLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_CHA_SEX_MALE:
-        if( !IsCurInRect( ChaSexBMale, ChaSexX, ChaSexY ) )
+        case IFACE_CHA_SEX_MALE:
+            if( !IsCurInRect( ChaSexBMale, ChaSexX, ChaSexY ) )
+                break;
+            if( RegNewCr )
+            {
+                RegNewCr->ParamsReg[ST_GENDER] = GENDER_MALE;
+                RegNewCr->GenParams();
+            }
+        case IFACE_CHA_SEX_FEMALE:
+            if( !IsCurInRect( ChaSexBFemale, ChaSexX, ChaSexY ) )
+                break;
+            if( RegNewCr )
+            {
+                RegNewCr->ParamsReg[ST_GENDER] = GENDER_FEMALE;
+                RegNewCr->GenParams();
+            }
+        default:
             break;
-        if( RegNewCr )
-        {
-            RegNewCr->ParamsReg[ST_GENDER] = GENDER_MALE;
-            RegNewCr->GenParams();
-        }
-    case IFACE_CHA_SEX_FEMALE:
-        if( !IsCurInRect( ChaSexBFemale, ChaSexX, ChaSexY ) )
-            break;
-        if( RegNewCr )
-        {
-            RegNewCr->ParamsReg[ST_GENDER] = GENDER_FEMALE;
-            RegNewCr->GenParams();
-        }
-    default:
-        break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -8194,20 +8194,20 @@ void FOClient::PerkDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_PERK_SCRUP:
-        SprMngr.DrawSprite( PerkPBScrUpDn, PerkBScrUp[0] + PerkX, PerkBScrUp[1] + PerkY );
-        break;
-    case IFACE_PERK_SCRDN:
-        SprMngr.DrawSprite( PerkPBScrDnDn, PerkBScrDn[0] + PerkX, PerkBScrDn[1] + PerkY );
-        break;
-    case IFACE_PERK_OK:
-        SprMngr.DrawSprite( PerkPBOkDn, PerkBOk[0] + PerkX, PerkBOk[1] + PerkY );
-        break;
-    case IFACE_PERK_CANCEL:
-        SprMngr.DrawSprite( PerkPBCancelDn, PerkBCancel[0] + PerkX, PerkBCancel[1] + PerkY );
-        break;
-    default:
-        break;
+        case IFACE_PERK_SCRUP:
+            SprMngr.DrawSprite( PerkPBScrUpDn, PerkBScrUp[0] + PerkX, PerkBScrUp[1] + PerkY );
+            break;
+        case IFACE_PERK_SCRDN:
+            SprMngr.DrawSprite( PerkPBScrDnDn, PerkBScrDn[0] + PerkX, PerkBScrDn[1] + PerkY );
+            break;
+        case IFACE_PERK_OK:
+            SprMngr.DrawSprite( PerkPBOkDn, PerkBOk[0] + PerkX, PerkBOk[1] + PerkY );
+            break;
+        case IFACE_PERK_CANCEL:
+            SprMngr.DrawSprite( PerkPBCancelDn, PerkBCancel[0] + PerkX, PerkBCancel[1] + PerkY );
+            break;
+        default:
+            break;
     }
 
     if( PerkCurPerk >= 0 )
@@ -8288,32 +8288,32 @@ void FOClient::PerkLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_PERK_SCRUP:
-        if( !IsCurInRect( PerkBScrUp, PerkX, PerkY ) )
+        case IFACE_PERK_SCRUP:
+            if( !IsCurInRect( PerkBScrUp, PerkX, PerkY ) )
+                break;
+            if( PerkScroll > 0 )
+                PerkScroll--;
             break;
-        if( PerkScroll > 0 )
-            PerkScroll--;
-        break;
-    case IFACE_PERK_SCRDN:
-        if( !IsCurInRect( PerkBScrDn, PerkX, PerkY ) )
+        case IFACE_PERK_SCRDN:
+            if( !IsCurInRect( PerkBScrDn, PerkX, PerkY ) )
+                break;
+            if( PerkScroll < (int)PerkCollection.size() - 1 )
+                PerkScroll++;
             break;
-        if( PerkScroll < (int)PerkCollection.size() - 1 )
-            PerkScroll++;
-        break;
-    case IFACE_PERK_OK:
-        if( !IsCurInRect( PerkBOk, PerkX, PerkY ) )
+        case IFACE_PERK_OK:
+            if( !IsCurInRect( PerkBOk, PerkX, PerkY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
+            if( PerkCurPerk >= 0 )
+                Net_SendLevelUp( PerkCurPerk );
             break;
-        ShowScreen( SCREEN_NONE );
-        if( PerkCurPerk >= 0 )
-            Net_SendLevelUp( PerkCurPerk );
-        break;
-    case IFACE_PERK_CANCEL:
-        if( !IsCurInRect( PerkBCancel, PerkX, PerkY ) )
+        case IFACE_PERK_CANCEL:
+            if( !IsCurInRect( PerkBCancel, PerkX, PerkY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
             break;
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -8436,21 +8436,21 @@ void FOClient::PipDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_PIP_STATUS:
-        SprMngr.DrawSprite( PipPBStatusDn, PipBStatus[0] + PipX, PipBStatus[1] + PipY );
-        break;
-    // case IFACE_PIP_GAMES: SprMngr.DrawSprite(PipPBGamesDn,PipBGames[0]+PipX,PipBGames[1]+PipY); break;
-    case IFACE_PIP_AUTOMAPS:
-        SprMngr.DrawSprite( PipPBAutomapsDn, PipBAutomaps[0] + PipX, PipBAutomaps[1] + PipY );
-        break;
-    case IFACE_PIP_ARCHIVES:
-        SprMngr.DrawSprite( PipPBArchivesDn, PipBArchives[0] + PipX, PipBArchives[1] + PipY );
-        break;
-    case IFACE_PIP_CLOSE:
-        SprMngr.DrawSprite( PipPBCloseDn, PipBClose[0] + PipX, PipBClose[1] + PipY );
-        break;
-    default:
-        break;
+        case IFACE_PIP_STATUS:
+            SprMngr.DrawSprite( PipPBStatusDn, PipBStatus[0] + PipX, PipBStatus[1] + PipY );
+            break;
+        // case IFACE_PIP_GAMES: SprMngr.DrawSprite(PipPBGamesDn,PipBGames[0]+PipX,PipBGames[1]+PipY); break;
+        case IFACE_PIP_AUTOMAPS:
+            SprMngr.DrawSprite( PipPBAutomapsDn, PipBAutomaps[0] + PipX, PipBAutomaps[1] + PipY );
+            break;
+        case IFACE_PIP_ARCHIVES:
+            SprMngr.DrawSprite( PipPBArchivesDn, PipBArchives[0] + PipX, PipBArchives[1] + PipY );
+            break;
+        case IFACE_PIP_CLOSE:
+            SprMngr.DrawSprite( PipPBCloseDn, PipBClose[0] + PipX, PipBClose[1] + PipY );
+            break;
+        default:
+            break;
     }
 
     int scr = -(int)PipScroll[PipMode];
@@ -8466,241 +8466,241 @@ void FOClient::PipDraw()
 
     switch( PipMode )
     {
-    case PIP__NONE:
-    {
-        SpriteInfo* si = SprMngr.GetSpriteInfo( PipPWMonitor->GetCurSprId() );
-        SprMngr.DrawSprite( PipPWMonitor, PipWMonitor[0] + ( PipWMonitor[2] - PipWMonitor[0] - si->Width ) / 2 + PipX, PipWMonitor[1] + ( PipWMonitor[3] - PipWMonitor[1] - si->Height ) / 2 + PipY );
-    }
-    break;
-    case PIP__STATUS:
-    {
-        // Status
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_STATUS ), FT_CENTERX, COLOR_TEXT_DGREEN );
-        scr++;
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_MONEY ), 0, COLOR_TEXT );
-        PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_MONEY_VAL, Chosen->GetParam( ST_REPLICATION_MONEY ) ), 0, COLOR_TEXT );
-        scr++;
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COST ), 0, COLOR_TEXT );
-        PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COST_VAL, Chosen->GetParam( ST_REPLICATION_COST ) ), 0, COLOR_TEXT );
-        scr++;
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
-        PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
-        scr++;
-
-        // Timeouts
-        scr++;
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FT_CENTERX, COLOR_TEXT_DGREEN );
-        scr++;
-        for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
+        case PIP__NONE:
         {
-            if( !MsgGame->Count( STR_PARAM_NAME_( j ) ) )
-                continue;
-            uint val = Chosen->GetParam( j );
-
-            if( j == TO_REMOVE_FROM_GAME )
-            {
-                uint to_battle = Chosen->GetParam( TO_BATTLE );
-                if( val < to_battle )
-                    val = to_battle;
-            }
-
-            val /= ( GameOpt.TimeMultiplier ? GameOpt.TimeMultiplier : 1 );             // Convert to seconds
-            if( j == TO_REMOVE_FROM_GAME && val < GameOpt.MinimumOfflineTime / 1000 )
-                val = GameOpt.MinimumOfflineTime / 1000;
-            if( j == TO_REMOVE_FROM_GAME && NoLogOut )
-                val = 1000000;                                                      // Infinity
-
-            uint str_num = STR_TIMEOUT_SECONDS;
-            if( val > 300 )
-            {
-                val /= 60;
-                str_num = STR_TIMEOUT_MINUTES;
-            }
-            PIP_DRAW_TEXT( FmtGameText( STR_PARAM_NAME_( j ) ), 0, COLOR_TEXT );
-            if( val > 1440 )
-                PIP_DRAW_TEXTR( FmtGameText( str_num, "?" ), 0, COLOR_TEXT );
-            else
-                PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
-            scr++;
+            SpriteInfo* si = SprMngr.GetSpriteInfo( PipPWMonitor->GetCurSprId() );
+            SprMngr.DrawSprite( PipPWMonitor, PipWMonitor[0] + ( PipWMonitor[2] - PipWMonitor[0] - si->Width ) / 2 + PipX, PipWMonitor[1] + ( PipWMonitor[3] - PipWMonitor[1] - si->Height ) / 2 + PipY );
         }
-
-        // Quests
-        scr++;
-        if( scr >= 0 && scr < ml )
-            SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FT_CENTERX, COLOR_TEXT_DGREEN );
-        scr++;
-        QuestTabMap* tabs = QuestMngr.GetTabs();
-        for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
+        break;
+        case PIP__STATUS:
         {
-            PIP_DRAW_TEXT( ( *it ).first.c_str(), FT_NOBREAK, COLOR_TEXT );
+            // Status
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_STATUS ), FT_CENTERX, COLOR_TEXT_DGREEN );
             scr++;
-        }
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_MONEY ), 0, COLOR_TEXT );
+            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_MONEY_VAL, Chosen->GetParam( ST_REPLICATION_MONEY ) ), 0, COLOR_TEXT );
+            scr++;
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COST ), 0, COLOR_TEXT );
+            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COST_VAL, Chosen->GetParam( ST_REPLICATION_COST ) ), 0, COLOR_TEXT );
+            scr++;
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_REPLICATION_COUNT ), 0, COLOR_TEXT );
+            PIP_DRAW_TEXTR( FmtGameText( STR_PIP_REPLICATION_COUNT_VAL, Chosen->GetParam( ST_REPLICATION_COUNT ) ), 0, COLOR_TEXT );
+            scr++;
 
-        // Scores title
-        scr++;
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_SCORES ), FT_CENTERX, COLOR_TEXT_DGREEN );
-    }
-    break;
-    case PIP__STATUS_QUESTS:
-    {
-        QuestTab* tab = QuestMngr.GetTab( QuestNumTab );
-        if( !tab )
-            break;
-        SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tab->GetText(), FT_SKIPLINES( PipScroll[PipMode] ) );
-    }
-    break;
-    case PIP__STATUS_SCORES:
-    {
-        bool is_first_title = true;
-        char last_title[256];
-        for( int i = 0; i < SCORES_MAX; i++ )
-        {
-            if( MsgGame->Count( STR_SCORES_TITLE_( i ) ) )
-                Str::Copy( last_title, MsgGame->GetStr( STR_SCORES_TITLE_( i ) ) );
-            char* name = &BestScores[i][0];
-            if( !name[0] )
-                continue;
-            if( last_title[0] )
+            // Timeouts
+            scr++;
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_TIMEOUTS ), FT_CENTERX, COLOR_TEXT_DGREEN );
+            scr++;
+            for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
             {
-                if( !is_first_title )
-                    scr++;
-                PIP_DRAW_TEXT( last_title, FT_CENTERX, COLOR_TEXT_DGREEN );
-                scr += 2;
-                last_title[0] = '\0';
-                is_first_title = false;
-            }
-            PIP_DRAW_TEXT( MsgGame->GetStr( STR_SCORES_NAME_( i ) ), FT_CENTERX, COLOR_TEXT );
-            scr++;
-            PIP_DRAW_TEXT( name, FT_CENTERX, COLOR_TEXT );
-            scr++;
-        }
-    }
-    break;
-//	case PIP__GAMES:
-//		break;
-    case PIP__AUTOMAPS:
-    {
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_MAPS ), FT_CENTERX, COLOR_TEXT_DGREEN );
-        scr += 2;
-        for( uint i = 0, j = (uint)Automaps.size(); i < j; i++ )
-        {
-            Automap& amap = Automaps[i];
-            PIP_DRAW_TEXT( amap.LocName.c_str(), FT_CENTERX, COLOR_TEXT );
-            scr++;
+                if( !MsgGame->Count( STR_PARAM_NAME_( j ) ) )
+                    continue;
+                uint val = Chosen->GetParam( j );
 
-            for( uint k = 0, l = (uint)amap.MapNames.size(); k < l; k++ )
-            {
-                PIP_DRAW_TEXT( amap.MapNames[k].c_str(), FT_CENTERX, COLOR_TEXT_GREEN );
+                if( j == TO_REMOVE_FROM_GAME )
+                {
+                    uint to_battle = Chosen->GetParam( TO_BATTLE );
+                    if( val < to_battle )
+                        val = to_battle;
+                }
+
+                val /= ( GameOpt.TimeMultiplier ? GameOpt.TimeMultiplier : 1 );         // Convert to seconds
+                if( j == TO_REMOVE_FROM_GAME && val < GameOpt.MinimumOfflineTime / 1000 )
+                    val = GameOpt.MinimumOfflineTime / 1000;
+                if( j == TO_REMOVE_FROM_GAME && NoLogOut )
+                    val = 1000000;                                                  // Infinity
+
+                uint str_num = STR_TIMEOUT_SECONDS;
+                if( val > 300 )
+                {
+                    val /= 60;
+                    str_num = STR_TIMEOUT_MINUTES;
+                }
+                PIP_DRAW_TEXT( FmtGameText( STR_PARAM_NAME_( j ) ), 0, COLOR_TEXT );
+                if( val > 1440 )
+                    PIP_DRAW_TEXTR( FmtGameText( str_num, "?" ), 0, COLOR_TEXT );
+                else
+                    PIP_DRAW_TEXTR( FmtGameText( str_num, Str::FormatBuf( "%u", val ) ), 0, COLOR_TEXT );
                 scr++;
             }
+
+            // Quests
             scr++;
-        }
-    }
-    break;
-    case PIP__AUTOMAPS_LOC:
-    {
-        SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), MsgGM->GetStr( STR_GM_INFO_( AutomapSelected.LocPid ) ), FT_SKIPLINES( PipScroll[PipMode] ) | FT_ALIGN );
-    }
-    break;
-    case PIP__AUTOMAPS_MAP:
-    {
-        ushort map_pid = AutomapSelected.MapPids[AutomapSelected.CurMap];
-        const char* map_name = AutomapSelected.MapNames[AutomapSelected.CurMap].c_str();
-
-        scr = 0;
-        PIP_DRAW_TEXT( map_name, FT_CENTERX, COLOR_TEXT_GREEN );
-        scr += 2;
-
-        // Draw already builded minimap
-        if( map_pid == AutomapCurMapPid )
-        {
-            RectF stencil( (float)( PipWMonitor.L + PipX ), (float)( PipWMonitor.T + PipY ), (float)( PipWMonitor.R + PipX ), (float)( PipWMonitor.B + PipY ) );
-            PointF offset( AutomapScrX, AutomapScrY );
-            SprMngr.DrawPoints( AutomapPoints, PRIMITIVE_LINELIST, &AutomapZoom, &stencil, &offset );
-            break;
-        }
-
-        // Check wait of data
-        if( AutomapWaitPids.count( map_pid ) )
-        {
-            PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING ), FT_CENTERX, COLOR_TEXT );
-            break;
-        }
-
-        // Try load map
-        ushort maxhx, maxhy;
-        ItemVec items;
-        if( !HexMngr.GetMapData( map_pid, items, maxhx, maxhy ) )
-        {
-            // Check for already received
-            if( AutomapReceivedPids.count( map_pid ) )
+            if( scr >= 0 && scr < ml )
+                SprMngr.DrawStr( Rect( PipWMonitor[0], PipWMonitor[1] + scr * h, PipWMonitor[2], PipWMonitor[1] + scr * h + h, PipX, PipY ), FmtGameText( STR_PIP_QUESTS ), FT_CENTERX, COLOR_TEXT_DGREEN );
+            scr++;
+            QuestTabMap* tabs = QuestMngr.GetTabs();
+            for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
             {
-                PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING_ERROR ), FT_CENTERX, COLOR_TEXT );
+                PIP_DRAW_TEXT( ( *it ).first.c_str(), FT_NOBREAK, COLOR_TEXT );
+                scr++;
+            }
+
+            // Scores title
+            scr++;
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_SCORES ), FT_CENTERX, COLOR_TEXT_DGREEN );
+        }
+        break;
+        case PIP__STATUS_QUESTS:
+        {
+            QuestTab* tab = QuestMngr.GetTab( QuestNumTab );
+            if( !tab )
+                break;
+            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), tab->GetText(), FT_SKIPLINES( PipScroll[PipMode] ) );
+        }
+        break;
+        case PIP__STATUS_SCORES:
+        {
+            bool is_first_title = true;
+            char last_title[256];
+            for( int i = 0; i < SCORES_MAX; i++ )
+            {
+                if( MsgGame->Count( STR_SCORES_TITLE_( i ) ) )
+                    Str::Copy( last_title, MsgGame->GetStr( STR_SCORES_TITLE_( i ) ) );
+                char* name = &BestScores[i][0];
+                if( !name[0] )
+                    continue;
+                if( last_title[0] )
+                {
+                    if( !is_first_title )
+                        scr++;
+                    PIP_DRAW_TEXT( last_title, FT_CENTERX, COLOR_TEXT_DGREEN );
+                    scr += 2;
+                    last_title[0] = '\0';
+                    is_first_title = false;
+                }
+                PIP_DRAW_TEXT( MsgGame->GetStr( STR_SCORES_NAME_( i ) ), FT_CENTERX, COLOR_TEXT );
+                scr++;
+                PIP_DRAW_TEXT( name, FT_CENTERX, COLOR_TEXT );
+                scr++;
+            }
+        }
+        break;
+//	case PIP__GAMES:
+//		break;
+        case PIP__AUTOMAPS:
+        {
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_MAPS ), FT_CENTERX, COLOR_TEXT_DGREEN );
+            scr += 2;
+            for( uint i = 0, j = (uint)Automaps.size(); i < j; i++ )
+            {
+                Automap& amap = Automaps[i];
+                PIP_DRAW_TEXT( amap.LocName.c_str(), FT_CENTERX, COLOR_TEXT );
+                scr++;
+
+                for( uint k = 0, l = (uint)amap.MapNames.size(); k < l; k++ )
+                {
+                    PIP_DRAW_TEXT( amap.MapNames[k].c_str(), FT_CENTERX, COLOR_TEXT_GREEN );
+                    scr++;
+                }
+                scr++;
+            }
+        }
+        break;
+        case PIP__AUTOMAPS_LOC:
+        {
+            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), MsgGM->GetStr( STR_GM_INFO_( AutomapSelected.LocPid ) ), FT_SKIPLINES( PipScroll[PipMode] ) | FT_ALIGN );
+        }
+        break;
+        case PIP__AUTOMAPS_MAP:
+        {
+            ushort map_pid = AutomapSelected.MapPids[AutomapSelected.CurMap];
+            const char* map_name = AutomapSelected.MapNames[AutomapSelected.CurMap].c_str();
+
+            scr = 0;
+            PIP_DRAW_TEXT( map_name, FT_CENTERX, COLOR_TEXT_GREEN );
+            scr += 2;
+
+            // Draw already builded minimap
+            if( map_pid == AutomapCurMapPid )
+            {
+                RectF stencil( (float)( PipWMonitor.L + PipX ), (float)( PipWMonitor.T + PipY ), (float)( PipWMonitor.R + PipX ), (float)( PipWMonitor.B + PipY ) );
+                PointF offset( AutomapScrX, AutomapScrY );
+                SprMngr.DrawPoints( AutomapPoints, PRIMITIVE_LINELIST, &AutomapZoom, &stencil, &offset );
                 break;
             }
 
-            Net_SendGiveMap( true, map_pid, AutomapSelected.LocId, 0, 0, 0 );
-            AutomapWaitPids.insert( map_pid );
-            break;
-        }
-
-        // Build minimap
-        AutomapPoints.clear();
-        AutomapScrX = (float)( PipX - maxhx * 2 / 2 + PipWMonitor.W() / 2 );
-        AutomapScrY = (float)( PipY - maxhy * 2 / 2 + PipWMonitor.H() / 2 );
-        for( auto it = items.begin(), end = items.end(); it != end; ++it )
-        {
-            Item& item = *it;
-            ushort pid = item.GetProtoId();
-            if( pid == SP_SCEN_IBLOCK || pid == SP_MISC_SCRBLOCK )
-                continue;
-
-            uint color;
-            if( pid == SP_GRID_EXITGRID )
-                color = 0x3FFF7F00;
-            else if( item.Proto->IsWall() )
-                color = 0xFF00FF00;
-            else if( item.Proto->IsScen() )
-                color = 0x7F00FF00;
-            else if( item.Proto->IsGrid() )
-                color = 0x7F00FF00;
-            else
-                continue;
-
-            int x = PipWMonitor.L + maxhx * 2 - item.AccHex.HexX * 2;
-            int y = PipWMonitor.T + item.AccHex.HexY * 2;
-
-            AutomapPoints.push_back( PrepPoint( x, y, color ) );
-            AutomapPoints.push_back( PrepPoint( x + 1, y + 1, color ) );
-        }
-        AutomapCurMapPid = map_pid;
-        AutomapZoom = 1.0f;
-    }
-    break;
-    case PIP__ARCHIVES:
-    {
-        PIP_DRAW_TEXT( FmtGameText( STR_PIP_INFO ), FT_CENTERX, COLOR_TEXT_DGREEN );
-        scr++;
-        for( int i = 0; i < MAX_HOLO_INFO; i++ )
-        {
-            uint num = HoloInfo[i];
-            if( !num )
+            // Check wait of data
+            if( AutomapWaitPids.count( map_pid ) )
             {
-                scr++;
-                continue;
+                PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING ), FT_CENTERX, COLOR_TEXT );
+                break;
             }
-            PIP_DRAW_TEXT( GetHoloText( STR_HOLO_INFO_NAME_( num ) ), 0, COLOR_TEXT );
-            scr++;
+
+            // Try load map
+            ushort maxhx, maxhy;
+            ItemVec items;
+            if( !HexMngr.GetMapData( map_pid, items, maxhx, maxhy ) )
+            {
+                // Check for already received
+                if( AutomapReceivedPids.count( map_pid ) )
+                {
+                    PIP_DRAW_TEXT( MsgGame->GetStr( STR_AUTOMAP_LOADING_ERROR ), FT_CENTERX, COLOR_TEXT );
+                    break;
+                }
+
+                Net_SendGiveMap( true, map_pid, AutomapSelected.LocId, 0, 0, 0 );
+                AutomapWaitPids.insert( map_pid );
+                break;
+            }
+
+            // Build minimap
+            AutomapPoints.clear();
+            AutomapScrX = (float)( PipX - maxhx * 2 / 2 + PipWMonitor.W() / 2 );
+            AutomapScrY = (float)( PipY - maxhy * 2 / 2 + PipWMonitor.H() / 2 );
+            for( auto it = items.begin(), end = items.end(); it != end; ++it )
+            {
+                Item& item = *it;
+                ushort pid = item.GetProtoId();
+                if( pid == SP_SCEN_IBLOCK || pid == SP_MISC_SCRBLOCK )
+                    continue;
+
+                uint color;
+                if( pid == SP_GRID_EXITGRID )
+                    color = 0x3FFF7F00;
+                else if( item.Proto->IsWall() )
+                    color = 0xFF00FF00;
+                else if( item.Proto->IsScen() )
+                    color = 0x7F00FF00;
+                else if( item.Proto->IsGrid() )
+                    color = 0x7F00FF00;
+                else
+                    continue;
+
+                int x = PipWMonitor.L + maxhx * 2 - item.AccHex.HexX * 2;
+                int y = PipWMonitor.T + item.AccHex.HexY * 2;
+
+                AutomapPoints.push_back( PrepPoint( x, y, color ) );
+                AutomapPoints.push_back( PrepPoint( x + 1, y + 1, color ) );
+            }
+            AutomapCurMapPid = map_pid;
+            AutomapZoom = 1.0f;
         }
-    }
-    break;
-    case PIP__ARCHIVES_INFO:
-    {
-        SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), GetHoloText( STR_HOLO_INFO_DESC_( PipInfoNum ) ), FT_SKIPLINES( PipScroll[PipMode] ) | FT_ALIGN );
-    }
-    break;
-    default:
         break;
+        case PIP__ARCHIVES:
+        {
+            PIP_DRAW_TEXT( FmtGameText( STR_PIP_INFO ), FT_CENTERX, COLOR_TEXT_DGREEN );
+            scr++;
+            for( int i = 0; i < MAX_HOLO_INFO; i++ )
+            {
+                uint num = HoloInfo[i];
+                if( !num )
+                {
+                    scr++;
+                    continue;
+                }
+                PIP_DRAW_TEXT( GetHoloText( STR_HOLO_INFO_NAME_( num ) ), 0, COLOR_TEXT );
+                scr++;
+            }
+        }
+        break;
+        case PIP__ARCHIVES_INFO:
+        {
+            SprMngr.DrawStr( Rect( PipWMonitor, PipX, PipY ), GetHoloText( STR_HOLO_INFO_DESC_( PipInfoNum ) ), FT_SKIPLINES( PipScroll[PipMode] ) | FT_ALIGN );
+        }
+        break;
+        default:
+            break;
     }
 
     // Time
@@ -8735,107 +8735,107 @@ void FOClient::PipLMouseDown()
     {
         switch( PipMode )
         {
-        case PIP__STATUS:
-        {
-            scr += 8;
-            for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
-                if( MsgGame->Count( STR_PARAM_NAME_( j ) ) )
-                    scr++;
-            int scr_ = scr;
-
-            QuestTabMap* tabs = QuestMngr.GetTabs();
-            for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
+            case PIP__STATUS:
             {
-                if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
-                {
-                    QuestNumTab = scr - scr_ + PipScroll[PipMode];
-                    PipMode = PIP__STATUS_QUESTS;
-                    PipScroll[PipMode] = 0;
-                    break;
-                }
-                scr++;
-            }
-            if( PipMode == PIP__STATUS )
-            {
-                scr++;
-                if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
-                {
-                    PipMode = PIP__STATUS_SCORES;
-                    PipScroll[PipMode] = 0;
-                    if( Timer::FastTick() >= ScoresNextUploadTick )
-                    {
-                        Net_SendGetScores();
-                        ScoresNextUploadTick = Timer::FastTick() + SCORES_SEND_TIME;
-                    }
-                    break;
-                }
-            }
-        }
-        break;
-//		case PIP__GAMES:
-//			PipMode=PIP__STATUS;
-//			break;
-        case PIP__AUTOMAPS:
-        {
-            scr += 2;
-            for( uint i = 0, j = (uint)Automaps.size(); i < j; i++ )
-            {
-                Automap& amap = Automaps[i];
+                scr += 8;
+                for( uint j = TIMEOUT_END; j >= TIMEOUT_BEGIN; j-- )
+                    if( MsgGame->Count( STR_PARAM_NAME_( j ) ) )
+                        scr++;
+                int scr_ = scr;
 
-                if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
-                {
-                    PipMode = PIP__AUTOMAPS_LOC;
-                    AutomapSelected = amap;
-                    PipScroll[PipMode] = 0;
-                    break;
-                }
-                scr++;
-
-                for( uint k = 0, l = (uint)amap.MapNames.size(); k < l; k++ )
+                QuestTabMap* tabs = QuestMngr.GetTabs();
+                for( auto it = tabs->begin(), end = tabs->end(); it != end; ++it )
                 {
                     if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
                     {
-                        PipMode = PIP__AUTOMAPS_MAP;
-                        AutomapSelected = amap;
-                        AutomapSelected.CurMap = k;
+                        QuestNumTab = scr - scr_ + PipScroll[PipMode];
+                        PipMode = PIP__STATUS_QUESTS;
                         PipScroll[PipMode] = 0;
-                        AutomapCurMapPid = 0;
-                        i = j;
                         break;
                     }
                     scr++;
                 }
-                scr++;
-            }
-        }
-        break;
-        case PIP__AUTOMAPS_MAP:
-        {
-            PipVectX = GameOpt.MouseX - (int)AutomapScrX;
-            PipVectY = GameOpt.MouseY - (int)AutomapScrY;
-            IfaceHold = IFACE_PIP_AUTOMAPS_SCR;
-        }
-        break;
-        case PIP__ARCHIVES:
-        {
-            scr += 1;
-            for( int i = 0; i < MAX_HOLO_INFO; i++ )
-            {
-                if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
+                if( PipMode == PIP__STATUS )
                 {
-                    PipInfoNum = HoloInfo[scr - 1 + PipScroll[PipMode]];
-                    if( !PipInfoNum )
+                    scr++;
+                    if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
+                    {
+                        PipMode = PIP__STATUS_SCORES;
+                        PipScroll[PipMode] = 0;
+                        if( Timer::FastTick() >= ScoresNextUploadTick )
+                        {
+                            Net_SendGetScores();
+                            ScoresNextUploadTick = Timer::FastTick() + SCORES_SEND_TIME;
+                        }
                         break;
-                    PipMode = PIP__ARCHIVES_INFO;
-                    PipScroll[PipMode] = 0;
-                    break;
+                    }
                 }
-                scr++;
             }
-        }
-        break;
-        default:
             break;
+//		case PIP__GAMES:
+//			PipMode=PIP__STATUS;
+//			break;
+            case PIP__AUTOMAPS:
+            {
+                scr += 2;
+                for( uint i = 0, j = (uint)Automaps.size(); i < j; i++ )
+                {
+                    Automap& amap = Automaps[i];
+
+                    if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
+                    {
+                        PipMode = PIP__AUTOMAPS_LOC;
+                        AutomapSelected = amap;
+                        PipScroll[PipMode] = 0;
+                        break;
+                    }
+                    scr++;
+
+                    for( uint k = 0, l = (uint)amap.MapNames.size(); k < l; k++ )
+                    {
+                        if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
+                        {
+                            PipMode = PIP__AUTOMAPS_MAP;
+                            AutomapSelected = amap;
+                            AutomapSelected.CurMap = k;
+                            PipScroll[PipMode] = 0;
+                            AutomapCurMapPid = 0;
+                            i = j;
+                            break;
+                        }
+                        scr++;
+                    }
+                    scr++;
+                }
+            }
+            break;
+            case PIP__AUTOMAPS_MAP:
+            {
+                PipVectX = GameOpt.MouseX - (int)AutomapScrX;
+                PipVectY = GameOpt.MouseY - (int)AutomapScrY;
+                IfaceHold = IFACE_PIP_AUTOMAPS_SCR;
+            }
+            break;
+            case PIP__ARCHIVES:
+            {
+                scr += 1;
+                for( int i = 0; i < MAX_HOLO_INFO; i++ )
+                {
+                    if( scr >= 0 && scr < ml && IsCurInRect( Rect( r[0], r[1] + scr * h, r[2], r[1] + scr * h + h ), PipX, PipY ) )
+                    {
+                        PipInfoNum = HoloInfo[scr - 1 + PipScroll[PipMode]];
+                        if( !PipInfoNum )
+                            break;
+                        PipMode = PIP__ARCHIVES_INFO;
+                        PipScroll[PipMode] = 0;
+                        break;
+                    }
+                    scr++;
+                }
+            }
+            break;
+            default:
+                break;
         }
     }
     else if( IsCurInRect( PipWMain, PipX, PipY ) )
@@ -8850,32 +8850,32 @@ void FOClient::PipLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_PIP_STATUS:
-        if( !IsCurInRect( PipBStatus, PipX, PipY ) )
+        case IFACE_PIP_STATUS:
+            if( !IsCurInRect( PipBStatus, PipX, PipY ) )
+                break;
+            PipMode = PIP__STATUS;
             break;
-        PipMode = PIP__STATUS;
-        break;
 //	case IFACE_PIP_GAMES:
 //		if(!IsCurInRect(PipBGames,PipX,PipY)) break;
 //		PipMode=PIP__GAMES;
 //		break;
-    case IFACE_PIP_AUTOMAPS:
-        if( !IsCurInRect( PipBAutomaps, PipX, PipY ) )
+        case IFACE_PIP_AUTOMAPS:
+            if( !IsCurInRect( PipBAutomaps, PipX, PipY ) )
+                break;
+            PipMode = PIP__AUTOMAPS;
             break;
-        PipMode = PIP__AUTOMAPS;
-        break;
-    case IFACE_PIP_ARCHIVES:
-        if( !IsCurInRect( PipBArchives, PipX, PipY ) )
+        case IFACE_PIP_ARCHIVES:
+            if( !IsCurInRect( PipBArchives, PipX, PipY ) )
+                break;
+            PipMode = PIP__ARCHIVES;
             break;
-        PipMode = PIP__ARCHIVES;
-        break;
-    case IFACE_PIP_CLOSE:
-        if( !IsCurInRect( PipBClose, PipX, PipY ) )
+        case IFACE_PIP_CLOSE:
+            if( !IsCurInRect( PipBClose, PipX, PipY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
             break;
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -8887,23 +8887,23 @@ void FOClient::PipRMouseDown()
     {
         switch( PipMode )
         {
-        case PIP__STATUS_QUESTS:
-            PipMode = PIP__STATUS;
-            break;
-        case PIP__STATUS_SCORES:
-            PipMode = PIP__STATUS;
-            break;
-        case PIP__AUTOMAPS_LOC:
-            PipMode = PIP__AUTOMAPS;
-            break;
-        case PIP__AUTOMAPS_MAP:
-            PipMode = PIP__AUTOMAPS;
-            break;
-        case PIP__ARCHIVES_INFO:
-            PipMode = PIP__ARCHIVES;
-            break;
-        default:
-            break;
+            case PIP__STATUS_QUESTS:
+                PipMode = PIP__STATUS;
+                break;
+            case PIP__STATUS_SCORES:
+                PipMode = PIP__STATUS;
+                break;
+            case PIP__AUTOMAPS_LOC:
+                PipMode = PIP__AUTOMAPS;
+                break;
+            case PIP__AUTOMAPS_MAP:
+                PipMode = PIP__AUTOMAPS;
+                break;
+            case PIP__ARCHIVES_INFO:
+                PipMode = PIP__ARCHIVES;
+                break;
+            default:
+                break;
         }
     }
 }
@@ -9025,61 +9025,61 @@ void FOClient::AimLMouseUp()
 
     switch( IfaceHold )
     {
-    case IFACE_AIM_CANCEL:
-        if( !IsCurInRect( AimBCancel, AimX, AimY ) )
+        case IFACE_AIM_CANCEL:
+            if( !IsCurInRect( AimBCancel, AimX, AimY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
             break;
-        ShowScreen( SCREEN_NONE );
-        break;
-    case IFACE_AIM_HEAD:
-        if( !IsCurInRect( AimWHeadT, AimX, AimY ) )
+        case IFACE_AIM_HEAD:
+            if( !IsCurInRect( AimWHeadT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_HEAD );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_HEAD );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_LARM:
-        if( !IsCurInRect( AimWLArmT, AimX, AimY ) )
+        case IFACE_AIM_LARM:
+            if( !IsCurInRect( AimWLArmT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_LEFT_ARM );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_LEFT_ARM );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_RARM:
-        if( !IsCurInRect( AimWRArmT, AimX, AimY ) )
+        case IFACE_AIM_RARM:
+            if( !IsCurInRect( AimWRArmT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_RIGHT_ARM );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_RIGHT_ARM );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_TORSO:
-        if( !IsCurInRect( AimWTorsoT, AimX, AimY ) )
+        case IFACE_AIM_TORSO:
+            if( !IsCurInRect( AimWTorsoT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_TORSO );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_TORSO );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_RLEG:
-        if( !IsCurInRect( AimWRLegT, AimX, AimY ) )
+        case IFACE_AIM_RLEG:
+            if( !IsCurInRect( AimWRLegT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_RIGHT_LEG );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_RIGHT_LEG );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_LLEG:
-        if( !IsCurInRect( AimWLLegT, AimX, AimY ) )
+        case IFACE_AIM_LLEG:
+            if( !IsCurInRect( AimWLLegT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_LEFT_LEG );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_LEFT_LEG );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_EYES:
-        if( !IsCurInRect( AimWEyesT, AimX, AimY ) )
+        case IFACE_AIM_EYES:
+            if( !IsCurInRect( AimWEyesT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_EYES );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_EYES );
-        goto Label_Attack;
-        break;
-    case IFACE_AIM_GROIN:
-        if( !IsCurInRect( AimWGroinT, AimX, AimY ) )
+        case IFACE_AIM_GROIN:
+            if( !IsCurInRect( AimWGroinT, AimX, AimY ) )
+                break;
+            Chosen->SetAim( HIT_LOCATION_GROIN );
+            goto Label_Attack;
             break;
-        Chosen->SetAim( HIT_LOCATION_GROIN );
-        goto Label_Attack;
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -9285,126 +9285,126 @@ void FOClient::PupLMouseUp()
 
     switch( IfaceHold )
     {
-    case IFACE_PUP_CONT2:
-    {
-        if( !IsCurInRect( PupWCont1, PupX, PupY ) )
-            break;
-
-        auto it = std::find( PupCont2.begin(), PupCont2.end(), PupHoldId );
-        if( it != PupCont2.end() )
+        case IFACE_PUP_CONT2:
         {
-            Item& item = *it;
-            if( item.GetCount() > 1 )
-                SplitStart( &item, IFACE_PUP_CONT2 );
-            else
-                SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT2, 1 );
-        }
-    }
-    break;
-    case IFACE_PUP_CONT1:
-    {
-        if( !IsCurInRect( PupWCont2, PupX, PupY ) )
-            break;
+            if( !IsCurInRect( PupWCont1, PupX, PupY ) )
+                break;
 
-        auto it = std::find( PupCont1.begin(), PupCont1.end(), PupHoldId );
-        if( it != PupCont1.end() )
-        {
-            Item& item = *it;
-            if( item.GetCount() > 1 )
-                SplitStart( &item, IFACE_PUP_CONT1 );
-            else
-                SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT1, 1 );
+            auto it = std::find( PupCont2.begin(), PupCont2.end(), PupHoldId );
+            if( it != PupCont2.end() )
+            {
+                Item& item = *it;
+                if( item.GetCount() > 1 )
+                    SplitStart( &item, IFACE_PUP_CONT2 );
+                else
+                    SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT2, 1 );
+            }
         }
-    }
-    break;
-    case IFACE_PUP_OK:
-    {
-        if( !IsCurInRect( PupBOk, PupX, PupY ) )
-            break;
-        ShowScreen( SCREEN_NONE );
-    }
-    break;
-    case IFACE_PUP_SCRUP1:
-    {
-        if( !IsCurInRect( PupBScrUp1, PupX, PupY ) )
-            break;
-        if( PupScroll1 > 0 )
-            PupScroll1--;
-    }
-    break;
-    case IFACE_PUP_SCRDOWN1:
-    {
-        if( !IsCurInRect( PupBScrDw1, PupX, PupY ) )
-            break;
-        if( PupScroll1 < (int)Chosen->GetItemsCountInv() - ( PupWCont2[3] - PupWCont2[1] ) / PupHeightItem2 )
-            PupScroll1++;
-    }
-    break;
-    case IFACE_PUP_SCRUP2:
-    {
-        if( !IsCurInRect( PupBScrUp2, PupX, PupY ) )
-            break;
-        if( PupScroll2 > 0 )
-            PupScroll2--;
-    }
-    break;
-    case IFACE_PUP_SCRDOWN2:
-    {
-        if( !IsCurInRect( PupBScrDw2, PupX, PupY ) )
-            break;
-        if( PupScroll2 < (int)PupCont2.size() - ( PupWCont1[3] - PupWCont1[1] ) / PupHeightItem1 )
-            PupScroll2++;
-    }
-    break;
-    case IFACE_PUP_TAKEALL:
-    {
-        if( PupTransferType == TRANSFER_CRIT_STEAL )
-            break;
-        if( !IsCurInRect( PupBTakeAll, PupX, PupY ) )
-            break;
-        SetAction( CHOSEN_TAKE_ALL );
-    }
-    break;
-    case IFACE_PUP_SCRCR_L:
-    {
-        if( !IsCurInRect( PupBNextCritLeft, PupX, PupY ) )
-            break;
-        if( !Chosen->IsFree() || !ChosenAction.empty() )
-            break;
-        uint cnt = (uint)PupGetLootCrits().size();
-        if( cnt < 2 )
-            break;
-        if( !PupScrollCrit )
-            PupScrollCrit = cnt - 1;
-        else
-            PupScrollCrit--;
-        CritterCl* cr = PupGetLootCrit( PupScrollCrit );
-        if( !cr )
-            break;
-        SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
-    }
-    break;
-    case IFACE_PUP_SCRCR_R:
-    {
-        if( !IsCurInRect( PupBNextCritRight, PupX, PupY ) )
-            break;
-        if( !Chosen->IsFree() || !ChosenAction.empty() )
-            break;
-        uint cnt = (uint)PupGetLootCrits().size();
-        if( cnt < 2 )
-            break;
-        if( PupScrollCrit + 1 >= (int)cnt )
-            PupScrollCrit = 0;
-        else
-            PupScrollCrit++;
-        CritterCl* cr = PupGetLootCrit( PupScrollCrit );
-        if( !cr )
-            break;
-        SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
-    }
-    break;
-    default:
         break;
+        case IFACE_PUP_CONT1:
+        {
+            if( !IsCurInRect( PupWCont2, PupX, PupY ) )
+                break;
+
+            auto it = std::find( PupCont1.begin(), PupCont1.end(), PupHoldId );
+            if( it != PupCont1.end() )
+            {
+                Item& item = *it;
+                if( item.GetCount() > 1 )
+                    SplitStart( &item, IFACE_PUP_CONT1 );
+                else
+                    SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT1, 1 );
+            }
+        }
+        break;
+        case IFACE_PUP_OK:
+        {
+            if( !IsCurInRect( PupBOk, PupX, PupY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
+        }
+        break;
+        case IFACE_PUP_SCRUP1:
+        {
+            if( !IsCurInRect( PupBScrUp1, PupX, PupY ) )
+                break;
+            if( PupScroll1 > 0 )
+                PupScroll1--;
+        }
+        break;
+        case IFACE_PUP_SCRDOWN1:
+        {
+            if( !IsCurInRect( PupBScrDw1, PupX, PupY ) )
+                break;
+            if( PupScroll1 < (int)Chosen->GetItemsCountInv() - ( PupWCont2[3] - PupWCont2[1] ) / PupHeightItem2 )
+                PupScroll1++;
+        }
+        break;
+        case IFACE_PUP_SCRUP2:
+        {
+            if( !IsCurInRect( PupBScrUp2, PupX, PupY ) )
+                break;
+            if( PupScroll2 > 0 )
+                PupScroll2--;
+        }
+        break;
+        case IFACE_PUP_SCRDOWN2:
+        {
+            if( !IsCurInRect( PupBScrDw2, PupX, PupY ) )
+                break;
+            if( PupScroll2 < (int)PupCont2.size() - ( PupWCont1[3] - PupWCont1[1] ) / PupHeightItem1 )
+                PupScroll2++;
+        }
+        break;
+        case IFACE_PUP_TAKEALL:
+        {
+            if( PupTransferType == TRANSFER_CRIT_STEAL )
+                break;
+            if( !IsCurInRect( PupBTakeAll, PupX, PupY ) )
+                break;
+            SetAction( CHOSEN_TAKE_ALL );
+        }
+        break;
+        case IFACE_PUP_SCRCR_L:
+        {
+            if( !IsCurInRect( PupBNextCritLeft, PupX, PupY ) )
+                break;
+            if( !Chosen->IsFree() || !ChosenAction.empty() )
+                break;
+            uint cnt = (uint)PupGetLootCrits().size();
+            if( cnt < 2 )
+                break;
+            if( !PupScrollCrit )
+                PupScrollCrit = cnt - 1;
+            else
+                PupScrollCrit--;
+            CritterCl* cr = PupGetLootCrit( PupScrollCrit );
+            if( !cr )
+                break;
+            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+        }
+        break;
+        case IFACE_PUP_SCRCR_R:
+        {
+            if( !IsCurInRect( PupBNextCritRight, PupX, PupY ) )
+                break;
+            if( !Chosen->IsFree() || !ChosenAction.empty() )
+                break;
+            uint cnt = (uint)PupGetLootCrits().size();
+            if( cnt < 2 )
+                break;
+            if( PupScrollCrit + 1 >= (int)cnt )
+                PupScrollCrit = 0;
+            else
+                PupScrollCrit++;
+            CritterCl* cr = PupGetLootCrit( PupScrollCrit );
+            if( !cr )
+                break;
+            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+        }
+        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -9604,167 +9604,167 @@ void FOClient::CurDraw()
     // Other cursors
     switch( GetCurMode() )
     {
-    case CUR_USE_WEAPON:
-    {
-        if( !( si = SprMngr.GetSpriteInfo( CurPUseItem->GetCurSprId() ) ) )
-            return;
-        x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
-        y = GameOpt.MouseY - si->Height + si->OffsY;
-        SprMngr.DrawSprite( CurPUseItem, x, y );
-
-        CritterCl* cr = HexMngr.GetCritterPixel( GameOpt.MouseX, GameOpt.MouseY, true );
-        if( !cr || !Chosen || cr == Chosen )
-            break;
-
-        if( !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), Chosen->GetAttackDist(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true ) )
-            break;
-
-        int hit = ScriptGetHitProc( cr, HIT_LOCATION_NONE );
-        if( !hit )
-            break;
-
-        char str[16];
-        Str::Format( str, "%d%%", hit );
-
-        SprMngr.Flush();
-        SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, 0, COLOR_TEXT_RED );
-    }
-    break;
-    case CUR_USE_ITEM:
-    case CUR_USE_SKILL:
-    {
-        if( !( si = SprMngr.GetSpriteInfo( CurPUseSkill->GetCurSprId() ) ) )
-            return;
-        x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
-        y = GameOpt.MouseY - si->Height + si->OffsY;
-        SprMngr.DrawSprite( CurPUseSkill, x, y );
-    }
-    break;
-    case CUR_MOVE:
-        ushort hx, hy;
-        if( GetCurHex( hx, hy, false ) )
-            break;
-    /*{
-            Field& f=HexMngr.HexField[TargetY][TargetX];
-            if(!(si=SprMngr.GetSpriteInfo(CurPMove))) return;
-
-            if(HexMngr.IsHexPassed(TargetX,TargetY))
-                    SprMngr.DrawSpriteSize(CurPMove,(f.ScrX+1+GameOpt.ScrOx)/GameOpt.SpritesZoom,(f.ScrY-1+GameOpt.ScrOy)/GameOpt.SpritesZoom,si->Width/GameOpt.SpritesZoom,si->Height/GameOpt.SpritesZoom,TRUE,FALSE);
-            else
-                    SprMngr.DrawSpriteSize(CurPMoveBlock,(f.ScrX+1+GameOpt.ScrOx)/GameOpt.SpritesZoom,(f.ScrY-1+GameOpt.ScrOy)/GameOpt.SpritesZoom,si->Width/GameOpt.SpritesZoom,si->Height/GameOpt.SpritesZoom,TRUE,FALSE);
-
-            break;
-       }*/
-    // Draw default
-    case CUR_DEFAULT:
-        if( !( si = SprMngr.GetSpriteInfo( CurPDef->GetCurSprId() ) ) )
-            return;
-        if( IsLMenu() )
+        case CUR_USE_WEAPON:
         {
-            x = LMenuRestoreCurX - ( si->Width / 2 ) + si->OffsX;
-            y = LMenuRestoreCurY - si->Height + si->OffsY;
-        }
-        else
-        {
+            if( !( si = SprMngr.GetSpriteInfo( CurPUseItem->GetCurSprId() ) ) )
+                return;
             x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
             y = GameOpt.MouseY - si->Height + si->OffsY;
-        }
-        SprMngr.DrawSprite( CurPDef, x, y );
-        break;
-    case CUR_HAND:
-        if( !Chosen )
-            break;
+            SprMngr.DrawSprite( CurPUseItem, x, y );
 
-        if( GetActiveScreen() == SCREEN__INVENTORY )
+            CritterCl* cr = HexMngr.GetCritterPixel( GameOpt.MouseX, GameOpt.MouseY, true );
+            if( !cr || !Chosen || cr == Chosen )
+                break;
+
+            if( !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), Chosen->GetAttackDist(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true ) )
+                break;
+
+            int hit = ScriptGetHitProc( cr, HIT_LOCATION_NONE );
+            if( !hit )
+                break;
+
+            char str[16];
+            Str::Format( str, "%d%%", hit );
+
+            SprMngr.Flush();
+            SprMngr.DrawStr( Rect( GameOpt.MouseX + 6, GameOpt.MouseY + 6, x + 500, y + 500 ), str, 0, COLOR_TEXT_RED );
+        }
+        break;
+        case CUR_USE_ITEM:
+        case CUR_USE_SKILL:
         {
-            if( IfaceHold && InvHoldId )
+            if( !( si = SprMngr.GetSpriteInfo( CurPUseSkill->GetCurSprId() ) ) )
+                return;
+            x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
+            y = GameOpt.MouseY - si->Height + si->OffsY;
+            SprMngr.DrawSprite( CurPUseSkill, x, y );
+        }
+        break;
+        case CUR_MOVE:
+            ushort hx, hy;
+            if( GetCurHex( hx, hy, false ) )
+                break;
+        /*{
+                Field& f=HexMngr.HexField[TargetY][TargetX];
+                if(!(si=SprMngr.GetSpriteInfo(CurPMove))) return;
+
+                if(HexMngr.IsHexPassed(TargetX,TargetY))
+                        SprMngr.DrawSpriteSize(CurPMove,(f.ScrX+1+GameOpt.ScrOx)/GameOpt.SpritesZoom,(f.ScrY-1+GameOpt.ScrOy)/GameOpt.SpritesZoom,si->Width/GameOpt.SpritesZoom,si->Height/GameOpt.SpritesZoom,TRUE,FALSE);
+                else
+                        SprMngr.DrawSpriteSize(CurPMoveBlock,(f.ScrX+1+GameOpt.ScrOx)/GameOpt.SpritesZoom,(f.ScrY-1+GameOpt.ScrOy)/GameOpt.SpritesZoom,si->Width/GameOpt.SpritesZoom,si->Height/GameOpt.SpritesZoom,TRUE,FALSE);
+
+                break;
+           }*/
+        // Draw default
+        case CUR_DEFAULT:
+            if( !( si = SprMngr.GetSpriteInfo( CurPDef->GetCurSprId() ) ) )
+                return;
+            if( IsLMenu() )
             {
-                Item* item = Chosen->GetItem( InvHoldId );
-                if( !item )
-                    break;
-                AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
-                if( !anim )
-                    break;
-                if( !( si = SprMngr.GetSpriteInfo( anim->GetCurSprId() ) ) )
-                    return;
-                x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
-                y = GameOpt.MouseY - ( si->Height / 2 ) + si->OffsY;
-                SprMngr.DrawSprite( anim, x, y, item->GetInvColor() );
+                x = LMenuRestoreCurX - ( si->Width / 2 ) + si->OffsX;
+                y = LMenuRestoreCurY - si->Height + si->OffsY;
             }
             else
             {
-DrawCurHand:
-                if( !( si = SprMngr.GetSpriteInfo( CurPHand->GetCurSprId() ) ) )
-                    return;
                 x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
                 y = GameOpt.MouseY - si->Height + si->OffsY;
-                SprMngr.DrawSprite( CurPHand, x, y );
+            }
+            SprMngr.DrawSprite( CurPDef, x, y );
+            break;
+        case CUR_HAND:
+            if( !Chosen )
                 break;
-            }
-        }
-        else if( GetActiveScreen() == SCREEN__BARTER )
-        {
-            if( IfaceHold && BarterHoldId )
+
+            if( GetActiveScreen() == SCREEN__INVENTORY )
             {
-                ItemVec* cont = NULL;
-                switch( IfaceHold )
+                if( IfaceHold && InvHoldId )
                 {
-                case IFACE_BARTER_CONT1:
-                    cont = &InvContInit;
-                    break;
-                case IFACE_BARTER_CONT2:
-                    cont = &BarterCont2Init;
-                    break;
-                case IFACE_BARTER_CONT1O:
-                    cont = &BarterCont1oInit;
-                    break;
-                case IFACE_BARTER_CONT2O:
-                    cont = &BarterCont2oInit;
-                    break;
-                default:
-                    goto DrawCurHand;
-                }
-
-                auto it = std::find( cont->begin(), cont->end(), BarterHoldId );
-                if( it == cont->end() )
-                    goto DrawCurHand;
-                Item* item = &( *it );
-
-                AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
-                if( !anim )
-                    goto DrawCurHand;
-
-                if( !( si = SprMngr.GetSpriteInfo( anim->GetCurSprId() ) ) )
-                    goto DrawCurHand;
-                x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
-                y = GameOpt.MouseY - ( si->Height / 2 ) + si->OffsY;
-                SprMngr.DrawSprite( anim, x, y, item->GetInvColor() );
-            }
-            else
-                goto DrawCurHand;
-        }
-        else if( GetActiveScreen() == SCREEN__PICKUP && PupHoldId )
-        {
-            Item* item = GetContainerItem( IfaceHold == IFACE_PUP_CONT1 ? PupCont1 : PupCont2, PupHoldId );
-            if( item )
-            {
-                AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
-                if( anim )
-                {
+                    Item* item = Chosen->GetItem( InvHoldId );
+                    if( !item )
+                        break;
+                    AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
+                    if( !anim )
+                        break;
                     if( !( si = SprMngr.GetSpriteInfo( anim->GetCurSprId() ) ) )
                         return;
                     x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
                     y = GameOpt.MouseY - ( si->Height / 2 ) + si->OffsY;
                     SprMngr.DrawSprite( anim, x, y, item->GetInvColor() );
                 }
+                else
+                {
+DrawCurHand:
+                    if( !( si = SprMngr.GetSpriteInfo( CurPHand->GetCurSprId() ) ) )
+                        return;
+                    x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
+                    y = GameOpt.MouseY - si->Height + si->OffsY;
+                    SprMngr.DrawSprite( CurPHand, x, y );
+                    break;
+                }
             }
-        }
-        else
-            goto DrawCurHand;
-        break;
-    default:
-        SetCurMode( CUR_DEFAULT );
-        break;
+            else if( GetActiveScreen() == SCREEN__BARTER )
+            {
+                if( IfaceHold && BarterHoldId )
+                {
+                    ItemVec* cont = NULL;
+                    switch( IfaceHold )
+                    {
+                        case IFACE_BARTER_CONT1:
+                            cont = &InvContInit;
+                            break;
+                        case IFACE_BARTER_CONT2:
+                            cont = &BarterCont2Init;
+                            break;
+                        case IFACE_BARTER_CONT1O:
+                            cont = &BarterCont1oInit;
+                            break;
+                        case IFACE_BARTER_CONT2O:
+                            cont = &BarterCont2oInit;
+                            break;
+                        default:
+                            goto DrawCurHand;
+                    }
+
+                    auto it = std::find( cont->begin(), cont->end(), BarterHoldId );
+                    if( it == cont->end() )
+                        goto DrawCurHand;
+                    Item* item = &( *it );
+
+                    AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
+                    if( !anim )
+                        goto DrawCurHand;
+
+                    if( !( si = SprMngr.GetSpriteInfo( anim->GetCurSprId() ) ) )
+                        goto DrawCurHand;
+                    x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
+                    y = GameOpt.MouseY - ( si->Height / 2 ) + si->OffsY;
+                    SprMngr.DrawSprite( anim, x, y, item->GetInvColor() );
+                }
+                else
+                    goto DrawCurHand;
+            }
+            else if( GetActiveScreen() == SCREEN__PICKUP && PupHoldId )
+            {
+                Item* item = GetContainerItem( IfaceHold == IFACE_PUP_CONT1 ? PupCont1 : PupCont2, PupHoldId );
+                if( item )
+                {
+                    AnyFrames* anim = ResMngr.GetInvAnim( item->GetPicInv() );
+                    if( anim )
+                    {
+                        if( !( si = SprMngr.GetSpriteInfo( anim->GetCurSprId() ) ) )
+                            return;
+                        x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
+                        y = GameOpt.MouseY - ( si->Height / 2 ) + si->OffsY;
+                        SprMngr.DrawSprite( anim, x, y, item->GetInvColor() );
+                    }
+                }
+            }
+            else
+                goto DrawCurHand;
+            break;
+        default:
+            SetCurMode( CUR_DEFAULT );
+            break;
     }
 }
 
@@ -9830,56 +9830,56 @@ void FOClient::DlgboxLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_DIALOG_BTN:
-        if( !IsCurInRect( DlgboxBButton, DlgboxX, DlgboxY + DlgboxWTop.H() + DlgboxSelectedButton * DlgboxWMiddle.H() ) )
-            break;
+        case IFACE_DIALOG_BTN:
+            if( !IsCurInRect( DlgboxBButton, DlgboxX, DlgboxY + DlgboxWTop.H() + DlgboxSelectedButton * DlgboxWMiddle.H() ) )
+                break;
 
-        if( DlgboxSelectedButton == DlgboxButtonsCount - 1 )
-        {
-            if( DlgboxType >= DIALOGBOX_ENCOUNTER_ANY && DlgboxType <= DIALOGBOX_ENCOUNTER_TB )
-                Net_SendRuleGlobal( GM_CMD_ANSWER, -1 );
-            // if(DlgboxType==DIALOGBOX_BARTER) Net_SendPlayersBarter(BARTER_END,PBarterPlayerId,true);
+            if( DlgboxSelectedButton == DlgboxButtonsCount - 1 )
+            {
+                if( DlgboxType >= DIALOGBOX_ENCOUNTER_ANY && DlgboxType <= DIALOGBOX_ENCOUNTER_TB )
+                    Net_SendRuleGlobal( GM_CMD_ANSWER, -1 );
+                // if(DlgboxType==DIALOGBOX_BARTER) Net_SendPlayersBarter(BARTER_END,PBarterPlayerId,true);
+                DlgboxType = DIALOGBOX_NONE;
+                ShowScreen( SCREEN_NONE );
+                return;
+            }
+
+            if( DlgboxType == DIALOGBOX_FOLLOW )
+            {
+                Net_SendRuleGlobal( GM_CMD_FOLLOW, FollowRuleId );
+            }
+            else if( DlgboxType == DIALOGBOX_BARTER )
+            {
+                if( DlgboxSelectedButton == 0 )
+                    Net_SendPlayersBarter( BARTER_ACCEPTED, PBarterPlayerId, false );
+                else
+                    Net_SendPlayersBarter( BARTER_ACCEPTED, PBarterPlayerId, true );
+            }
+            else if( DlgboxType == DIALOGBOX_ENCOUNTER_ANY )
+            {
+                if( DlgboxSelectedButton == 0 )
+                    Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_REAL_TIME );
+                else
+                    Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_TURN_BASED );
+            }
+            else if( DlgboxType == DIALOGBOX_ENCOUNTER_RT )
+            {
+                Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_REAL_TIME );
+            }
+            else if( DlgboxType == DIALOGBOX_ENCOUNTER_TB )
+            {
+                Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_TURN_BASED );
+            }
+            else if( DlgboxType == DIALOGBOX_MANUAL )
+            {
+                if( ShowScreenType && ShowScreenNeedAnswer )
+                    Net_SendScreenAnswer( DlgboxSelectedButton, "" );
+            }
             DlgboxType = DIALOGBOX_NONE;
             ShowScreen( SCREEN_NONE );
-            return;
-        }
-
-        if( DlgboxType == DIALOGBOX_FOLLOW )
-        {
-            Net_SendRuleGlobal( GM_CMD_FOLLOW, FollowRuleId );
-        }
-        else if( DlgboxType == DIALOGBOX_BARTER )
-        {
-            if( DlgboxSelectedButton == 0 )
-                Net_SendPlayersBarter( BARTER_ACCEPTED, PBarterPlayerId, false );
-            else
-                Net_SendPlayersBarter( BARTER_ACCEPTED, PBarterPlayerId, true );
-        }
-        else if( DlgboxType == DIALOGBOX_ENCOUNTER_ANY )
-        {
-            if( DlgboxSelectedButton == 0 )
-                Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_REAL_TIME );
-            else
-                Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_TURN_BASED );
-        }
-        else if( DlgboxType == DIALOGBOX_ENCOUNTER_RT )
-        {
-            Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_REAL_TIME );
-        }
-        else if( DlgboxType == DIALOGBOX_ENCOUNTER_TB )
-        {
-            Net_SendRuleGlobal( GM_CMD_ANSWER, COMBAT_MODE_TURN_BASED );
-        }
-        else if( DlgboxType == DIALOGBOX_MANUAL )
-        {
-            if( ShowScreenType && ShowScreenNeedAnswer )
-                Net_SendScreenAnswer( DlgboxSelectedButton, "" );
-        }
-        DlgboxType = DIALOGBOX_NONE;
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        break;
+            break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -9948,26 +9948,26 @@ void FOClient::ElevatorLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_ELEVATOR_BTN:
-        if( ElevatorAnswerDone )
+        case IFACE_ELEVATOR_BTN:
+            if( ElevatorAnswerDone )
+                break;
+            if( ElevatorSelectedButton != ElevatorGetCurButton() )
+                break;
+            if( ElevatorStartLevel + ElevatorSelectedButton != ElevatorCurrentLevel && ShowScreenType && ShowScreenNeedAnswer )
+            {
+                ElevatorAnswerDone = true;
+                ElevatorSendAnswerTick = Timer::GameTick();
+                int diff = abs( (int)ElevatorCurrentLevel - int(ElevatorStartLevel + ElevatorSelectedButton) );
+                AnyFrames* anim = AnimGetFrames( ElevatorIndicatorAnim );
+                if( anim )
+                    ElevatorSendAnswerTick += anim->Ticks / anim->GetCnt() * ( anim->GetCnt() * Procent( ElevatorLevelsCount - 1, diff ) / 100 );
+                AnimRun( ElevatorIndicatorAnim, ElevatorStartLevel + ElevatorSelectedButton < ElevatorCurrentLevel ? ANIMRUN_FROM_END : ANIMRUN_TO_END );
+                return;
+            }
+            ShowScreen( SCREEN_NONE );
             break;
-        if( ElevatorSelectedButton != ElevatorGetCurButton() )
+        default:
             break;
-        if( ElevatorStartLevel + ElevatorSelectedButton != ElevatorCurrentLevel && ShowScreenType && ShowScreenNeedAnswer )
-        {
-            ElevatorAnswerDone = true;
-            ElevatorSendAnswerTick = Timer::GameTick();
-            int diff = abs( (int)ElevatorCurrentLevel - int(ElevatorStartLevel + ElevatorSelectedButton) );
-            AnyFrames* anim = AnimGetFrames( ElevatorIndicatorAnim );
-            if( anim )
-                ElevatorSendAnswerTick += anim->Ticks / anim->GetCnt() * ( anim->GetCnt() * Procent( ElevatorLevelsCount - 1, diff ) / 100 );
-            AnimRun( ElevatorIndicatorAnim, ElevatorStartLevel + ElevatorSelectedButton < ElevatorCurrentLevel ? ANIMRUN_FROM_END : ANIMRUN_TO_END );
-            return;
-        }
-        ShowScreen( SCREEN_NONE );
-        break;
-    default:
-        break;
     }
 
     if( !ElevatorAnswerDone )
@@ -10027,53 +10027,53 @@ void FOClient::ElevatorGenerate( uint param )
         uint val = *(uint*)arr->At( i );
         switch( i )
         {
-        case 0:
-            ElevatorCurrentLevel = val;
-            break;
-        case 1:
-            ElevatorStartLevel = val;
-            break;
-        case 2:
-            ElevatorLevelsCount = val;
-            break;
-        case 3:
-            main_pic = val;
-            break;
-        case 4:
-            ElevatorMain.R = val;
-            break;
-        case 5:
-            ElevatorMain.B = val;
-            break;
-        case 6:
-            ext_pic = val;
-            break;
-        case 7:
-            ElevatorExt.L = val;
-            break;
-        case 8:
-            ElevatorExt.T = val;
-            break;
-        case 9:
-            ElevatorIndicatorAnim = val;
-            break;
-        case 10:
-            ElevatorIndicator.L = val;
-            break;
-        case 11:
-            ElevatorIndicator.T = val;
-            break;
-        case 12:
-            button_pic = val;
-            break;
-        case 13:
-            ElevatorButtonsCount = val;
-            break;
-        default:
-            ElevatorButtons[( i - 14 ) / 4][( i - 14 ) % 4] = val;
-            if( ( i - 14 ) % 4 == 3 )
-                added_buttons++;
-            break;
+            case 0:
+                ElevatorCurrentLevel = val;
+                break;
+            case 1:
+                ElevatorStartLevel = val;
+                break;
+            case 2:
+                ElevatorLevelsCount = val;
+                break;
+            case 3:
+                main_pic = val;
+                break;
+            case 4:
+                ElevatorMain.R = val;
+                break;
+            case 5:
+                ElevatorMain.B = val;
+                break;
+            case 6:
+                ext_pic = val;
+                break;
+            case 7:
+                ElevatorExt.L = val;
+                break;
+            case 8:
+                ElevatorExt.T = val;
+                break;
+            case 9:
+                ElevatorIndicatorAnim = val;
+                break;
+            case 10:
+                ElevatorIndicator.L = val;
+                break;
+            case 11:
+                ElevatorIndicator.T = val;
+                break;
+            case 12:
+                button_pic = val;
+                break;
+            case 13:
+                ElevatorButtonsCount = val;
+                break;
+            default:
+                ElevatorButtons[( i - 14 ) / 4][( i - 14 ) % 4] = val;
+                if( ( i - 14 ) % 4 == 3 )
+                    added_buttons++;
+                break;
         }
     }
 
@@ -10140,14 +10140,14 @@ void FOClient::SayDraw()
     SprMngr.DrawSprite( SayWMainPicNone, SayWMain[0] + SayX, SayWMain[1] + SayY );
     switch( IfaceHold )
     {
-    case IFACE_SAY_OK:
-        SprMngr.DrawSprite( SayBOkPicDown, SayBOk[0] + SayX, SayBOk[1] + SayY );
-        break;
-    case IFACE_SAY_CANCEL:
-        SprMngr.DrawSprite( SayBCancelPicDown, SayBCancel[0] + SayX, SayBCancel[1] + SayY );
-        break;
-    default:
-        break;
+        case IFACE_SAY_OK:
+            SprMngr.DrawSprite( SayBOkPicDown, SayBOk[0] + SayX, SayBOk[1] + SayY );
+            break;
+        case IFACE_SAY_CANCEL:
+            SprMngr.DrawSprite( SayBCancelPicDown, SayBCancel[0] + SayX, SayBCancel[1] + SayY );
+            break;
+        default:
+            break;
     }
 
     SprMngr.DrawStr( Rect( SayWMainText, SayX, SayY ), SayTitle.c_str(), FT_CENTERX | FT_CENTERY, COLOR_TEXT_SAND, FONT_FAT );
@@ -10178,33 +10178,33 @@ void FOClient::SayLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_SAY_OK:
-        if( !IsCurInRect( SayBOk, SayX, SayY ) )
+        case IFACE_SAY_OK:
+            if( !IsCurInRect( SayBOk, SayX, SayY ) )
+                break;
+            if( SayText.empty() )
+                break;
+            if( ShowScreenType )
+            {
+                if( ShowScreenNeedAnswer )
+                    Net_SendScreenAnswer( 0, SayText.c_str() );
+            }
+            else
+            {
+                if( SayType == DIALOGSAY_TEXT )
+                    Net_SendSayNpc( DlgIsNpc, DlgNpcId, SayText.c_str() );
+                else if( SayType == DIALOGSAY_SAVE )
+                    SaveLoadSaveGame( SayText.c_str() );
+            }
+            ShowScreen( SCREEN_NONE );
+            WaitPing();
+            return;
+        case IFACE_SAY_CANCEL:
+            if( !IsCurInRect( SayBCancel, SayX, SayY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
+            return;
+        default:
             break;
-        if( SayText.empty() )
-            break;
-        if( ShowScreenType )
-        {
-            if( ShowScreenNeedAnswer )
-                Net_SendScreenAnswer( 0, SayText.c_str() );
-        }
-        else
-        {
-            if( SayType == DIALOGSAY_TEXT )
-                Net_SendSayNpc( DlgIsNpc, DlgNpcId, SayText.c_str() );
-            else if( SayType == DIALOGSAY_SAVE )
-                SaveLoadSaveGame( SayText.c_str() );
-        }
-        ShowScreen( SCREEN_NONE );
-        WaitPing();
-        return;
-    case IFACE_SAY_CANCEL:
-        if( !IsCurInRect( SayBCancel, SayX, SayY ) )
-            break;
-        ShowScreen( SCREEN_NONE );
-        return;
-    default:
-        break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -10295,30 +10295,30 @@ void FOClient::SplitClose( bool change )
         goto label_DropItems;
     switch( SplitParentScreen )
     {
-    case SCREEN__INVENTORY:
-        IfaceHold = IFACE_NONE;
-        InvHoldId = 0;
+        case SCREEN__INVENTORY:
+            IfaceHold = IFACE_NONE;
+            InvHoldId = 0;
 label_DropItems:
-        if( !change )
+            if( !change )
+                break;
+            AddActionBack( CHOSEN_MOVE_ITEM, SplitItemId, SplitValue, SplitCont & 0xFFFF, ( SplitCont >> 16 ) & 1 );
             break;
-        AddActionBack( CHOSEN_MOVE_ITEM, SplitItemId, SplitValue, SplitCont & 0xFFFF, ( SplitCont >> 16 ) & 1 );
-        break;
-    case SCREEN__BARTER:
-        IfaceHold = IFACE_NONE;
-        BarterHoldId = 0;
-        if( !change )
+        case SCREEN__BARTER:
+            IfaceHold = IFACE_NONE;
+            BarterHoldId = 0;
+            if( !change )
+                break;
+            BarterTransfer( SplitItemId, SplitCont & 0xFFFF, SplitValue );
             break;
-        BarterTransfer( SplitItemId, SplitCont & 0xFFFF, SplitValue );
-        break;
-    case SCREEN__PICKUP:
-        IfaceHold = IFACE_NONE;
-        PupHoldId = 0;
-        if( !change )
+        case SCREEN__PICKUP:
+            IfaceHold = IFACE_NONE;
+            PupHoldId = 0;
+            if( !change )
+                break;
+            SetAction( CHOSEN_MOVE_ITEM_CONT, SplitItemId, SplitCont & 0xFFFF, SplitValue );
             break;
-        SetAction( CHOSEN_MOVE_ITEM_CONT, SplitItemId, SplitCont & 0xFFFF, SplitValue );
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     SplitParentScreen = SCREEN_NONE;
@@ -10331,23 +10331,23 @@ void FOClient::SplitDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_SPLIT_UP:
-        SprMngr.DrawSprite( SplitPBUpDn, SplitBUp[0] + SplitX, SplitBUp[1] + SplitY );
-        break;
-    case IFACE_SPLIT_DOWN:
-        SprMngr.DrawSprite( SplitPBDnDn, SplitBDown[0] + SplitX, SplitBDown[1] + SplitY );
-        break;
-    case IFACE_SPLIT_ALL:
-        SprMngr.DrawSprite( SplitPBAllDn, SplitBAll[0] + SplitX, SplitBAll[1] + SplitY );
-        break;
-    case IFACE_SPLIT_DONE:
-        SprMngr.DrawSprite( SplitPBDoneDn, SplitBDone[0] + SplitX, SplitBDone[1] + SplitY );
-        break;
-    case IFACE_SPLIT_CANCEL:
-        SprMngr.DrawSprite( SplitPBCancelDn, SplitBCancel[0] + SplitX, SplitBCancel[1] + SplitY );
-        break;
-    default:
-        break;
+        case IFACE_SPLIT_UP:
+            SprMngr.DrawSprite( SplitPBUpDn, SplitBUp[0] + SplitX, SplitBUp[1] + SplitY );
+            break;
+        case IFACE_SPLIT_DOWN:
+            SprMngr.DrawSprite( SplitPBDnDn, SplitBDown[0] + SplitX, SplitBDown[1] + SplitY );
+            break;
+        case IFACE_SPLIT_ALL:
+            SprMngr.DrawSprite( SplitPBAllDn, SplitBAll[0] + SplitX, SplitBAll[1] + SplitY );
+            break;
+        case IFACE_SPLIT_DONE:
+            SprMngr.DrawSprite( SplitPBDoneDn, SplitBDone[0] + SplitX, SplitBDone[1] + SplitY );
+            break;
+        case IFACE_SPLIT_CANCEL:
+            SprMngr.DrawSprite( SplitPBCancelDn, SplitBCancel[0] + SplitX, SplitBCancel[1] + SplitY );
+            break;
+        default:
+            break;
     }
 
     if( SplitItemPic )
@@ -10364,61 +10364,61 @@ void FOClient::SplitKeyDown( uchar dik, const char* dik_text )
 
     switch( dik )
     {
-    case DIK_RETURN:
-    case DIK_NUMPADENTER:
-        SplitClose( true );
-        return;
-    case DIK_ESCAPE:
-        SplitClose( false );
-        return;
-    case DIK_BACK:
-        add = -1;
-        break;
-    case DIK_DELETE:
-        add = -2;
-        break;
-    case DIK_0:
-    case DIK_NUMPAD0:
-        add = 0;
-        break;
-    case DIK_1:
-    case DIK_NUMPAD1:
-        add = 1;
-        break;
-    case DIK_2:
-    case DIK_NUMPAD2:
-        add = 2;
-        break;
-    case DIK_3:
-    case DIK_NUMPAD3:
-        add = 3;
-        break;
-    case DIK_4:
-    case DIK_NUMPAD4:
-        add = 4;
-        break;
-    case DIK_5:
-    case DIK_NUMPAD5:
-        add = 5;
-        break;
-    case DIK_6:
-    case DIK_NUMPAD6:
-        add = 6;
-        break;
-    case DIK_7:
-    case DIK_NUMPAD7:
-        add = 7;
-        break;
-    case DIK_8:
-    case DIK_NUMPAD8:
-        add = 8;
-        break;
-    case DIK_9:
-    case DIK_NUMPAD9:
-        add = 9;
-        break;
-    default:
-        return;
+        case DIK_RETURN:
+        case DIK_NUMPADENTER:
+            SplitClose( true );
+            return;
+        case DIK_ESCAPE:
+            SplitClose( false );
+            return;
+        case DIK_BACK:
+            add = -1;
+            break;
+        case DIK_DELETE:
+            add = -2;
+            break;
+        case DIK_0:
+        case DIK_NUMPAD0:
+            add = 0;
+            break;
+        case DIK_1:
+        case DIK_NUMPAD1:
+            add = 1;
+            break;
+        case DIK_2:
+        case DIK_NUMPAD2:
+            add = 2;
+            break;
+        case DIK_3:
+        case DIK_NUMPAD3:
+            add = 3;
+            break;
+        case DIK_4:
+        case DIK_NUMPAD4:
+            add = 4;
+            break;
+        case DIK_5:
+        case DIK_NUMPAD5:
+            add = 5;
+            break;
+        case DIK_6:
+        case DIK_NUMPAD6:
+            add = 6;
+            break;
+        case DIK_7:
+        case DIK_NUMPAD7:
+            add = 7;
+            break;
+        case DIK_8:
+        case DIK_NUMPAD8:
+            add = 8;
+            break;
+        case DIK_9:
+        case DIK_NUMPAD9:
+            add = 9;
+            break;
+        default:
+            return;
     }
 
     if( add == -1 )
@@ -10470,37 +10470,37 @@ void FOClient::SplitLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_SPLIT_UP:
-        if( !IsCurInRect( SplitBUp, SplitX, SplitY ) )
+        case IFACE_SPLIT_UP:
+            if( !IsCurInRect( SplitBUp, SplitX, SplitY ) )
+                break;
+            if( SplitValue < SplitMaxValue )
+                SplitValue++;
             break;
-        if( SplitValue < SplitMaxValue )
-            SplitValue++;
-        break;
-    case IFACE_SPLIT_DOWN:
-        if( !IsCurInRect( SplitBDown, SplitX, SplitY ) )
+        case IFACE_SPLIT_DOWN:
+            if( !IsCurInRect( SplitBDown, SplitX, SplitY ) )
+                break;
+            if( SplitValue > SplitMinValue )
+                SplitValue--;
             break;
-        if( SplitValue > SplitMinValue )
-            SplitValue--;
-        break;
-    case IFACE_SPLIT_ALL:
-        if( !IsCurInRect( SplitBAll, SplitX, SplitY ) )
+        case IFACE_SPLIT_ALL:
+            if( !IsCurInRect( SplitBAll, SplitX, SplitY ) )
+                break;
+            SplitValue = SplitMaxValue;
+            if( SplitValue >= MAX_SPLIT_VALUE )
+                SplitValue = MAX_SPLIT_VALUE - 1;
             break;
-        SplitValue = SplitMaxValue;
-        if( SplitValue >= MAX_SPLIT_VALUE )
-            SplitValue = MAX_SPLIT_VALUE - 1;
-        break;
-    case IFACE_SPLIT_DONE:
-        if( !IsCurInRect( SplitBDone, SplitX, SplitY ) )
+        case IFACE_SPLIT_DONE:
+            if( !IsCurInRect( SplitBDone, SplitX, SplitY ) )
+                break;
+            SplitClose( true );
             break;
-        SplitClose( true );
-        break;
-    case IFACE_SPLIT_CANCEL:
-        if( !IsCurInRect( SplitBCancel, SplitX, SplitY ) )
+        case IFACE_SPLIT_CANCEL:
+            if( !IsCurInRect( SplitBCancel, SplitX, SplitY ) )
+                break;
+            SplitClose( false );
             break;
-        SplitClose( false );
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -10559,20 +10559,20 @@ void FOClient::TimerDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_TIMER_UP:
-        SprMngr.DrawSprite( TimerBUpPicDown, TimerBUp[0] + TimerX, TimerBUp[1] + TimerY );
-        break;
-    case IFACE_TIMER_DOWN:
-        SprMngr.DrawSprite( TimerBDownPicDown, TimerBDown[0] + TimerX, TimerBDown[1] + TimerY );
-        break;
-    case IFACE_TIMER_DONE:
-        SprMngr.DrawSprite( TimerBDonePicDown, TimerBDone[0] + TimerX, TimerBDone[1] + TimerY );
-        break;
-    case IFACE_TIMER_CANCEL:
-        SprMngr.DrawSprite( TimerBCancelPicDown, TimerBCancel[0] + TimerX, TimerBCancel[1] + TimerY );
-        break;
-    default:
-        break;
+        case IFACE_TIMER_UP:
+            SprMngr.DrawSprite( TimerBUpPicDown, TimerBUp[0] + TimerX, TimerBUp[1] + TimerY );
+            break;
+        case IFACE_TIMER_DOWN:
+            SprMngr.DrawSprite( TimerBDownPicDown, TimerBDown[0] + TimerX, TimerBDown[1] + TimerY );
+            break;
+        case IFACE_TIMER_DONE:
+            SprMngr.DrawSprite( TimerBDonePicDown, TimerBDone[0] + TimerX, TimerBDone[1] + TimerY );
+            break;
+        case IFACE_TIMER_CANCEL:
+            SprMngr.DrawSprite( TimerBCancelPicDown, TimerBCancel[0] + TimerX, TimerBCancel[1] + TimerY );
+            break;
+        default:
+            break;
     }
 
     if( TimerItemPic )
@@ -10587,48 +10587,48 @@ void FOClient::TimerKeyDown( uchar dik, const char* dik_text )
 {
     switch( dik )
     {
-    case DIK_RETURN:
-    case DIK_NUMPADENTER:
-        TimerClose( true );
-        return;
-    case DIK_ESCAPE:
-        TimerClose( false );
-        return;
-    // Numetric +, -
-    // Arrow Right, Left
-    case DIK_EQUALS:
-    case DIK_ADD:
-    case DIK_RIGHT:
-        TimerValue += 1;
-        break;
-    case DIK_MINUS:
-    case DIK_SUBTRACT:
-    case DIK_LEFT:
-        TimerValue -= 1;
-        break;
-    // PageUp, PageDown
-    case DIK_PRIOR:
-        TimerValue += 60;
-        break;
-    case DIK_NEXT:
-        TimerValue -= 60;
-        break;
-    // Arrow Up, Down
-    case DIK_UP:
-        TimerValue += 10;
-        break;
-    case DIK_DOWN:
-        TimerValue -= 10;
-        break;
-    // End, Home
-    case DIK_END:
-        TimerValue = TIMER_MAX_VALUE;
-        break;
-    case DIK_HOME:
-        TimerValue = TIMER_MIN_VALUE;
-        break;
-    default:
-        return;
+        case DIK_RETURN:
+        case DIK_NUMPADENTER:
+            TimerClose( true );
+            return;
+        case DIK_ESCAPE:
+            TimerClose( false );
+            return;
+        // Numetric +, -
+        // Arrow Right, Left
+        case DIK_EQUALS:
+        case DIK_ADD:
+        case DIK_RIGHT:
+            TimerValue += 1;
+            break;
+        case DIK_MINUS:
+        case DIK_SUBTRACT:
+        case DIK_LEFT:
+            TimerValue -= 1;
+            break;
+        // PageUp, PageDown
+        case DIK_PRIOR:
+            TimerValue += 60;
+            break;
+        case DIK_NEXT:
+            TimerValue -= 60;
+            break;
+        // Arrow Up, Down
+        case DIK_UP:
+            TimerValue += 10;
+            break;
+        case DIK_DOWN:
+            TimerValue -= 10;
+            break;
+        // End, Home
+        case DIK_END:
+            TimerValue = TIMER_MAX_VALUE;
+            break;
+        case DIK_HOME:
+            TimerValue = TIMER_MIN_VALUE;
+            break;
+        default:
+            return;
     }
 
     if( TimerValue < TIMER_MIN_VALUE )
@@ -10670,30 +10670,30 @@ void FOClient::TimerLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_TIMER_UP:
-        if( !IsCurInRect( TimerBUp, TimerX, TimerY ) )
+        case IFACE_TIMER_UP:
+            if( !IsCurInRect( TimerBUp, TimerX, TimerY ) )
+                break;
+            if( TimerValue < TIMER_MAX_VALUE )
+                TimerValue++;
             break;
-        if( TimerValue < TIMER_MAX_VALUE )
-            TimerValue++;
-        break;
-    case IFACE_TIMER_DOWN:
-        if( !IsCurInRect( TimerBDown, TimerX, TimerY ) )
+        case IFACE_TIMER_DOWN:
+            if( !IsCurInRect( TimerBDown, TimerX, TimerY ) )
+                break;
+            if( TimerValue > TIMER_MIN_VALUE )
+                TimerValue--;
             break;
-        if( TimerValue > TIMER_MIN_VALUE )
-            TimerValue--;
-        break;
-    case IFACE_TIMER_DONE:
-        if( !IsCurInRect( TimerBDone, TimerX, TimerY ) )
+        case IFACE_TIMER_DONE:
+            if( !IsCurInRect( TimerBDone, TimerX, TimerY ) )
+                break;
+            TimerClose( true );
             break;
-        TimerClose( true );
-        break;
-    case IFACE_TIMER_CANCEL:
-        if( !IsCurInRect( TimerBCancel, TimerX, TimerY ) )
+        case IFACE_TIMER_CANCEL:
+            if( !IsCurInRect( TimerBCancel, TimerX, TimerY ) )
+                break;
+            TimerClose( false );
             break;
-        TimerClose( false );
-        break;
-    default:
-        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -10879,20 +10879,20 @@ void FOClient::FixGenerate( int fix_mode )
 
         switch( FixResult )
         {
-        case CRAFT_RESULT_NONE:
-            FixResultStr = "...";
-            break;
-        case CRAFT_RESULT_SUCC:
-            FixResultStr = MsgGame->GetStr( STR_FIX_SUCCESS );
-            break;
-        case CRAFT_RESULT_FAIL:
-            FixResultStr = MsgGame->GetStr( STR_FIX_FAIL );
-            break;
-        case CRAFT_RESULT_TIMEOUT:
-            FixResultStr = MsgGame->GetStr( STR_FIX_TIMEOUT );
-            break;
-        default:
-            break;
+            case CRAFT_RESULT_NONE:
+                FixResultStr = "...";
+                break;
+            case CRAFT_RESULT_SUCC:
+                FixResultStr = MsgGame->GetStr( STR_FIX_SUCCESS );
+                break;
+            case CRAFT_RESULT_FAIL:
+                FixResultStr = MsgGame->GetStr( STR_FIX_FAIL );
+                break;
+            case CRAFT_RESULT_TIMEOUT:
+                FixResultStr = MsgGame->GetStr( STR_FIX_TIMEOUT );
+                break;
+            default:
+                break;
         }
     }
 }
@@ -11003,20 +11003,20 @@ void FOClient::FixDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_FIX_SCRUP:
-        SprMngr.DrawSprite( FixPBScrUpDn, FixBScrUp[0] + FixX, FixBScrUp[1] + FixY );
-        break;
-    case IFACE_FIX_SCRDN:
-        SprMngr.DrawSprite( FixPBScrDnDn, FixBScrDn[0] + FixX, FixBScrDn[1] + FixY );
-        break;
-    case IFACE_FIX_DONE:
-        SprMngr.DrawSprite( FixPBDoneDn, FixBDone[0] + FixX, FixBDone[1] + FixY );
-        break;
-    case IFACE_FIX_FIX:
-        SprMngr.DrawSprite( FixPBFixDn, FixBFix[0] + FixX, FixBFix[1] + FixY );
-        break;
-    default:
-        break;
+        case IFACE_FIX_SCRUP:
+            SprMngr.DrawSprite( FixPBScrUpDn, FixBScrUp[0] + FixX, FixBScrUp[1] + FixY );
+            break;
+        case IFACE_FIX_SCRDN:
+            SprMngr.DrawSprite( FixPBScrDnDn, FixBScrDn[0] + FixX, FixBScrDn[1] + FixY );
+            break;
+        case IFACE_FIX_DONE:
+            SprMngr.DrawSprite( FixPBDoneDn, FixBDone[0] + FixX, FixBDone[1] + FixY );
+            break;
+        case IFACE_FIX_FIX:
+            SprMngr.DrawSprite( FixPBFixDn, FixBFix[0] + FixX, FixBFix[1] + FixY );
+            break;
+        default:
+            break;
     }
 
     if( FixMode != FIX_MODE_FIXIT )
@@ -11036,53 +11036,53 @@ void FOClient::FixDraw()
 
     switch( FixMode )
     {
-    case FIX_MODE_LIST:
-    {
-        // Crafts names
-        SCraftVec* cur_vec = GetCurSCrafts();
-        if( !cur_vec )
-            break;
-
-        for( uint i = 0, j = (uint)cur_vec->size(); i < j; i++ )
+        case FIX_MODE_LIST:
         {
-            SCraft* scraft = &( *cur_vec )[i];
-            uint col = COLOR_TEXT;
-            if( !scraft->IsTrue )
-                col = COLOR_TEXT_DRED;
-            if( i == (uint)FixCurCraft )
+            // Crafts names
+            SCraftVec* cur_vec = GetCurSCrafts();
+            if( !cur_vec )
+                break;
+
+            for( uint i = 0, j = (uint)cur_vec->size(); i < j; i++ )
             {
-                if( IfaceHold == IFACE_FIX_CHOOSE )
-                    col = COLOR_TEXT_DBLUE;
-                else
-                    col = COLOR_TEXT_DGREEN;
+                SCraft* scraft = &( *cur_vec )[i];
+                uint col = COLOR_TEXT;
+                if( !scraft->IsTrue )
+                    col = COLOR_TEXT_DRED;
+                if( i == (uint)FixCurCraft )
+                {
+                    if( IfaceHold == IFACE_FIX_CHOOSE )
+                        col = COLOR_TEXT_DBLUE;
+                    else
+                        col = COLOR_TEXT_DGREEN;
+                }
+
+                SprMngr.DrawStr( Rect( scraft->Pos, FixX, FixY ), scraft->Name.c_str(), 0, col );
             }
 
-            SprMngr.DrawStr( Rect( scraft->Pos, FixX, FixY ), scraft->Name.c_str(), 0, col );
+            // Number of page
+            char str[64];
+            Str::Format( str, "%u/%u", FixScrollLst + 1, FixCraftLst.size() );
+            SprMngr.DrawStr( Rect( FixWWin[2] - 30 + FixX, FixWWin[3] - 15 + FixY, FixWWin[2] + FixX, FixWWin[3] + FixY ), str, FT_NOBREAK );
         }
-
-        // Number of page
-        char str[64];
-        Str::Format( str, "%u/%u", FixScrollLst + 1, FixCraftLst.size() );
-        SprMngr.DrawStr( Rect( FixWWin[2] - 30 + FixX, FixWWin[3] - 15 + FixY, FixWWin[2] + FixX, FixWWin[3] + FixY ), str, FT_NOBREAK );
-    }
-    break;
-    case FIX_MODE_FIXIT:
-    {
-        for( uint i = 0, j = (uint)FixDrawComp.size(); i < j; i++ )
-        {
-            FixDrawComponent* c = FixDrawComp[i];
-            if( c->IsText )
-                SprMngr.DrawStr( Rect( c->Place, FixX, FixY ), c->Text.c_str(), FT_CENTERX );
-        }
-    }
-    break;
-    case FIX_MODE_RESULT:
-    {
-        SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FT_CENTERX );
-    }
-    break;
-    default:
         break;
+        case FIX_MODE_FIXIT:
+        {
+            for( uint i = 0, j = (uint)FixDrawComp.size(); i < j; i++ )
+            {
+                FixDrawComponent* c = FixDrawComp[i];
+                if( c->IsText )
+                    SprMngr.DrawStr( Rect( c->Place, FixX, FixY ), c->Text.c_str(), FT_CENTERX );
+            }
+        }
+        break;
+        case FIX_MODE_RESULT:
+        {
+            SprMngr.DrawStr( Rect( FixWWin, FixX, FixY ), FixResultStr.c_str(), FT_CENTERX );
+        }
+        break;
+        default:
+            break;
     }
 }
 
@@ -11119,93 +11119,93 @@ void FOClient::FixLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_FIX_SCRUP:
-    {
-        if( !IsCurInRect( FixBScrUp, FixX, FixY ) )
-            break;
-
-        if( FixMode == FIX_MODE_LIST )
+        case IFACE_FIX_SCRUP:
         {
-            if( FixScrollLst > 0 )
-                FixScrollLst--;
+            if( !IsCurInRect( FixBScrUp, FixX, FixY ) )
+                break;
+
+            if( FixMode == FIX_MODE_LIST )
+            {
+                if( FixScrollLst > 0 )
+                    FixScrollLst--;
+            }
+            else if( FixMode == FIX_MODE_FIXIT )
+            {
+                if( FixScrollFix > 0 )
+                    FixScrollFix--;
+            }
         }
-        else if( FixMode == FIX_MODE_FIXIT )
-        {
-            if( FixScrollFix > 0 )
-                FixScrollFix--;
-        }
-    }
-    break;
-    case IFACE_FIX_SCRDN:
-    {
-        if( !IsCurInRect( FixBScrDn, FixX, FixY ) )
-            break;
-
-        if( FixMode == FIX_MODE_LIST )
-        {
-            if( FixScrollLst < (int)FixCraftLst.size() - 1 )
-                FixScrollLst++;
-        }
-        else if( FixMode == FIX_MODE_FIXIT )
-        {
-            if( FixScrollFix < (int)FixCraftFix.size() - 1 )
-                FixScrollFix++;
-        }
-    }
-    break;
-    case IFACE_FIX_DONE:
-    {
-        if( !IsCurInRect( FixBDone, FixX, FixY ) )
-            break;
-
-        if( FixMode != FIX_MODE_LIST )
-            FixGenerate( FIX_MODE_LIST );
-        else
-            ShowScreen( SCREEN_NONE );
-    }
-    break;
-    case IFACE_FIX_FIX:
-    {
-        if( !IsCurInRect( FixBFix, FixX, FixY ) )
-            break;
-        if( FixMode != FIX_MODE_FIXIT )
-            break;
-
-        SCraftVec* cur_vec = GetCurSCrafts();
-        if( !cur_vec )
-            break;
-        if( FixCurCraft >= (int)cur_vec->size() )
-            break;
-
-        SCraft& craft = ( *cur_vec )[FixCurCraft];
-        uint num = craft.Num;
-
-        FixResult = CRAFT_RESULT_NONE;
-        FixGenerate( FIX_MODE_RESULT );
-        Net_SendCraft( num );
-        WaitPing();
-    }
-    break;
-    case IFACE_FIX_CHOOSE:
-    {
-        if( FixMode != FIX_MODE_LIST )
-            break;
-        if( FixCurCraft < 0 )
-            break;
-        IfaceHold = IFACE_NONE;
-        if( FixCurCraft != GetMouseCraft() )
-            break;
-        SCraftVec* cur_vec = GetCurSCrafts();
-        if( !cur_vec )
-            break;
-        if( FixCurCraft >= (int)cur_vec->size() )
-            break;
-
-        FixGenerate( FIX_MODE_FIXIT );
-    }
-    break;
-    default:
         break;
+        case IFACE_FIX_SCRDN:
+        {
+            if( !IsCurInRect( FixBScrDn, FixX, FixY ) )
+                break;
+
+            if( FixMode == FIX_MODE_LIST )
+            {
+                if( FixScrollLst < (int)FixCraftLst.size() - 1 )
+                    FixScrollLst++;
+            }
+            else if( FixMode == FIX_MODE_FIXIT )
+            {
+                if( FixScrollFix < (int)FixCraftFix.size() - 1 )
+                    FixScrollFix++;
+            }
+        }
+        break;
+        case IFACE_FIX_DONE:
+        {
+            if( !IsCurInRect( FixBDone, FixX, FixY ) )
+                break;
+
+            if( FixMode != FIX_MODE_LIST )
+                FixGenerate( FIX_MODE_LIST );
+            else
+                ShowScreen( SCREEN_NONE );
+        }
+        break;
+        case IFACE_FIX_FIX:
+        {
+            if( !IsCurInRect( FixBFix, FixX, FixY ) )
+                break;
+            if( FixMode != FIX_MODE_FIXIT )
+                break;
+
+            SCraftVec* cur_vec = GetCurSCrafts();
+            if( !cur_vec )
+                break;
+            if( FixCurCraft >= (int)cur_vec->size() )
+                break;
+
+            SCraft& craft = ( *cur_vec )[FixCurCraft];
+            uint num = craft.Num;
+
+            FixResult = CRAFT_RESULT_NONE;
+            FixGenerate( FIX_MODE_RESULT );
+            Net_SendCraft( num );
+            WaitPing();
+        }
+        break;
+        case IFACE_FIX_CHOOSE:
+        {
+            if( FixMode != FIX_MODE_LIST )
+                break;
+            if( FixCurCraft < 0 )
+                break;
+            IfaceHold = IFACE_NONE;
+            if( FixCurCraft != GetMouseCraft() )
+                break;
+            SCraftVec* cur_vec = GetCurSCrafts();
+            if( !cur_vec )
+                break;
+            if( FixCurCraft >= (int)cur_vec->size() )
+                break;
+
+            FixGenerate( FIX_MODE_FIXIT );
+        }
+        break;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;
@@ -11242,14 +11242,14 @@ void FOClient::IboxDraw()
 
     switch( IfaceHold )
     {
-    case IFACE_IBOX_DONE:
-        SprMngr.DrawSprite( IboxBDonePicDown, IboxBDone[0] + IboxX, IboxBDone[1] + IboxY );
-        break;
-    case IFACE_IBOX_CANCEL:
-        SprMngr.DrawSprite( IboxBCancelPicDown, IboxBCancel[0] + IboxX, IboxBCancel[1] + IboxY );
-        break;
-    default:
-        break;
+        case IFACE_IBOX_DONE:
+            SprMngr.DrawSprite( IboxBDonePicDown, IboxBDone[0] + IboxX, IboxBDone[1] + IboxY );
+            break;
+        case IFACE_IBOX_CANCEL:
+            SprMngr.DrawSprite( IboxBCancelPicDown, IboxBCancel[0] + IboxX, IboxBCancel[1] + IboxY );
+            break;
+        default:
+            break;
     }
 
     char* buf = (char*)Str::FormatBuf( "%s", IboxTitle.c_str() );
@@ -11292,26 +11292,26 @@ void FOClient::IboxLMouseUp()
 {
     switch( IfaceHold )
     {
-    case IFACE_IBOX_DONE:
-    {
-        if( !IsCurInRect( IboxBDone, IboxX, IboxY ) )
-            break;
-        AddActionBack( CHOSEN_WRITE_HOLO, IboxHolodiskId );
-        ShowScreen( SCREEN_NONE );
-    }
-    break;
-    case IFACE_IBOX_CANCEL:
-    {
-        if( !IsCurInRect( IboxBCancel, IboxX, IboxY ) )
-            break;
-        ShowScreen( SCREEN_NONE );
-    }
-    break;
-    case IFACE_IBOX_TITLE:
-    case IFACE_IBOX_TEXT:
-        return;
-    default:
+        case IFACE_IBOX_DONE:
+        {
+            if( !IsCurInRect( IboxBDone, IboxX, IboxY ) )
+                break;
+            AddActionBack( CHOSEN_WRITE_HOLO, IboxHolodiskId );
+            ShowScreen( SCREEN_NONE );
+        }
         break;
+        case IFACE_IBOX_CANCEL:
+        {
+            if( !IsCurInRect( IboxBCancel, IboxX, IboxY ) )
+                break;
+            ShowScreen( SCREEN_NONE );
+        }
+        break;
+        case IFACE_IBOX_TITLE:
+        case IFACE_IBOX_TEXT:
+            return;
+        default:
+            break;
     }
 
     IfaceHold = IFACE_NONE;

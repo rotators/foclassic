@@ -423,17 +423,17 @@ int Ogg_seek_func( void* datasource, ogg_int64_t offset, int whence )
     FileManager* fm = (FileManager*)datasource;
     switch( whence )
     {
-    case SEEK_SET:
-        fm->SetCurPos( (uint)offset );
-        break;
-    case SEEK_CUR:
-        fm->GoForward( (uint)offset );
-        break;
-    case SEEK_END:
-        fm->SetCurPos( fm->GetFsize() );
-        break;
-    default:
-        return -1;
+        case SEEK_SET:
+            fm->SetCurPos( (uint)offset );
+            break;
+        case SEEK_CUR:
+            fm->GoForward( (uint)offset );
+            break;
+        case SEEK_END:
+            fm->SetCurPos( fm->GetFsize() );
+            break;
+        default:
+            return -1;
     }
     return 0;
 }
@@ -472,24 +472,24 @@ bool SoundManager::LoadOGG( Sound* sound, const char* fname, int path_type )
         WriteLogF( _FUNC_, " - Open OGG file<%s> fail, error:\n", fname );
         switch( error )
         {
-        case OV_EREAD:
-            WriteLog( "<A read from media returned an error>.\n" );
-            break;
-        case OV_ENOTVORBIS:
-            WriteLog( "<Bitstream does not contain any Vorbis data>.\n" );
-            break;
-        case OV_EVERSION:
-            WriteLog( "<Vorbis version mismatch>.\n" );
-            break;
-        case OV_EBADHEADER:
-            WriteLog( "<Invalid Vorbis bitstream header>.\n" );
-            break;
-        case OV_EFAULT:
-            WriteLog( "<Internal logic fault; indicates a bug or heap/stack corruption>.\n" );
-            break;
-        default:
-            WriteLog( "<Unknown error code %d>.\n", error );
-            break;
+            case OV_EREAD:
+                WriteLog( "<A read from media returned an error>.\n" );
+                break;
+            case OV_ENOTVORBIS:
+                WriteLog( "<Bitstream does not contain any Vorbis data>.\n" );
+                break;
+            case OV_EVERSION:
+                WriteLog( "<Vorbis version mismatch>.\n" );
+                break;
+            case OV_EBADHEADER:
+                WriteLog( "<Invalid Vorbis bitstream header>.\n" );
+                break;
+            case OV_EFAULT:
+                WriteLog( "<Internal logic fault; indicates a bug or heap/stack corruption>.\n" );
+                break;
+            default:
+                WriteLog( "<Unknown error code %d>.\n", error );
+                break;
         }
         return false;
     }

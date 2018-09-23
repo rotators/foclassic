@@ -1266,20 +1266,20 @@ void FOServer::NetIO_Work( void* )
         {
             switch( InterlockedCompareExchange( &io->Operation, 0, 0 ) )
             {
-            case WSAOP_SEND:
-                Statistics.BytesSend += bytes;
-                NetIO_Output( io );
-                break;
-            case WSAOP_RECV:
-                Statistics.BytesRecv += bytes;
-                io->Bytes = bytes;
-                NetIO_Input( io );
-                break;
-            default:
-                WriteLogF( _FUNC_, " - Unknown operation<%d>, is send<%d>.\n", io->Operation, io == cl->NetIOOut );
-                InterlockedExchange( &io->Operation, WSAOP_FREE );
-                cl->Disconnect();
-                break;
+                case WSAOP_SEND:
+                    Statistics.BytesSend += bytes;
+                    NetIO_Output( io );
+                    break;
+                case WSAOP_RECV:
+                    Statistics.BytesRecv += bytes;
+                    io->Bytes = bytes;
+                    NetIO_Input( io );
+                    break;
+                default:
+                    WriteLogF( _FUNC_, " - Unknown operation<%d>, is send<%d>.\n", io->Operation, io == cl->NetIOOut );
+                    InterlockedExchange( &io->Operation, WSAOP_FREE );
+                    cl->Disconnect();
+                    break;
             }
         }
         else
@@ -1418,37 +1418,37 @@ void FOServer::Process( ClientPtr& cl )
             uint tick = Timer::FastTick();
             switch( msg )
             {
-            case 0xFFFFFFFF:
-            {
-                uint answer[4] = { CrMngr.PlayersInGame(), Statistics.Uptime, 0, 0 };
-                BOUT_BEGIN( cl );
-                cl->Bout.Push( (char*)answer, sizeof( answer ) );
-                cl->DisableZlib = true;
-                BOUT_END( cl );
-                cl->Disconnect();
-            }
-                BIN_END( cl );
-                break;
-            case NETMSG_PING:
-                Process_Ping( cl );
-                BIN_END( cl );
-                break;
-            case NETMSG_LOGIN:
-                Process_LogIn( cl );
-                BIN_END( cl );
-                break;
-            case NETMSG_CREATE_CLIENT:
-                Process_CreateClient( cl );
-                BIN_END( cl );
-                break;
-            case NETMSG_SINGLEPLAYER_SAVE_LOAD:
-                Process_SingleplayerSaveLoad( cl );
-                BIN_END( cl );
-                break;
-            default:
-                cl->Bin.SkipMsg( msg );
-                BIN_END( cl );
-                break;
+                case 0xFFFFFFFF:
+                {
+                    uint answer[4] = { CrMngr.PlayersInGame(), Statistics.Uptime, 0, 0 };
+                    BOUT_BEGIN( cl );
+                    cl->Bout.Push( (char*)answer, sizeof( answer ) );
+                    cl->DisableZlib = true;
+                    BOUT_END( cl );
+                    cl->Disconnect();
+                }
+                    BIN_END( cl );
+                    break;
+                case NETMSG_PING:
+                    Process_Ping( cl );
+                    BIN_END( cl );
+                    break;
+                case NETMSG_LOGIN:
+                    Process_LogIn( cl );
+                    BIN_END( cl );
+                    break;
+                case NETMSG_CREATE_CLIENT:
+                    Process_CreateClient( cl );
+                    BIN_END( cl );
+                    break;
+                case NETMSG_SINGLEPLAYER_SAVE_LOAD:
+                    Process_SingleplayerSaveLoad( cl );
+                    BIN_END( cl );
+                    break;
+                default:
+                    cl->Bin.SkipMsg( msg );
+                    BIN_END( cl );
+                    break;
             }
         }
         else
@@ -1479,24 +1479,24 @@ void FOServer::Process( ClientPtr& cl )
             uint tick = Timer::FastTick();
             switch( msg )
             {
-            case NETMSG_PING:
-                Process_Ping( cl );
-                BIN_END( cl );
-                break;
-            case NETMSG_SEND_GIVE_MAP:
-                CHECK_BUSY;
-                Process_GiveMap( cl );
-                BIN_END( cl );
-                break;
-            case NETMSG_SEND_LOAD_MAP_OK:
-                CHECK_BUSY;
-                Process_ParseToGame( cl );
-                BIN_END( cl );
-                break;
-            default:
-                cl->Bin.SkipMsg( msg );
-                BIN_END( cl );
-                break;
+                case NETMSG_PING:
+                    Process_Ping( cl );
+                    BIN_END( cl );
+                    break;
+                case NETMSG_SEND_GIVE_MAP:
+                    CHECK_BUSY;
+                    Process_GiveMap( cl );
+                    BIN_END( cl );
+                    break;
+                case NETMSG_SEND_LOAD_MAP_OK:
+                    CHECK_BUSY;
+                    Process_ParseToGame( cl );
+                    BIN_END( cl );
+                    break;
+                default:
+                    cl->Bin.SkipMsg( msg );
+                    BIN_END( cl );
+                    break;
             }
         }
         else
@@ -1543,265 +1543,265 @@ void FOServer::Process( ClientPtr& cl )
             uint tick = Timer::FastTick();
             switch( msg )
             {
-            case NETMSG_PING:
-            {
-                Process_Ping( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_TEXT:
-            {
-                Process_Text( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_COMMAND:
-            {
-                static THREAD Client* cl_;
-                struct LogCB
+                case NETMSG_PING:
                 {
-                    static void Message( const char* str )
+                    Process_Ping( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_TEXT:
+                {
+                    Process_Text( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_COMMAND:
+                {
+                    static THREAD Client* cl_;
+                    struct LogCB
                     {
-                        cl_->Send_Text( cl_, str, SAY_NETMSG );
-                    }
-                };
-                cl_ = cl;
-                Process_Command( cl->Bin, LogCB::Message, cl, NULL );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_LEVELUP:
-            {
-                Process_LevelUp( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_CRAFT_ASK:
-            {
-                Process_CraftAsk( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_CRAFT:
-            {
-                CHECK_BUSY_AND_LIFE;
-                Process_Craft( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_DIR:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                Process_Dir( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_MOVE_WALK:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                CHECK_REAL_AP( cl->GetApCostCritterMove( false ) );
-                Process_Move( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_MOVE_RUN:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                CHECK_REAL_AP( cl->GetApCostCritterMove( true ) );
-                Process_Move( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_USE_ITEM:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_AP_MSG;
-                Process_UseItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_PICK_ITEM:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                CHECK_AP( cl->GetApCostPickItem() );
-                Process_PickItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_PICK_CRITTER:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                CHECK_AP( cl->GetApCostPickCritter() );
-                Process_PickCritter( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_ITEM_CONT:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_AP( cl->GetApCostMoveItemContainer() );
-                Process_ContainerItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_CHANGE_ITEM:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_AP_MSG;
-                Process_ChangeItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_RATE_ITEM:
-            {
-                Process_RateItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_SORT_VALUE_ITEM:
-            {
-                Process_SortValueItem( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_USE_SKILL:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_AP( cl->GetApCostUseSkill() );
-                Process_UseSkill( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_TALK_NPC:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                Process_Dialog( cl, false );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_SAY_NPC:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                Process_Dialog( cl, true );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_BARTER:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                Process_Barter( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_PLAYERS_BARTER:
-            {
-                CHECK_BUSY_AND_LIFE;
-                Process_PlayersBarter( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_SCREEN_ANSWER:
-            {
-                Process_ScreenAnswer( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_REFRESH_ME:
-            {
-                cl->Send_LoadMap( NULL );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_COMBAT:
-            {
-                CHECK_BUSY_AND_LIFE;
-                CHECK_NO_GLOBAL;
-                Process_Combat( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_GET_INFO:
-            {
-                Map* map = MapMngr.GetMap( cl->GetMap(), false );
-                cl->Send_GameInfo( map );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_GIVE_MAP:
-            {
-                CHECK_BUSY;
-                Process_GiveMap( cl );
-                BIN_END( cl );
-                continue;
-            }
-            break;
-            case NETMSG_SEND_GIVE_GLOBAL_INFO:
-            {
-                CHECK_IS_GLOBAL;
-                Process_GiveGlobalInfo( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_RULE_GLOBAL:
-            {
-                CHECK_BUSY_AND_LIFE;
-                Process_RuleGlobal( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_SET_USER_HOLO_STR:
-            {
-                CHECK_BUSY_AND_LIFE;
-                Process_SetUserHoloStr( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_GET_USER_HOLO_STR:
-            {
-                CHECK_BUSY_AND_LIFE;
-                Process_GetUserHoloStr( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_GET_SCORES:
-            {
-                CHECK_BUSY;
-                Process_GetScores( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_RUN_SERVER_SCRIPT:
-            {
-                Process_RunServerScript( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SEND_KARMA_VOTING:
-            {
-                Process_KarmaVoting( cl );
-                BIN_END( cl );
-                continue;
-            }
-            case NETMSG_SINGLEPLAYER_SAVE_LOAD:
-            {
-                Process_SingleplayerSaveLoad( cl );
-                BIN_END( cl );
-                continue;
-            }
-            default:
-            {
-                cl->Bin.SkipMsg( msg );
-                BIN_END( cl );
-                continue;
-            }
+                        static void Message( const char* str )
+                        {
+                            cl_->Send_Text( cl_, str, SAY_NETMSG );
+                        }
+                    };
+                    cl_ = cl;
+                    Process_Command( cl->Bin, LogCB::Message, cl, NULL );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_LEVELUP:
+                {
+                    Process_LevelUp( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_CRAFT_ASK:
+                {
+                    Process_CraftAsk( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_CRAFT:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    Process_Craft( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_DIR:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    Process_Dir( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_MOVE_WALK:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    CHECK_REAL_AP( cl->GetApCostCritterMove( false ) );
+                    Process_Move( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_MOVE_RUN:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    CHECK_REAL_AP( cl->GetApCostCritterMove( true ) );
+                    Process_Move( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_USE_ITEM:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_AP_MSG;
+                    Process_UseItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_PICK_ITEM:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    CHECK_AP( cl->GetApCostPickItem() );
+                    Process_PickItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_PICK_CRITTER:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    CHECK_AP( cl->GetApCostPickCritter() );
+                    Process_PickCritter( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_ITEM_CONT:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_AP( cl->GetApCostMoveItemContainer() );
+                    Process_ContainerItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_CHANGE_ITEM:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_AP_MSG;
+                    Process_ChangeItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_RATE_ITEM:
+                {
+                    Process_RateItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_SORT_VALUE_ITEM:
+                {
+                    Process_SortValueItem( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_USE_SKILL:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_AP( cl->GetApCostUseSkill() );
+                    Process_UseSkill( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_TALK_NPC:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    Process_Dialog( cl, false );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_SAY_NPC:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    Process_Dialog( cl, true );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_BARTER:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    Process_Barter( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_PLAYERS_BARTER:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    Process_PlayersBarter( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_SCREEN_ANSWER:
+                {
+                    Process_ScreenAnswer( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_REFRESH_ME:
+                {
+                    cl->Send_LoadMap( NULL );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_COMBAT:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    CHECK_NO_GLOBAL;
+                    Process_Combat( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_GET_INFO:
+                {
+                    Map* map = MapMngr.GetMap( cl->GetMap(), false );
+                    cl->Send_GameInfo( map );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_GIVE_MAP:
+                {
+                    CHECK_BUSY;
+                    Process_GiveMap( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                break;
+                case NETMSG_SEND_GIVE_GLOBAL_INFO:
+                {
+                    CHECK_IS_GLOBAL;
+                    Process_GiveGlobalInfo( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_RULE_GLOBAL:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    Process_RuleGlobal( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_SET_USER_HOLO_STR:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    Process_SetUserHoloStr( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_GET_USER_HOLO_STR:
+                {
+                    CHECK_BUSY_AND_LIFE;
+                    Process_GetUserHoloStr( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_GET_SCORES:
+                {
+                    CHECK_BUSY;
+                    Process_GetScores( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_RUN_SERVER_SCRIPT:
+                {
+                    Process_RunServerScript( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SEND_KARMA_VOTING:
+                {
+                    Process_KarmaVoting( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                case NETMSG_SINGLEPLAYER_SAVE_LOAD:
+                {
+                    Process_SingleplayerSaveLoad( cl );
+                    BIN_END( cl );
+                    continue;
+                }
+                default:
+                {
+                    cl->Bin.SkipMsg( msg );
+                    BIN_END( cl );
+                    continue;
+                }
             }
 
             cl->Bin.SkipMsg( msg );
@@ -1858,71 +1858,71 @@ void FOServer::Process_Text( Client* cl )
 
     switch( how_say )
     {
-    case SAY_NORM:
-    {
-        if( cl->GetMap() )
-            cl->SendAA_Text( cl->VisCr, str, SAY_NORM, true );
-        else
-            cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_NORM, true );
-    }
-    break;
-    case SAY_SHOUT:
-    {
-        if( cl->GetMap() )
+        case SAY_NORM:
         {
-            Map* map = MapMngr.GetMap( cl->GetMap() );
-            if( !map )
-                return;
-
-            CrVec critters;
-            map->GetCritters( critters, false );
-
-            cl->SendAA_Text( critters, str, SAY_SHOUT, true );
+            if( cl->GetMap() )
+                cl->SendAA_Text( cl->VisCr, str, SAY_NORM, true );
+            else
+                cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_NORM, true );
         }
-        else
+        break;
+        case SAY_SHOUT:
         {
-            cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_SHOUT, true );
-        }
-    }
-    break;
-    case SAY_EMOTE:
-    {
-        if( cl->GetMap() )
-            cl->SendAA_Text( cl->VisCr, str, SAY_EMOTE, true );
-        else
-            cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_EMOTE, true );
-    }
-    break;
-    case SAY_WHISP:
-    {
-        if( cl->GetMap() )
-            cl->SendAA_Text( cl->VisCr, str, SAY_WHISP, true );
-        else
-            cl->Send_TextEx( cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true );
-    }
-    break;
-    case SAY_SOCIAL:
-    {
-        return;
-    }
-    break;
-    case SAY_RADIO:
-    {
-        if( cl->GetMap() )
-            cl->SendAA_Text( cl->VisCr, str, SAY_WHISP, true );
-        else
-            cl->Send_TextEx( cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true );
+            if( cl->GetMap() )
+            {
+                Map* map = MapMngr.GetMap( cl->GetMap() );
+                if( !map )
+                    return;
 
-        ItemMngr.RadioSendText( cl, str, len, true, 0, 0, channels );
-        if( channels.empty() )
+                CrVec critters;
+                map->GetCritters( critters, false );
+
+                cl->SendAA_Text( critters, str, SAY_SHOUT, true );
+            }
+            else
+            {
+                cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_SHOUT, true );
+            }
+        }
+        break;
+        case SAY_EMOTE:
         {
-            cl->Send_TextMsg( cl, STR_RADIO_CANT_SEND, SAY_NETMSG, TEXTMSG_GAME );
+            if( cl->GetMap() )
+                cl->SendAA_Text( cl->VisCr, str, SAY_EMOTE, true );
+            else
+                cl->SendAA_Text( cl->GroupMove->CritMove, str, SAY_EMOTE, true );
+        }
+        break;
+        case SAY_WHISP:
+        {
+            if( cl->GetMap() )
+                cl->SendAA_Text( cl->VisCr, str, SAY_WHISP, true );
+            else
+                cl->Send_TextEx( cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true );
+        }
+        break;
+        case SAY_SOCIAL:
+        {
             return;
         }
-    }
-    break;
-    default:
-        return;
+        break;
+        case SAY_RADIO:
+        {
+            if( cl->GetMap() )
+                cl->SendAA_Text( cl->VisCr, str, SAY_WHISP, true );
+            else
+                cl->Send_TextEx( cl->GetId(), str, len, SAY_WHISP, cl->IntellectCacheValue, true );
+
+            ItemMngr.RadioSendText( cl, str, len, true, 0, 0, channels );
+            if( channels.empty() )
+            {
+                cl->Send_TextMsg( cl, STR_RADIO_CANT_SEND, SAY_NETMSG, TEXTMSG_GAME );
+                return;
+            }
+        }
+        break;
+        default:
+            return;
     }
 
     // Best score
@@ -2013,610 +2013,643 @@ void FOServer::Process_Command( BufferManager& buf, void ( *logcb )( const char*
     #define CHECK_ADMIN_PANEL    if( !cl_ ) { logcb( "Can't execute this command in admin panel." ); return; }
     switch( cmd )
     {
-    case CMD_EXIT:
-    {
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        cl_->Disconnect();
-    }
-    break;
-    case CMD_MYINFO:
-    {
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        char istr[1024];
-        Str::Format( istr, "|0xFF00FF00 Name: |0xFFFF0000 %s"
-                           "|0xFF00FF00 , Id: |0xFFFF0000 %u"
-                           "|0xFF00FF00 , Access: ",
-                     cl_->GetName(), cl_->GetId() );
-
-        switch( cl_->Access )
+        case CMD_EXIT:
         {
-        case ACCESS_CLIENT:
-            strcat( istr, "|0xFFFF0000 Client|0xFF00FF00 ." );
-            break;
-        case ACCESS_TESTER:
-            strcat( istr, "|0xFFFF0000 Tester|0xFF00FF00 ." );
-            break;
-        case ACCESS_MODER:
-            strcat( istr, "|0xFFFF0000 Moderator|0xFF00FF00 ." );
-            break;
-        case ACCESS_ADMIN:
-            strcat( istr, "|0xFFFF0000 Administrator|0xFF00FF00 ." );
-            break;
-        default:
-            break;
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            cl_->Disconnect();
         }
-
-        logcb( istr );
-    }
-    break;
-    case CMD_GAMEINFO:
-    {
-        int info;
-        buf >> info;
-
-        CHECK_ALLOW_COMMAND;
-
-        string result;
-        switch( info )
+        break;
+        case CMD_MYINFO:
         {
-        case 0:
-            result = Debugger::GetMemoryStatistics();
-            break;
-        case 1:
-            result = GetIngamePlayersStatistics();
-            break;
-        case 2:
-            result = MapMngr.GetLocationsMapsStatistics();
-            break;
-        case 3:
-            result = GetTimeEventsStatistics();
-            break;
-        case 4:
-            result = GetAnyDataStatistics();
-            break;
-        case 5:
-            result = ItemMngr.GetItemsStatistics();
-            break;
-        default:
-            break;
-        }
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
 
-        char str[MAX_FOTEXT];
-        ConnectedClientsLocker.Lock();
-        Str::Format( str, "Connections: %u, Players: %u, Npc: %u. FOServer machine uptime: %u min., FOServer uptime: %u min.",
-                     ConnectedClients.size(), CrMngr.PlayersInGame(), CrMngr.NpcInGame(),
-                     Timer::FastTick() / 1000 / 60, ( Timer::FastTick() - Statistics.ServerStartTick ) / 1000 / 60 );
-        ConnectedClientsLocker.Unlock();
-        result += str;
+            char istr[1024];
+            Str::Format( istr, "|0xFF00FF00 Name: |0xFFFF0000 %s"
+                               "|0xFF00FF00 , Id: |0xFFFF0000 %u"
+                               "|0xFF00FF00 , Access: ",
+                         cl_->GetName(), cl_->GetId() );
 
-        const char* ptext = result.c_str();
-        uint        text_begin = 0;
-        char        buf[MAX_FOTEXT];
-        for( uint i = 0, j = (uint)result.length(); i < j; i++ )
-        {
-            if( result[i] == '\n' )
+            switch( cl_->Access )
             {
-                uint len = i - text_begin;
-                if( len )
+                case ACCESS_CLIENT:
+                    strcat( istr, "|0xFFFF0000 Client|0xFF00FF00 ." );
+                    break;
+                case ACCESS_TESTER:
+                    strcat( istr, "|0xFFFF0000 Tester|0xFF00FF00 ." );
+                    break;
+                case ACCESS_MODER:
+                    strcat( istr, "|0xFFFF0000 Moderator|0xFF00FF00 ." );
+                    break;
+                case ACCESS_ADMIN:
+                    strcat( istr, "|0xFFFF0000 Administrator|0xFF00FF00 ." );
+                    break;
+                default:
+                    break;
+            }
+
+            logcb( istr );
+        }
+        break;
+        case CMD_GAMEINFO:
+        {
+            int info;
+            buf >> info;
+
+            CHECK_ALLOW_COMMAND;
+
+            string result;
+            switch( info )
+            {
+                case 0:
+                    result = Debugger::GetMemoryStatistics();
+                    break;
+                case 1:
+                    result = GetIngamePlayersStatistics();
+                    break;
+                case 2:
+                    result = MapMngr.GetLocationsMapsStatistics();
+                    break;
+                case 3:
+                    result = GetTimeEventsStatistics();
+                    break;
+                case 4:
+                    result = GetAnyDataStatistics();
+                    break;
+                case 5:
+                    result = ItemMngr.GetItemsStatistics();
+                    break;
+                default:
+                    break;
+            }
+
+            char str[MAX_FOTEXT];
+            ConnectedClientsLocker.Lock();
+            Str::Format( str, "Connections: %u, Players: %u, Npc: %u. FOServer machine uptime: %u min., FOServer uptime: %u min.",
+                         ConnectedClients.size(), CrMngr.PlayersInGame(), CrMngr.NpcInGame(),
+                         Timer::FastTick() / 1000 / 60, ( Timer::FastTick() - Statistics.ServerStartTick ) / 1000 / 60 );
+            ConnectedClientsLocker.Unlock();
+            result += str;
+
+            const char* ptext = result.c_str();
+            uint        text_begin = 0;
+            char        buf[MAX_FOTEXT];
+            for( uint i = 0, j = (uint)result.length(); i < j; i++ )
+            {
+                if( result[i] == '\n' )
                 {
-                    if( len >= MAX_FOTEXT )
-                        len = MAX_FOTEXT - 1;
-                    memcpy( buf, &ptext[text_begin], len );
-                    buf[len] = 0;
-                    logcb( buf );
+                    uint len = i - text_begin;
+                    if( len )
+                    {
+                        if( len >= MAX_FOTEXT )
+                            len = MAX_FOTEXT - 1;
+                        memcpy( buf, &ptext[text_begin], len );
+                        buf[len] = 0;
+                        logcb( buf );
+                    }
+                    text_begin = i + 1;
                 }
-                text_begin = i + 1;
             }
         }
-    }
-    break;
-    case CMD_CRITID:
-    {
-        char name[UTF8_BUF_SIZE( MAX_NAME )];
-        buf.Pop( name, sizeof( name ) );
-        name[sizeof( name ) - 1] = 0;
-
-        CHECK_ALLOW_COMMAND;
-
-        SaveClientsLocker.Lock();
-
-        ClientData* cd = GetClientData( name );
-        if( cd )
-            logcb( Str::FormatBuf( "Client id is %u.", cd->ClientId ) );
-        else
-            logcb( "Client not found." );
-
-        SaveClientsLocker.Unlock();
-    }
-    break;
-    case CMD_MOVECRIT:
-    {
-        uint   crid;
-        ushort hex_x;
-        ushort hex_y;
-        buf >> crid;
-        buf >> hex_x;
-        buf >> hex_y;
-
-        CHECK_ALLOW_COMMAND;
-
-        Critter* cr = CrMngr.GetCritter( crid, true );
-        if( !cr )
+        break;
+        case CMD_CRITID:
         {
-            logcb( "Critter not found." );
-            break;
+            char name[UTF8_BUF_SIZE( MAX_NAME )];
+            buf.Pop( name, sizeof( name ) );
+            name[sizeof( name ) - 1] = 0;
+
+            CHECK_ALLOW_COMMAND;
+
+            SaveClientsLocker.Lock();
+
+            ClientData* cd = GetClientData( name );
+            if( cd )
+                logcb( Str::FormatBuf( "Client id is %u.", cd->ClientId ) );
+            else
+                logcb( "Client not found." );
+
+            SaveClientsLocker.Unlock();
         }
-
-        Map* map = MapMngr.GetMap( cr->GetMap(), true );
-        if( !map )
+        break;
+        case CMD_MOVECRIT:
         {
-            logcb( "Critter is on global." );
-            break;
-        }
+            uint   crid;
+            ushort hex_x;
+            ushort hex_y;
+            buf >> crid;
+            buf >> hex_x;
+            buf >> hex_y;
 
-        if( hex_x >= map->GetMaxHexX() || hex_y >= map->GetMaxHexY() )
-        {
-            logcb( "Invalid hex position." );
-            break;
-        }
+            CHECK_ALLOW_COMMAND;
 
-        if( MapMngr.Transit( cr, map, hex_x, hex_y, cr->GetDir(), 3, true ) )
-            logcb( "Critter move success." );
-        else
-            logcb( "Critter move fail." );
-    }
-    break;
-    case CMD_KILLCRIT:
-    {
-        uint crid;
-        buf >> crid;
-
-        CHECK_ALLOW_COMMAND;
-
-        Critter* cr = CrMngr.GetCritter( crid, true );
-        if( !cr )
-        {
-            logcb( "Critter not found." );
-            break;
-        }
-
-        KillCritter( cr, ANIM2_DEAD_FRONT, NULL );
-        logcb( "Critter is dead." );
-    }
-    break;
-    case CMD_DISCONCRIT:
-    {
-        uint crid;
-        buf >> crid;
-
-        CHECK_ALLOW_COMMAND;
-
-        if( cl_ && cl_->GetId() == crid )
-        {
-            logcb( "To kick yourself type <~exit>" );
-            return;
-        }
-
-        Critter* cr = CrMngr.GetCritter( crid, true );
-        if( !cr )
-        {
-            logcb( "Critter not found." );
-            return;
-        }
-
-        if( !cr->IsPlayer() )
-        {
-            logcb( "Founded critter is not a player." );
-            return;
-        }
-
-        Client* cl2 = (Client*)cr;
-        if( cl2->GameState != STATE_PLAYING )
-        {
-            logcb( "Player is not in a game." );
-            return;
-        }
-
-        cl2->Send_Text( cl2, "You are kicked from game.", SAY_NETMSG );
-        cl2->Disconnect();
-
-        logcb( "Player disconnected." );
-    }
-    break;
-    case CMD_TOGLOBAL:
-    {
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        if( !cl_->IsLife() )
-        {
-            logcb( "To global fail, only life none." );
-            break;
-        }
-
-        if( MapMngr.TransitToGlobal( cl_, 0, 0, false ) == true )
-            logcb( "To global success." );
-        else
-            logcb( "To global fail." );
-    }
-    break;
-    case CMD_RESPAWN:
-    {
-        uint crid;
-        buf >> crid;
-
-        CHECK_ALLOW_COMMAND;
-
-        Critter* cr = ( !crid ? cl_ : CrMngr.GetCritter( crid, true ) );
-        if( !cr )
-            logcb( "Critter not found." );
-        else if( !cr->IsDead() )
-            logcb( "Critter does not require respawn." );
-        else
-        {
-            RespawnCritter( cr );
-            logcb( "Respawn success." );
-        }
-    }
-    break;
-    case CMD_PARAM:
-    {
-        uint   crid;
-        ushort param_num;
-        int    param_val;
-        buf >> crid;
-        buf >> param_num;
-        buf >> param_val;
-
-        CHECK_ALLOW_COMMAND;
-
-        Critter* cr = ( !crid ? cl_ : CrMngr.GetCritter( crid, true ) );
-        if( cr )
-        {
-            if( param_num >= MAX_PARAMS )
+            Critter* cr = CrMngr.GetCritter( crid, true );
+            if( !cr )
             {
-                logcb( "Wrong param number." );
+                logcb( "Critter not found." );
+                break;
+            }
+
+            Map* map = MapMngr.GetMap( cr->GetMap(), true );
+            if( !map )
+            {
+                logcb( "Critter is on global." );
+                break;
+            }
+
+            if( hex_x >= map->GetMaxHexX() || hex_y >= map->GetMaxHexY() )
+            {
+                logcb( "Invalid hex position." );
+                break;
+            }
+
+            if( MapMngr.Transit( cr, map, hex_x, hex_y, cr->GetDir(), 3, true ) )
+                logcb( "Critter move success." );
+            else
+                logcb( "Critter move fail." );
+        }
+        break;
+        case CMD_KILLCRIT:
+        {
+            uint crid;
+            buf >> crid;
+
+            CHECK_ALLOW_COMMAND;
+
+            Critter* cr = CrMngr.GetCritter( crid, true );
+            if( !cr )
+            {
+                logcb( "Critter not found." );
+                break;
+            }
+
+            KillCritter( cr, ANIM2_DEAD_FRONT, NULL );
+            logcb( "Critter is dead." );
+        }
+        break;
+        case CMD_DISCONCRIT:
+        {
+            uint crid;
+            buf >> crid;
+
+            CHECK_ALLOW_COMMAND;
+
+            if( cl_ && cl_->GetId() == crid )
+            {
+                logcb( "To kick yourself type <~exit>" );
                 return;
             }
 
-            cr->ChangeParam( param_num );
-            cr->Data.Params[param_num] = param_val;
-            logcb( "Done." );
+            Critter* cr = CrMngr.GetCritter( crid, true );
+            if( !cr )
+            {
+                logcb( "Critter not found." );
+                return;
+            }
+
+            if( !cr->IsPlayer() )
+            {
+                logcb( "Founded critter is not a player." );
+                return;
+            }
+
+            Client* cl2 = (Client*)cr;
+            if( cl2->GameState != STATE_PLAYING )
+            {
+                logcb( "Player is not in a game." );
+                return;
+            }
+
+            cl2->Send_Text( cl2, "You are kicked from game.", SAY_NETMSG );
+            cl2->Disconnect();
+
+            logcb( "Player disconnected." );
         }
-        else
+        break;
+        case CMD_TOGLOBAL:
         {
-            logcb( "Critter not found." );
-        }
-    }
-    break;
-    case CMD_GETACCESS:
-    {
-        char name_access[UTF8_BUF_SIZE( MAX_NAME )];
-        char pasw_access[UTF8_BUF_SIZE( 128 )];
-        buf.Pop( name_access, sizeof( name_access ) );
-        buf.Pop( pasw_access, sizeof( pasw_access ) );
-        name_access[sizeof( name_access ) - 1] = 0;
-        pasw_access[sizeof( pasw_access ) - 1] = 0;
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
 
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
+            if( !cl_->IsLife() )
+            {
+                logcb( "To global fail, only life none." );
+                break;
+            }
 
-        StrVec client, tester, moder, admin, admin_names;
-        GetAccesses( client, tester, moder, admin, admin_names );
-
-        int wanted_access = -1;
-        if( Str::Compare( name_access, "client" ) && std::find( client.begin(), client.end(), pasw_access ) != client.end() )
-            wanted_access = ACCESS_CLIENT;
-        else if( Str::Compare( name_access, "tester" ) && std::find( tester.begin(), tester.end(), pasw_access ) != tester.end() )
-            wanted_access = ACCESS_TESTER;
-        else if( Str::Compare( name_access, "moder" ) && std::find( moder.begin(), moder.end(), pasw_access ) != moder.end() )
-            wanted_access = ACCESS_MODER;
-        else if( Str::Compare( name_access, "admin" ) && std::find( admin.begin(), admin.end(), pasw_access ) != admin.end() )
-            wanted_access = ACCESS_ADMIN;
-
-        bool allow = false;
-        if( wanted_access != -1 && Script::PrepareContext( ServerFunctions.PlayerGetAccess, _FUNC_, cl_->GetInfo() ) )
-        {
-            ScriptString* pass = new ScriptString( pasw_access );
-            Script::SetArgObject( cl_ );
-            Script::SetArgUInt( wanted_access );
-            Script::SetArgObject( pass );
-            if( Script::RunPrepared() && Script::GetReturnedBool() )
-                allow = true;
-            pass->Release();
-        }
-
-        if( !allow )
-        {
-            logcb( "Access denied." );
-            break;
-        }
-
-        cl_->Access = wanted_access;
-        logcb( "Access changed." );
-    }
-    break;
-    case CMD_ADDITEM:
-    {
-        ushort hex_x;
-        ushort hex_y;
-        ushort pid;
-        uint   count;
-        buf >> hex_x;
-        buf >> hex_y;
-        buf >> pid;
-        buf >> count;
-
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        Map* map = MapMngr.GetMap( cl_->GetMap() );
-        if( !map || hex_x >= map->GetMaxHexX() || hex_y >= map->GetMaxHexY() )
-        {
-            logcb( "Wrong hexes or critter on global map." );
-            return;
-        }
-
-        if( !CreateItemOnHex( map, hex_x, hex_y, pid, count ) )
-        {
-            logcb( "Item(s) not added." );
-        }
-        else
-        {
-            logcb( "Item(s) added." );
-        }
-    }
-    break;
-    case CMD_ADDITEM_SELF:
-    {
-        ushort pid;
-        uint   count;
-        buf >> pid;
-        buf >> count;
-
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        if( ItemMngr.AddItemCritter( cl_, pid, count ) != NULL )
-            logcb( "Item(s) added." );
-        else
-            logcb( "Item(s) added fail." );
-    }
-    break;
-    case CMD_ADDNPC:
-    {
-        ushort hex_x;
-        ushort hex_y;
-        uchar  dir;
-        ushort pid;
-        buf >> hex_x;
-        buf >> hex_y;
-        buf >> dir;
-        buf >> pid;
-
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        Map* map = MapMngr.GetMap( cl_->GetMap() );
-        Npc* npc = CrMngr.CreateNpc( pid, 0, NULL, 0, NULL, NULL, map, hex_x, hex_y, dir, true );
-        if( !npc )
-            logcb( "Npc not created." );
-        else
-            logcb( "Npc created." );
-    }
-    break;
-    case CMD_ADDLOCATION:
-    {
-        ushort wx;
-        ushort wy;
-        ushort pid;
-        buf >> wx;
-        buf >> wy;
-        buf >> pid;
-
-        CHECK_ALLOW_COMMAND;
-
-        Location* loc = MapMngr.CreateLocation( pid, wx, wy, 0 );
-        if( !loc )
-            logcb( "Location not created." );
-        else
-            logcb( "Location created." );
-    }
-    break;
-    case CMD_RELOADSCRIPTS:
-    {
-        CHECK_ALLOW_COMMAND;
-        if( Script::Profiler::IsActive() )
-            return;
-
-        SynchronizeLogicThreads();
-
-        // Get config file
-        FileManager scripts_cfg;
-        if( scripts_cfg.LoadFile( SCRIPTS_LST, PT_SERVER_SCRIPTS ) )
-        {
-            // Reload script modules
-            Script::Undef( NULL );
-            Script::Define( "__SERVER" );
-            if( Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
-                logcb( "Success." );
+            if( MapMngr.TransitToGlobal( cl_, 0, 0, false ) == true )
+                logcb( "To global success." );
             else
-                logcb( "Fail." );
+                logcb( "To global fail." );
         }
-        else
+        break;
+        case CMD_RESPAWN:
         {
-            logcb( "Scripts config file not found." );
-        }
+            uint crid;
+            buf >> crid;
 
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_LOADSCRIPT:
-    {
-        char module_name[MAX_SCRIPT_NAME + 1];
-        buf.Pop( module_name, MAX_SCRIPT_NAME );
-        module_name[MAX_SCRIPT_NAME] = 0;
+            CHECK_ALLOW_COMMAND;
 
-        CHECK_ALLOW_COMMAND;
-        if( Script::Profiler::IsActive() )
-            return;
-
-        if( !Str::Length( module_name ) )
-        {
-            logcb( "Fail, name length is zero." );
-            break;
-        }
-
-        SynchronizeLogicThreads();
-
-        if( Script::LoadScript( module_name, NULL, true ) )
-        {
-            int errors = Script::BindImportedFunctions();
-            if( !errors )
-                logcb( "Complete." );
-            else
-                logcb( Str::FormatBuf( "Complete, bind errors<%d>.", errors ) );
-        }
-        else
-        {
-            logcb( "Unable to load script." );
-        }
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RELOAD_CLIENT_SCRIPTS:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        if( ReloadClientScripts() )
-            logcb( "Reload client scripts success." );
-        else
-            logcb( "Reload client scripts fail." );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RUNSCRIPT:
-    {
-        char module_name[MAX_SCRIPT_NAME + 1];
-        char func_name[MAX_SCRIPT_NAME + 1];
-        uint param0, param1, param2;
-        buf.Pop( module_name, MAX_SCRIPT_NAME );
-        module_name[MAX_SCRIPT_NAME] = 0;
-        buf.Pop( func_name, MAX_SCRIPT_NAME );
-        func_name[MAX_SCRIPT_NAME] = 0;
-        buf >> param0;
-        buf >> param1;
-        buf >> param2;
-
-        CHECK_ALLOW_COMMAND;
-
-        if( !Str::Length( module_name ) || !Str::Length( func_name ) )
-        {
-            logcb( "Fail, length is zero." );
-            break;
-        }
-
-        if( !cl_ )
-            SynchronizeLogicThreads();
-
-        int bind_id = Script::Bind( module_name, func_name, "void %s(Critter&,int,int,int)", true );
-        if( !bind_id )
-        {
-            if( !cl_ )
-                ResynchronizeLogicThreads();
-            logcb( "Fail, function not found." );
-            break;
-        }
-
-        if( !Script::PrepareContext( bind_id, _FUNC_, cl_ ? cl_->GetInfo() : "AdminPanel" ) )
-        {
-            if( !cl_ )
-                ResynchronizeLogicThreads();
-            logcb( "Fail, prepare error." );
-            break;
-        }
-
-        Script::SetArgObject( cl_ );
-        Script::SetArgUInt( param0 );
-        Script::SetArgUInt( param1 );
-        Script::SetArgUInt( param2 );
-
-        if( Script::RunPrepared() )
-            logcb( "Run script success." );
-        else
-            logcb( "Run script fail." );
-
-        if( !cl_ )
-            ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RELOADLOCATIONS:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        if( MapMngr.LoadLocationsProtos() )
-            logcb( "Reload proto locations success." );
-        else
-            logcb( "Reload proto locations fail." );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_LOADLOCATION:
-    {
-        ushort loc_pid;
-        buf >> loc_pid;
-
-        CHECK_ALLOW_COMMAND;
-
-        if( !loc_pid || loc_pid >= MAX_PROTO_LOCATIONS )
-        {
-            logcb( "Invalid proto location pid." );
-            break;
-        }
-
-        SynchronizeLogicThreads();
-
-        IniParser city_txt;
-        if( city_txt.LoadFile( "Locations.cfg", PT_SERVER_MAPS ) )
-        {
-            ProtoLocation ploc;
-            if( !MapMngr.LoadLocationProto( city_txt, ploc, loc_pid ) )
-                logcb( "Load proto location fail." );
+            Critter* cr = ( !crid ? cl_ : CrMngr.GetCritter( crid, true ) );
+            if( !cr )
+                logcb( "Critter not found." );
+            else if( !cr->IsDead() )
+                logcb( "Critter does not require respawn." );
             else
             {
-                MapMngr.ProtoLoc[loc_pid] = ploc;
-                logcb( "Load proto location success." );
+                RespawnCritter( cr );
+                logcb( "Respawn success." );
             }
         }
-        else
+        break;
+        case CMD_PARAM:
         {
-            logcb( "Locations.cfg not found." );
+            uint   crid;
+            ushort param_num;
+            int    param_val;
+            buf >> crid;
+            buf >> param_num;
+            buf >> param_val;
+
+            CHECK_ALLOW_COMMAND;
+
+            Critter* cr = ( !crid ? cl_ : CrMngr.GetCritter( crid, true ) );
+            if( cr )
+            {
+                if( param_num >= MAX_PARAMS )
+                {
+                    logcb( "Wrong param number." );
+                    return;
+                }
+
+                cr->ChangeParam( param_num );
+                cr->Data.Params[param_num] = param_val;
+                logcb( "Done." );
+            }
+            else
+            {
+                logcb( "Critter not found." );
+            }
         }
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RELOADMAPS:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        int fails = 0;
-        for( int map_pid = 0; map_pid < MAX_PROTO_MAPS; map_pid++ )
+        break;
+        case CMD_GETACCESS:
         {
-            if( MapMngr.ProtoMaps[map_pid].IsInit() )
+            char name_access[UTF8_BUF_SIZE( MAX_NAME )];
+            char pasw_access[UTF8_BUF_SIZE( 128 )];
+            buf.Pop( name_access, sizeof( name_access ) );
+            buf.Pop( pasw_access, sizeof( pasw_access ) );
+            name_access[sizeof( name_access ) - 1] = 0;
+            pasw_access[sizeof( pasw_access ) - 1] = 0;
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            StrVec client, tester, moder, admin, admin_names;
+            GetAccesses( client, tester, moder, admin, admin_names );
+
+            int wanted_access = -1;
+            if( Str::Compare( name_access, "client" ) && std::find( client.begin(), client.end(), pasw_access ) != client.end() )
+                wanted_access = ACCESS_CLIENT;
+            else if( Str::Compare( name_access, "tester" ) && std::find( tester.begin(), tester.end(), pasw_access ) != tester.end() )
+                wanted_access = ACCESS_TESTER;
+            else if( Str::Compare( name_access, "moder" ) && std::find( moder.begin(), moder.end(), pasw_access ) != moder.end() )
+                wanted_access = ACCESS_MODER;
+            else if( Str::Compare( name_access, "admin" ) && std::find( admin.begin(), admin.end(), pasw_access ) != admin.end() )
+                wanted_access = ACCESS_ADMIN;
+
+            bool allow = false;
+            if( wanted_access != -1 && Script::PrepareContext( ServerFunctions.PlayerGetAccess, _FUNC_, cl_->GetInfo() ) )
+            {
+                ScriptString* pass = new ScriptString( pasw_access );
+                Script::SetArgObject( cl_ );
+                Script::SetArgUInt( wanted_access );
+                Script::SetArgObject( pass );
+                if( Script::RunPrepared() && Script::GetReturnedBool() )
+                    allow = true;
+                pass->Release();
+            }
+
+            if( !allow )
+            {
+                logcb( "Access denied." );
+                break;
+            }
+
+            cl_->Access = wanted_access;
+            logcb( "Access changed." );
+        }
+        break;
+        case CMD_ADDITEM:
+        {
+            ushort hex_x;
+            ushort hex_y;
+            ushort pid;
+            uint   count;
+            buf >> hex_x;
+            buf >> hex_y;
+            buf >> pid;
+            buf >> count;
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            Map* map = MapMngr.GetMap( cl_->GetMap() );
+            if( !map || hex_x >= map->GetMaxHexX() || hex_y >= map->GetMaxHexY() )
+            {
+                logcb( "Wrong hexes or critter on global map." );
+                return;
+            }
+
+            if( !CreateItemOnHex( map, hex_x, hex_y, pid, count ) )
+            {
+                logcb( "Item(s) not added." );
+            }
+            else
+            {
+                logcb( "Item(s) added." );
+            }
+        }
+        break;
+        case CMD_ADDITEM_SELF:
+        {
+            ushort pid;
+            uint   count;
+            buf >> pid;
+            buf >> count;
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            if( ItemMngr.AddItemCritter( cl_, pid, count ) != NULL )
+                logcb( "Item(s) added." );
+            else
+                logcb( "Item(s) added fail." );
+        }
+        break;
+        case CMD_ADDNPC:
+        {
+            ushort hex_x;
+            ushort hex_y;
+            uchar  dir;
+            ushort pid;
+            buf >> hex_x;
+            buf >> hex_y;
+            buf >> dir;
+            buf >> pid;
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            Map* map = MapMngr.GetMap( cl_->GetMap() );
+            Npc* npc = CrMngr.CreateNpc( pid, 0, NULL, 0, NULL, NULL, map, hex_x, hex_y, dir, true );
+            if( !npc )
+                logcb( "Npc not created." );
+            else
+                logcb( "Npc created." );
+        }
+        break;
+        case CMD_ADDLOCATION:
+        {
+            ushort wx;
+            ushort wy;
+            ushort pid;
+            buf >> wx;
+            buf >> wy;
+            buf >> pid;
+
+            CHECK_ALLOW_COMMAND;
+
+            Location* loc = MapMngr.CreateLocation( pid, wx, wy, 0 );
+            if( !loc )
+                logcb( "Location not created." );
+            else
+                logcb( "Location created." );
+        }
+        break;
+        case CMD_RELOADSCRIPTS:
+        {
+            CHECK_ALLOW_COMMAND;
+            if( Script::Profiler::IsActive() )
+                return;
+
+            SynchronizeLogicThreads();
+
+            // Get config file
+            FileManager scripts_cfg;
+            if( scripts_cfg.LoadFile( SCRIPTS_LST, PT_SERVER_SCRIPTS ) )
+            {
+                // Reload script modules
+                Script::Undef( NULL );
+                Script::Define( "__SERVER" );
+                if( Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
+                    logcb( "Success." );
+                else
+                    logcb( "Fail." );
+            }
+            else
+            {
+                logcb( "Scripts config file not found." );
+            }
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_LOADSCRIPT:
+        {
+            char module_name[MAX_SCRIPT_NAME + 1];
+            buf.Pop( module_name, MAX_SCRIPT_NAME );
+            module_name[MAX_SCRIPT_NAME] = 0;
+
+            CHECK_ALLOW_COMMAND;
+            if( Script::Profiler::IsActive() )
+                return;
+
+            if( !Str::Length( module_name ) )
+            {
+                logcb( "Fail, name length is zero." );
+                break;
+            }
+
+            SynchronizeLogicThreads();
+
+            if( Script::LoadScript( module_name, NULL, true ) )
+            {
+                int errors = Script::BindImportedFunctions();
+                if( !errors )
+                    logcb( "Complete." );
+                else
+                    logcb( Str::FormatBuf( "Complete, bind errors<%d>.", errors ) );
+            }
+            else
+            {
+                logcb( "Unable to load script." );
+            }
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_RELOAD_CLIENT_SCRIPTS:
+        {
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            if( ReloadClientScripts() )
+                logcb( "Reload client scripts success." );
+            else
+                logcb( "Reload client scripts fail." );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_RUNSCRIPT:
+        {
+            char module_name[MAX_SCRIPT_NAME + 1];
+            char func_name[MAX_SCRIPT_NAME + 1];
+            uint param0, param1, param2;
+            buf.Pop( module_name, MAX_SCRIPT_NAME );
+            module_name[MAX_SCRIPT_NAME] = 0;
+            buf.Pop( func_name, MAX_SCRIPT_NAME );
+            func_name[MAX_SCRIPT_NAME] = 0;
+            buf >> param0;
+            buf >> param1;
+            buf >> param2;
+
+            CHECK_ALLOW_COMMAND;
+
+            if( !Str::Length( module_name ) || !Str::Length( func_name ) )
+            {
+                logcb( "Fail, length is zero." );
+                break;
+            }
+
+            if( !cl_ )
+                SynchronizeLogicThreads();
+
+            int bind_id = Script::Bind( module_name, func_name, "void %s(Critter&,int,int,int)", true );
+            if( !bind_id )
+            {
+                if( !cl_ )
+                    ResynchronizeLogicThreads();
+                logcb( "Fail, function not found." );
+                break;
+            }
+
+            if( !Script::PrepareContext( bind_id, _FUNC_, cl_ ? cl_->GetInfo() : "AdminPanel" ) )
+            {
+                if( !cl_ )
+                    ResynchronizeLogicThreads();
+                logcb( "Fail, prepare error." );
+                break;
+            }
+
+            Script::SetArgObject( cl_ );
+            Script::SetArgUInt( param0 );
+            Script::SetArgUInt( param1 );
+            Script::SetArgUInt( param2 );
+
+            if( Script::RunPrepared() )
+                logcb( "Run script success." );
+            else
+                logcb( "Run script fail." );
+
+            if( !cl_ )
+                ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_RELOADLOCATIONS:
+        {
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            if( MapMngr.LoadLocationsProtos() )
+                logcb( "Reload proto locations success." );
+            else
+                logcb( "Reload proto locations fail." );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_LOADLOCATION:
+        {
+            ushort loc_pid;
+            buf >> loc_pid;
+
+            CHECK_ALLOW_COMMAND;
+
+            if( !loc_pid || loc_pid >= MAX_PROTO_LOCATIONS )
+            {
+                logcb( "Invalid proto location pid." );
+                break;
+            }
+
+            SynchronizeLogicThreads();
+
+            IniParser city_txt;
+            if( city_txt.LoadFile( "Locations.cfg", PT_SERVER_MAPS ) )
+            {
+                ProtoLocation ploc;
+                if( !MapMngr.LoadLocationProto( city_txt, ploc, loc_pid ) )
+                    logcb( "Load proto location fail." );
+                else
+                {
+                    MapMngr.ProtoLoc[loc_pid] = ploc;
+                    logcb( "Load proto location success." );
+                }
+            }
+            else
+            {
+                logcb( "Locations.cfg not found." );
+            }
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_RELOADMAPS:
+        {
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            int fails = 0;
+            for( int map_pid = 0; map_pid < MAX_PROTO_MAPS; map_pid++ )
+            {
+                if( MapMngr.ProtoMaps[map_pid].IsInit() )
+                {
+                    ProtoMap    pmap;
+                    const char* map_name = MapMngr.ProtoMaps[map_pid].GetName();
+                    if( pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
+                    {
+                        MapMngr.ProtoMaps[map_pid].Clear();
+                        MapMngr.ProtoMaps[map_pid] = pmap;
+                    }
+                    else
+                    {
+                        fails++;
+                    }
+                }
+            }
+
+            if( !fails )
+                logcb( "Reload proto maps complete, without fails." );
+            else
+                logcb( "Reload proto maps complete, with fails." );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_LOADMAP:
+        {
+            ushort map_pid;
+            buf >> map_pid;
+
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            if( map_pid > 0 && map_pid < MAX_PROTO_MAPS && MapMngr.ProtoMaps[map_pid].IsInit() )
             {
                 ProtoMap    pmap;
                 const char* map_name = MapMngr.ProtoMaps[map_pid].GetName();
@@ -2624,569 +2657,536 @@ void FOServer::Process_Command( BufferManager& buf, void ( *logcb )( const char*
                 {
                     MapMngr.ProtoMaps[map_pid].Clear();
                     MapMngr.ProtoMaps[map_pid] = pmap;
+
+                    logcb( "Load proto map success." );
                 }
                 else
                 {
-                    fails++;
-                }
-            }
-        }
-
-        if( !fails )
-            logcb( "Reload proto maps complete, without fails." );
-        else
-            logcb( "Reload proto maps complete, with fails." );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_LOADMAP:
-    {
-        ushort map_pid;
-        buf >> map_pid;
-
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        if( map_pid > 0 && map_pid < MAX_PROTO_MAPS && MapMngr.ProtoMaps[map_pid].IsInit() )
-        {
-            ProtoMap    pmap;
-            const char* map_name = MapMngr.ProtoMaps[map_pid].GetName();
-            if( pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
-            {
-                MapMngr.ProtoMaps[map_pid].Clear();
-                MapMngr.ProtoMaps[map_pid] = pmap;
-
-                logcb( "Load proto map success." );
-            }
-            else
-            {
-                logcb( "Load proto map fail." );
-            }
-        }
-        else
-        {
-            logcb( "Invalid proto map pid." );
-        }
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_REGENMAP:
-    {
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        // Check global
-        if( !cl_->GetMap() )
-        {
-            logcb( "Only on local map." );
-            return;
-        }
-
-        // Find map
-        Map* map = MapMngr.GetMap( cl_->GetMap() );
-        if( !map )
-        {
-            logcb( "Map not found." );
-            return;
-        }
-
-        // Regenerate
-        ushort hx = cl_->GetHexX();
-        ushort hy = cl_->GetHexY();
-        uchar  dir = cl_->GetDir();
-        if( RegenerateMap( map ) )
-        {
-            // Transit to old position
-            MapMngr.Transit( cl_, map, hx, hy, dir, 5, true );
-            logcb( "Regenerate map success." );
-        }
-        else
-        {
-            logcb( "Regenerate map fail." );
-        }
-    }
-    break;
-    case CMD_RELOADDIALOGS:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        DlgMngr.DialogsPacks.clear();
-        DlgMngr.DlgPacksNames.clear();
-        int errors = DlgMngr.LoadDialogs( DIALOGS_LST_NAME );
-
-        InitLangPacks( LangPacks );
-        InitLangPacksDialogs( LangPacks );
-        logcb( Str::FormatBuf( "Dialogs reload done, errors<%d>.", errors ) );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_LOADDIALOG:
-    {
-        char dlg_name[128];
-        uint dlg_id;
-        buf.Pop( dlg_name, 128 );
-        buf >> dlg_id;
-        dlg_name[127] = 0;
-
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        FileManager fm;
-        if( fm.LoadFile( Str::FormatBuf( "%s%s", dlg_name, DIALOG_FILE_EXT ), PT_SERVER_DIALOGS ) )
-        {
-            DialogPack* pack = DlgMngr.ParseDialog( dlg_name, dlg_id, (char*)fm.GetBuf() );
-            if( pack )
-            {
-                DlgMngr.EraseDialogs( dlg_id );
-                DlgMngr.EraseDialogs( string( dlg_name ) );
-
-                if( DlgMngr.AddDialogs( pack ) )
-                {
-                    InitLangPacks( LangPacks );
-                    InitLangPacksDialogs( LangPacks );
-                    logcb( "Load dialog success." );
-                }
-                else
-                {
-                    logcb( "Unable to add dialog." );
+                    logcb( "Load proto map fail." );
                 }
             }
             else
             {
-                logcb( "Unable to parse dialog." );
+                logcb( "Invalid proto map pid." );
             }
+
+            ResynchronizeLogicThreads();
         }
-        else
+        break;
+        case CMD_REGENMAP:
         {
-            logcb( "File not found." );
-        }
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
 
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RELOADTEXTS:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        LangPackVec lang_packs;
-        if( InitLangPacks( lang_packs ) && InitLangPacksDialogs( lang_packs ) && InitCrafts( lang_packs ) )
-        {
-            LangPacks = lang_packs;
-            logcb( "Reload texts success." );
-        }
-        else
-        {
-            lang_packs.clear();
-            logcb( "Reload texts fail." );
-        }
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_RELOADAI:
-    {
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        NpcAIMngr ai_mngr;
-        if( ai_mngr.Init() )
-        {
-            AIMngr = ai_mngr;
-            logcb( "Reload ai success." );
-        }
-        else
-        {
-            logcb( "Init AI manager fail." );
-        }
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_CHECKVAR:
-    {
-        ushort tid_var;
-        uchar  master_is_npc;
-        uint   master_id;
-        uint   slave_id;
-        uchar  full_info;
-        buf >> tid_var;
-        buf >> master_is_npc;
-        buf >> master_id;
-        buf >> slave_id;
-        buf >> full_info;
-
-        CHECK_ALLOW_COMMAND;
-
-        if( master_is_npc )
-            master_id += NPC_START_ID - 1;
-        GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
-        if( !var )
-        {
-            logcb( "Var not found." );
-            break;
-        }
-
-        if( !full_info )
-        {
-            logcb( Str::FormatBuf( "Value<%d>.", var->GetValue() ) );
-        }
-        else
-        {
-            TemplateVar* tvar = var->GetTemplateVar();
-            logcb( Str::FormatBuf( "Value<%d>, Name<%s>, Start<%d>, MIN<%d>, Max<%d>.",
-                                   var->GetValue(), tvar->Name.c_str(), tvar->StartVal, tvar->MinVal, tvar->MaxVal ) );
-        }
-    }
-    break;
-    case CMD_SETVAR:
-    {
-        ushort tid_var;
-        uchar  master_is_npc;
-        uint   master_id;
-        uint   slave_id;
-        int    value;
-        buf >> tid_var;
-        buf >> master_is_npc;
-        buf >> master_id;
-        buf >> slave_id;
-        buf >> value;
-
-        CHECK_ALLOW_COMMAND;
-
-        if( master_is_npc )
-            master_id += NPC_START_ID - 1;
-        GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
-        if( !var )
-        {
-            logcb( "Var not found." );
-            break;
-        }
-
-        TemplateVar* tvar = var->GetTemplateVar();
-        if( value < tvar->MinVal )
-            logcb( "Incorrect new value. Less than minimum." );
-        if( value > tvar->MaxVal )
-            logcb( "Incorrect new value. Greater than maximum." );
-        else
-        {
-            *var = value;
-            logcb( "Var changed." );
-        }
-    }
-    break;
-    case CMD_SETTIME:
-    {
-        int multiplier;
-        int year;
-        int month;
-        int day;
-        int hour;
-        int minute;
-        int second;
-        buf >> multiplier;
-        buf >> year;
-        buf >> month;
-        buf >> day;
-        buf >> hour;
-        buf >> minute;
-        buf >> second;
-
-        CHECK_ALLOW_COMMAND;
-
-        SynchronizeLogicThreads();
-
-        if( multiplier >= 1 && multiplier <= 50000 )
-            GameOpt.TimeMultiplier = multiplier;
-        if( year >= GameOpt.YearStart && year <= GameOpt.YearStart + 130 )
-            GameOpt.Year = year;
-        if( month >= 1 && month <= 12 )
-            GameOpt.Month = month;
-        if( day >= 1 && day <= 31 )
-            GameOpt.Day = day;
-        if( hour >= 0 && hour <= 23 )
-            GameOpt.Hour = hour;
-        if( minute >= 0 && minute <= 59 )
-            GameOpt.Minute = minute;
-        if( second >= 0 && second <= 59 )
-            GameOpt.Second = second;
-        GameOpt.FullSecond = Timer::GetFullSecond( GameOpt.Year, GameOpt.Month, GameOpt.Day, GameOpt.Hour, GameOpt.Minute, GameOpt.Second );
-        GameOpt.FullSecondStart = GameOpt.FullSecond;
-        GameOpt.GameTimeTick = Timer::GameTick();
-
-        ConnectedClientsLocker.Lock();
-        for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
-        {
-            Client* cl_ = *it;
-            if( cl_->IsOnline() )
-                cl_->Send_GameInfo( MapMngr.GetMap( cl_->GetMap(), false ) );
-        }
-        ConnectedClientsLocker.Unlock();
-
-        logcb( "Time changed." );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    case CMD_BAN:
-    {
-        char name[UTF8_BUF_SIZE( MAX_NAME )];
-        char params[UTF8_BUF_SIZE( MAX_NAME )];
-        uint ban_hours;
-        char info[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
-        buf.Pop( name, sizeof( name ) );
-        name[sizeof( name - 1 )] = 0;
-        buf.Pop( params, sizeof( params ) );
-        params[sizeof( params ) - 1] = 0;
-        buf >> ban_hours;
-        buf.Pop( info, sizeof( info ) );
-        info[sizeof( info ) - 1] = 0;
-
-        CHECK_ALLOW_COMMAND;
-
-        SCOPE_LOCK( BannedLocker );
-
-        if( Str::CompareCase( params, "list" ) )
-        {
-            if( Banned.empty() )
+            // Check global
+            if( !cl_->GetMap() )
             {
-                logcb( "Ban list empty." );
+                logcb( "Only on local map." );
                 return;
             }
 
-            uint index = 1;
-            for( auto it = Banned.begin(), end = Banned.end(); it != end; ++it )
+            // Find map
+            Map* map = MapMngr.GetMap( cl_->GetMap() );
+            if( !map )
             {
-                ClientBanned& ban = *it;
-                logcb( Str::FormatBuf( "--- %3u ---", index ) );
-                if( ban.ClientName[0] )
-                    logcb( Str::FormatBuf( "User: %s", ban.ClientName ) );
-                if( ban.ClientIp )
-                    logcb( Str::FormatBuf( "UserIp: %u", ban.ClientIp ) );
-                logcb( Str::FormatBuf( "BeginTime: %u %u %u %u %u", ban.BeginTime.Year, ban.BeginTime.Month, ban.BeginTime.Day, ban.BeginTime.Hour, ban.BeginTime.Minute ) );
-                logcb( Str::FormatBuf( "EndTime: %u %u %u %u %u", ban.EndTime.Year, ban.EndTime.Month, ban.EndTime.Day, ban.EndTime.Hour, ban.EndTime.Minute ) );
-                if( ban.BannedBy[0] )
-                    logcb( Str::FormatBuf( "BannedBy: %s", ban.BannedBy ) );
-                if( ban.BanInfo[0] )
-                    logcb( Str::FormatBuf( "Comment: %s", ban.BanInfo ) );
-                index++;
-            }
-        }
-        else if( Str::CompareCase( params, "add" ) || Str::CompareCase( params, "add+" ) )
-        {
-            uint name_len = Str::LengthUTF8( name );
-            if( name_len < MIN_NAME || name_len < GameOpt.MinNameLength || name_len > MAX_NAME || name_len > GameOpt.MaxNameLength || !ban_hours )
-            {
-                logcb( "Invalid arguments." );
+                logcb( "Map not found." );
                 return;
             }
 
-            Client*      cl_banned = CrMngr.GetPlayer( name, true );
-            ClientBanned ban;
-            memzero( &ban, sizeof( ban ) );
-            Str::Copy( ban.ClientName, name );
-            ban.ClientIp = ( cl_banned && strstr( params, "+" ) ? cl_banned->GetIp() : 0 );
-            Timer::GetCurrentDateTime( ban.BeginTime );
-            ban.EndTime = ban.BeginTime;
-            Timer::ContinueTime( ban.EndTime, ban_hours * 60 * 60 );
-            Str::Copy( ban.BannedBy, cl_ ? cl_->Name : admin_panel );
-            Str::Copy( ban.BanInfo, info );
-
-            Banned.push_back( ban );
-            SaveBan( ban, false );
-            logcb( "User banned." );
-
-            if( cl_banned )
+            // Regenerate
+            ushort hx = cl_->GetHexX();
+            ushort hy = cl_->GetHexY();
+            uchar  dir = cl_->GetDir();
+            if( RegenerateMap( map ) )
             {
-                cl_banned->Send_TextMsg( cl_banned, STR_NET_BAN, SAY_NETMSG, TEXTMSG_GAME );
-                cl_banned->Send_TextMsgLex( cl_banned, STR_NET_BAN_REASON, SAY_NETMSG, TEXTMSG_GAME, ban.GetBanLexems() );
-                cl_banned->Disconnect();
-            }
-        }
-        else if( Str::CompareCase( params, "delete" ) )
-        {
-            if( !Str::Length( name ) )
-            {
-                logcb( "Invalid arguments." );
-                return;
-            }
-
-            bool resave = false;
-            if( Str::CompareCase( name, "*" ) )
-            {
-                int index = (int)ban_hours - 1;
-                if( index >= 0 && index < (int)Banned.size() )
-                {
-                    Banned.erase( Banned.begin() + index );
-                    resave = true;
-                }
+                // Transit to old position
+                MapMngr.Transit( cl_, map, hx, hy, dir, 5, true );
+                logcb( "Regenerate map success." );
             }
             else
             {
-                for( auto it = Banned.begin(); it != Banned.end();)
+                logcb( "Regenerate map fail." );
+            }
+        }
+        break;
+        case CMD_RELOADDIALOGS:
+        {
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            DlgMngr.DialogsPacks.clear();
+            DlgMngr.DlgPacksNames.clear();
+            int errors = DlgMngr.LoadDialogs( DIALOGS_LST_NAME );
+
+            InitLangPacks( LangPacks );
+            InitLangPacksDialogs( LangPacks );
+            logcb( Str::FormatBuf( "Dialogs reload done, errors<%d>.", errors ) );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_LOADDIALOG:
+        {
+            char dlg_name[128];
+            uint dlg_id;
+            buf.Pop( dlg_name, 128 );
+            buf >> dlg_id;
+            dlg_name[127] = 0;
+
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            FileManager fm;
+            if( fm.LoadFile( Str::FormatBuf( "%s%s", dlg_name, DIALOG_FILE_EXT ), PT_SERVER_DIALOGS ) )
+            {
+                DialogPack* pack = DlgMngr.ParseDialog( dlg_name, dlg_id, (char*)fm.GetBuf() );
+                if( pack )
                 {
-                    ClientBanned& ban = *it;
-                    if( Str::CompareCaseUTF8( ban.ClientName, name ) )
+                    DlgMngr.EraseDialogs( dlg_id );
+                    DlgMngr.EraseDialogs( string( dlg_name ) );
+
+                    if( DlgMngr.AddDialogs( pack ) )
                     {
-                        SaveBan( ban, true );
-                        it = Banned.erase( it );
-                        resave = true;
+                        InitLangPacks( LangPacks );
+                        InitLangPacksDialogs( LangPacks );
+                        logcb( "Load dialog success." );
                     }
                     else
                     {
-                        ++it;
+                        logcb( "Unable to add dialog." );
                     }
                 }
-            }
-
-            if( resave )
-            {
-                SaveBans();
-                logcb( "User unbanned." );
+                else
+                {
+                    logcb( "Unable to parse dialog." );
+                }
             }
             else
             {
-                logcb( "User not found." );
+                logcb( "File not found." );
             }
-        }
-        else
-        {
-            logcb( "Unknown option." );
-        }
-    }
-    break;
-    case CMD_DELETE_ACCOUNT:
-    {
-        char pass_hash[PASS_HASH_SIZE];
-        buf.Pop( pass_hash, PASS_HASH_SIZE );
 
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
-        {
-            logcb( "Invalid password." );
+            ResynchronizeLogicThreads();
         }
-        else
+        break;
+        case CMD_RELOADTEXTS:
         {
-            if( !cl_->Data.ClientToDelete )
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            LangPackVec lang_packs;
+            if( InitLangPacks( lang_packs ) && InitLangPacksDialogs( lang_packs ) && InitCrafts( lang_packs ) )
             {
-                cl_->Data.ClientToDelete = true;
-                logcb( "Your account will be deleted after character exit from game." );
+                LangPacks = lang_packs;
+                logcb( "Reload texts success." );
             }
             else
             {
-                cl_->Data.ClientToDelete = false;
-                logcb( "Deleting canceled." );
+                lang_packs.clear();
+                logcb( "Reload texts fail." );
+            }
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_RELOADAI:
+        {
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            NpcAIMngr ai_mngr;
+            if( ai_mngr.Init() )
+            {
+                AIMngr = ai_mngr;
+                logcb( "Reload ai success." );
+            }
+            else
+            {
+                logcb( "Init AI manager fail." );
+            }
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_CHECKVAR:
+        {
+            ushort tid_var;
+            uchar  master_is_npc;
+            uint   master_id;
+            uint   slave_id;
+            uchar  full_info;
+            buf >> tid_var;
+            buf >> master_is_npc;
+            buf >> master_id;
+            buf >> slave_id;
+            buf >> full_info;
+
+            CHECK_ALLOW_COMMAND;
+
+            if( master_is_npc )
+                master_id += NPC_START_ID - 1;
+            GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
+            if( !var )
+            {
+                logcb( "Var not found." );
+                break;
+            }
+
+            if( !full_info )
+            {
+                logcb( Str::FormatBuf( "Value<%d>.", var->GetValue() ) );
+            }
+            else
+            {
+                TemplateVar* tvar = var->GetTemplateVar();
+                logcb( Str::FormatBuf( "Value<%d>, Name<%s>, Start<%d>, MIN<%d>, Max<%d>.",
+                                       var->GetValue(), tvar->Name.c_str(), tvar->StartVal, tvar->MinVal, tvar->MaxVal ) );
             }
         }
-    }
-    break;
-    case CMD_CHANGE_PASSWORD:
-    {
-        char pass_hash[PASS_HASH_SIZE];
-        char new_pass_hash[PASS_HASH_SIZE];
-        buf.Pop( pass_hash, PASS_HASH_SIZE );
-        buf.Pop( new_pass_hash, PASS_HASH_SIZE );
-
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
+        break;
+        case CMD_SETVAR:
         {
-            logcb( "Invalid current password." );
+            ushort tid_var;
+            uchar  master_is_npc;
+            uint   master_id;
+            uint   slave_id;
+            int    value;
+            buf >> tid_var;
+            buf >> master_is_npc;
+            buf >> master_id;
+            buf >> slave_id;
+            buf >> value;
+
+            CHECK_ALLOW_COMMAND;
+
+            if( master_is_npc )
+                master_id += NPC_START_ID - 1;
+            GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
+            if( !var )
+            {
+                logcb( "Var not found." );
+                break;
+            }
+
+            TemplateVar* tvar = var->GetTemplateVar();
+            if( value < tvar->MinVal )
+                logcb( "Incorrect new value. Less than minimum." );
+            if( value > tvar->MaxVal )
+                logcb( "Incorrect new value. Greater than maximum." );
+            else
+            {
+                *var = value;
+                logcb( "Var changed." );
+            }
         }
-        else
+        break;
+        case CMD_SETTIME:
         {
-            SCOPE_LOCK( SaveClientsLocker );
+            int multiplier;
+            int year;
+            int month;
+            int day;
+            int hour;
+            int minute;
+            int second;
+            buf >> multiplier;
+            buf >> year;
+            buf >> month;
+            buf >> day;
+            buf >> hour;
+            buf >> minute;
+            buf >> second;
+
+            CHECK_ALLOW_COMMAND;
+
+            SynchronizeLogicThreads();
+
+            if( multiplier >= 1 && multiplier <= 50000 )
+                GameOpt.TimeMultiplier = multiplier;
+            if( year >= GameOpt.YearStart && year <= GameOpt.YearStart + 130 )
+                GameOpt.Year = year;
+            if( month >= 1 && month <= 12 )
+                GameOpt.Month = month;
+            if( day >= 1 && day <= 31 )
+                GameOpt.Day = day;
+            if( hour >= 0 && hour <= 23 )
+                GameOpt.Hour = hour;
+            if( minute >= 0 && minute <= 59 )
+                GameOpt.Minute = minute;
+            if( second >= 0 && second <= 59 )
+                GameOpt.Second = second;
+            GameOpt.FullSecond = Timer::GetFullSecond( GameOpt.Year, GameOpt.Month, GameOpt.Day, GameOpt.Hour, GameOpt.Minute, GameOpt.Second );
+            GameOpt.FullSecondStart = GameOpt.FullSecond;
+            GameOpt.GameTimeTick = Timer::GameTick();
+
+            ConnectedClientsLocker.Lock();
+            for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
+            {
+                Client* cl_ = *it;
+                if( cl_->IsOnline() )
+                    cl_->Send_GameInfo( MapMngr.GetMap( cl_->GetMap(), false ) );
+            }
+            ConnectedClientsLocker.Unlock();
+
+            logcb( "Time changed." );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        case CMD_BAN:
+        {
+            char name[UTF8_BUF_SIZE( MAX_NAME )];
+            char params[UTF8_BUF_SIZE( MAX_NAME )];
+            uint ban_hours;
+            char info[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
+            buf.Pop( name, sizeof( name ) );
+            name[sizeof( name - 1 )] = 0;
+            buf.Pop( params, sizeof( params ) );
+            params[sizeof( params ) - 1] = 0;
+            buf >> ban_hours;
+            buf.Pop( info, sizeof( info ) );
+            info[sizeof( info ) - 1] = 0;
+
+            CHECK_ALLOW_COMMAND;
+
+            SCOPE_LOCK( BannedLocker );
+
+            if( Str::CompareCase( params, "list" ) )
+            {
+                if( Banned.empty() )
+                {
+                    logcb( "Ban list empty." );
+                    return;
+                }
+
+                uint index = 1;
+                for( auto it = Banned.begin(), end = Banned.end(); it != end; ++it )
+                {
+                    ClientBanned& ban = *it;
+                    logcb( Str::FormatBuf( "--- %3u ---", index ) );
+                    if( ban.ClientName[0] )
+                        logcb( Str::FormatBuf( "User: %s", ban.ClientName ) );
+                    if( ban.ClientIp )
+                        logcb( Str::FormatBuf( "UserIp: %u", ban.ClientIp ) );
+                    logcb( Str::FormatBuf( "BeginTime: %u %u %u %u %u", ban.BeginTime.Year, ban.BeginTime.Month, ban.BeginTime.Day, ban.BeginTime.Hour, ban.BeginTime.Minute ) );
+                    logcb( Str::FormatBuf( "EndTime: %u %u %u %u %u", ban.EndTime.Year, ban.EndTime.Month, ban.EndTime.Day, ban.EndTime.Hour, ban.EndTime.Minute ) );
+                    if( ban.BannedBy[0] )
+                        logcb( Str::FormatBuf( "BannedBy: %s", ban.BannedBy ) );
+                    if( ban.BanInfo[0] )
+                        logcb( Str::FormatBuf( "Comment: %s", ban.BanInfo ) );
+                    index++;
+                }
+            }
+            else if( Str::CompareCase( params, "add" ) || Str::CompareCase( params, "add+" ) )
+            {
+                uint name_len = Str::LengthUTF8( name );
+                if( name_len < MIN_NAME || name_len < GameOpt.MinNameLength || name_len > MAX_NAME || name_len > GameOpt.MaxNameLength || !ban_hours )
+                {
+                    logcb( "Invalid arguments." );
+                    return;
+                }
+
+                Client*      cl_banned = CrMngr.GetPlayer( name, true );
+                ClientBanned ban;
+                memzero( &ban, sizeof( ban ) );
+                Str::Copy( ban.ClientName, name );
+                ban.ClientIp = ( cl_banned && strstr( params, "+" ) ? cl_banned->GetIp() : 0 );
+                Timer::GetCurrentDateTime( ban.BeginTime );
+                ban.EndTime = ban.BeginTime;
+                Timer::ContinueTime( ban.EndTime, ban_hours * 60 * 60 );
+                Str::Copy( ban.BannedBy, cl_ ? cl_->Name : admin_panel );
+                Str::Copy( ban.BanInfo, info );
+
+                Banned.push_back( ban );
+                SaveBan( ban, false );
+                logcb( "User banned." );
+
+                if( cl_banned )
+                {
+                    cl_banned->Send_TextMsg( cl_banned, STR_NET_BAN, SAY_NETMSG, TEXTMSG_GAME );
+                    cl_banned->Send_TextMsgLex( cl_banned, STR_NET_BAN_REASON, SAY_NETMSG, TEXTMSG_GAME, ban.GetBanLexems() );
+                    cl_banned->Disconnect();
+                }
+            }
+            else if( Str::CompareCase( params, "delete" ) )
+            {
+                if( !Str::Length( name ) )
+                {
+                    logcb( "Invalid arguments." );
+                    return;
+                }
+
+                bool resave = false;
+                if( Str::CompareCase( name, "*" ) )
+                {
+                    int index = (int)ban_hours - 1;
+                    if( index >= 0 && index < (int)Banned.size() )
+                    {
+                        Banned.erase( Banned.begin() + index );
+                        resave = true;
+                    }
+                }
+                else
+                {
+                    for( auto it = Banned.begin(); it != Banned.end();)
+                    {
+                        ClientBanned& ban = *it;
+                        if( Str::CompareCaseUTF8( ban.ClientName, name ) )
+                        {
+                            SaveBan( ban, true );
+                            it = Banned.erase( it );
+                            resave = true;
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                    }
+                }
+
+                if( resave )
+                {
+                    SaveBans();
+                    logcb( "User unbanned." );
+                }
+                else
+                {
+                    logcb( "User not found." );
+                }
+            }
+            else
+            {
+                logcb( "Unknown option." );
+            }
+        }
+        break;
+        case CMD_DELETE_ACCOUNT:
+        {
+            char pass_hash[PASS_HASH_SIZE];
+            buf.Pop( pass_hash, PASS_HASH_SIZE );
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
+            {
+                logcb( "Invalid password." );
+            }
+            else
+            {
+                if( !cl_->Data.ClientToDelete )
+                {
+                    cl_->Data.ClientToDelete = true;
+                    logcb( "Your account will be deleted after character exit from game." );
+                }
+                else
+                {
+                    cl_->Data.ClientToDelete = false;
+                    logcb( "Deleting canceled." );
+                }
+            }
+        }
+        break;
+        case CMD_CHANGE_PASSWORD:
+        {
+            char pass_hash[PASS_HASH_SIZE];
+            char new_pass_hash[PASS_HASH_SIZE];
+            buf.Pop( pass_hash, PASS_HASH_SIZE );
+            buf.Pop( new_pass_hash, PASS_HASH_SIZE );
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
+            {
+                logcb( "Invalid current password." );
+            }
+            else
+            {
+                SCOPE_LOCK( SaveClientsLocker );
+
+                ClientData* data = GetClientData( cl_->GetId() );
+                if( data )
+                {
+                    memcpy( data->ClientPassHash, new_pass_hash, PASS_HASH_SIZE );
+                    memcpy( cl_->PassHash, new_pass_hash, PASS_HASH_SIZE );
+                    logcb( "Password changed." );
+                }
+            }
+        }
+        break;
+        case CMD_DROP_UID:
+        {
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
 
             ClientData* data = GetClientData( cl_->GetId() );
             if( data )
             {
-                memcpy( data->ClientPassHash, new_pass_hash, PASS_HASH_SIZE );
-                memcpy( cl_->PassHash, new_pass_hash, PASS_HASH_SIZE );
-                logcb( "Password changed." );
+                for( int i = 0; i < 5; i++ )
+                    data->UID[i] = 0;
+                data->UIDEndTick = 0;
             }
+            logcb( "UID dropped, you can relogin on another account without timeout." );
         }
-    }
-    break;
-    case CMD_DROP_UID:
-    {
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        ClientData* data = GetClientData( cl_->GetId() );
-        if( data )
-        {
-            for( int i = 0; i < 5; i++ )
-                data->UID[i] = 0;
-            data->UIDEndTick = 0;
-        }
-        logcb( "UID dropped, you can relogin on another account without timeout." );
-    }
-    break;
-    case CMD_LOG:
-    {
-        char flags[16];
-        buf.Pop( flags, 16 );
-
-        CHECK_ALLOW_COMMAND;
-        CHECK_ADMIN_PANEL;
-
-        int action = -1;
-        if( flags[0] == '-' && flags[1] == '-' )
-            action = 2;                                  // Detach all
-        else if( flags[0] == '-' )
-            action = 0;                                  // Detach current
-        else if( flags[0] == '+' )
-            action = 1;                                  // Attach current
-        else
-        {
-            logcb( "Wrong flags. Valid is '+', '-', '--'." );
-            return;
-        }
-
-        SynchronizeLogicThreads();
-
-        LogToFunc( &FOServer::LogToClients, false );
-        auto it = std::find( LogClients.begin(), LogClients.end(), cl_ );
-        if( action == 0 && it != LogClients.end() )           // Detach current
-        {
-            logcb( "Detached." );
-            cl_->Release();
-            LogClients.erase( it );
-        }
-        else if( action == 1 && it == LogClients.end() )           // Attach current
-        {
-            logcb( "Attached." );
-            cl_->AddRef();
-            LogClients.push_back( cl_ );
-        }
-        else if( action == 2 )             // Detach all
-        {
-            logcb( "Detached all." );
-            for( auto it_ = LogClients.begin(); it_ < LogClients.end(); ++it_ )
-                ( *it_ )->Release();
-            LogClients.clear();
-        }
-        if( !LogClients.empty() )
-            LogToFunc( &FOServer::LogToClients, true );
-
-        ResynchronizeLogicThreads();
-    }
-    break;
-    default:
-        logcb( "Unknown command." );
         break;
+        case CMD_LOG:
+        {
+            char flags[16];
+            buf.Pop( flags, 16 );
+
+            CHECK_ALLOW_COMMAND;
+            CHECK_ADMIN_PANEL;
+
+            int action = -1;
+            if( flags[0] == '-' && flags[1] == '-' )
+                action = 2;                              // Detach all
+            else if( flags[0] == '-' )
+                action = 0;                              // Detach current
+            else if( flags[0] == '+' )
+                action = 1;                              // Attach current
+            else
+            {
+                logcb( "Wrong flags. Valid is '+', '-', '--'." );
+                return;
+            }
+
+            SynchronizeLogicThreads();
+
+            LogToFunc( &FOServer::LogToClients, false );
+            auto it = std::find( LogClients.begin(), LogClients.end(), cl_ );
+            if( action == 0 && it != LogClients.end() )       // Detach current
+            {
+                logcb( "Detached." );
+                cl_->Release();
+                LogClients.erase( it );
+            }
+            else if( action == 1 && it == LogClients.end() )       // Attach current
+            {
+                logcb( "Attached." );
+                cl_->AddRef();
+                LogClients.push_back( cl_ );
+            }
+            else if( action == 2 )         // Detach all
+            {
+                logcb( "Detached all." );
+                for( auto it_ = LogClients.begin(); it_ < LogClients.end(); ++it_ )
+                    ( *it_ )->Release();
+                LogClients.clear();
+            }
+            if( !LogClients.empty() )
+                LogToFunc( &FOServer::LogToClients, true );
+
+            ResynchronizeLogicThreads();
+        }
+        break;
+        default:
+            logcb( "Unknown command." );
+            break;
     }
 }
 

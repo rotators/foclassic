@@ -833,88 +833,88 @@ void FOMapper::ParseKeyboard()
         {
             switch( dikdw )
             {
-            case DIK_F1:
-                GameOpt.ShowItem = !GameOpt.ShowItem;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F2:
-                GameOpt.ShowScen = !GameOpt.ShowScen;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F3:
-                GameOpt.ShowWall = !GameOpt.ShowWall;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F4:
-                GameOpt.ShowCrit = !GameOpt.ShowCrit;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F5:
-                GameOpt.ShowTile = !GameOpt.ShowTile;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F6:
-                GameOpt.ShowFast = !GameOpt.ShowFast;
-                HexMngr.RefreshMap();
-                break;
-            case DIK_F7:
-                IntVisible = !IntVisible;
-                break;
-            case DIK_F8:
-                GameOpt.MouseScroll = !GameOpt.MouseScroll;
-                break;
-            case DIK_F9:
-                ObjVisible = !ObjVisible;
-                break;
-            case DIK_F10:
-                HexMngr.SwitchShowHex();
-                break;
+                case DIK_F1:
+                    GameOpt.ShowItem = !GameOpt.ShowItem;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F2:
+                    GameOpt.ShowScen = !GameOpt.ShowScen;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F3:
+                    GameOpt.ShowWall = !GameOpt.ShowWall;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F4:
+                    GameOpt.ShowCrit = !GameOpt.ShowCrit;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F5:
+                    GameOpt.ShowTile = !GameOpt.ShowTile;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F6:
+                    GameOpt.ShowFast = !GameOpt.ShowFast;
+                    HexMngr.RefreshMap();
+                    break;
+                case DIK_F7:
+                    IntVisible = !IntVisible;
+                    break;
+                case DIK_F8:
+                    GameOpt.MouseScroll = !GameOpt.MouseScroll;
+                    break;
+                case DIK_F9:
+                    ObjVisible = !ObjVisible;
+                    break;
+                case DIK_F10:
+                    HexMngr.SwitchShowHex();
+                    break;
 
-            // Fullscreen
-            case DIK_F11:
-                if( !GameOpt.FullScreen )
-                {
-                    MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT );
-                    MainWindow->fullscreen();
-                    GameOpt.FullScreen = true;
-                }
-                else
-                {
-                    MainWindow->fullscreen_off();
-                    MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT, MODE_WIDTH, MODE_HEIGHT );
-                    GameOpt.FullScreen = false;
-                }
-                #ifndef FO_D3D
-                SprMngr.RefreshViewPort();
-                #endif
-                continue;
-            // Minimize
-            case DIK_F12:
-                MainWindow->iconize();
-                continue;
+                // Fullscreen
+                case DIK_F11:
+                    if( !GameOpt.FullScreen )
+                    {
+                        MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT );
+                        MainWindow->fullscreen();
+                        GameOpt.FullScreen = true;
+                    }
+                    else
+                    {
+                        MainWindow->fullscreen_off();
+                        MainWindow->size_range( MODE_WIDTH, MODE_HEIGHT, MODE_WIDTH, MODE_HEIGHT );
+                        GameOpt.FullScreen = false;
+                    }
+                    #ifndef FO_D3D
+                    SprMngr.RefreshViewPort();
+                    #endif
+                    continue;
+                // Minimize
+                case DIK_F12:
+                    MainWindow->iconize();
+                    continue;
 
-            case DIK_DELETE:
-                SelectDelete();
-                break;
-            case DIK_ADD:
-                if( !ConsoleEdit && SelectedObj.empty() )
-                {
-                    DayTime += 60;
-                    ChangeGameTime();
-                }
-                break;
-            case DIK_SUBTRACT:
-                if( !ConsoleEdit && SelectedObj.empty() )
-                {
-                    DayTime -= 60;
-                    ChangeGameTime();
-                }
-                break;
-            case DIK_TAB:
-                SelectType = ( SelectType == SELECT_TYPE_OLD ? SELECT_TYPE_NEW : SELECT_TYPE_OLD );
-                break;
-            default:
-                break;
+                case DIK_DELETE:
+                    SelectDelete();
+                    break;
+                case DIK_ADD:
+                    if( !ConsoleEdit && SelectedObj.empty() )
+                    {
+                        DayTime += 60;
+                        ChangeGameTime();
+                    }
+                    break;
+                case DIK_SUBTRACT:
+                    if( !ConsoleEdit && SelectedObj.empty() )
+                    {
+                        DayTime -= 60;
+                        ChangeGameTime();
+                    }
+                    break;
+                case DIK_TAB:
+                    SelectType = ( SelectType == SELECT_TYPE_OLD ? SELECT_TYPE_NEW : SELECT_TYPE_OLD );
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -922,57 +922,57 @@ void FOMapper::ParseKeyboard()
         {
             switch( dikdw )
             {
-            case DIK_F7:
-                IntFix = !IntFix;
-                break;
-            case DIK_F9:
-                ObjFix = !ObjFix;
-                break;
-            case DIK_F10:
-                HexMngr.SwitchShowRain();
-                break;
-            case DIK_F11:
-                SprMngr.SaveSufaces();
-                break;
-            case DIK_ESCAPE:
-                ExitProcess( 0 );
-                break;
-            case DIK_ADD:
-                if( !ConsoleEdit && SelectedObj.empty() )
-                {
-                    DayTime += 1;
-                    ChangeGameTime();
-                }
-                break;
-            case DIK_SUBTRACT:
-                if( !ConsoleEdit && SelectedObj.empty() )
-                {
-                    DayTime -= 1;
-                    ChangeGameTime();
-                }
-                break;
-            case DIK_0:
-            case DIK_NUMPAD0:
-                TileLayer = 0;
-                break;
-            case DIK_1:
-            case DIK_NUMPAD1:
-                TileLayer = 1;
-                break;
-            case DIK_2:
-            case DIK_NUMPAD2:
-                TileLayer = 2;
-                break;
-            case DIK_3:
-            case DIK_NUMPAD3:
-                TileLayer = 3;
-                break;
-            case DIK_4:
-            case DIK_NUMPAD4:
-                TileLayer = 4;
-                break;
-            default:
-                break;
+                case DIK_F7:
+                    IntFix = !IntFix;
+                    break;
+                case DIK_F9:
+                    ObjFix = !ObjFix;
+                    break;
+                case DIK_F10:
+                    HexMngr.SwitchShowRain();
+                    break;
+                case DIK_F11:
+                    SprMngr.SaveSufaces();
+                    break;
+                case DIK_ESCAPE:
+                    ExitProcess( 0 );
+                    break;
+                case DIK_ADD:
+                    if( !ConsoleEdit && SelectedObj.empty() )
+                    {
+                        DayTime += 1;
+                        ChangeGameTime();
+                    }
+                    break;
+                case DIK_SUBTRACT:
+                    if( !ConsoleEdit && SelectedObj.empty() )
+                    {
+                        DayTime -= 1;
+                        ChangeGameTime();
+                    }
+                    break;
+                case DIK_0:
+                case DIK_NUMPAD0:
+                    TileLayer = 0;
+                    break;
+                case DIK_1:
+                case DIK_NUMPAD1:
+                    TileLayer = 1;
+                    break;
+                case DIK_2:
+                case DIK_NUMPAD2:
+                    TileLayer = 2;
+                    break;
+                case DIK_3:
+                case DIK_NUMPAD3:
+                    TileLayer = 3;
+                    break;
+                case DIK_4:
+                case DIK_NUMPAD4:
+                    TileLayer = 4;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -980,43 +980,43 @@ void FOMapper::ParseKeyboard()
         {
             switch( dikdw )
             {
-            case DIK_X:
-                BufferCut();
-                break;
-            case DIK_C:
-                BufferCopy();
-                break;
-            case DIK_V:
-                BufferPaste( 50, 50 );
-                break;
-            case DIK_A:
-                SelectAll();
-                break;
-            case DIK_S:
-                GameOpt.ScrollCheck = !GameOpt.ScrollCheck;
-                break;
-            case DIK_B:
-                HexMngr.MarkPassedHexes();
-                break;
-            case DIK_Q:
-                GameOpt.ShowCorners = !GameOpt.ShowCorners;
-                break;
-            case DIK_W:
-                GameOpt.ShowSpriteCuts = !GameOpt.ShowSpriteCuts;
-                break;
-            case DIK_E:
-                GameOpt.ShowDrawOrder = !GameOpt.ShowDrawOrder;
-                break;
-            case DIK_M:
-                DrawCrExtInfo++;
-                if( DrawCrExtInfo > DRAW_CR_INFO_MAX )
-                    DrawCrExtInfo = 0;
-                break;
-            case DIK_L:
-                SaveLogFile();
-                break;
-            default:
-                break;
+                case DIK_X:
+                    BufferCut();
+                    break;
+                case DIK_C:
+                    BufferCopy();
+                    break;
+                case DIK_V:
+                    BufferPaste( 50, 50 );
+                    break;
+                case DIK_A:
+                    SelectAll();
+                    break;
+                case DIK_S:
+                    GameOpt.ScrollCheck = !GameOpt.ScrollCheck;
+                    break;
+                case DIK_B:
+                    HexMngr.MarkPassedHexes();
+                    break;
+                case DIK_Q:
+                    GameOpt.ShowCorners = !GameOpt.ShowCorners;
+                    break;
+                case DIK_W:
+                    GameOpt.ShowSpriteCuts = !GameOpt.ShowSpriteCuts;
+                    break;
+                case DIK_E:
+                    GameOpt.ShowDrawOrder = !GameOpt.ShowDrawOrder;
+                    break;
+                case DIK_M:
+                    DrawCrExtInfo++;
+                    if( DrawCrExtInfo > DRAW_CR_INFO_MAX )
+                        DrawCrExtInfo = 0;
+                    break;
+                case DIK_L:
+                    SaveLogFile();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -1054,20 +1054,20 @@ void FOMapper::ParseKeyboard()
             {
                 switch( dikdw )
                 {
-                case DIK_LEFT:
-                    GameOpt.ScrollKeybLeft = true;
-                    break;
-                case DIK_RIGHT:
-                    GameOpt.ScrollKeybRight = true;
-                    break;
-                case DIK_UP:
-                    GameOpt.ScrollKeybUp = true;
-                    break;
-                case DIK_DOWN:
-                    GameOpt.ScrollKeybDown = true;
-                    break;
-                default:
-                    break;
+                    case DIK_LEFT:
+                        GameOpt.ScrollKeybLeft = true;
+                        break;
+                    case DIK_RIGHT:
+                        GameOpt.ScrollKeybRight = true;
+                        break;
+                    case DIK_UP:
+                        GameOpt.ScrollKeybUp = true;
+                        break;
+                    case DIK_DOWN:
+                        GameOpt.ScrollKeybDown = true;
+                        break;
+                    default:
+                        break;
                 }
 
                 ObjKeyDown( dikdw, event_text );
@@ -1081,20 +1081,20 @@ void FOMapper::ParseKeyboard()
 
             switch( dikup )
             {
-            case DIK_LEFT:
-                GameOpt.ScrollKeybLeft = false;
-                break;
-            case DIK_RIGHT:
-                GameOpt.ScrollKeybRight = false;
-                break;
-            case DIK_UP:
-                GameOpt.ScrollKeybUp = false;
-                break;
-            case DIK_DOWN:
-                GameOpt.ScrollKeybDown = false;
-                break;
-            default:
-                break;
+                case DIK_LEFT:
+                    GameOpt.ScrollKeybLeft = false;
+                    break;
+                case DIK_RIGHT:
+                    GameOpt.ScrollKeybRight = false;
+                    break;
+                case DIK_UP:
+                    GameOpt.ScrollKeybUp = false;
+                    break;
+                case DIK_DOWN:
+                    GameOpt.ScrollKeybDown = false;
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -1749,62 +1749,62 @@ void FOMapper::IntDraw()
 
     switch( IntMode )
     {
-    case INT_MODE_CUSTOM0:
-        SprMngr.DrawSprite( IntPTab, IntBCust[0][0] + IntX, IntBCust[0][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM1:
-        SprMngr.DrawSprite( IntPTab, IntBCust[1][0] + IntX, IntBCust[1][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM2:
-        SprMngr.DrawSprite( IntPTab, IntBCust[2][0] + IntX, IntBCust[2][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM3:
-        SprMngr.DrawSprite( IntPTab, IntBCust[3][0] + IntX, IntBCust[3][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM4:
-        SprMngr.DrawSprite( IntPTab, IntBCust[4][0] + IntX, IntBCust[4][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM5:
-        SprMngr.DrawSprite( IntPTab, IntBCust[5][0] + IntX, IntBCust[5][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM6:
-        SprMngr.DrawSprite( IntPTab, IntBCust[6][0] + IntX, IntBCust[6][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM7:
-        SprMngr.DrawSprite( IntPTab, IntBCust[7][0] + IntX, IntBCust[7][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM8:
-        SprMngr.DrawSprite( IntPTab, IntBCust[8][0] + IntX, IntBCust[8][1] + IntY );
-        break;
-    case INT_MODE_CUSTOM9:
-        SprMngr.DrawSprite( IntPTab, IntBCust[9][0] + IntX, IntBCust[9][1] + IntY );
-        break;
-    case INT_MODE_ITEM:
-        SprMngr.DrawSprite( IntPTab, IntBItem[0] + IntX, IntBItem[1] + IntY );
-        break;
-    case INT_MODE_TILE:
-        SprMngr.DrawSprite( IntPTab, IntBTile[0] + IntX, IntBTile[1] + IntY );
-        break;
-    case INT_MODE_CRIT:
-        SprMngr.DrawSprite( IntPTab, IntBCrit[0] + IntX, IntBCrit[1] + IntY );
-        break;
-    case INT_MODE_FAST:
-        SprMngr.DrawSprite( IntPTab, IntBFast[0] + IntX, IntBFast[1] + IntY );
-        break;
-    case INT_MODE_IGNORE:
-        SprMngr.DrawSprite( IntPTab, IntBIgnore[0] + IntX, IntBIgnore[1] + IntY );
-        break;
-    case INT_MODE_INCONT:
-        SprMngr.DrawSprite( IntPTab, IntBInCont[0] + IntX, IntBInCont[1] + IntY );
-        break;
-    case INT_MODE_MESS:
-        SprMngr.DrawSprite( IntPTab, IntBMess[0] + IntX, IntBMess[1] + IntY );
-        break;
-    case INT_MODE_LIST:
-        SprMngr.DrawSprite( IntPTab, IntBList[0] + IntX, IntBList[1] + IntY );
-        break;
-    default:
-        break;
+        case INT_MODE_CUSTOM0:
+            SprMngr.DrawSprite( IntPTab, IntBCust[0][0] + IntX, IntBCust[0][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM1:
+            SprMngr.DrawSprite( IntPTab, IntBCust[1][0] + IntX, IntBCust[1][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM2:
+            SprMngr.DrawSprite( IntPTab, IntBCust[2][0] + IntX, IntBCust[2][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM3:
+            SprMngr.DrawSprite( IntPTab, IntBCust[3][0] + IntX, IntBCust[3][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM4:
+            SprMngr.DrawSprite( IntPTab, IntBCust[4][0] + IntX, IntBCust[4][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM5:
+            SprMngr.DrawSprite( IntPTab, IntBCust[5][0] + IntX, IntBCust[5][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM6:
+            SprMngr.DrawSprite( IntPTab, IntBCust[6][0] + IntX, IntBCust[6][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM7:
+            SprMngr.DrawSprite( IntPTab, IntBCust[7][0] + IntX, IntBCust[7][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM8:
+            SprMngr.DrawSprite( IntPTab, IntBCust[8][0] + IntX, IntBCust[8][1] + IntY );
+            break;
+        case INT_MODE_CUSTOM9:
+            SprMngr.DrawSprite( IntPTab, IntBCust[9][0] + IntX, IntBCust[9][1] + IntY );
+            break;
+        case INT_MODE_ITEM:
+            SprMngr.DrawSprite( IntPTab, IntBItem[0] + IntX, IntBItem[1] + IntY );
+            break;
+        case INT_MODE_TILE:
+            SprMngr.DrawSprite( IntPTab, IntBTile[0] + IntX, IntBTile[1] + IntY );
+            break;
+        case INT_MODE_CRIT:
+            SprMngr.DrawSprite( IntPTab, IntBCrit[0] + IntX, IntBCrit[1] + IntY );
+            break;
+        case INT_MODE_FAST:
+            SprMngr.DrawSprite( IntPTab, IntBFast[0] + IntX, IntBFast[1] + IntY );
+            break;
+        case INT_MODE_IGNORE:
+            SprMngr.DrawSprite( IntPTab, IntBIgnore[0] + IntX, IntBIgnore[1] + IntY );
+            break;
+        case INT_MODE_INCONT:
+            SprMngr.DrawSprite( IntPTab, IntBInCont[0] + IntX, IntBInCont[1] + IntY );
+            break;
+        case INT_MODE_MESS:
+            SprMngr.DrawSprite( IntPTab, IntBMess[0] + IntX, IntBMess[1] + IntY );
+            break;
+        case INT_MODE_LIST:
+            SprMngr.DrawSprite( IntPTab, IntBList[0] + IntX, IntBList[1] + IntY );
+            break;
+        default:
+            break;
     }
 
     for( int i = INT_MODE_CUSTOM0; i <= INT_MODE_CUSTOM9; i++ )
@@ -2235,23 +2235,23 @@ void FOMapper::ObjDraw()
 
             switch( proto->Type )
             {
-            case ITEM_TYPE_WEAPON:
-                if( !proto->Weapon_MaxAmmoCount )
+                case ITEM_TYPE_WEAPON:
+                    if( !proto->Weapon_MaxAmmoCount )
+                        break;
+                    DRAW_COMPONENT( "AmmoPid", o->MItem.AmmoPid, true, false );                              // 34
+                    DRAW_COMPONENT( "AmmoCount", o->MItem.AmmoCount, true, false );                          // 35
                     break;
-                DRAW_COMPONENT( "AmmoPid", o->MItem.AmmoPid, true, false );                                  // 34
-                DRAW_COMPONENT( "AmmoCount", o->MItem.AmmoCount, true, false );                              // 35
-                break;
-            case ITEM_TYPE_KEY:
-                DRAW_COMPONENT( "LockerDoorId", o->MItem.LockerDoorId, true, false );                        // 34
-                break;
-            case ITEM_TYPE_CONTAINER:
-            case ITEM_TYPE_DOOR:
-                DRAW_COMPONENT( "LockerDoorId", o->MItem.LockerDoorId, true, false );                        // 34
-                DRAW_COMPONENT( "LockerCondition", o->MItem.LockerCondition, true, false );                  // 35
-                DRAW_COMPONENT( "LockerComplexity", o->MItem.LockerComplexity, true, false );                // 36
-                break;
-            default:
-                break;
+                case ITEM_TYPE_KEY:
+                    DRAW_COMPONENT( "LockerDoorId", o->MItem.LockerDoorId, true, false );                    // 34
+                    break;
+                case ITEM_TYPE_CONTAINER:
+                case ITEM_TYPE_DOOR:
+                    DRAW_COMPONENT( "LockerDoorId", o->MItem.LockerDoorId, true, false );                    // 34
+                    DRAW_COMPONENT( "LockerCondition", o->MItem.LockerCondition, true, false );              // 35
+                    DRAW_COMPONENT( "LockerComplexity", o->MItem.LockerComplexity, true, false );            // 36
+                    break;
+                default:
+                    break;
             }
         }
         else if( o->MapObjType == MAP_OBJECT_SCENERY )
@@ -2358,269 +2358,269 @@ void FOMapper::ObjKeyDownA( MapObject* o, uchar dik, const char* dik_text )
 
     switch( ObjCurLine )
     {
-    case 6:
-        if( o->MapObjType != MAP_OBJECT_CRITTER )
-            val_s = &o->Dir;
-        break;
-    case 7:
-        Keyb::GetChar( dik, dik_text, o->ScriptName, sizeof( o->ScriptName ), NULL, MAPOBJ_SCRIPT_NAME, KIF_NO_SPEC_SYMBOLS );
-        return;
-    case 8:
-        Keyb::GetChar( dik, dik_text, o->FuncName, sizeof( o->FuncName ), NULL, MAPOBJ_SCRIPT_NAME, KIF_NO_SPEC_SYMBOLS );
-        return;
-    case 9:
-        val_c = &o->LightIntensity;
-        break;
-    case 10:
-        val_b = &o->LightDistance;
-        break;
-    case 11:
-        val_dw = &o->LightColor;
-        break;
-    case 12:
-        val_b = &o->LightDirOff;
-        break;
-    case 13:
-        val_b = &o->LightDay;
-        break;
-    case 14:
-        break;
-
-    case 15:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            val_b = &o->MCritter.Cond;
-        else
-            val_s = &o->MItem.OffsetX;
-        break;
-    case 16:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            val_dw = &o->MCritter.Anim1;
-        else
-            val_s = &o->MItem.OffsetY;
-        break;
-    case 17:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            val_dw = &o->MCritter.Anim2;
-        else
-            val_b = &o->MItem.AnimStayBegin;
-        break;
-    case 18:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
+        case 6:
+            if( o->MapObjType != MAP_OBJECT_CRITTER )
+                val_s = &o->Dir;
             break;
-        else
-            val_b = &o->MItem.AnimStayEnd;
-        break;
-    case 19:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            break;
-        else
-            val_w = &o->MItem.AnimWait;
-        break;
-    case 20:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            break;
-        else
-        {
-            Keyb::GetChar( dik, dik_text, o->RunTime.PicMapName, sizeof( o->RunTime.PicMapName ), NULL, sizeof( o->RunTime.PicMapName ), KIF_NO_SPEC_SYMBOLS );
+        case 7:
+            Keyb::GetChar( dik, dik_text, o->ScriptName, sizeof( o->ScriptName ), NULL, MAPOBJ_SCRIPT_NAME, KIF_NO_SPEC_SYMBOLS );
             return;
-        }
-        break;
-    case 21:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
-            break;
-        else
-        {
-            Keyb::GetChar( dik, dik_text, o->RunTime.PicInvName, sizeof( o->RunTime.PicInvName ), NULL, sizeof( o->RunTime.PicInvName ), KIF_NO_SPEC_SYMBOLS );
+        case 8:
+            Keyb::GetChar( dik, dik_text, o->FuncName, sizeof( o->FuncName ), NULL, MAPOBJ_SCRIPT_NAME, KIF_NO_SPEC_SYMBOLS );
             return;
-        }
-        break;
-    case 22:
-        if( o->MapObjType == MAP_OBJECT_CRITTER )
+        case 9:
+            val_c = &o->LightIntensity;
             break;
-        else
-            val_b = &o->MItem.InfoOffset;
-        break;
-    case 23:
-        break;
+        case 10:
+            val_b = &o->LightDistance;
+            break;
+        case 11:
+            val_dw = &o->LightColor;
+            break;
+        case 12:
+            val_b = &o->LightDirOff;
+            break;
+        case 13:
+            val_b = &o->LightDay;
+            break;
+        case 14:
+            break;
 
-    case 24:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_s = &o->MItem.TrapValue;
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-            val_b = &o->MScenery.SpriteCut;
-        break;
-    case 25:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_i = &o->MItem.Val[0];
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-        {
-            if( proto->Type == ITEM_TYPE_GRID )
-                val_w = &o->MScenery.ToMapPid;
-            else if( proto->Type == ITEM_TYPE_GENERIC )
-                val_b = &o->MScenery.ParamsCount;
-        }
-        break;
-    case 26:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_i = &o->MItem.Val[1];
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-        {
-            if( proto->Type == ITEM_TYPE_GRID )
-                val_dw = &o->MScenery.ToEntire;
-            else if( proto->Type == ITEM_TYPE_GENERIC )
-                val_i = &o->MScenery.Param[0];
-        }
-        break;
-    case 27:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_i = &o->MItem.Val[2];
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-        {
-            if( proto->Type == ITEM_TYPE_GRID )
-                val_b = &o->MScenery.ToDir;
-            else if( proto->Type == ITEM_TYPE_GENERIC )
-                val_i = &o->MScenery.Param[1];
-        }
-        break;
-    case 28:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_i = &o->MItem.Val[3];
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-        {
-            if( proto->Type == ITEM_TYPE_GENERIC )
-                val_i = &o->MScenery.Param[2];
-        }
-        break;
-    case 29:
-        if( o->MapObjType == MAP_OBJECT_ITEM )
-            val_i = &o->MItem.Val[4];
-        else if( o->MapObjType == MAP_OBJECT_SCENERY )
-        {
-            if( proto->Type == ITEM_TYPE_GENERIC )
-                val_i = &o->MScenery.Param[3];
-        }
-        break;
-    case 30:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Stackable )
-            val_dw = &o->MItem.Count;
-        else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC )
-            val_i = &o->MScenery.Param[4];
-        break;
-    case 31:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
-            val_b = &o->MItem.BrokenFlags;
-        else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC )
-        {
-            if( o->ProtoId == SP_SCEN_TRIGGER )
-                val_dw = &o->MScenery.TriggerNum;
+        case 15:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                val_b = &o->MCritter.Cond;
             else
-                val_bool = &o->MScenery.CanUse;
-        }
-        break;
-    case 32:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
-            val_b = &o->MItem.BrokenCount;
-        else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC && o->ProtoId != SP_SCEN_TRIGGER )
-            val_bool = &o->MScenery.CanTalk;
-        break;
-    case 33:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
-            val_w = &o->MItem.Deterioration;
-        break;
-    case 34:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Type == ITEM_TYPE_WEAPON && proto->Weapon_MaxAmmoCount )
-            val_w = &o->MItem.AmmoPid;
-        else if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_KEY || proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
-            val_dw = &o->MItem.LockerDoorId;
-        break;
-    case 35:
-        if( o->MapObjType == MAP_OBJECT_ITEM && proto->Type == ITEM_TYPE_WEAPON && proto->Weapon_MaxAmmoCount )
-            val_dw = &o->MItem.AmmoCount;
-        else if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
-            val_w = &o->MItem.LockerCondition;
-        break;
-    case 36:
-        if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
-            val_w = &o->MItem.LockerComplexity;
-        break;
-    default:
-        break;
+                val_s = &o->MItem.OffsetX;
+            break;
+        case 16:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                val_dw = &o->MCritter.Anim1;
+            else
+                val_s = &o->MItem.OffsetY;
+            break;
+        case 17:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                val_dw = &o->MCritter.Anim2;
+            else
+                val_b = &o->MItem.AnimStayBegin;
+            break;
+        case 18:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                break;
+            else
+                val_b = &o->MItem.AnimStayEnd;
+            break;
+        case 19:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                break;
+            else
+                val_w = &o->MItem.AnimWait;
+            break;
+        case 20:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                break;
+            else
+            {
+                Keyb::GetChar( dik, dik_text, o->RunTime.PicMapName, sizeof( o->RunTime.PicMapName ), NULL, sizeof( o->RunTime.PicMapName ), KIF_NO_SPEC_SYMBOLS );
+                return;
+            }
+            break;
+        case 21:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                break;
+            else
+            {
+                Keyb::GetChar( dik, dik_text, o->RunTime.PicInvName, sizeof( o->RunTime.PicInvName ), NULL, sizeof( o->RunTime.PicInvName ), KIF_NO_SPEC_SYMBOLS );
+                return;
+            }
+            break;
+        case 22:
+            if( o->MapObjType == MAP_OBJECT_CRITTER )
+                break;
+            else
+                val_b = &o->MItem.InfoOffset;
+            break;
+        case 23:
+            break;
+
+        case 24:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_s = &o->MItem.TrapValue;
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+                val_b = &o->MScenery.SpriteCut;
+            break;
+        case 25:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_i = &o->MItem.Val[0];
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+            {
+                if( proto->Type == ITEM_TYPE_GRID )
+                    val_w = &o->MScenery.ToMapPid;
+                else if( proto->Type == ITEM_TYPE_GENERIC )
+                    val_b = &o->MScenery.ParamsCount;
+            }
+            break;
+        case 26:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_i = &o->MItem.Val[1];
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+            {
+                if( proto->Type == ITEM_TYPE_GRID )
+                    val_dw = &o->MScenery.ToEntire;
+                else if( proto->Type == ITEM_TYPE_GENERIC )
+                    val_i = &o->MScenery.Param[0];
+            }
+            break;
+        case 27:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_i = &o->MItem.Val[2];
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+            {
+                if( proto->Type == ITEM_TYPE_GRID )
+                    val_b = &o->MScenery.ToDir;
+                else if( proto->Type == ITEM_TYPE_GENERIC )
+                    val_i = &o->MScenery.Param[1];
+            }
+            break;
+        case 28:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_i = &o->MItem.Val[3];
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+            {
+                if( proto->Type == ITEM_TYPE_GENERIC )
+                    val_i = &o->MScenery.Param[2];
+            }
+            break;
+        case 29:
+            if( o->MapObjType == MAP_OBJECT_ITEM )
+                val_i = &o->MItem.Val[4];
+            else if( o->MapObjType == MAP_OBJECT_SCENERY )
+            {
+                if( proto->Type == ITEM_TYPE_GENERIC )
+                    val_i = &o->MScenery.Param[3];
+            }
+            break;
+        case 30:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Stackable )
+                val_dw = &o->MItem.Count;
+            else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC )
+                val_i = &o->MScenery.Param[4];
+            break;
+        case 31:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
+                val_b = &o->MItem.BrokenFlags;
+            else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC )
+            {
+                if( o->ProtoId == SP_SCEN_TRIGGER )
+                    val_dw = &o->MScenery.TriggerNum;
+                else
+                    val_bool = &o->MScenery.CanUse;
+            }
+            break;
+        case 32:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
+                val_b = &o->MItem.BrokenCount;
+            else if( o->MapObjType == MAP_OBJECT_SCENERY && proto->Type == ITEM_TYPE_GENERIC && o->ProtoId != SP_SCEN_TRIGGER )
+                val_bool = &o->MScenery.CanTalk;
+            break;
+        case 33:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Deteriorable )
+                val_w = &o->MItem.Deterioration;
+            break;
+        case 34:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Type == ITEM_TYPE_WEAPON && proto->Weapon_MaxAmmoCount )
+                val_w = &o->MItem.AmmoPid;
+            else if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_KEY || proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
+                val_dw = &o->MItem.LockerDoorId;
+            break;
+        case 35:
+            if( o->MapObjType == MAP_OBJECT_ITEM && proto->Type == ITEM_TYPE_WEAPON && proto->Weapon_MaxAmmoCount )
+                val_dw = &o->MItem.AmmoCount;
+            else if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
+                val_w = &o->MItem.LockerCondition;
+            break;
+        case 36:
+            if( o->MapObjType == MAP_OBJECT_ITEM && ( proto->Type == ITEM_TYPE_CONTAINER || proto->Type == ITEM_TYPE_DOOR ) )
+                val_w = &o->MItem.LockerComplexity;
+            break;
+        default:
+            break;
     }
 
     int add = 0;
 
     switch( dik )
     {
-    case DIK_0:
-    case DIK_NUMPAD0:
-        add = 0;
-        break;
-    case DIK_1:
-    case DIK_NUMPAD1:
-        add = 1;
-        break;
-    case DIK_2:
-    case DIK_NUMPAD2:
-        add = 2;
-        break;
-    case DIK_3:
-    case DIK_NUMPAD3:
-        add = 3;
-        break;
-    case DIK_4:
-    case DIK_NUMPAD4:
-        add = 4;
-        break;
-    case DIK_5:
-    case DIK_NUMPAD5:
-        add = 5;
-        break;
-    case DIK_6:
-    case DIK_NUMPAD6:
-        add = 6;
-        break;
-    case DIK_7:
-    case DIK_NUMPAD7:
-        add = 7;
-        break;
-    case DIK_8:
-    case DIK_NUMPAD8:
-        add = 8;
-        break;
-    case DIK_9:
-    case DIK_NUMPAD9:
-        add = 9;
-        break;
+        case DIK_0:
+        case DIK_NUMPAD0:
+            add = 0;
+            break;
+        case DIK_1:
+        case DIK_NUMPAD1:
+            add = 1;
+            break;
+        case DIK_2:
+        case DIK_NUMPAD2:
+            add = 2;
+            break;
+        case DIK_3:
+        case DIK_NUMPAD3:
+            add = 3;
+            break;
+        case DIK_4:
+        case DIK_NUMPAD4:
+            add = 4;
+            break;
+        case DIK_5:
+        case DIK_NUMPAD5:
+            add = 5;
+            break;
+        case DIK_6:
+        case DIK_NUMPAD6:
+            add = 6;
+            break;
+        case DIK_7:
+        case DIK_NUMPAD7:
+            add = 7;
+            break;
+        case DIK_8:
+        case DIK_NUMPAD8:
+            add = 8;
+            break;
+        case DIK_9:
+        case DIK_NUMPAD9:
+            add = 9;
+            break;
 //	case DIK_DELETE:
-    case DIK_BACK:
-        if( val_c )
-            *val_c = *val_c / 10;
-        if( val_b )
-            *val_b = *val_b / 10;
-        if( val_s )
-            *val_s = *val_s / 10;
-        if( val_w )
-            *val_w = *val_w / 10;
-        if( val_dw )
-            *val_dw = *val_dw / 10;
-        if( val_i )
-            *val_i = *val_i / 10;
-        if( val_bool )
-            *val_bool = false;
-        return;
-    case DIK_MINUS:
-    case DIK_SUBTRACT:
-        if( val_c )
-            *val_c = -*val_c;
-        if( val_s )
-            *val_s = -*val_s;
-        if( val_i )
-            *val_i = -*val_i;
-        if( val_bool )
-            *val_bool = !*val_bool;
-        return;
-    default:
-        return;
+        case DIK_BACK:
+            if( val_c )
+                *val_c = *val_c / 10;
+            if( val_b )
+                *val_b = *val_b / 10;
+            if( val_s )
+                *val_s = *val_s / 10;
+            if( val_w )
+                *val_w = *val_w / 10;
+            if( val_dw )
+                *val_dw = *val_dw / 10;
+            if( val_i )
+                *val_i = *val_i / 10;
+            if( val_bool )
+                *val_bool = false;
+            return;
+        case DIK_MINUS:
+        case DIK_SUBTRACT:
+            if( val_c )
+                *val_c = -*val_c;
+            if( val_s )
+                *val_s = -*val_s;
+            if( val_i )
+                *val_i = -*val_i;
+            if( val_bool )
+                *val_bool = !*val_bool;
+            return;
+        default:
+            return;
     }
 
     if( val_b == &o->MCritter.Cond )
@@ -4486,100 +4486,100 @@ void FOMapper::CurDraw()
 {
     switch( CurMode )
     {
-    case CUR_MODE_DEFAULT:
-    case CUR_MODE_MOVE_SELECTION:
-    {
-        AnyFrames* anim = ( CurMode == CUR_MODE_DEFAULT ? CurPDef : CurPHand );
-        if( anim )
+        case CUR_MODE_DEFAULT:
+        case CUR_MODE_MOVE_SELECTION:
         {
-            SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
-            if( si )
+            AnyFrames* anim = ( CurMode == CUR_MODE_DEFAULT ? CurPDef : CurPHand );
+            if( anim )
             {
-                int x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
-                int y = GameOpt.MouseY - si->Height + si->OffsY;
-                SprMngr.DrawSprite( anim, x, y, COLOR_IFACE );
-            }
-        }
-    }
-    break;
-    case CUR_MODE_PLACE_OBJECT:
-        if( IsObjectMode() && ( *CurItemProtos ).size() )
-        {
-            ProtoItem& proto_item = ( *CurItemProtos )[GetTabIndex()];
-
-            ushort     hx, hy;
-            if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
-                break;
-
-            uint        spr_id = proto_item.GetCurSprId();
-            SpriteInfo* si = SprMngr.GetSpriteInfo( spr_id );
-            if( si )
-            {
-                int x = HexMngr.GetField( hx, hy ).ScrX - ( si->Width / 2 ) + si->OffsX + HEX_OX + GameOpt.ScrOx + proto_item.OffsetX;
-                int y = HexMngr.GetField( hx, hy ).ScrY - si->Height + si->OffsY + HEX_OY + GameOpt.ScrOy + proto_item.OffsetY;
-
-                SprMngr.DrawSpriteSize( spr_id, (int)( x / GameOpt.SpritesZoom ), (int)( y / GameOpt.SpritesZoom ),
-                                        si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false );
-            }
-        }
-        else if( IsTileMode() && CurTileHashes->size() )
-        {
-            AnyFrames* anim = ResMngr.GetItemAnim( ( *CurTileHashes )[GetTabIndex()] );
-            if( !anim )
-                anim = ItemHex::DefaultAnim;
-
-            ushort hx, hy;
-            if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
-                break;
-
-            SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
-            if( si )
-            {
-                int x = HexMngr.GetField( hx, hy ).ScrX - ( si->Width / 2 ) + si->OffsX;
-                int y = HexMngr.GetField( hx, hy ).ScrY - si->Height + si->OffsY;
-                if( !DrawRoof )
+                SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
+                if( si )
                 {
-                    x += TILE_OX;
-                    y += TILE_OY;
+                    int x = GameOpt.MouseX - ( si->Width / 2 ) + si->OffsX;
+                    int y = GameOpt.MouseY - si->Height + si->OffsY;
+                    SprMngr.DrawSprite( anim, x, y, COLOR_IFACE );
                 }
-                else
-                {
-                    x += ROOF_OX;
-                    y += ROOF_OY;
-                }
-
-                SprMngr.DrawSpriteSize( anim, (int)( ( x + GameOpt.ScrOx ) / GameOpt.SpritesZoom ), (int)( ( y + GameOpt.ScrOy ) / GameOpt.SpritesZoom ),
-                                        si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false );
             }
         }
-        else if( IsCritMode() && CurNpcProtos->size() )
-        {
-            uint spr_id = ResMngr.GetCritSprId( ( *CurNpcProtos )[GetTabIndex()] -> BaseType, 1, 1, NpcDir );
-            if( !spr_id )
-                spr_id = ItemHex::DefaultAnim->GetSprId(0);
-
-            ushort hx, hy;
-            if( !HexMngr.GetHexPixel(GameOpt.MouseX, GameOpt.MouseY, hx, hy) )
-                break;
-
-            SpriteInfo* si = SprMngr.GetSpriteInfo(spr_id);
-            if( si )
+        break;
+        case CUR_MODE_PLACE_OBJECT:
+            if( IsObjectMode() && ( *CurItemProtos ).size() )
             {
-                int x = HexMngr.GetField(hx, hy).ScrX - ( si->Width / 2 ) + si->OffsX;
-                int y = HexMngr.GetField(hx, hy).ScrY - si->Height + si->OffsY;
+                ProtoItem& proto_item = ( *CurItemProtos )[GetTabIndex()];
 
-                SprMngr.DrawSpriteSize(spr_id, (int)( ( x + GameOpt.ScrOx + HEX_OX ) / GameOpt.SpritesZoom ), (int)( ( y + GameOpt.ScrOy + HEX_OY ) / GameOpt.SpritesZoom ),
-                                       si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false);
+                ushort     hx, hy;
+                if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
+                    break;
+
+                uint        spr_id = proto_item.GetCurSprId();
+                SpriteInfo* si = SprMngr.GetSpriteInfo( spr_id );
+                if( si )
+                {
+                    int x = HexMngr.GetField( hx, hy ).ScrX - ( si->Width / 2 ) + si->OffsX + HEX_OX + GameOpt.ScrOx + proto_item.OffsetX;
+                    int y = HexMngr.GetField( hx, hy ).ScrY - si->Height + si->OffsY + HEX_OY + GameOpt.ScrOy + proto_item.OffsetY;
+
+                    SprMngr.DrawSpriteSize( spr_id, (int)( x / GameOpt.SpritesZoom ), (int)( y / GameOpt.SpritesZoom ),
+                                            si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false );
+                }
             }
-        }
-        else
-        {
+            else if( IsTileMode() && CurTileHashes->size() )
+            {
+                AnyFrames* anim = ResMngr.GetItemAnim( ( *CurTileHashes )[GetTabIndex()] );
+                if( !anim )
+                    anim = ItemHex::DefaultAnim;
+
+                ushort hx, hy;
+                if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
+                    break;
+
+                SpriteInfo* si = SprMngr.GetSpriteInfo( anim->GetCurSprId() );
+                if( si )
+                {
+                    int x = HexMngr.GetField( hx, hy ).ScrX - ( si->Width / 2 ) + si->OffsX;
+                    int y = HexMngr.GetField( hx, hy ).ScrY - si->Height + si->OffsY;
+                    if( !DrawRoof )
+                    {
+                        x += TILE_OX;
+                        y += TILE_OY;
+                    }
+                    else
+                    {
+                        x += ROOF_OX;
+                        y += ROOF_OY;
+                    }
+
+                    SprMngr.DrawSpriteSize( anim, (int)( ( x + GameOpt.ScrOx ) / GameOpt.SpritesZoom ), (int)( ( y + GameOpt.ScrOy ) / GameOpt.SpritesZoom ),
+                                            si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false );
+                }
+            }
+            else if( IsCritMode() && CurNpcProtos->size() )
+            {
+                uint spr_id = ResMngr.GetCritSprId( ( *CurNpcProtos )[GetTabIndex()] -> BaseType, 1, 1, NpcDir );
+                if( !spr_id )
+                    spr_id = ItemHex::DefaultAnim->GetSprId(0);
+
+                ushort hx, hy;
+                if( !HexMngr.GetHexPixel(GameOpt.MouseX, GameOpt.MouseY, hx, hy) )
+                    break;
+
+                SpriteInfo* si = SprMngr.GetSpriteInfo(spr_id);
+                if( si )
+                {
+                    int x = HexMngr.GetField(hx, hy).ScrX - ( si->Width / 2 ) + si->OffsX;
+                    int y = HexMngr.GetField(hx, hy).ScrY - si->Height + si->OffsY;
+
+                    SprMngr.DrawSpriteSize(spr_id, (int)( ( x + GameOpt.ScrOx + HEX_OX ) / GameOpt.SpritesZoom ), (int)( ( y + GameOpt.ScrOy + HEX_OY ) / GameOpt.SpritesZoom ),
+                                           si->Width / GameOpt.SpritesZoom, si->Height / GameOpt.SpritesZoom, true, false);
+                }
+            }
+            else
+            {
+                CurMode = CUR_MODE_DEFAULT;
+            }
+            break;
+        default:
             CurMode = CUR_MODE_DEFAULT;
-        }
-        break;
-    default:
-        CurMode = CUR_MODE_DEFAULT;
-        break;
+            break;
     }
 }
 
@@ -4735,32 +4735,32 @@ void FOMapper::ConsoleKeyDown(uchar dik, const char* dik_text)
 
     switch( dik )
     {
-    case DIK_UP:
-        if( ConsoleHistoryCur - 1 < 0 )
+        case DIK_UP:
+            if( ConsoleHistoryCur - 1 < 0 )
+                return;
+            ConsoleHistoryCur--;
+            ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
+            ConsoleCur = (int)ConsoleStr.length();
             return;
-        ConsoleHistoryCur--;
-        ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
-        ConsoleCur = (int)ConsoleStr.length();
-        return;
-    case DIK_DOWN:
-        if( ConsoleHistoryCur + 1 >= (int)ConsoleHistory.size() )
-        {
-            ConsoleHistoryCur = (int)ConsoleHistory.size();
-            ConsoleStr = "";
-            ConsoleCur = 0;
+        case DIK_DOWN:
+            if( ConsoleHistoryCur + 1 >= (int)ConsoleHistory.size() )
+            {
+                ConsoleHistoryCur = (int)ConsoleHistory.size();
+                ConsoleStr = "";
+                ConsoleCur = 0;
+                return;
+            }
+            ConsoleHistoryCur++;
+            ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
+            ConsoleCur = (int)ConsoleStr.length();
             return;
-        }
-        ConsoleHistoryCur++;
-        ConsoleStr = ConsoleHistory[ConsoleHistoryCur];
-        ConsoleCur = (int)ConsoleStr.length();
-        return;
-    default:
-        Keyb::GetChar( dik, dik_text, ConsoleStr, &ConsoleCur, MAX_CHAT_MESSAGE, KIF_NO_SPEC_SYMBOLS );
-        ConsoleLastKey = dik;
-        ConsoleLastKeyText = dik_text;
-        ConsoleKeyTick = Timer::FastTick();
-        ConsoleAccelerate = 1;
-        return;
+        default:
+            Keyb::GetChar( dik, dik_text, ConsoleStr, &ConsoleCur, MAX_CHAT_MESSAGE, KIF_NO_SPEC_SYMBOLS );
+            ConsoleLastKey = dik;
+            ConsoleLastKeyText = dik_text;
+            ConsoleKeyTick = Timer::FastTick();
+            ConsoleAccelerate = 1;
+            return;
     }
 }
 
@@ -6850,26 +6850,26 @@ void FOMapper::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     int prim;
     switch( primitive_type )
     {
-    case 0:
-        prim = PRIMITIVE_POINTLIST;
-        break;
-    case 1:
-        prim = PRIMITIVE_LINELIST;
-        break;
-    case 2:
-        prim = PRIMITIVE_LINESTRIP;
-        break;
-    case 3:
-        prim = PRIMITIVE_TRIANGLELIST;
-        break;
-    case 4:
-        prim = PRIMITIVE_TRIANGLESTRIP;
-        break;
-    case 5:
-        prim = PRIMITIVE_TRIANGLEFAN;
-        break;
-    default:
-        return;
+        case 0:
+            prim = PRIMITIVE_POINTLIST;
+            break;
+        case 1:
+            prim = PRIMITIVE_LINELIST;
+            break;
+        case 2:
+            prim = PRIMITIVE_LINESTRIP;
+            break;
+        case 3:
+            prim = PRIMITIVE_TRIANGLELIST;
+            break;
+        case 4:
+            prim = PRIMITIVE_TRIANGLESTRIP;
+            break;
+        case 5:
+            prim = PRIMITIVE_TRIANGLEFAN;
+            break;
+        default:
+            return;
     }
 
     static PointVec points;
@@ -6922,19 +6922,19 @@ void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
             int egg_type = 0;
             switch( proto_item->Corner )
             {
-            case CORNER_SOUTH:
-                egg_type = EGG_X_OR_Y;
-                break;
-            case CORNER_NORTH:
-                egg_type = EGG_X_AND_Y;
-                break;
-            case CORNER_EAST_WEST:
-            case CORNER_WEST:
-                egg_type = EGG_Y;
-                break;
-            default:
-                egg_type = EGG_X;
-                break;                                  // CORNER_NORTH_SOUTH, CORNER_EAST
+                case CORNER_SOUTH:
+                    egg_type = EGG_X_OR_Y;
+                    break;
+                case CORNER_NORTH:
+                    egg_type = EGG_X_AND_Y;
+                    break;
+                case CORNER_EAST_WEST:
+                case CORNER_WEST:
+                    egg_type = EGG_Y;
+                    break;
+                default:
+                    egg_type = EGG_X;
+                    break;                              // CORNER_NORTH_SOUTH, CORNER_EAST
             }
             spr.SetEgg( egg_type );
         }

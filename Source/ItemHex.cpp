@@ -264,15 +264,15 @@ int ItemHex::GetEggType()
         return 0;
     switch( Proto->Corner )
     {
-    case CORNER_SOUTH:
-        return EGG_X_OR_Y;
-    case CORNER_NORTH:
-        return EGG_X_AND_Y;
-    case CORNER_EAST_WEST:
-    case CORNER_WEST:
-        return EGG_Y;
-    default:
-        return EGG_X;          // CORNER_NORTH_SOUTH, CORNER_EAST
+        case CORNER_SOUTH:
+            return EGG_X_OR_Y;
+        case CORNER_NORTH:
+            return EGG_X_AND_Y;
+        case CORNER_EAST_WEST:
+        case CORNER_WEST:
+            return EGG_Y;
+        default:
+            return EGG_X;      // CORNER_NORTH_SOUTH, CORNER_EAST
     }
     return 0;
 }

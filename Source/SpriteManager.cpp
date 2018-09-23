@@ -1652,33 +1652,33 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
     {
         switch( dir )
         {
-        case 0:
-            dir = 0;
-            break;
-        case 1:
-            dir = 1;
-            break;
-        case 2:
-            dir = 2;
-            break;
-        case 3:
-            dir = 2;
-            break;
-        case 4:
-            dir = 3;
-            break;
-        case 5:
-            dir = 4;
-            break;
-        case 6:
-            dir = 5;
-            break;
-        case 7:
-            dir = 5;
-            break;
-        default:
-            dir = 0;
-            break;
+            case 0:
+                dir = 0;
+                break;
+            case 1:
+                dir = 1;
+                break;
+            case 2:
+                dir = 2;
+                break;
+            case 3:
+                dir = 2;
+                break;
+            case 4:
+                dir = 3;
+                break;
+            case 5:
+                dir = 4;
+                break;
+            case 6:
+                dir = 5;
+                break;
+            case 7:
+                dir = 5;
+                break;
+            default:
+                dir = 0;
+                break;
         }
     }
 
@@ -2143,27 +2143,27 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
     {
         switch( dir )
         {
-        case 0:
-            dir = 1;
-            break;
-        case 1:
-            dir = 2;
-            break;
-        case 2:
-            dir = 3;
-            break;
-        case 3:
-            dir = 5;
-            break;
-        case 4:
-            dir = 6;
-            break;
-        case 5:
-            dir = 7;
-            break;
-        default:
-            dir = 0;
-            break;
+            case 0:
+                dir = 1;
+                break;
+            case 1:
+                dir = 2;
+                break;
+            case 2:
+                dir = 3;
+                break;
+            case 3:
+                dir = 5;
+                break;
+            case 4:
+                dir = 6;
+                break;
+            case 5:
+                dir = 7;
+                break;
+            default:
+                dir = 0;
+                break;
         }
     }
     else
@@ -2190,41 +2190,41 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         {
             switch( delim[i] )
             {
-            case '0':
-                palette_index = 0;
-                break;
-            case '1':
-                palette_index = 1;
-                break;
-            case '2':
-                palette_index = 2;
-                break;
-            case '3':
-                palette_index = 3;
-                break;
-            case 'T':
-            case 't':
-                transparent = true;
-                break;
-            case 'H':
-            case 'h':
-                mirror_hor = true;
-                break;
-            case 'V':
-            case 'v':
-                mirror_ver = true;
-                break;
-            case 'F':
-            case 'f':
-                // name$1vf5-7.art
-                uint a, b;
-                if( sscanf( &delim[i + 1], "%u-%u", &a, &b ) == 2 )
-                    frm_from = a, frm_to = b, i += 3;
-                else if( sscanf( &delim[i + 1], "%u", &a ) == 1 )
-                    frm_from = a, frm_to = a, i += 1;
-                break;
-            default:
-                break;
+                case '0':
+                    palette_index = 0;
+                    break;
+                case '1':
+                    palette_index = 1;
+                    break;
+                case '2':
+                    palette_index = 2;
+                    break;
+                case '3':
+                    palette_index = 3;
+                    break;
+                case 'T':
+                case 't':
+                    transparent = true;
+                    break;
+                case 'H':
+                case 'h':
+                    mirror_hor = true;
+                    break;
+                case 'V':
+                case 'v':
+                    mirror_ver = true;
+                    break;
+                case 'F':
+                case 'f':
+                    // name$1vf5-7.art
+                    uint a, b;
+                    if( sscanf( &delim[i + 1], "%u-%u", &a, &b ) == 2 )
+                        frm_from = a, frm_to = b, i += 3;
+                    else if( sscanf( &delim[i + 1], "%u", &a ) == 1 )
+                        frm_from = a, frm_to = a, i += 1;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -2465,27 +2465,27 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     {
         switch( dir )
         {
-        case 0:
-            dir = 2;
-            break;
-        case 1:
-            dir = 3;
-            break;
-        case 2:
-            dir = 4;
-            break;
-        case 3:
-            dir = 6;
-            break;
-        case 4:
-            dir = 7;
-            break;
-        case 5:
-            dir = 0;
-            break;
-        default:
-            dir = 0;
-            break;
+            case 0:
+                dir = 2;
+                break;
+            case 1:
+                dir = 3;
+                break;
+            case 2:
+                dir = 4;
+                break;
+            case 3:
+                dir = 6;
+                break;
+            case 4:
+                dir = 7;
+                break;
+            case 5:
+                dir = 0;
+                break;
+            default:
+                dir = 0;
+                break;
         }
     }
     else
@@ -2900,20 +2900,20 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                     uint col = 0;
                     switch( control_mode )
                     {
-                    case 1:
-                        col = palette[part][rle_buf[i]];
-                        ( (uchar*)&col )[3] = 0xFF;
-                        break;
-                    case 2:
-                        col = palette[part][rle_buf[2 * i]];
-                        ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
-                        break;
-                    case 3:
-                        col = palette[part][def_color];
-                        ( (uchar*)&col )[3] = rle_buf[i];
-                        break;
-                    default:
-                        break;
+                        case 1:
+                            col = palette[part][rle_buf[i]];
+                            ( (uchar*)&col )[3] = 0xFF;
+                            break;
+                        case 2:
+                            col = palette[part][rle_buf[2 * i]];
+                            ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                            break;
+                        case 3:
+                            col = palette[part][def_color];
+                            ( (uchar*)&col )[3] = rle_buf[i];
+                            break;
+                        default:
+                            break;
                     }
 
                     for( int j = 0; j < 3; j++ )
@@ -3026,20 +3026,20 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
             uint col = 0;
             switch( control_mode )
             {
-            case 1:
-                col = palette[rle_buf[i]];
-                ( (uchar*)&col )[3] = 0xFF;
-                break;
-            case 2:
-                col = palette[rle_buf[2 * i]];
-                ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
-                break;
-            case 3:
-                col = palette[def_color];
-                ( (uchar*)&col )[3] = rle_buf[i];
-                break;
-            default:
-                break;
+                case 1:
+                    col = palette[rle_buf[i]];
+                    ( (uchar*)&col )[3] = 0xFF;
+                    break;
+                case 2:
+                    col = palette[rle_buf[2 * i]];
+                    ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                    break;
+                case 3:
+                    col = palette[def_color];
+                    ( (uchar*)&col )[3] = rle_buf[i];
+                    break;
+                default:
+                    break;
             }
 
             *ptr++ = col;
@@ -3151,20 +3151,20 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
                 uint col = 0;
                 switch( control_mode )
                 {
-                case 1:
-                    col = palette[rle_buf[i]];
-                    ( (uchar*)&col )[3] = 0xFF;
-                    break;
-                case 2:
-                    col = palette[rle_buf[2 * i]];
-                    ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
-                    break;
-                case 3:
-                    col = palette[def_color];
-                    ( (uchar*)&col )[3] = rle_buf[i];
-                    break;
-                default:
-                    break;
+                    case 1:
+                        col = palette[rle_buf[i]];
+                        ( (uchar*)&col )[3] = 0xFF;
+                        break;
+                    case 2:
+                        col = palette[rle_buf[2 * i]];
+                        ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                        break;
+                    case 3:
+                        col = palette[def_color];
+                        ( (uchar*)&col )[3] = rle_buf[i];
+                        break;
+                    default:
+                        break;
                 }
 
                 *ptr++ = col;
@@ -4232,24 +4232,24 @@ bool SpriteManager::CompareHexEgg( ushort hx, ushort hy, int egg_type )
         hy--;
     switch( egg_type )
     {
-    case EGG_X:
-        if( hx >= eggHx )
-            return true;
-        break;
-    case EGG_Y:
-        if( hy >= eggHy )
-            return true;
-        break;
-    case EGG_X_AND_Y:
-        if( hx >= eggHx || hy >= eggHy )
-            return true;
-        break;
-    case EGG_X_OR_Y:
-        if( hx >= eggHx && hy >= eggHy )
-            return true;
-        break;
-    default:
-        break;
+        case EGG_X:
+            if( hx >= eggHx )
+                return true;
+            break;
+        case EGG_Y:
+            if( hy >= eggHy )
+                return true;
+            break;
+        case EGG_X_AND_Y:
+            if( hx >= eggHx || hy >= eggHy )
+                return true;
+            break;
+        case EGG_X_OR_Y:
+            if( hx >= eggHx && hy >= eggHy )
+                return true;
+            break;
+        default:
+            break;
     }
     return false;
 }
@@ -4605,24 +4605,24 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
 
             switch( spr->EggType )
             {
-            case EGG_ALWAYS:
-                PrepareSquare( corner, RectF( xf + cx - 2.0f, yf + hf - 50.0f, xf + cx + 2.0f, yf + hf ), 0x5FFFFF00 );
-                break;
-            case EGG_X:
-                PrepareSquare( corner, PointF( xf + cx - 5.0f, yf + hf - 55.0f ), PointF( xf + cx + 5.0f, yf + hf - 45.0f ), PointF( xf + cx - 5.0f, yf + hf - 5.0f ), PointF( xf + cx + 5.0f, yf + hf + 5.0f ), 0x5F00AF00 );
-                break;
-            case EGG_Y:
-                PrepareSquare( corner, PointF( xf + cx - 5.0f, yf + hf - 49.0f ), PointF( xf + cx + 5.0f, yf + hf - 52.0f ), PointF( xf + cx - 5.0f, yf + hf + 1.0f ), PointF( xf + cx + 5.0f, yf + hf - 2.0f ), 0x5F00FF00 );
-                break;
-            case EGG_X_AND_Y:
-                PrepareSquare( corner, PointF( xf + cx - 10.0f, yf + hf - 49.0f ), PointF( xf + cx, yf + hf - 52.0f ), PointF( xf + cx - 10.0f, yf + hf + 1.0f ), PointF( xf + cx, yf + hf - 2.0f ), 0x5FFF0000 );
-                PrepareSquare( corner, PointF( xf + cx, yf + hf - 55.0f ), PointF( xf + cx + 10.0f, yf + hf - 45.0f ), PointF( xf + cx, yf + hf - 5.0f ), PointF( xf + cx + 10.0f, yf + hf + 5.0f ), 0x5FFF0000 );
-                break;
-            case EGG_X_OR_Y:
-                PrepareSquare( corner, PointF( xf + cx, yf + hf - 49.0f ), PointF( xf + cx + 10.0f, yf + hf - 52.0f ), PointF( xf + cx, yf + hf + 1.0f ), PointF( xf + cx + 10.0f, yf + hf - 2.0f ), 0x5FAF0000 );
-                PrepareSquare( corner, PointF( xf + cx - 10.0f, yf + hf - 55.0f ), PointF( xf + cx, yf + hf - 45.0f ), PointF( xf + cx - 10.0f, yf + hf - 5.0f ), PointF( xf + cx, yf + hf + 5.0f ), 0x5FAF0000 );
-            default:
-                break;
+                case EGG_ALWAYS:
+                    PrepareSquare( corner, RectF( xf + cx - 2.0f, yf + hf - 50.0f, xf + cx + 2.0f, yf + hf ), 0x5FFFFF00 );
+                    break;
+                case EGG_X:
+                    PrepareSquare( corner, PointF( xf + cx - 5.0f, yf + hf - 55.0f ), PointF( xf + cx + 5.0f, yf + hf - 45.0f ), PointF( xf + cx - 5.0f, yf + hf - 5.0f ), PointF( xf + cx + 5.0f, yf + hf + 5.0f ), 0x5F00AF00 );
+                    break;
+                case EGG_Y:
+                    PrepareSquare( corner, PointF( xf + cx - 5.0f, yf + hf - 49.0f ), PointF( xf + cx + 5.0f, yf + hf - 52.0f ), PointF( xf + cx - 5.0f, yf + hf + 1.0f ), PointF( xf + cx + 5.0f, yf + hf - 2.0f ), 0x5F00FF00 );
+                    break;
+                case EGG_X_AND_Y:
+                    PrepareSquare( corner, PointF( xf + cx - 10.0f, yf + hf - 49.0f ), PointF( xf + cx, yf + hf - 52.0f ), PointF( xf + cx - 10.0f, yf + hf + 1.0f ), PointF( xf + cx, yf + hf - 2.0f ), 0x5FFF0000 );
+                    PrepareSquare( corner, PointF( xf + cx, yf + hf - 55.0f ), PointF( xf + cx + 10.0f, yf + hf - 45.0f ), PointF( xf + cx, yf + hf - 5.0f ), PointF( xf + cx + 10.0f, yf + hf + 5.0f ), 0x5FFF0000 );
+                    break;
+                case EGG_X_OR_Y:
+                    PrepareSquare( corner, PointF( xf + cx, yf + hf - 49.0f ), PointF( xf + cx + 10.0f, yf + hf - 52.0f ), PointF( xf + cx, yf + hf + 1.0f ), PointF( xf + cx + 10.0f, yf + hf - 2.0f ), 0x5FAF0000 );
+                    PrepareSquare( corner, PointF( xf + cx - 10.0f, yf + hf - 55.0f ), PointF( xf + cx, yf + hf - 45.0f ), PointF( xf + cx - 10.0f, yf + hf - 5.0f ), PointF( xf + cx, yf + hf + 5.0f ), 0x5FAF0000 );
+                default:
+                    break;
             }
 
             DrawPoints( corner, PRIMITIVE_TRIANGLELIST );
@@ -4927,25 +4927,25 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     // Calculate primitive count
     switch( prim )
     {
-    case PRIMITIVE_POINTLIST:
-        break;
-    case PRIMITIVE_LINELIST:
-        count /= 2;
-        break;
-    case PRIMITIVE_LINESTRIP:
-        count -= 1;
-        break;
-    case PRIMITIVE_TRIANGLELIST:
-        count /= 3;
-        break;
-    case PRIMITIVE_TRIANGLESTRIP:
-        count -= 2;
-        break;
-    case PRIMITIVE_TRIANGLEFAN:
-        count -= 2;
-        break;
-    default:
-        break;
+        case PRIMITIVE_POINTLIST:
+            break;
+        case PRIMITIVE_LINELIST:
+            count /= 2;
+            break;
+        case PRIMITIVE_LINESTRIP:
+            count -= 1;
+            break;
+        case PRIMITIVE_TRIANGLELIST:
+            count /= 3;
+            break;
+        case PRIMITIVE_TRIANGLESTRIP:
+            count -= 2;
+            break;
+        case PRIMITIVE_TRIANGLEFAN:
+            count -= 2;
+            break;
+        default:
+            break;
     }
     if( count <= 0 )
         return false;
@@ -4997,31 +4997,31 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     GLenum prim_type;
     switch( prim )
     {
-    case PRIMITIVE_POINTLIST:
-        prim_type = GL_POINTS;
-        break;
-    case PRIMITIVE_LINELIST:
-        prim_type = GL_LINES;
-        prim_count /= 2;
-        break;
-    case PRIMITIVE_LINESTRIP:
-        prim_type = GL_LINE_STRIP;
-        prim_count -= 1;
-        break;
-    case PRIMITIVE_TRIANGLELIST:
-        prim_type = GL_TRIANGLES;
-        prim_count /= 3;
-        break;
-    case PRIMITIVE_TRIANGLESTRIP:
-        prim_type = GL_TRIANGLE_STRIP;
-        prim_count -= 2;
-        break;
-    case PRIMITIVE_TRIANGLEFAN:
-        prim_type = GL_TRIANGLE_FAN;
-        prim_count -= 2;
-        break;
-    default:
-        return false;
+        case PRIMITIVE_POINTLIST:
+            prim_type = GL_POINTS;
+            break;
+        case PRIMITIVE_LINELIST:
+            prim_type = GL_LINES;
+            prim_count /= 2;
+            break;
+        case PRIMITIVE_LINESTRIP:
+            prim_type = GL_LINE_STRIP;
+            prim_count -= 1;
+            break;
+        case PRIMITIVE_TRIANGLELIST:
+            prim_type = GL_TRIANGLES;
+            prim_count /= 3;
+            break;
+        case PRIMITIVE_TRIANGLESTRIP:
+            prim_type = GL_TRIANGLE_STRIP;
+            prim_count -= 2;
+            break;
+        case PRIMITIVE_TRIANGLEFAN:
+            prim_type = GL_TRIANGLE_FAN;
+            prim_count -= 2;
+            break;
+        default:
+            return false;
     }
     if( prim_count <= 0 )
         return false;

@@ -83,73 +83,73 @@ bool FOServer::TransferAllItems()
 
         switch( item->Accessory )
         {
-        case ITEM_ACCESSORY_CRITTER:
-        {
-            if( IS_USER_ID( item->AccCritter.Id ) )
-                continue;                                                      // Skip player
-
-            Critter* npc = CrMngr.GetNpc( item->AccCritter.Id, false );
-            if( !npc )
+            case ITEM_ACCESSORY_CRITTER:
             {
-                WriteLog( "Item<%u> npc not found, id<%u>.\n", item->GetId(), item->AccCritter.Id );
+                if( IS_USER_ID( item->AccCritter.Id ) )
+                    continue;                                                  // Skip player
+
+                Critter* npc = CrMngr.GetNpc( item->AccCritter.Id, false );
+                if( !npc )
+                {
+                    WriteLog( "Item<%u> npc not found, id<%u>.\n", item->GetId(), item->AccCritter.Id );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                npc->SetItem( item );
+            }
+            break;
+            case ITEM_ACCESSORY_HEX:
+            {
+                Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
+                if( !map )
+                {
+                    WriteLog( "Item<%u> map not found, map id<%u>, hx<%u>, hy<%u>.\n", item->GetId(), item->AccHex.MapId, item->AccHex.HexX, item->AccHex.HexY );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                if( item->AccHex.HexX >= map->GetMaxHexX() || item->AccHex.HexY >= map->GetMaxHexY() )
+                {
+                    WriteLog( "Item<%u> invalid hex position, hx<%u>, hy<%u>.\n", item->GetId(), item->AccHex.HexX, item->AccHex.HexY );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                if( !item->Proto->IsItem() )
+                {
+                    WriteLog( "Item<%u> is not item type<%u>.\n", item->GetId(), item->GetType() );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                map->SetItem( item, item->AccHex.HexX, item->AccHex.HexY );
+            }
+            break;
+            case ITEM_ACCESSORY_CONTAINER:
+            {
+                Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, false );
+                if( !cont )
+                {
+                    WriteLog( "Item<%u> container not found, container id<%u>.\n", item->GetId(), item->AccContainer.ContainerId );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                if( !cont->IsContainer() )
+                {
+                    WriteLog( "Find item is not container, id<%u>, type<%u>, id_cont<%u>, type_cont<%u>.\n", item->GetId(), item->GetType(), cont->GetId(), cont->GetType() );
+                    bad_items.push_back( item );
+                    continue;
+                }
+
+                cont->ContSetItem( item );
+            }
+            break;
+            default:
+                WriteLog( "Unknown accessory id<%u>, acc<%u>.\n", item->Id, item->Accessory );
                 bad_items.push_back( item );
                 continue;
-            }
-
-            npc->SetItem( item );
-        }
-        break;
-        case ITEM_ACCESSORY_HEX:
-        {
-            Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
-            if( !map )
-            {
-                WriteLog( "Item<%u> map not found, map id<%u>, hx<%u>, hy<%u>.\n", item->GetId(), item->AccHex.MapId, item->AccHex.HexX, item->AccHex.HexY );
-                bad_items.push_back( item );
-                continue;
-            }
-
-            if( item->AccHex.HexX >= map->GetMaxHexX() || item->AccHex.HexY >= map->GetMaxHexY() )
-            {
-                WriteLog( "Item<%u> invalid hex position, hx<%u>, hy<%u>.\n", item->GetId(), item->AccHex.HexX, item->AccHex.HexY );
-                bad_items.push_back( item );
-                continue;
-            }
-
-            if( !item->Proto->IsItem() )
-            {
-                WriteLog( "Item<%u> is not item type<%u>.\n", item->GetId(), item->GetType() );
-                bad_items.push_back( item );
-                continue;
-            }
-
-            map->SetItem( item, item->AccHex.HexX, item->AccHex.HexY );
-        }
-        break;
-        case ITEM_ACCESSORY_CONTAINER:
-        {
-            Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, false );
-            if( !cont )
-            {
-                WriteLog( "Item<%u> container not found, container id<%u>.\n", item->GetId(), item->AccContainer.ContainerId );
-                bad_items.push_back( item );
-                continue;
-            }
-
-            if( !cont->IsContainer() )
-            {
-                WriteLog( "Find item is not container, id<%u>, type<%u>, id_cont<%u>, type_cont<%u>.\n", item->GetId(), item->GetType(), cont->GetId(), cont->GetType() );
-                bad_items.push_back( item );
-                continue;
-            }
-
-            cont->ContSetItem( item );
-        }
-        break;
-        default:
-            WriteLog( "Unknown accessory id<%u>, acc<%u>.\n", item->Id, item->Accessory );
-            bad_items.push_back( item );
-            continue;
         }
     }
 

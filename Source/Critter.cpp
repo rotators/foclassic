@@ -1176,33 +1176,33 @@ void Critter::SetItem( Item* item )
 
     switch( item->AccCritter.Slot )
     {
-    case SLOT_INV:
+        case SLOT_INV:
 label_InvSlot:
-        item->AccCritter.Slot = SLOT_INV;
-        break;
-    case SLOT_HAND1:
-        if( ItemSlotMain->GetId() )
-            goto label_InvSlot;
-        if( item->IsWeapon() && !CritType::IsAnim1( GetCrType(), item->Proto->Weapon_Anim1 ) )
-            goto label_InvSlot;
-        ItemSlotMain = item;
-        break;
-    case SLOT_HAND2:
-        if( ItemSlotExt->GetId() )
-            goto label_InvSlot;
-        ItemSlotExt = item;
-        break;
-    case SLOT_ARMOR:
-        if( ItemSlotArmor->GetId() )
-            goto label_InvSlot;
-        if( !item->IsArmor() )
-            goto label_InvSlot;
-        if( !CritType::IsCanArmor( GetCrType() ) )
-            goto label_InvSlot;
-        ItemSlotArmor = item;
-        break;
-    default:
-        break;
+            item->AccCritter.Slot = SLOT_INV;
+            break;
+        case SLOT_HAND1:
+            if( ItemSlotMain->GetId() )
+                goto label_InvSlot;
+            if( item->IsWeapon() && !CritType::IsAnim1( GetCrType(), item->Proto->Weapon_Anim1 ) )
+                goto label_InvSlot;
+            ItemSlotMain = item;
+            break;
+        case SLOT_HAND2:
+            if( ItemSlotExt->GetId() )
+                goto label_InvSlot;
+            ItemSlotExt = item;
+            break;
+        case SLOT_ARMOR:
+            if( ItemSlotArmor->GetId() )
+                goto label_InvSlot;
+            if( !item->IsArmor() )
+                goto label_InvSlot;
+            if( !CritType::IsCanArmor( GetCrType() ) )
+                goto label_InvSlot;
+            ItemSlotArmor = item;
+            break;
+        default:
+            break;
     }
 }
 
@@ -1474,17 +1474,17 @@ bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count
     {
         switch( from_slot )
         {
-        case SLOT_HAND1:
-            item_id = ItemSlotMain->GetId();
-            break;
-        case SLOT_HAND2:
-            item_id = ItemSlotExt->GetId();
-            break;
-        case SLOT_ARMOR:
-            item_id = ItemSlotArmor->GetId();
-            break;
-        default:
-            break;
+            case SLOT_HAND1:
+                item_id = ItemSlotMain->GetId();
+                break;
+            case SLOT_HAND2:
+                item_id = ItemSlotExt->GetId();
+                break;
+            case SLOT_ARMOR:
+                item_id = ItemSlotArmor->GetId();
+                break;
+            default:
+                break;
         }
     }
 
@@ -1632,17 +1632,17 @@ void Critter::TakeDefaultItem( uchar slot )
 {
     switch( slot )
     {
-    case SLOT_HAND1:
-        ItemSlotMain = defItemSlotHand;
-        break;
-    case SLOT_HAND2:
-        ItemSlotExt = defItemSlotHand;
-        break;
-    case SLOT_ARMOR:
-        ItemSlotArmor = defItemSlotArmor;
-        break;
-    default:
-        break;
+        case SLOT_HAND1:
+            ItemSlotMain = defItemSlotHand;
+            break;
+        case SLOT_HAND2:
+            ItemSlotExt = defItemSlotHand;
+            break;
+        case SLOT_ARMOR:
+            ItemSlotArmor = defItemSlotArmor;
+            break;
+        default:
+            break;
     }
 }
 
@@ -3077,45 +3077,45 @@ void Critter::SendMessage( int num, int val, int to )
 {
     switch( to )
     {
-    case MESSAGE_TO_VISIBLE_ME:
-    {
-        CrVec critters = VisCr;
-        for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
+        case MESSAGE_TO_VISIBLE_ME:
         {
-            Critter* cr = *it;
-            SYNC_LOCK( cr );
-            cr->EventMessage( this, num, val );
+            CrVec critters = VisCr;
+            for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
+            {
+                Critter* cr = *it;
+                SYNC_LOCK( cr );
+                cr->EventMessage( this, num, val );
+            }
         }
-    }
-    break;
-    case MESSAGE_TO_IAM_VISIBLE:
-    {
-        CrVec critters = VisCrSelf;
-        for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
-        {
-            Critter* cr = *it;
-            SYNC_LOCK( cr );
-            cr->EventMessage( this, num, val );
-        }
-    }
-    break;
-    case MESSAGE_TO_ALL_ON_MAP:
-    {
-        Map* map = MapMngr.GetMap( GetMap() );
-        if( !map )
-            return;
-
-        CrVec critters;
-        map->GetCritters( critters, true );
-        for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
-        {
-            Critter* cr = *it;
-            cr->EventMessage( this, num, val );
-        }
-    }
-    break;
-    default:
         break;
+        case MESSAGE_TO_IAM_VISIBLE:
+        {
+            CrVec critters = VisCrSelf;
+            for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
+            {
+                Critter* cr = *it;
+                SYNC_LOCK( cr );
+                cr->EventMessage( this, num, val );
+            }
+        }
+        break;
+        case MESSAGE_TO_ALL_ON_MAP:
+        {
+            Map* map = MapMngr.GetMap( GetMap() );
+            if( !map )
+                return;
+
+            CrVec critters;
+            map->GetCritters( critters, true );
+            for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
+            {
+                Critter* cr = *it;
+                cr->EventMessage( this, num, val );
+            }
+        }
+        break;
+        default:
+            break;
     }
 }
 
@@ -5273,27 +5273,27 @@ void Client::CloseTalk()
         int func_id = Talk.CurDialog.DlgScript;
         switch( func_id )
         {
-        case NOT_ANSWER_CLOSE_DIALOG:
+            case NOT_ANSWER_CLOSE_DIALOG:
+                break;
+            case NOT_ANSWER_BEGIN_BATTLE:
+            {
+                if( !npc )
+                    break;
+                npc->SetTarget( REASON_FROM_DIALOG, this, GameOpt.DeadHitPoints, false );
+            }
             break;
-        case NOT_ANSWER_BEGIN_BATTLE:
-        {
-            if( !npc )
+            default:
+                if( func_id <= 0 )
+                    break;
+                if( !Script::PrepareContext( func_id, _FUNC_, GetInfo() ) )
+                    break;
+                Script::SetArgObject( this );
+                Script::SetArgObject( npc );
+                Script::SetArgObject( NULL );
+                Talk.Locked = true;
+                Script::RunPrepared();
+                Talk.Locked = false;
                 break;
-            npc->SetTarget( REASON_FROM_DIALOG, this, GameOpt.DeadHitPoints, false );
-        }
-        break;
-        default:
-            if( func_id <= 0 )
-                break;
-            if( !Script::PrepareContext( func_id, _FUNC_, GetInfo() ) )
-                break;
-            Script::SetArgObject( this );
-            Script::SetArgObject( npc );
-            Script::SetArgObject( NULL );
-            Talk.Locked = true;
-            Script::RunPrepared();
-            Talk.Locked = false;
-            break;
         }
     }
 
@@ -5763,12 +5763,12 @@ bool Npc::IsPlaneNoTalk()
 
     switch( p->Type )
     {
-    case AI_PLANE_WALK:
-    case AI_PLANE_ATTACK:
-    case AI_PLANE_PICK:
-        return true;
-    default:
-        break;
+        case AI_PLANE_WALK:
+        case AI_PLANE_ATTACK:
+        case AI_PLANE_PICK:
+            return true;
+        default:
+            break;
     }
 
     return false;

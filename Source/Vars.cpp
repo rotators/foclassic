@@ -455,20 +455,20 @@ bool VarManager::CheckVar( GameVar* var, char oper, int val )
 {
     switch( oper )
     {
-    case '>':
-        return *var > val;
-    case '<':
-        return *var < val;
-    case '=':
-        return *var == val;
-    case '!':
-        return *var != val;
-    case '}':
-        return *var >= val;
-    case '{':
-        return *var <= val;
-    default:
-        return false;
+        case '>':
+            return *var > val;
+        case '<':
+            return *var < val;
+        case '=':
+            return *var == val;
+        case '!':
+            return *var != val;
+        case '}':
+            return *var >= val;
+        case '{':
+            return *var <= val;
+        default:
+            return false;
     }
 }
 
@@ -476,23 +476,23 @@ void VarManager::ChangeVar( GameVar* var, char oper, int val )
 {
     switch( oper )
     {
-    case '+':
-        *var += val;
-        break;
-    case '-':
-        *var -= val;
-        break;
-    case '*':
-        *var *= val;
-        break;
-    case '/':
-        *var /= val;
-        break;
-    case '=':
-        *var = val;
-        break;
-    default:
-        break;
+        case '+':
+            *var += val;
+            break;
+        case '-':
+            *var -= val;
+            break;
+        case '*':
+            *var *= val;
+            break;
+        case '/':
+            *var /= val;
+            break;
+        case '=':
+            *var = val;
+            break;
+        default:
+            break;
     }
 }
 
@@ -516,33 +516,33 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
 
     switch( tvar->Type )
     {
-    case VAR_GLOBAL:
-        if( master_id || slave_id )
+        case VAR_GLOBAL:
+            if( master_id || slave_id )
+                return NULL;
+            master_id = temp_id;
+            break;
+        case VAR_LOCAL:
+            if( !master_id || slave_id )
+                return NULL;
+            break;
+        case VAR_UNICUM:
+            if( !master_id || !slave_id )
+                return NULL;
+            break;
+        case VAR_LOCAL_LOCATION:
+            if( !master_id || slave_id )
+                return NULL;
+            break;
+        case VAR_LOCAL_MAP:
+            if( !master_id || slave_id )
+                return NULL;
+            break;
+        case VAR_LOCAL_ITEM:
+            if( !master_id || slave_id )
+                return NULL;
+            break;
+        default:
             return NULL;
-        master_id = temp_id;
-        break;
-    case VAR_LOCAL:
-        if( !master_id || slave_id )
-            return NULL;
-        break;
-    case VAR_UNICUM:
-        if( !master_id || !slave_id )
-            return NULL;
-        break;
-    case VAR_LOCAL_LOCATION:
-        if( !master_id || slave_id )
-            return NULL;
-        break;
-    case VAR_LOCAL_MAP:
-        if( !master_id || slave_id )
-            return NULL;
-        break;
-    case VAR_LOCAL_ITEM:
-        if( !master_id || slave_id )
-            return NULL;
-        break;
-    default:
-        return NULL;
     }
 
     GameVar* var;
@@ -809,30 +809,30 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
         {
             switch( var->Type )
             {
-            case VAR_LOCAL:
-                if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_UNICUM:
-                if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
-                    continue;
-                if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_LOCATION:
-                if( ids_locs.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_MAP:
-                if( ids_maps.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_ITEM:
-                if( ids_items.count( var->MasterId ) )
-                    continue;
-                break;
-            default:
-                break;
+                case VAR_LOCAL:
+                    if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_UNICUM:
+                    if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
+                        continue;
+                    if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_LOCATION:
+                    if( ids_locs.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_MAP:
+                    if( ids_maps.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_ITEM:
+                    if( ids_items.count( var->MasterId ) )
+                        continue;
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -853,30 +853,30 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
         {
             switch( var->Type )
             {
-            case VAR_LOCAL:
-                if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_UNICUM:
-                if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
-                    continue;
-                if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_LOCATION:
-                if( ids_locs.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_MAP:
-                if( ids_maps.count( var->MasterId ) )
-                    continue;
-                break;
-            case VAR_LOCAL_ITEM:
-                if( ids_items.count( var->MasterId ) )
-                    continue;
-                break;
-            default:
-                break;
+                case VAR_LOCAL:
+                    if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_UNICUM:
+                    if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
+                        continue;
+                    if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_LOCATION:
+                    if( ids_locs.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_MAP:
+                    if( ids_maps.count( var->MasterId ) )
+                        continue;
+                    break;
+                case VAR_LOCAL_ITEM:
+                    if( ids_items.count( var->MasterId ) )
+                        continue;
+                    break;
+                default:
+                    break;
             }
         }
 

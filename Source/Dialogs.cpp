@@ -439,178 +439,140 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
     switch( type )
     {
-    case DR_PARAM:
-    {
-        // Who
-        if( !Str::CompareCase( type_str, "loy" ) && !Str::CompareCase( type_str, "kill" ) )         // Deprecated
+        case DR_PARAM:
         {
+            // Who
+            if( !Str::CompareCase( type_str, "loy" ) && !Str::CompareCase( type_str, "kill" ) )     // Deprecated
+            {
+                input >> who;
+                if( !CheckWho( who ) )
+                {
+                    AddError( "Invalid DR param who<%c>.", who );
+                    errors++;
+                }
+            }
+
+            // Name
+            input >> name;
+            if( ( id = ConstantsManager::GetParamId( name ) ) < 0 )
+            {
+                AddError( "Invalid DR parameter<%s>.", name );
+                errors++;
+            }
+
+            // Operator
+            input >> oper;
+            if( !CheckOper( oper ) )
+            {
+                AddError( "Invalid DR param oper<%c>.", oper );
+                errors++;
+            }
+
+            // Value
+            READ_VALUE;
+        }
+        break;
+        case DR_VAR:
+        {
+            // Who
             input >> who;
             if( !CheckWho( who ) )
             {
-                AddError( "Invalid DR param who<%c>.", who );
+                AddError( "Invalid DR var who<%c>.", who );
                 errors++;
             }
-        }
 
-        // Name
-        input >> name;
-        if( ( id = ConstantsManager::GetParamId( name ) ) < 0 )
-        {
-            AddError( "Invalid DR parameter<%s>.", name );
-            errors++;
-        }
-
-        // Operator
-        input >> oper;
-        if( !CheckOper( oper ) )
-        {
-            AddError( "Invalid DR param oper<%c>.", oper );
-            errors++;
-        }
-
-        // Value
-        READ_VALUE;
-    }
-    break;
-    case DR_VAR:
-    {
-        // Who
-        input >> who;
-        if( !CheckWho( who ) )
-        {
-            AddError( "Invalid DR var who<%c>.", who );
-            errors++;
-        }
-
-        // Name
-        input >> name;
-        if( ( id = GetTempVarId( name ) ) == 0 )
-        {
-            AddError( "Invalid DR var name<%s>.", name );
-            errors++;
-        }
-
-        // Operator
-        input >> oper;
-        if( !CheckOper( oper ) )
-        {
-            AddError( "Invalid DR var oper<%c>.", oper );
-            errors++;
-        }
-
-        // Value
-        READ_VALUE;
-    }
-    break;
-    case DR_ITEM:
-    {
-        // Who
-        input >> who;
-        if( !CheckWho( who ) )
-        {
-            AddError( "Invalid DR item who<%c>.", who );
-            errors++;
-        }
-
-        // Name
-        input >> name;
-        id = ConstantsManager::GetItemPid( name );
-        if( id == -1 )
-        {
-            id = atoi( name );
-            const char* name_ = ConstantsManager::GetItemName( id );
-            if( !name_ )
+            // Name
+            input >> name;
+            if( ( id = GetTempVarId( name ) ) == 0 )
             {
-                AddError( "Invalid DR item<%s>.", name );
+                AddError( "Invalid DR var name<%s>.", name );
                 errors++;
             }
-            if( name_ != 0 )
-                Str::Copy( name, name_ );
-        }
 
-        // Operator
-        input >> oper;
-        if( !CheckOper( oper ) )
-        {
-            AddError( "Invalid DR item oper<%c>.", oper );
-            errors++;
-        }
-
-        // Value
-        READ_VALUE;
-    }
-    break;
-    case DR_SCRIPT:
-    {
-        // Script name
-        input >> name;
-
-        // Operator, not used
-        if( deprecated && is_demand )
+            // Operator
             input >> oper;
-
-        // Values count
-        input >> values_count;
-
-        // Values
-        if( !deprecated )
-        {
-            #ifdef FONLINE_NPCEDITOR
-            # define READ_SCRIPT_VALUE_( val )         \
-                { input >> value_str; val = value_str; \
-                }
-            #else
-            # define READ_SCRIPT_VALUE_( val )       { input >> value_str; val = ConstantsManager::GetDefineValue( value_str ); }
-            #endif
-            char value_str[256];
-            if( values_count > 0 )
-                READ_SCRIPT_VALUE_( script_val[0] );
-            if( values_count > 1 )
-                READ_SCRIPT_VALUE_( script_val[1] );
-            if( values_count > 2 )
-                READ_SCRIPT_VALUE_( script_val[2] );
-            if( values_count > 3 )
-                READ_SCRIPT_VALUE_( script_val[3] );
-            if( values_count > 4 )
-                READ_SCRIPT_VALUE_( script_val[4] );
-            if( values_count > 5 )
+            if( !CheckOper( oper ) )
             {
-                AddError( "Invalid DR script values count<%d>.", values_count );
-                values_count = 0;
+                AddError( "Invalid DR var oper<%c>.", oper );
                 errors++;
             }
+
+            // Value
+            READ_VALUE;
         }
-        else
+        break;
+        case DR_ITEM:
         {
-            #ifdef USE_STLPORT
-            # if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
-            char ch = *input.rdbuf()->_M_gptr();
-            # else
-            char ch = *input.str();
-            input.rdbuf()->freeze( false );
-            # endif
-            #else
-            char ch = *input.str();
-            input.rdbuf()->freeze( false );
-            #endif
-            if( ch == ' ' )
+            // Who
+            input >> who;
+            if( !CheckWho( who ) )
+            {
+                AddError( "Invalid DR item who<%c>.", who );
+                errors++;
+            }
+
+            // Name
+            input >> name;
+            id = ConstantsManager::GetItemPid( name );
+            if( id == -1 )
+            {
+                id = atoi( name );
+                const char* name_ = ConstantsManager::GetItemName( id );
+                if( !name_ )
+                {
+                    AddError( "Invalid DR item<%s>.", name );
+                    errors++;
+                }
+                if( name_ != 0 )
+                    Str::Copy( name, name_ );
+            }
+
+            // Operator
+            input >> oper;
+            if( !CheckOper( oper ) )
+            {
+                AddError( "Invalid DR item oper<%c>.", oper );
+                errors++;
+            }
+
+            // Value
+            READ_VALUE;
+        }
+        break;
+        case DR_SCRIPT:
+        {
+            // Script name
+            input >> name;
+
+            // Operator, not used
+            if( deprecated && is_demand )
+                input >> oper;
+
+            // Values count
+            input >> values_count;
+
+            // Values
+            if( !deprecated )
             {
                 #ifdef FONLINE_NPCEDITOR
-                # define READ_SCRIPT_VALUE( val )    { input >> value_int; char buf[64]; val = itoa( value_int, buf, 10 ); }
+                # define READ_SCRIPT_VALUE_( val )         \
+                    { input >> value_str; val = value_str; \
+                    }
                 #else
-                # define READ_SCRIPT_VALUE( val )    { input >> value_int; val = value_int; }
+                # define READ_SCRIPT_VALUE_( val )       { input >> value_str; val = ConstantsManager::GetDefineValue( value_str ); }
                 #endif
-                int value_int;
+                char value_str[256];
                 if( values_count > 0 )
-                    READ_SCRIPT_VALUE( script_val[0] );
+                    READ_SCRIPT_VALUE_( script_val[0] );
                 if( values_count > 1 )
-                    READ_SCRIPT_VALUE( script_val[1] );
+                    READ_SCRIPT_VALUE_( script_val[1] );
                 if( values_count > 2 )
-                    READ_SCRIPT_VALUE( script_val[2] );
+                    READ_SCRIPT_VALUE_( script_val[2] );
                 if( values_count > 3 )
-                    READ_SCRIPT_VALUE( script_val[3] );
+                    READ_SCRIPT_VALUE_( script_val[3] );
                 if( values_count > 4 )
-                    READ_SCRIPT_VALUE( script_val[4] );
+                    READ_SCRIPT_VALUE_( script_val[4] );
                 if( values_count > 5 )
                 {
                     AddError( "Invalid DR script values count<%d>.", values_count );
@@ -620,69 +582,107 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             }
             else
             {
-                #ifdef FONLINE_NPCEDITOR
-                char buf[64];
-                script_val[0] = _itoa( values_count, buf, 10 );
+                #ifdef USE_STLPORT
+                # if !defined ( FONLINE_NPCEDITOR ) && !defined ( FONLINE_MRFIXIT )
+                char ch = *input.rdbuf()->_M_gptr();
+                # else
+                char ch = *input.str();
+                input.rdbuf()->freeze( false );
+                # endif
                 #else
-                script_val[0] = values_count;
+                char ch = *input.str();
+                input.rdbuf()->freeze( false );
                 #endif
-                values_count = 1;
+                if( ch == ' ' )
+                {
+                    #ifdef FONLINE_NPCEDITOR
+                    # define READ_SCRIPT_VALUE( val )    { input >> value_int; char buf[64]; val = itoa( value_int, buf, 10 ); }
+                    #else
+                    # define READ_SCRIPT_VALUE( val )    { input >> value_int; val = value_int; }
+                    #endif
+                    int value_int;
+                    if( values_count > 0 )
+                        READ_SCRIPT_VALUE( script_val[0] );
+                    if( values_count > 1 )
+                        READ_SCRIPT_VALUE( script_val[1] );
+                    if( values_count > 2 )
+                        READ_SCRIPT_VALUE( script_val[2] );
+                    if( values_count > 3 )
+                        READ_SCRIPT_VALUE( script_val[3] );
+                    if( values_count > 4 )
+                        READ_SCRIPT_VALUE( script_val[4] );
+                    if( values_count > 5 )
+                    {
+                        AddError( "Invalid DR script values count<%d>.", values_count );
+                        values_count = 0;
+                        errors++;
+                    }
+                }
+                else
+                {
+                    #ifdef FONLINE_NPCEDITOR
+                    char buf[64];
+                    script_val[0] = _itoa( values_count, buf, 10 );
+                    #else
+                    script_val[0] = values_count;
+                    #endif
+                    values_count = 1;
+                }
             }
-        }
 
-        #ifdef FONLINE_SERVER
-        // Bind function
-        # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
-        # define BIND_R_FUNC( params )                                                                                     \
-            { if( ( id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
-              } else                                                                                                       \
-                  id = Script::Bind( name, "void %s(Critter&,Critter@" params, false ); }
-        switch( values_count )
+            #ifdef FONLINE_SERVER
+            // Bind function
+            # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
+            # define BIND_R_FUNC( params )                                                                                     \
+                { if( ( id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
+                  } else                                                                                                       \
+                      id = Script::Bind( name, "void %s(Critter&,Critter@" params, false ); }
+            switch( values_count )
+            {
+                case 1:
+                    if( is_demand )
+                        BIND_D_FUNC( ",int)" ) else
+                            BIND_R_FUNC( ",int)" ) break;
+                case 2:
+                    if( is_demand )
+                        BIND_D_FUNC( ",int,int)" ) else
+                            BIND_R_FUNC( ",int,int)" ) break;
+                case 3:
+                    if( is_demand )
+                        BIND_D_FUNC( ",int,int,int)" ) else
+                            BIND_R_FUNC( ",int,int,int)" ) break;
+                case 4:
+                    if( is_demand )
+                        BIND_D_FUNC( ",int,int,int,int)" ) else
+                            BIND_R_FUNC( ",int,int,int,int)" ) break;
+                case 5:
+                    if( is_demand )
+                        BIND_D_FUNC( ",int,int,int,int,int)" ) else
+                            BIND_R_FUNC( ",int,int,int,int,int)" ) break;
+                default:
+                    if( is_demand )
+                        BIND_D_FUNC( ")" ) else
+                            BIND_R_FUNC( ")" ) break;
+            }
+            if( id <= 0 )
+            {
+                WriteLogF( _FUNC_, " - Script<%s> bind error.\n", name );
+                return NULL;
+            }
+            if( id > 0xFFFF )
+                WriteLogF( _FUNC_, " - Id greater than 0xFFFF.\n" );
+            #endif
+        }
+            break;
+        case DR_LOCK:
         {
-        case 1:
-            if( is_demand )
-                BIND_D_FUNC( ",int)" ) else
-                    BIND_R_FUNC( ",int)" ) break;
-        case 2:
-            if( is_demand )
-                BIND_D_FUNC( ",int,int)" ) else
-                    BIND_R_FUNC( ",int,int)" ) break;
-        case 3:
-            if( is_demand )
-                BIND_D_FUNC( ",int,int,int)" ) else
-                    BIND_R_FUNC( ",int,int,int)" ) break;
-        case 4:
-            if( is_demand )
-                BIND_D_FUNC( ",int,int,int,int)" ) else
-                    BIND_R_FUNC( ",int,int,int,int)" ) break;
-        case 5:
-            if( is_demand )
-                BIND_D_FUNC( ",int,int,int,int,int)" ) else
-                    BIND_R_FUNC( ",int,int,int,int,int)" ) break;
+            READ_VALUE;
+        }
+        break;
+        case DR_OR:
+            break;
         default:
-            if( is_demand )
-                BIND_D_FUNC( ")" ) else
-                    BIND_R_FUNC( ")" ) break;
-        }
-        if( id <= 0 )
-        {
-            WriteLogF( _FUNC_, " - Script<%s> bind error.\n", name );
             return NULL;
-        }
-        if( id > 0xFFFF )
-            WriteLogF( _FUNC_, " - Id greater than 0xFFFF.\n" );
-        #endif
-    }
-        break;
-    case DR_LOCK:
-    {
-        READ_VALUE;
-    }
-    break;
-    case DR_OR:
-        break;
-    default:
-        return NULL;
     }
 
     // Validate parsing

@@ -281,39 +281,39 @@ void FOServer::ProcessAI( Npc* npc )
                 int reason = 0;
                 switch( result )
                 {
-                case FPATH_MAP_NOT_FOUND:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
-                case FPATH_TOOFAR:
-                    reason = REASON_HEX_TOO_FAR;
-                    break;
-                case FPATH_ERROR:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
-                case FPATH_INVALID_HEXES:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
-                case FPATH_TRACE_TARG_NULL_PTR:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
-                case FPATH_HEX_BUSY:
-                    reason = REASON_HEX_BUSY;
-                    break;
-                case FPATH_HEX_BUSY_RING:
-                    reason = REASON_HEX_BUSY_RING;
-                    break;
-                case FPATH_DEADLOCK:
-                    reason = REASON_DEADLOCK;
-                    break;
-                case FPATH_TRACE_FAIL:
-                    reason = REASON_TRACE_FAIL;
-                    break;
-                case FPATH_ALLOC_FAIL:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
-                default:
-                    reason = REASON_FIND_PATH_ERROR;
-                    break;
+                    case FPATH_MAP_NOT_FOUND:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
+                    case FPATH_TOOFAR:
+                        reason = REASON_HEX_TOO_FAR;
+                        break;
+                    case FPATH_ERROR:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
+                    case FPATH_INVALID_HEXES:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
+                    case FPATH_TRACE_TARG_NULL_PTR:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
+                    case FPATH_HEX_BUSY:
+                        reason = REASON_HEX_BUSY;
+                        break;
+                    case FPATH_HEX_BUSY_RING:
+                        reason = REASON_HEX_BUSY_RING;
+                        break;
+                    case FPATH_DEADLOCK:
+                        reason = REASON_DEADLOCK;
+                        break;
+                    case FPATH_TRACE_FAIL:
+                        reason = REASON_TRACE_FAIL;
+                        break;
+                    case FPATH_ALLOC_FAIL:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
+                    default:
+                        reason = REASON_FIND_PATH_ERROR;
+                        break;
                 }
 
                 plane->IsMove = false;
@@ -364,461 +364,461 @@ void FOServer::ProcessAI( Npc* npc )
 /* ========================   Misc   ================================== */
 /* ==================================================================== */
 /************************************************************************/
-    case AI_PLANE_MISC:
-    {
-        if( is_busy )
-            break;
-
-        uint wait = plane->Misc.WaitSecond;
-        int  bind_id = plane->Misc.ScriptBindId;
-
-        if( wait > GameOpt.FullSecond )
+        case AI_PLANE_MISC:
         {
-            AI_Stay( npc, ( wait - GameOpt.FullSecond ) * 1000 / GameOpt.TimeMultiplier );
-        }
-        else if( bind_id > 0 )
-        {
-            plane->Misc.ScriptBindId = 0;
-            if( Script::PrepareContext( bind_id, _FUNC_, npc->GetInfo() ) )
+            if( is_busy )
+                break;
+
+            uint wait = plane->Misc.WaitSecond;
+            int  bind_id = plane->Misc.ScriptBindId;
+
+            if( wait > GameOpt.FullSecond )
             {
-                Script::SetArgObject( npc );
-                Script::RunPrepared();
+                AI_Stay( npc, ( wait - GameOpt.FullSecond ) * 1000 / GameOpt.TimeMultiplier );
+            }
+            else if( bind_id > 0 )
+            {
+                plane->Misc.ScriptBindId = 0;
+                if( Script::PrepareContext( bind_id, _FUNC_, npc->GetInfo() ) )
+                {
+                    Script::SetArgObject( npc );
+                    Script::RunPrepared();
+                }
+            }
+            else
+            {
+                npc->NextPlane( REASON_SUCCESS );
             }
         }
-        else
-        {
-            npc->NextPlane( REASON_SUCCESS );
-        }
-    }
-    break;
+        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Attack   ================================ */
 /* ==================================================================== */
 /************************************************************************/
-    case AI_PLANE_ATTACK:
-    {
-        if( map->Data.IsTurnBasedAviable && !map->IsTurnBasedOn )
-            map->BeginTurnBased( npc );
-
-        /************************************************************************/
-        /* Target is visible                                                    */
-        /************************************************************************/
-        Critter* targ = npc->GetCritSelf( plane->Attack.TargId, true );
-        if( targ )
+        case AI_PLANE_ATTACK:
         {
-            /************************************************************************/
-            /* Step 0: Check for success plane and continue target timeout          */
-            /************************************************************************/
-
-            if( plane->Attack.IsGag && ( targ->GetHexX() != plane->Attack.GagHexX || targ->GetHexY() != plane->Attack.GagHexY ) )
-            {
-                npc->NextPlane( REASON_SUCCESS );
-                break;
-            }
-
-            bool attack_to_dead = ( plane->Attack.MinHp <= GameOpt.DeadHitPoints );
-            if( !plane->Attack.IsGag && ( !attack_to_dead && targ->GetParam( ST_CURRENT_HP ) <= plane->Attack.MinHp ) || ( attack_to_dead && targ->IsDead() ) )
-            {
-                npc->NextPlane( REASON_SUCCESS );
-                break;
-            }
-
-            if( plane->IsMove && !plane->Attack.LastHexX && !plane->Attack.LastHexY )
-            {
-                plane->IsMove = false;
-                npc->SendA_XY();
-            }
-            plane->Attack.LastHexX = targ->GetHexX();
-            plane->Attack.LastHexY = targ->GetHexY();
-
-            if( is_busy )
-                break;
+            if( map->Data.IsTurnBasedAviable && !map->IsTurnBasedOn )
+                map->BeginTurnBased( npc );
 
             /************************************************************************/
-            /* Step 1: Choose weapon                                                */
+            /* Target is visible                                                    */
             /************************************************************************/
-            // Get battle weapon
-            int   use;
-            Item* weap = NULL;
-            uint  r0 = targ->GetId(), r1 = 0, r2 = 0;
-            int   sss = 0;
-            if( !npc->RunPlane( REASON_ATTACK_WEAPON, r0, r1, r2 ) )
+            Critter* targ = npc->GetCritSelf( plane->Attack.TargId, true );
+            if( targ )
             {
-                WriteLog( "REASON_ATTACK_WEAPON fail. Skip attack.\n" );
-                break;
-            }
-            if( plane != npc->GetCurPlane() )
-                break;                                               // Validate plane
+                /************************************************************************/
+                /* Step 0: Check for success plane and continue target timeout          */
+                /************************************************************************/
 
-            if( r0 )
-            {
-                weap = npc->GetItem( r0, false );
-                SETFLAG( sss, 0x000001 );
-            }
-            else
-            {
-                if( npc->IsRawParam( MODE_NO_UNARMED ) )
+                if( plane->Attack.IsGag && ( targ->GetHexX() != plane->Attack.GagHexX || targ->GetHexY() != plane->Attack.GagHexY ) )
                 {
-                    npc->NextPlane( REASON_NO_UNARMED );
+                    npc->NextPlane( REASON_SUCCESS );
                     break;
                 }
 
-                SETFLAG( sss, 0x000002 );
-                ProtoItem* unarmed = ItemMngr.GetProtoItem( r2 );
-                if( unarmed && unarmed->Weapon_IsUnarmed )
+                bool attack_to_dead = ( plane->Attack.MinHp <= GameOpt.DeadHitPoints );
+                if( !plane->Attack.IsGag && ( !attack_to_dead && targ->GetParam( ST_CURRENT_HP ) <= plane->Attack.MinHp ) || ( attack_to_dead && targ->IsDead() ) )
                 {
-                    SETFLAG( sss, 0x000004 );
-                    Item* def_item_main = npc->GetDefaultItemSlotMain();
-                    if( def_item_main->Proto != unarmed )
-                        def_item_main->Init( unarmed );
-                    weap = def_item_main;
-                }
-            }
-            use = r1;
-
-            if( !weap || !weap->IsWeapon() || !weap->WeapIsUseAviable( use ) )
-            {
-                WriteLog( "REASON_ATTACK_WEAPON fail, debug values<%u><%p><%d><%d>.\n", sss, weap, weap ? weap->IsWeapon() : -1, weap ? weap->WeapIsUseAviable( use ) : -1 );
-                break;
-            }
-
-            // Hide cur, show new
-            if( weap != npc->ItemSlotMain )
-            {
-                // Hide cur item
-                if( npc->ItemSlotMain->GetId() )                       // Is no hands
-                {
-                    Item* item_hand = npc->ItemSlotMain;
-                    AI_MoveItem( npc, map, SLOT_HAND1, SLOT_INV, item_hand->GetId(), item_hand->GetCount() );
+                    npc->NextPlane( REASON_SUCCESS );
                     break;
                 }
 
-                // Show new
-                if( weap->GetId() )                       // Is no hands
+                if( plane->IsMove && !plane->Attack.LastHexX && !plane->Attack.LastHexY )
                 {
-                    AI_MoveItem( npc, map, weap->AccCritter.Slot, SLOT_HAND1, weap->GetId(), weap->GetCount() );
+                    plane->IsMove = false;
+                    npc->SendA_XY();
+                }
+                plane->Attack.LastHexX = targ->GetHexX();
+                plane->Attack.LastHexY = targ->GetHexY();
+
+                if( is_busy )
+                    break;
+
+                /************************************************************************/
+                /* Step 1: Choose weapon                                                */
+                /************************************************************************/
+                // Get battle weapon
+                int   use;
+                Item* weap = NULL;
+                uint  r0 = targ->GetId(), r1 = 0, r2 = 0;
+                int   sss = 0;
+                if( !npc->RunPlane( REASON_ATTACK_WEAPON, r0, r1, r2 ) )
+                {
+                    WriteLog( "REASON_ATTACK_WEAPON fail. Skip attack.\n" );
                     break;
                 }
-            }
-            npc->ItemSlotMain->SetMode( MAKE_ITEM_MODE( use, 0 ) );
+                if( plane != npc->GetCurPlane() )
+                    break;                                           // Validate plane
 
-            // Load weapon
-            if( !npc->IsRawParam( MODE_UNLIMITED_AMMO ) && weap->WeapGetMaxAmmoCount() && weap->WeapIsEmpty() )
-            {
-                Item* ammo = npc->GetAmmoForWeapon( weap );
-                if( !ammo )
+                if( r0 )
                 {
-                    WriteLogF( _FUNC_, " - Ammo for weapon not found, full load, npc<%s>.\n", npc->GetInfo() );
+                    weap = npc->GetItem( r0, false );
+                    SETFLAG( sss, 0x000001 );
+                }
+                else
+                {
+                    if( npc->IsRawParam( MODE_NO_UNARMED ) )
+                    {
+                        npc->NextPlane( REASON_NO_UNARMED );
+                        break;
+                    }
+
+                    SETFLAG( sss, 0x000002 );
+                    ProtoItem* unarmed = ItemMngr.GetProtoItem( r2 );
+                    if( unarmed && unarmed->Weapon_IsUnarmed )
+                    {
+                        SETFLAG( sss, 0x000004 );
+                        Item* def_item_main = npc->GetDefaultItemSlotMain();
+                        if( def_item_main->Proto != unarmed )
+                            def_item_main->Init( unarmed );
+                        weap = def_item_main;
+                    }
+                }
+                use = r1;
+
+                if( !weap || !weap->IsWeapon() || !weap->WeapIsUseAviable( use ) )
+                {
+                    WriteLog( "REASON_ATTACK_WEAPON fail, debug values<%u><%p><%d><%d>.\n", sss, weap, weap ? weap->IsWeapon() : -1, weap ? weap->WeapIsUseAviable( use ) : -1 );
+                    break;
+                }
+
+                // Hide cur, show new
+                if( weap != npc->ItemSlotMain )
+                {
+                    // Hide cur item
+                    if( npc->ItemSlotMain->GetId() )                   // Is no hands
+                    {
+                        Item* item_hand = npc->ItemSlotMain;
+                        AI_MoveItem( npc, map, SLOT_HAND1, SLOT_INV, item_hand->GetId(), item_hand->GetCount() );
+                        break;
+                    }
+
+                    // Show new
+                    if( weap->GetId() )                   // Is no hands
+                    {
+                        AI_MoveItem( npc, map, weap->AccCritter.Slot, SLOT_HAND1, weap->GetId(), weap->GetCount() );
+                        break;
+                    }
+                }
+                npc->ItemSlotMain->SetMode( MAKE_ITEM_MODE( use, 0 ) );
+
+                // Load weapon
+                if( !npc->IsRawParam( MODE_UNLIMITED_AMMO ) && weap->WeapGetMaxAmmoCount() && weap->WeapIsEmpty() )
+                {
+                    Item* ammo = npc->GetAmmoForWeapon( weap );
+                    if( !ammo )
+                    {
+                        WriteLogF( _FUNC_, " - Ammo for weapon not found, full load, npc<%s>.\n", npc->GetInfo() );
+                        weap->WeapLoadHolder();
+                    }
+                    else
+                    {
+                        AI_ReloadWeapon( npc, map, weap, ammo->GetId() );
+                        break;
+                    }
+                }
+                else if( npc->IsRawParam( MODE_UNLIMITED_AMMO ) && weap->WeapGetMaxAmmoCount() )
                     weap->WeapLoadHolder();
-                }
-                else
+
+                /************************************************************************/
+                /* Step 2: Move to target                                               */
+                /************************************************************************/
+                bool is_can_walk = CritType::IsCanWalk( npc->GetCrType() );
+                uint best_dist = 0, min_dist = 0, max_dist = 0;
+                r0 = targ->GetId(), r1 = 0, r2 = 0;
+                if( !npc->RunPlane( REASON_ATTACK_DISTANTION, r0, r1, r2 ) )
                 {
-                    AI_ReloadWeapon( npc, map, weap, ammo->GetId() );
+                    WriteLog( "REASON_ATTACK_DISTANTION fail. Skip attack.\n" );
                     break;
                 }
-            }
-            else if( npc->IsRawParam( MODE_UNLIMITED_AMMO ) && weap->WeapGetMaxAmmoCount() )
-                weap->WeapLoadHolder();
+                if( plane != npc->GetCurPlane() )
+                    break;                                           // Validate plane
 
-            /************************************************************************/
-            /* Step 2: Move to target                                               */
-            /************************************************************************/
-            bool is_can_walk = CritType::IsCanWalk( npc->GetCrType() );
-            uint best_dist = 0, min_dist = 0, max_dist = 0;
-            r0 = targ->GetId(), r1 = 0, r2 = 0;
-            if( !npc->RunPlane( REASON_ATTACK_DISTANTION, r0, r1, r2 ) )
-            {
-                WriteLog( "REASON_ATTACK_DISTANTION fail. Skip attack.\n" );
-                break;
-            }
-            if( plane != npc->GetCurPlane() )
-                break;                                               // Validate plane
+                best_dist = r0;
+                min_dist = r1;
+                max_dist = r2;
 
-            best_dist = r0;
-            min_dist = r1;
-            max_dist = r2;
+                if( r2 <= 0 )             // Run away
+                {
+                    npc->NextPlane( REASON_RUN_AWAY );
+                    break;
+                }
 
-            if( r2 <= 0 )                 // Run away
-            {
-                npc->NextPlane( REASON_RUN_AWAY );
-                break;
-            }
+                if( max_dist <= 0 )
+                {
+                    uint look = npc->GetLook();
+                    max_dist = npc->GetAttackDist( weap, use );
+                    if( max_dist > look )
+                        max_dist = look;
+                }
+                if( min_dist <= 0 )
+                    min_dist = 1;
 
-            if( max_dist <= 0 )
-            {
-                uint look = npc->GetLook();
-                max_dist = npc->GetAttackDist( weap, use );
-                if( max_dist > look )
-                    max_dist = look;
-            }
-            if( min_dist <= 0 )
-                min_dist = 1;
+                if( min_dist > max_dist )
+                    min_dist = max_dist;
+                best_dist = CLAMP( best_dist, min_dist, max_dist );
 
-            if( min_dist > max_dist )
-                min_dist = max_dist;
-            best_dist = CLAMP( best_dist, min_dist, max_dist );
+                ushort    hx = npc->GetHexX();
+                ushort    hy = npc->GetHexY();
+                ushort    t_hx = targ->GetHexX();
+                ushort    t_hy = targ->GetHexY();
+                ushort    res_hx = t_hx;
+                ushort    res_hy = t_hy;
+                bool      is_run = plane->Attack.IsRun;
+                bool      is_range = ( weap->Proto->Weapon_MaxDist[use] > 2 );
 
-            ushort    hx = npc->GetHexX();
-            ushort    hy = npc->GetHexY();
-            ushort    t_hx = targ->GetHexX();
-            ushort    t_hy = targ->GetHexY();
-            ushort    res_hx = t_hx;
-            ushort    res_hy = t_hy;
-            bool      is_run = plane->Attack.IsRun;
-            bool      is_range = ( weap->Proto->Weapon_MaxDist[use] > 2 );
+                TraceData trace;
+                trace.TraceMap = map;
+                trace.BeginHx = hx;
+                trace.BeginHy = hy;
+                trace.EndHx = t_hx;
+                trace.EndHy = t_hy;
+                trace.Dist = max_dist;
+                trace.FindCr = targ;
 
-            TraceData trace;
-            trace.TraceMap = map;
-            trace.BeginHx = hx;
-            trace.BeginHy = hy;
-            trace.EndHx = t_hx;
-            trace.EndHy = t_hy;
-            trace.Dist = max_dist;
-            trace.FindCr = targ;
-
-            // Dirt
-            MapMngr.TraceBullet( trace );
-            if( !trace.IsCritterFounded )
-            {
-                if( is_can_walk )
-                    AI_MoveToCrit( npc, targ->GetId(), is_range ? 1 + npc->GetMultihex() : max_dist, max_dist + ( is_range ? 0 : 5 ), is_run );
-                else
-                    npc->NextPlane( REASON_CANT_WALK );
-                break;
-            }
-
-            // Find better position
-            if( is_range && is_can_walk )
-            {
-                trace.BeginHx = t_hx;
-                trace.BeginHy = t_hy;
-                trace.EndHx = hx;
-                trace.EndHy = hy;
-                trace.Dist = best_dist;
-                trace.FindCr = npc;
-                trace.IsCheckTeam = true;
-                trace.BaseCrTeamId = npc->Data.Params[ST_TEAM_ID];
+                // Dirt
                 MapMngr.TraceBullet( trace );
                 if( !trace.IsCritterFounded )
                 {
-                    UShortPair last_passed;
-                    trace.LastPassed = &last_passed;
-                    trace.LastPassedSkipCritters = true;
-                    trace.FindCr = NULL;
-                    trace.Dist = best_dist;
+                    if( is_can_walk )
+                        AI_MoveToCrit( npc, targ->GetId(), is_range ? 1 + npc->GetMultihex() : max_dist, max_dist + ( is_range ? 0 : 5 ), is_run );
+                    else
+                        npc->NextPlane( REASON_CANT_WALK );
+                    break;
+                }
 
-                    bool  find_ok = false;
-                    float deq_step = 360.0f / float(max_dist * 6);
-                    float deq = deq_step;
-                    for( int i = 1, j = best_dist * 6; i <= j; i++ )                // Full round
+                // Find better position
+                if( is_range && is_can_walk )
+                {
+                    trace.BeginHx = t_hx;
+                    trace.BeginHy = t_hy;
+                    trace.EndHx = hx;
+                    trace.EndHy = hy;
+                    trace.Dist = best_dist;
+                    trace.FindCr = npc;
+                    trace.IsCheckTeam = true;
+                    trace.BaseCrTeamId = npc->Data.Params[ST_TEAM_ID];
+                    MapMngr.TraceBullet( trace );
+                    if( !trace.IsCritterFounded )
                     {
-                        trace.Angle = deq;
-                        MapMngr.TraceBullet( trace );
-                        if( ( trace.IsHaveLastPassed || ( last_passed.first == npc->GetHexX() && last_passed.second == npc->GetHexY() ) ) &&
-                            DistGame( t_hx, t_hy, last_passed.first, last_passed.second ) >= min_dist )
+                        UShortPair last_passed;
+                        trace.LastPassed = &last_passed;
+                        trace.LastPassedSkipCritters = true;
+                        trace.FindCr = NULL;
+                        trace.Dist = best_dist;
+
+                        bool  find_ok = false;
+                        float deq_step = 360.0f / float(max_dist * 6);
+                        float deq = deq_step;
+                        for( int i = 1, j = best_dist * 6; i <= j; i++ )            // Full round
                         {
-                            res_hx = last_passed.first;
-                            res_hy = last_passed.second;
-                            find_ok = true;
+                            trace.Angle = deq;
+                            MapMngr.TraceBullet( trace );
+                            if( ( trace.IsHaveLastPassed || ( last_passed.first == npc->GetHexX() && last_passed.second == npc->GetHexY() ) ) &&
+                                DistGame( t_hx, t_hy, last_passed.first, last_passed.second ) >= min_dist )
+                            {
+                                res_hx = last_passed.first;
+                                res_hy = last_passed.second;
+                                find_ok = true;
+                                break;
+                            }
+
+                            if( !( i & 1 ) )
+                                deq = deq_step * float( ( i + 2 ) / 2 );
+                            else
+                                deq = -deq;
+                        }
+
+                        if( !find_ok )                       // Position not found
+                        {
+                            npc->NextPlane( REASON_POSITION_NOT_FOUND );
+                            break;
+                        }
+                        else if( hx != res_hx || hy != res_hy )
+                        {
+                            if( is_can_walk )
+                                AI_Move( npc, res_hx, res_hy, is_run, 0, 0 );
+                            else
+                                npc->NextPlane( REASON_CANT_WALK );
                             break;
                         }
 
-                        if( !( i & 1 ) )
-                            deq = deq_step * float( ( i + 2 ) / 2 );
-                        else
-                            deq = -deq;
                     }
-
-                    if( !find_ok )                           // Position not found
-                    {
-                        npc->NextPlane( REASON_POSITION_NOT_FOUND );
-                        break;
-                    }
-                    else if( hx != res_hx || hy != res_hy )
-                    {
-                        if( is_can_walk )
-                            AI_Move( npc, res_hx, res_hy, is_run, 0, 0 );
-                        else
-                            npc->NextPlane( REASON_CANT_WALK );
-                        break;
-                    }
-
                 }
-            }
-            // Find precision HtH attack
-            else if( !is_range )
-            {
-                if( !CheckDist( hx, hy, t_hx, t_hy, max_dist ) )
+                // Find precision HtH attack
+                else if( !is_range )
                 {
-                    if( !is_can_walk )
-                        npc->NextPlane( REASON_CANT_WALK );
-                    else if( max_dist > 1 && best_dist == 1 )                       // Check busy ring
+                    if( !CheckDist( hx, hy, t_hx, t_hy, max_dist ) )
                     {
-                        short* rsx, * rsy;
-                        GetHexOffsets( t_hx & 1, rsx, rsy );
+                        if( !is_can_walk )
+                            npc->NextPlane( REASON_CANT_WALK );
+                        else if( max_dist > 1 && best_dist == 1 )                   // Check busy ring
+                        {
+                            short* rsx, * rsy;
+                            GetHexOffsets( t_hx & 1, rsx, rsy );
 
-                        int i;
-                        for( i = 0; i < 6; i++, rsx++, rsy++ )
-                            if( map->IsHexPassed( t_hx + *rsx, t_hy + *rsy ) )
-                                break;
+                            int i;
+                            for( i = 0; i < 6; i++, rsx++, rsy++ )
+                                if( map->IsHexPassed( t_hx + *rsx, t_hy + *rsy ) )
+                                    break;
 
-                        if( i == 6 )
-                            AI_MoveToCrit( npc, targ->GetId(), max_dist, 0, is_run );
+                            if( i == 6 )
+                                AI_MoveToCrit( npc, targ->GetId(), max_dist, 0, is_run );
+                            else
+                                AI_MoveToCrit( npc, targ->GetId(), best_dist, 0, is_run );
+                        }
                         else
                             AI_MoveToCrit( npc, targ->GetId(), best_dist, 0, is_run );
+                        break;
                     }
-                    else
-                        AI_MoveToCrit( npc, targ->GetId(), best_dist, 0, is_run );
+                }
+
+                /************************************************************************/
+                /* Step 3: Attack                                                       */
+                /************************************************************************/
+
+                r0 = targ->GetId();
+                r1 = 0;
+                r2 = 0;
+                if( !npc->RunPlane( REASON_ATTACK_USE_AIM, r0, r1, r2 ) )
+                {
+                    WriteLog( "REASON_ATTACK_USE_AIM fail. Skip attack.\n" );
                     break;
                 }
-            }
 
+                if( r2 )
+                {
+                    npc->SetWait( r2 );
+                    break;
+                }
+
+                if( r0 != (uint)use && weap->WeapIsUseAviable( r0 ) )
+                    use = r0;
+
+                int aim = r1;
+                if( !( CritType::IsCanAim( npc->GetCrType() ) && !npc->IsRawParam( MODE_NO_AIM ) && weap->WeapIsCanAim( use ) ) )
+                    aim = 0;
+
+                weap->SetMode( MAKE_ITEM_MODE( use, aim ) );
+                AI_Attack( npc, map, MAKE_ITEM_MODE( use, aim ), targ->GetId() );
+            }
             /************************************************************************/
-            /* Step 3: Attack                                                       */
+            /* Target not visible, try find by last stored position                 */
             /************************************************************************/
-
-            r0 = targ->GetId();
-            r1 = 0;
-            r2 = 0;
-            if( !npc->RunPlane( REASON_ATTACK_USE_AIM, r0, r1, r2 ) )
+            else
             {
-                WriteLog( "REASON_ATTACK_USE_AIM fail. Skip attack.\n" );
-                break;
+                if( is_busy )
+                    break;
+
+                if( ( !plane->Attack.LastHexX && !plane->Attack.LastHexY ) || !CritType::IsCanWalk( npc->GetCrType() ) )
+                {
+                    Critter* targ_ = CrMngr.GetCritter( plane->Attack.TargId, true );
+                    npc->NextPlane( REASON_TARGET_DISAPPEARED, targ_, NULL );
+                    break;
+                }
+
+                AI_Move( npc, plane->Attack.LastHexX, plane->Attack.LastHexY, plane->Attack.IsRun, 1 + npc->GetMultihex(), npc->GetLook() / 2 );
+                plane->Attack.LastHexX = 0;
+                plane->Attack.LastHexY = 0;
             }
-
-            if( r2 )
-            {
-                npc->SetWait( r2 );
-                break;
-            }
-
-            if( r0 != (uint)use && weap->WeapIsUseAviable( r0 ) )
-                use = r0;
-
-            int aim = r1;
-            if( !( CritType::IsCanAim( npc->GetCrType() ) && !npc->IsRawParam( MODE_NO_AIM ) && weap->WeapIsCanAim( use ) ) )
-                aim = 0;
-
-            weap->SetMode( MAKE_ITEM_MODE( use, aim ) );
-            AI_Attack( npc, map, MAKE_ITEM_MODE( use, aim ), targ->GetId() );
         }
-        /************************************************************************/
-        /* Target not visible, try find by last stored position                 */
-        /************************************************************************/
-        else
-        {
-            if( is_busy )
-                break;
-
-            if( ( !plane->Attack.LastHexX && !plane->Attack.LastHexY ) || !CritType::IsCanWalk( npc->GetCrType() ) )
-            {
-                Critter* targ_ = CrMngr.GetCritter( plane->Attack.TargId, true );
-                npc->NextPlane( REASON_TARGET_DISAPPEARED, targ_, NULL );
-                break;
-            }
-
-            AI_Move( npc, plane->Attack.LastHexX, plane->Attack.LastHexY, plane->Attack.IsRun, 1 + npc->GetMultihex(), npc->GetLook() / 2 );
-            plane->Attack.LastHexX = 0;
-            plane->Attack.LastHexY = 0;
-        }
-    }
-    break;
+        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Walk   ================================== */
 /* ==================================================================== */
 /************************************************************************/
-    case AI_PLANE_WALK:
-    {
-        if( is_busy )
-            break;
-
-        if( CheckDist( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY, plane->Walk.Cut ) )
+        case AI_PLANE_WALK:
         {
-            if( plane->Walk.Dir < 6 )
-            {
-                npc->Data.Dir = plane->Walk.Dir;
-                npc->SendA_Dir();
-            }
-            else if( plane->Walk.Cut )
-            {
-                npc->Data.Dir = GetFarDir( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY );
-                npc->SendA_Dir();
-            }
+            if( is_busy )
+                break;
 
-            npc->NextPlane( REASON_SUCCESS );
-        }
-        else
-        {
-            if( CritType::IsCanWalk( npc->GetCrType() ) )
-                AI_Move( npc, plane->Walk.HexX, plane->Walk.HexY, plane->Walk.IsRun, plane->Walk.Cut, 0 );
+            if( CheckDist( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY, plane->Walk.Cut ) )
+            {
+                if( plane->Walk.Dir < 6 )
+                {
+                    npc->Data.Dir = plane->Walk.Dir;
+                    npc->SendA_Dir();
+                }
+                else if( plane->Walk.Cut )
+                {
+                    npc->Data.Dir = GetFarDir( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY );
+                    npc->SendA_Dir();
+                }
+
+                npc->NextPlane( REASON_SUCCESS );
+            }
             else
-                npc->NextPlane( REASON_CANT_WALK );
+            {
+                if( CritType::IsCanWalk( npc->GetCrType() ) )
+                    AI_Move( npc, plane->Walk.HexX, plane->Walk.HexY, plane->Walk.IsRun, plane->Walk.Cut, 0 );
+                else
+                    npc->NextPlane( REASON_CANT_WALK );
+            }
         }
-    }
-    break;
+        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Pick   ================================== */
 /* ==================================================================== */
 /************************************************************************/
-    case AI_PLANE_PICK:
-    {
-        ushort hx = plane->Pick.HexX;
-        ushort hy = plane->Pick.HexY;
-        ushort pid = plane->Pick.Pid;
-        uint   use_item_id = plane->Pick.UseItemId;
-        bool   to_open = plane->Pick.ToOpen;
-        bool   is_run = plane->Pick.IsRun;
-
-        Item*  item = map->GetItemHex( hx, hy, pid, NULL );         // Cheat
-        if( !item || ( item->IsDoor() && ( to_open ? item->LockerIsOpen() : item->LockerIsClose() ) ) )
+        case AI_PLANE_PICK:
         {
-            npc->NextPlane( REASON_SUCCESS );
-            break;
-        }
+            ushort hx = plane->Pick.HexX;
+            ushort hy = plane->Pick.HexY;
+            ushort pid = plane->Pick.Pid;
+            uint   use_item_id = plane->Pick.UseItemId;
+            bool   to_open = plane->Pick.ToOpen;
+            bool   is_run = plane->Pick.IsRun;
 
-        if( use_item_id && !npc->GetItem( use_item_id, true ) )
-        {
-            npc->NextPlane( REASON_USE_ITEM_NOT_FOUND );
-            break;
-        }
-
-        if( is_busy )
-            break;
-
-        ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
-        if( !proto_item )
-        {
-            npc->NextPlane( REASON_SUCCESS );
-            break;
-        }
-
-        int use_dist = npc->GetUseDist();
-        if( !CheckDist( npc->GetHexX(), npc->GetHexY(), hx, hy, use_dist ) )
-        {
-            AI_Move( npc, hx, hy, is_run, use_dist, 0 );
-        }
-        else
-        {
-            npc->Data.Dir = GetFarDir( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY );
-            npc->SendA_Dir();
-            if( AI_PickItem( npc, map, hx, hy, pid, use_item_id ) )
+            Item*  item = map->GetItemHex( hx, hy, pid, NULL );     // Cheat
+            if( !item || ( item->IsDoor() && ( to_open ? item->LockerIsOpen() : item->LockerIsClose() ) ) )
+            {
                 npc->NextPlane( REASON_SUCCESS );
+                break;
+            }
+
+            if( use_item_id && !npc->GetItem( use_item_id, true ) )
+            {
+                npc->NextPlane( REASON_USE_ITEM_NOT_FOUND );
+                break;
+            }
+
+            if( is_busy )
+                break;
+
+            ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
+            if( !proto_item )
+            {
+                npc->NextPlane( REASON_SUCCESS );
+                break;
+            }
+
+            int use_dist = npc->GetUseDist();
+            if( !CheckDist( npc->GetHexX(), npc->GetHexY(), hx, hy, use_dist ) )
+            {
+                AI_Move( npc, hx, hy, is_run, use_dist, 0 );
+            }
+            else
+            {
+                npc->Data.Dir = GetFarDir( npc->GetHexX(), npc->GetHexY(), plane->Walk.HexX, plane->Walk.HexY );
+                npc->SendA_Dir();
+                if( AI_PickItem( npc, map, hx, hy, pid, use_item_id ) )
+                    npc->NextPlane( REASON_SUCCESS );
+            }
         }
-    }
-    break;
+        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ==================================================================== */
 /* ==================================================================== */
 /************************************************************************/
-    default:
-    {
-        npc->NextPlane( REASON_SUCCESS );
-    }
-    break;
+        default:
+        {
+            npc->NextPlane( REASON_SUCCESS );
+        }
+        break;
     }
 
 //	if(map->IsTurnBasedOn && map->IsCritterTurn(npc) && !is_busy && (npc->IsNoPlanes() || !npc->GetCurPlane()->IsMove) && !npc->IsBusy() && !npc->IsWait()) map->EndCritterTurn();
@@ -1006,16 +1006,16 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
 
         switch( demand.Who )
         {
-        case 'p':
-            master = cl;
-            slave = npc;
-            break;
-        case 'n':
-            master = npc;
-            slave = cl;
-            break;
-        default:
-            continue;
+            case 'p':
+                master = cl;
+                slave = npc;
+                break;
+            case 'n':
+                master = npc;
+                slave = cl;
+                break;
+            default:
+                continue;
         }
 
         if( !master )
@@ -1024,114 +1024,114 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
         ushort index = demand.ParamId;
         switch( demand.Type )
         {
-        case DR_PARAM:
-        {
-            int val = DialogGetParam( master, slave, index );
-            switch( demand.Op )
+            case DR_PARAM:
             {
-            case '>':
-                if( val > demand.Value )
-                    continue;
-                break;
-            case '<':
-                if( val < demand.Value )
-                    continue;
-                break;
-            case '=':
-                if( val == demand.Value )
-                    continue;
-                break;
-            case '!':
-                if( val != demand.Value )
-                    continue;
-                break;
-            case '}':
-                if( val >= demand.Value )
-                    continue;
-                break;
-            case '{':
-                if( val <= demand.Value )
-                    continue;
-                break;
-            default:
-                break;
-            }
-        }
-        break;                 // or
-        case DR_VAR:
-        {
-            TemplateVar* tvar = VarMngr.GetTemplateVar( index );
-            if( !tvar )
-                break;
-
-            uint master_id = 0, slave_id = 0;
-            if( tvar->Type == VAR_LOCAL )
-                master_id = master->GetId();
-            else if( tvar->Type == VAR_UNICUM )
-            {
-                master_id = master->GetId();
-                slave_id = ( slave ? slave->GetId() : 0 );
-            }
-            else if( tvar->Type == VAR_LOCAL_LOCATION )
-            {
-                Map* map = MapMngr.GetMap( master->GetMap(), false );
-                if( map )
-                    master_id = map->GetLocation( false )->GetId();
-            }
-            else if( tvar->Type == VAR_LOCAL_MAP )
-                master_id = master->GetMap();
-            else if( tvar->Type == VAR_LOCAL_ITEM )
-                master_id = master->ItemSlotMain->GetId();
-
-            if( VarMngr.CheckVar( index, master_id, slave_id, demand.Op, demand.Value ) )
-                continue;
-        }
-        break;                 // or
-        case DR_ITEM:
-            switch( demand.Op )
-            {
-            case '>':
-                if( (int)master->CountItemPid( index ) > demand.Value )
-                    continue;
-                break;
-            case '<':
-                if( (int)master->CountItemPid( index ) < demand.Value )
-                    continue;
-                break;
-            case '=':
-                if( (int)master->CountItemPid( index ) == demand.Value )
-                    continue;
-                break;
-            case '!':
-                if( (int)master->CountItemPid( index ) != demand.Value )
-                    continue;
-                break;
-            case '}':
-                if( (int)master->CountItemPid( index ) >= demand.Value )
-                    continue;
-                break;
-            case '{':
-                if( (int)master->CountItemPid( index ) <= demand.Value )
-                    continue;
-                break;
-            default:
-                break;
+                int val = DialogGetParam( master, slave, index );
+                switch( demand.Op )
+                {
+                    case '>':
+                        if( val > demand.Value )
+                            continue;
+                        break;
+                    case '<':
+                        if( val < demand.Value )
+                            continue;
+                        break;
+                    case '=':
+                        if( val == demand.Value )
+                            continue;
+                        break;
+                    case '!':
+                        if( val != demand.Value )
+                            continue;
+                        break;
+                    case '}':
+                        if( val >= demand.Value )
+                            continue;
+                        break;
+                    case '{':
+                        if( val <= demand.Value )
+                            continue;
+                        break;
+                    default:
+                        break;
+                }
             }
             break;             // or
-        case DR_SCRIPT:
-            GameOpt.DialogDemandRecheck = recheck;
-            cl->Talk.Locked = true;
-            if( DialogScriptDemand( demand, master, slave ) )
+            case DR_VAR:
             {
+                TemplateVar* tvar = VarMngr.GetTemplateVar( index );
+                if( !tvar )
+                    break;
+
+                uint master_id = 0, slave_id = 0;
+                if( tvar->Type == VAR_LOCAL )
+                    master_id = master->GetId();
+                else if( tvar->Type == VAR_UNICUM )
+                {
+                    master_id = master->GetId();
+                    slave_id = ( slave ? slave->GetId() : 0 );
+                }
+                else if( tvar->Type == VAR_LOCAL_LOCATION )
+                {
+                    Map* map = MapMngr.GetMap( master->GetMap(), false );
+                    if( map )
+                        master_id = map->GetLocation( false )->GetId();
+                }
+                else if( tvar->Type == VAR_LOCAL_MAP )
+                    master_id = master->GetMap();
+                else if( tvar->Type == VAR_LOCAL_ITEM )
+                    master_id = master->ItemSlotMain->GetId();
+
+                if( VarMngr.CheckVar( index, master_id, slave_id, demand.Op, demand.Value ) )
+                    continue;
+            }
+            break;             // or
+            case DR_ITEM:
+                switch( demand.Op )
+                {
+                    case '>':
+                        if( (int)master->CountItemPid( index ) > demand.Value )
+                            continue;
+                        break;
+                    case '<':
+                        if( (int)master->CountItemPid( index ) < demand.Value )
+                            continue;
+                        break;
+                    case '=':
+                        if( (int)master->CountItemPid( index ) == demand.Value )
+                            continue;
+                        break;
+                    case '!':
+                        if( (int)master->CountItemPid( index ) != demand.Value )
+                            continue;
+                        break;
+                    case '}':
+                        if( (int)master->CountItemPid( index ) >= demand.Value )
+                            continue;
+                        break;
+                    case '{':
+                        if( (int)master->CountItemPid( index ) <= demand.Value )
+                            continue;
+                        break;
+                    default:
+                        break;
+                }
+                break;         // or
+            case DR_SCRIPT:
+                GameOpt.DialogDemandRecheck = recheck;
+                cl->Talk.Locked = true;
+                if( DialogScriptDemand( demand, master, slave ) )
+                {
+                    cl->Talk.Locked = false;
+                    continue;
+                }
                 cl->Talk.Locked = false;
+                break;         // or
+            case DR_OR:
+                return true;
+            default:
                 continue;
-            }
-            cl->Talk.Locked = false;
-            break;             // or
-        case DR_OR:
-            return true;
-        default:
-            continue;
         }
 
         bool or_mod = false;
@@ -1165,16 +1165,16 @@ uint FOServer::Dialog_UseResult( Npc* npc, Client* cl, DialogAnswer& answer )
 
         switch( result.Who )
         {
-        case 'p':
-            master = cl;
-            slave = npc;
-            break;
-        case 'n':
-            master = npc;
-            slave = cl;
-            break;
-        default:
-            continue;
+            case 'p':
+                master = cl;
+                slave = npc;
+                break;
+            case 'n':
+                master = npc;
+                slave = cl;
+                break;
+            default:
+                continue;
         }
 
         if( !master )
@@ -1183,99 +1183,99 @@ uint FOServer::Dialog_UseResult( Npc* npc, Client* cl, DialogAnswer& answer )
         ushort index = result.ParamId;
         switch( result.Type )
         {
-        case DR_PARAM:
-            master->ChangeParam( index );
-            if( index >= REPUTATION_BEGIN && index <= REPUTATION_END && master->Data.Params[index] == (int)0x80000000 )
-                master->Data.Params[index] = 0;
-            switch( result.Op )
+            case DR_PARAM:
+                master->ChangeParam( index );
+                if( index >= REPUTATION_BEGIN && index <= REPUTATION_END && master->Data.Params[index] == (int)0x80000000 )
+                    master->Data.Params[index] = 0;
+                switch( result.Op )
+                {
+                    case '+':
+                        master->Data.Params[index] += result.Value;
+                        break;
+                    case '-':
+                        master->Data.Params[index] -= result.Value;
+                        break;
+                    case '*':
+                        master->Data.Params[index] *= result.Value;
+                        break;
+                    case '/':
+                        master->Data.Params[index] /= result.Value;
+                        break;
+                    case '=':
+                        master->Data.Params[index] = result.Value;
+                        break;
+                    default:
+                        break;
+                }
+                continue;
+            case DR_VAR:
             {
-            case '+':
-                master->Data.Params[index] += result.Value;
-                break;
-            case '-':
-                master->Data.Params[index] -= result.Value;
-                break;
-            case '*':
-                master->Data.Params[index] *= result.Value;
-                break;
-            case '/':
-                master->Data.Params[index] /= result.Value;
-                break;
-            case '=':
-                master->Data.Params[index] = result.Value;
-                break;
-            default:
-                break;
-            }
-            continue;
-        case DR_VAR:
-        {
-            TemplateVar* tvar = VarMngr.GetTemplateVar( index );
-            if( !tvar )
-                break;
+                TemplateVar* tvar = VarMngr.GetTemplateVar( index );
+                if( !tvar )
+                    break;
 
-            uint master_id = 0, slave_id = 0;
-            if( tvar->Type == VAR_LOCAL )
-                master_id = master->GetId();
-            else if( tvar->Type == VAR_UNICUM )
-            {
-                master_id = master->GetId();
-                slave_id = ( slave ? slave->GetId() : 0 );
-            }
-            else if( tvar->Type == VAR_LOCAL_LOCATION )
-            {
-                Map* map = MapMngr.GetMap( master->GetMap(), false );
-                if( map )
-                    master_id = map->GetLocation( false )->GetId();
-            }
-            else if( tvar->Type == VAR_LOCAL_MAP )
-                master_id = master->GetMap();
-            else if( tvar->Type == VAR_LOCAL_ITEM )
-                master_id = master->ItemSlotMain->GetId();
+                uint master_id = 0, slave_id = 0;
+                if( tvar->Type == VAR_LOCAL )
+                    master_id = master->GetId();
+                else if( tvar->Type == VAR_UNICUM )
+                {
+                    master_id = master->GetId();
+                    slave_id = ( slave ? slave->GetId() : 0 );
+                }
+                else if( tvar->Type == VAR_LOCAL_LOCATION )
+                {
+                    Map* map = MapMngr.GetMap( master->GetMap(), false );
+                    if( map )
+                        master_id = map->GetLocation( false )->GetId();
+                }
+                else if( tvar->Type == VAR_LOCAL_MAP )
+                    master_id = master->GetMap();
+                else if( tvar->Type == VAR_LOCAL_ITEM )
+                    master_id = master->ItemSlotMain->GetId();
 
-            VarMngr.ChangeVar( index, master_id, slave_id, result.Op, result.Value );
-        }
-            continue;
-        case DR_ITEM:
-        {
-            int cur_count = master->CountItemPid( index );
-            int need_count = cur_count;
-
-            switch( result.Op )
+                VarMngr.ChangeVar( index, master_id, slave_id, result.Op, result.Value );
+            }
+                continue;
+            case DR_ITEM:
             {
-            case '+':
-                need_count += result.Value;
-                break;
-            case '-':
-                need_count -= result.Value;
-                break;
-            case '*':
-                need_count *= result.Value;
-                break;
-            case '/':
-                need_count /= result.Value;
-                break;
-            case '=':
-                need_count = result.Value;
-                break;
+                int cur_count = master->CountItemPid( index );
+                int need_count = cur_count;
+
+                switch( result.Op )
+                {
+                    case '+':
+                        need_count += result.Value;
+                        break;
+                    case '-':
+                        need_count -= result.Value;
+                        break;
+                    case '*':
+                        need_count *= result.Value;
+                        break;
+                    case '/':
+                        need_count /= result.Value;
+                        break;
+                    case '=':
+                        need_count = result.Value;
+                        break;
+                    default:
+                        continue;
+                }
+
+                if( need_count < 0 )
+                    need_count = 0;
+                if( cur_count == need_count )
+                    continue;
+                ItemMngr.SetItemCritter( master, index, need_count );
+            }
+                continue;
+            case DR_SCRIPT:
+                cl->Talk.Locked = true;
+                force_dialog = DialogScriptResult( result, master, slave );
+                cl->Talk.Locked = false;
+                continue;
             default:
                 continue;
-            }
-
-            if( need_count < 0 )
-                need_count = 0;
-            if( cur_count == need_count )
-                continue;
-            ItemMngr.SetItemCritter( master, index, need_count );
-        }
-            continue;
-        case DR_SCRIPT:
-            cl->Talk.Locked = true;
-            force_dialog = DialogScriptResult( result, master, slave );
-            cl->Talk.Locked = false;
-            continue;
-        default:
-            continue;
         }
     }
 
@@ -1706,54 +1706,54 @@ label_ForceDialog:
         // Special links
         switch( dlg_id )
         {
-        case -3:
-        case DIALOG_BARTER:
+            case -3:
+            case DIALOG_BARTER:
 label_Barter:
-            if( !npc )
-            {
-                cl->Send_TextMsg( cl, STR_BARTER_NO_BARTER_MODE, SAY_DIALOG, TEXTMSG_GAME );
-                return;
-            }
-            if( cur_dialog->DlgScript != NOT_ANSWER_CLOSE_DIALOG && !npc->IsRawParam( MODE_DLG_SCRIPT_BARTER ) )
-            {
-                cl->Send_TextMsg( npc, STR_BARTER_NO_BARTER_NOW, SAY_DIALOG, TEXTMSG_GAME );
-                return;
-            }
-            if( npc->IsRawParam( MODE_NO_BARTER ) )
-            {
-                cl->Send_TextMsg( npc, STR_BARTER_NO_BARTER_MODE, SAY_DIALOG, TEXTMSG_GAME );
-                return;
-            }
-            if( !npc->EventBarter( cl, true, npc->GetBarterPlayers() + 1 ) )
-            {
-                // Message must processed in script
-                return;
-            }
+                if( !npc )
+                {
+                    cl->Send_TextMsg( cl, STR_BARTER_NO_BARTER_MODE, SAY_DIALOG, TEXTMSG_GAME );
+                    return;
+                }
+                if( cur_dialog->DlgScript != NOT_ANSWER_CLOSE_DIALOG && !npc->IsRawParam( MODE_DLG_SCRIPT_BARTER ) )
+                {
+                    cl->Send_TextMsg( npc, STR_BARTER_NO_BARTER_NOW, SAY_DIALOG, TEXTMSG_GAME );
+                    return;
+                }
+                if( npc->IsRawParam( MODE_NO_BARTER ) )
+                {
+                    cl->Send_TextMsg( npc, STR_BARTER_NO_BARTER_MODE, SAY_DIALOG, TEXTMSG_GAME );
+                    return;
+                }
+                if( !npc->EventBarter( cl, true, npc->GetBarterPlayers() + 1 ) )
+                {
+                    // Message must processed in script
+                    return;
+                }
 
-            cl->Talk.Barter = true;
-            cl->Talk.StartTick = Timer::GameTick();
-            cl->Talk.TalkTime = MAX( cl->GetRawParam( SK_BARTER ) * 1000, (int)GameOpt.DlgBarterMinTime );
-            cl->Send_ContainerInfo( npc, TRANSFER_CRIT_BARTER, true );
-            return;
-        case -2:
-        case DIALOG_BACK:
-            if( cl->Talk.LastDialogId )
-            {
-                dlg_id = cl->Talk.LastDialogId;
+                cl->Talk.Barter = true;
+                cl->Talk.StartTick = Timer::GameTick();
+                cl->Talk.TalkTime = MAX( cl->GetRawParam( SK_BARTER ) * 1000, (int)GameOpt.DlgBarterMinTime );
+                cl->Send_ContainerInfo( npc, TRANSFER_CRIT_BARTER, true );
+                return;
+            case -2:
+            case DIALOG_BACK:
+                if( cl->Talk.LastDialogId )
+                {
+                    dlg_id = cl->Talk.LastDialogId;
+                    break;
+                }
+            case -1:
+            case DIALOG_END:
+                cl->CloseTalk();
+                return;
+            case -4:
+            case DIALOG_ATTACK:
+                cl->CloseTalk();
+                if( npc )
+                    npc->SetTarget( REASON_FROM_DIALOG, cl, GameOpt.DeadHitPoints, false );
+                return;
+            default:
                 break;
-            }
-        case -1:
-        case DIALOG_END:
-            cl->CloseTalk();
-            return;
-        case -4:
-        case DIALOG_ATTACK:
-            cl->CloseTalk();
-            if( npc )
-                npc->SetTarget( REASON_FROM_DIALOG, cl, GameOpt.DeadHitPoints, false );
-            return;
-        default:
-            break;
         }
     }
     else

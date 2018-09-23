@@ -95,14 +95,14 @@ const char* FOMsg::GetStr( uint num )
 
     switch( str_count )
     {
-    case 0:
-        return ( *strData.begin() ).second.c_str();       // give FOMSG_ERRNUM
-    case 1:
-        break;
-    default:
-        for( int i = 0, j = Random( 0, str_count ) - 1; i < j; i++ )
-            ++it;
-        break;
+        case 0:
+            return ( *strData.begin() ).second.c_str();   // give FOMSG_ERRNUM
+        case 1:
+            break;
+        default:
+            for( int i = 0, j = Random( 0, str_count ) - 1; i < j; i++ )
+                ++it;
+            break;
     }
 
     return ( *it ).second.c_str();
@@ -144,14 +144,14 @@ int FOMsg::GetInt( uint num )
 
     switch( str_count )
     {
-    case 0:
-        return -1;
-    case 1:
-        break;
-    default:
-        for( int i = 0, j = Random( 0, str_count ) - 1; i < j; i++ )
-            ++it;
-        break;
+        case 0:
+            return -1;
+        case 1:
+            break;
+        default:
+            for( int i = 0, j = Random( 0, str_count ) - 1; i < j; i++ )
+                ++it;
+            break;
     }
 
     return atoi( ( *it ).second.c_str() );

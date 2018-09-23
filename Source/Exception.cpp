@@ -104,8 +104,8 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
             switch( except->ExceptionRecord->ExceptionCode )
             {
                 # define CASE_EXCEPTION( e ) \
-                case e:                      \
-                    fprintf( f, # e ); break
+                    case e:                  \
+                        fprintf( f, # e ); break
                 CASE_EXCEPTION( EXCEPTION_ACCESS_VIOLATION );
                 CASE_EXCEPTION( EXCEPTION_DATATYPE_MISALIGNMENT );
                 CASE_EXCEPTION( EXCEPTION_BREAKPOINT );
@@ -128,9 +128,9 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                 CASE_EXCEPTION( EXCEPTION_INVALID_DISPOSITION );
                 CASE_EXCEPTION( EXCEPTION_GUARD_PAGE );
                 CASE_EXCEPTION( EXCEPTION_INVALID_HANDLE );
-            default:
-                fprintf( f, "0x%0X", except->ExceptionRecord->ExceptionCode );
-                break;
+                default:
+                    fprintf( f, "0x%0X", except->ExceptionRecord->ExceptionCode );
+                    break;
             }
             fprintf( f, "\n" );
             fprintf( f, "\tAddress   0x%p\n", except->ExceptionRecord->ExceptionAddress );
@@ -350,38 +350,38 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
                     {
                         switch( module.SymType )
                         {
-                        case SymNone:
-                            callstack.symTypeString = "-nosymbols-";
-                            break;
-                        case SymCoff:
-                            callstack.symTypeString = "COFF";
-                            break;
-                        case SymCv:
-                            callstack.symTypeString = "CV";
-                            break;
-                        case SymPdb:
-                            callstack.symTypeString = "PDB";
-                            break;
-                        case SymExport:
-                            callstack.symTypeString = "-exported-";
-                            break;
-                        case SymDeferred:
-                            callstack.symTypeString = "-deferred-";
-                            break;
-                        case SymSym:
-                            callstack.symTypeString = "SYM";
-                            break;
-                            # if API_VERSION_NUMBER >= 9
-                        case SymDia:
-                            callstack.symTypeString = "DIA";
-                            break;
-                            # endif
-                        case SymVirtual:
-                            callstack.symTypeString = "Virtual";
-                            break;
-                        default:
-                            callstack.symTypeString = NULL;
-                            break;
+                            case SymNone:
+                                callstack.symTypeString = "-nosymbols-";
+                                break;
+                            case SymCoff:
+                                callstack.symTypeString = "COFF";
+                                break;
+                            case SymCv:
+                                callstack.symTypeString = "CV";
+                                break;
+                            case SymPdb:
+                                callstack.symTypeString = "PDB";
+                                break;
+                            case SymExport:
+                                callstack.symTypeString = "-exported-";
+                                break;
+                            case SymDeferred:
+                                callstack.symTypeString = "-deferred-";
+                                break;
+                            case SymSym:
+                                callstack.symTypeString = "SYM";
+                                break;
+                                # if API_VERSION_NUMBER >= 9
+                            case SymDia:
+                                callstack.symTypeString = "DIA";
+                                break;
+                                # endif
+                            case SymVirtual:
+                                callstack.symTypeString = "Virtual";
+                                break;
+                            default:
+                                callstack.symTypeString = NULL;
+                                break;
                         }
 
                         strcpy_s( callstack.moduleName, module.ModuleName );

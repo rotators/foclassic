@@ -1137,96 +1137,96 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
 
     switch( garbager_state )
     {
-    case 5:     // First time
-    {
-        best_count = 1000;
-    }
-    case 6:     // Statistics init and first time
-    {
-        CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
-
-        last_nongarbage = GetGCStatistics();
-        garbager_state = 0;
-    }
-    break;
-    case 0:     // Statistics stage 0, 1, 2
-    case 1:
-    case 2:
-    {
-        uint current_size = GetGCStatistics();
-
-        // Try 1x, 1.5x and 2x count time for time extrapolation
-        if( current_size < last_nongarbage + ( best_count * ( 2 + garbager_state ) ) / 2 )
-            break;
-
-        garbager_time[garbager_state] = Timer::AccurateTick();
-        CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
-        garbager_time[garbager_state] = Timer::AccurateTick() - garbager_time[garbager_state];
-
-        last_nongarbage = GetGCStatistics();
-        garbager_count[garbager_state] = current_size - last_nongarbage;
-
-        if( !garbager_count[garbager_state] )
-            break;                                                 // Repeat this step
-        garbager_state++;
-    }
-    break;
-    case 3:     // Statistics last stage, calculate best count
-    {
-        double obj_times[2];
-        bool   undetermined = false;
-        for( int i = 0; i < 2; i++ )
+        case 5: // First time
         {
-            if( garbager_count[i + 1] == garbager_count[i] )
-            {
-                undetermined = true;                       // Too low resolution, break statistics and repeat later
-                break;
-            }
-
-            obj_times[i] = ( garbager_time[i + 1] - garbager_time[i] ) / ( (double)garbager_count[i + 1] - (double)garbager_count[i] );
-
-            if( obj_times[i] <= 0.0f )                 // Should not happen
-            {
-                undetermined = true;                   // Too low resolution, break statistics and repeat later
-                break;
-            }
+            best_count = 1000;
         }
-        garbager_state = 4;
-        if( undetermined )
-            break;
-
-        double object_delete_time = ( obj_times[0] + obj_times[1] ) / 2;
-        double overhead = 0.0f;
-        for( int i = 0; i < 3; i++ )
-            overhead += ( garbager_time[i] - garbager_count[i] * object_delete_time );
-        overhead /= 3;
-        if( overhead > MaxGarbagerTime )
-            overhead = MaxGarbagerTime;                                        // Will result on deletion on every frame
-        best_count = (uint)( ( MaxGarbagerTime - overhead ) / object_delete_time );
-    }
-    break;
-    case 4:     // Normal garbage check
-    {
-        if( GarbagerCycle && Timer::FastTick() - last_garbager_tick >= GarbagerCycle )
-        {
-            CollectGarbage( asGC_ONE_STEP | asGC_DETECT_GARBAGE );
-            last_garbager_tick = Timer::FastTick();
-        }
-
-        if( EvaluationCycle && Timer::FastTick() - last_evaluation_tick >= EvaluationCycle )
-        {
-            garbager_state = 6;                   // Enter statistics after normal garbaging is done
-            last_evaluation_tick = Timer::FastTick();
-        }
-
-        if( GetGCStatistics() > last_nongarbage + best_count )
+        case 6: // Statistics init and first time
         {
             CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
+
+            last_nongarbage = GetGCStatistics();
+            garbager_state = 0;
         }
-    }
-    break;
-    default:
         break;
+        case 0: // Statistics stage 0, 1, 2
+        case 1:
+        case 2:
+        {
+            uint current_size = GetGCStatistics();
+
+            // Try 1x, 1.5x and 2x count time for time extrapolation
+            if( current_size < last_nongarbage + ( best_count * ( 2 + garbager_state ) ) / 2 )
+                break;
+
+            garbager_time[garbager_state] = Timer::AccurateTick();
+            CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
+            garbager_time[garbager_state] = Timer::AccurateTick() - garbager_time[garbager_state];
+
+            last_nongarbage = GetGCStatistics();
+            garbager_count[garbager_state] = current_size - last_nongarbage;
+
+            if( !garbager_count[garbager_state] )
+                break;                                             // Repeat this step
+            garbager_state++;
+        }
+        break;
+        case 3: // Statistics last stage, calculate best count
+        {
+            double obj_times[2];
+            bool   undetermined = false;
+            for( int i = 0; i < 2; i++ )
+            {
+                if( garbager_count[i + 1] == garbager_count[i] )
+                {
+                    undetermined = true;                   // Too low resolution, break statistics and repeat later
+                    break;
+                }
+
+                obj_times[i] = ( garbager_time[i + 1] - garbager_time[i] ) / ( (double)garbager_count[i + 1] - (double)garbager_count[i] );
+
+                if( obj_times[i] <= 0.0f )             // Should not happen
+                {
+                    undetermined = true;               // Too low resolution, break statistics and repeat later
+                    break;
+                }
+            }
+            garbager_state = 4;
+            if( undetermined )
+                break;
+
+            double object_delete_time = ( obj_times[0] + obj_times[1] ) / 2;
+            double overhead = 0.0f;
+            for( int i = 0; i < 3; i++ )
+                overhead += ( garbager_time[i] - garbager_count[i] * object_delete_time );
+            overhead /= 3;
+            if( overhead > MaxGarbagerTime )
+                overhead = MaxGarbagerTime;                                    // Will result on deletion on every frame
+            best_count = (uint)( ( MaxGarbagerTime - overhead ) / object_delete_time );
+        }
+        break;
+        case 4: // Normal garbage check
+        {
+            if( GarbagerCycle && Timer::FastTick() - last_garbager_tick >= GarbagerCycle )
+            {
+                CollectGarbage( asGC_ONE_STEP | asGC_DETECT_GARBAGE );
+                last_garbager_tick = Timer::FastTick();
+            }
+
+            if( EvaluationCycle && Timer::FastTick() - last_evaluation_tick >= EvaluationCycle )
+            {
+                garbager_state = 6;               // Enter statistics after normal garbaging is done
+                last_evaluation_tick = Timer::FastTick();
+            }
+
+            if( GetGCStatistics() > last_nongarbage + best_count )
+            {
+                CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
+            }
+        }
+        break;
+        default:
+            break;
     }
 }
 
