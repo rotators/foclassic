@@ -14,7 +14,7 @@
 class ScriptDictionary
 {
 public:
-    #ifdef FONLINE_DLL
+    #ifdef FOCLASSIC_DLL
     static ScriptDictionary& Create()
     {
         static int        typeId = ASEngine->GetTypeIdByDecl( "dictionary" );
@@ -100,7 +100,7 @@ protected:
     std::map< std::string, valueStruct > dict;
 };
 
-#ifndef FONLINE_DLL
+#ifndef FOCLASSIC_DLL
 void RegisterScriptDictionary( asIScriptEngine* engine );
 #endif
 

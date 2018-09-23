@@ -6,7 +6,7 @@
 class ScriptAny
 {
 public:
-    #ifdef FONLINE_DLL
+    #ifdef FOCLASSIC_DLL
     static ScriptAny& Create()
     {
         static int typeId = ASEngine->GetTypeIdByDecl( "any" );
@@ -78,7 +78,7 @@ protected:
     valueStruct value;
 };
 
-#ifndef FONLINE_DLL
+#ifndef FOCLASSIC_DLL
 void RegisterScriptAny( asIScriptEngine* engine );
 #endif
 

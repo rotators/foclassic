@@ -3,7 +3,7 @@
 
 #include "angelscript.h"
 
-#ifndef FONLINE_DLL
+#ifndef FOCLASSIC_DLL
 void RegisterScriptMath( asIScriptEngine* engine );
 #endif
 

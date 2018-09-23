@@ -17,7 +17,7 @@
 class ScriptFile
 {
 public:
-    #ifdef FONLINE_DLL
+    #ifdef FOCLASSIC_DLL
     static ScriptFile& Create()
     {
         static int  typeId = ASEngine->GetTypeIdByDecl( "file" );
@@ -86,7 +86,7 @@ protected:
     FILE*       file;
 };
 
-#ifndef FONLINE_DLL
+#ifndef FOCLASSIC_DLL
 void RegisterScriptFile( asIScriptEngine* engine );
 #endif
 
