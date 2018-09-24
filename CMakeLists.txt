@@ -2,11 +2,30 @@
 ## https://cmake.org/cmake/help/v3.12/
 ##
 
+cmake_minimum_required( VERSION 3.12.2 )
+
 # disable in-source builds
 set( CMAKE_DISABLE_SOURCE_CHANGES ON )
 set( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
+get_filename_component( srcdir "${CMAKE_SOURCE_DIR}" REALPATH )
+get_filename_component( bindir "${CMAKE_BINARY_DIR}" REALPATH )
+if( ${srcdir} STREQUAL ${bindir} )
+	file( REMOVE ${srcdir}/cmake_install.cmake ) # removing other files wont work
+	message( STATUS "In-Source build are not allowed,
+   cmake must be ran from dedicated build directory.
 
-cmake_minimum_required( VERSION 3.12.2 )
+   Recommended
+	${srcdir}/SDK*/
+
+   Following files and directories MUST to be deleted
+   before running cmake again, from any location.
+	${srcdir}/CMakeCache.txt
+	${srcdir}/CMakeFiles/
+" )
+	message( FATAL_ERROR "In-Source build" )
+endif()
+unset( srcdir )
+unset( bindir )
 
 project( FOClassic
 	DESCRIPTION  "FOnline Classic"
