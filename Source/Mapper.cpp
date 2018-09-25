@@ -26,13 +26,6 @@ bool FOMapper::Init()
 {
     WriteLog( "Mapper initialization...\n" );
 
-    #ifdef USE_STLPORT
-    # if defined (FO_X86)
-    STATIC_ASSERT( sizeof(SpriteInfo) == 36 );
-    STATIC_ASSERT( sizeof(Sprite) == 120 );
-    STATIC_ASSERT( sizeof(GameOptions) == 1340 );
-    # endif
-    #else
     // Check the sizes of base types
     STATIC_ASSERT( sizeof(char) == 1 );
     STATIC_ASSERT( sizeof(short) == 2 );
@@ -45,7 +38,7 @@ bool FOMapper::Init()
     STATIC_ASSERT( sizeof(bool) == 1 );
     STATIC_ASSERT( sizeof(size_t) == 4 );
     STATIC_ASSERT( sizeof(void*) == 4 );
-    #endif
+    STATIC_ASSERT( sizeof(string) == 28 );
 
     // Register dll script data
     struct CritterChangeParameter_

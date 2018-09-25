@@ -160,6 +160,22 @@ int main( int argc, char** argv )
 
     WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
 
+    # if 0
+    WriteLog( "STATIC_ASSERT\n" );
+    WriteLog( "sizeof(char)   == %u\n", sizeof(char) );
+    WriteLog( "sizeof(short)  == %u\n", sizeof(short) );
+    WriteLog( "sizeof(int)    == %u\n", sizeof(int) );
+    WriteLog( "sizeof(int64)  == %u\n", sizeof(int64) );
+    WriteLog( "sizeof(uchar)  == %u\n", sizeof(uchar) );
+    WriteLog( "sizeof(ushort) == %u\n", sizeof(ushort) );
+    WriteLog( "sizeof(uint)   == %u\n", sizeof(uint) );
+    WriteLog( "sizeof(uint64) == %u\n", sizeof(uint64) );
+    WriteLog( "sizeof(bool)   == %u\n", sizeof(bool) );
+    WriteLog( "sizeof(size_t) == %u\n", sizeof(size_t) );
+    WriteLog( "sizeof(void*)  == %u\n", sizeof(void*) );
+    WriteLog( "sizeof(string) == %u\n", sizeof(string) );
+    # endif
+
     FOQuit = true;
     Script::SetLogDebugInfo( true );
 

@@ -108,6 +108,7 @@ bool FOClient::Init()
     STATIC_ASSERT( sizeof(bool) == 1 );
     STATIC_ASSERT( sizeof(size_t) == 4 );
     STATIC_ASSERT( sizeof(void*) == 4 );
+    STATIC_ASSERT( sizeof(string) == 28 );
 
     GET_UID0( UID0 );
     UID_PREPARE_UID4_0;
