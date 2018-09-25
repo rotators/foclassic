@@ -338,7 +338,11 @@ bool CryptManager::SetCacheTable( const char* cache_fname )
             fseek( fr, 0, SEEK_SET );
             uchar* buf = new uchar[len];
             if( !buf )
+            {
+                fclose( fr );
+                fclose( fw );
                 return false;
+            }
             fread( buf, sizeof(uchar), len, fr );
             fwrite( buf, sizeof(uchar), len, fw );
             delete[] buf;

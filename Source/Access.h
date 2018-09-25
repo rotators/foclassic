@@ -667,7 +667,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void (*logcb)( con
             uint info_size_utf8 = UTF8_BUF_SIZE( MAX_CHAT_MESSAGE );
             name[name_size_utf8 - 1] = 0;
             params[params_size_utf8 - 1] = 0;
-            info[info_size_utf8 - 1] = 0;
+            info[info_size_utf8 - 1] = 0; // FIXME Array 'info[128]' accessed at index 399, which is out of bounds.
 
             msg_len += name_size_utf8 + params_size_utf8 + info_size_utf8 + sizeof(ban_hours);
 
