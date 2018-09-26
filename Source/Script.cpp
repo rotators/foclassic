@@ -499,7 +499,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     }
 
     // Register variables
-    ptr = DLL_GetAddress( dll, "FOnline" );
+    ptr = DLL_GetAddress( dll, "FOClassic" );
     if( ptr )
         *ptr = (size_t)&GameOpt;
     ptr = DLL_GetAddress( dll, "ASEngine" );

@@ -820,7 +820,7 @@ void GetClientOptions()
 
     // Client config
     IniParser cfg;
-    cfg_mapper.GetStr( "ClientName", "FOnline", buf );
+    cfg_mapper.GetStr( "ClientName", "FOClassic", buf );
     Str::Append( buf, ".cfg" );
     cfg.LoadFile( buf, PT_ROOT );
     # else

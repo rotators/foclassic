@@ -97,7 +97,7 @@ namespace Script
         }
 
         // Register variables
-        ptr = DLL_GetAddress( dll, "FOnline" );
+        ptr = DLL_GetAddress( dll, "FOClassic" );
         if( ptr )
             *ptr = (size_t)NULL;
         ptr = DLL_GetAddress( dll, "ASEngine" );

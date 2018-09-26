@@ -193,7 +193,7 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryOptions)();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
 #define FOCLASSIC_DLL_ENTRY( isCompiler )          \
-    GameOptions * FOnline;                         \
+    GameOptions * FOClassic;                       \
     asIScriptEngine* ASEngine;                     \
     EXPORT void TARGET_NAME() {}                   \
     void (*Log)(const char* frmt, ...);            \
@@ -267,28 +267,28 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
 // Parameters
 #define MAX_PARAMS                   (1000)
-#define SKILL_OFFSET( skill )            ( (skill) + (FOnline->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
-#define PERK_OFFSET( perk )              ( (perk)  + (FOnline->AbsoluteOffsets ? 0 : PERK_BEGIN) )
+#define SKILL_OFFSET( skill )            ( (skill) + (FOClassic->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
+#define PERK_OFFSET( perk )              ( (perk)  + (FOClassic->AbsoluteOffsets ? 0 : PERK_BEGIN) )
 #define TB_BATTLE_TIMEOUT            (100000000)
 #define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
-#define SKILL_BEGIN                  (FOnline->SkillBegin)
-#define SKILL_END                    (FOnline->SkillEnd)
-#define TIMEOUT_BEGIN                (FOnline->TimeoutBegin)
-#define TIMEOUT_END                  (FOnline->TimeoutEnd)
-#define KILL_BEGIN                   (FOnline->KillBegin)
-#define KILL_END                     (FOnline->KillEnd)
-#define PERK_BEGIN                   (FOnline->PerkBegin)
-#define PERK_END                     (FOnline->PerkEnd)
-#define ADDICTION_BEGIN              (FOnline->AddictionBegin)
-#define ADDICTION_END                (FOnline->AddictionEnd)
-#define KARMA_BEGIN                  (FOnline->KarmaBegin)
-#define KARMA_END                    (FOnline->KarmaEnd)
-#define DAMAGE_BEGIN                 (FOnline->DamageBegin)
-#define DAMAGE_END                   (FOnline->DamageEnd)
-#define TRAIT_BEGIN                  (FOnline->TraitBegin)
-#define TRAIT_END                    (FOnline->TraitEnd)
-#define REPUTATION_BEGIN             (FOnline->ReputationBegin)
-#define REPUTATION_END               (FOnline->ReputationEnd)
+#define SKILL_BEGIN                  (FOClassic->SkillBegin)
+#define SKILL_END                    (FOClassic->SkillEnd)
+#define TIMEOUT_BEGIN                (FOClassic->TimeoutBegin)
+#define TIMEOUT_END                  (FOClassic->TimeoutEnd)
+#define KILL_BEGIN                   (FOClassic->KillBegin)
+#define KILL_END                     (FOClassic->KillEnd)
+#define PERK_BEGIN                   (FOClassic->PerkBegin)
+#define PERK_END                     (FOClassic->PerkEnd)
+#define ADDICTION_BEGIN              (FOClassic->AddictionBegin)
+#define ADDICTION_END                (FOClassic->AddictionEnd)
+#define KARMA_BEGIN                  (FOClassic->KarmaBegin)
+#define KARMA_END                    (FOClassic->KarmaEnd)
+#define DAMAGE_BEGIN                 (FOClassic->DamageBegin)
+#define DAMAGE_END                   (FOClassic->DamageEnd)
+#define TRAIT_BEGIN                  (FOClassic->TraitBegin)
+#define TRAIT_END                    (FOClassic->TraitEnd)
+#define REPUTATION_BEGIN             (FOClassic->ReputationBegin)
+#define REPUTATION_END               (FOClassic->ReputationEnd)
 
 // Events
 #define MAP_LOOP_FUNC_MAX            (5)
@@ -623,7 +623,7 @@ struct GameOptions
     uint               ( * GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
     void               ( * GetRainOffset )( int16* ox, int16* oy );
 };
-EXPORT_UNINITIALIZED GameOptions* FOnline;
+EXPORT_UNINITIALIZED GameOptions* FOClassic;
 
 struct Mutex
 {
@@ -1806,39 +1806,39 @@ struct Sprite
 
     SpriteInfo* const GetSprInfo()
     {
-        return FOnline->GetSpriteInfo( PSprId ? *PSprId : SprId );
+        return FOClassic->GetSpriteInfo( PSprId ? *PSprId : SprId );
     }
 
     void const GetPos( int& x, int& y )
     {
         SpriteInfo* si = GetSprInfo();
-        x = (int)( (float)(ScrX - si->Width / 2 + si->OffsX + (OffsX ? *OffsX : 0) + FOnline->ScrOx) / FOnline->SpritesZoom );
-        y = (int)( (float)(ScrY - si->Height    + si->OffsY + (OffsY ? *OffsY : 0) + FOnline->ScrOy) / FOnline->SpritesZoom );
+        x = (int)( (float)(ScrX - si->Width / 2 + si->OffsX + (OffsX ? *OffsX : 0) + FOClassic->ScrOx) / FOClassic->SpritesZoom );
+        y = (int)( (float)(ScrY - si->Height    + si->OffsY + (OffsY ? *OffsY : 0) + FOClassic->ScrOy) / FOClassic->SpritesZoom );
     }
 };
 
 
 inline Field* GetField( uint hexX, uint hexY )
 {
-    if( !FOnline->ClientMap || hexX >= FOnline->ClientMapWidth || hexY >= FOnline->ClientMapHeight )
+    if( !FOClassic->ClientMap || hexX >= FOClassic->ClientMapWidth || hexY >= FOClassic->ClientMapHeight )
         return NULL;
-    return &FOnline->ClientMap[hexY * FOnline->ClientMapWidth + hexX];
+    return &FOClassic->ClientMap[hexY * FOClassic->ClientMapWidth + hexX];
 }
 
 inline uint GetFieldLight( uint hexX, uint hexY )
 {
-    if( !FOnline->ClientMapLight || hexX >= FOnline->ClientMapWidth || hexY >= FOnline->ClientMapHeight )
+    if( !FOClassic->ClientMapLight || hexX >= FOClassic->ClientMapWidth || hexY >= FOClassic->ClientMapHeight )
         return 0;
-    uint r = FOnline->ClientMapLight[hexY * FOnline->ClientMapWidth * 3 + hexX * 3 + 0];
-    uint g = FOnline->ClientMapLight[hexY * FOnline->ClientMapWidth * 3 + hexX * 3 + 1];
-    uint b = FOnline->ClientMapLight[hexY * FOnline->ClientMapWidth * 3 + hexX * 3 + 2];
+    uint r = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 0];
+    uint g = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 1];
+    uint b = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 2];
     uint rgb = (r << 16) | (g << 8) | (b);
     return rgb;
 }
 
 inline int GetDirection( int x1, int y1, int x2, int y2 )
 {
-    if( FOnline->MapHexagonal )
+    if( FOClassic->MapHexagonal )
     {
         float hx = (float)x1;
         float hy = (float)y1;
@@ -1884,7 +1884,7 @@ inline int GetDirection( int x1, int y1, int x2, int y2 )
 
 inline int GetDistantion( int x1, int y1, int x2, int y2 )
 {
-    if( FOnline->MapHexagonal )
+    if( FOClassic->MapHexagonal )
     {
         int dx = (x1 > x2 ? x1 - x2 : x2 - x1);
         if( x1 % 2 == 0 )
