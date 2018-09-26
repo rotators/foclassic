@@ -8,8 +8,10 @@
 - changed generated binary files signatures, files created by FOnline are explicitly ignored
   - results in enforcing clean state on all servers willing to use applications in this project; migrating from r412 keeping saves, while technically possible, is not adviced, support, or good idea at all
   - see [binary files documentation](BinaryFiles.md#signature) for detailed description
-- security fix for registration parameters
 - removed StlPort support
+- security fix for registration parameters
+- hidden trade crash fix
+- numeric commands removed
 - simplified logic for detecting outdated scripts bytecode
   scripts are silently recompiled from source whenever any mismatch is detected
 - core applications (ASCompiler, Client, Mapper, Server) now share global version number
