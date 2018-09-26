@@ -57,85 +57,49 @@ struct CmdDef
 
 const CmdDef cmdlist[] =
 {
-    { "~1", CMD_EXIT },
     { "exit", CMD_EXIT },
-    { "~2", CMD_MYINFO },
     { "myinfo", CMD_MYINFO },
-    { "~3", CMD_GAMEINFO },
     { "gameinfo", CMD_GAMEINFO },
-    { "~4", CMD_CRITID },
     { "id", CMD_CRITID },
-    { "~5", CMD_MOVECRIT },
     { "move", CMD_MOVECRIT },
-    { "~6", CMD_KILLCRIT },
     { "kill", CMD_KILLCRIT },
-    { "~7", CMD_DISCONCRIT },
     { "disconnect", CMD_DISCONCRIT },
-    { "~8", CMD_TOGLOBAL },
     { "toglobal", CMD_TOGLOBAL },
-    { "~9", CMD_RESPAWN },
     { "respawn", CMD_RESPAWN },
-    { "~10", CMD_PARAM },
     { "param", CMD_PARAM },
-    { "~11", CMD_GETACCESS },
     { "getaccess", CMD_GETACCESS },
-    { "~12", CMD_ADDITEM },
     { "additem", CMD_ADDITEM },
-    { "~14", CMD_ADDITEM_SELF },
     { "additemself", CMD_ADDITEM_SELF },
     { "ais", CMD_ADDITEM_SELF },
-    { "~15", CMD_ADDNPC },
     { "addnpc", CMD_ADDNPC },
-    { "~16", CMD_ADDLOCATION },
     { "addloc", CMD_ADDLOCATION },
-    { "~17", CMD_RELOADSCRIPTS },
     { "reloadscripts", CMD_RELOADSCRIPTS },
-    { "~18", CMD_LOADSCRIPT },
     { "loadscript", CMD_LOADSCRIPT },
     { "load", CMD_LOADSCRIPT },
-    { "~19", CMD_RELOAD_CLIENT_SCRIPTS },
     { "reloadclientscripts", CMD_RELOAD_CLIENT_SCRIPTS },
     { "rcs", CMD_RELOAD_CLIENT_SCRIPTS },
-    { "~20", CMD_RUNSCRIPT },
     { "runscript", CMD_RUNSCRIPT },
     { "run", CMD_RUNSCRIPT },
-    { "~21", CMD_RELOADLOCATIONS },
     { "reloadlocations", CMD_RELOADLOCATIONS },
-    { "~22", CMD_LOADLOCATION },
     { "loadlocation", CMD_LOADLOCATION },
-    { "~23", CMD_RELOADMAPS },
     { "reloadmaps", CMD_RELOADMAPS },
-    { "~24", CMD_LOADMAP },
     { "loadmap", CMD_LOADMAP },
-    { "~25", CMD_REGENMAP },
     { "regenmap", CMD_REGENMAP },
-    { "~26", CMD_RELOADDIALOGS },
     { "reloaddialogs", CMD_RELOADDIALOGS },
-    { "~27", CMD_LOADDIALOG },
     { "loaddialog", CMD_LOADDIALOG },
-    { "~28", CMD_RELOADTEXTS },
     { "reloadtexts", CMD_RELOADTEXTS },
-    { "~29", CMD_RELOADAI },
     { "reloadai", CMD_RELOADAI },
-    { "~30", CMD_CHECKVAR },
     { "checkvar", CMD_CHECKVAR },
     { "cvar", CMD_CHECKVAR },
-    { "~31", CMD_SETVAR },
     { "setvar", CMD_SETVAR },
     { "svar", CMD_SETVAR },
-    { "~32", CMD_SETTIME },
     { "settime", CMD_SETTIME },
-    { "~33", CMD_BAN },
     { "ban", CMD_BAN },
-    { "~34", CMD_DELETE_ACCOUNT },
     { "deleteself", CMD_DELETE_ACCOUNT },
-    { "~35", CMD_CHANGE_PASSWORD },
     { "changepassword", CMD_CHANGE_PASSWORD },
     { "changepass", CMD_CHANGE_PASSWORD },
-    { "~36", CMD_DROP_UID },
     { "dropuid", CMD_DROP_UID },
     { "drop", CMD_DROP_UID },
-    { "~37", CMD_LOG },
     { "log", CMD_LOG },
 };
 
@@ -378,7 +342,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void (*logcb)( con
             ushort hex_y;
             uchar  dir;
             ushort pid;
-            if( sscanf( args, "%hd%hd%hhd%hd", &hex_x, &hex_y, &dir, &pid ) != 4 )
+            if( sscanf( args, "%hu%hu%hhu%hu", &hex_x, &hex_y, &dir, &pid ) != 4 )
             {
                 logcb( "Invalid arguments. Example: <~addnpc hx hy dir pid>." );
                 break;
@@ -399,7 +363,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void (*logcb)( con
             ushort wx;
             ushort wy;
             ushort pid;
-            if( sscanf( args, "%hd%hd%hd", &wx, &wy, &pid ) != 3 )
+            if( sscanf( args, "%hu%hu%hu", &wx, &wy, &pid ) != 3 )
             {
                 logcb( "Invalid arguments. Example: <~addloc wx wy pid>." );
                 break;
@@ -450,7 +414,7 @@ inline void PackCommand( const char* str, BufferManager& buf, void (*logcb)( con
             char script_name[MAX_SCRIPT_NAME + 1];
             char func_name[MAX_SCRIPT_NAME + 1];
             uint param0, param1, param2;
-            if( sscanf( args, "%s%s%d%d%d", script_name, func_name, &param0, &param1, &param2 ) != 5 )
+            if( sscanf( args, "%s%s%u%u%u", script_name, func_name, &param0, &param1, &param2 ) != 5 )
             {
                 logcb( "Invalid arguments. Example: <~runscript module func param0 param1 param2>." );
                 break;

@@ -57,7 +57,7 @@ bool ConstantsManager::AddCollection( int collection, const char* fname, int pat
     char   line[MAX_FOTEXT];
     string name;
     int    offset = 0;
-    int    num;
+    int    num = 0;
     while( fm.GetLine( line, MAX_FOTEXT ) )
     {
         if( line[0] == '*' )

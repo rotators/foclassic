@@ -6483,7 +6483,11 @@ void FOClient::Net_OnPlayersBarterSetHide()
     if( !citem )
     {
         Item item;
-        memzero( &item, sizeof(item) );
+
+        // hidden trade crash fix
+        // faulty code preserved for future generations
+        // memzero( &item, sizeof(item) );
+
         item.Init( proto_item );
         item.Id = id;
         item.Count_Set( count );
@@ -6607,7 +6611,7 @@ void FOClient::Net_OnRunClientScript()
     Bin >> p1;
     Bin >> p2;
     Bin >> p3len;
-    if( p3len && p3len )
+    if( p3len )
     {
         Bin.Pop( str, p3len );
         str[p3len] = 0;
@@ -6880,9 +6884,7 @@ void FOClient::Net_OnProtoItemData()
 
 void FOClient::Net_OnQuest( bool many )
 {
-    many ? \
-    WriteLog( "Quests..." ) :
-    WriteLog( "Quest..." );
+    WriteLog( "Quest%s...", many ? "s" : "" );
 
     if( many )
     {

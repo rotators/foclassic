@@ -332,7 +332,7 @@ bool CritType::InitFromMsg( FOMsg* msg )
         // Read as int to avoid gcc warning 'format '%d' expects type 'int*', but argument has type 'bool*''
         int canDo[5];
         int anims[37];
-        if( sscanf( str, "%s%u%u%u%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%s", name,
+        if( sscanf( str, "%s%u%u%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%s", name,
                     &ct.Alias, &ct.Multihex, &ct.AnimType, &canDo[0], &canDo[1], &canDo[2], &canDo[3], &canDo[4],
                     &anims[1], &anims[2], &anims[3], &anims[4], &anims[5], &anims[6], &anims[7],
                     &anims[8], &anims[9], &anims[10], &anims[11], &anims[12], &anims[13], &anims[14],

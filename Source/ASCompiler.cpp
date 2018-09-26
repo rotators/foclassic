@@ -156,7 +156,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
     {
         if( msg->row )
         {
-            printf( "%s(%d) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
+            printf( "%s(%u) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
         }
         else
         {
@@ -165,7 +165,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
     }
     else
     {
-        printf( "%s(%d) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
+        printf( "%s(%u) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
     }
 }
 
