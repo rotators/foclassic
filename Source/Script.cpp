@@ -499,7 +499,15 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     }
 
     // Register variables
-    ptr = DLL_GetAddress( dll, "FOClassic" );
+#if FOCLASSIC_STAGE <= 2
+    ptr = DLL_GetAddress( dll, "FOnline" );
+    if( ptr )
+        *ptr = (size_t)&GameOpt;
+#else
+	#pragma MESSAGE("[STAGE 3] 'FOnline' pointer is no longer assignedd in extension")
+#endif
+
+	ptr = DLL_GetAddress( dll, "FOClassic" );
     if( ptr )
         *ptr = (size_t)&GameOpt;
     ptr = DLL_GetAddress( dll, "ASEngine" );
