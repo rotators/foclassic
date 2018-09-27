@@ -50,8 +50,18 @@
 #endif
 
 // Platform specific options
+#undef NDEBUG
 #define NDEBUG
+
 #ifdef FO_MSVC
+# undef _WINDOWS
+# undef _MBCS
+# undef _CRT_SECURE_NO_WARNINGS
+# undef _CRT_SECURE_NO_DEPRECATE
+# undef _HAS_ITERATOR_DEBUGGING
+# undef _SECURE_SCL
+# undef _HAS_EXCEPTIONS
+
 # define _WINDOWS
 # define _MBCS
 # define _CRT_SECURE_NO_WARNINGS
@@ -59,7 +69,7 @@
 # define _HAS_ITERATOR_DEBUGGING    0
 # define _SECURE_SCL                0
 # define _HAS_EXCEPTIONS            0
-#endif
+#endif // FO_MSVC
 
 #ifdef FO_WINDOWS
 # ifdef FO_MSVC
@@ -1060,10 +1070,6 @@ struct Item
 
     bool IsDeteriorable()   const { return Proto->Deteriorable; }
     bool IsBroken()         const { return FLAG( Data.BrokenFlags, BI_BROKEN ); }
-    bool IsNoResc()         const { return FLAG( Data.BrokenFlags, BI_NOTRESC ); }
-    bool IsService()        const { return FLAG( Data.BrokenFlags, BI_SERVICE ); }
-    bool IsServiceExt()     const { return FLAG( Data.BrokenFlags, BI_SERVICE_EXT ); }
-    bool IsEternal()        const { return FLAG( Data.BrokenFlags, BI_ETERNAL ); }
     int  GetBrokenCount()   const { return Data.BrokenCount; }
     int  GetDeterioration() const { return Data.Deterioration; }
     int  GetDeteriorationProc() const

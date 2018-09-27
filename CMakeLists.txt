@@ -62,6 +62,7 @@ set( DAT_DIR    "${FO_DIR}/DatFile" )
 set( GLEW_DIR   "${FO_DIR}/GL" )
 set( SHA2_DIR   "${FO_DIR}/SHA2" )
 set( ZLIB_DIR   "${FO_DIR}/zlib" )
+set( DLL_DIR    "Dll" )
 
 if( MSVC )
 	set( COMPILER_DEFINES "" )
@@ -625,6 +626,29 @@ target_include_directories( ASCompiler PRIVATE "ASCompiler" ${FO_DIR} )
 target_compile_definitions( ASCompiler PRIVATE FONLINE_SCRIPT_COMPILER )
 target_link_libraries( ASCompiler ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
 list( APPEND FONLINE_APPS ASCompiler )
+#
+# Dll
+#
+set( DLL_SOURCES
+	${DLL_DIR}/dll.cpp
+	${DLL_DIR}/foclassic.h
+	${DLL_DIR}/foclassic.fos
+	${DLL_DIR}/AngelScript/angelscript.h
+	${DLL_DIR}/AngelScript/scriptany.h
+	${DLL_DIR}/AngelScript/scriptarray.h
+	${DLL_DIR}/AngelScript/scriptdictionary.h
+	${DLL_DIR}/AngelScript/scriptfile.h
+	${DLL_DIR}/AngelScript/scriptmath.h
+	${DLL_DIR}/AngelScript/scriptstring.h
+)
+foreach( target Client Mapper Server )
+	set( lib Dll${target} )
+	set( target "__${target}" )
+	string( TOUPPER ${target} target )
+	add_library( ${lib} SHARED ${DLL_SOURCES} )
+	target_compile_definitions( ${lib} PRIVATE ${target} )
+endforeach()
+
 ##
 ## Finalize
 ##
@@ -661,6 +685,7 @@ set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 set_target_properties( ${ANGELSCRIPT_ALL_LIBS} PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( Acm DatFile GLEW SHA2 Zlib PROPERTIES FOLDER "Libs" )
+set_target_properties( DllClient DllMapper DllServer PROPERTIES FOLDER "Dll" )
 source_group( " "     REGULAR_EXPRESSION "${FO_DIR}\/[A-Za-z0-9]+\.([Cc][Pp][Pp]|[Hh])$" )
 source_group( "Misc"
 	FILES
