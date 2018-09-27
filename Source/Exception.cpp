@@ -75,7 +75,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
     # else
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
     # endif
-    Str::Format( dump_path, "%s%s_%s_%s_%04d.%02d.%02d_%02d-%02d-%02d.txt",
+    Str::Format( dump_path, "%s%s_%s_%u_%04d.%02d.%02d_%02d-%02d-%02d.txt",
                  dump_path_dir, dump_str, AppName, FOCLASSIC_VERSION, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 
     FILE* f = fopen( dump_path, "wt" );
@@ -84,7 +84,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         // Generic info
         fprintf( f, "Application\n" );
         fprintf( f, "\tName        %s\n", AppName );
-        fprintf( f, "\tVersion     %s\n",  FOCLASSIC_VERSION );
+        fprintf( f, "\tVersion     %u\n",  FOCLASSIC_VERSION );
         OSVERSIONINFOA ver;
         memset( &ver, 0, sizeof(OSVERSIONINFOA) );
         ver.dwOSVersionInfoSize = sizeof(ver);
