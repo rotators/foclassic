@@ -1638,13 +1638,13 @@ struct Map
     uint16 GetMaxHexY() const { return Proto->Header.MaxHexY; }
 
     #ifdef __SERVER
-    bool   IsHexTrigger( uint16 hx, uint16 hy ) const { return FLAG( Proto->HexFlags[hy * GetMaxHexX() + hx], FH_TRIGGER ); }
-    bool   IsHexTrap( uint16 hx, uint16 hy )    const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], FH_WALK_ITEM ); }
-    bool   IsHexCritter( uint16 hx, uint16 hy ) const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], FH_CRITTER | FH_DEAD_CRITTER ); }
-    bool   IsHexGag( uint16 hx, uint16 hy )     const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], FH_GAG_ITEM ); }
+    bool   IsHexTrigger( uint16 hx, uint16 hy ) const { return FLAG( Proto->HexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_TRIGGER ); }
+    bool   IsHexTrap( uint16 hx, uint16 hy )    const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_WALK_ITEM ); }
+    bool   IsHexCritter( uint16 hx, uint16 hy ) const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_CRITTER | HEX_FLAG_DEAD_CRITTER ); }
+    bool   IsHexGag( uint16 hx, uint16 hy )     const { return FLAG( HexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_GAG_ITEM ); }
     uint16 GetHexFlags( uint16 hx, uint16 hy )  const { return (HexFlags[hy * GetMaxHexX() + hx] << 8) | Proto->HexFlags[hy * GetMaxHexX() + hx]; }
-    bool   IsHexPassed( uint16 hx, uint16 hy )  const { return !FLAG( GetHexFlags( hx, hy ), FH_NOWAY ); }
-    bool   IsHexRaked( uint16 hx, uint16 hy )   const { return !FLAG( GetHexFlags( hx, hy ), FH_NOSHOOT ); }
+    bool   IsHexPassed( uint16 hx, uint16 hy )  const { return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOWAY ); }
+    bool   IsHexRaked( uint16 hx, uint16 hy )   const { return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOSHOOT ); }
     #endif
 };
 

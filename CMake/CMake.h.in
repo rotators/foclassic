@@ -1,5 +1,5 @@
-#ifndef __FOCLASSIC_CMAKE_H__
-#define __FOCLASSIC_CMAKE_H__
+#ifndef __FOCLASSIC_CMAKE__
+#define __FOCLASSIC_CMAKE__
 
 // Version //
 
