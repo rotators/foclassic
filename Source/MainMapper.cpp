@@ -1,15 +1,18 @@
-#include "StdAfx.h"
-#include "Mapper.h"
-#include "Exception.h"
-#include "Version.h"
 #include <locale.h>
+
+#include "Core.h"
+
+#include "Exception.h"
+#include "Mapper.h"
+#include "Thread.h"
+#include "Version.h"
 
 FOWindow* MainWindow = NULL;
 FOMapper* Mapper = NULL;
 
 int main( int argc, char** argv )
 {
-    setlocale( LC_ALL, "Russian" );
+    setlocale( LC_ALL, "English" );
     RestoreMainDirectory();
 
     // Threading

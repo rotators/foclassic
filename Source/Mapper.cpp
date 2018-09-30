@@ -1,5 +1,8 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "Mapper.h"
+#include "MsgStr.h"
+#include "Thread.h"
 
 void _PreRestore()
 {
@@ -6393,7 +6396,7 @@ void FOMapper::SScriptFunc::Global_Message( ScriptString& msg )
 
 void FOMapper::SScriptFunc::Global_MessageMsg( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
     Self->AddMess( Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
@@ -6418,7 +6421,7 @@ void FOMapper::SScriptFunc::Global_MapMessage( ScriptString& text, ushort hx, us
 
 ScriptString* FOMapper::SScriptFunc::Global_GetMsgStr( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     ScriptString* str = new ScriptString( Self->CurLang.Msg[text_msg].GetStr( str_num ) );
     return str;
@@ -6426,7 +6429,7 @@ ScriptString* FOMapper::SScriptFunc::Global_GetMsgStr( int text_msg, uint str_nu
 
 ScriptString* FOMapper::SScriptFunc::Global_GetMsgStrSkip( int text_msg, uint str_num, uint skip_count )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     ScriptString* str = new ScriptString( Self->CurLang.Msg[text_msg].GetStr( str_num, skip_count ) );
     return str;
@@ -6434,28 +6437,28 @@ ScriptString* FOMapper::SScriptFunc::Global_GetMsgStrSkip( int text_msg, uint st
 
 uint FOMapper::SScriptFunc::Global_GetMsgStrNumUpper( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].GetStrNumUpper( str_num );
 }
 
 uint FOMapper::SScriptFunc::Global_GetMsgStrNumLower( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].GetStrNumLower( str_num );
 }
 
 uint FOMapper::SScriptFunc::Global_GetMsgStrCount( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].Count( str_num );
 }
 
 bool FOMapper::SScriptFunc::Global_IsMsgStr( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].Count( str_num ) > 0;
 }

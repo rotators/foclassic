@@ -85,7 +85,7 @@ endif()
 link_directories( "Lib" )
 link_directories( "Lib/Dx9/x86/" )
 
-set( DX_LIBS d3d9 dxguid dxerr d3dxof )
+set( DX_LIBS d3d9 dxguid dxerr d3dxof glu32 ) # DX needs glu32 due to 3dStuff.cpp VecProject() VecUnproject()
 set( GL_LIBS opengl32 glu32 )
 
 ##

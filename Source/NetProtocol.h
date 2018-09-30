@@ -37,7 +37,7 @@
 // !uint uid1
 // char pass_hash[PASS_HASH_SIZE]
 // uint msg_language
-// uint hash_msg_game[TEXTMSG_COUNT]
+// uint hash_msg_game[TEXTMSG_MAX]
 // !uint uidxor
 // !uint uid3
 // !uint uid2
