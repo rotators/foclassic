@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "ItemHex.h"
 #include "Common.h"
 #include "ResourceManager.h"

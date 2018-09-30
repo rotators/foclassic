@@ -1,9 +1,14 @@
-#include "StdAfx.h"
-#include "Log.h"
-#include "Timer.h"
 #include <stdarg.h>
 
-#if defined (FONLINE_SERVER) && !defined (SERVER_DAEMON)
+#include "Common.h"
+#include "Defines.h"
+#include "Log.h"
+#include "Mutex.h"
+#include "Text.h"
+#include "Thread.h"
+#include "Timer.h"
+
+#if defined (FOCLASSIC_SERVER) && !defined (SERVER_DAEMON)
 # include "FL/Fl_Text_Display.H"
 #endif
 
@@ -131,12 +136,12 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
         uint seconds = delta / 1000;
         uint minutes = seconds / 60 % 60;
         uint hours = seconds / 60 / 60;
-        if( hours )
-            Str::Format( str_time, "[%03u:%02u:%02u:%03u]", hours, minutes, seconds % 60, delta % 1000 );
-        else if( minutes )
-            Str::Format( str_time, "[%02u:%02u:%03u]", minutes, seconds % 60, delta % 1000 );
-        else
-            Str::Format( str_time, "[%02u:%03u]", seconds % 60, delta % 1000 );
+        // if( hours )
+        Str::Format( str_time, "[%04u:%02u:%02u:%03u]", hours, minutes, seconds % 60, delta % 1000 );
+        // else if( minutes )
+        //    Str::Format( str_time, "[%02u:%02u:%03u]", minutes, seconds % 60, delta % 1000 );
+        // else
+        //    Str::Format( str_time, "[%02u:%03u]", seconds % 60, delta % 1000 );
     }
 
     char str[MAX_LOGTEXT] = { 0 };
@@ -166,7 +171,7 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
     }
     if( LogTextBox )
     {
-        #if defined (FONLINE_SERVER) && !defined (SERVER_DAEMON)
+        #if defined (FOCLASSIC_SERVER) && !defined (SERVER_DAEMON)
         ( (Fl_Text_Display*)LogTextBox )->buffer()->append( str );
         #endif
     }

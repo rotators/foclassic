@@ -1,4 +1,5 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "Map.h"
 #include "CritterManager.h"
 #include "ItemManager.h"
@@ -173,11 +174,11 @@ bool Map::Generate()
         }
 
         // Check condition
-        if( mobj.MCritter.Cond != COND_LIFE && npc->Data.Cond == COND_LIFE && npc->GetMap() == GetId() )
+        if( mobj.MCritter.Cond != CRITTER_CONDITION_LIFE && npc->Data.Cond == CRITTER_CONDITION_LIFE && npc->GetMap() == GetId() )
         {
-            npc->Data.Cond = CLAMP( mobj.MCritter.Cond, COND_LIFE, COND_DEAD );
+            npc->Data.Cond = CLAMP( mobj.MCritter.Cond, CRITTER_CONDITION_LIFE, CRITTER_CONDITION_DEAD );
 
-            if( npc->Data.Cond == COND_DEAD )
+            if( npc->Data.Cond == CRITTER_CONDITION_DEAD )
             {
                 npc->Data.Params[ST_CURRENT_HP] = GameOpt.DeadHitPoints - 1;
                 if( !npc->Data.Params[ST_REPLICATION_TIME] )
@@ -187,7 +188,7 @@ bool Map::Generate()
                 UnsetFlagCritter( npc->GetHexX(), npc->GetHexY(), multihex, false );
                 SetFlagCritter( npc->GetHexX(), npc->GetHexY(), multihex, true );
             }
-            else if( npc->Data.Cond == COND_KNOCKOUT )
+            else if( npc->Data.Cond == CRITTER_CONDITION_KNOCKOUT )
             {
                 npc->KnockoutAp = 10000;
             }
@@ -196,12 +197,12 @@ bool Map::Generate()
         // Set condition animation
         if( mobj.MCritter.Cond == npc->Data.Cond )
         {
-            if( npc->Data.Cond == COND_LIFE )
+            if( npc->Data.Cond == CRITTER_CONDITION_LIFE )
             {
                 npc->Data.Anim1Life = mobj.MCritter.Anim1;
                 npc->Data.Anim2Life = mobj.MCritter.Anim2;
             }
-            else if( npc->Data.Cond == COND_KNOCKOUT )
+            else if( npc->Data.Cond == CRITTER_CONDITION_KNOCKOUT )
             {
                 npc->Data.Anim1Knockout = mobj.MCritter.Anim1;
                 npc->Data.Anim2Knockout = mobj.MCritter.Anim2;
@@ -700,19 +701,19 @@ void Map::SetItem( Item* item, ushort hx, ushort hy )
     item->AccHex.HexY = hy;
 
     hexItems.push_back( item );
-    SetHexFlag( hx, hy, FH_ITEM );
+    SetHexFlag( hx, hy, HEX_FLAG_ITEM );
 
     if( !item->IsPassed() )
-        SetHexFlag( hx, hy, FH_BLOCK_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     if( !item->IsRaked() )
-        SetHexFlag( hx, hy, FH_NRAKE_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
     if( item->IsGag() )
-        SetHexFlag( hx, hy, FH_GAG_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
     if( item->IsBlocks() )
         PlaceItemBlocks( hx, hy, item->Proto );
 
     if( item->FuncId[ITEM_EVENT_WALK] > 0 )
-        SetHexFlag( hx, hy, FH_WALK_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_WALK_ITEM );
     if( item->IsGeck() )
         mapLocation->GeckCount++;
 }
@@ -1030,7 +1031,7 @@ void Map::GetItemsTrap( ushort hx, ushort hy, ItemPtrVec& traps, bool lock )
             traps.push_back( item );
     }
     if( !traps.size() )
-        UnsetHexFlag( hx, hy, FH_WALK_ITEM );
+        UnsetHexFlag( hx, hy, HEX_FLAG_WALK_ITEM );
 
     if( lock )
         for( auto it = traps.begin(), end = traps.end(); it != end; ++it )
@@ -1039,8 +1040,8 @@ void Map::GetItemsTrap( ushort hx, ushort hy, ItemPtrVec& traps, bool lock )
 
 void Map::RecacheHexBlock( ushort hx, ushort hy )
 {
-    UnsetHexFlag( hx, hy, FH_BLOCK_ITEM );
-    UnsetHexFlag( hx, hy, FH_GAG_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
     bool is_block = false;
     bool is_gag = false;
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
@@ -1057,20 +1058,20 @@ void Map::RecacheHexBlock( ushort hx, ushort hy )
         }
     }
     if( is_block )
-        SetHexFlag( hx, hy, FH_BLOCK_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     if( is_gag )
-        SetHexFlag( hx, hy, FH_GAG_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
 }
 
 void Map::RecacheHexShoot( ushort hx, ushort hy )
 {
-    UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         Item* item = *it;
         if( item->AccHex.HexX == hx && item->AccHex.HexY == hy && !item->IsRaked() )
         {
-            SetHexFlag( hx, hy, FH_NRAKE_ITEM );
+            SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
             break;
         }
     }
@@ -1078,9 +1079,9 @@ void Map::RecacheHexShoot( ushort hx, ushort hy )
 
 void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
 {
-    UnsetHexFlag( hx, hy, FH_BLOCK_ITEM );
-    UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
-    UnsetHexFlag( hx, hy, FH_GAG_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
+    UnsetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
     bool is_block = false;
     bool is_nrake = false;
     bool is_gag = false;
@@ -1100,11 +1101,11 @@ void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
         }
     }
     if( is_block )
-        SetHexFlag( hx, hy, FH_BLOCK_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     if( is_nrake )
-        SetHexFlag( hx, hy, FH_NRAKE_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
     if( is_gag )
-        SetHexFlag( hx, hy, FH_GAG_ITEM );
+        SetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
 }
 
 ushort Map::GetHexFlags( ushort hx, ushort hy )
@@ -1124,18 +1125,18 @@ void Map::UnsetHexFlag( ushort hx, ushort hy, uchar flag )
 
 bool Map::IsHexPassed( ushort hx, ushort hy )
 {
-    return !FLAG( GetHexFlags( hx, hy ), FH_NOWAY );
+    return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOWAY );
 }
 
 bool Map::IsHexRaked( ushort hx, ushort hy )
 {
-    return !FLAG( GetHexFlags( hx, hy ), FH_NOSHOOT );
+    return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOSHOOT );
 }
 
 bool Map::IsHexesPassed( ushort hx, ushort hy, uint radius )
 {
     // Base
-    if( FLAG( GetHexFlags( hx, hy ), FH_NOWAY ) )
+    if( FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOWAY ) )
         return false;
     if( !radius )
         return true;
@@ -1150,7 +1151,7 @@ bool Map::IsHexesPassed( ushort hx, ushort hy, uint radius )
     {
         short hx_ = (short)hx + sx[i];
         short hy_ = (short)hy + sy[i];
-        if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy && FLAG( GetHexFlags( hx_, hy_ ), FH_NOWAY ) )
+        if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy && FLAG( GetHexFlags( hx_, hy_ ), HEX_FLAG_NOWAY ) )
             return false;
     }
     return true;
@@ -1203,20 +1204,20 @@ bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
 bool Map::IsFlagCritter( ushort hx, ushort hy, bool dead )
 {
     if( dead )
-        return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_DEAD_CRITTER );
+        return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_DEAD_CRITTER );
     else
-        return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_CRITTER );
+        return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_CRITTER );
 }
 
 void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
 {
     if( dead )
     {
-        SetHexFlag( hx, hy, FH_DEAD_CRITTER );
+        SetHexFlag( hx, hy, HEX_FLAG_DEAD_CRITTER );
     }
     else
     {
-        SetHexFlag( hx, hy, FH_CRITTER );
+        SetHexFlag( hx, hy, HEX_FLAG_CRITTER );
 
         if( multihex )
         {
@@ -1230,7 +1231,7 @@ void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
                 short hx_ = (short)hx + sx[i];
                 short hy_ = (short)hy + sy[i];
                 if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy )
-                    SetHexFlag( hx_, hy_, FH_CRITTER );
+                    SetHexFlag( hx_, hy_, HEX_FLAG_CRITTER );
             }
         }
     }
@@ -1252,11 +1253,11 @@ void Map::UnsetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
         dataLocker.Unlock();
 
         if( dead_count <= 1 )
-            UnsetHexFlag( hx, hy, FH_DEAD_CRITTER );
+            UnsetHexFlag( hx, hy, HEX_FLAG_DEAD_CRITTER );
     }
     else
     {
-        UnsetHexFlag( hx, hy, FH_CRITTER );
+        UnsetHexFlag( hx, hy, HEX_FLAG_CRITTER );
 
         if( multihex > 0 )
         {
@@ -1270,7 +1271,7 @@ void Map::UnsetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
                 short hx_ = (short)hx + sx[i];
                 short hy_ = (short)hy + sy[i];
                 if( hx_ >= 0 && hy_ >= 0 && hx_ < maxhx && hy_ < maxhy )
-                    UnsetHexFlag( hx_, hy_, FH_CRITTER );
+                    UnsetHexFlag( hx_, hy_, HEX_FLAG_CRITTER );
             }
         }
     }
@@ -1645,9 +1646,9 @@ void Map::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
 {
     bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
-                              SetHexFlag( hx, hy, FH_BLOCK_ITEM );
+                              SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
                               if( !raked )
-                                  SetHexFlag( hx, hy, FH_NRAKE_ITEM );
+                                  SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
                               );
 }
 
@@ -1655,10 +1656,10 @@ void Map::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
 {
     bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
-                              UnsetHexFlag( hx, hy, FH_BLOCK_ITEM );
+                              UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
                               if( !raked )
     {
-        UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
+        UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
         if( IsHexItem( hx, hy ) )
             RecacheHexBlockShoot( hx, hy );
     }

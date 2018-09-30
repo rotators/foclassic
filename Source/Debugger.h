@@ -1,7 +1,9 @@
 #ifndef __DEBUGGER__
 #define __DEBUGGER__
 
-#ifdef FONLINE_SERVER
+#include "Types.h"
+
+#ifdef FOCLASSIC_SERVER
 # define MEMORY_DEBUG
 #endif
 

@@ -1,10 +1,11 @@
-#include "ScriptPragmas.h"
 #include "AngelScript/angelscript.h"
 
-#ifdef FONLINE_SCRIPT_COMPILER
+#include "ScriptPragmas.h"
+#include "Types.h"
+
+#ifdef FOCLASSIC_SCRIPT_COMPILER
 # include "PlatformSpecific.h"
 # include "Defines.h"
-# include "Types.h"
 # include "ASCompiler.h"
 # include "AngelScript/scriptstring.h"
 # include <stdio.h>
@@ -135,7 +136,7 @@ namespace Script
 
 # include "Script.h"
 
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 #  include "Critter.h"
 # else
 #  include "CritterCl.h"
@@ -275,7 +276,7 @@ public:
         char decl_ref[128];
         sprintf( decl_ref, "DataRef %sBase", name.c_str() );
 
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         // Real registration
         if( engine->RegisterObjectProperty( "Critter", decl_val, OFFSETOF( Critter, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
         if( engine->RegisterObjectProperty( "Critter", decl_ref, OFFSETOF( Critter, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
@@ -310,7 +311,7 @@ public:
         char decl_ref[128];
         sprintf( decl_ref, "DataRef %sBase", name.c_str() );
 
-        #ifdef FONLINE_CLIENT
+        #ifdef FOCLASSIC_CLIENT
         // Real registration
         if( engine->RegisterObjectProperty( "CritterCl", decl_val, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
         if( engine->RegisterObjectProperty( "CritterCl", decl_ref, OFFSETOF( CritterCl, ThisPtr[0] ) + sizeof(void*) * parametersIndex ) < 0 ) return false;
@@ -544,12 +545,12 @@ ScriptPragmaCallback::ScriptPragmaCallback( int pragma_type )
         bindFuncPragma = new BindFuncPragma();
         bindFieldPragma = new BindFieldPragma();
 
-        #ifdef FONLINE_SCRIPT_COMPILER
+        #ifdef FOCLASSIC_SCRIPT_COMPILER
         bindFieldPragma->Add( "ProtoItem", 0, PROTO_ITEM_USER_DATA_SIZE );
         bindFieldPragma->Add( "Critter", 0, CRITTER_USER_DATA_SIZE );
         #else
         bindFieldPragma->Add( "ProtoItem", OFFSETOF( ProtoItem, UserData ), PROTO_ITEM_USER_DATA_SIZE );
-        # ifdef FONLINE_SERVER
+        # ifdef FOCLASSIC_SERVER
         bindFieldPragma->Add( "Critter", OFFSETOF( Critter, Data ) + OFFSETOF( CritData, UserData ), CRITTER_USER_DATA_SIZE );
         # endif
         #endif

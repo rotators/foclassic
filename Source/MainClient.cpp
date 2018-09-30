@@ -1,20 +1,26 @@
-#include "StdAfx.h"
-#include "CMake.h"
-#include "Client.h"
-#include "Exception.h"
-#include "Version.h"
-#include "Keyboard.h"
 #include <locale.h>
 #ifndef FO_WINDOWS
 # include <signal.h>
 #endif
+
+#include "CMake.h"
+
+#include "Client.h"
+#include "Exception.h"
+#include "Keyboard.h"
+#include "Thread.h"
+#include "Version.h"
 
 FOWindow* MainWindow = NULL;
 FOClient* FOEngine = NULL;
 
 int main( int argc, char** argv )
 {
-    RestoreMainDirectory();
+    // Make command line
+    SetCommandLine( argc, argv );
+
+    if( !strstr( CommandLine, "--no-restore-directory" ) )
+        RestoreMainDirectory();
 
     // Threading
     #ifdef FO_WINDOWS
@@ -33,10 +39,6 @@ int main( int argc, char** argv )
     #else
     CatchExceptions( "ClientGL" );
     #endif
-
-
-    // Make command line
-    SetCommandLine( argc, argv );
 
     // Stuff
     Timer::Init();

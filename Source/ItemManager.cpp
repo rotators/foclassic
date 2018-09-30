@@ -1,9 +1,9 @@
-#include "StdAfx.h"
 #include "ItemManager.h"
 #include "ConstantsManager.h"
 #include "IniParser.h"
+#include "GameOptions.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "Critter.h"
 # include "Map.h"
 # include "CritterManager.h"
@@ -11,7 +11,7 @@
 # include "Script.h"
 #endif
 
-#ifdef FONLINE_MAPPER
+#ifdef FOCLASSIC_MAPPER
 # include "Script.h"
 #endif
 
@@ -45,7 +45,7 @@ void ItemManager::Finish()
         return;
     }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     ItemGarbager();
 
     ItemPtrMap items = gameItems;
@@ -67,7 +67,7 @@ void ItemManager::Finish()
 
 void ItemManager::Clear()
 {
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     for( auto it = gameItems.begin(), end = gameItems.end(); it != end; ++it )
         SAFEREL( (*it).second );
     gameItems.clear();
@@ -77,11 +77,11 @@ void ItemManager::Clear()
     lastItemId = 0;
     #endif
 
-    for( int i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
+    for( int i = 0; i < MAX_PROTO_ITEMS; i++ )
         itemCount[i] = 0;
 }
 
-#if defined (FONLINE_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FONLINE_MAPPER)
+#if defined (FOCLASSIC_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FOCLASSIC_MAPPER)
 
 template<class T>
 T ResolveProtoValue( const char* str )
@@ -440,7 +440,7 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
         ProtoItem& proto_item = protos[i];
         ushort     pid = proto_item.ProtoId;
 
-        if( !pid || pid >= MAX_ITEM_PROTOTYPES )
+        if( !pid || pid >= MAX_PROTO_ITEMS )
         {
             WriteLogF( _FUNC_, " - Invalid pid<%u> of item prototype.\n", pid );
             continue;
@@ -453,10 +453,10 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
         }
 
         int type = protos[i].Type;
-        if( type < 0 || type >= ITEM_MAX_TYPES )
+        if( type < 0 || type >= ITEM_TYPE_MAX )
             type = ITEM_TYPE_OTHER;
 
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         if( collection_name )
             proto_item.CollectionName = Str::Duplicate( collection_name );
         else
@@ -467,7 +467,7 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
         allProto[pid] = proto_item;
     }
 
-    for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+    for( int i = 0; i < ITEM_TYPE_MAX; i++ )
     {
         protoHash[i] = 0;
         if( typeProto[i].size() )
@@ -492,7 +492,7 @@ ProtoItem* ItemManager::GetAllProtos()
 
 void ItemManager::GetCopyAllProtos( ProtoItemVec& protos )
 {
-    for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+    for( int i = 0; i < ITEM_TYPE_MAX; i++ )
     {
         for( uint j = 0; j < typeProto[i].size(); j++ )
         {
@@ -503,7 +503,7 @@ void ItemManager::GetCopyAllProtos( ProtoItemVec& protos )
 
 bool ItemManager::IsInitProto( ushort pid )
 {
-    if( !pid || pid >= MAX_ITEM_PROTOTYPES )
+    if( !pid || pid >= MAX_PROTO_ITEMS )
         return false;
     return allProto[pid].ProtoId != 0;
 }
@@ -519,16 +519,16 @@ void ItemManager::ClearProtos( int type /* = 0xFF */ )
 {
     if( type == 0xFF )
     {
-        for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+        for( int i = 0; i < ITEM_TYPE_MAX; i++ )
         {
             protoHash[i] = 0;
             typeProto[i].clear();
         }
         memzero( allProto, sizeof(allProto) );
-        for( int i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
+        for( int i = 0; i < MAX_PROTO_ITEMS; i++ )
             SAFEDELA( protoScript[i] );
     }
-    else if( type < ITEM_MAX_TYPES )
+    else if( type < ITEM_TYPE_MAX )
     {
         for( uint i = 0; i < typeProto[type].size(); ++i )
         {
@@ -555,7 +555,7 @@ void ItemManager::ClearProto( ushort pid )
         return;
 
     int type = proto_item->Type;
-    if( type < 0 || type >= ITEM_MAX_TYPES )
+    if( type < 0 || type >= ITEM_TYPE_MAX )
         type = ITEM_TYPE_OTHER;
 
     ProtoItemVec& protos = typeProto[type];
@@ -570,7 +570,7 @@ void ItemManager::ClearProto( ushort pid )
     hash = Crypt.Crc32( (uchar*)&protos[0], sizeof(ProtoItem) * (uint)protos.size() );
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void ItemManager::SaveAllItemsFile( void (*save_func)( void*, size_t ) )
 {
     uint count = (uint)gameItems.size();
@@ -667,7 +667,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
 # pragma MESSAGE("Add item proto functions checker.")
 bool ItemManager::CheckProtoFunctions()
 {
-    for( int i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
+    for( int i = 0; i < MAX_PROTO_ITEMS; i++ )
     {
         const char* script = protoScript[i];
         // Check for items
@@ -1580,7 +1580,7 @@ void ItemManager::RadioSendTextEx( ushort channel, int broadcast_type, uint from
         }
     }
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 void ItemManager::AddItemStatistics( ushort pid, uint val )
 {
@@ -1618,7 +1618,7 @@ string ItemManager::GetItemsStatistics()
     if( IsInit() )
     {
         char str[512];
-        for( int i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
+        for( int i = 0; i < MAX_PROTO_ITEMS; i++ )
         {
             ProtoItem* proto_item = GetProtoItem( i );
             if( proto_item && proto_item->IsItem() )

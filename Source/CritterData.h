@@ -6,9 +6,6 @@
 #include "AI.h"
 #include "Defines.h"
 
-#define MAX_CRIT_PROTOS         (10000)
-#define MAX_STORED_LOCATIONS    (1000)
-
 struct CritData
 {
     uint       Id;

@@ -1,10 +1,11 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "Critter.h"
-#include "MapManager.h"
-#include "ItemManager.h"
-#include "CritterType.h"
-#include "Access.h"
 #include "CritterManager.h"
+#include "CritterType.h"
+#include "ItemManager.h"
+#include "MapManager.h"
+#include "MsgStr.h"
 
 const char* CritterEventFuncName[CRITTER_EVENT_MAX] =
 {
@@ -313,9 +314,9 @@ void Critter::ProcessVisibleCritters()
                 Critter* cr = *it;
                 if( this == cr )
                 {
-                    SETFLAG( Flags, FCRIT_CHOSEN );
+                    SETFLAG( Flags, CRITTER_FLAG_CHOSEN );
                     cl->Send_AddCritter( this );
-                    UNSETFLAG( Flags, FCRIT_CHOSEN );
+                    UNSETFLAG( Flags, CRITTER_FLAG_CHOSEN );
                     cl->Send_AllParams();
                     cl->Send_AddAllItems();
                 }
@@ -1667,7 +1668,7 @@ bool Critter::IsHaveGeckItem()
 
 void Critter::ToKnockout( uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, ushort knock_hx, ushort knock_hy )
 {
-    Data.Cond = COND_KNOCKOUT;
+    Data.Cond = CRITTER_CONDITION_KNOCKOUT;
     Data.Anim2Knockout = anim2idle;
     Data.Anim2KnockoutEnd = anim2end;
     KnockoutAp = lost_ap;
@@ -1699,7 +1700,7 @@ void Critter::TryUpOnKnockout()
         return;
 
     // Stand up
-    Data.Cond = COND_LIFE;
+    Data.Cond = CRITTER_CONDITION_LIFE;
     SendAA_Action( ACTION_STANDUP, Data.Anim2KnockoutEnd, NULL );
     SetBreakTime( GameOpt.Breaktime );
 }
@@ -1710,7 +1711,7 @@ void Critter::ToDead( uint anim2, bool send_all )
 
     if( GetParam( ST_CURRENT_HP ) > 0 )
         Data.Params[ST_CURRENT_HP] = 0;
-    Data.Cond = COND_DEAD;
+    Data.Cond = CRITTER_CONDITION_DEAD;
     Data.Anim2Dead = anim2;
 
     Item* item = ItemSlotMain;
@@ -3525,7 +3526,7 @@ Client::Client() : ZstrmInit( false ), Access( ACCESS_DEFAULT ), pingOk( true ),
     CritterIsNpc = false;
     MEMORY_PROCESS( MEMORY_CLIENT, sizeof(Client) + sizeof(GlobalMapGroup) + 40 + sizeof(Item) * 2 );
 
-    SETFLAG( Flags, FCRIT_PLAYER );
+    SETFLAG( Flags, CRITTER_FLAG_PLAYER );
     Sock = INVALID_SOCKET;
     memzero( Name, sizeof(Name) );
     memzero( PassHash, sizeof(PassHash) );
@@ -5309,7 +5310,7 @@ Npc::Npc() : NextRefreshBagTick( 0 )
 {
     CritterIsNpc = true;
     MEMORY_PROCESS( MEMORY_NPC, sizeof(Npc) + sizeof(GlobalMapGroup) + 40 + sizeof(Item) * 2 );
-    SETFLAG( Flags, FCRIT_NPC );
+    SETFLAG( Flags, CRITTER_FLAG_NPC );
 }
 
 Npc::~Npc()
@@ -5332,7 +5333,7 @@ void Npc::RefreshBag()
     SyncLockItems();
 
     // Collect pids and count
-    static THREAD uint pids[MAX_ITEM_PROTOTYPES];
+    static THREAD uint pids[MAX_PROTO_ITEMS];
     memzero( &pids, sizeof(pids) );
 
     for( auto it = invItems.begin(), end = invItems.end(); it != end; ++it )
@@ -5355,7 +5356,7 @@ void Npc::RefreshBag()
     {
         // Erase not grouped items
         uint need_count = Random( 2, 4 );
-        for( uint i = 0; i < MAX_ITEM_PROTOTYPES; i++ )
+        for( uint i = 0; i < MAX_PROTO_ITEMS; i++ )
         {
             if( pids[i] <= need_count )
                 continue;

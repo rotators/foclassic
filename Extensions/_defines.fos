@@ -1,0 +1,9 @@
+#ifndef __DEFINES_FOS__
+#define __DEFINES__
+
+#ifndef FOCLASSIC_EXTENSION
+ #define FOCLASSIC_SCRIPT
+ #include "foclassic.fos"
+#endif
+
+#endif // __DEFINES_FOS__ //

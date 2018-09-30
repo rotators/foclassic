@@ -8,7 +8,7 @@
 #include "Item.h"
 #include "ItemManager.h"
 #include "3dStuff.h"
-
+#include "GameOptions.h"
 
 class CritterCl
 {
@@ -90,15 +90,15 @@ public:
     const char* GetName() { return Name.c_str(); }
     const char* GetPass() { return Pass.c_str(); }
 
-    bool IsNpc()      { return FLAG( Flags, FCRIT_NPC ); }
-    bool IsPlayer()   { return FLAG( Flags, FCRIT_PLAYER ); }
-    bool IsChosen()   { return FLAG( Flags, FCRIT_CHOSEN ); }
-    bool IsGmapRule() { return FLAG( Flags, FCRIT_RULEGROUP ); }
-    bool IsOnline()   { return !FLAG( Flags, FCRIT_DISCONNECT ); }
-    bool IsOffline()  { return FLAG( Flags, FCRIT_DISCONNECT ); }
-    bool IsLife()     { return Cond == COND_LIFE; }
-    bool IsKnockout() { return Cond == COND_KNOCKOUT; }
-    bool IsDead()     { return Cond == COND_DEAD; }
+    bool IsNpc()      { return FLAG( Flags, CRITTER_FLAG_NPC ); }
+    bool IsPlayer()   { return FLAG( Flags, CRITTER_FLAG_PLAYER ); }
+    bool IsChosen()   { return FLAG( Flags, CRITTER_FLAG_CHOSEN ); }
+    bool IsGmapRule() { return FLAG( Flags, CRITTER_FLAG_RULEGROUP ); }
+    bool IsOnline()   { return !FLAG( Flags, CRITTER_FLAG_DISCONNECT ); }
+    bool IsOffline()  { return FLAG( Flags, CRITTER_FLAG_DISCONNECT ); }
+    bool IsLife()     { return Cond == CRITTER_CONDITION_LIFE; }
+    bool IsKnockout() { return Cond == CRITTER_CONDITION_KNOCKOUT; }
+    bool IsDead()     { return Cond == CRITTER_CONDITION_DEAD; }
     bool CheckFind( int find_type );
     bool IsCanTalk()    { return IsNpc() && IsLife() && IsRawParam( ST_DIALOG_ID ) && !IsRawParam( MODE_NO_TALK ); }
     bool IsCombatMode() { return GetParam( TO_BATTLE ) != 0; }

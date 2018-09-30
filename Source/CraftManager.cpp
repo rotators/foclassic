@@ -1,15 +1,15 @@
-#include "StdAfx.h"
 #include "CraftManager.h"
 #include "ConstantsManager.h"
 #include "FileManager.h"
+#include "MsgStr.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "Critter.h"
 # include "CritterManager.h"
 # include "ItemManager.h"
 #endif
 
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 # include "CritterCl.h"
 #endif
 
@@ -121,7 +121,7 @@ void CraftItem::Clear()
     Experience = 0;
 }
 
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 void CraftItem::SetName( FOMsg& msg_game, FOMsg& msg_item )
 {
     Name = "";
@@ -149,7 +149,7 @@ void CraftItem::SetName( FOMsg& msg_game, FOMsg& msg_item )
         Name += msg_game.GetStr( STR_AND );
     }
 }
-#endif // FONLINE_CLIENT
+#endif // FOCLASSIC_CLIENT
 
 template<class T>
 void SetStrMetadata( T& v, const char*& str )
@@ -257,7 +257,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
         return 0;
     }
 
-    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
+    #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
     // Parse show params
     int res = SetStrParam( pstr_in, ShowPNum, ShowPVal, ShowPOr );
     if( res < 0 )
@@ -299,7 +299,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
     return 0;
 }
 
-#if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
+#if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
 int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     char  str[MAX_FOTEXT];
@@ -441,7 +441,7 @@ const char* CraftItem::GetStr( bool metadata )
         return str;
     }
 
-    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
+    #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
     // Name, info
     Str::Format( str, "%s%c%s%c", Name.c_str(), MRFIXIT_NEXT, Info.c_str(), MRFIXIT_NEXT );
 
@@ -481,7 +481,7 @@ const char* CraftItem::GetStr( bool metadata )
     return str;
 }
 
-#if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
+#if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
 void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
@@ -630,19 +630,19 @@ bool CraftManager::LoadCrafts( FOMsg& msg )
             continue;
         }
 
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         CraftItem* craft = GetCraft( num );
         str = craft->GetStr( true );
         #endif
     }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     msg.CalculateHash();
     #endif
     return load_fail == 0;
 }
 
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 void CraftManager::GenerateNames( FOMsg& msg_game, FOMsg& msg_item )
 {
     auto it = itemCraft.begin();
@@ -653,7 +653,7 @@ void CraftManager::GenerateNames( FOMsg& msg_game, FOMsg& msg_item )
         (*it).second->SetName( msg_game, msg_item );
     }
 }
-#endif // FONLINE_CLIENT
+#endif // FOCLASSIC_CLIENT
 
 void CraftManager::Finish()
 {
@@ -684,7 +684,7 @@ bool CraftManager::AddCraft( uint num, const char* str )
         return false;
     }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     if( craft->Script.length() )
     {
         craft->ScriptBindId = Script::Bind( craft->Script.c_str(), "int %s(Critter&, int, CraftItem&)", false );
@@ -732,8 +732,8 @@ bool CraftManager::IsCraftExist( uint num )
     return itemCraft.count( num ) != 0;
 }
 
-#if defined (FONLINE_SERVER) || defined (FONLINE_CLIENT)
-# ifdef FONLINE_SERVER
+#if defined (FOCLASSIC_SERVER) || defined (FOCLASSIC_CLIENT)
+# ifdef FOCLASSIC_SERVER
 bool CallFixBoyScript( CraftItem* craft, Critter* cr, uint stage, uint& flags )
 {
     if( !Script::PrepareContext( craft->ScriptBindId, _FUNC_, cr->GetInfo() ) )
@@ -769,7 +769,7 @@ bool CraftManager::IsShowCraft( Critter* cr, uint num )
     return true;
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 bool CraftManager::IsShowCraft( CritterCl* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );
@@ -784,7 +784,7 @@ bool CraftManager::IsShowCraft( CritterCl* cr, uint num )
     return true;
 }
 # endif
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 void CraftManager::GetShowCrafts( Critter* cr, CraftItemVec& craft_vec )
 {
     craft_vec.clear();
@@ -795,7 +795,7 @@ void CraftManager::GetShowCrafts( Critter* cr, CraftItemVec& craft_vec )
     }
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 void CraftManager::GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec )
 {
     craft_vec.clear();
@@ -806,7 +806,7 @@ void CraftManager::GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec )
     }
 }
 # endif
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 bool CraftManager::IsTrueCraft( Critter* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );
@@ -818,7 +818,7 @@ bool CraftManager::IsTrueCraft( Critter* cr, uint num )
            IsTrueItems( cr, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr );
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 bool CraftManager::IsTrueCraft( CritterCl* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );
@@ -830,7 +830,7 @@ bool CraftManager::IsTrueCraft( CritterCl* cr, uint num )
            IsTrueItems( cr, craft->NeedItems, craft->NeedItemsVal, craft->NeedItemsOr );
 }
 # endif
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 void CraftManager::GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec )
 {
     craft_vec.clear();
@@ -843,7 +843,7 @@ void CraftManager::GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec )
     }
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 void CraftManager::GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec )
 {
     craft_vec.clear();
@@ -856,7 +856,7 @@ void CraftManager::GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec )
     }
 }
 # endif
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     for( int i = 0, j = (uint)num_vec.size(); i < j; i++ )
@@ -886,7 +886,7 @@ bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec,
     return true;
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
 {
     for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
@@ -916,7 +916,7 @@ bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_ve
     return true;
 }
 # endif
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
     for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
@@ -951,7 +951,7 @@ bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_
     return true;
 }
 # endif
-# ifdef FONLINE_CLIENT
+# ifdef FOCLASSIC_CLIENT
 bool CraftManager::IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
 {
     for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
@@ -987,7 +987,7 @@ bool CraftManager::IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& coun
 }
 # endif
 
-# ifdef FONLINE_SERVER
+# ifdef FOCLASSIC_SERVER
 int CraftManager::ProcessCraft( Critter* cr, uint num )
 {
     CraftItem* craft = GetCraft( num );
@@ -1121,5 +1121,5 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
 
     CRAFT_RETURN_SUCC;
 }
-# endif // FONLINE_SERVER
-#endif  // #if defined(FONLINE_SERVER) || defined(FONLINE_CLIENT)
+# endif // FOCLASSIC_SERVER
+#endif  // #if defined(FOCLASSIC_SERVER) || defined(FOCLASSIC_CLIENT)

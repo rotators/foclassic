@@ -1,14 +1,20 @@
-#include "StdAfx.h"
-#include "Server.h"
 #include "AngelScript/preprocessor.h"
-#include "Version.h"
+
+#include "Core.h"
+
+#include "ConstantsManager.h"
+#include "Critter.h"
+#include "CritterType.h"
+#include "ItemManager.h"
+#include "Map.h"
+#include "MapManager.h"
+#include "MsgStr.h"
+#include "Server.h"
 #include "ScriptPragmas.h"
+#include "Version.h"
 
 // Global_LoadImage
 #include "PNG/png.h"
-#ifdef FO_WINDOWS
-# pragma comment( lib, "libpng15.lib" )
-#endif
 
 void* ASDebugMalloc( size_t size )
 {
@@ -734,7 +740,7 @@ bool FOServer::SScriptFunc::Item_SetEvent( Item* item, int event_type, ScriptStr
         {
             Map* map = MapMngr.GetMap( item->AccHex.MapId );
             if( map )
-                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_WALK_ITEM );
+                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_WALK_ITEM );
         }
     }
     return true;
@@ -1059,9 +1065,9 @@ bool FOServer::SScriptFunc::Item_LockerClose( Item* item )
             if( map )
             {
                 if( recache_block )
-                    map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_BLOCK_ITEM );
+                    map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_BLOCK_ITEM );
                 if( recache_shoot )
-                    map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_NRAKE_ITEM );
+                    map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_NRAKE_ITEM );
             }
         }
     }
@@ -1193,15 +1199,15 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
             if( FLAG( value, ITEM_NO_BLOCK ) )
                 recache_block = true;
             else
-                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_BLOCK_ITEM );
+                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_BLOCK_ITEM );
             if( FLAG( value, ITEM_SHOOT_THRU ) )
                 recache_shoot = true;
             else
-                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_NRAKE_ITEM );
+                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_NRAKE_ITEM );
             if( !FLAG( value, ITEM_GAG ) )
                 recache_block = true;
             else
-                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, FH_GAG_ITEM );
+                map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_GAG_ITEM );
 
             if( recache_block && recache_shoot )
                 map->RecacheHexBlockShoot( item->AccHex.HexX, item->AccHex.HexY );
@@ -2576,17 +2582,17 @@ void FOServer::SScriptFunc::Crit_SetAnims( Critter* cr, int cond, uint anim1, ui
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
-    if( cond == 0 || cond == COND_LIFE )
+    if( cond == 0 || cond == CRITTER_CONDITION_LIFE )
     {
         cr->Data.Anim1Life = anim1;
         cr->Data.Anim2Life = anim2;
     }
-    if( cond == 0 || cond == COND_KNOCKOUT )
+    if( cond == 0 || cond == CRITTER_CONDITION_KNOCKOUT )
     {
         cr->Data.Anim1Knockout = anim1;
         cr->Data.Anim2Knockout = anim2;
     }
-    if( cond == 0 || cond == COND_DEAD )
+    if( cond == 0 || cond == CRITTER_CONDITION_DEAD )
     {
         cr->Data.Anim1Dead = anim1;
         cr->Data.Anim2Dead = anim2;
@@ -2658,9 +2664,9 @@ bool FOServer::SScriptFunc::Cl_SetKnownLoc( Critter* cl, bool by_id, uint loc_nu
 
     int zx = GM_ZONE( loc->Data.WX );
     int zy = GM_ZONE( loc->Data.WY );
-    if( cl_->GMapFog.Get2Bit( zx, zy ) == GM_FOG_FULL )
+    if( cl_->GMapFog.Get2Bit( zx, zy ) == WORLDMAP_FOG_FULL )
     {
-        cl_->GMapFog.Set2Bit( zx, zy, GM_FOG_HALF );
+        cl_->GMapFog.Set2Bit( zx, zy, WORLDMAP_FOG_HALF );
         if( !cl_->GetMap() )
             cl_->Send_GlobalMapFog( zx, zy, cl_->GMapFog.Get2Bit( zx, zy ) );
     }
@@ -2695,7 +2701,7 @@ void FOServer::SScriptFunc::Cl_SetFog( Critter* cl, ushort zone_x, ushort zone_y
         SCRIPT_ERROR_R( "Critter is not player." );
     if( zone_x >= GameOpt.GlobalMapWidth || zone_y >= GameOpt.GlobalMapHeight )
         SCRIPT_ERROR_R( "Invalid world map pos arg." );
-    if( fog < GM_FOG_FULL || fog > GM_FOG_NONE )
+    if( fog < WORLDMAP_FOG_FULL || fog > WORLDMAP_FOG_NONE )
         SCRIPT_ERROR_R( "Invalid fog arg." );
 
     Client* cl_ = (Client*)cl;
@@ -2911,7 +2917,7 @@ void FOServer::SScriptFunc::Crit_ClearEnemyStackNpc( Critter* cr )
         SCRIPT_ERROR_R( "This nullptr." );
     for( int i = 0; i < MAX_ENEMY_STACK; i++ )
     {
-        if( IS_NPC_ID( cr->Data.EnemyStack[i] ) )
+        if( CRITTER_ID_IS_NPC( cr->Data.EnemyStack[i] ) )
         {
             cr->Data.EnemyStack[i] = 0;
             for( int j = i; j < MAX_ENEMY_STACK - 1; j++ )
@@ -4511,7 +4517,7 @@ void FOServer::SScriptFunc::Map_RunEffect( Map* map, ushort eff_pid, ushort hx, 
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
-    if( !eff_pid || eff_pid >= MAX_ITEM_PROTOTYPES )
+    if( !eff_pid || eff_pid >= MAX_PROTO_ITEMS )
         SCRIPT_ERROR_R( "Effect pid invalid arg." );
     if( hx >= map->GetMaxHexX() || hy >= map->GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid hexes args." );
@@ -4522,7 +4528,7 @@ void FOServer::SScriptFunc::Map_RunFlyEffect( Map* map, ushort eff_pid, Critter*
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
-    if( !eff_pid || eff_pid >= MAX_ITEM_PROTOTYPES )
+    if( !eff_pid || eff_pid >= MAX_PROTO_ITEMS )
         SCRIPT_ERROR_R( "Effect pid invalid arg." );
     if( from_hx >= map->GetMaxHexX() || from_hy >= map->GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid from hexes args." );
@@ -4553,9 +4559,9 @@ void FOServer::SScriptFunc::Map_BlockHex( Map* map, ushort hx, ushort hy, bool f
         SCRIPT_ERROR_R( "This nullptr." );
     if( hx >= map->GetMaxHexX() || hy >= map->GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid hexes args." );
-    map->SetHexFlag( hx, hy, FH_BLOCK_ITEM );
+    map->SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     if( full )
-        map->SetHexFlag( hx, hy, FH_NRAKE_ITEM );
+        map->SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
 }
 
 void FOServer::SScriptFunc::Map_UnblockHex( Map* map, ushort hx, ushort hy )
@@ -4564,8 +4570,8 @@ void FOServer::SScriptFunc::Map_UnblockHex( Map* map, ushort hx, ushort hy )
         SCRIPT_ERROR_R( "This nullptr." );
     if( hx >= map->GetMaxHexX() || hy >= map->GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid hexes args." );
-    map->UnsetHexFlag( hx, hy, FH_BLOCK_ITEM );
-    map->UnsetHexFlag( hx, hy, FH_NRAKE_ITEM );
+    map->UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
+    map->UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
 }
 
 void FOServer::SScriptFunc::Map_PlaySound( Map* map, ScriptString& sound_name )
@@ -5124,11 +5130,11 @@ uint FOServer::SScriptFunc::Global_CreateLocation( ushort loc_pid, ushort wx, us
 
             ushort zx = GM_ZONE( loc->Data.WX );
             ushort zy = GM_ZONE( loc->Data.WY );
-            if( cl->GMapFog.Get2Bit( zx, zy ) == GM_FOG_FULL )
+            if( cl->GMapFog.Get2Bit( zx, zy ) == WORLDMAP_FOG_FULL )
             {
-                cl->GMapFog.Set2Bit( zx, zy, GM_FOG_HALF );
+                cl->GMapFog.Set2Bit( zx, zy, WORLDMAP_FOG_HALF );
                 if( !cl->GetMap() )
-                    cl->Send_GlobalMapFog( zx, zy, GM_FOG_HALF );
+                    cl->Send_GlobalMapFog( zx, zy, WORLDMAP_FOG_HALF );
             }
         }
     }
@@ -5641,6 +5647,7 @@ void FOServer::SScriptFunc::Global_SetSendParameterFunc( int index, bool enabled
     Critter::ParamsSendEnabled[index] = enabled;
 }
 
+#pragma MESSAGE( "REMOVE SwapCritters")
 template<typename Ty>
 void SwapArray( Ty& arr1, Ty& arr2 )
 {
@@ -5652,8 +5659,8 @@ void SwapArray( Ty& arr1, Ty& arr2 )
 
 void SwapCrittersRefreshNpc( Npc* npc )
 {
-    UNSETFLAG( npc->Flags, FCRIT_PLAYER );
-    SETFLAG( npc->Flags, FCRIT_NPC );
+    UNSETFLAG( npc->Flags, CRITTER_FLAG_PLAYER );
+    SETFLAG( npc->Flags, CRITTER_FLAG_NPC );
     AIDataPlaneVec& planes = npc->GetPlanes();
     for( auto it = planes.begin(), end = planes.end(); it != end; ++it )
         delete *it;
@@ -5663,8 +5670,8 @@ void SwapCrittersRefreshNpc( Npc* npc )
 
 void SwapCrittersRefreshClient( Client* cl, Map* map, Map* prev_map )
 {
-    UNSETFLAG( cl->Flags, FCRIT_NPC );
-    SETFLAG( cl->Flags, FCRIT_PLAYER );
+    UNSETFLAG( cl->Flags, CRITTER_FLAG_NPC );
+    SETFLAG( cl->Flags, CRITTER_FLAG_PLAYER );
 
     if( cl->Talk.TalkType != TALK_NONE )
         cl->CloseTalk();
@@ -5699,6 +5706,8 @@ void SwapCrittersRefreshClient( Client* cl, Map* map, Map* prev_map )
 
 bool FOServer::SScriptFunc::Global_SwapCritters( Critter* cr1, Critter* cr2, bool with_inventory, bool with_vars )
 {
+    return false;
+    #if 0
     // Check
     if( cr1->IsNotValid )
         SCRIPT_ERROR_R0( "Critter1 nullptr." );
@@ -5831,6 +5840,7 @@ bool FOServer::SScriptFunc::Global_SwapCritters( Critter* cr1, Critter* cr2, boo
         cr2->ProcessVisibleItems();
     }
     return true;
+    #endif
 }
 
 uint FOServer::SScriptFunc::Global_GetAllItems( ushort pid, ScriptArray* items )

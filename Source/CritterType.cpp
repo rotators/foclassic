@@ -1,8 +1,11 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "CritterType.h"
-#include "Text.h"
 #include "FileManager.h"
+#include "Log.h"
 #include "MsgFiles.h"
+#include "MsgStr.h"
+#include "Text.h"
 
 CritTypeType CrTypes[MAX_CRIT_TYPES];
 int          MoveWalk[MAX_CRIT_TYPES][6] = { 0 };

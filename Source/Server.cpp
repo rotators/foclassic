@@ -1,6 +1,15 @@
-#include "StdAfx.h"
-#include "Server.h"
 #include "FL/Fl.H"
+
+#include "Core.h"
+
+#include "ConstantsManager.h"
+#include "Critter.h"
+#include "CritterType.h"
+#include "IniParser.h"
+#include "ItemManager.h"
+#include "MapManager.h"
+#include "MsgStr.h"
+#include "Server.h"
 
 void* zlib_alloc( void* opaque, unsigned int items, unsigned int size ) { return calloc( items, size ); }
 void  zlib_free( void* opaque, void* address )                          { free( address ); }
@@ -263,7 +272,7 @@ void FOServer::DisconnectClient( Client* cl )
         EraseSaveClient( cl->GetId() );
         AddSaveClient( cl );
 
-        SETFLAG( cl->Flags, FCRIT_DISCONNECT );
+        SETFLAG( cl->Flags, CRITTER_FLAG_DISCONNECT );
         if( cl->GetMap() )
         {
             cl->SendA_Action( ACTION_DISCONNECT, 0, NULL );
@@ -2013,7 +2022,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
     #define CHECK_ADMIN_PANEL    if( !cl_ ) { logcb( "Can't execute this command in admin panel." ); return; }
     switch( cmd )
     {
-        case CMD_EXIT:
+        case COMMAND_EXIT:
         {
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
@@ -2021,7 +2030,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             cl_->Disconnect();
         }
         break;
-        case CMD_MYINFO:
+        case COMMAND_MYINFO:
         {
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
@@ -2053,7 +2062,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             logcb( istr );
         }
         break;
-        case CMD_GAMEINFO:
+        case COMMAND_GAMEINFO:
         {
             int info;
             buf >> info;
@@ -2114,7 +2123,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_CRITID:
+        case COMMAND_CRITID:
         {
             char name[UTF8_BUF_SIZE( MAX_NAME )];
             buf.Pop( name, sizeof(name) );
@@ -2133,7 +2142,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             SaveClientsLocker.Unlock();
         }
         break;
-        case CMD_MOVECRIT:
+        case COMMAND_MOVECRIT:
         {
             uint   crid;
             ushort hex_x;
@@ -2170,7 +2179,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 logcb( "Critter move fail." );
         }
         break;
-        case CMD_KILLCRIT:
+        case COMMAND_KILLCRIT:
         {
             uint crid;
             buf >> crid;
@@ -2188,7 +2197,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             logcb( "Critter is dead." );
         }
         break;
-        case CMD_DISCONCRIT:
+        case COMMAND_DISCONCRIT:
         {
             uint crid;
             buf >> crid;
@@ -2227,7 +2236,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             logcb( "Player disconnected." );
         }
         break;
-        case CMD_TOGLOBAL:
+        case COMMAND_TOGLOBAL:
         {
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
@@ -2244,7 +2253,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 logcb( "To global fail." );
         }
         break;
-        case CMD_RESPAWN:
+        case COMMAND_RESPAWN:
         {
             uint crid;
             buf >> crid;
@@ -2263,7 +2272,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_PARAM:
+        case COMMAND_PARAM:
         {
             uint   crid;
             ushort param_num;
@@ -2293,7 +2302,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_GETACCESS:
+        case COMMAND_GETACCESS:
         {
             char name_access[UTF8_BUF_SIZE( MAX_NAME )];
             char pasw_access[UTF8_BUF_SIZE( 128 )];
@@ -2340,7 +2349,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             logcb( "Access changed." );
         }
         break;
-        case CMD_ADDITEM:
+        case COMMAND_ADDITEM:
         {
             ushort hex_x;
             ushort hex_y;
@@ -2371,7 +2380,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_ADDITEM_SELF:
+        case COMMAND_ADDITEM_SELF:
         {
             ushort pid;
             uint   count;
@@ -2387,7 +2396,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 logcb( "Item(s) added fail." );
         }
         break;
-        case CMD_ADDNPC:
+        case COMMAND_ADDNPC:
         {
             ushort hex_x;
             ushort hex_y;
@@ -2409,7 +2418,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 logcb( "Npc created." );
         }
         break;
-        case CMD_ADDLOCATION:
+        case COMMAND_ADDLOCATION:
         {
             ushort wx;
             ushort wy;
@@ -2427,7 +2436,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 logcb( "Location created." );
         }
         break;
-        case CMD_RELOADSCRIPTS:
+        case COMMAND_RELOADSCRIPTS:
         {
             CHECK_ALLOW_COMMAND;
             if( Script::Profiler::IsActive() )
@@ -2455,7 +2464,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_LOADSCRIPT:
+        case COMMAND_LOADSCRIPT:
         {
             char module_name[MAX_SCRIPT_NAME + 1];
             buf.Pop( module_name, MAX_SCRIPT_NAME );
@@ -2489,7 +2498,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RELOAD_CLIENT_SCRIPTS:
+        case COMMAND_RELOAD_CLIENT_SCRIPTS:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2503,7 +2512,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RUNSCRIPT:
+        case COMMAND_RUNSCRIPT:
         {
             char module_name[MAX_SCRIPT_NAME + 1];
             char func_name[MAX_SCRIPT_NAME + 1];
@@ -2558,7 +2567,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RELOADLOCATIONS:
+        case COMMAND_RELOADLOCATIONS:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2572,7 +2581,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_LOADLOCATION:
+        case COMMAND_LOADLOCATION:
         {
             ushort loc_pid;
             buf >> loc_pid;
@@ -2607,7 +2616,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RELOADMAPS:
+        case COMMAND_RELOADMAPS:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2640,7 +2649,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_LOADMAP:
+        case COMMAND_LOADMAP:
         {
             ushort map_pid;
             buf >> map_pid;
@@ -2673,7 +2682,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_REGENMAP:
+        case COMMAND_REGENMAP:
         {
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
@@ -2709,7 +2718,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_RELOADDIALOGS:
+        case COMMAND_RELOADDIALOGS:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2726,7 +2735,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_LOADDIALOG:
+        case COMMAND_LOADDIALOG:
         {
             char dlg_name[128];
             uint dlg_id;
@@ -2771,7 +2780,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RELOADTEXTS:
+        case COMMAND_RELOADTEXTS:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2792,7 +2801,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_RELOADAI:
+        case COMMAND_RELOADAI:
         {
             CHECK_ALLOW_COMMAND;
 
@@ -2812,7 +2821,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_CHECKVAR:
+        case COMMAND_CHECKVAR:
         {
             ushort tid_var;
             uchar  master_is_npc;
@@ -2828,7 +2837,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             CHECK_ALLOW_COMMAND;
 
             if( master_is_npc )
-                master_id += NPC_START_ID - 1;
+                master_id += CRITTER_ID_START_NPC - 1;
             GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
             if( !var )
             {
@@ -2848,7 +2857,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_SETVAR:
+        case COMMAND_SETVAR:
         {
             ushort tid_var;
             uchar  master_is_npc;
@@ -2864,7 +2873,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             CHECK_ALLOW_COMMAND;
 
             if( master_is_npc )
-                master_id += NPC_START_ID - 1;
+                master_id += CRITTER_ID_START_NPC - 1;
             GameVar* var = VarMngr.GetVar( tid_var, master_id, slave_id, true );
             if( !var )
             {
@@ -2884,7 +2893,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_SETTIME:
+        case COMMAND_SETTIME:
         {
             int multiplier;
             int year;
@@ -2937,7 +2946,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ResynchronizeLogicThreads();
         }
         break;
-        case CMD_BAN:
+        case COMMAND_BAN:
         {
             char name[UTF8_BUF_SIZE( MAX_NAME )];
             char params[UTF8_BUF_SIZE( MAX_NAME )];
@@ -3064,7 +3073,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_DELETE_ACCOUNT:
+        case COMMAND_DELETE_ACCOUNT:
         {
             char pass_hash[PASS_HASH_SIZE];
             buf.Pop( pass_hash, PASS_HASH_SIZE );
@@ -3091,7 +3100,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_CHANGE_PASSWORD:
+        case COMMAND_CHANGE_PASSWORD:
         {
             char pass_hash[PASS_HASH_SIZE];
             char new_pass_hash[PASS_HASH_SIZE];
@@ -3119,7 +3128,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
         }
         break;
-        case CMD_DROP_UID:
+        case COMMAND_DROP_UID:
         {
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
@@ -3134,7 +3143,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             logcb( "UID dropped, you can relogin on another account without timeout." );
         }
         break;
-        case CMD_LOG:
+        case COMMAND_LOG:
         {
             char flags[16];
             buf.Pop( flags, 16 );
@@ -4233,7 +4242,7 @@ bool FOServer::LoadClientsData()
         }
 
         // Check id
-        if( !IS_USER_ID( id ) )
+        if( !CRITTER_ID_IS_PLAYER( id ) )
         {
             WriteLog( "Wrong id<%u> of client<%s>. Skipped.\n", id, name );
             continue;

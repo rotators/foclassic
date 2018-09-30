@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "Common.h"
 #include "Exception.h"
 #include "Crypt.h"
@@ -9,6 +8,8 @@
 #include "IniParser.h"
 #include "Version.h"
 #include <stdarg.h>
+
+#include "GameOptions.h"
 
 #pragma MESSAGE("Add TARGET_HEX.")
 
@@ -38,12 +39,7 @@ void SetCommandLine( uint argc, char** argv )
     }
 }
 
-// Default randomizer
-Randomizer DefaultRandomizer;
-int Random( int minimum, int maximum )
-{
-    return DefaultRandomizer.Random( minimum, maximum );
-}
+
 
 // Math stuff
 int Procent( int full, int peace )
@@ -608,11 +604,11 @@ void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int
 const char* GetConfigFileName()
 {
     // Default config names
-    #if defined (FONLINE_SERVER)
+    #if defined (FOCLASSIC_SERVER)
     static char config_name[MAX_FOPATH] = { "FOnlineServer.cfg\0--default-server-config--" };
-    #elif defined (FONLINE_MAPPER)
+    #elif defined (FOCLASSIC_MAPPER)
     static char config_name[MAX_FOPATH] = { "Mapper.cfg\0--default-mapper-config--" };
-    #else // FONLINE_CLIENT and others
+    #else // FOCLASSIC_CLIENT and others
     static char config_name[MAX_FOPATH] = { "FOnline.cfg\0--default-client-config--" };
     #endif
 
@@ -664,13 +660,13 @@ const char* GetConfigFileName()
 const char* GetWindowName()
 {
     // Default config names
-    #if defined (FONLINE_SERVER)
+    #if defined (FOCLASSIC_SERVER)
     static char window_name[MAX_FOPATH] = { "FOnline Server\0--default-server-name--" };
     int         path_type = PT_SERVER_ROOT;
-    #elif defined (FONLINE_MAPPER)
+    #elif defined (FOCLASSIC_MAPPER)
     static char window_name[MAX_FOPATH] = { "FOnline Mapper\0--default-mapper-name--" };
     int         path_type = PT_MAPPER_ROOT;
-    #else // FONLINE_CLIENT and others
+    #else // FOCLASSIC_CLIENT and others
     static char window_name[MAX_FOPATH] = { "FOnline\0--default-client-name--" };
     int         path_type = PT_ROOT;
     #endif
@@ -690,7 +686,7 @@ const char* GetWindowName()
 
         // 'WindowName' section
         char str[MAX_FOPATH];
-        #if !defined (FONLINE_CLIENT)
+        #if !defined (FOCLASSIC_CLIENT)
         if( !cfg.GetStr( "WindowName", "", str ) || !str[0] )
             return window_name;
         #else
@@ -704,7 +700,7 @@ const char* GetWindowName()
             Str::Append( window_name, " Singleplayer" );
 
         // Mapper appendix
-        #if defined (FONLINE_MAPPER)
+        #if defined (FOCLASSIC_MAPPER)
         Str::Append( window_name, " " );
         Str::Append( window_name, MAPPER_VERSION_STR );
         #endif
@@ -716,7 +712,7 @@ const char* GetWindowName()
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
 uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light )
 {
@@ -799,7 +795,7 @@ void GetClientOptions()
     char buf[MAX_FOTEXT];
 
     // Load config file
-    # ifdef FONLINE_MAPPER
+    # ifdef FOCLASSIC_MAPPER
     IniParser cfg_mapper;
     cfg_mapper.LoadFile( GetConfigFileName(), PT_MAPPER_ROOT );
 
@@ -962,7 +958,7 @@ void GetClientOptions()
     GETOPTIONS_CMD_LINE_BOOL( logging, "-LoggingThread" );
     LogWithThread( logging );
 
-    # ifdef FONLINE_MAPPER
+    # ifdef FOCLASSIC_MAPPER
     Script::SetRunTimeout( 0, 0 );
     # endif
 }
@@ -973,7 +969,7 @@ MapperScriptFunctions MapperFunctions;
 /************************************************************************/
 /*                                                                      */
 /************************************************************************/
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 
 bool FOQuit = false;
 int  ServerGameSleep = 10;
@@ -1119,319 +1115,7 @@ const char* GetLastSocketError()
 /*                                                                      */
 /************************************************************************/
 
-GameOptions GameOpt;
-GameOptions::GameOptions()
-{
-    YearStart = 2246;
-    Year = 2246;
-    Month = 1;
-    Day = 2;
-    Hour = 14;
-    Minute = 5;
-    Second = 0;
-    FullSecondStart = 0;
-    FullSecond = 0;
-    TimeMultiplier = 0;
-    GameTimeTick = 0;
 
-    DisableTcpNagle = false;
-    DisableZlibCompression = false;
-    FloodSize = 2048;
-    NoAnswerShuffle = false;
-    DialogDemandRecheck = false;
-    FixBoyDefaultExperience = 50;
-    SneakDivider = 6;
-    LevelCap = 99;
-    LevelCapAddExperience = false;
-    LookNormal = 20;
-    LookMinimum = 6;
-    GlobalMapMaxGroupCount = 10;
-    CritterIdleTick = 10000;
-    TurnBasedTick = 30000;
-    DeadHitPoints = -6;
-
-    Breaktime = 1200;
-    TimeoutTransfer = 3;
-    TimeoutBattle = 10;
-    ApRegeneration = 10000;
-    RtApCostCritterWalk = 0;
-    RtApCostCritterRun = 1;
-    RtApCostMoveItemContainer = 0;
-    RtApCostMoveItemInventory = 2;
-    RtApCostPickItem = 1;
-    RtApCostDropItem = 1;
-    RtApCostReloadWeapon = 2;
-    RtApCostPickCritter = 1;
-    RtApCostUseItem = 3;
-    RtApCostUseSkill = 2;
-    RtAlwaysRun = false;
-    TbApCostCritterMove = 1;
-    TbApCostMoveItemContainer = 0;
-    TbApCostMoveItemInventory = 1;
-    TbApCostPickItem = 3;
-    TbApCostDropItem = 1;
-    TbApCostReloadWeapon = 2;
-    TbApCostPickCritter = 3;
-    TbApCostUseItem = 3;
-    TbApCostUseSkill = 3;
-    TbAlwaysRun = false;
-    ApCostAimEyes = 1;
-    ApCostAimHead = 1;
-    ApCostAimGroin = 1;
-    ApCostAimTorso = 1;
-    ApCostAimArms = 1;
-    ApCostAimLegs = 1;
-    RunOnCombat = false;
-    RunOnTransfer = false;
-    GlobalMapWidth = 28;
-    GlobalMapHeight = 30;
-    GlobalMapZoneLength = 50;
-    GlobalMapMoveTime = 500;
-    BagRefreshTime = 60;
-    AttackAnimationsMinDist = 0;
-    WhisperDist = 2;
-    ShoutDist = 200;
-    LookChecks = 0;
-    LookDir[0] = 0;
-    LookDir[1] = 20;
-    LookDir[2] = 40;
-    LookDir[3] = 60;
-    LookDir[4] = 60;
-    LookSneakDir[0] = 90;
-    LookSneakDir[1] = 60;
-    LookSneakDir[2] = 30;
-    LookSneakDir[3] = 0;
-    LookSneakDir[4] = 0;
-    LookWeight = 200;
-    CustomItemCost = false;
-    RegistrationTimeout = 5;
-    AccountPlayTime = 0;
-    LoggingVars = false;
-    ScriptRunSuspendTimeout = 30000;
-    ScriptRunMessageTimeout = 10000;
-    TalkDistance = 3;
-    NpcMaxTalkers = 1;
-    MinNameLength = 4;
-    MaxNameLength = 12;
-    DlgTalkMinTime = 0;
-    DlgBarterMinTime = 0;
-    MinimumOfflineTime = 180000;
-
-    StartSpecialPoints = 40;
-    StartTagSkillPoints = 3;
-
-    SkillMaxValue = 300;
-    SkillModAdd2 = 100;
-    SkillModAdd3 = 125;
-    SkillModAdd4 = 150;
-    SkillModAdd5 = 175;
-    SkillModAdd6 = 200;
-
-    AbsoluteOffsets = true;
-    SkillBegin = 200;
-    SkillEnd = 217;
-    TimeoutBegin = 230;
-    TimeoutEnd = 249;
-    KillBegin = 260;
-    KillEnd = 278;
-    PerkBegin = 300;
-    PerkEnd = 435;
-    AddictionBegin = 470;
-    AddictionEnd = 476;
-    KarmaBegin = 480;
-    KarmaEnd = 495;
-    DamageBegin = 500;
-    DamageEnd = 506;
-    TraitBegin = 550;
-    TraitEnd = 565;
-    ReputationBegin = 570;
-    ReputationEnd = 599;
-
-    ReputationLoved = 30;
-    ReputationLiked = 15;
-    ReputationAccepted = 1;
-    ReputationNeutral = 0;
-    ReputationAntipathy = -14;
-    ReputationHated = -29;
-
-    MapHexagonal = true;
-    MapHexWidth = 32;
-    MapHexHeight = 16;
-    MapHexLineHeight = 12;
-    MapTileOffsX = -8;
-    MapTileOffsY = 32;
-    MapRoofOffsX = -8;
-    MapRoofOffsY = -66;
-    MapRoofSkipSize = 2;
-    MapCameraAngle = 25.7f;
-    MapSmoothPath = true;
-    MapDataPrefix = "art/geometry/fallout_";
-
-    // Client and Mapper
-    Quit = false;
-    #ifdef FO_D3D
-    OpenGLRendering = false;
-    #else
-    OpenGLRendering = true;
-    #endif
-    OpenGLDebug = false;
-    AssimpLogging = false;
-    MouseX = 0;
-    MouseY = 0;
-    ScrOx = 0;
-    ScrOy = 0;
-    ShowTile = true;
-    ShowRoof = true;
-    ShowItem = true;
-    ShowScen = true;
-    ShowWall = true;
-    ShowCrit = true;
-    ShowFast = true;
-    ShowPlayerNames = false;
-    ShowNpcNames = false;
-    ShowCritId = false;
-    ScrollKeybLeft = false;
-    ScrollKeybRight = false;
-    ScrollKeybUp = false;
-    ScrollKeybDown = false;
-    ScrollMouseLeft = false;
-    ScrollMouseRight = false;
-    ScrollMouseUp = false;
-    ScrollMouseDown = false;
-    ShowGroups = true;
-    HelpInfo = false;
-    DebugInfo = false;
-    DebugNet = false;
-    DebugSprites = false;
-    FullScreen = false;
-    VSync = false;
-    FlushVal = 100;
-    BaseTexture = 256;
-    Light = 0;
-    Host = "localhost";
-    Port = 0;
-    ProxyType = 0;
-    ProxyHost = "";
-    ProxyPort = 0;
-    ProxyUser = "";
-    ProxyPass = "";
-    Name = "";
-    ScrollDelay = 10;
-    ScrollStep = 1;
-    ScrollCheck = true;
-    FoDataPath = "";
-    FixedFPS = 100;
-    FPS = 0;
-    PingPeriod = 2000;
-    Ping = 0;
-    MsgboxInvert = false;
-    DefaultCombatMode = COMBAT_MODE_ANY;
-    MessNotify = true;
-    SoundNotify = true;
-    AlwaysOnTop = false;
-    TextDelay = 3000;
-    DamageHitDelay = 0;
-    ScreenWidth = 800;
-    ScreenHeight = 600;
-    MultiSampling = 0;
-    MouseScroll = true;
-    IndicatorType = INDICATOR_LINES;
-    DoubleClickTime = 0;
-    RoofAlpha = 200;
-    HideCursor = false;
-    DisableLMenu = false;
-    DisableMouseEvents = false;
-    DisableKeyboardEvents = false;
-    HidePassword = true;
-    PlayerOffAppendix = "_off";
-    CombatMessagesType = 0;
-    Animation3dSmoothTime = 250;
-    Animation3dFPS = 10;
-    RunModMul = 1;
-    RunModDiv = 3;
-    RunModAdd = 0;
-    MapZooming = false;
-    SpritesZoom = 1.0f;
-    SpritesZoomMax = MAX_ZOOM;
-    SpritesZoomMin = MIN_ZOOM;
-    memzero( EffectValues, sizeof(EffectValues) );
-    AlwaysRun = false;
-    AlwaysRunMoveDist = 1;
-    AlwaysRunUseDist = 5;
-    KeyboardRemap = "";
-    CritterFidgetTime = 50000;
-    Anim2CombatBegin = 0;
-    Anim2CombatIdle = 0;
-    Anim2CombatEnd = 0;
-    RainTick = 60;
-    RainSpeedX = 0;
-    RainSpeedY = 15;
-
-    // Mapper
-    ClientPath = DIR_SLASH_SD;
-    ServerPath = DIR_SLASH_SD;
-    ShowCorners = false;
-    ShowSpriteCuts = false;
-    ShowDrawOrder = false;
-    SplitTilesCollection = true;
-
-    // Engine data
-    CritterChangeParameter = NULL;
-    CritterTypes = NULL;
-
-    ClientMap = NULL;
-    ClientMapLight = NULL;
-    ClientMapWidth = 0;
-    ClientMapHeight = 0;
-
-    GetDrawingSprites = NULL;
-    GetSpriteInfo = NULL;
-    GetSpriteColor = NULL;
-    IsSpriteHit = NULL;
-
-    GetNameByHash = NULL;
-    GetHashByName = NULL;
-
-    ScriptLoadModule = NULL;
-    ScriptBind = NULL;
-    ScriptPrepare = NULL;
-    ScriptSetArgInt8 = NULL;
-    ScriptSetArgInt16 = NULL;
-    ScriptSetArgInt = NULL;
-    ScriptSetArgInt64 = NULL;
-    ScriptSetArgUInt8 = NULL;
-    ScriptSetArgUInt16 = NULL;
-    ScriptSetArgUInt = NULL;
-    ScriptSetArgUInt64 = NULL;
-    ScriptSetArgBool = NULL;
-    ScriptSetArgFloat = NULL;
-    ScriptSetArgDouble = NULL;
-    ScriptSetArgObject = NULL;
-    ScriptSetArgAddress = NULL;
-    ScriptRunPrepared = NULL;
-    ScriptGetReturnedInt8 = NULL;
-    ScriptGetReturnedInt16 = NULL;
-    ScriptGetReturnedInt = NULL;
-    ScriptGetReturnedInt64 = NULL;
-    ScriptGetReturnedUInt8 = NULL;
-    ScriptGetReturnedUInt16 = NULL;
-    ScriptGetReturnedUInt = NULL;
-    ScriptGetReturnedUInt64 = NULL;
-    ScriptGetReturnedBool = NULL;
-    ScriptGetReturnedFloat = NULL;
-    ScriptGetReturnedDouble = NULL;
-    ScriptGetReturnedObject = NULL;
-    ScriptGetReturnedAddress = NULL;
-
-    Random = &::Random;
-    GetTick = &Timer::FastTick;
-    SetLogCallback = &LogToFunc;
-
-    // Callbacks
-    GetUseApCost = NULL;
-    GetAttackDistantion = NULL;
-    GetRainOffset = NULL;
-}
 
 /************************************************************************/
 /* File logger                                                          */
@@ -1564,132 +1248,10 @@ bool             Singleplayer = false;
 InterprocessData SingleplayerData;
 
 /************************************************************************/
-/* Thread                                                               */
-/************************************************************************/
-
-#if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
-
-THREAD char Thread::threadName[64] = { 0 };
-UIntStrMap  Thread::threadNames;
-Mutex       Thread::threadNamesLocker;
-
-void* ThreadBeginExecution( void* args )
-{
-    void** args_ = (void**)args;
-    void   ( * func )( void* ) = (void (*)( void* ) )args_[0];
-    void*  func_arg = args_[1];
-    char*  name = (char*)args_[2];
-    Thread::SetCurrentName( name );
-    delete[] name;
-    free( args );
-    func( func_arg );
-    return NULL;
-}
-
-Thread::Thread()
-{
-    isStarted = false;
-    pthread_attr_init( &threadAttr );
-}
-
-Thread::~Thread()
-{
-    pthread_attr_destroy( &threadAttr );
-}
-
-bool Thread::Start( void (*func)( void* ), const char* name, void* arg /* = NULL */ )
-{
-    void** args = (void**)malloc( sizeof(void*) * 3 );
-    char*  name_ = Str::Duplicate( name );
-    args[0] = (void*)func, args[1] = arg, args[2] = name_;
-    isStarted = (pthread_create( &threadId, &threadAttr, ThreadBeginExecution, args ) == 0);
-    return isStarted;
-}
-
-void Thread::Wait()
-{
-    if( isStarted )
-        pthread_join( threadId, NULL );
-    isStarted = false;
-}
-
-void Thread::Finish()
-{
-    if( isStarted )
-        pthread_cancel( threadId );
-    isStarted = false;
-}
-
-# ifdef FO_WINDOWS
-HANDLE Thread::GetWindowsHandle()
-{
-    return pthread_getw32threadhandle_np( threadId );
-}
-# endif
-
-# ifndef FO_WINDOWS
-pid_t Thread::GetPid()
-{
-    return (pid_t)threadId;
-}
-# endif
-
-uint Thread::GetCurrentId()
-{
-    # ifdef FO_WINDOWS
-    return (uint)GetCurrentThreadId();
-    # else
-    return (uint)pthread_self();
-    # endif
-}
-
-void Thread::SetCurrentName( const char* name )
-{
-    if( threadName[0] )
-        return;
-
-    Str::Copy( threadName, name );
-    SCOPE_LOCK( threadNamesLocker );
-    threadNames.insert( PAIR( GetCurrentId(), string( threadName ) ) );
-}
-
-const char* Thread::GetCurrentName()
-{
-    return threadName;
-}
-
-const char* Thread::FindName( uint thread_id )
-{
-    SCOPE_LOCK( threadNamesLocker );
-    auto it = threadNames.find( thread_id );
-    return it != threadNames.end() ? (*it).second.c_str() : NULL;
-}
-
-void Thread::Sleep( uint ms )
-{
-    # ifdef FO_WINDOWS
-    ::Sleep( ms );
-    # else
-    struct timespec req;
-    req.tv_sec = ms / 1000;
-    req.tv_nsec = (ms % 1000) * 1000000;
-    while( nanosleep( &req, &req ) == -1 && errno == EINTR )
-        continue;
-    # endif
-}
-
-void Thread_Sleep( uint ms ) // Used in Mutex.h as extern function
-{
-    Thread::Sleep( ms );
-}
-
-#endif
-
-/************************************************************************/
 /* FOWindow                                                             */
 /************************************************************************/
 
-#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
 FOWindow::FOWindow() : Fl_Window( 0, 0, "" ), Focused( true )
 {
@@ -1909,13 +1471,13 @@ uint Deprecated_GetPicHash( int pid, int type, ushort pic_num )
 
 void Deprecated_CondExtToAnim2( uchar cond, uchar cond_ext, uint& anim2ko, uint& anim2dead )
 {
-    if( cond == COND_KNOCKOUT )
+    if( cond == CRITTER_CONDITION_KNOCKOUT )
     {
         if( cond_ext == 2 )
             anim2ko = ANIM2_IDLE_PRONE_FRONT;  // COND_KNOCKOUT_FRONT
         anim2ko = ANIM2_IDLE_PRONE_BACK;       // COND_KNOCKOUT_BACK
     }
-    else if( cond == COND_DEAD )
+    else if( cond == CRITTER_CONDITION_DEAD )
     {
         switch( cond_ext )
         {

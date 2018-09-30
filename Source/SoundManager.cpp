@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "SoundManager.h"
 #include "Common.h"
 #include "ResourceManager.h"

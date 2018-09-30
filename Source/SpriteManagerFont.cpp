@@ -1,6 +1,9 @@
-#include "StdAfx.h"
-#include "SpriteManager.h"
+#include "CMake.h"
+
 #include "Crypt.h"
+#include "GameOptions.h"
+#include "SpriteManager.h"
+#include "Types.h"
 
 #ifdef FO_D3D
 # define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )

@@ -4,7 +4,7 @@
 #include "Defines.h"
 #include "Item.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 class Critter;
 class Map;
 #endif
@@ -13,10 +13,10 @@ class ItemManager
 {
 private:
     bool         isActive;
-    ProtoItem    allProto[MAX_ITEM_PROTOTYPES];   // All
-    ProtoItemVec typeProto[ITEM_MAX_TYPES];       // By type
-    uint         protoHash[ITEM_MAX_TYPES];       // Hash types protos
-    char*        protoScript[MAX_ITEM_PROTOTYPES];
+    ProtoItem    allProto[MAX_PROTO_ITEMS];  // All
+    ProtoItemVec typeProto[ITEM_TYPE_MAX];   // By type
+    uint         protoHash[ITEM_TYPE_MAX];   // Hash types protos
+    char*        protoScript[MAX_PROTO_ITEMS];
 
 public:
     ProtoItemVec& GetProtos( int type )     { return typeProto[type]; }
@@ -27,7 +27,7 @@ public:
     void Finish();
     void Clear();
 
-    #if defined (FONLINE_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FONLINE_MAPPER)
+    #if defined (FOCLASSIC_SERVER) || defined (FONLINE_OBJECT_EDITOR) || defined (FOCLASSIC_MAPPER)
     bool LoadProtos();
     bool LoadProtos( ProtoItemVec& protos, const char* fname );
     #endif
@@ -46,7 +46,7 @@ public:
     void        ClearProtos( int type = 0xFF ); // 0xFF - All
     void        ClearProto( ushort pid );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 private:
     ItemPtrMap gameItems;
     UIntVec    itemToDelete;
@@ -98,11 +98,11 @@ public:
     void RadioRegister( Item* radio, bool add );
     void RadioSendText( Critter* cr, const char* text, ushort text_len, bool unsafe_text, ushort text_msg, uint num_str, UShortVec& channels );
     void RadioSendTextEx( ushort channel, int broadcast_type, uint from_map_id, ushort from_wx, ushort from_wy, const char* text, ushort text_len, ushort intellect, bool unsafe_text, ushort text_msg, uint num_str, const char* lexems );
-    #endif // FONLINE_SERVER
+    #endif // FOCLASSIC_SERVER
 
     // Items statistics
 private:
-    int64         itemCount[MAX_ITEM_PROTOTYPES];
+    int64         itemCount[MAX_PROTO_ITEMS];
     MutexSpinlock itemCountLocker;
 
 public:

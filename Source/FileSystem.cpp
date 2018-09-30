@@ -1,4 +1,5 @@
-#include "StdAfx.h"
+#include "Common.h"
+#include "FileSystem.h"
 
 #ifdef FO_WINDOWS
 

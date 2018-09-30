@@ -3,24 +3,11 @@
 
 #include "Common.h"
 
-#define VAR_NAME_LEN          (256)
-#define VAR_DESC_LEN          (2048)
-#define VAR_FNAME_VARS        "_vars.fos"
-#define VAR_DESC_MARK         "**********"
+#define VAR_NAME_LEN      (256)
+#define VAR_DESC_LEN      (2048)
+#define VAR_FNAME_VARS    "_vars.fos"
+#define VAR_DESC_MARK     "**********"
 #define VAR_CALC_QUEST( tid, val )    ( (tid) * 1000 + (val) )
-
-// Types
-#define VAR_GLOBAL            (0)
-#define VAR_LOCAL             (1)
-#define VAR_UNICUM            (2)
-#define VAR_LOCAL_LOCATION    (3)
-#define VAR_LOCAL_MAP         (4)
-#define VAR_LOCAL_ITEM        (5)
-
-// Flags
-#define VAR_FLAG_QUEST        (0x1)
-#define VAR_FLAG_RANDOM       (0x2)
-#define VAR_FLAG_NO_CHECK     (0x4)
 
 // Typedefs
 class TemplateVar;
@@ -46,15 +33,15 @@ public:
     VarsMap32 Vars;
     VarsMap64 VarsUnicum;
 
-    bool IsNotUnicum() { return Type != VAR_UNICUM; }
-    bool IsError()     { return !TempId || !Name.size() || (IsNoBorders() && (MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal) ) || (IsQuest() && Type != VAR_LOCAL);  }
+    bool IsNotUnicum() { return Type != VAR_TYPE_UNICUM; }
+    bool IsError()     { return !TempId || !Name.size() || (IsNoBorders() && (MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal) ) || (IsQuest() && Type != VAR_TYPE_LOCAL);  }
     bool IsQuest()     { return FLAG( Flags, VAR_FLAG_QUEST ); }
     bool IsRandom()    { return FLAG( Flags, VAR_FLAG_RANDOM ); }
     bool IsNoBorders() { return FLAG( Flags, VAR_FLAG_NO_CHECK ); }
-    TemplateVar() : Type( VAR_GLOBAL ), TempId( 0 ), StartVal( 0 ), MinVal( 0 ), MaxVal( 0 ), Flags( 0 ) {}
+    TemplateVar() : Type( VAR_TYPE_GLOBAL ), TempId( 0 ), StartVal( 0 ), MinVal( 0 ), MaxVal( 0 ), Flags( 0 ) {}
 };
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 class Critter;
 
 class GameVar
@@ -133,7 +120,7 @@ bool GameVarEqualInt( const GameVar& var, const int _right );
 int  GameVarCmpInt( const GameVar& var, const int _right );
 bool GameVarEqualGameVar( const GameVar& var, const GameVar& _right );
 int  GameVarCmpGameVar( const GameVar& var, const GameVar& _right );
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 class VarManager
 {
@@ -161,7 +148,7 @@ public:
     void         SaveTemplateVars();
     TempVarVec&  GetTemplateVars() { return tempVars; }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 public:
     void     SaveVarsDataFile( void (* save_func)( void*, size_t ) );
     bool     LoadVarsDataFile( void* f, int version );
@@ -185,7 +172,7 @@ private:
     void     ChangeVar( GameVar* var, char oper, int val );
     GameVar* CreateVar( uint master_id, TemplateVar* tvar );
     GameVar* CreateVarUnicum( uint64 id, uint master_id, uint slave_id, TemplateVar* tvar );
-    #endif // FONLINE_SERVER
+    #endif // FOCLASSIC_SERVER
 };
 
 extern VarManager VarMngr;

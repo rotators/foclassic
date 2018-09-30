@@ -1,8 +1,10 @@
-#include "StdAfx.h"
 #include "CMake.h"
-#include "Client.h"
+
 #include "Access.h"
+#include "Client.h"
 #include "Defence.h"
+#include "MsgStr.h"
+#include "Thread.h"
 #include "Version.h"
 
 // Check buffer for error
@@ -3258,7 +3260,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     Bout.Push( pass_hash, PASS_HASH_SIZE );
     uint uid2 = *UID2;
     Bout << CurLang.Name;
-    for( int i = 0; i < TEXTMSG_COUNT; i++ )
+    for( int i = 0; i < TEXTMSG_MAX; i++ )
         Bout << CurLang.Msg[i].GetHash();
     Bout << UIDXOR;                                                                                                                                                             // UID xor
     uint uid3 = *UID3;
@@ -3269,7 +3271,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     uid3 ^= uid2;
     uid1 |= uid4 + 222 - *UID2;                                                                                                                 // UID2
     Bout << UIDOR;                                                                                                                              // UID or
-    for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+    for( int i = 0; i < ITEM_TYPE_MAX; i++ )
         Bout << ItemMngr.GetProtosHash( i );
     Bout << UIDCALC;                                                                                                                            // UID uidcalc
     Bout << GameOpt.DefaultCombatMode;
@@ -3923,7 +3925,7 @@ void FOClient::Net_OnAddCritter( bool is_npc )
         cr->SetBaseType( base_type );
         cr->Init();
 
-        if( FLAG( cr->Flags, FCRIT_CHOSEN ) )
+        if( FLAG( cr->Flags, CRITTER_FLAG_CHOSEN ) )
             SetAction( CHOSEN_NONE );
 
         AddCritter( cr );
@@ -4041,7 +4043,7 @@ void FOClient::Net_OnTextMsg( bool with_lexems )
         return;
     }
 
-    if( msg_num >= TEXTMSG_COUNT )
+    if( msg_num >= TEXTMSG_MAX )
     {
         WriteLogF( _FUNC_, " - Msg num invalid value<%u>.\n", msg_num );
         return;
@@ -4356,7 +4358,7 @@ void FOClient::Net_OnMapTextMsg()
     Bin >> msg_num;
     Bin >> num_str;
 
-    if( msg_num >= TEXTMSG_COUNT )
+    if( msg_num >= TEXTMSG_MAX )
     {
         WriteLogF( _FUNC_, " - Msg num invalid value, num<%u>.\n", msg_num );
         return;
@@ -4395,7 +4397,7 @@ void FOClient::Net_OnMapTextMsgLex()
 
     CHECK_IN_BUFF_ERROR;
 
-    if( msg_num >= TEXTMSG_COUNT )
+    if( msg_num >= TEXTMSG_MAX )
     {
         WriteLogF( _FUNC_, " - Msg num invalid value, num<%u>.\n", msg_num );
         return;
@@ -4709,17 +4711,17 @@ void FOClient::Net_OnCritterSetAnims()
     CritterCl* cr = GetCritter( crid );
     if( cr )
     {
-        if( cond == 0 || cond == COND_LIFE )
+        if( cond == 0 || cond == CRITTER_CONDITION_LIFE )
         {
             cr->Anim1Life = anim1;
             cr->Anim2Life = anim2;
         }
-        else if( cond == 0 || cond == COND_KNOCKOUT )
+        else if( cond == 0 || cond == CRITTER_CONDITION_KNOCKOUT )
         {
             cr->Anim1Knockout = anim1;
             cr->Anim2Knockout = anim2;
         }
-        else if( cond == 0 || cond == COND_DEAD )
+        else if( cond == 0 || cond == CRITTER_CONDITION_DEAD )
         {
             cr->Anim1Dead = anim1;
             cr->Anim2Dead = anim2;
@@ -6783,7 +6785,7 @@ void FOClient::Net_OnMsgData()
         }
     }
 
-    if( num_msg >= TEXTMSG_COUNT )
+    if( num_msg >= TEXTMSG_MAX )
     {
         WriteLogF( _FUNC_, " - Incorrect value of msg num.\n" );
         return;
@@ -8141,7 +8143,7 @@ label_EndMove:
             {
                 PupCont2Init.clear();
                 PupCount = 0;
-                Net_SendItemCont( PupTransferType, PupContId, PupHoldId, 0, CONT_GETALL );
+                Net_SendItemCont( PupTransferType, PupContId, PupHoldId, 0, CONTAINER_GETALL );
                 Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + 1, NULL );
                 Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
                 CollectContItems();
@@ -10554,14 +10556,14 @@ void FOClient::SScriptFunc::Global_MessageType( ScriptString& msg, int type )
 
 void FOClient::SScriptFunc::Global_MessageMsg( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
     Self->AddMess( FOMB_GAME, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
 void FOClient::SScriptFunc::Global_MessageMsgType( int text_msg, uint str_num, int type )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
     if( type < FOMB_GAME || type > FOMB_VIEW )
         type = FOMB_GAME;
@@ -10588,42 +10590,42 @@ void FOClient::SScriptFunc::Global_MapMessage( ScriptString& text, ushort hx, us
 
 ScriptString* FOClient::SScriptFunc::Global_GetMsgStr( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_RX( "Invalid text msg arg.", new ScriptString( "" ) );
     return new ScriptString( text_msg == TEXTMSG_HOLO ? Self->GetHoloText( str_num ) : Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
 ScriptString* FOClient::SScriptFunc::Global_GetMsgStrSkip( int text_msg, uint str_num, uint skip_count )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_RX( "Invalid text msg arg.", new ScriptString( "" ) );
     return new ScriptString( text_msg == TEXTMSG_HOLO ? Self->GetHoloText( str_num ) : Self->CurLang.Msg[text_msg].GetStr( str_num, skip_count ) );
 }
 
 uint FOClient::SScriptFunc::Global_GetMsgStrNumUpper( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].GetStrNumUpper( str_num );
 }
 
 uint FOClient::SScriptFunc::Global_GetMsgStrNumLower( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].GetStrNumLower( str_num );
 }
 
 uint FOClient::SScriptFunc::Global_GetMsgStrCount( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].Count( str_num );
 }
 
 bool FOClient::SScriptFunc::Global_IsMsgStr( int text_msg, uint str_num )
 {
-    if( text_msg >= TEXTMSG_COUNT )
+    if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R0( "Invalid text msg arg." );
     return Self->CurLang.Msg[text_msg].Count( str_num ) > 0;
 }

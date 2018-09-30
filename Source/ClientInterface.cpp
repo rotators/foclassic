@@ -1,6 +1,8 @@
-#include "StdAfx.h"
 #include "CMake.h"
+
 #include "Client.h"
+#include "Defines.h"
+#include "MsgStr.h"
 #include "Version.h"
 
 // ==============================================================================================================================
@@ -4353,7 +4355,7 @@ void FOClient::FormatTags( char* text, size_t text_len, CritterCl* player, Critt
                     else
                     {
                         int msg_type = FOMsg::GetMsgType( msg_type_name );
-                        if( msg_type < 0 || msg_type >= TEXTMSG_COUNT )
+                        if( msg_type < 0 || msg_type >= TEXTMSG_MAX )
                             Str::Copy( tag, "<msg tag, unknown type>" );
                         else if( !CurLang.Msg[msg_type].Count( str_num ) )
                             Str::Copy( tag, Str::FormatBuf( "<msg tag, string %u not found>", str_num ) );
@@ -6054,12 +6056,12 @@ void FOClient::GmapDraw()
         for( int zy = fog_t; zy <= fog_b; zy++ )
         {
             int val = GmapFog.Get2Bit( zx, zy );
-            if( val == GM_FOG_NONE )
+            if( val == WORLDMAP_FOG_NONE )
                 continue;
             uint color = COLOR_ARGB( 0xFF, 0, 0, 0 );      // GM_FOG_FULL
-            if( val == GM_FOG_HALF )
+            if( val == WORLDMAP_FOG_HALF )
                 color = COLOR_ARGB( 0x7F, 0, 0, 0 );
-            else if( val == GM_FOG_HALF_EX )
+            else if( val == WORLDMAP_FOG_HALF_EX )
                 color = COLOR_ARGB( 0x3F, 0, 0, 0 );
             float l = float(zx * GM_ZONE_LEN) / GmapZoom + GmapOffsetX;
             float t = float(zy * GM_ZONE_LEN) / GmapZoom + GmapOffsetY;
@@ -6239,7 +6241,7 @@ void FOClient::GmapDraw()
     {
         int cx = (int)( (GameOpt.MouseX - GmapOffsetX) * GmapZoom );
         int cy = (int)( (GameOpt.MouseY - GmapOffsetY) * GmapZoom );
-        if( GmapFog.Get2Bit( GM_ZONE( cx ), GM_ZONE( cy ) ) != GM_FOG_FULL )
+        if( GmapFog.Get2Bit( GM_ZONE( cx ), GM_ZONE( cy ) ) != WORLDMAP_FOG_FULL )
         {
             GmapLocation* cur_loc = NULL;
             for( auto it = GmapLoc.begin(); it != GmapLoc.end(); ++it )
@@ -9448,7 +9450,7 @@ void FOClient::PupTransfer( uint item_id, uint cont, uint count )
             return;
 
         PupLastPutId = item_id;
-        Net_SendItemCont( PupTransferType, PupContId, item_id, count, CONT_PUT );
+        Net_SendItemCont( PupTransferType, PupContId, item_id, count, CONTAINER_PUT );
         WaitPing();
     }
     // From container to Chosen
@@ -9464,7 +9466,7 @@ void FOClient::PupTransfer( uint item_id, uint cont, uint count )
         else
             PupCont2Init.erase( it );
 
-        Net_SendItemCont( PupTransferType, PupContId, item_id, count, CONT_GET );
+        Net_SendItemCont( PupTransferType, PupContId, item_id, count, CONTAINER_GET );
         WaitPing();
     }
     CollectContItems();

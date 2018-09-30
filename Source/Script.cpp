@@ -1,17 +1,23 @@
-#include "StdAfx.h"
-#include "CMake.h"
-#include "Script.h"
-#include "Text.h"
-#include "FileManager.h"
-#include "Version.h"
-#include "AngelScript/scriptstring.h"
+#include <strstream>
+
+#include "AngelScript/angelscript.h"
 #include "AngelScript/scriptany.h"
+#include "AngelScript/scriptarray.h"
 #include "AngelScript/scriptdictionary.h"
 #include "AngelScript/scriptfile.h"
 #include "AngelScript/scriptmath.h"
-#include "AngelScript/scriptarray.h"
+#include "AngelScript/scriptstring.h"
 #include "AngelScript/preprocessor.h"
-#include <strstream>
+
+#include "CMake.h"
+
+#include "FileManager.h"
+#include "GameOptions.h"
+#include "Script.h"
+#include "Text.h"
+#include "Thread.h"
+#include "Types.h"
+#include "Version.h"
 
 const char* ContextStatesStr[] =
 {
@@ -74,7 +80,7 @@ bool            ConcurrentExecution = false;
 Mutex           ConcurrentExecutionLocker;
 #endif
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 Mutex ProfilerLocker;
 Mutex ProfilerCallStacksLocker;
 void* ProfilerFileHandle = NULL;
@@ -391,7 +397,7 @@ void Script::Finish()
         return;
 
     EndLog();
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     Profiler::Finish();
     #endif
     RunTimeoutSuspend = 0;
@@ -406,7 +412,7 @@ void Script::Finish()
     FinishEngine( Engine );     // Finish default engine
 
     #pragma MESSAGE("Client crashed here, disable finishing until fix angelscript.")
-    #ifndef FONLINE_CLIENT
+    #ifndef FOCLASSIC_CLIENT
     FinishThread();
     #endif
 }
@@ -473,7 +479,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     #endif
 
     // Client path fixes
-    #if defined (FONLINE_CLIENT)
+    #if defined (FOCLASSIC_CLIENT)
     Str::Insert( dll_path, FileManager::GetPath( PT_SERVER_SCRIPTS ) );
     Str::Replacement( dll_path, '\\', '.' );
     Str::Replacement( dll_path, '/', '.' );
@@ -610,7 +616,7 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
         bool fail = str.fail();
         if( !fail )
         {
-            #ifdef FONLINE_SERVER
+            #ifdef FOCLASSIC_SERVER
             WriteLog( "Load server module<%s>\n", value.c_str() );
             #endif
             fail = !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix );
@@ -620,11 +626,11 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
             WriteLog( "Load module fail, name<%s>.\n", value.c_str() );
             errors++;
         }
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         Script::Profiler::AddModule( value.c_str() );
         #endif
     }
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     Script::Profiler::EndModules();
     Script::Profiler::SaveFunctionsData();
     #endif
@@ -699,7 +705,7 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
     return true;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void Script::Profiler::SetData( uint sample_time, uint save_time, bool dynamic_display )
 {
     if( ProfilerStage != ProfilerUninitialized )
@@ -1262,7 +1268,7 @@ void RunTimeout( void* data )
 {
     while( RunTimeoutSuspend )
     {
-        #ifndef FONLINE_SERVER
+        #ifndef FOCLASSIC_SERVER
         Thread::Sleep( 100 );
         #else
         if( ProfilerSampleInterval )

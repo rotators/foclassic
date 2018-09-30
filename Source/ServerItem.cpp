@@ -1,6 +1,9 @@
-#include "StdAfx.h"
-#include "Server.h"
+#include "Core.h"
 
+#include "ItemManager.h"
+#include "Map.h"
+#include "MapManager.h"
+#include "Server.h"
 
 Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uint count, bool check_blocks /* = true */ )
 {
@@ -85,7 +88,7 @@ bool FOServer::TransferAllItems()
         {
             case ITEM_ACCESSORY_CRITTER:
             {
-                if( IS_USER_ID( item->AccCritter.Id ) )
+                if( CRITTER_ID_IS_PLAYER( item->AccCritter.Id ) )
                     continue;                                                  // Skip player
 
                 Critter* npc = CrMngr.GetNpc( item->AccCritter.Id, false );

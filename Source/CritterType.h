@@ -1,7 +1,7 @@
 #ifndef __CRITTER_TYPE__
 #define __CRITTER_TYPE__
 
-#include "Defines.h"
+#include "Types.h"
 
 #define CRTYPE_FILE_NAME       "CritterTypes.cfg"
 #define DEFAULT_CRTYPE         (0)

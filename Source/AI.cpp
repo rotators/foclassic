@@ -1,4 +1,5 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "AI.h"
 #include "Text.h"
 #include "ConstantsManager.h"
@@ -175,7 +176,7 @@ bool NpcAIMngr::LoadNpcBags()
                     for( uint k = 0; k < items.size(); k++ )
                     {
                         NpcBagItem& b = items[k];
-                        if( b.ItemPid >= MAX_ITEM_PROTOTYPES || b.MinCnt > b.MaxCnt )
+                        if( b.ItemPid >= MAX_PROTO_ITEMS || b.MinCnt > b.MaxCnt )
                         {
                             WriteLog( "Invalid items combination<%s>, Item combination<%d>, number<%d>.\n", c.c_str(), l, k );
                             delete[] bag_str;

@@ -4,7 +4,7 @@
 #include "Common.h"
 #include "CritterData.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "Critter.h"
 #endif
 
@@ -14,7 +14,7 @@ class CritterManager
 private:
     bool        isActive;
     FileManager fileMngr;
-    CritData    allProtos[MAX_CRIT_PROTOS];
+    CritData    allProtos[MAX_PROTO_CRITTERS];
 
 public:
     CritterManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof(CritterManager) ); }
@@ -28,7 +28,7 @@ public:
     CritData* GetProto( ushort proto_id );
     CritData* GetAllProtos();
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 private:
     CrMap   allCritters;
     UIntVec crToDelete;
@@ -64,11 +64,11 @@ public:
     uint PlayersInGame();
     uint NpcInGame();
     uint CrittersInGame();
-    #endif // FONLINE_SERVER
+    #endif // FOCLASSIC_SERVER
 
 
-    #ifdef FONLINE_MAPPER
-    string ProtosCollectionName[MAX_CRIT_PROTOS];
+    #ifdef FOCLASSIC_MAPPER
+    string ProtosCollectionName[MAX_PROTO_CRITTERS];
     #endif
 };
 

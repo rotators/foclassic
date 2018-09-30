@@ -1,7 +1,14 @@
-#include "StdAfx.h"
-#include "Text.h"
-#include "Crypt.h"
+#include <stdarg.h>
+
+#include <strstream>
+
 #include "FL/case.h"
+
+#include "Core.h"
+
+#include "Crypt.h"
+#include "Log.h"
+#include "Text.h"
 
 void Str::Copy( char* to, uint size, const char* from )
 {

@@ -1,9 +1,15 @@
-#include "StdAfx.h"
-#include "MsgFiles.h"
-#include "Crypt.h"
-#include "FileManager.h"
+#include "CMake.h"
 
-const char* TextMsgFileName[TEXTMSG_COUNT] =
+#include "Crypt.h"
+#include "Defines.h"
+#include "FileManager.h"
+#include "FileSystem.h"
+#include "Log.h"
+#include "MsgFiles.h"
+#include "Random.h"
+#include "Text.h"
+
+const char* TextMsgFileName[TEXTMSG_MAX] =
 {
     "FOTEXT.MSG",
     "FODLG.MSG",
@@ -210,7 +216,7 @@ uint FOMsg::GetSize()
 void FOMsg::CalculateHash()
 {
     strDataHash = 0;
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     toSend.clear();
     #endif
     auto it = strData.begin();
@@ -222,7 +228,7 @@ void FOMsg::CalculateHash()
         string& str = (*it).second;
         uint    str_len = (uint)str.size();
 
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         toSend.resize( toSend.size() + sizeof(num) + sizeof(str_len) + str_len );
         memcpy( &toSend[toSend.size() - (sizeof(num) + sizeof(str_len) + str_len)], &num, sizeof(num) );
         memcpy( &toSend[toSend.size() - (sizeof(str_len) + str_len)], &str_len, sizeof(str_len) );
@@ -245,7 +251,7 @@ UIntStrMulMap& FOMsg::GetData()
     return strData;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 const char* FOMsg::GetToSend()
 {
     return &toSend[0];
@@ -257,7 +263,7 @@ uint FOMsg::GetToSendLen()
 }
 #endif
 
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 int FOMsg::LoadMsgStream( CharVec& stream )
 {
     Clear();
@@ -297,7 +303,7 @@ int FOMsg::LoadMsgFile( const char* fname, int path_type )
 {
     Clear();
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     uint  buf_len;
     char* buf = (char*)Crypt.GetCache( fname, buf_len );
     if( !buf )
@@ -319,7 +325,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
 {
     Clear();
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     char* buf = (char*)Crypt.Uncompress( (uchar*)data, data_len, 10 );
     if( !buf )
         return -3;
@@ -364,7 +370,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
             break;
         *pbuf = 0;
 
-        #ifndef FONLINE_CLIENT
+        #ifndef FOCLASSIC_CLIENT
         if( num_info < last_num )
         {
             WriteLogF( _FUNC_, " - Error string id, cur<%u>, last<%u>\n", num_info, last_num );
@@ -377,7 +383,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
         pbuf++;
     }
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     delete[] buf;
     #endif
     CalculateHash();
@@ -386,7 +392,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
 
 int FOMsg::SaveMsgFile( const char* fname, int path_type )
 {
-    #ifndef FONLINE_CLIENT
+    #ifndef FOCLASSIC_CLIENT
     FileManager fm;
     #endif
 
@@ -406,7 +412,7 @@ int FOMsg::SaveMsgFile( const char* fname, int path_type )
     char* buf = (char*)str.c_str();
     uint  buf_len = (uint)str.length();
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     buf = (char*)Crypt.Compress( (uchar*)buf, buf_len );
     if( !buf )
         return -2;
@@ -426,7 +432,7 @@ void FOMsg::Clear()
     strData.clear();
     strData.insert( PAIR( FOMSG_ERRNUM, string( "error" ) ) );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     toSend.clear();
     #endif
 
@@ -481,7 +487,7 @@ int LanguagePack::LoadAll()
     }
 
     int count_fail = 0;
-    for( int i = 0; i < TEXTMSG_COUNT; i++ )
+    for( int i = 0; i < TEXTMSG_MAX; i++ )
     {
         if( Msg[i].LoadMsgFile( Str::FormatBuf( "%s" DIR_SLASH_S "%s", NameStr, TextMsgFileName[i] ), PathType ) < 0 )
         {

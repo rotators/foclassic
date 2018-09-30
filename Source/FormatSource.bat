@@ -1,31 +1,10 @@
 @echo off
 
-FOR /F "tokens=*" %%G IN ('DIR /B ..\Dll\*.h') DO (
-"SourceTools\uncrustify.exe" -f "..\Dll\%%G" -c "SourceTools\uncrustify.cfg" -o ..\Dll\indentoutput.tmp
-move /Y ..\Dll\indentoutput.tmp "..\Dll\%%G" >nul
-)
-
-FOR /F "tokens=*" %%G IN ('DIR /B ..\Dll\*.cpp') DO (
-"SourceTools\uncrustify.exe" -f "..\Dll\%%G" -c "SourceTools\uncrustify.cfg" -o ..\Dll\indentoutput.tmp
-move /Y ..\Dll\indentoutput.tmp "..\Dll\%%G" >nul
-)
-
-FOR /F "tokens=*" %%G IN ('DIR /B ..\Dll\*.fos') DO (
-"SourceTools\uncrustify.exe" -l CPP -f "..\Dll\%%G" -c "SourceTools\uncrustify.cfg" -o ..\Dll\indentoutput.tmp
-move /Y ..\Dll\indentoutput.tmp "..\Dll\%%G" >nul
-)
-
-FOR /F "tokens=*" %%G IN ('DIR /B ..\Dll\AngelScript\*.h') DO (
-"SourceTools\uncrustify.exe" -f "..\Dll\AngelScript\%%G" -c "SourceTools\uncrustify.cfg" -o ..\Dll\AngelScript\indentoutput.tmp
-move /Y ..\Dll\AngelScript\indentoutput.tmp "..\Dll\AngelScript\%%G" >nul
-)
-
-FOR /F "tokens=*" %%G IN ('DIR /B .\*.h') DO (
-"SourceTools\uncrustify.exe" -f "%%G" -c "SourceTools\uncrustify.cfg" -o indentoutput.tmp
-move /Y indentoutput.tmp "%%G" >nul
-)
-
-FOR /F "tokens=*" %%G IN ('DIR /B .\*.cpp') DO (
-"SourceTools\uncrustify.exe" -f "%%G" -c "SourceTools\uncrustify.cfg" -o indentoutput.tmp
-move /Y indentoutput.tmp "%%G" >nul
+for %%D in (..\Dll ..\Dll\AngelScript .) do (
+	for %%E in (h cpp fos) do (
+		for %%F in (%%D\*.%%E) do (
+			"SourceTools\uncrustify.exe" -c "SourceTools\uncrustify.cfg" -l CPP -f "%%F" -o FormatSource.tmp --if-changed
+			if exist FormatSource.tmp (echo          FormatSource prevails. && move /Y FormatSource.tmp "%%F" >nul)
+		)
+	)
 )

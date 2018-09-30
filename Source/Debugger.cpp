@@ -1,6 +1,14 @@
-#include "StdAfx.h"
+#include <algorithm>
+
+#include "Defines.h"
 #include "Debugger.h"
+#include "Log.h"
 #include "Mutex.h"
+#include "Text.h"
+#include "Thread.h"
+#include "Timer.h"
+#include "Types.h"
+#include "Common.h"
 
 #define MAX_BLOCKS       (25)
 #define MAX_ENTRY        (2000)
@@ -105,7 +113,7 @@ const char* MemBlockNames[MAX_MEM_NODES] =
     "Any data     ",
     "Images       ",
     "Script string",
-    "Angel Script ",
+    "AngelScript  ",
 };
 
 static Mutex* MemLocker = NULL;
@@ -196,7 +204,7 @@ const char* Debugger::GetMemoryStatistics()
     static string result;
     result = "Memory statistics:\n";
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     char  buf[512];
     int64 all_alloc = 0, all_dealloc = 0;
 

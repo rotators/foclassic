@@ -1,7 +1,8 @@
 #ifndef __FILE_SYSTEM__
 #define __FILE_SYSTEM__
 
-#include "Common.h"
+#include "Defines.h"
+#include "Types.h"
 
 #ifdef FO_WINDOWS
 # define DIR_SLASH_C      '\\'
@@ -38,6 +39,7 @@ struct FIND_DATA
     char FileName[MAX_FOPATH];
     bool IsDirectory;
 };
+
 void* FileFindFirst( const char* path, const char* extension, FIND_DATA& fd );
 bool  FileFindNext( void* descriptor, FIND_DATA& fd );
 void  FileFindClose( void* descriptor );

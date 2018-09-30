@@ -64,14 +64,14 @@ public:
     void AddRef()  {}
     void Release() {}
 // Set, get parse
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     void SetName( FOMsg& msg_game, FOMsg& msg_item );
     #endif
 
     int         SetStr( uint num, const char* str );
     const char* GetStr( bool metadata );
 
-    #if defined (FONLINE_SERVER) || defined (FONLINE_MRFIXIT)
+    #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
 private:
     int  SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
     int  SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
@@ -83,10 +83,10 @@ private:
 typedef map<uint, CraftItem*, less<uint>> CraftItemMap;
 typedef vector<CraftItem*>                CraftItemVec;
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 class Critter;
 #endif
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 class CritterCl;
 #endif
 
@@ -111,7 +111,7 @@ public:
     // Return fail crafts
     bool LoadCrafts( FOMsg& msg );
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     // Item manager must be init!
     void GenerateNames( FOMsg& msg_game, FOMsg& msg_item );
     #endif
@@ -123,7 +123,7 @@ public:
     CraftItem* GetCraft( uint num );
     bool       IsCraftExist( uint num );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 public:
     bool IsShowCraft( Critter* cr, uint num );
     void GetShowCrafts( Critter* cr, CraftItemVec& craft_vec );
@@ -133,7 +133,7 @@ private:
     bool IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
     bool IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
     #endif
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
 public:
     bool IsShowCraft( CritterCl* cr, uint num );
     void GetShowCrafts( CritterCl* cr, CraftItemVec& craft_vec );
@@ -144,7 +144,7 @@ private:
     bool IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
     #endif
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 public:
     int ProcessCraft( Critter* cr, uint num );
     #endif

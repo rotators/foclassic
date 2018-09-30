@@ -1,7 +1,12 @@
-#include "StdAfx.h"
-#include "Crypt.h"
 #include "zlib/zlib.h"
 #include "SHA2/sha2.h"
+
+#include "Core.h"
+
+#include "Crypt.h"
+#include "Random.h"
+#include "Log.h"
+#include "Text.h"
 
 CryptManager Crypt;
 

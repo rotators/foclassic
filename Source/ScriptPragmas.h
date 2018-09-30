@@ -1,11 +1,9 @@
 #ifndef __SCRIPT_PRAGMAS__
 #define __SCRIPT_PRAGMAS__
 
-#include "AngelScript/angelscript.h"
 #include "AngelScript/preprocessor.h"
-#include <set>
-#include <string>
-using namespace std;
+
+#include "Types.h"
 
 #define PRAGMA_UNKNOWN    (0)
 #define PRAGMA_SERVER     (1)

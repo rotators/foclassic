@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+#include "Core.h"
+
+#include "Thread.h"
 #include "ThreadSync.h"
 #include "Mutex.h"
 

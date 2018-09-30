@@ -1,9 +1,11 @@
-#include "StdAfx.h"
+#include "Core.h"
+
+#include "Critter.h"
 #include "Jobs.h"
 #include "Mutex.h"
 #include "Map.h"
-#include "Critter.h"
 #include "Item.h"
+#include "Thread.h"
 #include "Vars.h"
 
 static Mutex JobLocker; // Defense code from simultaneously execution

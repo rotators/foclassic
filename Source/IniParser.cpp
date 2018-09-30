@@ -1,7 +1,10 @@
-#include "StdAfx.h"
-#include "IniParser.h"
+#include <strstream>
+
 #include "Crypt.h"
+#include "Common.h"
 #include "FileManager.h"
+#include "IniParser.h"
+#include "Text.h"
 
 #define STR_PRIVATE_APP_BEGIN    '['
 #define STR_PRIVATE_APP_END      ']'

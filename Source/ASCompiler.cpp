@@ -3,6 +3,7 @@
 #include "PlatformSpecific.h"
 #include "ScriptPragmas.h"
 #include "Debugger.h"
+#include "Exception.h"
 #include "FileManager.h"
 #include "AngelScript/angelscript.h"
 #include "AngelScript/preprocessor.h"
@@ -223,6 +224,8 @@ namespace MapperBind
 
 int main( int argc, char* argv[] )
 {
+    CatchExceptions( "ASCompiler" );
+
     // Initialization
     Timer::Init();
 
@@ -266,7 +269,7 @@ int main( int argc, char* argv[] )
         else if( !_stricmp( argv[i], "-gc" ) )
             CollectGarbage = true;
     }
-
+    printf( "after options\n" );
     // Fix path
     FixPathSlashes( str_fname );
     if( str_prep )

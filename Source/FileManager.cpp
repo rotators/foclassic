@@ -1,5 +1,10 @@
-#include "StdAfx.h"
+#include "Common.h"
+
+
 #include "FileManager.h"
+#include "FileSystem.h"
+#include "Log.h"
+#include "Text.h"
 
 #define OUT_BUF_START_SIZE    (0x100)
 
@@ -748,13 +753,13 @@ const char* FileManager::GetDataPath( int path_type )
 {
     static const char root_path[] = DIR_SLASH_SD;
 
-    #if defined (FONLINE_SERVER)
+    #if defined (FOCLASSIC_SERVER)
     if( path_type == PT_SERVER_ROOT )
         return root_path;
-    #elif defined (FONLINE_CLIENT)
+    #elif defined (FOCLASSIC_CLIENT)
     if( path_type == PT_ROOT )
         return root_path;
-    #elif defined (FONLINE_MAPPER)
+    #elif defined (FOCLASSIC_MAPPER)
     if( path_type == PT_MAPPER_ROOT || path_type == PT_MAPPER_DATA )
         return root_path;
     #endif

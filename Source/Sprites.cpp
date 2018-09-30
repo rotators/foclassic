@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+#include "CMake.h"
+
+#include "GameOptions.h"
 #include "Sprites.h"
 #include "SpriteManager.h"
 
@@ -189,7 +191,7 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
             spr_.CutTexR = si->SprRect.L + (si->SprRect.R - si->SprRect.L) * ( (xx + ww) / widthf );
             spr_.CutType = cut;
 
-            #ifdef FONLINE_MAPPER
+            #ifdef FOCLASSIC_MAPPER
             spr_.CutOyL = (hor ? -6 : -12) * ( (hor ? hx : hy) - i );
             spr_.CutOyR = spr_.CutOyL;
             if( ww < stepf )

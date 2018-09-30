@@ -1,10 +1,11 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "CritterManager.h"
 #include "ConstantsManager.h"
 #include "ItemManager.h"
 #include "IniParser.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "MapManager.h"
 #endif
 
@@ -40,7 +41,7 @@ void CritterManager::Finish()
 {
     WriteLog( "Critter manager finish...\n" );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     CritterGarbager();
     #endif
 
@@ -53,14 +54,14 @@ void CritterManager::Finish()
 
 void CritterManager::Clear()
 {
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     for( auto it = allCritters.begin(), end = allCritters.end(); it != end; ++it )
         SAFEREL( (*it).second );
     allCritters.clear();
     crToDelete.clear();
     playersCount = 0;
     npcCount = 0;
-    lastNpcId = NPC_START_ID;
+    lastNpcId = CRITTER_ID_START_NPC;
     #endif
 }
 
@@ -95,7 +96,7 @@ bool CritterManager::LoadProtos()
     {
         const char* fname = fnames[i].c_str();
 
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         char collection_name[MAX_FOPATH];
         Str::Format( collection_name, "%03d - %s", i + 1, fname );
         FileManager::EraseExtension( collection_name );
@@ -137,7 +138,7 @@ bool CritterManager::LoadProtos()
                     }
                 }
 
-                if( pid > 0 && pid < MAX_CRIT_PROTOS )
+                if( pid > 0 && pid < MAX_PROTO_CRITTERS )
                 {
                     CritData& proto = allProtos[pid];
 
@@ -149,7 +150,7 @@ bool CritterManager::LoadProtos()
                     proto.ProtoId = pid;
                     memcpy( proto.Params, params, sizeof(params) );
 
-                    #ifdef FONLINE_MAPPER
+                    #ifdef FOCLASSIC_MAPPER
                     ProtosCollectionName[pid] = collection_name;
                     #endif
                 }
@@ -168,7 +169,7 @@ bool CritterManager::LoadProtos()
 
 CritData* CritterManager::GetProto( ushort proto_id )
 {
-    if( !proto_id || proto_id >= MAX_CRIT_PROTOS || !allProtos[proto_id].ProtoId )
+    if( !proto_id || proto_id >= MAX_PROTO_CRITTERS || !allProtos[proto_id].ProtoId )
         return NULL;
     return &allProtos[proto_id];
 }
@@ -178,7 +179,7 @@ CritData* CritterManager::GetAllProtos()
     return allProtos;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void CritterManager::SaveCrittersFile( void (*save_func)( void*, size_t ) )
 {
     CrVec crits;
@@ -527,7 +528,7 @@ Npc* CritterManager::CreateNpc( ushort proto_id, bool copy_data )
         npc->Data = *data;
     npc->Data.EnemyStackCount = MAX_ENEMY_STACK;
     npc->Data.ProtoId = proto_id;
-    npc->Data.Cond = COND_LIFE;
+    npc->Data.Cond = CRITTER_CONDITION_LIFE;
     npc->Data.Multihex = -1;
 
     SYNC_LOCK( npc );
@@ -741,7 +742,7 @@ Critter* CritterManager::GetCritter( uint crid, bool sync_lock )
 
 Client* CritterManager::GetPlayer( uint crid, bool sync_lock )
 {
-    if( !IS_USER_ID( crid ) )
+    if( !CRITTER_ID_IS_PLAYER( crid ) )
         return NULL;
 
     Critter* cr = NULL;
@@ -782,7 +783,7 @@ Client* CritterManager::GetPlayer( const char* name, bool sync_lock )
 
 Npc* CritterManager::GetNpc( uint crid, bool sync_lock )
 {
-    if( !IS_NPC_ID( crid ) )
+    if( !CRITTER_ID_IS_NPC( crid ) )
         return NULL;
 
     Critter* cr = NULL;

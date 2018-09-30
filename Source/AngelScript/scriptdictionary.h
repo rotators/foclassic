@@ -14,7 +14,7 @@
 class ScriptDictionary
 {
 public:
-    #ifdef FOCLASSIC_DLL
+    #ifdef FOCLASSIC_EXTENSION
     static ScriptDictionary& Create()
     {
         static int        typeId = ASEngine->GetTypeIdByDecl( "dictionary" );
@@ -100,7 +100,7 @@ protected:
     std::map< std::string, valueStruct > dict;
 };
 
-#ifndef FOCLASSIC_DLL
+#ifdef FOCLASSIC_ENGINE
 void RegisterScriptDictionary( asIScriptEngine* engine );
 #endif
 

@@ -9,7 +9,7 @@ typedef unsigned int uint;
 class ScriptString
 {
 public:
-    #ifdef FOCLASSIC_DLL
+    #ifdef FOCLASSIC_EXTENSION
     static ScriptString& Create( const char* str = NULL )
     {
         static int    typeId = ASEngine->GetTypeIdByDecl( "string" );
@@ -94,7 +94,7 @@ protected:
     mutable int refCount;
 };
 
-#ifndef FOCLASSIC_DLL
+#ifdef FOCLASSIC_ENGINE
 void RegisterScriptString( asIScriptEngine* engine );
 #endif
 

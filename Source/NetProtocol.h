@@ -42,7 +42,7 @@
 // !uint uid3
 // !uint uid2
 // !uint uidor
-// uint hash_proto[ITEM_MAX_TYPES]
+// uint hash_proto[ITEM_TYPE_MAX]
 // !uint uidcalc
 // uchar default_combat_mode
 // !uint uid0

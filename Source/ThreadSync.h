@@ -1,7 +1,7 @@
 #ifndef __THREAD_SYNC__
 #define __THREAD_SYNC__
 
-#include "Common.h"
+#include "Types.h"
 
 #define SYNC_LOCK( obj )    (obj)->Sync.Lock()
 

@@ -1,8 +1,13 @@
-#include "StdAfx.h"
-#include "SpriteManager.h"
-#include "IniParser.h"
+#include <time.h>
+
+#include "CMake.h"
+
 #include "Crypt.h"
+#include "Defines.h"
+#include "GameOptions.h"
+#include "SpriteManager.h"
 #include "F2Palette.h"
+#include "IniParser.h"
 
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;
@@ -4596,7 +4601,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         if( ++curSprCnt == flushSprCnt || si->Anim3d )
             Flush();
 
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         // Corners indication
         if( GameOpt.ShowCorners && spr->EggType )
         {

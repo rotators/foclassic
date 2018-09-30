@@ -1,12 +1,14 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "3dStuff.h"
 #include "3dAnimation.h"
-#include "GraphicLoader.h"
 #include "Common.h"
-#include "Text.h"
 #include "ConstantsManager.h"
-#include "Script.h"
 #include "CritterType.h"
+#include "GameOptions.h"
+#include "GraphicLoader.h"
+#include "Text.h"
+#include "Script.h"
 
 Device_   D3DDevice = 0;
 Caps_     D3DCaps;
@@ -2692,9 +2694,9 @@ int Animation3dEntity::GetAnimationIndex( uint& anim1, uint& anim2, float* speed
     // Find substitute animation
     uint crtype = 0;
     uint crtype_base = crtype, anim1_base = anim1, anim2_base = anim2;
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     while( index == -1 && Script::PrepareContext( ClientFunctions.CritterAnimationSubstitute, _FUNC_, "Anim" ) )
-    #else // FONLINE_MAPPER
+    #else // FOCLASSIC_MAPPER
     while( index == -1 && Script::PrepareContext( MapperFunctions.CritterAnimationSubstitute, _FUNC_, "Anim" ) )
     #endif
     {

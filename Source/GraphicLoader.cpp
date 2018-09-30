@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+#include "CMake.h"
+
+#include "GameOptions.h"
 #include "GraphicLoader.h"
 #include "3dAnimation.h"
 #include "Text.h"

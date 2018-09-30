@@ -2,6 +2,7 @@
 #define __SPRITES__
 
 #include "GraphicStructures.h"
+#include "Types.h"
 
 #define SPRITES_POOL_GROW_SIZE    (10000)
 #define SPRITES_RESIZE_COUNT      (100)
@@ -31,7 +32,7 @@ public:
     bool*    ValidCallback;
     bool     Valid;
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     int CutOyL, CutOyR;
     #endif
 

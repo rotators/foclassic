@@ -1,23 +1,12 @@
 #ifndef ___MSG_FILES___
 #define ___MSG_FILES___
 
-#include "Common.h"
-#include "MsgStr.h"
+#include "Defines.h"
+#include "Types.h"
 
-#define TEXTMSG_TEXT        (0)
-#define TEXTMSG_DLG         (1)
-#define TEXTMSG_ITEM        (2)
-#define TEXTMSG_GAME        (3)
-#define TEXTMSG_GM          (4)
-#define TEXTMSG_COMBAT      (5)
-#define TEXTMSG_QUEST       (6)
-#define TEXTMSG_HOLO        (7)
-#define TEXTMSG_CRAFT       (8)
-#define TEXTMSG_INTERNAL    (9)
-#define TEXTMSG_COUNT       (10)
-extern const char* TextMsgFileName[TEXTMSG_COUNT];
+extern const char* TextMsgFileName[TEXTMSG_MAX];
 
-#define DEFAULT_LANGUAGE    "russ"
+#define DEFAULT_LANGUAGE    "engl"
 
 #define FOMSG_ERRNUM        (0)
 #define FOMSG_VERNUM        (1)
@@ -48,12 +37,12 @@ public:
     uint           GetHash();                     // Gets Hash code of MSG in toSend
     UIntStrMulMap& GetData();                     // Gets strData
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     const char* GetToSend();                      // Gets toSend data
     uint        GetToSendLen();                   // Gets toSend Length
     #endif
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     // Load MSG from stream, old data is clear
     int LoadMsgStream( CharVec& stream );
     #endif
@@ -68,7 +57,7 @@ public:
 
 private:
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     // Data to send client
     CharVec toSend;
     #endif
@@ -93,7 +82,7 @@ public:
     };
 
     int   PathType;
-    FOMsg Msg[TEXTMSG_COUNT];
+    FOMsg Msg[TEXTMSG_MAX];
 
     bool Init( const char* lang, int path_type );
     int  LoadAll();

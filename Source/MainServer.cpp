@@ -1,11 +1,17 @@
-#include "StdAfx.h"
-#include "CMake.h"
-#include "Server.h"
-#include "Exception.h"
-#include "Version.h"
+#include <locale.h>
+
+#include "Core.h"
+
 #include "Access.h"
 #include "BufferManager.h"
-#include <locale.h>
+#include "Exception.h"
+#include "IniParser.h"
+#include "ItemManager.h"
+#include "MapManager.h"
+#include "Server.h"
+#include "Thread.h"
+#include "Version.h"
+
 #ifndef FO_WINDOWS
 # include <signal.h>
 #endif
@@ -67,7 +73,11 @@ void ServiceMain( bool as_service );
 // Main
 int main( int argc, char** argv )
 {
-    RestoreMainDirectory();
+    // Make command line
+    SetCommandLine( argc, argv );
+
+    if( !strstr( CommandLine, "--no-restore-directory" ) )
+        RestoreMainDirectory();
 
     // Threading
     # ifdef FO_WINDOWS
@@ -94,9 +104,6 @@ int main( int argc, char** argv )
     MemoryDebugLevel = cfg.GetInt( "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
-
-    // Make command line
-    SetCommandLine( argc, argv );
 
     // Logging
     LogWithTime( cfg.GetInt( "LoggingTime", 1 ) == 0 ? false : true );

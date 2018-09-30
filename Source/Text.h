@@ -1,10 +1,9 @@
 #ifndef ___TEXT___
 #define ___TEXT___
 
-#include "Common.h"
-#include <strstream>
+#include "Defines.h"
+#include "Types.h"
 
-#define MAX_FOTEXT      UTF8_BUF_SIZE( 2048 )
 #define BIG_BUF_SIZE    (0x100000)         // 1mb
 
 namespace Str

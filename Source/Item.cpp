@@ -1,8 +1,7 @@
-#include "StdAfx.h"
 #include "Item.h"
 #include "ItemManager.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "MapManager.h"
 # include "CritterManager.h"
 # include "AI.h"
@@ -44,7 +43,7 @@ void Item::Init( ProtoItem* proto )
         return;
     }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     ViewByCritter = NULL;
     ViewPlaceOnMap = false;
     ChildItems = NULL;
@@ -102,13 +101,13 @@ void Item::Init( ProtoItem* proto )
     if( IsHolodisk() )
     {
         Data.HolodiskNumber = Proto->HolodiskNum;
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         if( !Data.HolodiskNumber )
             Data.HolodiskNumber = Random( 1, 42 );
         #endif
     }
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     Lexems = "";
     #endif
 }
@@ -122,13 +121,13 @@ Item* Item::Clone()
     memcpy( clone->AccBuffer, AccBuffer, sizeof(AccBuffer) );
     clone->Data = Data;
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     clone->ViewByCritter = NULL;
     clone->ViewPlaceOnMap = false;
     clone->ChildItems = NULL;
     clone->PLexems = NULL;
     #endif
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     clone->Lexems = Lexems;
     #endif
 
@@ -136,7 +135,7 @@ Item* Item::Clone()
 }
 
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void Item::FullClear()
 {
     IsNotValid = true;
@@ -288,7 +287,7 @@ void Item::EventWalk( Critter* cr, bool entered, uchar dir )
     Script::SetArgUChar( dir );
     Script::RunPrepared();
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 void Item::SetSortValue( ItemPtrVec& items )
 {
@@ -344,7 +343,7 @@ void Item::Count_Sub( uint val )
     ItemMngr.SubItemStatistics( GetProtoId(), val );
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void Item::Repair()
 {
     uchar&  flags = Data.BrokenFlags;
@@ -436,7 +435,7 @@ uint Item::GetCost1st()
     return cost;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void Item::SetLexems( const char* lexems )
 {
     if( lexems )
@@ -477,7 +476,7 @@ void Item::WeapLoadHolder()
     Data.AmmoCount = Proto->Weapon_MaxAmmoCount;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void Item::ContAddItem( Item*& item, uint stack_id )
 {
     if( !IsContainer() || !item )
@@ -682,9 +681,9 @@ Item* Item::GetChild( uint child_index )
     }
     return NULL;
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
-#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 # include "ResourceManager.h"
 # include "SpriteManager.h"
 

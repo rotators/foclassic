@@ -1,6 +1,10 @@
-#include "StdAfx.h"
 #include "CMake.h"
+
+#include "Common.h"
 #include "Exception.h"
+#include "Text.h"
+#include "Thread.h"
+#include "Types.h"
 
 char DumpMess[] =
 {
@@ -70,7 +74,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
     const char* dump_str = except ? "CrashDump" : ManualDumpAppendix;
-    # ifdef FONLINE_SERVER
+    # ifdef FOCLASSIC_SERVER
     FileManager::GetFullPath( NULL, PT_SERVER_DUMPS, dump_path_dir );
     # else
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
@@ -444,7 +448,7 @@ LONG WINAPI TopLevelFilterMiniDump( EXCEPTION_POINTERS* except )
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
     const char* dump_str = except ? "CrashDump" : ManualDumpAppendix;
-    # ifdef FONLINE_SERVER
+    # ifdef FOCLASSIC_SERVER
     FileManager::GetFullPath( NULL, PT_SERVER_DUMPS, dump_path_dir );
     # else
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );
@@ -570,7 +574,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
     const char* dump_str = siginfo ? "CrashDump" : ManualDumpAppendix;
-    # ifdef FONLINE_SERVER
+    # ifdef FOCLASSIC_SERVER
     FileManager::GetFullPath( NULL, PT_SERVER_DUMPS, dump_path_dir );
     # else
     FileManager::GetFullPath( NULL, PT_ROOT, dump_path_dir );

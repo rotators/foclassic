@@ -1,57 +1,11 @@
 #ifndef __FILE_MANAGER__
 #define __FILE_MANAGER__
 
-#include "Defines.h"
-#include "FileSystem.h"
-#include "Log.h"
 #include "DataFile.h"
+#include "Defines.h"
+#include "Types.h"
 
-// Client and mapper paths
-#define PT_ROOT                   (0)
-#define PT_DATA                   (1)
-#define PT_ART                    (2)
-#define PT_ART_CRITTERS           (3)
-#define PT_ART_INTRFACE           (4)
-#define PT_ART_INVEN              (5)
-#define PT_ART_ITEMS              (6)
-#define PT_ART_MISC               (7)
-#define PT_ART_SCENERY            (8)
-#define PT_ART_SKILLDEX           (9)
-#define PT_ART_SPLASH             (10)
-#define PT_ART_TILES              (11)
-#define PT_ART_WALLS              (12)
-#define PT_TEXTURES               (13)
-#define PT_EFFECTS                (14)
-#define PT_SND_MUSIC              (16)
-#define PT_SND_SFX                (17)
-#define PT_SCRIPTS                (18)
-#define PT_VIDEO                  (19)
-#define PT_TEXTS                  (20)
-#define PT_SAVE                   (21)
-#define PT_FONTS                  (22)
-#define PT_CACHE                  (23)
-
-// Server paths
-#define PT_SERVER_ROOT            (30)
-#define PT_SERVER_DATA            (31)
-#define PT_SERVER_TEXTS           (32)
-#define PT_SERVER_DIALOGS         (33)
-#define PT_SERVER_MAPS            (34)
-#define PT_SERVER_PRO_ITEMS       (35)
-#define PT_SERVER_PRO_CRITTERS    (36)
-#define PT_SERVER_SCRIPTS         (37)
-#define PT_SERVER_SAVE            (38)
-#define PT_SERVER_CLIENTS         (39)
-#define PT_SERVER_BANS            (40)
-#define PT_SERVER_LOGS            (41)
-#define PT_SERVER_DUMPS           (42)
-#define PT_SERVER_PROFILER        (43)
-
-// Other
-#define PT_MAPPER_ROOT            (45)
-#define PT_MAPPER_DATA            (46)
-
-#define PATH_LIST_COUNT           (50)
+#define PATH_LIST_COUNT    (50)
 extern const char* PathList[PATH_LIST_COUNT];
 
 class FileManager

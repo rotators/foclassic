@@ -1,42 +1,33 @@
 #ifndef ___DEFINES___
 #define ___DEFINES___
 
-// Bits
-#define BIN__N( x )                             (x) | x >> 3 | x >> 6 | x >> 9
-#define BIN__B( x )                             (x) & 0xf | (x) >> 12 & 0xf0
-#define BIN8( v )                               (BIN__B( BIN__N( 0x ## v ) ) )
-#define BIN16( bin16, bin8 )                    ( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
-#define BIN32( bin32, bin24, bin16, bin8 )      ( (BIN8( bin32 ) << 24) | (BIN8( bin24 ) << 16) | (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
+#include "PlatformSpecific.h"
+#include "PUBLIC.Defines.h"
 
 // Flags
-#define FLAG( x, y )                            ( ( (x) & (y) ) != 0 )
-#define FLAGS( x, y )                           ( ( (x) & (y) ) == y )
-#define SETFLAG( x, y )                         ( (x) = (x) | (y) )
-#define UNSETFLAG( x, y )                       ( (x) = ( (x) | (y) ) ^ (y) )
-
-// Limits
-#define MAX_UCHAR                    (0xFF)
-#define MAX_USHORT                   (0xFFFF)
-#define MAX_UINT                     (0xFFFFFFFF)
-#define MAX_INT                      (0x7FFFFFFF)
-#define MIN_INT                      (0x80000000)
+#define FLAG( x, y )             ( ( (x) & (y) ) != 0 )
+#define FLAGS( x, y )            ( ( (x) & (y) ) == y )
+#define SETFLAG( x, y )          ( (x) = (x) | (y) )
+#define UNSETFLAG( x, y )        ( (x) = ( (x) | (y) ) ^ (y) )
 
 // Other stuff
-#define CLAMP( x, low, high )                   ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
-#define CONVERT_GRAMM( x )                      ( (x) * 453 )
-#define RAD( deg )                              ( (deg) * 3.141592654f / 180.0f )
+#define CLAMP( x, low, high )    ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
+#define CONVERT_GRAMM( x )       ( (x) * 453 )
+#define RAD( deg )               ( (deg) * 3.141592654f / 180.0f )
 
-// Signatures
-#define BINARY_SIGNATURE( name, type, ver )     const unsigned char name[6] = { 'F', 'O', type, ( (ver) >> 8 ) & 0xFF, ( (ver) ) & 0xFF, 0 }
-#define BINARY_SIGNATURE_VALID( sig1, sig2 )    (sig1[0] == sig2[0] && sig1[1] == sig2[1] && sig1[2] == sig2[2] && sig1[5] == sig2[5])                   // skip version check
-#define BINARY_SIGNATURE_VERSION( sig )         ( (sig[3] << 8) | sig[4] )
+#define SAFEREL( x ) \
+    { if( x )        \
+          (x)->Release(); (x) = NULL; }
+#define SAFEDEL( x ) \
+    { if( x )        \
+          delete (x); (x) = NULL; }
+#define SAFEDELA( x ) \
+    { if( x )         \
+          delete[] (x); (x) = NULL; }
 
-#define BINARY_CLIENTSAVE            'C'
-#define BINARY_MAPSAVE               'M'
-#define BINARY_PROFILERSAVE          'P'
-#define BINARY_SCRIPTSAVE            'S'
-#define BINARY_WORLDSAVE             'W'
-#define BINARY_CACHE                 'c'
+#define ___MSG1( x )             # x
+#define ___MSG0( x )             ___MSG1( x )
+#define MESSAGE( desc )          message( __FILE__ "(" ___MSG0( __LINE__ ) "):" # desc )
 
 // World dump versions
 #define WORLD_SAVE_V1                (1)   // unreleased
@@ -50,7 +41,7 @@
 
 // Generic
 #define WORLD_START_TIME             "07:00 30:10:2246 x00"
-#define MAX_FOPATH                   UTF8_BUF_SIZE( 1024 )
+
 #define CRAFT_SEND_TIME              (60000)
 #define LEXEMS_SIZE                  (128)
 #define MAX_HOLO_INFO                (250)
@@ -60,19 +51,12 @@
 #define EFFECT_SCRIPT_VALUES         (10)
 #define ABC_SIZE                     (26)
 #define DIRS_COUNT                   (GameOpt.MapHexagonal ? 6 : 8)
-#define IS_DIR_CORNER( dir )                    ( ( (dir) & 1 ) != 0 )   // 1, 3, 5, 7
-#define UTF8_BUF_SIZE( count )                  ( (count) * 4 )
+
 
 // Script pragma bindfield sizes
 #define PROTO_ITEM_USER_DATA_SIZE    (500)
 #define CRITTER_USER_DATA_SIZE       (400)
 
-// Critters
-#define GENDER_MALE                  (0)
-#define GENDER_FEMALE                (1)
-#define GENDER_IT                    (2)
-#define AGE_MAX                      (60)
-#define AGE_MIN                      (14)
 #define AGGRESSOR_TICK               (60000)
 #define MAX_ENEMY_STACK              (30)
 #define MAX_STORED_IP                (20)
@@ -91,23 +75,12 @@
 #define SCEN_CAN_TALK                (0x02)
 
 // Maps
-#define TIME_CAN_FOLLOW_GM           (20000)   // Can less than Map timeout
+#define MAX_HEX_OFFSET               (50)    // Must be not odd
 
-// Critter find types
-#define FIND_LIFE                    (0x01)
-#define FIND_KO                      (0x02)
-#define FIND_DEAD                    (0x04)
-#define FIND_ONLY_PLAYERS            (0x10)
-#define FIND_ONLY_NPC                (0x20)
-#define FIND_ALL                     (0x0F)
+#define TIME_CAN_FOLLOW_GM           (20000) // Can less than Map timeout
 
 // Proto maps
 #define MAP_PROTO_EXT                ".fomap"
-#define MAX_PROTO_MAPS               (30000)
-
-// Type entires
-#define ENTIRE_DEFAULT               (0)
-#define ENTIRE_LOG_OUT               (241)
 
 // Sendmap info
 #define SENDMAP_TILES                BIN8( 00000001 )
@@ -120,56 +93,7 @@
 #define PING_CLIENT                  (2)
 #define PING_UID_FAIL                (3)
 
-// Say types
-#define SAY_NORM                     (1)
-#define SAY_NORM_ON_HEAD             (2)
-#define SAY_SHOUT                    (3)
-#define SAY_SHOUT_ON_HEAD            (4)
-#define SAY_EMOTE                    (5)
-#define SAY_EMOTE_ON_HEAD            (6)
-#define SAY_WHISP                    (7)
-#define SAY_WHISP_ON_HEAD            (8)
-#define SAY_SOCIAL                   (9)
-#define SAY_RADIO                    (10)
-#define SAY_NETMSG                   (11)
-#define SAY_DIALOG                   (12)
-#define SAY_APPEND                   (13)
-#define SAY_ENCOUNTER_ANY            (14)
-#define SAY_ENCOUNTER_RT             (15)
-#define SAY_ENCOUNTER_TB             (16)
-#define SAY_FIX_RESULT               (17)
-#define SAY_DIALOGBOX_TEXT           (18)
-#define SAY_DIALOGBOX_BUTTON( b )               (19 + (b) )    // Max 20 buttons (0..19)
-#define SAY_SAY_TITLE                (39)
-#define SAY_SAY_TEXT                 (40)
-#define SAY_FLASH_WINDOW             (41)
-
 #define MAX_DLGBOX_BUTTONS           (20)
-
-// Transfer types
-#define TRANSFER_CLOSE               (0)
-#define TRANSFER_HEX_CONT_UP         (1)
-#define TRANSFER_HEX_CONT_DOWN       (2)
-#define TRANSFER_SELF_CONT           (3)
-#define TRANSFER_CRIT_LOOT           (4)
-#define TRANSFER_CRIT_STEAL          (5)
-#define TRANSFER_CRIT_BARTER         (6)
-#define TRANSFER_FAR_CONT            (7)
-#define TRANSFER_FAR_CRIT            (8)
-
-// Take flags
-#define CONT_GET                     (1)
-#define CONT_PUT                     (2)
-#define CONT_GETALL                  (3)
-#define CONT_PUTALL                  (4)
-
-// Target types
-#define TARGET_SELF                  (0)
-#define TARGET_SELF_ITEM             (1)
-#define TARGET_CRITTER               (2)
-#define TARGET_ITEM                  (3)
-#define TARGET_SCENERY               (4)
-#define TARGET_HEX                   (5)   // Todo:
 
 // Pick types
 #define PICK_CRIT_LOOT               (0)
@@ -184,26 +108,6 @@
 // Critters
 #define CRITTER_INV_VOLUME           (1000)
 
-// Locker
-#define LOCKER_ISOPEN                (0x01)
-#define LOCKER_NOOPEN                (0x10)
-
-// Hit locations
-#define HIT_LOCATION_NONE            (0)
-#define HIT_LOCATION_HEAD            (1)
-#define HIT_LOCATION_LEFT_ARM        (2)
-#define HIT_LOCATION_RIGHT_ARM       (3)
-#define HIT_LOCATION_TORSO           (4)
-#define HIT_LOCATION_RIGHT_LEG       (5)
-#define HIT_LOCATION_LEFT_LEG        (6)
-#define HIT_LOCATION_EYES            (7)
-#define HIT_LOCATION_GROIN           (8)
-#define HIT_LOCATION_UNCALLED        (9)
-#define MAX_HIT_LOCATION             (10)
-
-// Locations
-#define MAX_PROTO_LOCATIONS          (30000)
-
 // Global map
 #define GM_MAXX                      (GameOpt.GlobalMapWidth * GameOpt.GlobalMapZoneLength)
 #define GM_MAXY                      (GameOpt.GlobalMapHeight * GameOpt.GlobalMapZoneLength)
@@ -211,14 +115,10 @@
 #define GM__MAXZONEX                 (100)
 #define GM__MAXZONEY                 (100)
 #define GM_ZONES_FOG_SIZE            ( ( (GM__MAXZONEX / 4) + ( (GM__MAXZONEX % 4) ? 1 : 0 ) ) * GM__MAXZONEY )
-#define GM_FOG_FULL                  (0)
-#define GM_FOG_HALF                  (1)
-#define GM_FOG_HALF_EX               (2)
-#define GM_FOG_NONE                  (3)
 #define GM_MAX_GROUP_COUNT           (GameOpt.GlobalMapMaxGroupCount)
 #define GM_ANSWER_WAIT_TIME          (20000)
 #define GM_LIGHT_TIME                (5000)
-#define GM_ZONE( x )                            ( (x) / GM_ZONE_LEN )
+#define GM_ZONE( x )             ( (x) / GM_ZONE_LEN )
 #define GM_ENTRANCES_SEND_TIME       (60000)
 #define GM_TRACE_TIME                (1000)
 
@@ -236,16 +136,6 @@
 #define GM_INFO_FOG                  (0x10)
 #define GM_INFO_LOCATION             (0x20)
 
-// Global process types
-#define GLOBAL_PROCESS_MOVE          (0)
-#define GLOBAL_PROCESS_ENTER         (1)
-#define GLOBAL_PROCESS_START_FAST    (2)
-#define GLOBAL_PROCESS_START         (3)
-#define GLOBAL_PROCESS_SET_MOVE      (4)
-#define GLOBAL_PROCESS_STOPPED       (5)
-#define GLOBAL_PROCESS_NPC_IDLE      (6)
-#define GLOBAL_PROCESS_KICK          (7)
-
 // GM Rule command
 #define GM_CMD_SETMOVE               (1)   // +r-a*x,y
 #define GM_CMD_STOP                  (2)   // +r-a
@@ -258,32 +148,6 @@
 #define GM_CMD_ENTRANCES             (9)
 #define GM_CMD_VIEW_MAP              (10)
 
-// GM Walk types
-#define GM_WALK_GROUND               (0)
-#define GM_WALK_FLY                  (1)
-#define GM_WALK_WATER                (2)
-
-// Flags Hex
-// Proto map
-#define FH_BLOCK                     BIN8( 00000001 )
-#define FH_NOTRAKE                   BIN8( 00000010 )
-#define FH_WALL                      BIN8( 00000100 )
-#define FH_SCEN                      BIN8( 00001000 )
-#define FH_SCEN_GRID                 BIN8( 00010000 )
-#define FH_TRIGGER                   BIN8( 00100000 )
-// Map copy
-#define FH_CRITTER                   BIN8( 00000001 )
-#define FH_DEAD_CRITTER              BIN8( 00000010 )
-#define FH_ITEM                      BIN8( 00000100 )
-#define FH_DOOR                      BIN8( 00001000 )
-#define FH_BLOCK_ITEM                BIN8( 00010000 )
-#define FH_NRAKE_ITEM                BIN8( 00100000 )
-#define FH_WALK_ITEM                 BIN8( 01000000 )
-#define FH_GAG_ITEM                  BIN8( 10000000 )
-
-#define FH_NOWAY                     BIN16( 00010001, 00000001 )
-#define FH_NOSHOOT                   BIN16( 00100000, 00000010 )
-
 // Client map
 #define SERVER_MAP_EXT               ".map"
 #define CLIENT_MAP_FORMAT_VER        (7)
@@ -294,8 +158,6 @@
 #define MAXHEX_MAX                   (10000)
 
 // Client parameters
-#define MAX_NAME                     (30)
-#define MIN_NAME                     (1)
 #define MAX_CHAT_MESSAGE             (100)
 #define MAX_SAY_NPC_TEXT             (25)
 #define MAX_SCENERY                  (5000)
@@ -307,14 +169,11 @@
 
 // Critters
 #define MAX_CRIT_TYPES               (1000)
-#define NPC_START_ID                 (5000001)
-#define USERS_START_ID               (1)
-#define IS_USER_ID( id )                        ( (id) > 0 && (id) < NPC_START_ID )
-#define IS_NPC_ID( id )                         ( (id) >= NPC_START_ID )
+
 #define MAX_ANSWERS                  (100)
 #define PROCESS_TALK_TICK            (1000)
 #define DIALOGS_LST_NAME             "dialogs.lst"
-#define MAX_SCRIPT_NAME              (64)
+
 #define SCRIPTS_LST                  "scripts.cfg"
 #define MAX_START_SPECIAL            (40)
 #define TURN_BASED_TIMEOUT           (1000)
@@ -325,10 +184,7 @@
 #define RESPOWN_TIME_NPC             (120)
 #define RESPOWN_TIME_INFINITY        (4 * 24 * 60 * 60000)
 
-// Combat modes
-#define COMBAT_MODE_ANY              (0)
-#define COMBAT_MODE_REAL_TIME        (1)
-#define COMBAT_MODE_TURN_BASED       (2)
+
 
 // Turn based
 #define COMBAT_TB_END_TURN           (0)
@@ -341,25 +197,6 @@
 
 // Time AP
 #define AP_DIVIDER                   (100)
-
-// Crit conditions
-#define COND_LIFE                    (1)
-#define COND_KNOCKOUT                (2)
-#define COND_DEAD                    (3)
-
-// Run-time critters flags
-#define FCRIT_PLAYER                 (0x00010000)   // Player
-#define FCRIT_NPC                    (0x00020000)   // Npc
-#define FCRIT_DISCONNECT             (0x00080000)   // In offline
-#define FCRIT_CHOSEN                 (0x00100000)   // Chosen
-#define FCRIT_RULEGROUP              (0x00200000)   // Group rule
-
-// Slots
-#define SLOT_INV                     (0)
-#define SLOT_HAND1                   (1)
-#define SLOT_HAND2                   (2)
-#define SLOT_ARMOR                   (3)
-#define SLOT_GROUND                  (255)
 
 // Players barter
 #define BARTER_DIST                  (1)
@@ -399,100 +236,23 @@
 #define SHOW_SCREEN_MINIMAP          (11)     // Mini-map.
 
 // Parameters
-#define MAX_PARAMS                   (1000)
-#define SKILL_OFFSET( skill )                   ( (skill) - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN) )
-#define PERK_OFFSET( perk )                     ( (perk) - (GameOpt.AbsoluteOffsets ? 0 : PERK_BEGIN) )
 
-// Stats
-#define ST_STRENGTH                  (0)
-#define ST_PERCEPTION                (1)
-// #define ST_ENDURANCE                (2)
-#define ST_CHARISMA                  (3)
-#define ST_INTELLECT                 (4)
-#define ST_AGILITY                   (5)
-#define ST_LUCK                      (6)
-#define ST_MAX_LIFE                  (7)
-#define ST_ACTION_POINTS             (8)
-#define ST_ARMOR_CLASS               (9)
-#define ST_MELEE_DAMAGE              (10)
-#define ST_CARRY_WEIGHT              (11)
-#define ST_SEQUENCE                  (12)
-#define ST_HEALING_RATE              (13)
-#define ST_CRITICAL_CHANCE           (14)
-#define ST_NORMAL_RESIST             (23)
-#define ST_RADIATION_RESISTANCE      (30)
-#define ST_POISON_RESISTANCE         (31)
-#define ST_AGE                       (70)
-#define ST_GENDER                    (71)
-#define ST_CURRENT_HP                (72)
-#define ST_POISONING_LEVEL           (73)
-#define ST_RADIATION_LEVEL           (74)
-#define ST_CURRENT_AP                (75)
-#define ST_EXPERIENCE                (76)
-#define ST_LEVEL                     (77)
-#define ST_UNSPENT_SKILL_POINTS      (78)
-#define ST_UNSPENT_PERKS             (79)
-#define ST_KARMA                     (80)
-#define ST_FOLLOW_CRIT               (81)
-#define ST_REPLICATION_MONEY         (82)
-#define ST_REPLICATION_COUNT         (83)
-#define ST_REPLICATION_TIME          (84)
-#define ST_REPLICATION_COST          (85)
-#define ST_TURN_BASED_AC             (86)
-#define ST_MAX_MOVE_AP               (87)
-#define ST_MOVE_AP                   (88)
-#define ST_NPC_ROLE                  (89)
-#define ST_BONUS_LOOK                (101)
-#define ST_HANDS_ITEM_AND_MODE       (102)
-#define ST_FREE_BARTER_PLAYER        (103)
-#define ST_DIALOG_ID                 (104)
-#define ST_AI_ID                     (105)
-#define ST_TEAM_ID                   (106)
-#define ST_BAG_ID                    (107)
-#define ST_LAST_WEAPON_ID            (110)
-#define ST_BASE_CRTYPE               (112)
-#define ST_TALK_DISTANCE             (115)
-#define ST_SCALE_FACTOR              (116)
-#define ST_WALK_TIME                 (117)
-#define ST_RUN_TIME                  (118)
-#define ST_MAX_TALKERS               (119)
-#define ST_ANIM3D_LAYER_BEGIN        (150)
-#define ST_ANIM3D_LAYER_END          (179)
+#define SKILL_OFFSET( skill )            ( (skill) - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN) )
+#define PERK_OFFSET( perk )              ( (perk) - (GameOpt.AbsoluteOffsets ? 0 : PERK_BEGIN) )
 
 // Skills
 #define SKILL_BEGIN                  (GameOpt.SkillBegin)
 #define SKILL_END                    (GameOpt.SkillEnd)
 #define SKILL_COUNT                  (SKILL_END - SKILL_BEGIN + 1)
 #define MAX_SKILL_VAL                (GameOpt.SkillMaxValue)
-#define SK_UNARMED                   (203)
-#define SK_FIRST_AID                 (206)
-#define SK_DOCTOR                    (207)
-#define SK_SNEAK                     (208)
-#define SK_LOCKPICK                  (209)
-#define SK_STEAL                     (210)
-#define SK_TRAPS                     (211)
-#define SK_SCIENCE                   (212)
-#define SK_REPAIR                    (213)
-#define SK_SPEECH                    (214)
-#define SK_BARTER                    (215)
 
-// Tag skills
-#define TAG_SKILL1                   (226)
-#define TAG_SKILL2                   (227)
-#define TAG_SKILL3                   (228)
-#define TAG_SKILL4                   (229)
 
 // Timeouts
 #define TIMEOUT_BEGIN                (GameOpt.TimeoutBegin)
 #define TIMEOUT_END                  (GameOpt.TimeoutEnd)
-#define TO_SK_REPAIR                 (232)
-#define TO_SK_SCIENCE                (233)
-#define TO_BATTLE                    (238)
-#define TO_TRANSFER                  (239)
-#define TO_REMOVE_FROM_GAME          (240)
-#define TO_KARMA_VOTING              (242)
+
 #define TB_BATTLE_TIMEOUT            (100000000)
-#define TB_BATTLE_TIMEOUT_CHECK( to )           ( (to) > 10000000 )
+#define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
 
 // Kills
 #define KILL_BEGIN                   (GameOpt.KillBegin)
@@ -502,10 +262,6 @@
 #define PERK_BEGIN                   (GameOpt.PerkBegin)
 #define PERK_END                     (GameOpt.PerkEnd)
 #define PERK_COUNT                   (PERK_END - PERK_BEGIN + 1)
-#define PE_SILENT_RUNNING            (316)
-#define PE_MASTER_TRADER             (318)
-#define PE_QUICK_POCKETS             (349)
-#define PE_SMOOTH_TALKER             (350)
 
 // Addiction
 #define ADDICTION_BEGIN              (GameOpt.AddictionBegin)
@@ -518,37 +274,6 @@
 // Damages
 #define DAMAGE_BEGIN                 (GameOpt.DamageBegin)
 #define DAMAGE_END                   (GameOpt.DamageEnd)
-#define DAMAGE_POISONED              (500)
-#define DAMAGE_RADIATED              (501)
-#define DAMAGE_RIGHT_ARM             (503)
-#define DAMAGE_LEFT_ARM              (504)
-#define DAMAGE_RIGHT_LEG             (505)
-#define DAMAGE_LEFT_LEG              (506)
-
-// Modes
-#define MODE_HIDE                    (510)
-#define MODE_NO_STEAL                (511)
-#define MODE_NO_BARTER               (512)
-#define MODE_NO_ENEMY_STACK          (513)
-#define MODE_NO_PVP                  (514)
-#define MODE_END_COMBAT              (515)
-#define MODE_DEFAULT_COMBAT          (516)
-#define MODE_NO_HOME                 (517)
-#define MODE_GECK                    (518)
-#define MODE_NO_FAVORITE_ITEM        (519)
-#define MODE_NO_ITEM_GARBAGER        (520)
-#define MODE_DLG_SCRIPT_BARTER       (521)
-#define MODE_UNLIMITED_AMMO          (522)
-#define MODE_INVULNERABLE            (527)
-#define MODE_NO_FLATTEN              (528)   // Client
-#define MODE_RANGE_HTH               (530)
-#define MODE_NO_LOOT                 (532)
-#define MODE_NO_PUSH                 (536)
-#define MODE_NO_UNARMED              (537)
-#define MODE_NO_AIM                  (538)
-#define MODE_NO_WALK                 (539)
-#define MODE_NO_RUN                  (540)
-#define MODE_NO_TALK                 (541)
 
 // Traits
 #define TRAIT_BEGIN                  (GameOpt.TraitBegin)
@@ -600,28 +325,10 @@
 #define ACTION_RESPAWN               (22)   //   s
 #define ACTION_REFRESH               (23)   //   s
 
-// Script defines
-// Look checks
-#define LOOK_CHECK_DIR               (0x01)
-#define LOOK_CHECK_SNEAK_DIR         (0x02)
-#define LOOK_CHECK_SNEAK_WEIGHT      (0x04)
-#define LOOK_CHECK_TRACE             (0x08)
-#define LOOK_CHECK_SCRIPT            (0x10)
-#define LOOK_CHECK_ITEM_SCRIPT       (0x20)
-
 // In SendMessage
 #define MESSAGE_TO_VISIBLE_ME        (0)
 #define MESSAGE_TO_IAM_VISIBLE       (1)
 #define MESSAGE_TO_ALL_ON_MAP        (2)
-
-// Special skill values
-#define SKILL_PICK_ON_GROUND         (-1)
-#define SKILL_PUT_CONT               (-2)
-#define SKILL_TAKE_CONT              (-3)
-#define SKILL_TAKE_ALL_CONT          (-4)
-#define SKILL_LOOT_CRITTER           (-5)
-#define SKILL_PUSH_CRITTER           (-6)
-#define SKILL_TALK                   (-7)
 
 // Anim1
 #define ANIM1_UNARMED                (1)

@@ -1,10 +1,9 @@
-#include "StdAfx.h"
 #include "CritterCl.h"
 #include "CritterType.h"
 #include "ResourceManager.h"
 #include "ItemManager.h"
 
-#ifdef FONLINE_CLIENT
+#ifdef FOCLASSIC_CLIENT
 # include "SoundManager.h"
 # include "Script.h"
 #endif
@@ -55,7 +54,7 @@ CritterCl::~CritterCl()
 
     if( Layers3d )
     {
-        #ifdef FONLINE_CLIENT
+        #ifdef FOCLASSIC_CLIENT
         ( (ScriptArray*)Layers3d )->Release();
         #else
         uint* layers = (uint*)Layers3d;
@@ -102,7 +101,7 @@ void CritterCl::Finish()
 
 void CritterCl::GenParams()
 {
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( Script::PrepareContext( ClientFunctions.PlayerGeneration, _FUNC_, "Registration" ) )
     {
         ScriptArray* arr = Script::CreateArray( "int[]" );
@@ -510,8 +509,8 @@ bool CritterCl::CheckFind( int find_type )
         if( FLAG( find_type, FIND_ONLY_NPC ) )
             return false;
     }
-    return FLAG( find_type, FIND_ALL ) ||
-           (IsLife() && FLAG( find_type, FIND_LIFE ) ) ||
+
+    return (IsLife() && FLAG( find_type, FIND_LIFE ) ) ||
            (IsKnockout() && FLAG( find_type, FIND_KO ) ) ||
            (IsDead() && FLAG( find_type, FIND_DEAD ) );
 }
@@ -556,7 +555,7 @@ uint CritterCl::GetMultihex()
 
 int CritterCl::GetParam( uint index )
 {
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( ParamsGetScript[index] && Script::PrepareContext( ParamsGetScript[index], _FUNC_, GetInfo() ) )
     {
         Script::SetArgObject( this );
@@ -626,7 +625,7 @@ void CritterCl::ProcessChangedParams()
             {
                 uint index = CallChange_[i + 1];
                 ParamLocked = index;
-                #ifdef FONLINE_CLIENT
+                #ifdef FOCLASSIC_CLIENT
                 if( Script::PrepareContext( CallChange_[i], _FUNC_, GetInfo() ) )
                 {
                     Script::SetArgObject( this );
@@ -679,7 +678,7 @@ void CritterCl::DrawStay( Rect r )
 const char* CritterCl::GetMoneyStr()
 {
     static char money_str[64];
-    uint        money_count = CountItemPid( 41 /*PID_BOTTLE_CAPS*/ );
+    uint        money_count = CountItemPid( PID_BOTTLE_CAPS );
     Str::Format( money_str, "%u$", money_count );
     return money_str;
 }
@@ -1086,7 +1085,7 @@ void CritterCl::Move( int dir )
 
 void CritterCl::Action( int action, int action_ext, Item* item, bool local_call /* = true */ )
 {
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( Script::PrepareContext( ClientFunctions.CritterAction, _FUNC_, "CritterAction" ) )
     {
         if( item )
@@ -1106,15 +1105,15 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
     switch( action )
     {
         case ACTION_KNOCKOUT:
-            Cond = COND_KNOCKOUT;
+            Cond = CRITTER_CONDITION_KNOCKOUT;
             Anim2Knockout = action_ext;
             break;
         case ACTION_STANDUP:
-            Cond = COND_LIFE;
+            Cond = CRITTER_CONDITION_LIFE;
             break;
         case ACTION_DEAD:
         {
-            Cond = COND_DEAD;
+            Cond = CRITTER_CONDITION_DEAD;
             Anim2Dead = action_ext;
             CritterAnim* anim = GetCurAnim();
             needReSet = true;
@@ -1122,13 +1121,13 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
         }
         break;
         case ACTION_CONNECT:
-            UNSETFLAG( Flags, FCRIT_DISCONNECT );
+            UNSETFLAG( Flags, CRITTER_FLAG_DISCONNECT );
             break;
         case ACTION_DISCONNECT:
-            SETFLAG( Flags, FCRIT_DISCONNECT );
+            SETFLAG( Flags, CRITTER_FLAG_DISCONNECT );
             break;
         case ACTION_RESPAWN:
-            Cond = COND_LIFE;
+            Cond = CRITTER_CONDITION_LIFE;
             Alpha = 0;
             SetFade( true );
             AnimateStay();
@@ -1206,7 +1205,7 @@ void CritterCl::Animate( uint anim1, uint anim2, Item* item )
 
         #pragma MESSAGE( "Migrate critter on head text moving in scripts." )
         bool move_text = true;
-//			(Cond==COND_DEAD || Cond==COND_KNOCKOUT ||
+//			(Cond==CRITTER_CONDITION_DEAD || Cond==CRITTER_CONDITION_KNOCKOUT ||
 //			(anim2!=ANIM2_SHOW_WEAPON && anim2!=ANIM2_HIDE_WEAPON && anim2!=ANIM2_PREPARE_WEAPON && anim2!=ANIM2_TURNOFF_WEAPON &&
 //			anim2!=ANIM2_DODGE_FRONT && anim2!=ANIM2_DODGE_BACK && anim2!=ANIM2_USE && anim2!=ANIM2_PICKUP &&
 //			anim2!=ANIM2_DAMAGE_FRONT && anim2!=ANIM2_DAMAGE_BACK && anim2!=ANIM2_IDLE && anim2!=ANIM2_IDLE_COMBAT));
@@ -1249,7 +1248,7 @@ void CritterCl::AnimateStay()
             stayAnim.AnimTick = anim->Ticks;
             stayAnim.BeginFrm = 0;
             stayAnim.EndFrm = anim->GetCnt() - 1;
-            if( Cond == COND_DEAD )
+            if( Cond == CRITTER_CONDITION_DEAD )
                 stayAnim.BeginFrm = stayAnim.EndFrm;
             curSpr = stayAnim.BeginFrm;
         }
@@ -1272,7 +1271,7 @@ void CritterCl::AnimateStay()
         ProcessAnim( true, false, anim1, anim2, NULL );
         SetOffs( 0, 0, true );
 
-        if( Cond == COND_LIFE || Cond == COND_KNOCKOUT )
+        if( Cond == CRITTER_CONDITION_LIFE || Cond == CRITTER_CONDITION_KNOCKOUT )
             Anim3d->SetAnimation( anim1, anim2, GetLayers3dData(), Animation3d::Is2dEmulation() ? ANIMATION_STAY : 0 );
         else
             Anim3d->SetAnimation( anim1, anim2, GetLayers3dData(), ANIMATION_STAY | ANIMATION_PERIOD( 100 ) );
@@ -1324,11 +1323,11 @@ uint CritterCl::GetAnim1( Item* anim_item /* = NULL */ )
 
     switch( Cond )
     {
-        case COND_LIFE:
+        case CRITTER_CONDITION_LIFE:
             return (Anim1Life) | (anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED);
-        case COND_KNOCKOUT:
+        case CRITTER_CONDITION_KNOCKOUT:
             return (Anim1Knockout) | (anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED);
-        case COND_DEAD:
+        case CRITTER_CONDITION_DEAD:
             return (Anim1Dead) | (anim_item->IsWeapon() ? anim_item->Proto->Weapon_Anim1 : ANIM1_UNARMED);
         default:
             break;
@@ -1340,11 +1339,11 @@ uint CritterCl::GetAnim2()
 {
     switch( Cond )
     {
-        case COND_LIFE:
+        case CRITTER_CONDITION_LIFE:
             return Anim2Life ? Anim2Life : ( (IsCombatMode() && GameOpt.Anim2CombatIdle) ? GameOpt.Anim2CombatIdle : ANIM2_IDLE );
-        case COND_KNOCKOUT:
+        case CRITTER_CONDITION_KNOCKOUT:
             return Anim2Knockout ? Anim2Knockout : ANIM2_IDLE_PRONE_FRONT;
-        case COND_DEAD:
+        case CRITTER_CONDITION_DEAD:
             return Anim2Dead ? Anim2Dead : ANIM2_DEAD_FRONT;
         default:
             break;
@@ -1354,7 +1353,7 @@ uint CritterCl::GetAnim2()
 
 void CritterCl::ProcessAnim( bool animate_stay, bool is2d, uint anim1, uint anim2, Item* item )
 {
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( Script::PrepareContext( is2d ? ClientFunctions.Animation2dProcess : ClientFunctions.Animation3dProcess, _FUNC_, "AnimationProcess" ) )
     {
         Script::SetArgBool( animate_stay );
@@ -1369,7 +1368,7 @@ void CritterCl::ProcessAnim( bool animate_stay, bool is2d, uint anim1, uint anim
 
 int* CritterCl::GetLayers3dData()
 {
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     static int   layers[LAYERS3D_COUNT];
     ScriptArray* arr = (ScriptArray*)Layers3d;
     memcpy( layers, arr->At( 0 ), sizeof(layers) );
@@ -1409,7 +1408,7 @@ void CritterCl::SetBaseType( uint type )
         Anim3d->SetDir( CrDir );
         SprId = Anim3d->GetSprId();
 
-        #ifdef FONLINE_CLIENT
+        #ifdef FOCLASSIC_CLIENT
         if( !Layers3d )
         {
             Layers3d = Script::CreateArray( "int[]" );
@@ -1551,7 +1550,7 @@ void CritterCl::Process()
 
     // Battle 3d mode
     // Todo: do same for 2d animations
-    if( Anim3d && GameOpt.Anim2CombatIdle && !animSequence.size() && Cond == COND_LIFE && !Anim2Life )
+    if( Anim3d && GameOpt.Anim2CombatIdle && !animSequence.size() && Cond == CRITTER_CONDITION_LIFE && !Anim2Life )
     {
         if( GameOpt.Anim2CombatBegin && IsCombatMode() && Anim3d->GetAnim2() != (int)GameOpt.Anim2CombatIdle )
             Animate( 0, GameOpt.Anim2CombatBegin, NULL );
@@ -1562,7 +1561,7 @@ void CritterCl::Process()
     // Fidget animation
     if( Timer::GameTick() >= tickFidget )
     {
-        if( !animSequence.size() && Cond == COND_LIFE && IsFree() && !MoveSteps.size() && !IsCombatMode() )
+        if( !animSequence.size() && Cond == CRITTER_CONDITION_LIFE && IsFree() && !MoveSteps.size() && !IsCombatMode() )
             Action( ACTION_FIDGET, 0, NULL );
         tickFidget = Timer::GameTick() + Random( GameOpt.CritterFidgetTime, GameOpt.CritterFidgetTime * 2 );
     }
@@ -1719,7 +1718,7 @@ void CritterCl::DrawTextOnHead()
                 Str::Copy( str, Name.c_str() );
             if( GameOpt.ShowCritId )
                 Str::Append( str, Str::FormatBuf( " <%u>", GetId() ) );
-            if( FLAG( Flags, FCRIT_DISCONNECT ) )
+            if( FLAG( Flags, CRITTER_FLAG_DISCONNECT ) )
                 Str::Append( str, GameOpt.PlayerOffAppendix.c_str() );
             color = (NameColor ? NameColor : COLOR_CRITTER_NAME);
         }

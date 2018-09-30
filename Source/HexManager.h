@@ -379,7 +379,7 @@ private:
 /* Mapper                                                               */
 /************************************************************************/
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
 public:
     // Proto map
     ProtoMap* CurProtoMap;
@@ -409,7 +409,7 @@ public:
     void MarkPassedHexes();
     void AffectItem( MapObject* mobj, ItemHex* item );
     void AffectCritter( MapObject* mobj, CritterCl* cr );
-    #endif // FONLINE_MAPPER
+    #endif // FOCLASSIC_MAPPER
 
 };
 

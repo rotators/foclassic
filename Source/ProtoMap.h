@@ -8,11 +8,6 @@
 #define MAPOBJ_SCRIPT_NAME       (25)
 #define MAPOBJ_CRITTER_PARAMS    (40)
 
-// Map object types
-#define MAP_OBJECT_CRITTER       (0)
-#define MAP_OBJECT_ITEM          (1)
-#define MAP_OBJECT_SCENERY       (2)
-
 class ProtoMap;
 class MapObject // Available in fonline.h
 {
@@ -109,13 +104,13 @@ public:
 
     struct _RunTime
     {
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         ProtoMap* FromMap;
         uint      MapObjId;
         char      PicMapName[64];
         char      PicInvName[64];
         #endif
-        #ifdef FONLINE_SERVER
+        #ifdef FOCLASSIC_SERVER
         int       BindScriptId;
         #endif
         long      RefCounter;
@@ -201,7 +196,7 @@ public:
         char   OffsX, OffsY;
         uchar  Layer;
         bool   IsRoof;
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         bool   IsSelected;
         #endif
 
@@ -210,7 +205,7 @@ public:
     };
     typedef vector<Tile>    TileVec;
     TileVec Tiles;
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     // For fast access
     typedef vector<TileVec> TileVecVec;
     TileVecVec TilesField;
@@ -223,11 +218,11 @@ private:
     bool ReadTiles( FileManager& fm, int version );
     bool ReadObjects( FileManager& fm, int version );
     bool LoadTextFormat( const char* buf );
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     void SaveTextFormat( FileManager& fm );
     #endif
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
 public:
     // To Client
     SceneryClVec    WallsToSend;
@@ -284,7 +279,7 @@ public:
     void Clear();
     bool Refresh();
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     void        GenNew();
     bool        Save( const char* fname, int path_type );
     static bool IsMapFile( const char* fname );
@@ -298,7 +293,7 @@ public:
     void AddRef()  { ++RefCounter; }
     void Release() { if( !--RefCounter ) delete this; }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     MapObject* GetMapScenery( ushort hx, ushort hy, ushort pid );
     void       GetMapSceneriesHex( ushort hx, ushort hy, MapObjectPtrVec& mobjs );
     void       GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs );

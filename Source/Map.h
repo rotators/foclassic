@@ -5,27 +5,14 @@
 #include "ProtoMap.h"
 #include "Item.h"
 #include "Critter.h"
+#include "Defines.h"
 
-// Script events
-#define MAP_EVENT_FINISH                (0)
-#define MAP_EVENT_LOOP_0                (1)
-#define MAP_EVENT_LOOP_1                (2)
-#define MAP_EVENT_LOOP_2                (3)
-#define MAP_EVENT_LOOP_3                (4)
-#define MAP_EVENT_LOOP_4                (5)
-#define MAP_EVENT_IN_CRITTER            (6)
-#define MAP_EVENT_OUT_CRITTER           (7)
-#define MAP_EVENT_CRITTER_DEAD          (8)
-#define MAP_EVENT_TURN_BASED_BEGIN      (9)
-#define MAP_EVENT_TURN_BASED_END        (10)
-#define MAP_EVENT_TURN_BASED_PROCESS    (11)
-#define MAP_EVENT_MAX                   (12)
 extern const char* MapEventFuncName[MAP_EVENT_MAX];
 
 // Loop times
-#define MAP_LOOP_FUNC_MAX               (5)
-#define MAP_LOOP_DEFAULT_TICK           (60 * 60000)
-#define MAP_MAX_DATA                    (100)
+#define MAP_LOOP_FUNC_MAX        (5)
+#define MAP_LOOP_DEFAULT_TICK    (60 * 60000)
+#define MAP_MAX_DATA             (100)
 
 class Map;
 class Location;
@@ -143,13 +130,13 @@ public:
     bool IsHexRaked( ushort hx, ushort hy );
     bool IsHexesPassed( ushort hx, ushort hy, uint radius );
     bool IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex );
-    bool IsHexItem( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_ITEM ); }
+    bool IsHexItem( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_ITEM ); }
 
-    bool IsHexTrigger( ushort hx, ushort hy ) { return FLAG( Proto->HexFlags[hy * GetMaxHexX() + hx], FH_TRIGGER ); }
-    bool IsHexTrap( ushort hx, ushort hy )    { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_WALK_ITEM ); }
+    bool IsHexTrigger( ushort hx, ushort hy ) { return FLAG( Proto->HexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_TRIGGER ); }
+    bool IsHexTrap( ushort hx, ushort hy )    { return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_WALK_ITEM ); }
 
-    bool IsHexCritter( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_CRITTER | FH_DEAD_CRITTER ); }
-    bool IsHexGag( ushort hx, ushort hy )     { return FLAG( hexFlags[hy * GetMaxHexX() + hx], FH_GAG_ITEM ); }
+    bool IsHexCritter( ushort hx, ushort hy ) { return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_CRITTER | HEX_FLAG_DEAD_CRITTER ); }
+    bool IsHexGag( ushort hx, ushort hy )     { return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_GAG_ITEM ); }
 
     bool     IsFlagCritter( ushort hx, ushort hy, bool dead );
     void     SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead );
@@ -263,10 +250,7 @@ public:
 };
 typedef vector<ProtoLocation> ProtoLocVec;
 
-// Script events
-#define LOCATION_EVENT_FINISH    (0)
-#define LOCATION_EVENT_ENTER     (1)
-#define LOCATION_EVENT_MAX       (2)
+
 extern const char* LocationEventFuncName[LOCATION_EVENT_MAX];
 
 class Location

@@ -1,14 +1,13 @@
-#include "StdAfx.h"
 #include "HexManager.h"
 #include "ResourceManager.h"
 #include "LineTracer.h"
 
-#ifdef FONLINE_MAPPER
+#ifdef FOCLASSIC_MAPPER
 # include "CritterData.h"
 # include "CritterManager.h"
 #endif
 
-#if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 # include "Script.h"
 #endif
 
@@ -202,7 +201,7 @@ bool HexManager::Init()
     maxHexX = 0;
     maxHexY = 0;
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     ClearSelTiles();
     CurProtoMap = NULL;
     #endif
@@ -946,7 +945,7 @@ void HexManager::RebuildMap( int rx, int ry )
                 {
                     ItemHex* item = *it;
 
-                    #ifdef FONLINE_CLIENT
+                    #ifdef FOCLASSIC_CLIENT
                     if( item->IsHidden() || item->IsFullyTransparent() )
                         continue;
                     if( item->IsScenOrGrid() && !GameOpt.ShowScen )
@@ -1022,7 +1021,7 @@ void HexManager::RebuildMap( int rx, int ry )
     mainTree.SortBySurfaces();
     mainTree.SortByMapPos();
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     if( MapperFunctions.RenderMap && Script::PrepareContext( MapperFunctions.RenderMap, _FUNC_, "Game" ) )
     {
         SpritesCanDrawMap = true;
@@ -1030,7 +1029,7 @@ void HexManager::RebuildMap( int rx, int ry )
         SpritesCanDrawMap = false;
     }
     #endif
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( Script::PrepareContext( ClientFunctions.RenderMap, _FUNC_, "Game" ) )
     {
         SpritesCanDrawMap = true;
@@ -1042,7 +1041,7 @@ void HexManager::RebuildMap( int rx, int ry )
     screenHexX = rx;
     screenHexY = ry;
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     if( CurProtoMap )
     {
         CurProtoMap->Header.WorkHexX = rx;
@@ -1441,7 +1440,7 @@ void HexManager::CollectLightSources()
 {
     lightSources.clear();
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     if( !CurProtoMap )
         return;
 
@@ -1546,7 +1545,7 @@ void HexManager::RebuildTiles()
                 int          oy = f.ScrY + tile.OffsY + TILE_OY;
 
                 if( IsVisible( spr_id, ox, oy ) )
-                #ifdef FONLINE_MAPPER
+                #ifdef FOCLASSIC_MAPPER
                 {
                     ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
                     tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, tiles[i].IsSelected ? (uchar*)&SELECT_ALPHA : NULL, &Effect::Tile, NULL );
@@ -1598,7 +1597,7 @@ void HexManager::RebuildRoof()
                     int          oy = f.ScrY + roof.OffsY + ROOF_OY;
 
                     if( IsVisible( spr_id, ox, oy ) )
-                    #ifdef FONLINE_MAPPER
+                    #ifdef FOCLASSIC_MAPPER
                     {
                         ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
                         roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, roofs[i].IsSelected ? (uchar*)&SELECT_ALPHA : &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
@@ -2674,7 +2673,7 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
         if( item->IsFinishing() || !item->SprDrawValid )
             continue;
 
-        #ifdef FONLINE_CLIENT
+        #ifdef FOCLASSIC_CLIENT
         if( item->IsHidden() || item->IsFullyTransparent() )
             continue;
         if( item->IsScenOrGrid() && !GameOpt.ShowScen )
@@ -2683,7 +2682,7 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
             continue;
         if( item->IsWall() && !GameOpt.ShowWall )
             continue;
-        #else // FONLINE_MAPPER
+        #else // FOCLASSIC_MAPPER
         bool is_fast = fastPids.count( item->GetProtoId() ) != 0;
         if( item->IsScenOrGrid() && !GameOpt.ShowScen && !is_fast )
             continue;
@@ -3410,7 +3409,7 @@ void HexManager::FindSetCenter( int cx, int cy )
         return;
     RebuildMap( cx, cy );
 
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     int    iw = VIEW_WIDTH / 2 + 2;
     int    ih = VIEW_HEIGHT / 2 + 2;
     ushort hx = cx;
@@ -3468,7 +3467,7 @@ void HexManager::FindSetCenter( int cx, int cy )
     FindSetCenterDir( hx, hy, dirs, ih );
 
     RebuildMap( hx, hy );
-    #endif // FONLINE_CLIENT
+    #endif // FOCLASSIC_CLIENT
 }
 
 void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int steps )
@@ -4031,7 +4030,7 @@ uchar* HexManager::GetMapDayColor()
     return dayColor;
 }
 
-#ifdef FONLINE_MAPPER
+#ifdef FOCLASSIC_MAPPER
 bool HexManager::SetProtoMap( ProtoMap& pmap )
 {
     WriteLog( "Create map from prototype.\n" );
@@ -4553,8 +4552,8 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
 
 void HexManager::AffectCritter( MapObject* mobj, CritterCl* cr )
 {
-    if( mobj->MCritter.Cond < COND_LIFE || mobj->MCritter.Cond > COND_DEAD )
-        mobj->MCritter.Cond = COND_LIFE;
+    if( mobj->MCritter.Cond < CRITTER_CONDITION_LIFE || mobj->MCritter.Cond > CRITTER_CONDITION_DEAD )
+        mobj->MCritter.Cond = CRITTER_CONDITION_LIFE;
 
     bool refresh = false;
     if( cr->Cond != mobj->MCritter.Cond )
@@ -4569,8 +4568,8 @@ void HexManager::AffectCritter( MapObject* mobj, CritterCl* cr )
         refresh = true;
     }
 
-    uint& anim1 = (cr->Cond == COND_LIFE ? cr->Anim1Life : (cr->Cond == COND_KNOCKOUT ? cr->Anim1Knockout : cr->Anim1Dead) );
-    uint& anim2 = (cr->Cond == COND_LIFE ? cr->Anim2Life : (cr->Cond == COND_KNOCKOUT ? cr->Anim2Knockout : cr->Anim2Dead) );
+    uint& anim1 = (cr->Cond == CRITTER_CONDITION_LIFE ? cr->Anim1Life : (cr->Cond == CRITTER_CONDITION_KNOCKOUT ? cr->Anim1Knockout : cr->Anim1Dead) );
+    uint& anim2 = (cr->Cond == CRITTER_CONDITION_LIFE ? cr->Anim2Life : (cr->Cond == CRITTER_CONDITION_KNOCKOUT ? cr->Anim2Knockout : cr->Anim2Dead) );
     if( anim1 != mobj->MCritter.Anim1 || anim2 != mobj->MCritter.Anim2 )
         refresh = true;
     anim1 = mobj->MCritter.Anim1;
@@ -4591,4 +4590,4 @@ void HexManager::AffectCritter( MapObject* mobj, CritterCl* cr )
         cr->AnimateStay();
 }
 
-#endif // FONLINE_MAPPER
+#endif // FOCLASSIC_MAPPER

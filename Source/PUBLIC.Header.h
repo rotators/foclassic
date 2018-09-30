@@ -3,7 +3,7 @@
 
 //
 // FOClassic engine structures, for native working
-// Last update 23.09.2018
+// Last update 30.09.2018
 // Engine version 1, MSVS 2010
 // Default calling convention - cdecl
 //
@@ -49,6 +49,10 @@
 # error __SERVER / __CLIENT / __MAPPER any of this must be defined
 #endif
 
+#if !defined (FOCLASSIC_EXTENSION)
+# warning FOCLASSIC_EXTENSION not defined
+#endif
+
 // Platform specific options
 #undef NDEBUG
 #define NDEBUG
@@ -71,6 +75,8 @@
 # define _HAS_EXCEPTIONS            0
 #endif // FO_MSVC
 
+#undef EXPORT
+#undef EXPORT_UNINITIALIZED
 #ifdef FO_WINDOWS
 # ifdef FO_MSVC
 #  define EXPORT                    extern "C" __declspec( dllexport )
@@ -99,42 +105,40 @@ using namespace std;
 EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 
 // AngelScript add-ons
-#define FOCLASSIC_DLL
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptarray.h"
 #include "AngelScript/scriptfile.h"
 #include "AngelScript/scriptdictionary.h"
 #include "AngelScript/scriptany.h"
 #include "AngelScript/scriptmath.h"
-#undef FOCLASSIC_DLL
 
 // FOClassic types
-struct GameOptions;
-struct Mutex;
-struct Spinlock;
-struct SyncObj;
+struct Client;
+struct Critter;
+struct CritterCl;
+struct CritterTimeEvent;
 struct CritterType;
-struct ProtoItem;
+struct Field;
+struct GameOptions;
 struct GameVar;
-struct TemplateVar;
-struct NpcPlane;
 struct GlobalMapGroup;
 struct Item;
-struct CritterTimeEvent;
-struct Critter;
-struct Client;
-struct Npc;
-struct CritterCl;
+struct Location;
+struct Map;
 struct MapObject;
 struct MapEntire;
-struct SceneryToClient;
+struct Mutex;
+struct Npc;
+struct NpcPlane;
+struct ProtoItem;
 struct ProtoMap;
-struct Map;
 struct ProtoLocation;
-struct Location;
-struct Field;
+struct SceneryToClient;
+struct Spinlock;
 struct SpriteInfo;
 struct Sprite;
+struct SyncObj;
+struct TemplateVar;
 
 #ifdef __SERVER
 typedef Critter                             CritterMutual;
@@ -202,7 +206,7 @@ EXPORT_UNINITIALIZED asIScriptContext* ( * ScriptGetActiveContext )();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryOptions)();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
-#define FOCLASSIC_DLL_ENTRY( isCompiler )          \
+#define FOCLASSIC_EXTENSION_ENTRY( isCompiler )          \
     GameOptions * FOClassic;                       \
     asIScriptEngine* ASEngine;                     \
     EXPORT void TARGET_NAME() {}                   \
@@ -249,18 +253,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 #define EFFECT_SCRIPT_VALUES         (10)
 #define CRITTER_USER_DATA_SIZE       (400)
 
-// Vars
-#define VAR_CALC_QUEST( tid, val )       ( (tid) * 1000 + (val) )
-#define VAR_GLOBAL                   (0)
-#define VAR_LOCAL                    (1)
-#define VAR_UNICUM                   (2)
-#define VAR_LOCAL_LOCATION           (3)
-#define VAR_LOCAL_MAP                (4)
-#define VAR_LOCAL_ITEM               (5)
-#define VAR_FLAG_QUEST               (0x1)
-#define VAR_FLAG_RANDOM              (0x2)
-#define VAR_FLAG_NO_CHECK            (0x4)
-
 // Items
 #define PROTO_ITEM_USER_DATA_SIZE    (500)
 #define ITEM_MAX_BLOCK_LINES         (50)
@@ -276,7 +268,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 #define USE_NONE                     (15)
 
 // Parameters
-#define MAX_PARAMS                   (1000)
 #define SKILL_OFFSET( skill )            ( (skill) + (FOClassic->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
 #define PERK_OFFSET( perk )              ( (perk)  + (FOClassic->AbsoluteOffsets ? 0 : PERK_BEGIN) )
 #define TB_BATTLE_TIMEOUT            (100000000)
@@ -307,23 +298,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 // Sprites cutting
 #define SPRITE_CUT_HORIZONTAL        (1)
 #define SPRITE_CUT_VERTICAL          (2)
-
-// Map blocks
-#define FH_BLOCK                     BIN8( 00000001 )
-#define FH_NOTRAKE                   BIN8( 00000010 )
-#define FH_WALL                      BIN8( 00000100 )
-#define FH_SCEN                      BIN8( 00001000 )
-#define FH_SCEN_GRID                 BIN8( 00010000 )
-#define FH_TRIGGER                   BIN8( 00100000 )
-#define FH_CRITTER                   BIN8( 00000001 )
-#define FH_DEAD_CRITTER              BIN8( 00000010 )
-#define FH_ITEM                      BIN8( 00000100 )
-#define FH_BLOCK_ITEM                BIN8( 00010000 )
-#define FH_NRAKE_ITEM                BIN8( 00100000 )
-#define FH_WALK_ITEM                 BIN8( 01000000 )
-#define FH_GAG_ITEM                  BIN8( 10000000 )
-#define FH_NOWAY                     BIN16( 00010001, 00000001 )
-#define FH_NOSHOOT                   BIN16( 00100000, 00000010 )
 
 // GameOptions::IndicatorType
 #define INDICATOR_LINES              (0)

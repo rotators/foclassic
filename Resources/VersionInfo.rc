@@ -1,23 +1,23 @@
 #include "CMake.h"
 
-#if defined(FONLINE_CLIENT)
+#if defined(FOCLASSIC_CLIENT)
 	#include "../Source/ResourceClient.h"
 	#define APPLICATION_NAME "Client"
 	#define APPLICATION_ICON "Client.ico"
-#elif defined(FONLINE_MAPPER)
+#elif defined(FOCLASSIC_MAPPER)
 	#include "../Source/ResourceMapper.h"
 	#define APPLICATION_NAME "Mapper"
 	#define APPLICATION_ICON "Mapper.ico"
-#elif defined(FONLINE_SERVER)
+#elif defined(FOCLASSIC_SERVER)
 	#define APPLICATION_NAME "Server"
 	#define APPLICATION_ICON "Server.ico"
-#elif defined(FONLINE_SCRIPT_COMPILER)
+#elif defined(FOCLASSIC_SCRIPT_COMPILER)
 	#define APPLICATION_NAME "ASCompiler"
 #else
 	#error "Unknown application"
 #endif
 
-#if defined(FONLINE_CLIENT) || defined(FONLINE_MAPPER)
+#if defined(FOCLASSIC_CLIENT) || defined(FOCLASSIC_MAPPER)
 	#ifdef FO_D3D
 		#define APPLICATION_NAME_SUFFIX "DX"
 	#else
@@ -81,7 +81,7 @@ BEGIN
 	END
 END
 
-#if defined(FONLINE_CLIENT) || defined(FONLINE_MAPPER)
+#if defined(FOCLASSIC_CLIENT) || defined(FOCLASSIC_MAPPER)
 	IDR_EFFECT_SKINNING RCDATA "../Source/3dSkinning.fx"
 	IDR_PS_CONTOUR      RCDATA "../Source/3dContourPS.txt"
 #endif

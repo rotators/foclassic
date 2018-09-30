@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "DataFile.h"
 #include "DatFile/cfile.h"
 #include "zlib/unzip.h"

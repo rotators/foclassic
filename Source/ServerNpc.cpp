@@ -1,4 +1,11 @@
-#include "StdAfx.h"
+#include "Core.h"
+
+#include "Critter.h"
+#include "CritterType.h"
+#include "ItemManager.h"
+#include "Map.h"
+#include "MapManager.h"
+#include "MsgStr.h"
 #include "Server.h"
 
 #define CHECK_NPC_AP( npc, map, need_ap )                                                                                     \
@@ -24,7 +31,7 @@ void FOServer::ProcessAI( Npc* npc )
     {
         if( !npc->GroupMove )
             return;
-        MapMngr.GM_GlobalProcess( npc, npc->GroupMove, GLOBAL_PROCESS_NPC_IDLE );
+        MapMngr.GM_GlobalProcess( npc, npc->GroupMove, WORLDMAP_PROCESS_NPC_IDLE );
         if( !npc->GetMap() && !npc->IsWait() )
             npc->SetWait( GameOpt.CritterIdleTick );
         return;
@@ -1065,22 +1072,22 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
                     break;
 
                 uint master_id = 0, slave_id = 0;
-                if( tvar->Type == VAR_LOCAL )
+                if( tvar->Type == VAR_TYPE_LOCAL )
                     master_id = master->GetId();
-                else if( tvar->Type == VAR_UNICUM )
+                else if( tvar->Type == VAR_TYPE_UNICUM )
                 {
                     master_id = master->GetId();
                     slave_id = (slave ? slave->GetId() : 0);
                 }
-                else if( tvar->Type == VAR_LOCAL_LOCATION )
+                else if( tvar->Type == VAR_TYPE_LOCAL_LOCATION )
                 {
                     Map* map = MapMngr.GetMap( master->GetMap(), false );
                     if( map )
                         master_id = map->GetLocation( false )->GetId();
                 }
-                else if( tvar->Type == VAR_LOCAL_MAP )
+                else if( tvar->Type == VAR_TYPE_LOCAL_MAP )
                     master_id = master->GetMap();
-                else if( tvar->Type == VAR_LOCAL_ITEM )
+                else if( tvar->Type == VAR_TYPE_LOCAL_ITEM )
                     master_id = master->ItemSlotMain->GetId();
 
                 if( VarMngr.CheckVar( index, master_id, slave_id, demand.Op, demand.Value ) )
@@ -1215,22 +1222,22 @@ uint FOServer::Dialog_UseResult( Npc* npc, Client* cl, DialogAnswer& answer )
                     break;
 
                 uint master_id = 0, slave_id = 0;
-                if( tvar->Type == VAR_LOCAL )
+                if( tvar->Type == VAR_TYPE_LOCAL )
                     master_id = master->GetId();
-                else if( tvar->Type == VAR_UNICUM )
+                else if( tvar->Type == VAR_TYPE_UNICUM )
                 {
                     master_id = master->GetId();
                     slave_id = (slave ? slave->GetId() : 0);
                 }
-                else if( tvar->Type == VAR_LOCAL_LOCATION )
+                else if( tvar->Type == VAR_TYPE_LOCAL_LOCATION )
                 {
                     Map* map = MapMngr.GetMap( master->GetMap(), false );
                     if( map )
                         master_id = map->GetLocation( false )->GetId();
                 }
-                else if( tvar->Type == VAR_LOCAL_MAP )
+                else if( tvar->Type == VAR_TYPE_LOCAL_MAP )
                     master_id = master->GetMap();
-                else if( tvar->Type == VAR_LOCAL_ITEM )
+                else if( tvar->Type == VAR_TYPE_LOCAL_ITEM )
                     master_id = master->ItemSlotMain->GetId();
 
                 VarMngr.ChangeVar( index, master_id, slave_id, result.Op, result.Value );

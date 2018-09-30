@@ -9,176 +9,53 @@
 class Critter;
 class MapObject;
 
-#define ITEM_EVENT_FINISH             (0)
-#define ITEM_EVENT_ATTACK             (1)
-#define ITEM_EVENT_USE                (2)
-#define ITEM_EVENT_USE_ON_ME          (3)
-#define ITEM_EVENT_SKILL              (4)
-#define ITEM_EVENT_DROP               (5)
-#define ITEM_EVENT_MOVE               (6)
-#define ITEM_EVENT_WALK               (7)
-#define ITEM_EVENT_MAX                (8)
 extern const char* ItemEventFuncName[ITEM_EVENT_MAX];
 
 // Prototypes
-#define MAX_ITEM_PROTOTYPES           (30000)
-#define PROTO_ITEM_DEFAULT_EXT        ".pro"
-#define PROTO_ITEM_FILENAME           "proto.fopro_"
-#define ITEM_MAX_SCRIPT_VALUES        (10)
-
-// Types
-#define ITEM_TYPE_OTHER               (0)
-#define ITEM_TYPE_ARMOR               (1)
-#define ITEM_TYPE_DRUG                (2)   // stacked
-#define ITEM_TYPE_WEAPON              (3)   // combined
-#define ITEM_TYPE_AMMO                (4)   // stacked
-#define ITEM_TYPE_MISC                (5)   // combined
-#define ITEM_TYPE_KEY                 (7)
-#define ITEM_TYPE_CONTAINER           (8)
-#define ITEM_TYPE_DOOR                (9)
-#define ITEM_TYPE_GRID                (10)
-#define ITEM_TYPE_GENERIC             (11)
-#define ITEM_TYPE_WALL                (12)
-#define ITEM_TYPE_CAR                 (13)
-#define ITEM_MAX_TYPES                (14)
-
-// Grid Types
-#define GRID_EXITGRID                 (1)
-#define GRID_STAIRS                   (2)
-#define GRID_LADDERBOT                (3)
-#define GRID_LADDERTOP                (4)
-#define GRID_ELEVATOR                 (5)
-
-// Accessory
-#define ITEM_ACCESSORY_NONE           (0)
-#define ITEM_ACCESSORY_CRITTER        (1)
-#define ITEM_ACCESSORY_HEX            (2)
-#define ITEM_ACCESSORY_CONTAINER      (3)
-
-// Damage types
-#define DAMAGE_TYPE_UNCALLED          (0)
-#define DAMAGE_TYPE_NORMAL            (1)
-#define DAMAGE_TYPE_LASER             (2)
-#define DAMAGE_TYPE_FIRE              (3)
-#define DAMAGE_TYPE_PLASMA            (4)
-#define DAMAGE_TYPE_ELECTR            (5)
-#define DAMAGE_TYPE_EMP               (6)
-#define DAMAGE_TYPE_EXPLODE           (7)
-
-// Uses
-#define USE_PRIMARY                   (0)
-#define USE_SECONDARY                 (1)
-#define USE_THIRD                     (2)
-#define USE_RELOAD                    (3)
-#define USE_USE                       (4)
-#define MAX_USES                      (3)
-#define USE_NONE                      (15)
-#define MAKE_ITEM_MODE( use, aim )    ( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
-
-// Corner type
-#define CORNER_NORTH_SOUTH            (0)
-#define CORNER_WEST                   (1)
-#define CORNER_EAST                   (2)
-#define CORNER_SOUTH                  (3)
-#define CORNER_NORTH                  (4)
-#define CORNER_EAST_WEST              (5)
-
-// Flags
-#define ITEM_HIDDEN                   (0x00000001)
-#define ITEM_FLAT                     (0x00000002)
-#define ITEM_NO_BLOCK                 (0x00000004)
-#define ITEM_SHOOT_THRU               (0x00000008)
-#define ITEM_LIGHT_THRU               (0x00000010)
-#define ITEM_MULTI_HEX                (0x00000020)   // Not used
-#define ITEM_WALL_TRANS_END           (0x00000040)   // Not used
-#define ITEM_TWO_HANDS                (0x00000080)
-#define ITEM_BIG_GUN                  (0x00000100)
-#define ITEM_ALWAYS_VIEW              (0x00000200)
-#define ITEM_HAS_TIMER                (0x00000400)
-#define ITEM_BAD_ITEM                 (0x00000800)
-#define ITEM_NO_HIGHLIGHT             (0x00001000)
-#define ITEM_SHOW_ANIM                (0x00002000)
-#define ITEM_SHOW_ANIM_EXT            (0x00004000)
-#define ITEM_LIGHT                    (0x00008000)
-#define ITEM_GECK                     (0x00010000)
-#define ITEM_TRAP                     (0x00020000)
-#define ITEM_NO_LIGHT_INFLUENCE       (0x00040000)
-#define ITEM_NO_LOOT                  (0x00080000)
-#define ITEM_NO_STEAL                 (0x00100000)
-#define ITEM_GAG                      (0x00200000)
-#define ITEM_COLORIZE                 (0x00400000)
-#define ITEM_COLORIZE_INV             (0x00800000)
-#define ITEM_CAN_USE_ON_SMTH          (0x01000000)
-#define ITEM_CAN_LOOK                 (0x02000000)
-#define ITEM_CAN_TALK                 (0x04000000)
-#define ITEM_CAN_PICKUP               (0x08000000)
-#define ITEM_CAN_USE                  (0x10000000)
-#define ITEM_HOLODISK                 (0x20000000)
-#define ITEM_RADIO                    (0x40000000)
-#define ITEM_CACHED                   (0x80000000)   // Not used
-
-// Material
-#define MATERIAL_GLASS                (0)
-#define MATERIAL_METAL                (1)
-#define MATERIAL_PLASTIC              (2)
-#define MATERIAL_WOOD                 (3)
-#define MATERIAL_DIRT                 (4)
-#define MATERIAL_STONE                (5)
-#define MATERIAL_CEMENT               (6)
-#define MATERIAL_LEATHER              (7)
-
-// Item deterioration info
-#define MAX_DETERIORATION             (10000)
-#define BI_BROKEN                     (0x0F)
+#define PROTO_ITEM_DEFAULT_EXT       ".pro"
+#define PROTO_ITEM_FILENAME          "proto.fopro_"
+#define ITEM_MAX_SCRIPT_VALUES       (10)
 
 // Radio
 // Flags
-#define RADIO_DISABLE_SEND            (0x01)
-#define RADIO_DISABLE_RECV            (0x02)
+#define RADIO_DISABLE_SEND           (0x01)
+#define RADIO_DISABLE_RECV           (0x02)
 // Broadcast
-#define RADIO_BROADCAST_WORLD         (0)
-#define RADIO_BROADCAST_MAP           (20)
-#define RADIO_BROADCAST_LOCATION      (40)
-#define RADIO_BROADCAST_ZONE( x )     (100 + CLAMP( x, 1, 100 ) )  // 1..100
-#define RADIO_BROADCAST_FORCE_ALL     (250)
+#define RADIO_BROADCAST_WORLD        (0)
+#define RADIO_BROADCAST_MAP          (20)
+#define RADIO_BROADCAST_LOCATION     (40)
+#define RADIO_BROADCAST_ZONE( x )    (100 + CLAMP( x, 1, 100 ) )   // 1..100
+#define RADIO_BROADCAST_FORCE_ALL    (250)
 
 // Blocks, childs
-#define ITEM_MAX_BLOCK_LINES          (50)
-#define ITEM_MAX_CHILDS               (5)
-#define ITEM_MAX_CHILD_LINES          (6)
+#define ITEM_MAX_BLOCK_LINES         (50)
+#define ITEM_MAX_CHILDS              (5)
+#define ITEM_MAX_CHILD_LINES         (6)
 
 // Light flags
-#define LIGHT_DISABLE_DIR( dir )      (1 << CLAMP( dir, 0, 5 ) )
-#define LIGHT_GLOBAL                  (0x40)
-#define LIGHT_INVERSE                 (0x80)
-
-// Item data masks
-#define ITEM_DATA_MASK_CHOSEN         (0)
-#define ITEM_DATA_MASK_CRITTER        (1)
-#define ITEM_DATA_MASK_CRITTER_EXT    (2)
-#define ITEM_DATA_MASK_CONTAINER      (3)
-#define ITEM_DATA_MASK_MAP            (4)
-#define ITEM_DATA_MASK_MAX            (5)
+#define LIGHT_DISABLE_DIR( dir )     (1 << CLAMP( dir, 0, 5 ) )
+#define LIGHT_GLOBAL                 (0x40)
+#define LIGHT_INVERSE                (0x80)
 
 // Special item pids
-#define SP_SCEN_LIGHT                 (2141)           // Light Source
-#define SP_SCEN_LIGHT_STOP            (4592)
-#define SP_SCEN_BLOCK                 (2067)           // Secret Blocking Hex
-#define SP_SCEN_IBLOCK                (2344)           // Block Hex Auto Inviso
-#define SP_SCEN_TRIGGER               (3852)
-#define SP_WALL_BLOCK_LIGHT           (5621)           // Wall s.t. with light
-#define SP_WALL_BLOCK                 (5622)           // Wall s.t.
-#define SP_GRID_EXITGRID              (2049)           // Exit Grid Map Marker
-#define SP_GRID_ENTIRE                (3853)
-#define SP_MISC_SCRBLOCK              (4012)           // Scroll block
-#define SP_MISC_GRID_MAP( pid )       ( (pid) >= 4016 && (pid) <= 4023 )
-#define SP_MISC_GRID_GM( pid )        ( (pid) >= 4031 && (pid) <= 4046 )
+#define SP_SCEN_LIGHT                (2141)            // Light Source
+#define SP_SCEN_LIGHT_STOP           (4592)
+#define SP_SCEN_BLOCK                (2067)            // Secret Blocking Hex
+#define SP_SCEN_IBLOCK               (2344)            // Block Hex Auto Inviso
+#define SP_SCEN_TRIGGER              (3852)
+#define SP_WALL_BLOCK_LIGHT          (5621)            // Wall s.t. with light
+#define SP_WALL_BLOCK                (5622)            // Wall s.t.
+#define SP_GRID_EXITGRID             (2049)            // Exit Grid Map Marker
+#define SP_GRID_ENTIRE               (3853)
+#define SP_MISC_SCRBLOCK             (4012)            // Scroll block
+#define SP_MISC_GRID_MAP( pid )      ( (pid) >= 4016 && (pid) <= 4023 )
+#define SP_MISC_GRID_GM( pid )       ( (pid) >= 4031 && (pid) <= 4046 )
 
 // Slot protos offsets
 // 1000 - 1100 protos reserved
-#define SLOT_MAIN_PROTO_OFFSET        (1000)
-#define SLOT_EXT_PROTO_OFFSET         (1030)
-#define SLOT_ARMOR_PROTO_OFFSET       (1060)
+#define SLOT_MAIN_PROTO_OFFSET       (1000)
+#define SLOT_EXT_PROTO_OFFSET        (1030)
+#define SLOT_ARMOR_PROTO_OFFSET      (1060)
 
 /************************************************************************/
 /* ProtoItem                                                            */
@@ -310,7 +187,7 @@ public:
     bool operator==( const ushort& _r ) { return ProtoId == _r;  }
     ProtoItem() { Clear(); }
 
-    #if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+    #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
     uint GetCurSprId();
     #endif
 
@@ -323,7 +200,7 @@ public:
     string Weapon_Anim2[MAX_USES];
     #endif
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     char* CollectionName;
     #endif
 };
@@ -420,21 +297,21 @@ public:
     short RefCounter;
     bool  IsNotValid;
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     int         FuncId[ITEM_EVENT_MAX];
     Critter*    ViewByCritter;
     ItemPtrVec* ChildItems;
     char*       PLexems;
     SyncObject  Sync;
     #endif
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     ScriptString Lexems;
     #endif
 
     void AddRef()  { RefCounter++; }
     void Release() { if( --RefCounter <= 0 ) delete this; }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     void FullClear();
 
     bool ParseScript( const char* script, bool first_time );
@@ -447,7 +324,7 @@ public:
     void EventDrop( Critter* cr );
     void EventMove( Critter* cr, uchar from_slot );
     void EventWalk( Critter* cr, bool entered, uchar dir );
-    #endif // FONLINE_SERVER
+    #endif // FOCLASSIC_SERVER
 
     void        Init( ProtoItem* proto );
     Item*       Clone();
@@ -505,16 +382,16 @@ public:
     uint GetCost1st();
     // uint GetCost1st(){return Data.Cost?Data.Cost:Proto->Cost;}
 
-    #if defined (FONLINE_CLIENT) || defined (FONLINE_MAPPER)
+    #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
     uint GetCurSprId();
     #endif
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     void SetLexems( const char* lexems );
     #endif
 
     // Deterioration
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     void Repair();
     #endif
 
@@ -546,7 +423,7 @@ public:
     bool ContIsCannotPickUp()   { return Proto->Container_CannotPickUp; }
     bool ContIsMagicHandsGrnd() { return Proto->Container_MagicHandsGrnd; }
     bool ContIsChangeble()      { return Proto->Container_Changeble; }
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     void  ContAddItem( Item*& item, uint stack_id );
     void  ContSetItem( Item* item );
     void  ContEraseItem( Item* item );
@@ -610,7 +487,7 @@ public:
     // Car
     bool IsCar() { return Proto->IsCar(); }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     Item* GetChild( uint child_index );
     #endif
 
@@ -626,7 +503,7 @@ public:
 
     bool operator==( const uint& id ) { return Id == id;  }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     Item()
     {
         memzero( this, sizeof(Item) );
@@ -641,7 +518,7 @@ public:
         SAFEDELA( PLexems );
         MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof(Item) );
     }
-    #elif FONLINE_CLIENT
+    #elif FOCLASSIC_CLIENT
     Item()
     {
         memzero( this, OFFSETOF( Item, IsNotValid ) );

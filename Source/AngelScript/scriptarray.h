@@ -8,7 +8,7 @@ struct SArrayCache;
 class ScriptArray
 {
 public:
-    #ifdef FOCLASSIC_DLL
+    #ifdef FOCLASSIC_EXTENSION
     static ScriptArray& Create( const char* type )
     {
         static int   typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
@@ -109,7 +109,7 @@ protected:
     virtual bool  Equals( const void* a, const void* b, asIScriptContext* ctx, SArrayCache* cache ) const;
 };
 
-#ifndef FOCLASSIC_DLL
+#ifdef FOCLASSIC_ENGINE
 void RegisterScriptArray( asIScriptEngine* engine, bool defaultArray );
 #endif
 

@@ -1,13 +1,10 @@
-#include "StdAfx.h"
+#include "Core.h"
+
+#include "GameOptions.h"
 #include "Timer.h"
 
 #ifdef FO_WINDOWS
 # include <Mmsystem.h>
-# if defined (FO_MSVC)
-#  pragma comment(lib,"Winmm.lib")
-# elif defined (FO_GCC)
-// Linker option: -lwinmm
-# endif
 #else
 # include <sys/time.h>
 #endif

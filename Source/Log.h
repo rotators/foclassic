@@ -3,8 +3,8 @@
 
 #include <string>
 
-#define _LOG_          __FUNCTION__ ":" __LINE__ " - "
-#define MAX_LOGTEXT    UTF8_BUF_SIZE( 2048 )
+#define _LOG_    __FUNCTION__ ":" __LINE__ " - "
+
 typedef void ( * LogFuncPtr )( const char* str );
 
 // Write formatted text

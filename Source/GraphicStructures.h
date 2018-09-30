@@ -1,9 +1,13 @@
 #ifndef __GRAPHIC_STRUCTURES__
 #define __GRAPHIC_STRUCTURES__
 
-#include "Defines.h"
 #include "Assimp/aiTypes.h"
 #include "Assimp/aiScene.h"
+
+#include "Core.h"
+
+#include "FlexRect.h"
+#include "Text.h" // TODO remove
 
 typedef aiMatrix4x4        Matrix;
 typedef aiVector3D         Vector;
@@ -15,8 +19,55 @@ typedef vector<Matrix>     MatrixVec;
 typedef vector<Matrix*>    MatrixPtrVec;
 
 #ifdef FO_D3D
+# include <dxerr.h>
+# include <d3dx9.h>
+
+# define COLOR_FIX( c )           (c)
+
+# define Device_           LPDIRECT3DDEVICE9
+# define Surface_          LPDIRECT3DSURFACE9
+# define EffectValue_      D3DXHANDLE
+# define Material_         D3DMATERIAL9
+# define PresentParams_    D3DPRESENT_PARAMETERS
+# define Caps_             D3DCAPS9
+# define VertexBuffer_     LPDIRECT3DVERTEXBUFFER9
+# define IndexBuffer_      LPDIRECT3DINDEXBUFFER9
+# define PixelShader_      IDirect3DPixelShader9
+# define ConstantTable_    ID3DXConstantTable
+# define SkinInfo_         LPD3DXSKININFO
+# define Light_            D3DLIGHT9
+# define ViewPort_         D3DVIEWPORT9
+# define LockRect_         D3DLOCKED_RECT
+
+# define D3D_HR( expr )           { HRESULT hr__ = expr; if( hr__ != D3D_OK ) { WriteLogF( _FUNC_, " - " # expr ", error<%s - %s>.\n", DXGetErrorString( hr__ ), DXGetErrorDescription( hr__ ) ); return 0; } }
 # define MATRIX_TRANSPOSE( m )    m.Transpose()
 #else
+# include "GL/glew.h"
+# define GL( expr )               { expr; if( GameOpt.OpenGLDebug ) { GLenum err__ = glGetError(); if( err__ != GL_NO_ERROR ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X - %s>.\n", err__, gluErrorString( err__ ) ); ExitProcess( 0 ); } } }
+# ifdef FO_WINDOWS
+#  include "GL/wglew.h"
+
+#  define WGL( expr )             { if( !(expr) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
+# else
+#  include "GL/glxew.h"
+# endif
+
+# define COLOR_FIX( c )           COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )
+# define Device_           GLuint
+# define Surface_          GLuint
+# define EffectValue_      GLint
+# define Material_         GLuint
+# define PresentParams_    GLuint
+# define Caps_             GLuint
+# define VertexBuffer_     GLuint
+# define IndexBuffer_      GLuint
+# define PixelShader_      GLuint
+# define ConstantTable_    GLuint
+# define SkinInfo_         GLuint
+# define Light_            GLuint
+# define ViewPort_         GLuint
+# define LockRect_         GLuint
+
 # define MATRIX_TRANSPOSE( m )
 #endif
 
@@ -39,30 +90,11 @@ struct Texture
     # ifdef FO_WINDOWS
     HPBUFFERARB        PBuffer;
     # endif
-    Texture() : Name( NULL ), Id( 0 ), Data( NULL ), Size( 0 ), Width( 0 ), Height( 0 ), Samples( 0.0f )
-    {
-        # ifdef FO_WINDOWS
-        PBuffer = NULL;
-        # endif
-    }
-    ~Texture()
-    {
-        GL( glDeleteTextures( 1, &Id ) );
-        SAFEDELA( Data );
-    }
+    Texture();
+    ~Texture();
     inline uint& Pixel( uint x, uint y ) { return *( (uint*)Data + y * Width + x ); }
-    bool         Update()
-    {
-        GL( glBindTexture( GL_TEXTURE_2D, Id ) );
-        GL( glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, Width, Height, GL_BGRA, GL_UNSIGNED_BYTE, Data ) );
-        return true;
-    }
-    bool Update( const Rect& r )
-    {
-        GL( glBindTexture( GL_TEXTURE_2D, Id ) );
-        GL( glTexSubImage2D( GL_TEXTURE_2D, 0, 0, r.T, Width, r.H(), GL_BGRA, GL_UNSIGNED_BYTE, (uint*)Data + r.T * Width ) );
-        return true;
-    }
+    bool         Update();
+    bool         Update( const Rect& r );
     #endif
 };
 

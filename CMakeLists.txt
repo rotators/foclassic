@@ -28,7 +28,7 @@ unset( srcdir )
 unset( bindir )
 
 project( FOClassic
-	DESCRIPTION  "FOnline Classic"
+	DESCRIPTION  "FOClassic"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
 	VERSION 1.1
 	LANGUAGES C CXX
@@ -49,12 +49,14 @@ set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
+include(PdbStrip)
+include(SourceOptions)
 
 # globals
-unset( FONLINE_APPS )
+unset( FOCLASSIC_APPS )
 
 # directories
-set( FO_DIR     "Source" )
+set( FO_DIR     "${CMAKE_SOURCE_DIR}/Source" )
 set( ACM_DIR    "${FO_DIR}/Acm" )
 set( AS_DIR     "${FO_DIR}/AngelScript" )
 set( ASSIMP_DIR "${FO_DIR}/Assimp" )
@@ -83,10 +85,12 @@ endif()
 link_directories( "Lib" )
 link_directories( "Lib/Dx9/x86/" )
 
+set( DX_LIBS d3d9 dxguid dxerr d3dxof )
+set( GL_LIBS opengl32 glu32 )
+
 ##
 ## Source options
 ##
-include(SourceOptions)
 source_options()
 ##
 ## Find threads
@@ -99,6 +103,40 @@ check_struct_has_member( "struct timespec" "tv_sec" "time.h" HAVE_STRUCT_TIMESPE
 if( HAVE_STRUCT_TIMESPEC )
 	add_definitions( -DHAVE_STRUCT_TIMESPEC )
 endif( HAVE_STRUCT_TIMESPEC )
+##
+## Shared
+##
+add_library( Shared "" )
+target_sources( Shared
+	PUBLIC
+		${FO_DIR}/Core.h
+
+		${FO_DIR}/Crypt.h
+		${FO_DIR}/Defines.h
+		${FO_DIR}/GameOptions.h
+		${FO_DIR}/Mutex.h
+		${FO_DIR}/PUBLIC.Defines.h
+		${FO_DIR}/PlatformSpecific.h
+		${FO_DIR}/Random.h
+		${FO_DIR}/Text.h
+		${FO_DIR}/Thread.h
+		${FO_DIR}/Timer.h
+		${FO_DIR}/Types.h
+	PRIVATE
+		${FO_DIR}/Crypt.cpp
+		${FO_DIR}/GameOptions.cpp
+		${FO_DIR}/Mutex.cpp
+		${FO_DIR}/Random.cpp
+		${FO_DIR}/Thread.cpp
+		${FO_DIR}/Timer.cpp
+		${FO_DIR}/Text.cpp
+)
+target_compile_definitions( Shared
+	PUBLIC
+		FOCLASSIC_ENGINE
+)
+target_link_libraries( Shared PRIVATE pthreadVC2 winmm )
+
 ##
 ## Acm
 ##
@@ -205,6 +243,7 @@ set( ANGELSCRIPT_ADDONS_SOURCES
 	${AS_DIR}/scriptstring.h	
 )
 add_library( AngelScriptAddons STATIC ${ANGELSCRIPT_ADDONS_SOURCES} )
+target_compile_definitions( AngelScriptAddons PRIVATE FOCLASSIC_ENGINE )
 target_include_directories( AngelScriptAddons PRIVATE ${AS_DIR} ${FO_DIR} )
 target_link_libraries( AngelScript Threads::Threads )
 ##
@@ -229,6 +268,7 @@ set( DATFILE_SOURCES
 	${DAT_DIR}/unlzss.h
 )
 add_library( DatFile ${DATFILE_SOURCES} )
+target_compile_definitions( DatFile PRIVATE FOCLASSIC_ENGINE )
 target_include_directories( DatFile PUBLIC ${DAT_DIR} ${FO_DIR} )
 ##
 ## GLEW
@@ -294,6 +334,7 @@ set( CLIENT_SOURCES
 	${FO_DIR}/3dAnimation.h
 	${FO_DIR}/3dStuff.cpp
 	${FO_DIR}/3dStuff.h
+	${FO_DIR}/Access.cpp
 	${FO_DIR}/Access.h
 	${FO_DIR}/BufferManager.cpp
 	${FO_DIR}/BufferManager.h
@@ -310,15 +351,12 @@ set( CLIENT_SOURCES
 	${FO_DIR}/CritterCl.h
 	${FO_DIR}/CritterType.cpp
 	${FO_DIR}/CritterType.h
-	${FO_DIR}/Crypt.cpp
-	${FO_DIR}/Crypt.h
 	${FO_DIR}/DataFile.cpp
 	${FO_DIR}/DataFile.h
 	${FO_DIR}/DataMask.h
 	${FO_DIR}/Debugger.cpp
 	${FO_DIR}/Debugger.h
 	${FO_DIR}/Defence.h
-	${FO_DIR}/Defines.h
 	${FO_DIR}/Exception.cpp
 	${FO_DIR}/Exception.h
 	${FO_DIR}/FileManager.cpp
@@ -327,6 +365,7 @@ set( CLIENT_SOURCES
 	${FO_DIR}/FileSystem.h
 	${FO_DIR}/GraphicLoader.cpp
 	${FO_DIR}/GraphicLoader.h
+	${FO_DIR}/GraphicStructures.cpp
 	${FO_DIR}/GraphicStructures.h
 	${FO_DIR}/HexManager.cpp
 	${FO_DIR}/HexManager.h
@@ -347,11 +386,10 @@ set( CLIENT_SOURCES
 	${FO_DIR}/MsgFiles.cpp
 	${FO_DIR}/MsgFiles.h
 	${FO_DIR}/MsgStr.h
-	${FO_DIR}/Mutex.h
 	${FO_DIR}/NetProtocol.h
 	${FO_DIR}/PlatformSpecific.h
+	${FO_DIR}/QuestManager.cpp
 	${FO_DIR}/QuestManager.h
-	${FO_DIR}/Randomizer.h
 	${FO_DIR}/ResourceClient.h
 	${FO_DIR}/ResourceManager.cpp
 	${FO_DIR}/ResourceManager.h
@@ -367,11 +405,6 @@ set( CLIENT_SOURCES
 	${FO_DIR}/SpriteManagerFont.cpp
 	${FO_DIR}/Sprites.cpp
 	${FO_DIR}/Sprites.h
-	${FO_DIR}/Text.cpp
-	${FO_DIR}/Text.h
-	${FO_DIR}/Timer.cpp
-	${FO_DIR}/Timer.h
-	${FO_DIR}/Types.h
 	${FO_DIR}/Version.h
 )
 ##
@@ -381,10 +414,10 @@ set( CLIENT_DX_SOURCES
 	${CLIENT_SOURCES}
 )
 add_executable( ClientDX WIN32 ${CLIENT_DX_SOURCES} )
-target_compile_definitions( ClientDX PRIVATE FO_D3D FONLINE_CLIENT )
+target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
 target_include_directories( ClientDX PRIVATE ${FO_DIR} ${FO_DIR}/Dx9 )
-target_link_libraries( ClientDX Acm ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
-list( APPEND FONLINE_APPS ClientDX )
+target_link_libraries( ClientDX Shared Acm ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib ${DX_LIBS} )
+list( APPEND FOCLASSIC_APPS ClientDX )
 ##
 ## ClientGL
 ##
@@ -392,10 +425,10 @@ set( CLIENT_GL_SOURCES
 	${CLIENT_SOURCES}
 )
 add_executable( ClientGL WIN32 ${CLIENT_GL_SOURCES} )
-target_compile_definitions( ClientGL PRIVATE FONLINE_CLIENT )
+target_compile_definitions( ClientGL PRIVATE FOCLASSIC_CLIENT )
 target_include_directories( ClientGL PRIVATE ${FO_DIR} )
-target_link_libraries( ClientGL Acm ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib )
-list( APPEND FONLINE_APPS ClientGL )
+target_link_libraries( ClientGL Shared Acm ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib ${GL_LIBS} )
+list( APPEND FOCLASSIC_APPS ClientGL )
 ##
 ## Mapper
 ##
@@ -414,13 +447,10 @@ set( MAPPER_SOURCES
 	${FO_DIR}/CritterManager.h
 	${FO_DIR}/CritterType.cpp
 	${FO_DIR}/CritterType.h
-	${FO_DIR}/Crypt.cpp
-	${FO_DIR}/Crypt.h
 	${FO_DIR}/DataFile.cpp
 	${FO_DIR}/DataFile.h
 	${FO_DIR}/Debugger.cpp
 	${FO_DIR}/Debugger.h
-	${FO_DIR}/Defines.h
 	${FO_DIR}/Exception.cpp
 	${FO_DIR}/Exception.h
 	${FO_DIR}/F2Palette.h
@@ -429,6 +459,8 @@ set( MAPPER_SOURCES
 	${FO_DIR}/FileSystem.cpp
 	${FO_DIR}/FileSystem.h
 	${FO_DIR}/FlexRect.h
+	${FO_DIR}/GraphicStructures.cpp
+	${FO_DIR}/GraphicStructures.h
 	${FO_DIR}/GraphicLoader.cpp
 	${FO_DIR}/GraphicLoader.h
 	${FO_DIR}/HexManager.cpp
@@ -455,7 +487,6 @@ set( MAPPER_SOURCES
 	${FO_DIR}/PlatformSpecific.h
 	${FO_DIR}/ProtoMap.cpp
 	${FO_DIR}/ProtoMap.h
-	${FO_DIR}/Randomizer.h
 	${FO_DIR}/ResourceManager.cpp
 	${FO_DIR}/ResourceManager.h
 	${FO_DIR}/ResourceMapper.h
@@ -469,10 +500,6 @@ set( MAPPER_SOURCES
 	${FO_DIR}/SpriteManagerFont.cpp
 	${FO_DIR}/Sprites.cpp
 	${FO_DIR}/Sprites.h
-	${FO_DIR}/Text.cpp
-	${FO_DIR}/Text.h
-	${FO_DIR}/Timer.cpp
-	${FO_DIR}/Timer.h
 	${FO_DIR}/Types.h
 	${FO_DIR}/Version.h
 )
@@ -483,10 +510,10 @@ set( MAPPER_DX_SOURCES
 	${MAPPER_SOURCES}
 )
 add_executable( MapperDX WIN32 ${MAPPER_DX_SOURCES} )
-target_compile_definitions( MapperDX PRIVATE FO_D3D FONLINE_MAPPER )
+target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
 target_include_directories( MapperDX PRIVATE ${FO_DIR} ${FO_DIR}/Dx9 )
-target_link_libraries( MapperDX ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
-list( APPEND FONLINE_APPS MapperDX )
+target_link_libraries( MapperDX Shared ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib ${DX_LIBS} )
+list( APPEND FOCLASSIC_APPS MapperDX )
 ##
 ## MapperGL
 ##
@@ -494,14 +521,15 @@ set( MAPPER_GL_SOURCES
 	${MAPPER_SOURCES}
 )
 add_executable( MapperGL WIN32 ${MAPPER_GL_SOURCES} )
-target_compile_definitions( MapperGL PRIVATE FONLINE_MAPPER )
+target_compile_definitions( MapperGL PRIVATE FOCLASSIC_MAPPER )
 target_include_directories( MapperGL PRIVATE ${FO_DIR} )
-target_link_libraries( MapperGL ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib )
-list( APPEND FONLINE_APPS MapperGL )
+target_link_libraries( MapperGL Shared ${ANGELSCRIPT_ALL_LIBS} DatFile GLEW SHA2 Zlib ${GL_LIBS} )
+list( APPEND FOCLASSIC_APPS MapperGL )
 ##
 ## Server
 ##
 set( SERVER_SOURCES
+	${FO_DIR}/Access.cpp
 	${FO_DIR}/Access.h
 	${FO_DIR}/AI.cpp
 	${FO_DIR}/AI.h
@@ -527,7 +555,6 @@ set( SERVER_SOURCES
 	${FO_DIR}/DataMask.h
 	${FO_DIR}/Debugger.cpp
 	${FO_DIR}/Debugger.h
-	${FO_DIR}/Defines.h
 	${FO_DIR}/Dialogs.cpp
 	${FO_DIR}/Dialogs.h
 	${FO_DIR}/DummyData.h
@@ -562,7 +589,6 @@ set( SERVER_SOURCES
 	${FO_DIR}/PlatformSpecific.h
 	${FO_DIR}/ProtoMap.cpp
 	${FO_DIR}/ProtoMap.h
-	${FO_DIR}/Randomizer.h
 	${FO_DIR}/Script.cpp
 	${FO_DIR}/Script.h
 	${FO_DIR}/ScriptBind.h
@@ -574,22 +600,18 @@ set( SERVER_SOURCES
 	${FO_DIR}/ServerItem.cpp
 	${FO_DIR}/ServerNpc.cpp
 	${FO_DIR}/ServerScript.cpp
-	${FO_DIR}/Text.cpp
-	${FO_DIR}/Text.h
 	${FO_DIR}/ThreadSync.cpp
 	${FO_DIR}/ThreadSync.h
-	${FO_DIR}/Timer.cpp
-	${FO_DIR}/Timer.h
 	${FO_DIR}/Types.h
 	${FO_DIR}/Vars.cpp
 	${FO_DIR}/Vars.h
 	${FO_DIR}/Version.h
 )
 add_executable( Server WIN32 ${SERVER_SOURCES} )
-target_compile_definitions( Server PRIVATE FONLINE_SERVER )
+target_compile_definitions( Server PRIVATE FOCLASSIC_SERVER SCRIPT_MULTITHREADING )
 target_include_directories( Server PRIVATE ${FO_DIR} )
-target_link_libraries( Server ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
-list( APPEND FONLINE_APPS Server )
+target_link_libraries( Server Shared ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib libpng15 )
+list( APPEND FOCLASSIC_APPS Server )
 ##
 ## ASCompiler
 ##
@@ -598,12 +620,12 @@ set( ASCOMPILER_SOURCES
 	${FO_DIR}/ASCompiler.h
 	${FO_DIR}/Common.cpp
 	${FO_DIR}/Common.h
-	${FO_DIR}/Crypt.cpp
-	${FO_DIR}/Crypt.h
 	${FO_DIR}/DataFile.cpp
 	${FO_DIR}/DataFile.h
 	${FO_DIR}/Debugger.cpp
 	${FO_DIR}/Debugger.h
+	${FO_DIR}/Exception.cpp
+	${FO_DIR}/Exception.h
 	${FO_DIR}/DummyData.h
 	${FO_DIR}/FileManager.cpp
 	${FO_DIR}/FileManager.h
@@ -616,46 +638,27 @@ set( ASCOMPILER_SOURCES
 	${FO_DIR}/ScriptBind.h
 	${FO_DIR}/ScriptPragmas.cpp
 	${FO_DIR}/ScriptPragmas.h
-	${FO_DIR}/Text.cpp
-	${FO_DIR}/Text.h
-	${FO_DIR}/Timer.cpp
-	${FO_DIR}/Timer.h
 )
 add_executable( ASCompiler ${ASCOMPILER_SOURCES} )
 target_include_directories( ASCompiler PRIVATE "ASCompiler" ${FO_DIR} )
-target_compile_definitions( ASCompiler PRIVATE FONLINE_SCRIPT_COMPILER )
-target_link_libraries( ASCompiler ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
-list( APPEND FONLINE_APPS ASCompiler )
-#
-# Dll
-#
-set( DLL_SOURCES
-	${DLL_DIR}/dll.cpp
-	${DLL_DIR}/foclassic.h
-	${DLL_DIR}/foclassic.fos
-	${DLL_DIR}/AngelScript/angelscript.h
-	${DLL_DIR}/AngelScript/scriptany.h
-	${DLL_DIR}/AngelScript/scriptarray.h
-	${DLL_DIR}/AngelScript/scriptdictionary.h
-	${DLL_DIR}/AngelScript/scriptfile.h
-	${DLL_DIR}/AngelScript/scriptmath.h
-	${DLL_DIR}/AngelScript/scriptstring.h
-)
-foreach( target Client Mapper Server )
-	set( lib Dll${target} )
-	set( target "__${target}" )
-	string( TOUPPER ${target} target )
-	add_library( ${lib} SHARED ${DLL_SOURCES} )
-	target_compile_definitions( ${lib} PRIVATE ${target} )
-endforeach()
+target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
+target_link_libraries( ASCompiler Shared ${ANGELSCRIPT_ALL_LIBS} DatFile SHA2 Zlib )
+list( APPEND FOCLASSIC_APPS ASCompiler )
+
+add_subdirectory( Extensions )
 
 ##
 ## Finalize
 ##
 configure_file( "CMake.h.in" "include/CMake.h" @ONLY NEWLINE_STYLE LF )
 include_directories( "${CMAKE_CURRENT_BINARY_DIR}/include" )
-foreach( target ${FONLINE_APPS} )
+foreach( target ${FOCLASSIC_APPS} )
+	# append headers generated by CMake
 	target_sources( ${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/CMake.h" )
+	# setup released .pdb files
+	pdb_strip( ${target} )
+	# inform sources about engine compilation
+	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
 endforeach()
 
 include(WriteCompilerDetectionHeader)
@@ -666,14 +669,14 @@ write_compiler_detection_header(
 	FEATURES
 		cxx_constexpr
 )
-foreach( target ${FONLINE_APPS} )
+foreach( target ${FOCLASSIC_APPS} )
 	target_sources( ${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include/CMake.CompilerFeatures.h" )
 endforeach()
 ##
 ## Prettify executables
 ##
 if( MSVC )
-	foreach( target ${FONLINE_APPS} )
+	foreach( target ${FOCLASSIC_APPS} )
 		target_sources( ${target} PRIVATE Resources/VersionInfo.rc )
 	endforeach()
 endif( MSVC )
@@ -685,8 +688,9 @@ set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 set_target_properties( ${ANGELSCRIPT_ALL_LIBS} PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( Acm DatFile GLEW SHA2 Zlib PROPERTIES FOLDER "Libs" )
-set_target_properties( DllClient DllMapper DllServer PROPERTIES FOLDER "Dll" )
-source_group( " "     REGULAR_EXPRESSION "${FO_DIR}\/[A-Za-z0-9]+\.([Cc][Pp][Pp]|[Hh])$" )
+set_target_properties( ExtensionClient ExtensionMapper ExtensionServer PROPERTIES FOLDER "Dll" )
+source_group( " " REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "AngelScript" REGULAR_EXPRESSION "${DLL_DIR}/AngelScript\/" )
 source_group( "Misc"
 	FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/include/CMake.h"
@@ -695,3 +699,5 @@ source_group( "Misc"
 	REGULAR_EXPRESSION
 		"[Cc][Mm]ake[Ll]ists\.txt"
 )
+
+#add_subdirectory( Tests )

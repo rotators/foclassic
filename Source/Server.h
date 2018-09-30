@@ -1,21 +1,16 @@
 #ifndef __SERVER__
 #define __SERVER__
 
-#include "StdAfx.h"
-#include "Common.h"
-#include "Item.h"
-#include "Critter.h"
-#include "Map.h"
-#include "MapManager.h"
-#include "CritterManager.h"
-#include "ItemManager.h"
-#include "Dialogs.h"
-#include "Vars.h"
+#include "AngelScript/scriptarray.h"
+#include "AngelScript/scriptstring.h"
+
+#include "BufferManager.h"
 #include "CraftManager.h"
-#include "ConstantsManager.h"
-#include "CritterType.h"
-#include "NetProtocol.h"
-#include "Access.h"
+#include "Critter.h"
+#include "CritterManager.h"
+#include "ProtoMap.h"
+#include "Thread.h"
+#include "Types.h"
 
 #if defined (USE_LIBEVENT)
 # include "event2/event.h"

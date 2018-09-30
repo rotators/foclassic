@@ -1,7 +1,6 @@
-#include "StdAfx.h"
 #include "BufferManager.h"
 #include "NetProtocol.h"
-#include "Randomizer.h"
+#include "Random.h"
 
 #define NET_BUFFER_SIZE    (2048)
 
@@ -383,7 +382,7 @@ BufferManager& BufferManager::operator>>( bool& i )
     return *this;
 }
 
-#if (defined (FONLINE_SERVER) ) || (defined (FONLINE_CLIENT) )
+#if (defined (FOCLASSIC_SERVER) ) || (defined (FOCLASSIC_CLIENT) )
 bool BufferManager::NeedProcess()
 {
     if( bufReadPos + sizeof(uint) > bufEndPos )
@@ -579,7 +578,7 @@ bool BufferManager::NeedProcess()
             return msg_len + bufReadPos <= bufEndPos;
         default:
             // Unknown message
-            # ifdef FONLINE_CLIENT
+            # ifdef FOCLASSIC_CLIENT
             WriteLogF( _FUNC_, " - Unknown message<%u> in buffer, try find valid.\n", (msg >> 8) & 0xFF );
             SeekValidMsg();
             return NeedProcess();

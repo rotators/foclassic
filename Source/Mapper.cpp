@@ -234,7 +234,7 @@ bool FOMapper::Init()
 
     // Initialize tabs
     CritData* cr_protos = CrMngr.GetAllProtos();
-    for( int i = 1; i < MAX_CRIT_PROTOS; i++ )
+    for( int i = 1; i < MAX_PROTO_CRITTERS; i++ )
     {
         CritData* data = &cr_protos[i];
         if( data->ProtoId )
@@ -3210,7 +3210,7 @@ void FOMapper::IntLMouseUp()
 
                     // Items, critters
                     HexMngr.GetItems( hx, hy, items );
-                    HexMngr.GetCritters( hx, hy, critters, FIND_ALL );
+                    HexMngr.GetCritters( hx, hy, critters, FIND_LIFE | FIND_KO | FIND_DEAD );
 
                     // Tile, roof
                     if( IsSelectTile && GameOpt.ShowTile )
@@ -3563,12 +3563,12 @@ void FOMapper::MoveMapObject( MapObject* mobj, ushort hx, ushort hy )
     }
     else if( hx < mobj->RunTime.FromMap->Header.MaxHexX && hy < mobj->RunTime.FromMap->Header.MaxHexY )
     {
-        if( mobj->MapObjType == MAP_OBJECT_CRITTER && mobj->MCritter.Cond != COND_DEAD )
+        if( mobj->MapObjType == MAP_OBJECT_CRITTER && mobj->MCritter.Cond != CRITTER_CONDITION_DEAD )
         {
             for( auto it = mobj->RunTime.FromMap->MObjects.begin(); it != mobj->RunTime.FromMap->MObjects.end(); ++it )
             {
                 MapObject* mobj_ = *it;
-                if( mobj_->MapObjType == MAP_OBJECT_CRITTER && mobj_->MCritter.Cond != COND_DEAD &&
+                if( mobj_->MapObjType == MAP_OBJECT_CRITTER && mobj_->MCritter.Cond != CRITTER_CONDITION_DEAD &&
                     mobj_->MapX == hx && mobj_->MapY == hy )
                     return;
             }
@@ -4276,7 +4276,7 @@ void FOMapper::ParseNpc( ushort pid, ushort hx, ushort hy )
     mobj->MapX = hx;
     mobj->MapY = hy;
     mobj->Dir = NpcDir;
-    mobj->MCritter.Cond = COND_LIFE;
+    mobj->MCritter.Cond = CRITTER_CONDITION_LIFE;
     CurProtoMap->MObjects.push_back( mobj );
 
     CritterCl* cr = new CritterCl();
@@ -4286,7 +4286,7 @@ void FOMapper::ParseNpc( ushort pid, ushort hx, ushort hy )
     cr->HexX = hx;
     cr->HexY = hy;
     cr->SetDir( NpcDir );
-    cr->Cond = COND_LIFE;
+    cr->Cond = CRITTER_CONDITION_LIFE;
     cr->Flags = pid;
     memcpy( cr->Params, pnpc->Params, sizeof(pnpc->Params) );
     cr->Id = AnyId;
@@ -4333,7 +4333,7 @@ MapObject* FOMapper::ParseMapObj( MapObject* mobj )
         cr->HexX = mobj->MapX;
         cr->HexY = mobj->MapY;
         cr->SetDir( (uchar)mobj->Dir );
-        cr->Cond = COND_LIFE;
+        cr->Cond = CRITTER_CONDITION_LIFE;
         cr->Flags = mobj->ProtoId;
         memcpy( cr->Params, pnpc->Params, sizeof(pnpc->Params) );
         cr->Id = AnyId;
@@ -5390,14 +5390,14 @@ void FOMapper::SScriptFunc::MapperObject_set_Critter_Cond( MapObject& mobj, ucha
         SCRIPT_ERROR_R( "Map object is not critter." );
     if( !mobj.RunTime.FromMap )
         return;
-    if( value < COND_LIFE || value > COND_DEAD )
+    if( value < CRITTER_CONDITION_LIFE || value > CRITTER_CONDITION_DEAD )
         return;
-    if( mobj.MCritter.Cond == COND_DEAD && value != COND_LIFE )
+    if( mobj.MCritter.Cond == CRITTER_CONDITION_DEAD && value != CRITTER_CONDITION_LIFE )
     {
         for( auto it = mobj.RunTime.FromMap->MObjects.begin(); it != mobj.RunTime.FromMap->MObjects.end(); ++it )
         {
             MapObject* mobj_ = *it;
-            if( mobj_->MapObjType == MAP_OBJECT_CRITTER && mobj_->MCritter.Cond != COND_DEAD && mobj_->MapX == mobj.MapX && mobj_->MapY == mobj.MapY )
+            if( mobj_->MapObjType == MAP_OBJECT_CRITTER && mobj_->MCritter.Cond != CRITTER_CONDITION_DEAD && mobj_->MapX == mobj.MapX && mobj_->MapY == mobj.MapY )
                 return;
         }
     }
@@ -5554,7 +5554,7 @@ MapObject* FOMapper::SScriptFunc::MapperMap_AddObject( ProtoMap& pmap, ushort hx
         for( auto it = pmap.MObjects.begin(); it != pmap.MObjects.end(); ++it )
         {
             MapObject* mobj = *it;
-            if( mobj->MapObjType == MAP_OBJECT_CRITTER && mobj->MCritter.Cond != COND_DEAD &&
+            if( mobj->MapObjType == MAP_OBJECT_CRITTER && mobj->MCritter.Cond != CRITTER_CONDITION_DEAD &&
                 mobj->MapX == hx && mobj->MapY == hy )
                 SCRIPT_ERROR_R0( "Critter already present on this hex." );
         }
@@ -5583,7 +5583,7 @@ MapObject* FOMapper::SScriptFunc::MapperMap_AddObject( ProtoMap& pmap, ushort hx
     mobj->MapX = hx;
     mobj->MapY = hy;
     if( mobj_type == MAP_OBJECT_CRITTER )
-        mobj->MCritter.Cond = COND_LIFE;
+        mobj->MCritter.Cond = CRITTER_CONDITION_LIFE;
 
     if( Self->CurProtoMap == &pmap )
     {

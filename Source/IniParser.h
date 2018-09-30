@@ -1,7 +1,7 @@
 #ifndef ___INI_PARSER___
 #define ___INI_PARSER___
 
-#include "Common.h"
+#include "Types.h"
 
 class IniParser
 {

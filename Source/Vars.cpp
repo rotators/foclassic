@@ -1,9 +1,10 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "Vars.h"
 #include "Text.h"
 #include "FileManager.h"
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 # include "Critter.h"
 # include "CritterManager.h"
 #endif
@@ -33,7 +34,7 @@ bool VarManager::Init( const char* fpath )
     return true;
 }
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 void VarManager::SaveVarsDataFile( void (*save_func)( void*, size_t ) )
 {
     save_func( &varsCount, sizeof(varsCount) );
@@ -123,7 +124,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
     WriteLog( "complete, count<%u>.\n", count );
     return true;
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 void VarManager::Finish()
 {
@@ -143,7 +144,7 @@ void VarManager::Finish()
 
 void VarManager::Clear()
 {
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
         TemplateVar* tvar = *it;
@@ -166,7 +167,7 @@ bool VarManager::UpdateVarsTemplate()
     WriteLog( "Update template vars...\n" );
 
     FileManager fm;
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     if( !fm.LoadFile( varsPath.c_str(), PT_SERVER_ROOT ) )
     #else
     if( !fm.LoadFile( varsPath.c_str(), -1 ) )
@@ -347,22 +348,22 @@ void VarManager::SaveTemplateVars()
             continue;
 
         fm.SetStr( "#define " );
-        if( var->Type == VAR_GLOBAL )
+        if( var->Type == VAR_TYPE_GLOBAL )
             fm.SetStr( "GVAR_" );
-        else if( var->Type == VAR_LOCAL )
+        else if( var->Type == VAR_TYPE_LOCAL )
             fm.SetStr( "LVAR_" );
-        else if( var->Type == VAR_UNICUM )
+        else if( var->Type == VAR_TYPE_UNICUM )
             fm.SetStr( "UVAR_" );
-        else if( var->Type == VAR_LOCAL_LOCATION )
+        else if( var->Type == VAR_TYPE_LOCAL_LOCATION )
             fm.SetStr( "LLVAR_" );
-        else if( var->Type == VAR_LOCAL_MAP )
+        else if( var->Type == VAR_TYPE_LOCAL_MAP )
             fm.SetStr( "LMVAR_" );
-        else if( var->Type == VAR_LOCAL_ITEM )
+        else if( var->Type == VAR_TYPE_LOCAL_ITEM )
             fm.SetStr( "LIVAR_" );
         else
             fm.SetStr( "?VAR_" );
         fm.SetStr( "%s", var->Name.c_str() );
-        int spaces = (uint)var->Name.length() + (var->Type == VAR_LOCAL_LOCATION || var->Type == VAR_LOCAL_MAP || var->Type == VAR_LOCAL_ITEM ? 1 : 0);
+        int spaces = (uint)var->Name.length() + (var->Type == VAR_TYPE_LOCAL_LOCATION || var->Type == VAR_TYPE_LOCAL_MAP || var->Type == VAR_TYPE_LOCAL_ITEM ? 1 : 0);
         for( int i = 0, j = MAX( 1, 40 - spaces ); i < j; i++ )
             fm.SetStr( " " );
         fm.SetStr( "(%u)\n", var->TempId );
@@ -393,7 +394,7 @@ void VarManager::SaveTemplateVars()
     fm.SetStr( "*************************************************************************************/\n" );
     fm.SetStr( "#endif\n" );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     fm.SaveOutBufToFile( varsPath.c_str(), PT_SERVER_DATA );
     #else
     fm.LoadFile( varsPath.c_str(), -1 );
@@ -405,7 +406,7 @@ void VarManager::SaveTemplateVars()
 /**************************************************************************************************
 ***************************************************************************************************
 **************************************************************************************************/
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 
 bool VarManager::CheckVar( const char* var_name, uint master_id, uint slave_id, char oper, int val )
 {
@@ -516,28 +517,28 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
 
     switch( tvar->Type )
     {
-        case VAR_GLOBAL:
+        case VAR_TYPE_GLOBAL:
             if( master_id || slave_id )
                 return NULL;
             master_id = temp_id;
             break;
-        case VAR_LOCAL:
+        case VAR_TYPE_LOCAL:
             if( !master_id || slave_id )
                 return NULL;
             break;
-        case VAR_UNICUM:
+        case VAR_TYPE_UNICUM:
             if( !master_id || !slave_id )
                 return NULL;
             break;
-        case VAR_LOCAL_LOCATION:
+        case VAR_TYPE_LOCAL_LOCATION:
             if( !master_id || slave_id )
                 return NULL;
             break;
-        case VAR_LOCAL_MAP:
+        case VAR_TYPE_LOCAL_MAP:
             if( !master_id || slave_id )
                 return NULL;
             break;
-        case VAR_LOCAL_ITEM:
+        case VAR_TYPE_LOCAL_ITEM:
             if( !master_id || slave_id )
                 return NULL;
             break;
@@ -592,17 +593,17 @@ GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  boo
 
     if( DbgLog )
     {
-        if( tvar->Type == VAR_GLOBAL )
+        if( tvar->Type == VAR_TYPE_GLOBAL )
             DbgLog->Write( "Reading gvar<%s> value<%d>.%s\n", tvar->Name.c_str(), var->GetValue(), allocated ? " Allocated." : "" );
-        else if( tvar->Type == VAR_LOCAL )
+        else if( tvar->Type == VAR_TYPE_LOCAL )
             DbgLog->Write( "Reading lvar<%s> masterId<%u> value<%d>.%s\n", tvar->Name.c_str(), master_id, var->GetValue(), allocated ? " Allocated." : "" );
-        else if( tvar->Type == VAR_UNICUM )
+        else if( tvar->Type == VAR_TYPE_UNICUM )
             DbgLog->Write( "Reading uvar<%s> masterId<%u> slaveId<%u> value<%d>.%s\n", tvar->Name.c_str(), master_id, slave_id, var->GetValue(), allocated ? " Allocated." : "" );
-        else if( tvar->Type == VAR_LOCAL_LOCATION )
+        else if( tvar->Type == VAR_TYPE_LOCAL_LOCATION )
             DbgLog->Write( "Reading llvar<%s> locId<%u> value<%d>.%s\n", tvar->Name.c_str(), master_id, var->GetValue(), allocated ? " Allocated." : "" );
-        else if( tvar->Type == VAR_LOCAL_MAP )
+        else if( tvar->Type == VAR_TYPE_LOCAL_MAP )
             DbgLog->Write( "Reading lmvar<%s> mapId<%u> value<%d>.%s\n", tvar->Name.c_str(), master_id, var->GetValue(), allocated ? " Allocated." : "" );
-        else if( tvar->Type == VAR_LOCAL_ITEM )
+        else if( tvar->Type == VAR_TYPE_LOCAL_ITEM )
             DbgLog->Write( "Reading livar<%s> itemId<%u> value<%d>.%s\n", tvar->Name.c_str(), master_id, var->GetValue(), allocated ? " Allocated." : "" );
     }
 
@@ -667,7 +668,7 @@ void VarManager::SwapVars( uint id1, uint id2 )
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
         TemplateVar* tvar = *it;
-        if( tvar && (tvar->Type == VAR_LOCAL || tvar->Type == VAR_UNICUM) )
+        if( tvar && (tvar->Type == VAR_TYPE_LOCAL || tvar->Type == VAR_TYPE_UNICUM) )
         {
             if( tvar->IsNotUnicum() )
             {
@@ -788,7 +789,7 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
         TemplateVar* tvar = *it;
-        if( tvar && tvar->Type != VAR_GLOBAL )
+        if( tvar && tvar->Type != VAR_TYPE_GLOBAL )
         {
             for( auto it_ = tvar->Vars.begin(), end_ = tvar->Vars.end(); it_ != end_; ++it_ )
                 all_vars.push_back( (*it_).second );
@@ -809,25 +810,25 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
         {
             switch( var->Type )
             {
-                case VAR_LOCAL:
+                case VAR_TYPE_LOCAL:
                     if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_UNICUM:
+                case VAR_TYPE_UNICUM:
                     if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
                         continue;
                     if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
                         continue;
                     break;
-                case VAR_LOCAL_LOCATION:
+                case VAR_TYPE_LOCAL_LOCATION:
                     if( ids_locs.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_LOCAL_MAP:
+                case VAR_TYPE_LOCAL_MAP:
                     if( ids_maps.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_LOCAL_ITEM:
+                case VAR_TYPE_LOCAL_ITEM:
                     if( ids_items.count( var->MasterId ) )
                         continue;
                     break;
@@ -853,25 +854,25 @@ uint VarManager::ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_loc
         {
             switch( var->Type )
             {
-                case VAR_LOCAL:
+                case VAR_TYPE_LOCAL:
                     if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_UNICUM:
+                case VAR_TYPE_UNICUM:
                     if( ids1.count( var->MasterId ) || ids2.count( var->MasterId ) )
                         continue;
                     if( ids1.count( var->SlaveId ) || ids2.count( var->SlaveId ) )
                         continue;
                     break;
-                case VAR_LOCAL_LOCATION:
+                case VAR_TYPE_LOCAL_LOCATION:
                     if( ids_locs.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_LOCAL_MAP:
+                case VAR_TYPE_LOCAL_MAP:
                     if( ids_maps.count( var->MasterId ) )
                         continue;
                     break;
-                case VAR_LOCAL_ITEM:
+                case VAR_TYPE_LOCAL_ITEM:
                     if( ids_items.count( var->MasterId ) )
                         continue;
                     break;
@@ -920,11 +921,11 @@ void DebugLog( GameVar* var, const char* op, int value )
     uint         master_id = var->MasterId;
     uint         slave_id = var->SlaveId;
     TemplateVar* tvar = var->GetTemplateVar();
-    if( tvar->Type == VAR_GLOBAL )
+    if( tvar->Type == VAR_TYPE_GLOBAL )
         DbgLog->Write( "Changing gvar<%s> op<%s> value<%d> result<%d>.\n", tvar->Name.c_str(), op, value, var->GetValue() );
-    else if( tvar->Type == VAR_LOCAL )
+    else if( tvar->Type == VAR_TYPE_LOCAL )
         DbgLog->Write( "Changing lvar<%s> masterId<%u> op<%s> value<%d> result<%d>.\n", tvar->Name.c_str(), master_id, op, value, var->GetValue() );
-    else if( tvar->Type == VAR_UNICUM )
+    else if( tvar->Type == VAR_TYPE_UNICUM )
         DbgLog->Write( "Changing uvar<%s> masterId<%u> slaveId<%u> op<%s> value<%d> result<%d>.\n", tvar->Name.c_str(), master_id, slave_id, op, value, var->GetValue() );
 }
 
@@ -1093,7 +1094,7 @@ int  GameVarCmpGameVar( const GameVar& var, const GameVar& _right )
         cmp = 1;
     return cmp;
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 /**************************************************************************************************
 ***************************************************************************************************

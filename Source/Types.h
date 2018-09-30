@@ -1,13 +1,17 @@
 #ifndef ___TYPES___
 #define ___TYPES___
 
-#include "PlatformSpecific.h"
-#include <map>
-#include <string>
-#include <set>
-#include <list>
-#include <vector>
+#include <algorithm>
 #include <deque>
+#include <list>
+#include <map>
+#include <set>
+#include <string>
+#include <strstream>
+#include <vector>
+
+#include "PlatformSpecific.h"
+
 using namespace std;
 
 #if defined (FO_MSVC)

@@ -1,4 +1,5 @@
-#include "StdAfx.h"
+#include "Core.h"
+
 #include "Dialogs.h"
 #include "ConstantsManager.h"
 #include "FileManager.h"
@@ -630,7 +631,7 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
                 }
             }
 
-            #ifdef FONLINE_SERVER
+            #ifdef FOCLASSIC_SERVER
             // Bind function
             # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
             # define BIND_R_FUNC( params )                                                                                    \
@@ -738,7 +739,7 @@ int DialogManager::GetNotAnswerAction( const char* str, bool& ret_val )
         return NOT_ANSWER_CLOSE_DIALOG;
     else if( Str::CompareCase( str, "NOT_ANSWER_BEGIN_BATTLE" ) || Str::CompareCase( str, "Attack" ) )
         return NOT_ANSWER_BEGIN_BATTLE;
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     else
     {
         int id = Script::Bind( str, "uint %s(Critter&,Critter@,string@)", false, true );
@@ -749,7 +750,7 @@ int DialogManager::GetNotAnswerAction( const char* str, bool& ret_val )
         }
         return Script::Bind( str, "void %s(Critter&,Critter@,string@)", false );
     }
-    #endif // FONLINE_SERVER
+    #endif // FOCLASSIC_SERVER
 
     return -1;
 }

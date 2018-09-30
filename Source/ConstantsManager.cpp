@@ -1,8 +1,11 @@
-#include "StdAfx.h"
+#include <algorithm>
+
 #include "ConstantsManager.h"
-#include "Log.h"
-#include "Text.h"
 #include "FileManager.h"
+#include "Log.h"
+#include "MsgStr.h"
+#include "Text.h"
+#include "Types.h"
 
 const char* CollectionFiles[] =
 {

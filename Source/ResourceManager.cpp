@@ -1,10 +1,12 @@
-#include "StdAfx.h"
-#include "ResourceManager.h"
-#include "FileManager.h"
-#include "DataFile.h"
+#include "CMake.h"
+
 #include "CritterType.h"
-#include "Script.h"
 #include "Crypt.h"
+#include "DataFile.h"
+#include "GameOptions.h"
+#include "FileManager.h"
+#include "ResourceManager.h"
+#include "Script.h"
 
 ResourceManager ResMngr;
 
@@ -228,9 +230,9 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
         {
             // Script specific
             uint pass_base = 0;
-            #ifdef FONLINE_CLIENT
+            #ifdef FOCLASSIC_CLIENT
             while( Script::PrepareContext( ClientFunctions.CritterAnimation, _FUNC_, "Anim" ) )
-            #else // FONLINE_MAPPER
+            #else // FOCLASSIC_MAPPER
             while( Script::PrepareContext( MapperFunctions.CritterAnimation, _FUNC_, "Anim" ) )
             #endif
             {
@@ -335,9 +337,9 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
         }
 
         // Find substitute animation
-        #ifdef FONLINE_CLIENT
+        #ifdef FOCLASSIC_CLIENT
         if( !anim && Script::PrepareContext( ClientFunctions.CritterAnimationSubstitute, _FUNC_, "Anim" ) )
-        #else // FONLINE_MAPPER
+        #else // FOCLASSIC_MAPPER
         if( !anim && Script::PrepareContext( MapperFunctions.CritterAnimationSubstitute, _FUNC_, "Anim" ) )
         #endif
         {
@@ -373,9 +375,9 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
 AnyFrames* ResourceManager::LoadFalloutAnim( uint crtype, uint anim1, uint anim2, int dir )
 {
     // Convert from common to fallout specific
-    #ifdef FONLINE_CLIENT
+    #ifdef FOCLASSIC_CLIENT
     if( Script::PrepareContext( ClientFunctions.CritterAnimationFallout, _FUNC_, "Anim" ) )
-    #else // FONLINE_MAPPER
+    #else // FOCLASSIC_MAPPER
     if( Script::PrepareContext( MapperFunctions.CritterAnimationFallout, _FUNC_, "Anim" ) )
     #endif
     {

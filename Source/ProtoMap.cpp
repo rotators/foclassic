@@ -1,14 +1,14 @@
-#include "StdAfx.h"
-#include "CMake.h"
-#include "ProtoMap.h"
-#include "ItemManager.h"
-#include "Crypt.h"
-#include "ConstantsManager.h"
-#include "Version.h"
-#include <strstream>
-#include "IniParser.h"
+#include "Core.h"
 
-#ifdef FONLINE_MAPPER
+#include "ConstantsManager.h"
+#include "Crypt.h"
+#include "GameOptions.h"
+#include "IniParser.h"
+#include "ItemManager.h"
+#include "ProtoMap.h"
+#include "Version.h"
+
+#ifdef FOCLASSIC_MAPPER
 # include "ResourceManager.h"
 #endif
 
@@ -329,7 +329,7 @@ bool ProtoMap::Init( ushort pid, const char* name, int path_type )
 
 void ProtoMap::Clear()
 {
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)SceneriesToSend.capacity() * sizeof(SceneryCl) );
     MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)WallsToSend.capacity() * sizeof(SceneryCl) );
     MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)mapEntires.capacity() * sizeof(MapEntire) );
@@ -359,7 +359,7 @@ void ProtoMap::Clear()
     for( auto it = MObjects.begin(), end = MObjects.end(); it != end; ++it )
     {
         MapObject* mobj = *it;
-        #ifdef FONLINE_MAPPER
+        #ifdef FOCLASSIC_MAPPER
         mobj->RunTime.FromMap = NULL;
         mobj->RunTime.MapObjId = 0;
         #endif
@@ -367,7 +367,7 @@ void ProtoMap::Clear()
     }
     MObjects.clear();
     Tiles.clear();
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     TilesField.clear();
     RoofsField.clear();
     #endif
@@ -966,7 +966,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                     mobj->MapObjType = ivalue;
                     if( ivalue == MAP_OBJECT_CRITTER )
                     {
-                        mobj->MCritter.Cond = COND_LIFE;
+                        mobj->MCritter.Cond = CRITTER_CONDITION_LIFE;
                         for( int i = 0; i < MAPOBJ_CRITTER_PARAMS; i++ )
                             mobj->MCritter.ParamIndex[i] = -1;
                     }
@@ -1073,14 +1073,14 @@ bool ProtoMap::LoadTextFormat( const char* buf )
                             mobj.MItem.AnimWait = ivalue;
                         else if( field == "PicMapName" )
                         {
-                            #ifdef FONLINE_MAPPER
+                            #ifdef FOCLASSIC_MAPPER
                             Str::Copy( mobj.RunTime.PicMapName, Str::EraseFrontBackSpecificChars( svalue ) );
                             #endif
                             mobj.MItem.PicMapHash = Str::GetHash( Str::EraseFrontBackSpecificChars( svalue ) );
                         }
                         else if( field == "PicInvName" )
                         {
-                            #ifdef FONLINE_MAPPER
+                            #ifdef FOCLASSIC_MAPPER
                             Str::Copy( mobj.RunTime.PicInvName, Str::EraseFrontBackSpecificChars( svalue ) );
                             #endif
                             mobj.MItem.PicInvHash = Str::GetHash( Str::EraseFrontBackSpecificChars( svalue ) );
@@ -1184,7 +1184,7 @@ bool ProtoMap::LoadTextFormat( const char* buf )
     return true;
 }
 
-#ifdef FONLINE_MAPPER
+#ifdef FOCLASSIC_MAPPER
 void ProtoMap::SaveTextFormat( FileManager& fm )
 {
     // Header
@@ -1421,7 +1421,7 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
 }
 #endif
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 bool ProtoMap::LoadCache( FileManager& fm )
 {
     uchar signature[sizeof(MapSaveSignature)];
@@ -1636,7 +1636,7 @@ void ProtoMap::BindSceneryScript( MapObject* mobj )
         mobj->RunTime.BindScriptId = 0;
     }
 }
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER
 
 bool ProtoMap::Refresh()
 {
@@ -1651,7 +1651,7 @@ bool ProtoMap::Refresh()
     string fname_bin = pmapName + string( MAP_PROTO_EXT ) + "b";
     string fname_map = pmapName + ".map"; // Deprecated
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     // Cached binary
     FileManager cached;
     cached.LoadFile( fname_bin.c_str(), pathType );
@@ -1694,8 +1694,8 @@ bool ProtoMap::Refresh()
             }
         }
     }
-    #endif // FONLINE_SERVER
-    #ifdef FONLINE_MAPPER
+    #endif // FOCLASSIC_SERVER
+    #ifdef FOCLASSIC_MAPPER
     // Load binary or text
     FileManager fm;
     bool        text = true;
@@ -1708,7 +1708,7 @@ bool ProtoMap::Refresh()
             return false;
         }
     }
-    #endif // FONLINE_MAPPER
+    #endif // FOCLASSIC_MAPPER
 
     // Load
     if( text )
@@ -1888,7 +1888,7 @@ bool ProtoMap::Refresh()
         }
     }
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     // Parse objects
     WallsToSend.clear();
     SceneriesToSend.clear();
@@ -1940,14 +1940,14 @@ bool ProtoMap::Refresh()
             case ITEM_TYPE_WALL:
             {
                 if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
                 if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
                 {
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_NOTRAKE );
                 }
 
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_WALL );
+                SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_WALL );
 
                 // To client
                 SceneryCl cur_wall;
@@ -1983,15 +1983,15 @@ bool ProtoMap::Refresh()
                 }
 
                 if( type == ITEM_TYPE_GRID )
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN_GRID );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_SCEN_GRID );
                 if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
                 if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
                 {
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_BLOCK );
-                    SETFLAG( HexFlags[hy * maxhx + hx], FH_NOTRAKE );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
+                    SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_NOTRAKE );
                 }
-                SETFLAG( HexFlags[hy * maxhx + hx], FH_SCEN );
+                SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_SCEN );
 
                 // To server
                 if( pid == SP_MISC_SCRBLOCK )
@@ -2001,7 +2001,7 @@ bool ProtoMap::Refresh()
                     {
                         ushort hx_ = hx, hy_ = hy;
                         MoveHexByDir( hx_, hy_, k, Header.MaxHexX, Header.MaxHexY );
-                        SETFLAG( HexFlags[hy_ * maxhx + hx_], FH_BLOCK );
+                        SETFLAG( HexFlags[hy_ * maxhx + hx_], HEX_FLAG_BLOCK );
                     }
                 }
                 else if( type == ITEM_TYPE_GRID )
@@ -2036,7 +2036,7 @@ bool ProtoMap::Refresh()
                 if( pid == SP_SCEN_TRIGGER )
                 {
                     if( mobj.RunTime.BindScriptId )
-                        SETFLAG( HexFlags[hy * maxhx + hx], FH_TRIGGER );
+                        SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_TRIGGER );
                     continue;
                 }
 
@@ -2116,7 +2116,7 @@ bool ProtoMap::Refresh()
     SaveCache( fm );
     #endif
 
-    #ifdef FONLINE_MAPPER
+    #ifdef FOCLASSIC_MAPPER
     // Post process objects
     for( uint i = 0, j = (uint)MObjects.size(); i < j; i++ )
     {
@@ -2160,7 +2160,7 @@ bool ProtoMap::Refresh()
     return true;
 }
 
-#ifdef FONLINE_MAPPER
+#ifdef FOCLASSIC_MAPPER
 void ProtoMap::GenNew()
 {
     Clear();
@@ -2191,7 +2191,7 @@ void ProtoMap::GenNew()
     Header.DayColor[10] = 86;
     Header.DayColor[11] = 29;
 
-    # ifdef FONLINE_MAPPER
+    # ifdef FOCLASSIC_MAPPER
     TilesField.resize( Header.MaxHexX * Header.MaxHexY );
     RoofsField.resize( Header.MaxHexX * Header.MaxHexY );
     # endif
@@ -2290,9 +2290,9 @@ bool ProtoMap::IsMapFile( const char* fname )
 
     return false;
 }
-#endif // FONLINE_MAPPER
+#endif // FOCLASSIC_MAPPER
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 uint ProtoMap::CountEntire( uint num )
 {
     if( num == uint( -1 ) )
@@ -2439,4 +2439,4 @@ MapObject* ProtoMap::GetMapGrid( ushort hx, ushort hy )
     return NULL;
 }
 
-#endif // FONLINE_SERVER
+#endif // FOCLASSIC_SERVER

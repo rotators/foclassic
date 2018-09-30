@@ -1,10 +1,12 @@
-#include "StdAfx.h"
-#include "MapManager.h"
-#include "Log.h"
+#include "Core.h"
+
 #include "CritterManager.h"
-#include "ItemManager.h"
-#include "Script.h"
 #include "LineTracer.h"
+#include "Log.h"
+#include "ItemManager.h"
+#include "MapManager.h"
+#include "MsgStr.h"
+#include "Script.h"
 
 MapManager MapMngr;
 
@@ -987,7 +989,7 @@ void MapManager::GM_GroupMove( GlobalMapGroup* group )
     {
         group->SyncLockGroup();
         group->IsSetMove = true;
-        GM_GlobalProcess( rule, group, GLOBAL_PROCESS_START );
+        GM_GlobalProcess( rule, group, WORLDMAP_PROCESS_START );
         return;
     }
 
@@ -1006,11 +1008,11 @@ void MapManager::GM_GroupMove( GlobalMapGroup* group )
             if( rule->IsPlayer() && ( (Client*)rule )->IsOffline() )
             {
                 group->Stop();
-                GM_GlobalProcess( rule, group, GLOBAL_PROCESS_STOPPED );
+                GM_GlobalProcess( rule, group, WORLDMAP_PROCESS_STOPPED );
                 return;
             }
 
-            GM_GlobalProcess( rule, group, GLOBAL_PROCESS_MOVE );
+            GM_GlobalProcess( rule, group, WORLDMAP_PROCESS_MOVE );
         }
     }
 }
@@ -1130,7 +1132,7 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
     }
 
     // New target
-    if( type == GLOBAL_PROCESS_SET_MOVE || to_wx != group->ToX || to_wy != group->ToY )
+    if( type == WORLDMAP_PROCESS_SET_MOVE || to_wx != group->ToX || to_wy != group->ToY )
     {
         GM_GroupSetMove( group, to_wx, to_wy, speed );
         recursion_depth--;
@@ -1141,18 +1143,18 @@ void MapManager::GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type 
     if( base_speed > 0.0f && speed <= 0.0f )
     {
         group->Stop();
-        GM_GlobalProcess( rule, group, GLOBAL_PROCESS_STOPPED );
+        GM_GlobalProcess( rule, group, WORLDMAP_PROCESS_STOPPED );
         recursion_depth--;
         return;
     }
-    if( type == GLOBAL_PROCESS_STOPPED )
+    if( type == WORLDMAP_PROCESS_STOPPED )
         cr->SendA_GlobalInfo( group, GM_INFO_GROUP_PARAM );
 
     // Encounter
     if( encounter_descriptor )
     {
         group->EncounterDescriptor = encounter_descriptor;
-        if( type == GLOBAL_PROCESS_ENTER )
+        if( type == WORLDMAP_PROCESS_ENTER )
         {
             GM_GlobalInvite( group, rule->Data.Params[MODE_DEFAULT_COMBAT] );
         }
@@ -1305,11 +1307,11 @@ void MapManager::GM_GroupStartMove( Critter* cr )
         group->CarId = car->GetId();
 
     group->TimeCanFollow = Timer::GameTick() + TIME_CAN_FOLLOW_GM;
-    SETFLAG( cr->Flags, FCRIT_RULEGROUP );
+    SETFLAG( cr->Flags, CRITTER_FLAG_RULEGROUP );
 
     group->AddCrit( cr );
     cr->Send_GlobalInfo( GM_INFO_ALL );
-    GM_GlobalProcess( cr, group, GLOBAL_PROCESS_START_FAST );
+    GM_GlobalProcess( cr, group, WORLDMAP_PROCESS_START_FAST );
 }
 
 void MapManager::GM_AddCritToGroup( Critter* cr, uint rule_id )
@@ -1338,7 +1340,7 @@ void MapManager::GM_AddCritToGroup( Critter* cr, uint rule_id )
     GlobalMapGroup* group = rule->GroupMove;
     group->SyncLockGroup();
 
-    UNSETFLAG( cr->Flags, FCRIT_RULEGROUP );
+    UNSETFLAG( cr->Flags, CRITTER_FLAG_RULEGROUP );
     cr->Data.WorldX = (uint)group->CurX;
     cr->Data.WorldY = (uint)group->CurY;
     cr->Data.HexX = (rule_id >> 16) & 0xFFFF;
@@ -1410,8 +1412,8 @@ void MapManager::GM_GiveRule( Critter* cr, Critter* new_rule )
     new_rule->GroupSelf->Rule = new_rule;
     cr->GroupSelf->Clear();
     new_rule->GroupMove = new_rule->GroupSelf;
-    UNSETFLAG( cr->Flags, FCRIT_RULEGROUP );
-    SETFLAG( new_rule->Flags, FCRIT_RULEGROUP );
+    UNSETFLAG( cr->Flags, CRITTER_FLAG_RULEGROUP );
+    SETFLAG( new_rule->Flags, CRITTER_FLAG_RULEGROUP );
 
     for( auto it = new_rule->GroupSelf->CritMove.begin(), end = new_rule->GroupSelf->CritMove.end(); it != end; ++it )
     {
@@ -1431,7 +1433,7 @@ void MapManager::GM_StopGroup( Critter* cr )
     cr->GroupMove->ToY = cr->GroupMove->CurY;
     cr->GroupMove->Speed = 0.0f;
 
-    GM_GlobalProcess( cr, cr->GroupMove, GLOBAL_PROCESS_STOPPED );
+    GM_GlobalProcess( cr, cr->GroupMove, WORLDMAP_PROCESS_STOPPED );
 }
 
 bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, ushort mx, ushort my, uchar mdir )
@@ -1648,7 +1650,7 @@ void MapManager::GM_GroupSetMove( GlobalMapGroup* group, float to_x, float to_y,
     if( !group->IsSetMove )
     {
         group->IsSetMove = true;
-        GM_GlobalProcess( group->Rule, group, GLOBAL_PROCESS_START );
+        GM_GlobalProcess( group->Rule, group, WORLDMAP_PROCESS_START );
     }
 }
 
@@ -1798,7 +1800,7 @@ int MapManager::FindPath( PathFindData& pfd )
 
     if( CheckDist( from_hx, from_hy, to_hx, to_hy, cut ) )
         return FPATH_ALREADY_HERE;
-    if( !cut && FLAG( map->GetHexFlags( to_hx, to_hy ), FH_NOWAY ) )
+    if( !cut && FLAG( map->GetHexFlags( to_hx, to_hy ), HEX_FLAG_NOWAY ) )
         return FPATH_HEX_BUSY;
 
     // Ring check
@@ -1815,9 +1817,9 @@ int MapManager::FindPath( PathFindData& pfd )
             if( xx >= 0 && xx < maxhx && yy >= 0 && yy < maxhy )
             {
                 ushort flags = map->GetHexFlags( xx, yy );
-                if( FLAG( flags, FH_GAG_ITEM << 8 ) )
+                if( FLAG( flags, HEX_FLAG_GAG_ITEM << 8 ) )
                     break;
-                if( !FLAG( flags, FH_NOWAY ) )
+                if( !FLAG( flags, HEX_FLAG_NOWAY ) )
                     break;
             }
         }
@@ -1891,17 +1893,17 @@ int MapManager::FindPath( PathFindData& pfd )
                 if( !multihex )
                 {
                     ushort flags = map->GetHexFlags( nx, ny );
-                    if( !FLAG( flags, FH_NOWAY ) )
+                    if( !FLAG( flags, HEX_FLAG_NOWAY ) )
                     {
                         coords.push_back( PAIR( nx, ny ) );
                         g = numindex;
                     }
-                    else if( check_gag_items && FLAG( flags, FH_GAG_ITEM << 8 ) )
+                    else if( check_gag_items && FLAG( flags, HEX_FLAG_GAG_ITEM << 8 ) )
                     {
                         gag_coords.push_back( PAIR( nx, ny ) );
                         g = numindex | 0x4000;
                     }
-                    else if( check_cr && FLAG( flags, FH_CRITTER << 8 ) )
+                    else if( check_cr && FLAG( flags, HEX_FLAG_CRITTER << 8 ) )
                     {
                         cr_coords.push_back( PAIR( nx, ny ) );
                         g = numindex | 0x8000;
@@ -2503,7 +2505,7 @@ bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, 
 
     if( !cr->IsPlayer() || !cr->IsLife() )
         return false;
-    if( !map || !FLAG( map->GetHexFlags( hx, hy ), FH_SCEN_GRID ) )
+    if( !map || !FLAG( map->GetHexFlags( hx, hy ), HEX_FLAG_SCEN_GRID ) )
         return false;
     if( !force && !map->IsTurnBasedOn && cr->IsTransferTimeouts( true ) )
         return false;

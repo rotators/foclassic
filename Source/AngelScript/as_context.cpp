@@ -52,7 +52,7 @@
 #pragma warning(disable:4702) // unreachable code
 #endif
 
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 extern void CheckProfiler();
 #endif
 BEGIN_AS_NAMESPACE
@@ -1593,7 +1593,7 @@ void asCContext::ExecuteNext()
 
 	for(;;)
 	{
-#ifdef FONLINE_SERVER
+#ifdef FOCLASSIC_SERVER
 		CheckProfiler();
 #endif
 #ifdef AS_DEBUG

@@ -1,15 +1,20 @@
-#include "StdAfx.h"
 #include <strstream>
+
+#include "CMake.h"
+
+#include "GameOptions.h"
+#include "Types.h"
+#include "SpriteManager.h"
 
 static uchar  KeysMap[0x10000] = { 0 };
 static ushort KeysMapRevert[0x100] = { 0 };
 static uchar  KeysMapUser[0x100] = { 0 };
+
+// TODO deuglify
 #define MAKE_KEY_CODE( name, index, code ) \
     const uchar name = index;              \
     struct name ## _INIT { name ## _INIT() { KeysMap[code] = index; KeysMapRevert[index] = code; } } name ## _INIT_;
-
 #include "Keyboard.h"
-#include "SpriteManager.h"
 
 namespace Keyb
 {

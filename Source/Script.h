@@ -46,7 +46,7 @@ namespace Script
     bool ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix = NULL );
     bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count );
 
-    #ifdef FONLINE_SERVER
+    #ifdef FOCLASSIC_SERVER
     namespace Profiler
     {
         void   SetData( uint sample_time, uint save_time, bool dynamic_display );

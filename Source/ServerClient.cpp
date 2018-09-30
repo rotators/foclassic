@@ -1,5 +1,9 @@
-#include "StdAfx.h"
-#include "CMake.h"
+#include "Core.h"
+
+#include "CritterType.h"
+#include "ItemManager.h"
+#include "MapManager.h"
+#include "MsgStr.h"
 #include "Server.h"
 
 void FOServer::ProcessCritter( Critter* cr )
@@ -553,7 +557,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         return false;
     }
 
-    if( aim >= MAX_HIT_LOCATION )
+    if( aim > HIT_LOCATION_MAX )
     {
         WriteLogF( _FUNC_, " - Aim<%u> invalid value, critter<%s>, target critter<%s>.\n", aim, cr->GetInfo(), t_cr->GetInfo() );
         return false;
@@ -1246,7 +1250,7 @@ void FOServer::RespawnCritter( Critter* cr )
     map->UnsetFlagCritter( hx, hy, multihex, true );
     map->SetFlagCritter( hx, hy, multihex, false );
 
-    cr->Data.Cond = COND_LIFE;
+    cr->Data.Cond = CRITTER_CONDITION_LIFE;
     if( cr->Data.Params[ST_CURRENT_HP] < 1 )
     {
         cr->ChangeParam( ST_CURRENT_HP );
@@ -1579,7 +1583,7 @@ void FOServer::Process_CreateClient( Client* cl )
     }
     if( !allow )
     {
-        if( disallow_msg_num < TEXTMSG_COUNT && disallow_str_num )
+        if( disallow_msg_num < TEXTMSG_MAX && disallow_str_num )
             cl->Send_TextMsg( cl, disallow_str_num, SAY_NETMSG, disallow_msg_num );
         else
             cl->Send_TextMsg( cl, STR_NET_LOGIN_SCRIPT_FAIL, SAY_NETMSG, TEXTMSG_GAME );
@@ -1594,7 +1598,7 @@ void FOServer::Process_CreateClient( Client* cl )
     cl->Data.Dir = 0;
     cl->Data.WorldX = GM_MAXX / 2;
     cl->Data.WorldY = GM_MAXY / 2;
-    cl->Data.Cond = COND_LIFE;
+    cl->Data.Cond = CRITTER_CONDITION_LIFE;
     cl->Data.Multihex = -1;
 
     CritDataExt* data_ext = cl->GetDataExt();
@@ -1756,18 +1760,18 @@ void FOServer::Process_LogIn( ClientPtr& cl )
 
     // Bin hashes
     uint  msg_language;
-    uint  textmsg_hash[TEXTMSG_COUNT];
-    uint  item_hash[ITEM_MAX_TYPES];
+    uint  textmsg_hash[TEXTMSG_MAX];
+    uint  item_hash[ITEM_TYPE_MAX];
     uchar default_combat_mode;
 
     cl->Bin >> msg_language;
-    for( int i = 0; i < TEXTMSG_COUNT; i++ )
+    for( int i = 0; i < TEXTMSG_MAX; i++ )
         cl->Bin >> textmsg_hash[i];
     cl->Bin >> uidxor;
     cl->Bin >> uid[3];
     cl->Bin >> uid[2];
     cl->Bin >> uidor;
-    for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+    for( int i = 0; i < ITEM_TYPE_MAX; i++ )
         cl->Bin >> item_hash[i];
     cl->Bin >> uidcalc;
     cl->Bin >> default_combat_mode;
@@ -1788,7 +1792,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     LanguagePack& lang = *it_l;
     msg_language = lang.Name;
     cl->LanguageMsg = msg_language;
-    for( int i = 0; i < TEXTMSG_COUNT; i++ )
+    for( int i = 0; i < TEXTMSG_MAX; i++ )
     {
         if( lang.Msg[i].GetHash() != textmsg_hash[i] )
             Send_MsgData( cl, msg_language, i, lang.Msg[i] );
@@ -1798,7 +1802,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         cl->Send_TextMsg( cl, STR_NET_LANGUAGE_NOT_SUPPORTED, SAY_NETMSG, TEXTMSG_GAME );
 
     // Proto item data
-    for( int i = 0; i < ITEM_MAX_TYPES; i++ )
+    for( int i = 0; i < ITEM_TYPE_MAX; i++ )
     {
         if( ItemMngr.GetProtosHash( i ) != item_hash[i] )
             Send_ProtoItemData( cl, i, ItemMngr.GetProtos( i ), ItemMngr.GetProtosHash( i ) );
@@ -1912,7 +1916,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     }
     if( !allow )
     {
-        if( disallow_msg_num < TEXTMSG_COUNT && disallow_str_num )
+        if( disallow_msg_num < TEXTMSG_MAX && disallow_str_num )
             cl->Send_TextMsg( cl, disallow_str_num, SAY_NETMSG, disallow_msg_num );
         else
             cl->Send_TextMsg( cl, STR_NET_LOGIN_SCRIPT_FAIL, SAY_NETMSG, TEXTMSG_GAME );
@@ -2114,8 +2118,8 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         cl->Sock = INVALID_SOCKET;
         memcpy( &cl_old->From, &cl->From, sizeof(cl_old->From) );
         cl_old->ConnectTime = 0;
-        UNSETFLAG( cl_old->Flags, FCRIT_DISCONNECT );
-        SETFLAG( cl->Flags, FCRIT_DISCONNECT );
+        UNSETFLAG( cl_old->Flags, CRITTER_FLAG_DISCONNECT );
+        SETFLAG( cl->Flags, CRITTER_FLAG_DISCONNECT );
         std::swap( cl_old->Zstrm, cl->Zstrm );
 
         #if defined (USE_LIBEVENT)
@@ -2504,9 +2508,9 @@ void FOServer::Process_ParseToGame( Client* cl )
     }
 
     // Parse to local
-    SETFLAG( cl->Flags, FCRIT_CHOSEN );
+    SETFLAG( cl->Flags, CRITTER_FLAG_CHOSEN );
     cl->Send_AddCritter( cl );
-    UNSETFLAG( cl->Flags, FCRIT_CHOSEN );
+    UNSETFLAG( cl->Flags, CRITTER_FLAG_CHOSEN );
 
     // Send all data
     #pragma MESSAGE("Send all data by demand.")
@@ -3165,7 +3169,7 @@ void FOServer::Process_ContainerItem( Client* cl )
         // Process
         switch( take_flags )
         {
-            case CONT_GET:
+            case CONTAINER_GET:
             {
                 // Get item
                 Item* item = cont->ContGetItem( item_id, true );
@@ -3222,7 +3226,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                     WriteLogF( _FUNC_, " - Transfer item, from container to player (get), fail.\n" );
             }
             break;
-            case CONT_GETALL:
+            case CONTAINER_GETALL:
             {
                 // Send
                 cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
@@ -3285,7 +3289,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
             }
             break;
-            case CONT_PUT:
+            case CONTAINER_PUT:
             {
                 // Get item
                 Item* item = cl->GetItem( item_id, true );
@@ -3344,7 +3348,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                     WriteLogF( _FUNC_, " - Transfer item, from player to container (put), fail.\n" );
             }
             break;
-            case CONT_PUTALL:
+            case CONTAINER_PUTALL:
             {
                 cl->Send_ContainerInfo();
             }
@@ -3437,7 +3441,7 @@ void FOServer::Process_ContainerItem( Client* cl )
         // Process
         switch( take_flags )
         {
-            case CONT_GET:
+            case CONTAINER_GET:
             {
                 // Get item
                 Item* item = cr->GetInvItem( item_id, transfer_type );
@@ -3505,7 +3509,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                     WriteLogF( _FUNC_, " - Transfer item, from player to player (get), fail.\n" );
             }
             break;
-            case CONT_GETALL:
+            case CONTAINER_GETALL:
             {
                 // Check for steal
                 if( is_steal )
@@ -3570,7 +3574,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
             }
             break;
-            case CONT_PUT:
+            case CONTAINER_PUT:
             {
                 // Get item
                 Item* item = cl->GetItem( item_id, true );
@@ -3645,7 +3649,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                     WriteLogF( _FUNC_, " - transfer item, from player to player (put), fail.\n" );
             }
             break;
-            case CONT_PUTALL:
+            case CONTAINER_PUTALL:
             {
                 cl->Send_ContainerInfo();
             }
@@ -4382,7 +4386,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
                 break;
             cl->GroupMove->ToX = (float)param1;
             cl->GroupMove->ToY = (float)param2;
-            MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_SET_MOVE );
+            MapMngr.GM_GlobalProcess( cl, cl->GroupMove, WORLDMAP_PROCESS_SET_MOVE );
             break;
         case GM_CMD_STOP:
             break;
@@ -4402,7 +4406,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
                 if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
                     break;
                 cl->GroupMove->EncounterDescriptor = 0;
-                MapMngr.GM_GlobalProcess( cl, cl->GroupMove, GLOBAL_PROCESS_ENTER );
+                MapMngr.GM_GlobalProcess( cl, cl->GroupMove, WORLDMAP_PROCESS_ENTER );
             }
             else
             {
@@ -4472,7 +4476,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
                     break;
             }
 
-            MapMngr.GM_GlobalProcess( kick_cr, cl->GroupMove, GLOBAL_PROCESS_KICK );
+            MapMngr.GM_GlobalProcess( kick_cr, cl->GroupMove, WORLDMAP_PROCESS_KICK );
         }
         break;
         case GM_CMD_GIVE_RULE:
