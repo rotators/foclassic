@@ -8,9 +8,13 @@
 
 char DumpMess[] =
 {
-    "Please send this file '%s' on e-mail 'support@fonline.ru'."
-    "The theme of the letter should contain a word 'dump'. In the letter specify "
-    "under what circumstances there was a failure. Thanks."
+    "Application crashed\n"
+    "\n"
+    "Detail has been saved to file\n"
+    "%s\n"
+    "\n"
+    "Please report an issue using following link\n"
+    "https://github.com/rotators/foclassic/issues"
 };
 
 char AppName[128] = { 0 };

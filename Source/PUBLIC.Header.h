@@ -206,7 +206,7 @@ EXPORT_UNINITIALIZED asIScriptContext* ( * ScriptGetActiveContext )();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryOptions)();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
-#define FOCLASSIC_EXTENSION_ENTRY( isCompiler )          \
+#define FOCLASSIC_EXTENSION_ENTRY( isCompiler )    \
     GameOptions * FOClassic;                       \
     asIScriptEngine* ASEngine;                     \
     EXPORT void TARGET_NAME() {}                   \
