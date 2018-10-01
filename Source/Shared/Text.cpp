@@ -2,13 +2,14 @@
 
 #include <strstream>
 
-#include "FL/case.h"
+#include "../FL/case.h"
 
 #include "Core.h"
 
 #include "Crypt.h"
-#include "Log.h"
 #include "Text.h"
+
+extern void WriteLogF( const char* func, const char* frmt, ... );
 
 void Str::Copy( char* to, uint size, const char* from )
 {

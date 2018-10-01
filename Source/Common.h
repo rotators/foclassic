@@ -173,11 +173,11 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 #  endif
 # endif
 
-# include "GL/glew.h"
+# include "glew.h"
 # ifdef FO_WINDOWS
-#  include "GL/wglew.h"
+#  include "wglew.h"
 # else
-#  include "GL/glxew.h"
+#  include "glxew.h"
 # endif
 # include "FL/gl.h"
 # include "Assimp/aiTypes.h"

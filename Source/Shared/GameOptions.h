@@ -5,7 +5,7 @@
 #ifndef __GAME_OPTIONS__
 #define __GAME_OPTIONS__
 
-#include "AngelScript/scriptstring.h"
+#include "scriptstring.h"
 
 #include "Defines.h"
 #include "Types.h"

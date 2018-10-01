@@ -6,7 +6,7 @@ function( pdb_strip target )
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
-			COMMAND if exist ${CMAKE_BINARY_DIR}/${pdb} (${CMAKE_COMMAND} -E rename ${CMAKE_BINARY_DIR}/${pdb} ${CMAKE_BINARY_DIR}/$(ConfigurationName)/${pdb})
+			COMMAND if exist ${CMAKE_CURRENT_BINARY_DIR}/${pdb} (${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/${pdb} ${CMAKE_CURRENT_BINARY_DIR}/$(ConfigurationName)/${pdb})
 		)
 	endif()
 endfunction()

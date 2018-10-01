@@ -2,7 +2,7 @@
 #define __CRITTER__
 
 #include "Common.h"
-#include "zlib/zlib.h"
+#include "zlib.h"
 #include "BufferManager.h"
 #include "Item.h"
 #include "Dialogs.h"

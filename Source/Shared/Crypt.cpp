@@ -1,12 +1,14 @@
-#include "zlib/zlib.h"
-#include "SHA2/sha2.h"
+#include "zlib.h"
+#include "sha2.h"
 
 #include "Core.h"
 
 #include "Crypt.h"
 #include "Random.h"
-#include "Log.h"
 #include "Text.h"
+
+extern void WriteLog( const char* frmt, ... );
+extern void WriteLogF( const char* func, const char* frmt, ... );
 
 CryptManager Crypt;
 

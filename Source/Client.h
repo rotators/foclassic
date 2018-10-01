@@ -19,7 +19,7 @@
 #include "CritterType.h"
 #include "DataMask.h"
 #include "Script.h"
-#include "zlib/zlib.h"
+#include "zlib.h"
 #include "IniParser.h"
 #include "MsgFiles.h"
 

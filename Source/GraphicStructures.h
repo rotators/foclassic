@@ -42,14 +42,14 @@ typedef vector<Matrix*>    MatrixPtrVec;
 # define D3D_HR( expr )           { HRESULT hr__ = expr; if( hr__ != D3D_OK ) { WriteLogF( _FUNC_, " - " # expr ", error<%s - %s>.\n", DXGetErrorString( hr__ ), DXGetErrorDescription( hr__ ) ); return 0; } }
 # define MATRIX_TRANSPOSE( m )    m.Transpose()
 #else
-# include "GL/glew.h"
+# include "glew.h"
 # define GL( expr )               { expr; if( GameOpt.OpenGLDebug ) { GLenum err__ = glGetError(); if( err__ != GL_NO_ERROR ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X - %s>.\n", err__, gluErrorString( err__ ) ); ExitProcess( 0 ); } } }
 # ifdef FO_WINDOWS
-#  include "GL/wglew.h"
+#  include "wglew.h"
 
 #  define WGL( expr )             { if( !(expr) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
 # else
-#  include "GL/glxew.h"
+#  include "glxew.h"
 # endif
 
 # define COLOR_FIX( c )           COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )

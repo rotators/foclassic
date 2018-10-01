@@ -14,7 +14,7 @@ SoundManager SndMngr;
 #endif
 
 // ACM
-#include "Acm/acmstrm.h"
+#include "acmstrm.h"
 
 // OGG
 #include "ogg/codec.h"

@@ -2,20 +2,24 @@
 # Extension
 #
 set( EXTENSION_SOURCES
-	extension.cpp
-	${CMAKE_SOURCE_DIR}/Source/PUBLIC.Defines.h
-	${CMAKE_SOURCE_DIR}/Source/PUBLIC.Header.h
 )
 
 foreach( target Client Mapper Server )
-	set( lib_old Extension${target} )
-	set( lib_new ExtensionBleedingEdge${target} )
+	set( lib Extension${target} )
 	set( target "__${target}" )
 	string( TOUPPER ${target} target )
 
-	add_library( ${lib_old} SHARED ${EXTENSION_SOURCES} )
-	target_compile_definitions( ${lib_old} PRIVATE ${target} FOCLASSIC_EXTENSION )
-
-	add_library( ${lib_new} SHARED ${EXTENSION_SOURCES} )
-	target_compile_definitions( ${lib_new} PRIVATE ${target} FOCLASSIC_EXTENSION FOCLASSIC_BLEEDING_EDGE )
+	add_library( ${lib} SHARED "" )
+	target_sources( ${lib}
+		PRIVATE
+			extension.cpp
+			${CMAKE_SOURCE_DIR}/Source/Shared/PUBLIC.Defines.h
+			${CMAKE_SOURCE_DIR}/Source/PUBLIC.Header.h
+			_defines.fos
+			foclassic.fos
+	)
+	target_compile_definitions( ${lib} PRIVATE ${target} FOCLASSIC_EXTENSION FOCLASSIC_BLEEDING_EDGE )
 endforeach()
+
+source_group( " "        REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "Wrappers" REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )

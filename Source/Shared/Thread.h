@@ -12,7 +12,7 @@
 
 # ifdef FO_WINDOWS
 #  define PTW32_STATIC_LIB
-#  include "PthreadWnd/pthread.h"
+#  include "../PthreadWnd/pthread.h"
 # else
 #  include <pthread.h>
 # endif

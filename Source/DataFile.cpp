@@ -1,6 +1,6 @@
 #include "DataFile.h"
 #include "DatFile/cfile.h"
-#include "zlib/unzip.h"
+#include "unzip.h"
 
 /************************************************************************/
 /* Dat/Zip loaders                                                      */

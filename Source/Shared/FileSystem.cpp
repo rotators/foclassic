@@ -1,5 +1,7 @@
-#include "Common.h"
+#include "Core.h"
+
 #include "FileSystem.h"
+#include "Text.h"
 
 #ifdef FO_WINDOWS
 

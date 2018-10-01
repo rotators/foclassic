@@ -1,8 +1,9 @@
 #include "scriptstring.h"
 #include "scriptarray.h"
-#include <Common.h>
-#include <Debugger.h>
-#include <Text.h>
+
+
+#include "../Debugger.h"
+#include "Text.h"
 
 #define assert( x )
 
