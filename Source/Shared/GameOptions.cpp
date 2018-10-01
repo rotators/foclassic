@@ -13,12 +13,12 @@ GameOptions GameOpt;
 
 GameOptions::GameOptions()
 {
-    YearStart = 2246;
-    Year = 2246;
-    Month = 1;
-    Day = 2;
-    Hour = 14;
-    Minute = 5;
+    YearStart = 2078;
+    Year = 2078;
+    Month = 9;
+    Day = 8;
+    Hour = 9;
+    Minute = 44;
     Second = 0;
     FullSecondStart = 0;
     FullSecond = 0;

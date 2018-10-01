@@ -40,8 +40,6 @@
 #define CLIENT_SAVE_LAST             (CLIENT_SAVE_V1)
 
 // Generic
-#define WORLD_START_TIME             "07:00 30:10:2246 x00"
-
 #define CRAFT_SEND_TIME              (60000)
 #define LEXEMS_SIZE                  (128)
 #define MAX_HOLO_INFO                (250)
