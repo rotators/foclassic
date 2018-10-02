@@ -1,8 +1,43 @@
 add_subdirectory( AngelScript )
 add_subdirectory( Libs )
 
+message( STATUS "Configuring engine..." )
+
 add_subdirectory( DatFile )
 add_subdirectory( Shared )
+
+set( FOCLASSIC_LIBS AngelScript AngelScriptPreprocessor DatFile Shared )
+set( FOCLASSIC_INCLUDES ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} )
+
+if( WIN32 )
+	set( FOCLASSIC_LIBS ${FOCLASSIC_LIBS}
+		dbghelp psapi # Exception.cpp
+	)
+endif()
+
+link_directories( "${CMAKE_SOURCE_DIR}/Lib" )
+
+if( WIN32 )
+	link_directories( "${CMAKE_SOURCE_DIR}/Lib/Dx9/x86/" )
+
+	# DX needs glu32 due to 3dStuff.cpp VecProject() VecUnproject()
+	# as for glew - no idea, probably some #pragma comment _somewhere_
+	set( DX_LIBS d3d9 dxguid dxerr d3dxof glew glu32 )
+endif()
+
+set( GL_LIBS glew glu32 opengl32 )
+
+# predefine libs used by engine applications
+
+set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} libpng15 )
+
+set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
+set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} )
+set( MAPPER_DX_LIBS ${MAPPER_LIBS} ${DX_LIBS} )
+set( MAPPER_GL_LIBS ${MAPPER_LIBS} ${GL_LIBS} )
 
 ##
 ## ASCompiler
@@ -32,13 +67,14 @@ target_sources( ASCompiler
 		ScriptPragmas.cpp
 		ScriptPragmas.h
 )
-target_include_directories( ASCompiler PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
 target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
-target_link_libraries( ASCompiler Shared AngelScript AngelScriptPreprocessor DatFile sha2 zlib )
+target_include_directories( ASCompiler PRIVATE ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} )
+target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 
 ##
 ## Client
 ##
+
 set( CLIENT_SOURCES
 	3dAnimation.h
 	3dStuff.cpp
@@ -113,126 +149,138 @@ set( CLIENT_SOURCES
 	Sprites.h
 	Version.h
 )
+
 ##
 ## ClientDX
 ##
-set( CLIENT_DX_SOURCES
-	${CLIENT_SOURCES}
-)
-add_executable( ClientDX WIN32 "" )
-target_sources( ClientDX PRIVATE ${CLIENT_DX_SOURCES} )
-target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
-target_include_directories( ClientDX PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Dx9 )
-target_link_libraries( ClientDX Shared AngelScript AngelScriptPreprocessor DatFile acm glew sha2 zlib ${DX_LIBS} )
+
+if( WIN32 )
+	add_executable( ClientDX WIN32 "" )
+	target_sources( ClientDX
+		PRIVATE
+			${CLIENT_SOURCES}
+	)
+	target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
+	target_include_directories( ClientDX PRIVATE ${FOCLASSIC_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/Dx9 )
+	target_link_libraries( ClientDX  ${CLIENT_DX_LIBS} )
+endif()
 
 ##
 ## ClientGL
 ##
-set( CLIENT_GL_SOURCES
-	${CLIENT_SOURCES}
-)
+
 add_executable( ClientGL WIN32 "" )
-target_sources( ClientGL PRIVATE ${CLIENT_GL_SOURCES} )
+target_sources( ClientGL
+	PRIVATE
+		${CLIENT_SOURCES}
+)
 target_compile_definitions( ClientGL PRIVATE FOCLASSIC_CLIENT )
-target_include_directories( ClientGL PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
-target_link_libraries( ClientGL Shared AngelScript AngelScriptPreprocessor DatFile acm glew sha2 zlib ${GL_LIBS} )
+target_include_directories( ClientGL PRIVATE ${FOCLASSIC_INCLUDES} )
+target_link_libraries( ClientGL ${CLIENT_GL_LIBS} )
 
 ##
 ## Mapper
 ##
+
 set( MAPPER_SOURCES
-	${FO_DIR}/3dAnimation.h
-	${FO_DIR}/3dStuff.cpp
-	${FO_DIR}/3dStuff.h
-	${FO_DIR}/Common.cpp
-	${FO_DIR}/Common.h
-	${FO_DIR}/ConstantsManager.cpp
-	${FO_DIR}/ConstantsManager.h
-	${FO_DIR}/CritterCl.cpp
-	${FO_DIR}/CritterCl.h
-	${FO_DIR}/CritterData.h
-	${FO_DIR}/CritterManager.cpp
-	${FO_DIR}/CritterManager.h
-	${FO_DIR}/CritterType.cpp
-	${FO_DIR}/CritterType.h
-	${FO_DIR}/DataFile.cpp
-	${FO_DIR}/DataFile.h
-	${FO_DIR}/Debugger.cpp
-	${FO_DIR}/Debugger.h
-	${FO_DIR}/Exception.cpp
-	${FO_DIR}/Exception.h
-	${FO_DIR}/F2Palette.h
-	${FO_DIR}/FileManager.cpp
-	${FO_DIR}/FileManager.h
-	${FO_DIR}/FlexRect.h
-	${FO_DIR}/GraphicStructures.cpp
-	${FO_DIR}/GraphicStructures.h
-	${FO_DIR}/GraphicLoader.cpp
-	${FO_DIR}/GraphicLoader.h
-	${FO_DIR}/HexManager.cpp
-	${FO_DIR}/HexManager.h
-	${FO_DIR}/IniParser.cpp
-	${FO_DIR}/IniParser.h
-	${FO_DIR}/Item.cpp
-	${FO_DIR}/Item.h
-	${FO_DIR}/ItemHex.cpp
-	${FO_DIR}/ItemHex.h
-	${FO_DIR}/ItemManager.cpp
-	${FO_DIR}/ItemManager.h
-	${FO_DIR}/Keyboard.cpp
-	${FO_DIR}/Keyboard.h
-	${FO_DIR}/LineTracer.h
-	${FO_DIR}/Log.cpp
-	${FO_DIR}/Log.h
-	${FO_DIR}/MainMapper.cpp
-	${FO_DIR}/Mapper.cpp
-	${FO_DIR}/Mapper.h
-	${FO_DIR}/MsgFiles.cpp
-	${FO_DIR}/MsgFiles.h
-	${FO_DIR}/MsgStr.h
-	${FO_DIR}/ProtoMap.cpp
-	${FO_DIR}/ProtoMap.h
-	${FO_DIR}/ResourceManager.cpp
-	${FO_DIR}/ResourceManager.h
-	${FO_DIR}/ResourceMapper.h
-	${FO_DIR}/Script.cpp
-	${FO_DIR}/Script.h
-	${FO_DIR}/ScriptBind.h
-	${FO_DIR}/ScriptPragmas.cpp
-	${FO_DIR}/ScriptPragmas.h
-	${FO_DIR}/SpriteManager.cpp
-	${FO_DIR}/SpriteManager.h
-	${FO_DIR}/SpriteManagerFont.cpp
-	${FO_DIR}/Sprites.cpp
-	${FO_DIR}/Sprites.h
-	${FO_DIR}/Version.h
+	3dAnimation.h
+	3dStuff.cpp
+	3dStuff.h
+	Common.cpp
+	Common.h
+	ConstantsManager.cpp
+	ConstantsManager.h
+	CritterCl.cpp
+	CritterCl.h
+	CritterData.h
+	CritterManager.cpp
+	CritterManager.h
+	CritterType.cpp
+	CritterType.h
+	DataFile.cpp
+	DataFile.h
+	Debugger.cpp
+	Debugger.h
+	Exception.cpp
+	Exception.h
+	F2Palette.h
+	FileManager.cpp
+	FileManager.h
+	FlexRect.h
+	GraphicStructures.cpp
+	GraphicStructures.h
+	GraphicLoader.cpp
+	GraphicLoader.h
+	HexManager.cpp
+	HexManager.h
+	IniParser.cpp
+	IniParser.h
+	Item.cpp
+	Item.h
+	ItemHex.cpp
+	ItemHex.h
+	ItemManager.cpp
+	ItemManager.h
+	Keyboard.cpp
+	Keyboard.h
+	LineTracer.h
+	Log.cpp
+	Log.h
+	MainMapper.cpp
+	Mapper.cpp
+	Mapper.h
+	MsgFiles.cpp
+	MsgFiles.h
+	MsgStr.h
+	ProtoMap.cpp
+	ProtoMap.h
+	ResourceManager.cpp
+	ResourceManager.h
+	ResourceMapper.h
+	Script.cpp
+	Script.h
+	ScriptBind.h
+	ScriptPragmas.cpp
+	ScriptPragmas.h
+	SpriteManager.cpp
+	SpriteManager.h
+	SpriteManagerFont.cpp
+	Sprites.cpp
+	Sprites.h
+	Version.h
 )
+
 ##
 ## MapperDX
 ##
-set( MAPPER_DX_SOURCES
-	${MAPPER_SOURCES}
-)
-add_executable( MapperDX WIN32 "" )
-target_sources( MapperDX PRIVATE ${MAPPER_DX_SOURCES} )
-target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
-target_include_directories( MapperDX PRIVATE ${FO_DIR} ${FO_DIR}/Dx9 )
-target_link_libraries( MapperDX Shared AngelScript AngelScriptPreprocessor DatFile glew sha2 zlib ${DX_LIBS} )
+if( WIN32 )
+	add_executable( MapperDX WIN32 "" )
+	target_sources( MapperDX
+		PRIVATE
+			${MAPPER_SOURCES}
+	)
+	target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
+	target_include_directories( MapperDX PRIVATE ${FOCLASSIC_INCLUDES} ${FO_DIR} ${FO_DIR}/Dx9 )
+	target_link_libraries( MapperDX ${MAPPER_DX_LIBS} )
+endif()
 
 ##
 ## MapperGL
 ##
-set( MAPPER_GL_SOURCES
-	${MAPPER_SOURCES}
+
+add_executable( MapperGL WIN32 "" )
+target_sources( MapperGL
+	PRIVATE
+		${MAPPER_SOURCES}
 )
-add_executable( MapperGL WIN32 ${MAPPER_GL_SOURCES} )
 target_compile_definitions( MapperGL PRIVATE FOCLASSIC_MAPPER )
-target_include_directories( MapperGL PRIVATE ${FO_DIR} )
-target_link_libraries( MapperGL Shared AngelScript AngelScriptPreprocessor DatFile glew sha2 zlib ${GL_LIBS} )
+target_include_directories( MapperGL PRIVATE ${FOCLASSIC_INCLUDES} )
+target_link_libraries( MapperGL ${MAPPER_GL_LIBS} )
 
 ##
 ## Server
 ##
+
 add_executable( Server WIN32 "" )
 target_sources( Server
 	PRIVATE
@@ -308,36 +356,38 @@ target_sources( Server
 		Version.h
 )
 target_compile_definitions( Server PRIVATE FOCLASSIC_SERVER SCRIPT_MULTITHREADING )
-target_include_directories( Server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
-target_link_libraries( Server Shared AngelScript AngelScriptPreprocessor DatFile sha2 zlib libpng15 )
-
+target_include_directories( Server PRIVATE ${FOCLASSIC_INCLUDES} )
+target_link_libraries( Server ${SERVER_LIBS} )
 ##
 ## Finalize
 ##
+
 set( FOCLASSIC_APPS ASCompiler ClientDX ClientGL MapperDX MapperGL Server )
 
+# create global header
 configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${CMAKE_BINARY_DIR}/include/CMake.h" @ONLY NEWLINE_STYLE LF )
 foreach( target ${FOCLASSIC_APPS} )
+
 	# append headers generated by CMake
 	target_sources( ${target} PRIVATE "${CMAKE_BINARY_DIR}/include/CMake.h" )
+
 	# setup released .pdb files
 	pdb_strip( ${target} )
+
 	# inform sources about engine compilation
 	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
-endforeach()
 
-##
-## Prettify executables
-##
-if( MSVC )
-	foreach( target ${FOCLASSIC_APPS} )
+	# prettify windows executables
+	if( MSVC )
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
+	endif()
+
 	endforeach()
-endif( MSVC )
 
 ##
 ## Prettify IDE
 ##
+
 source_group( " "           REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "AngelScript" REGULAR_EXPRESSION "${FO_DIR}/AngelScript" )
 source_group( "Shared"      REGULAR_EXPRESSION "${FO_DIR}/Shared" )
@@ -348,3 +398,5 @@ source_group( "Misc"
 	REGULAR_EXPRESSION
 		"CMakeLists"
 )
+
+message( STATUS "Configuring engine... OK" )

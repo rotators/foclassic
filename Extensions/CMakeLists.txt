@@ -1,13 +1,12 @@
 #
 # Extension
 #
-set( EXTENSION_SOURCES
-)
 
-foreach( target Client Mapper Server )
-	set( lib Extension${target} )
-	set( target "__${target}" )
-	string( TOUPPER ${target} target )
+foreach( name Client Mapper Server )
+	set( lib Extension${name} )
+	# create required define
+	set( name "__${name}" )
+	string( TOUPPER ${name} name )
 
 	add_library( ${lib} SHARED "" )
 	target_sources( ${lib}
@@ -18,8 +17,9 @@ foreach( target Client Mapper Server )
 			_defines.fos
 			foclassic.fos
 	)
-	target_compile_definitions( ${lib} PRIVATE ${target} FOCLASSIC_EXTENSION FOCLASSIC_BLEEDING_EDGE )
+	target_compile_definitions( ${lib} PRIVATE ${name} FOCLASSIC_EXTENSION FOCLASSIC_BLEEDING_EDGE )
 endforeach()
 
 source_group( " "        REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "Wrappers" REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )
+source_group( "Misc"     REGULAR_EXPRESSION "CMakeLists" )

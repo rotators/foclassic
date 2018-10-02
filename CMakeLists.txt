@@ -80,12 +80,6 @@ if( MSVC )
 	set( CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO" )
 endif()
 
-link_directories( "Lib" )
-link_directories( "Lib/Dx9/x86/" )
-
-set( DX_LIBS d3d9 dxguid dxerr d3dxof glu32 ) # DX needs glu32 due to 3dStuff.cpp VecProject() VecUnproject()
-set( GL_LIBS opengl32 glu32 )
-
 ##
 ## Source options
 ##
@@ -102,16 +96,17 @@ if( HAVE_STRUCT_TIMESPEC )
 	add_definitions( -DHAVE_STRUCT_TIMESPEC )
 endif( HAVE_STRUCT_TIMESPEC )
 
-include_directories( "${CMAKE_CURRENT_BINARY_DIR}/include" )
-
 add_subdirectory( Source )
 add_subdirectory( Extensions )
+
 ##
 ## Prettify IDE
 ##
+
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
+
 set_target_properties( AngelScript AngelScriptPreprocessor PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( acm DatFile glew sha2 zlib PROPERTIES FOLDER "Libs" )
-set_target_properties( ExtensionClient ExtensionMapper ExtensionServer PROPERTIES FOLDER "Dll" )
+set_target_properties( ExtensionClient ExtensionMapper ExtensionServer PROPERTIES FOLDER "Extensions" )

@@ -1,6 +1,7 @@
 ##
 ## Shared
 ##
+
 add_library( Shared "" )
 target_sources( Shared
 	PUBLIC

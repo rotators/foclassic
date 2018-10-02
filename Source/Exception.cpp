@@ -14,7 +14,7 @@ char DumpMess[] =
     "%s\n"
     "\n"
     "Please report an issue using following link\n"
-    "https://github.com/rotators/foclassic/issues"
+    "https://github.com/rotators/foclassic/issues\n"
 };
 
 char AppName[128] = { 0 };
@@ -25,9 +25,7 @@ char ManualDumpAppendix[128] = { 0 };
 # include <windows.h>
 # include <stdio.h>
 # include <DbgHelp.h>
-# pragma comment(lib, "Dbghelp.lib")
 # include <Psapi.h>
-# pragma comment(lib, "Psapi.lib")
 # include <tlhelp32.h>
 # include "Timer.h"
 # include "FileManager.h"
@@ -195,7 +193,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         }
 
         // Init symbols
-        SymInitialize( process, NULL, TRUE );
+        BOOL symInit = SymInitialize( process, NULL, TRUE );
         SymSetOptions( SYMOPT_LOAD_LINES | SYMOPT_FAIL_CRITICAL_ERRORS );
 
         // Print information about each thread
