@@ -50,6 +50,8 @@ target_include_directories( Shared
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${AS_DIR}
+	PRIVATE
+		${CMAKE_BINARY_DIR}/include
 )
 target_link_libraries( Shared
 	PUBLIC
