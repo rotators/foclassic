@@ -1,7 +1,7 @@
 #ifndef __SOUND_MANAGER__
 #define __SOUND_MANAGER__
 
-#include "Common.h"
+#include "Types.h"
 
 #define SOUND_DEFAULT_EXT    ".acm"
 #define MUSIC_REPEAT_TIME    (Random( 240, 360 ) * 1000)     // 4-6 minutes

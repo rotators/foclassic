@@ -30,7 +30,7 @@ set( GL_LIBS glew glu32 opengl32 )
 # predefine libs used by engine applications
 
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm )
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm ogg portaudio )
 set( MAPPER_LIBS     ${FOCLASSIC_LIBS} )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} libpng15 )
 

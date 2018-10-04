@@ -1,29 +1,20 @@
-#include "SoundManager.h"
-#include "Common.h"
-#include "ResourceManager.h"
-#include "Text.h"
+#include "acmstrm.h"
+#include "ogg/codec.h"
+#include "ogg/vorbisfile.h"
+#include "portaudio.h"
+
+#include "Core.h"
+
 #include "FileManager.h"
+#include "Log.h"
+#include "Random.h"
+#include "ResourceManager.h"
+#include "SoundManager.h"
+#include "Text.h"
+#include "Timer.h"
 
 // Manager instance
 SoundManager SndMngr;
-
-// PortAudio
-#include "PortAudio/portaudio.h"
-#ifdef FO_WINDOWS
-# pragma comment( lib, "portaudio.lib" )
-#endif
-
-// ACM
-#include "acmstrm.h"
-
-// OGG
-#include "ogg/codec.h"
-#include "ogg/vorbisfile.h"
-#ifdef FO_WINDOWS
-# pragma comment ( lib, "libogg_static.lib" )
-# pragma comment ( lib, "libvorbis_static.lib" )
-# pragma comment ( lib, "libvorbisfile_static.lib" )
-#endif
 
 // Sound structure
 class Sound
