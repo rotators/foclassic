@@ -2,9 +2,16 @@
 
 #include "Access.h"
 #include "Client.h"
+#include "ConstantsManager.h"
+#include "CraftManager.h"
+#include "CritterType.h"
 #include "Defence.h"
 #include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
+#include "Keyboard.h"
 #include "MsgStr.h"
+#include "ResourceManager.h"
+#include "Script.h"
+#include "SoundManager.h"
 #include "Thread.h"
 #include "Version.h"
 

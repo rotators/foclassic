@@ -10,6 +10,7 @@ add_subdirectory( ogg )
 add_subdirectory( png )
 add_subdirectory( portaudio )
 add_subdirectory( sha2 )
+add_subdirectory( theora )
 add_subdirectory( zlib )
 
 message( STATUS "Configuring libraries... OK" )

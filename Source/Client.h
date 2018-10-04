@@ -1,33 +1,20 @@
 #ifndef __CLIENT__
 #define __CLIENT__
 
-#include "Keyboard.h"
-#include "Common.h"
-#include "SpriteManager.h"
-#include "SoundManager.h"
-#include "HexManager.h"
-#include "Item.h"
-#include "ItemManager.h"
-#include "CritterCl.h"
-#include "NetProtocol.h"
-#include "BufferManager.h"
-#include "Text.h"
-#include "QuestManager.h"
-#include "CraftManager.h"
-#include "ConstantsManager.h"
-#include "ResourceManager.h"
-#include "CritterType.h"
-#include "DataMask.h"
-#include "Script.h"
+#ifndef FO_D3D
+# include "theoradec.h" // Video
+#endif
 #include "zlib.h"
+
+#include "scriptarray.h"
+
+#include "DataMask.h"
+#include "Defines.h"
+#include "HexManager.h"
 #include "IniParser.h"
 #include "MsgFiles.h"
-
-#ifndef FO_D3D
-// Video
-# include <Theora/theoradec.h>
-# pragma comment( lib, "libtheora_static.lib" )
-#endif
+#include "QuestManager.h"
+#include "Types.h"
 
 class FOClient
 {

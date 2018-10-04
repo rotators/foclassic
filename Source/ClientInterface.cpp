@@ -5,7 +5,14 @@
 #include "Core.h"
 
 #include "Client.h"
+#include "ConstantsManager.h"
+#include "CraftManager.h"
+#include "CritterType.h"
+#include "Keyboard.h"
 #include "MsgStr.h"
+#include "ResourceManager.h"
+#include "Script.h"
+#include "SoundManager.h"
 #include "Version.h"
 
 // ==============================================================================================================================

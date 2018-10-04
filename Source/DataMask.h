@@ -1,6 +1,9 @@
 #ifndef __DATA_MASK__
 #define __DATA_MASK__
 
+#include "Defines.h"
+#include "Types.h"
+
 /*class CBitMask
    {
    public:

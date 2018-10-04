@@ -25,7 +25,7 @@ if( WIN32 )
 	set( DX_LIBS d3d9 dxguid dxerr d3dxof glew glu32 )
 endif()
 
-set( GL_LIBS glew glu32 opengl32 )
+set( GL_LIBS glew glu32 opengl32 theora )
 
 # predefine libs used by engine applications
 # NOTES
