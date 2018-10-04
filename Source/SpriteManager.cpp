@@ -1,13 +1,16 @@
 #include <time.h>
 
-#include "CMake.h"
+#include "il.h"
+
+#include "Core.h"
 
 #include "Crypt.h"
-#include "Defines.h"
-#include "GameOptions.h"
-#include "SpriteManager.h"
 #include "F2Palette.h"
+#include "FileManager.h"
+#include "GameOptions.h"
+#include "GraphicLoader.h"
 #include "IniParser.h"
+#include "SpriteManager.h"
 
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;

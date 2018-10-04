@@ -1,8 +1,9 @@
-#include "CMake.h"
+#include "Core.h"
 
 #include "Access.h"
 #include "Client.h"
 #include "Defence.h"
+#include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
 #include "MsgStr.h"
 #include "Thread.h"
 #include "Version.h"

@@ -1,5 +1,6 @@
 #include "Core.h"
 
+#include "GraphicLoader.h"
 #include "Mapper.h"
 #include "MsgStr.h"
 #include "Thread.h"

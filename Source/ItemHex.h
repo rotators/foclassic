@@ -3,7 +3,8 @@
 
 #include "Defines.h"
 #include "Item.h"
-#include "SpriteManager.h"
+#include "Sprites.h"
+#include "Types.h"
 
 #define EFFECT_0_TIME_PROC    (10)
 #define EFFECT_0_SPEED_MUL    (10.0f)

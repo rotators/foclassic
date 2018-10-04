@@ -1,6 +1,7 @@
-#include "CMake.h"
+#include "Core.h"
 
 #include "Crypt.h"
+#include "FileManager.h"
 #include "GameOptions.h"
 #include "SpriteManager.h"
 #include "Types.h"

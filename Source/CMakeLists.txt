@@ -28,11 +28,13 @@ endif()
 set( GL_LIBS glew glu32 opengl32 )
 
 # predefine libs used by engine applications
+# NOTES
+# - il requires jpeg, png
 
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm ogg portaudio )
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} libpng15 )
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm il jpeg ogg png portaudio )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} il jpeg png )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} png )
 
 set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
 set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} )

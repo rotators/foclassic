@@ -1,3 +1,7 @@
+#ifndef FO_D3D
+#include "il.h"
+#endif
+
 #include "CMake.h"
 
 #include "GameOptions.h"

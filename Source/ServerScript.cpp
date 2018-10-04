@@ -1,4 +1,7 @@
-#include "AngelScript/preprocessor.h"
+// Global_LoadImage
+#include "png.h"
+
+#include "preprocessor.h"
 
 #include "Core.h"
 
@@ -12,9 +15,6 @@
 #include "Server.h"
 #include "ScriptPragmas.h"
 #include "Version.h"
-
-// Global_LoadImage
-#include "PNG/png.h"
 
 void* ASDebugMalloc( size_t size )
 {

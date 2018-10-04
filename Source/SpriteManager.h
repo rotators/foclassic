@@ -1,12 +1,10 @@
 #ifndef __SPRITE_MANAGER__
 #define __SPRITE_MANAGER__
 
-#include "Common.h"
-#include "Sprites.h"
-#include "FileManager.h"
-#include "Text.h"
 #include "3dStuff.h"
-#include "GraphicLoader.h"
+#include "GraphicStructures.h"
+#include "Sprites.h"
+#include "Types.h"
 
 // Font flags
 #define FT_NOBREAK                   (0x0001)

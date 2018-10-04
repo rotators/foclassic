@@ -182,14 +182,6 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 # include "FL/gl.h"
 # include "Assimp/aiTypes.h"
 
-# define IL_STATIC_LIB
-# include "IL/il.h"
-# pragma comment( lib, "IL.lib" )
-# pragma comment( lib, "jpeg.lib" )
-# pragma comment( lib, "libpng15.lib" )
-
-
-
 // Todo: Complete shadow maps
 // # define SHADOW_MAP
 

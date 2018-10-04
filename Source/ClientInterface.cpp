@@ -1,7 +1,10 @@
-#include "CMake.h"
+#ifndef FO_D3D
+ #include "il.h"
+#endif
+
+#include "Core.h"
 
 #include "Client.h"
-#include "Defines.h"
 #include "MsgStr.h"
 #include "Version.h"
 
