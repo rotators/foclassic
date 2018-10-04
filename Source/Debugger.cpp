@@ -309,14 +309,10 @@ static uint                       MemoryAllocRecursion;
 // Stack
 # pragma warning( disable : 4748 )
 # include <DbgHelp.h>
-# pragma comment( lib, "Dbghelp.lib" )
 # include "FileManager.h"
 
 // Hooks
-# include "NCodeHook/NCodeHookInstantiation.h"
-# ifdef FO_MSVC
-#  pragma comment( lib, "distorm.lib" )
-# endif
+# include "NCodeHookInstantiation.h"
 
 static HANDLE        ProcessHandle;
 static NCodeHookIA32 CodeHooker;

@@ -11,7 +11,8 @@ set( FOCLASSIC_INCLUDES ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} 
 
 if( WIN32 )
 	set( FOCLASSIC_LIBS ${FOCLASSIC_LIBS}
-		dbghelp psapi # Exception.cpp
+		dbghelp # Debugger.cpp Exception.cpp
+		psapi # Exception.cpp
 	)
 endif()
 
@@ -34,7 +35,7 @@ set( GL_LIBS glew glu32 opengl32 theora )
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
 set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm il jpeg ogg png portaudio )
 set( MAPPER_LIBS     ${FOCLASSIC_LIBS} il jpeg png )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} png )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm png )
 
 set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
 set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} )
@@ -54,8 +55,6 @@ target_sources( ASCompiler
 		Common.h
 		DataFile.cpp
 		DataFile.h
-		Debugger.cpp
-		Debugger.h
 		Exception.cpp
 		Exception.h
 		DummyData.h
@@ -101,8 +100,6 @@ set( CLIENT_SOURCES
 	DataFile.cpp
 	DataFile.h
 	DataMask.h
-	Debugger.cpp
-	Debugger.h
 	Defence.h
 	Exception.cpp
 	Exception.h
@@ -201,8 +198,6 @@ set( MAPPER_SOURCES
 	CritterType.h
 	DataFile.cpp
 	DataFile.h
-	Debugger.cpp
-	Debugger.h
 	Exception.cpp
 	Exception.h
 	F2Palette.h
