@@ -55,9 +55,9 @@ target_include_directories( Shared
 )
 target_link_libraries( Shared
 	PUBLIC
-		sha2 zlib
+		pthread sha2 zlib
 	PRIVATE
-		pthreadVC2 winmm
+		winmm
 )
 
 source_group( " " REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )

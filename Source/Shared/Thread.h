@@ -10,12 +10,7 @@
 
 #if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
 
-# ifdef FO_WINDOWS
-#  define PTW32_STATIC_LIB
-#  include "../PthreadWnd/pthread.h"
-# else
-#  include <pthread.h>
-# endif
+#include "pthread.h"
 
 class Thread
 {
