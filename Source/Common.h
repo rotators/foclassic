@@ -14,8 +14,6 @@
 #include <algorithm>
 #include <math.h>
 #ifdef FO_WINDOWS
-# define WINVER               0x0501   // Windows XP
-# define WIN32_LEAN_AND_MEAN
 # include <Windows.h>
 #else
 # include <errno.h>
@@ -46,17 +44,6 @@ const char* GetLastSocketError();
 # define SD_RECEIVE           SHUT_RD
 # define SD_SEND              SHUT_WR
 # define SD_BOTH              SHUT_RDWR
-#endif
-
-// FLTK
-#if defined (FO_MSVC)
-# if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
-#  pragma comment( lib, "fltk.lib" )
-#  pragma comment( lib, "fltkgl.lib" )
-# endif
-#elif defined (FO_MACOSX)
-# define fl_display           glXGetCurrentDisplay()
-# define fl_window            ( (uint)fl_xid( MainWindow ) )
 #endif
 
 // DLL
@@ -148,22 +135,6 @@ struct ScoreType
 # define COLOR_ARGB( a, r, g, b )      ( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
 # define COLOR_XRGB( r, g, b )         COLOR_ARGB( 0xff, r, g, b )
 
-# include "FL/Fl.H"
-# include "FL/Fl_Window.H"
-# include "FL/x.H"
-
-class FOWindow: public Fl_Window
-{
-public:
-    FOWindow();
-    virtual ~FOWindow() {}
-    virtual int handle( int event );
-    bool   Focused;
-    IntVec KeyboardEvents;
-    StrVec KeyboardEventsText;
-    IntVec MouseEvents;
-};
-extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / MainMapper.cpp
 
 # ifdef FO_D3D
 #  ifndef D3D_DEBUG_INFO
@@ -173,20 +144,10 @@ extern FOWindow* MainWindow; // Initialized and handled in MainClient.cpp / Main
 #  endif
 # endif
 
-# include "glew.h"
-# ifdef FO_WINDOWS
-#  include "wglew.h"
-# else
-#  include "glxew.h"
-# endif
-# include "FL/gl.h"
 # include "Assimp/aiTypes.h"
 
 // Todo: Complete shadow maps
 // # define SHADOW_MAP
-
-# define MODE_WIDTH           (GameOpt.ScreenWidth)
-# define MODE_HEIGHT          (GameOpt.ScreenHeight)
 
 # ifdef FOCLASSIC_CLIENT
 #  include "ResourceClient.h"

@@ -182,7 +182,8 @@
 #define RESPOWN_TIME_NPC             (120)
 #define RESPOWN_TIME_INFINITY        (4 * 24 * 60 * 60000)
 
-
+# define MODE_WIDTH           (GameOpt.ScreenWidth)
+# define MODE_HEIGHT          (GameOpt.ScreenHeight)
 
 // Turn based
 #define COMBAT_TB_END_TURN           (0)

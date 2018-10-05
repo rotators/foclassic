@@ -7,7 +7,7 @@ add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
 set( FOCLASSIC_LIBS AngelScript AngelScriptPreprocessor DatFile Shared )
-set( FOCLASSIC_INCLUDES ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} )
+set( FOCLASSIC_INCLUDES ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Libs )
 
 if( WIN32 )
 	set( FOCLASSIC_LIBS ${FOCLASSIC_LIBS}
@@ -21,21 +21,25 @@ link_directories( "${CMAKE_SOURCE_DIR}/Lib" )
 if( WIN32 )
 	link_directories( "${CMAKE_SOURCE_DIR}/Lib/Dx9/x86/" )
 
-	# DX needs glu32 due to 3dStuff.cpp VecProject() VecUnproject()
-	# as for glew - no idea, probably some #pragma comment _somewhere_
+	# DX needs glew/glu32 due to 3dStuff.cpp VecProject() VecUnproject()
 	set( DX_LIBS d3d9 dxguid dxerr d3dxof glew glu32 )
 endif()
 
-set( GL_LIBS glew glu32 opengl32 theora )
+set( GL_LIBS fltkgl glew glu32 opengl32 theora )
 
 # predefine libs used by engine applications
 # NOTES
 # - il requires jpeg, png
 
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm il jpeg ogg png portaudio )
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} il jpeg png )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm png )
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm fltk il jpeg ogg png portaudio )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} fltk il jpeg png )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
+
+if( WIN32 )
+	set( CLIENT_LIBS ${CLIENT_LIBS} ws2_32 )
+	set( SERVER_LIBS ${SERVER_LIBS} ws2_32 )
+endif()
 
 set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
 set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} )
@@ -69,7 +73,7 @@ target_sources( ASCompiler
 		ScriptPragmas.h
 )
 target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
-target_include_directories( ASCompiler PRIVATE ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} )
+target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 
 ##
@@ -129,6 +133,7 @@ set( CLIENT_SOURCES
 	MsgFiles.h
 	MsgStr.h
 	NetProtocol.h
+	Network.h
 	QuestManager.cpp
 	QuestManager.h
 	ResourceClient.h
@@ -147,6 +152,8 @@ set( CLIENT_SOURCES
 	Sprites.cpp
 	Sprites.h
 	Version.h
+	Window.cpp
+	Window.h
 )
 
 ##
@@ -245,6 +252,8 @@ set( MAPPER_SOURCES
 	Sprites.cpp
 	Sprites.h
 	Version.h
+	Window.cpp
+	Window.h
 )
 
 ##
@@ -333,6 +342,7 @@ target_sources( Server
 		MsgFiles.h
 		MsgStr.h
 		NetProtocol.h
+		Network.h
 		ProtoMap.cpp
 		ProtoMap.h
 		Script.cpp
@@ -374,8 +384,12 @@ foreach( target ${FOCLASSIC_APPS} )
 	# inform sources about engine compilation
 	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
 
-	# prettify windows executables
-	if( MSVC )
+	if( WIN32 )
+		# n/c
+		target_compile_definitions( ${target} PRIVATE WINVER=0x0501 ) # Windows XP
+		target_compile_definitions( ${target} PRIVATE WIN32_LEAN_AND_MEAN )
+
+		# prettify windows executables
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
 

@@ -1,9 +1,12 @@
+#include "FL/Fl.h"
+
 #include "Core.h"
 
 #include "GraphicLoader.h"
 #include "Mapper.h"
 #include "MsgStr.h"
 #include "Thread.h"
+#include "Window.h"
 
 void _PreRestore()
 {

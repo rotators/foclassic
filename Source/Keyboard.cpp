@@ -1,10 +1,12 @@
 #include <strstream>
 
-#include "CMake.h"
+#include "FL/Fl.H"
+
+#include "Core.h"
 
 #include "GameOptions.h"
-#include "Types.h"
 #include "SpriteManager.h"
+#include "Window.h"
 
 static uchar  KeysMap[0x10000] = { 0 };
 static ushort KeysMapRevert[0x100] = { 0 };

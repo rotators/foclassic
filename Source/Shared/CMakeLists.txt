@@ -46,12 +46,18 @@ target_compile_definitions( Shared
 	PUBLIC
 		FOCLASSIC_ENGINE
 )
+if( WIN32 )
+	target_compile_definitions( Shared PRIVATE WINVER=0x0501 ) # Windows XP
+	target_compile_definitions( Shared PRIVATE WIN32_LEAN_AND_MEAN )
+endif()
+
 target_include_directories( Shared
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${AS_DIR}
 	PRIVATE
 		${CMAKE_BINARY_DIR}/include
+		${CMAKE_SOURCE_DIR}/Source/Libs/fltk # Text.cpp -> FL/case.h
 )
 target_link_libraries( Shared
 	PUBLIC

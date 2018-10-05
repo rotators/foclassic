@@ -13,6 +13,7 @@
 #include "HexManager.h"
 #include "IniParser.h"
 #include "MsgFiles.h"
+#include "Network.h"
 #include "QuestManager.h"
 #include "Types.h"
 

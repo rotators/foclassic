@@ -1,3 +1,9 @@
+#include "FL/Fl.H"
+#ifdef FO_WINDOWS
+# include "FL/win32.H"
+#endif
+#include "FL/x.H"
+
 #include "Core.h"
 
 #include "Access.h"
@@ -9,11 +15,13 @@
 #include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
 #include "Keyboard.h"
 #include "MsgStr.h"
+#include "Network.h"
 #include "ResourceManager.h"
 #include "Script.h"
 #include "SoundManager.h"
 #include "Thread.h"
 #include "Version.h"
+#include "Window.h"
 
 // Check buffer for error
 #define CHECK_IN_BUFF_ERROR                          \

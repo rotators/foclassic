@@ -1,8 +1,6 @@
 #include <stdarg.h>
 
-#include <strstream>
-
-#include "../FL/case.h"
+#include "FL/case.h"
 
 #include "Core.h"
 

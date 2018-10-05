@@ -1,3 +1,6 @@
+#include "glew.h"
+#include "GL/glu.h"
+
 #include "Core.h"
 
 #include "3dStuff.h"

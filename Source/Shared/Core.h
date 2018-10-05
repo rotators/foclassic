@@ -8,9 +8,7 @@
 #include "Types.h"
 
 #ifdef FO_WINDOWS
-# define WINVER    0x0501 // Windows XP
-# define WIN32_LEAN_AND_MEAN
-# include <Windows.h>
+# include <windows.h>
 #endif
 
 /***** Externs *****/

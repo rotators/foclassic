@@ -1,5 +1,10 @@
 #include <time.h>
 
+#ifndef FO_D3D
+# include "glew.h"
+# include "FL/gl.h"
+#endif
+#include "FL/x.H"
 #include "il.h"
 
 #include "Core.h"
@@ -11,6 +16,7 @@
 #include "GraphicLoader.h"
 #include "IniParser.h"
 #include "SpriteManager.h"
+#include "Window.h"
 
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;

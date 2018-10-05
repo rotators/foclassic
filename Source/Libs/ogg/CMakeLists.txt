@@ -1,5 +1,4 @@
 add_library( ogg INTERFACE )
-target_include_directories( ogg INTERFACE ${LIB_DIR} ) #include "ogg/file.h"
 
 if( WIN32 )
 	target_link_libraries( ogg

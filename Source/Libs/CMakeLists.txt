@@ -1,9 +1,8 @@
 message( STATUS "Configuring libraries..." )
 
-set( LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-
 add_subdirectory( acm )
 add_subdirectory( distorm )
+add_subdirectory( fltk )
 add_subdirectory( glew )
 add_subdirectory( il )
 add_subdirectory( jpeg )

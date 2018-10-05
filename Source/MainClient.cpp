@@ -3,13 +3,16 @@
 # include <signal.h>
 #endif
 
-#include "CMake.h"
+#include "FL/Fl.H"
+
+#include "Core.h"
 
 #include "Client.h"
 #include "Exception.h"
 #include "Keyboard.h"
 #include "Thread.h"
 #include "Version.h"
+#include "Window.h"
 
 FOWindow* MainWindow = NULL;
 FOClient* FOEngine = NULL;

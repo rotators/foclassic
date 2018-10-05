@@ -1,5 +1,5 @@
 #ifndef FO_D3D
-#include "il.h"
+# include "il.h"
 #endif
 
 #include "CMake.h"

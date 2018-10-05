@@ -1,11 +1,14 @@
 #include <locale.h>
 
+#include "FL/Fl.H"
+
 #include "Core.h"
 
 #include "Exception.h"
 #include "Mapper.h"
 #include "Thread.h"
 #include "Version.h"
+#include "Window.h"
 
 FOWindow* MainWindow = NULL;
 FOMapper* Mapper = NULL;
