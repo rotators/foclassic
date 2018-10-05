@@ -9,7 +9,7 @@ Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc
 
 - changed generated binary files signatures, files created by FOnline are explicitly ignored
     - results in enforcing clean state on all servers willing to use applications in this project; migrating from r412 keeping saves, while technically possible, is not adviced, supported, or good idea at all
-    - see [binary files documentation](https://https://rotators.fodev.net/foclassic/docs/BinaryFiles.md) for detailed description
+    - see [binary files documentation](https://rotators.fodev.net/foclassic/docs/BinaryFiles.md) for detailed description
 - removed StlPort support
 - security fix for registration parameters
 - hidden trade crash fix
