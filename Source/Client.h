@@ -223,23 +223,8 @@ public:
     const char* FmtGameText( uint str_num, ... );
     const char* FmtCombatText( uint str_num, ... );
 
-    #define DESC_INVENTORY_MAIN       (0)
-    #define DESC_INVENTORY_SPECIAL    (1)
-    #define DESC_INVENTORY_STATS      (2)
-    #define DESC_INVENTORY_RESIST     (3)
     const char* FmtGenericDesc( int desc_type, int& ox, int& oy );
-
-    #define CRITTER_ONLY_NAME         (0)
-    #define CRITTER_LOOK_SHORT        (1)
-    #define CRITTER_LOOK_FULL         (2)
     const char* FmtCritLook( CritterCl* cr, int look_type );
-
-    #define ITEM_LOOK_DEFAULT         (0)
-    #define ITEM_LOOK_ONLY_NAME       (1)
-    #define ITEM_LOOK_MAP             (2)
-    #define ITEM_LOOK_BARTER          (3)
-    #define ITEM_LOOK_INVENTORY       (4)
-    #define ITEM_LOOK_WM_CAR          (5)
     const char* FmtItemLook( Item* item, int look_type );
 
     // Intellect text
@@ -250,10 +235,10 @@ public:
     auto FindIntellectWord( const char* word, PCharPairVec& text, Randomizer& rnd )->PCharPairVec::iterator;
     void FmtTextIntellect( char* str, ushort intellect );
 
-    #define SMTH_NONE                 (0)
-    #define SMTH_CRITTER              (1)
-    #define SMTH_ITEM                 (3)
-    #define SMTH_CONT_ITEM            (4)
+    #define SMTH_NONE         (0)
+    #define SMTH_CRITTER      (1)
+    #define SMTH_ITEM         (3)
+    #define SMTH_CONT_ITEM    (4)
     class SmthSelected
     {
 private:
@@ -395,10 +380,10 @@ public:
     };
     typedef vector<IfaceAnim*> IfaceAnimVec;
 
-    #define ANIMRUN_TO_END      (0x0001)
-    #define ANIMRUN_FROM_END    (0x0002)
-    #define ANIMRUN_CYCLE       (0x0004)
-    #define ANIMRUN_STOP        (0x0008)
+    #define ANIMRUN_TO_END            (0x0001)
+    #define ANIMRUN_FROM_END          (0x0002)
+    #define ANIMRUN_CYCLE             (0x0004)
+    #define ANIMRUN_STOP              (0x0008)
     #define ANIMRUN_SET_FRM( frm )    ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
@@ -1748,17 +1733,6 @@ public:
 /*                                                                      */
 /************************************************************************/
 };
-
-// Fonts
-#define FONT_FO                        (0)
-#define FONT_NUM                       (1)
-#define FONT_BIG_NUM                   (2)
-#define FONT_SAND_NUM                  (3)
-#define FONT_SPECIAL                   (4)
-#define FONT_DEFAULT                   (5)
-#define FONT_THIN                      (6)
-#define FONT_FAT                       (7)
-#define FONT_BIG                       (8)
 
 // Screens
 #define SCREEN_NONE                    (0)

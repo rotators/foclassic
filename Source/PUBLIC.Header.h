@@ -215,7 +215,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
     const char* (ScriptGetLibraryOptions)();       \
     const char* (ScriptGetLibraryVersion)();       \
     EXPORT void DllMainEx( bool isCompiler )
-// FOCLASSIC_DLL_ENTRY
 
 #define STATIC_ASSERT( a )               static_assert( a, # a )
 #define BIN__N( x )                      (x) | x >> 3 | x >> 6 | x >> 9
@@ -225,87 +224,87 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
 #define FLAG( x, y )                     ( ( (x) & (y) ) != 0 )
 #define CLAMP( x, low, high )            ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
-#define SQRT3T2_FLOAT                (3.4641016151f)
-#define SQRT3_FLOAT                  (1.732050807568877f)
-#define RAD2DEG                      (57.29577951f)
+#define SQRT3T2_FLOAT                    (3.4641016151f)
+#define SQRT3_FLOAT                      (1.732050807568877f)
+#define RAD2DEG                          (57.29577951f)
 #define CONVERT_GRAMM( x )               ( (x) * 453 )
 #define UTF8_BUF_SIZE( count )           ( (count) * 4 )
 
-#define LEXEMS_SIZE                  (128)
-#define MAX_HOLO_INFO                (250)
-#define SCORES_MAX                   (50)
-#define MAX_NPC_BAGS_PACKS           (20)
-#define MAX_ENEMY_STACK              (30)
-#define MAX_NPC_BAGS                 (50)
-#define MAX_STORED_LOCATIONS         (1000)
-#define GM_ZONES_FOG_SIZE            (2500)
-#define MAX_SCRIPT_NAME              (64)
-#define MAPOBJ_SCRIPT_NAME           (25)
-#define MAPOBJ_CRITTER_PARAMS        (40)
-#define MAX_PARAMETERS_ARRAYS        (100)
-#define MAX_NAME                     (30)
-#define PASS_HASH_SIZE               (32)
-#define MAX_STORED_IP                (20)
-#define MAX_HEX_OFFSET               (50)
-#define AP_DIVIDER                   (100)
-#define MAX_CRIT_TYPES               (1000)
-#define EFFECT_TEXTURES              (10)
-#define EFFECT_SCRIPT_VALUES         (10)
-#define CRITTER_USER_DATA_SIZE       (400)
+#define LEXEMS_SIZE                      (128)
+#define MAX_HOLO_INFO                    (250)
+#define SCORES_MAX                       (50)
+#define MAX_NPC_BAGS_PACKS               (20)
+#define MAX_ENEMY_STACK                  (30)
+#define MAX_NPC_BAGS                     (50)
+#define MAX_STORED_LOCATIONS             (1000)
+#define GM_ZONES_FOG_SIZE                (2500)
+#define MAX_SCRIPT_NAME                  (64)
+#define MAPOBJ_SCRIPT_NAME               (25)
+#define MAPOBJ_CRITTER_PARAMS            (40)
+#define MAX_PARAMETERS_ARRAYS            (100)
+#define MAX_NAME                         (30)
+#define PASS_HASH_SIZE                   (32)
+#define MAX_STORED_IP                    (20)
+#define MAX_HEX_OFFSET                   (50)
+#define AP_DIVIDER                       (100)
+#define MAX_CRIT_TYPES                   (1000)
+#define EFFECT_TEXTURES                  (10)
+#define EFFECT_SCRIPT_VALUES             (10)
+#define CRITTER_USER_DATA_SIZE           (400)
 
 // Items
-#define PROTO_ITEM_USER_DATA_SIZE    (500)
-#define ITEM_MAX_BLOCK_LINES         (50)
-#define ITEM_MAX_CHILDS              (5)
-#define ITEM_MAX_CHILD_LINES         (6)
-#define ITEM_MAX_SCRIPT_VALUES       (10)
-#define USE_PRIMARY                  (0)
-#define USE_SECONDARY                (1)
-#define USE_THIRD                    (2)
-#define USE_RELOAD                   (3)
-#define USE_USE                      (4)
-#define MAX_USES                     (3)
-#define USE_NONE                     (15)
+#define PROTO_ITEM_USER_DATA_SIZE        (500)
+#define ITEM_MAX_BLOCK_LINES             (50)
+#define ITEM_MAX_CHILDS                  (5)
+#define ITEM_MAX_CHILD_LINES             (6)
+#define ITEM_MAX_SCRIPT_VALUES           (10)
+#define USE_PRIMARY                      (0)
+#define USE_SECONDARY                    (1)
+#define USE_THIRD                        (2)
+#define USE_RELOAD                       (3)
+#define USE_USE                          (4)
+#define MAX_USES                         (3)
+#define USE_NONE                         (15)
 
 // Parameters
 #define SKILL_OFFSET( skill )            ( (skill) + (FOClassic->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
 #define PERK_OFFSET( perk )              ( (perk)  + (FOClassic->AbsoluteOffsets ? 0 : PERK_BEGIN) )
-#define TB_BATTLE_TIMEOUT            (100000000)
+#define TB_BATTLE_TIMEOUT                (100000000)
 #define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
-#define SKILL_BEGIN                  (FOClassic->SkillBegin)
-#define SKILL_END                    (FOClassic->SkillEnd)
-#define TIMEOUT_BEGIN                (FOClassic->TimeoutBegin)
-#define TIMEOUT_END                  (FOClassic->TimeoutEnd)
-#define KILL_BEGIN                   (FOClassic->KillBegin)
-#define KILL_END                     (FOClassic->KillEnd)
-#define PERK_BEGIN                   (FOClassic->PerkBegin)
-#define PERK_END                     (FOClassic->PerkEnd)
-#define ADDICTION_BEGIN              (FOClassic->AddictionBegin)
-#define ADDICTION_END                (FOClassic->AddictionEnd)
-#define KARMA_BEGIN                  (FOClassic->KarmaBegin)
-#define KARMA_END                    (FOClassic->KarmaEnd)
-#define DAMAGE_BEGIN                 (FOClassic->DamageBegin)
-#define DAMAGE_END                   (FOClassic->DamageEnd)
-#define TRAIT_BEGIN                  (FOClassic->TraitBegin)
-#define TRAIT_END                    (FOClassic->TraitEnd)
-#define REPUTATION_BEGIN             (FOClassic->ReputationBegin)
-#define REPUTATION_END               (FOClassic->ReputationEnd)
+#define SKILL_BEGIN                      (FOClassic->SkillBegin)
+#define SKILL_END                        (FOClassic->SkillEnd)
+#define TIMEOUT_BEGIN                    (FOClassic->TimeoutBegin)
+#define TIMEOUT_END                      (FOClassic->TimeoutEnd)
+#define KILL_BEGIN                       (FOClassic->KillBegin)
+#define KILL_END                         (FOClassic->KillEnd)
+#define PERK_BEGIN                       (FOClassic->PerkBegin)
+#define PERK_END                         (FOClassic->PerkEnd)
+#define ADDICTION_BEGIN                  (FOClassic->AddictionBegin)
+#define ADDICTION_END                    (FOClassic->AddictionEnd)
+#define KARMA_BEGIN                      (FOClassic->KarmaBegin)
+#define KARMA_END                        (FOClassic->KarmaEnd)
+#define DAMAGE_BEGIN                     (FOClassic->DamageBegin)
+#define DAMAGE_END                       (FOClassic->DamageEnd)
+#define TRAIT_BEGIN                      (FOClassic->TraitBegin)
+#define TRAIT_END                        (FOClassic->TraitEnd)
+#define REPUTATION_BEGIN                 (FOClassic->ReputationBegin)
+#define REPUTATION_END                   (FOClassic->ReputationEnd)
 
 // Events
-#define MAP_LOOP_FUNC_MAX            (5)
-#define MAP_MAX_DATA                 (100)
+#define MAP_LOOP_FUNC_MAX                (5)
+#define MAP_MAX_DATA                     (100)
 
 // Sprites cutting
-#define SPRITE_CUT_HORIZONTAL        (1)
-#define SPRITE_CUT_VERTICAL          (2)
+#define SPRITE_CUT_HORIZONTAL            (1)
+#define SPRITE_CUT_VERTICAL              (2)
 
 // GameOptions::IndicatorType
-#define INDICATOR_LINES              (0)
-#define INDICATOR_NUMBERS            (1)
-#define INDICATOR_BOTH               (2)
+#define INDICATOR_LINES                  (0)
+#define INDICATOR_NUMBERS                (1)
+#define INDICATOR_BOTH                   (2)
 // GameOptions::Zoom
-#define MIN_ZOOM                     (0.2f)
-#define MAX_ZOOM                     (10.0f)
+#define MIN_ZOOM                         (0.2f)
+#define MAX_ZOOM                         (10.0f)
 
 struct GameOptions
 {
@@ -795,7 +794,7 @@ struct ProtoItem
         if( IsContainer() ) return Container_Changeble;
         return false;
     }
-    bool IsCanPickUp() { return FLAG( Flags, ITEM_CAN_PICKUP ); }
+    bool IsCanPickUp() { return FLAG( Flags, ITEM_FLAG_CAN_PICKUP ); }
 };
 
 struct TemplateVar
@@ -1020,27 +1019,27 @@ struct Item
     uint8  GetType()     const { return Proto->Type; }
     bool   IsStackable() const { return Proto->Stackable; }
 
-    bool IsPassed()           const { return FLAG( Data.Flags, ITEM_NO_BLOCK ) && FLAG( Data.Flags, ITEM_SHOOT_THRU ); }
-    bool IsRaked()            const { return FLAG( Data.Flags, ITEM_SHOOT_THRU ); }
-    bool IsFlat()             const { return FLAG( Data.Flags, ITEM_FLAT ); }
-    bool IsHidden()           const { return FLAG( Data.Flags, ITEM_HIDDEN ); }
-    bool IsCanTalk()          const { return FLAG( Data.Flags, ITEM_CAN_TALK ); }
-    bool IsCanUse()           const { return FLAG( Data.Flags, ITEM_CAN_USE ); }
-    bool IsCanUseOnSmth()     const { return FLAG( Data.Flags, ITEM_CAN_USE_ON_SMTH ); }
-    bool IsHasTimer()         const { return FLAG( Data.Flags, ITEM_HAS_TIMER ); }
-    bool IsBadItem()          const { return FLAG( Data.Flags, ITEM_BAD_ITEM ); }
-    bool IsTwoHands()         const { return FLAG( Data.Flags, ITEM_TWO_HANDS ); }
-    bool IsBigGun()           const { return FLAG( Data.Flags, ITEM_BIG_GUN ); }
-    bool IsNoHighlight()      const { return FLAG( Data.Flags, ITEM_NO_HIGHLIGHT ); }
-    bool IsShowAnim()         const { return FLAG( Data.Flags, ITEM_SHOW_ANIM ); }
-    bool IsShowAnimExt()      const { return FLAG( Data.Flags, ITEM_SHOW_ANIM_EXT ); }
-    bool IsLightThru()        const { return FLAG( Data.Flags, ITEM_LIGHT_THRU ); }
-    bool IsAlwaysView()       const { return FLAG( Data.Flags, ITEM_ALWAYS_VIEW ); }
-    bool IsGeck()             const { return FLAG( Data.Flags, ITEM_GECK ); }
-    bool IsNoLightInfluence() const { return FLAG( Data.Flags, ITEM_NO_LIGHT_INFLUENCE ); }
-    bool IsNoLoot()           const { return FLAG( Data.Flags, ITEM_NO_LOOT ); }
-    bool IsNoSteal()          const { return FLAG( Data.Flags, ITEM_NO_STEAL ); }
-    bool IsCanPickUp()        const { return FLAG( Data.Flags, ITEM_CAN_PICKUP ); }
+    bool IsPassed()           const { return FLAG( Data.Flags, ITEM_FLAG_NO_BLOCK ) && FLAG( Data.Flags, ITEM_FLAG_SHOOT_THRU ); }
+    bool IsRaked()            const { return FLAG( Data.Flags, ITEM_FLAG_SHOOT_THRU ); }
+    bool IsFlat()             const { return FLAG( Data.Flags, ITEM_FLAG_FLAT ); }
+    bool IsHidden()           const { return FLAG( Data.Flags, ITEM_FLAG_HIDDEN ); }
+    bool IsCanTalk()          const { return FLAG( Data.Flags, ITEM_FLAG_CAN_TALK ); }
+    bool IsCanUse()           const { return FLAG( Data.Flags, ITEM_FLAG_CAN_USE ); }
+    bool IsCanUseOnSmth()     const { return FLAG( Data.Flags, ITEM_FLAG_CAN_USE_ON_SMTH ); }
+    bool IsHasTimer()         const { return FLAG( Data.Flags, ITEM_FLAG_HAS_TIMER ); }
+    bool IsBadItem()          const { return FLAG( Data.Flags, ITEM_FLAG_BAD_ITEM ); }
+    bool IsTwoHands()         const { return FLAG( Data.Flags, ITEM_FLAG_TWO_HANDS ); }
+    bool IsBigGun()           const { return FLAG( Data.Flags, ITEM_FLAG_BIG_GUN ); }
+    bool IsNoHighlight()      const { return FLAG( Data.Flags, ITEM_FLAG_NO_HIGHLIGHT ); }
+    bool IsShowAnim()         const { return FLAG( Data.Flags, ITEM_FLAG_SHOW_ANIM ); }
+    bool IsShowAnimExt()      const { return FLAG( Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT ); }
+    bool IsLightThru()        const { return FLAG( Data.Flags, ITEM_FLAG_LIGHT_THRU ); }
+    bool IsAlwaysView()       const { return FLAG( Data.Flags, ITEM_FLAG_ALWAYS_VIEW ); }
+    bool IsGeck()             const { return FLAG( Data.Flags, ITEM_FLAG_GECK ); }
+    bool IsNoLightInfluence() const { return FLAG( Data.Flags, ITEM_FLAG_NO_LIGHT_INFLUENCE ); }
+    bool IsNoLoot()           const { return FLAG( Data.Flags, ITEM_FLAG_NO_LOOT ); }
+    bool IsNoSteal()          const { return FLAG( Data.Flags, ITEM_FLAG_NO_STEAL ); }
+    bool IsCanPickUp()        const { return FLAG( Data.Flags, ITEM_FLAG_CAN_PICKUP ); }
 
     bool IsDeteriorable()   const { return Proto->Deteriorable; }
     bool IsBroken()         const { return FLAG( Data.BrokenFlags, BI_BROKEN ); }
@@ -1103,12 +1102,12 @@ struct Item
     bool IsMisc() const { return Proto->IsMisc(); }
 
     // Colorize
-    bool  IsColorize() const { return FLAG( Data.Flags, ITEM_COLORIZE ); }
+    bool  IsColorize() const { return FLAG( Data.Flags, ITEM_FLAG_COLORIZE ); }
     uint  GetColor()   const { return (Data.LightColor ? Data.LightColor : Proto->LightColor) & 0xFFFFFF; }
     uint8 GetAlpha()   const { return (Data.LightColor ? Data.LightColor : Proto->LightColor) >> 24; }
 
     // Light
-    bool IsLight()           const { return FLAG( Data.Flags, ITEM_LIGHT ); }
+    bool IsLight()           const { return FLAG( Data.Flags, ITEM_FLAG_LIGHT ); }
     int  LightGetIntensity() const { return Data.LightIntensity ? Data.LightIntensity : Proto->LightIntensity; }
     int  LightGetDistance()  const { return Data.LightDistance ? Data.LightDistance : Proto->LightDistance; }
     int  LightGetFlags()     const { return Data.LightFlags ? Data.LightFlags : Proto->LightFlags; }
@@ -1118,7 +1117,7 @@ struct Item
     bool IsCar() const { return Proto->IsCar(); }
 
     // Trap
-    bool IsTrap()       const { return FLAG( Data.Flags, ITEM_TRAP ); }
+    bool IsTrap()       const { return FLAG( Data.Flags, ITEM_FLAG_TRAP ); }
     int  TrapGetValue() const { return Data.TrapValue; }
 };
 

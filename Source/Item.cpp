@@ -74,13 +74,13 @@ void Item::Init( ProtoItem* proto )
             Data.AmmoPid = Proto->Weapon_DefaultAmmoPid;
             break;
         case ITEM_TYPE_DOOR:
-            SETFLAG( Data.Flags, ITEM_GAG );
+            SETFLAG( Data.Flags, ITEM_FLAG_GAG );
             if( !Proto->Door_NoBlockMove )
-                UNSETFLAG( Data.Flags, ITEM_NO_BLOCK );
+                UNSETFLAG( Data.Flags, ITEM_FLAG_NO_BLOCK );
             if( !Proto->Door_NoBlockShoot )
-                UNSETFLAG( Data.Flags, ITEM_SHOOT_THRU );
+                UNSETFLAG( Data.Flags, ITEM_FLAG_SHOOT_THRU );
             if( !Proto->Door_NoBlockLight )
-                UNSETFLAG( Data.Flags, ITEM_LIGHT_THRU );
+                UNSETFLAG( Data.Flags, ITEM_FLAG_LIGHT_THRU );
             Data.LockerCondition = Proto->Locker_Condition;
             break;
         case  ITEM_TYPE_CONTAINER:
@@ -694,9 +694,9 @@ uint ProtoItem::GetCurSprId()
         return 0;
 
     uint beg = 0, end = 0;
-    if( FLAG( Flags, ITEM_SHOW_ANIM ) )
+    if( FLAG( Flags, ITEM_FLAG_SHOW_ANIM ) )
         end = anim->CntFrm - 1;
-    if( FLAG( Flags, ITEM_SHOW_ANIM_EXT ) )
+    if( FLAG( Flags, ITEM_FLAG_SHOW_ANIM_EXT ) )
     {
         beg = AnimStay[0];
         end = AnimStay[1];

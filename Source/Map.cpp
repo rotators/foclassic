@@ -295,11 +295,11 @@ bool Map::Generate()
         if( item->IsDoor() && FLAG( item->Data.LockerCondition, LOCKER_ISOPEN ) )
         {
             if( !item->Proto->Door_NoBlockMove )
-                SETFLAG( item->Data.Flags, ITEM_NO_BLOCK );
+                SETFLAG( item->Data.Flags, ITEM_FLAG_NO_BLOCK );
             if( !item->Proto->Door_NoBlockShoot )
-                SETFLAG( item->Data.Flags, ITEM_SHOOT_THRU );
+                SETFLAG( item->Data.Flags, ITEM_FLAG_SHOOT_THRU );
             if( !item->Proto->Door_NoBlockLight )
-                SETFLAG( item->Data.Flags, ITEM_LIGHT_THRU );
+                SETFLAG( item->Data.Flags, ITEM_FLAG_LIGHT_THRU );
         }
 
         // Mapper additional parameters
@@ -307,8 +307,8 @@ bool Map::Generate()
             item->Data.Info = mobj.MItem.InfoOffset;
         if( mobj.MItem.AnimStayBegin || mobj.MItem.AnimStayEnd )
         {
-            SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM );
-            SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
+            SETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM );
+            SETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT );
             item->Data.AnimShow[0] = mobj.MItem.AnimStayBegin;
             item->Data.AnimShow[1] = mobj.MItem.AnimStayEnd;
             item->Data.AnimStay[0] = mobj.MItem.AnimStayBegin;
@@ -1575,7 +1575,7 @@ void Map::GetCritterCar( Critter* cr, Item* car )
 
     // Move car from map to inventory
     EraseItem( car->GetId() );
-    SETFLAG( car->Data.Flags, ITEM_HIDDEN );
+    SETFLAG( car->Data.Flags, ITEM_FLAG_HIDDEN );
     cr->AddItem( car, false );
 
     // Move car bags from map to inventory
@@ -1586,7 +1586,7 @@ void Map::GetCritterCar( Critter* cr, Item* car )
             continue;
 
         EraseItem( child->GetId() );
-        SETFLAG( child->Data.Flags, ITEM_HIDDEN );
+        SETFLAG( child->Data.Flags, ITEM_FLAG_HIDDEN );
         cr->AddItem( child, false );
     }
 }
@@ -1602,7 +1602,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
 
     // Move car from inventory to map
     cr->EraseItem( car, false );
-    UNSETFLAG( car->Data.Flags, ITEM_HIDDEN );
+    UNSETFLAG( car->Data.Flags, ITEM_FLAG_HIDDEN );
     AddItem( car, hx, hy );
 
     // Move car bags from inventory to map
@@ -1623,7 +1623,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
                                   );
 
         cr->EraseItem( child, false );
-        UNSETFLAG( child->Data.Flags, ITEM_HIDDEN );
+        UNSETFLAG( child->Data.Flags, ITEM_FLAG_HIDDEN );
         AddItem( child, child_hx, child_hy );
     }
 }
@@ -1644,7 +1644,7 @@ bool Map::IsPlaceForItem( ushort hx, ushort hy, ProtoItem* proto_item )
 
 void Map::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
 {
-    bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
+    bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
                               SetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
                               if( !raked )
@@ -1654,7 +1654,7 @@ void Map::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
 
 void Map::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
 {
-    bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
+    bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
                               UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
                               if( !raked )

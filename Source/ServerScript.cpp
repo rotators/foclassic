@@ -122,7 +122,7 @@ bool FOServer::InitScriptSystem()
     // Bind vars and functions, look bind.h
     asIScriptEngine* engine = Script::GetEngine();
     #define BIND_SERVER
-    #define BIND_CLASS    FOServer::SScriptFunc::
+    #define BIND_CLASS          FOServer::SScriptFunc::
     #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
     #include "ScriptBind.h"
 
@@ -261,7 +261,7 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 #undef BIND_CLASS
 #undef BIND_ASSERT
 #define BIND_CLIENT
-#define BIND_CLASS    BindClass::
+#define BIND_CLASS          BindClass::
 #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
 
 namespace ClientBind
@@ -1002,16 +1002,16 @@ bool FOServer::SScriptFunc::Item_LockerOpen( Item* item )
         bool recache_shoot = false;
         if( !item->Proto->Door_NoBlockMove )
         {
-            SETFLAG( item->Data.Flags, ITEM_NO_BLOCK );
+            SETFLAG( item->Data.Flags, ITEM_FLAG_NO_BLOCK );
             recache_block = true;
         }
         if( !item->Proto->Door_NoBlockShoot )
         {
-            SETFLAG( item->Data.Flags, ITEM_SHOOT_THRU );
+            SETFLAG( item->Data.Flags, ITEM_FLAG_SHOOT_THRU );
             recache_shoot = true;
         }
         if( !item->Proto->Door_NoBlockLight )
-            SETFLAG( item->Data.Flags, ITEM_LIGHT_THRU );
+            SETFLAG( item->Data.Flags, ITEM_FLAG_LIGHT_THRU );
 
         if( item->Accessory == ITEM_ACCESSORY_HEX && (recache_block || recache_shoot) )
         {
@@ -1048,16 +1048,16 @@ bool FOServer::SScriptFunc::Item_LockerClose( Item* item )
         bool recache_shoot = false;
         if( !item->Proto->Door_NoBlockMove )
         {
-            UNSETFLAG( item->Data.Flags, ITEM_NO_BLOCK );
+            UNSETFLAG( item->Data.Flags, ITEM_FLAG_NO_BLOCK );
             recache_block = true;
         }
         if( !item->Proto->Door_NoBlockShoot )
         {
-            UNSETFLAG( item->Data.Flags, ITEM_SHOOT_THRU );
+            UNSETFLAG( item->Data.Flags, ITEM_FLAG_SHOOT_THRU );
             recache_shoot = true;
         }
         if( !item->Proto->Door_NoBlockLight )
-            UNSETFLAG( item->Data.Flags, ITEM_LIGHT_THRU );
+            UNSETFLAG( item->Data.Flags, ITEM_FLAG_LIGHT_THRU );
 
         if( item->Accessory == ITEM_ACCESSORY_HEX && (recache_block || recache_shoot) )
         {
@@ -1163,7 +1163,7 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
     Map* map = NULL;
 
     // Recalculate view for this item
-    if( (old & (ITEM_HIDDEN | ITEM_ALWAYS_VIEW | ITEM_TRAP) ) != (value & (ITEM_HIDDEN | ITEM_ALWAYS_VIEW | ITEM_TRAP) ) )
+    if( (old & (ITEM_FLAG_HIDDEN | ITEM_FLAG_ALWAYS_VIEW | ITEM_FLAG_TRAP) ) != (value & (ITEM_FLAG_HIDDEN | ITEM_FLAG_ALWAYS_VIEW | ITEM_FLAG_TRAP) ) )
     {
         if( item->Accessory == ITEM_ACCESSORY_HEX )
         {
@@ -1172,12 +1172,12 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
             if( map )
                 map->ChangeViewItem( item );
         }
-        else if( item->Accessory == ITEM_ACCESSORY_CRITTER && (old & ITEM_HIDDEN) != (value & ITEM_HIDDEN) )
+        else if( item->Accessory == ITEM_ACCESSORY_CRITTER && (old & ITEM_FLAG_HIDDEN) != (value & ITEM_FLAG_HIDDEN) )
         {
             Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, false );
             if( cr )
             {
-                if( FLAG( value, ITEM_HIDDEN ) )
+                if( FLAG( value, ITEM_FLAG_HIDDEN ) )
                     cr->Send_EraseItem( item );
                 else
                     cr->Send_AddItem( item );
@@ -1187,7 +1187,7 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
     }
 
     // Recache move and shoot blockers
-    if( (old & (ITEM_NO_BLOCK | ITEM_SHOOT_THRU | ITEM_GAG) ) != (value & (ITEM_NO_BLOCK | ITEM_SHOOT_THRU | ITEM_GAG) ) && item->Accessory == ITEM_ACCESSORY_HEX )
+    if( (old & (ITEM_FLAG_NO_BLOCK | ITEM_FLAG_SHOOT_THRU | ITEM_FLAG_GAG) ) != (value & (ITEM_FLAG_NO_BLOCK | ITEM_FLAG_SHOOT_THRU | ITEM_FLAG_GAG) ) && item->Accessory == ITEM_ACCESSORY_HEX )
     {
         if( !map )
             map = MapMngr.GetMap( item->AccHex.MapId );
@@ -1196,15 +1196,15 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
             bool recache_block = false;
             bool recache_shoot = false;
 
-            if( FLAG( value, ITEM_NO_BLOCK ) )
+            if( FLAG( value, ITEM_FLAG_NO_BLOCK ) )
                 recache_block = true;
             else
                 map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_BLOCK_ITEM );
-            if( FLAG( value, ITEM_SHOOT_THRU ) )
+            if( FLAG( value, ITEM_FLAG_SHOOT_THRU ) )
                 recache_shoot = true;
             else
                 map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_NRAKE_ITEM );
-            if( !FLAG( value, ITEM_GAG ) )
+            if( !FLAG( value, ITEM_FLAG_GAG ) )
                 recache_block = true;
             else
                 map->SetHexFlag( item->AccHex.HexX, item->AccHex.HexY, HEX_FLAG_GAG_ITEM );
@@ -1219,18 +1219,18 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
     }
 
     // Recache geck value
-    if( (old & ITEM_GECK) != (value & ITEM_GECK) && item->Accessory == ITEM_ACCESSORY_HEX )
+    if( (old & ITEM_FLAG_GECK) != (value & ITEM_FLAG_GECK) && item->Accessory == ITEM_ACCESSORY_HEX )
     {
         if( !map )
             map = MapMngr.GetMap( item->AccHex.MapId );
         if( map )
-            map->GetLocation( false )->GeckCount += (FLAG( value, ITEM_GECK ) ? 1 : -1);
+            map->GetLocation( false )->GeckCount += (FLAG( value, ITEM_FLAG_GECK ) ? 1 : -1);
     }
 
     // Process radio flag
-    if( (old & ITEM_RADIO) != (value & ITEM_RADIO) )
+    if( (old & ITEM_FLAG_RADIO) != (value & ITEM_FLAG_RADIO) )
     {
-        ItemMngr.RadioRegister( item, FLAG( value, ITEM_RADIO ) );
+        ItemMngr.RadioRegister( item, FLAG( value, ITEM_FLAG_RADIO ) );
     }
 
     // Update data

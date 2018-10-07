@@ -10,7 +10,7 @@
 
 #if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
 
-#include "pthread.h"
+# include "pthread.h"
 
 class Thread
 {

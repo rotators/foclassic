@@ -182,7 +182,7 @@ public:
         if( IsContainer() ) return Container_Changeble;
         return false;
     }
-    bool IsCanPickUp() { return FLAG( Flags, ITEM_CAN_PICKUP ); }
+    bool IsCanPickUp() { return FLAG( Flags, ITEM_FLAG_CAN_PICKUP ); }
 
     bool operator==( const ushort& _r ) { return ProtoId == _r;  }
     ProtoItem() { Clear(); }
@@ -351,28 +351,28 @@ public:
     bool IsStackable() { return Proto->Stackable; }
     bool IsBlocks()    { return Proto->IsBlocks(); }
 
-    bool IsPassed()           { return FLAG( Data.Flags, ITEM_NO_BLOCK ) && FLAG( Data.Flags, ITEM_SHOOT_THRU ); }
-    bool IsRaked()            { return FLAG( Data.Flags, ITEM_SHOOT_THRU ); }
-    bool IsFlat()             { return FLAG( Data.Flags, ITEM_FLAT ); }
-    bool IsHidden()           { return FLAG( Data.Flags, ITEM_HIDDEN ); }
-    bool IsCanPickUp()        { return FLAG( Data.Flags, ITEM_CAN_PICKUP ); }
-    bool IsCanTalk()          { return FLAG( Data.Flags, ITEM_CAN_TALK ); }
-    bool IsCanUse()           { return FLAG( Data.Flags, ITEM_CAN_USE ); }
-    bool IsCanUseOnSmth()     { return FLAG( Data.Flags, ITEM_CAN_USE_ON_SMTH ); }
-    bool IsHasTimer()         { return FLAG( Data.Flags, ITEM_HAS_TIMER ); }
-    bool IsBadItem()          { return FLAG( Data.Flags, ITEM_BAD_ITEM ); }
-    bool IsTwoHands()         { return FLAG( Data.Flags, ITEM_TWO_HANDS ); }
-    bool IsBigGun()           { return FLAG( Data.Flags, ITEM_BIG_GUN ); }
-    bool IsNoHighlight()      { return FLAG( Data.Flags, ITEM_NO_HIGHLIGHT ); }
-    bool IsShowAnim()         { return FLAG( Data.Flags, ITEM_SHOW_ANIM ); }
-    bool IsShowAnimExt()      { return FLAG( Data.Flags, ITEM_SHOW_ANIM_EXT ); }
-    bool IsLightThru()        { return FLAG( Data.Flags, ITEM_LIGHT_THRU ); }
-    bool IsAlwaysView()       { return FLAG( Data.Flags, ITEM_ALWAYS_VIEW ); }
-    bool IsGeck()             { return FLAG( Data.Flags, ITEM_GECK ); }
-    bool IsNoLightInfluence() { return FLAG( Data.Flags, ITEM_NO_LIGHT_INFLUENCE ); }
-    bool IsNoLoot()           { return FLAG( Data.Flags, ITEM_NO_LOOT ); }
-    bool IsNoSteal()          { return FLAG( Data.Flags, ITEM_NO_STEAL ); }
-    bool IsGag()              { return FLAG( Data.Flags, ITEM_GAG ); }
+    bool IsPassed()           { return FLAG( Data.Flags, ITEM_FLAG_NO_BLOCK ) && FLAG( Data.Flags, ITEM_FLAG_SHOOT_THRU ); }
+    bool IsRaked()            { return FLAG( Data.Flags, ITEM_FLAG_SHOOT_THRU ); }
+    bool IsFlat()             { return FLAG( Data.Flags, ITEM_FLAG_FLAT ); }
+    bool IsHidden()           { return FLAG( Data.Flags, ITEM_FLAG_HIDDEN ); }
+    bool IsCanPickUp()        { return FLAG( Data.Flags, ITEM_FLAG_CAN_PICKUP ); }
+    bool IsCanTalk()          { return FLAG( Data.Flags, ITEM_FLAG_CAN_TALK ); }
+    bool IsCanUse()           { return FLAG( Data.Flags, ITEM_FLAG_CAN_USE ); }
+    bool IsCanUseOnSmth()     { return FLAG( Data.Flags, ITEM_FLAG_CAN_USE_ON_SMTH ); }
+    bool IsHasTimer()         { return FLAG( Data.Flags, ITEM_FLAG_HAS_TIMER ); }
+    bool IsBadItem()          { return FLAG( Data.Flags, ITEM_FLAG_BAD_ITEM ); }
+    bool IsTwoHands()         { return FLAG( Data.Flags, ITEM_FLAG_TWO_HANDS ); }
+    bool IsBigGun()           { return FLAG( Data.Flags, ITEM_FLAG_BIG_GUN ); }
+    bool IsNoHighlight()      { return FLAG( Data.Flags, ITEM_FLAG_NO_HIGHLIGHT ); }
+    bool IsShowAnim()         { return FLAG( Data.Flags, ITEM_FLAG_SHOW_ANIM ); }
+    bool IsShowAnimExt()      { return FLAG( Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT ); }
+    bool IsLightThru()        { return FLAG( Data.Flags, ITEM_FLAG_LIGHT_THRU ); }
+    bool IsAlwaysView()       { return FLAG( Data.Flags, ITEM_FLAG_ALWAYS_VIEW ); }
+    bool IsGeck()             { return FLAG( Data.Flags, ITEM_FLAG_GECK ); }
+    bool IsNoLightInfluence() { return FLAG( Data.Flags, ITEM_FLAG_NO_LIGHT_INFLUENCE ); }
+    bool IsNoLoot()           { return FLAG( Data.Flags, ITEM_FLAG_NO_LOOT ); }
+    bool IsNoSteal()          { return FLAG( Data.Flags, ITEM_FLAG_NO_STEAL ); }
+    bool IsGag()              { return FLAG( Data.Flags, ITEM_FLAG_GAG ); }
 
     uint GetVolume()    { return GetCount() * Proto->Volume; }
     uint GetVolume1st() { return Proto->Volume; }
@@ -461,17 +461,17 @@ public:
     bool IsMisc() { return Proto->IsMisc(); }
 
     // Colorize
-    bool  IsColorize()  { return FLAG( Data.Flags, ITEM_COLORIZE ); }
+    bool  IsColorize()  { return FLAG( Data.Flags, ITEM_FLAG_COLORIZE ); }
     uint  GetColor()    { return (Data.LightColor ? Data.LightColor : Proto->LightColor) & 0xFFFFFF; }
     uchar GetAlpha()    { return (Data.LightColor ? Data.LightColor : Proto->LightColor) >> 24; }
-    uint  GetInvColor() { return FLAG( Data.Flags, ITEM_COLORIZE_INV ) ? (Data.LightColor ? Data.LightColor : Proto->LightColor) : 0; }
+    uint  GetInvColor() { return FLAG( Data.Flags, ITEM_FLAG_COLORIZE_INV ) ? (Data.LightColor ? Data.LightColor : Proto->LightColor) : 0; }
 
     // Light
-    bool IsLight() { return FLAG( Data.Flags, ITEM_LIGHT ); }
+    bool IsLight() { return FLAG( Data.Flags, ITEM_FLAG_LIGHT ); }
     uint LightGetHash()
     {
         if( !IsLight() ) return 0;
-        if( Data.LightIntensity ) return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_LIGHT );
+        if( Data.LightIntensity ) return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_FLAG_LIGHT );
         return (uint)Proto;
     }
     int  LightGetIntensity() { return Data.LightIntensity ? Data.LightIntensity : Proto->LightIntensity; }
@@ -480,7 +480,7 @@ public:
     uint LightGetColor()     { return (Data.LightColor ? Data.LightColor : Proto->LightColor) & 0xFFFFFF; }
 
     // Radio
-    bool IsRadio()           { return FLAG( Data.Flags, ITEM_RADIO ); }
+    bool IsRadio()           { return FLAG( Data.Flags, ITEM_FLAG_RADIO ); }
     bool RadioIsSendActive() { return !FLAG( Data.RadioFlags, RADIO_DISABLE_SEND ); }
     bool RadioIsRecvActive() { return !FLAG( Data.RadioFlags, RADIO_DISABLE_RECV ); }
 
@@ -492,12 +492,12 @@ public:
     #endif
 
     // Holodisk
-    bool IsHolodisk()               { return FLAG( Data.Flags, ITEM_HOLODISK ); }
+    bool IsHolodisk()               { return FLAG( Data.Flags, ITEM_FLAG_HOLODISK ); }
     uint HolodiskGetNum()           { return Data.HolodiskNumber; }
     void HolodiskSetNum( uint num ) { Data.HolodiskNumber = num; }
 
     // Trap
-    bool IsTrap()                { return FLAG( Data.Flags, ITEM_TRAP ); }
+    bool IsTrap()                { return FLAG( Data.Flags, ITEM_FLAG_TRAP ); }
     void TrapSetValue( int val ) { Data.TrapValue = val; }
     int  TrapGetValue()          { return Data.TrapValue; }
 

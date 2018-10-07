@@ -263,7 +263,7 @@ void HexManager::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
     if( !proto_item )
         return;
 
-    bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
+    bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
                               GetField( hx, hy ).IsNotPassed = true;
                               if( !raked )
@@ -276,7 +276,7 @@ void HexManager::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item 
     if( !proto_item )
         return;
 
-    bool raked = FLAG( proto_item->Flags, ITEM_SHOOT_THRU );
+    bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
                               GetField( hx, hy ).ProcessCache();
                               );
@@ -384,7 +384,7 @@ void HexManager::ChangeItem( uint id, const Item::ItemData& data )
     item->RefreshAlpha();
     item->SetSprite( NULL );   // Refresh
     CritterCl* chosen = GetChosen();
-    if( item->IsLight() || FLAG( old_data.Flags, ITEM_LIGHT_THRU ) != FLAG( data.Flags, ITEM_LIGHT_THRU ) )
+    if( item->IsLight() || FLAG( old_data.Flags, ITEM_FLAG_LIGHT_THRU ) != FLAG( data.Flags, ITEM_FLAG_LIGHT_THRU ) )
         RebuildLight();
     GetField( item->GetHexX(), item->GetHexY() ).ProcessCache();
 
@@ -792,7 +792,7 @@ void HexManager::DrawCursor( const char* text )
     int x = (int)( (float)(cursorX + GameOpt.ScrOx) / GameOpt.SpritesZoom );
     int y = (int)( (float)(cursorY + GameOpt.ScrOy) / GameOpt.SpritesZoom );
     SprMngr.DrawStr( Rect( x, y, (int)( (float)(x + HEX_W) / GameOpt.SpritesZoom ),
-                           (int)( (float)(y + HEX_REAL_H) / GameOpt.SpritesZoom ) ), text, FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
+                           (int)( (float)(y + HEX_REAL_H) / GameOpt.SpritesZoom ) ), text, FONT_FLAG_CENTERXY, COLOR_TEXT_WHITE );
 }
 
 void HexManager::RebuildMap( int rx, int ry )
@@ -3978,8 +3978,8 @@ bool HexManager::ParseScenery( SceneryCl& scen )
         scenery->Data.Info = scen.InfoOffset;
     if( scen.AnimStayBegin || scen.AnimStayEnd )
     {
-        SETFLAG( scenery->Data.Flags, ITEM_SHOW_ANIM );
-        SETFLAG( scenery->Data.Flags, ITEM_SHOW_ANIM_EXT );
+        SETFLAG( scenery->Data.Flags, ITEM_FLAG_SHOW_ANIM );
+        SETFLAG( scenery->Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT );
         scenery->Data.AnimShow[0] = scen.AnimStayBegin;
         scenery->Data.AnimShow[1] = scen.AnimStayEnd;
         scenery->Data.AnimStay[0] = scen.AnimStayBegin;
@@ -4491,8 +4491,8 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
 
     if( mobj->MItem.AnimStayBegin || mobj->MItem.AnimStayEnd )
     {
-        SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM );
-        SETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
+        SETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM );
+        SETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT );
         item->Data.AnimShow[0] = mobj->MItem.AnimStayBegin;
         item->Data.AnimShow[1] = mobj->MItem.AnimStayEnd;
         item->Data.AnimStay[0] = mobj->MItem.AnimStayBegin;
@@ -4502,10 +4502,10 @@ void HexManager::AffectItem( MapObject* mobj, ItemHex* item )
     }
     else
     {
-        UNSETFLAG( item->Data.Flags, ITEM_SHOW_ANIM );
-        UNSETFLAG( item->Data.Flags, ITEM_SHOW_ANIM_EXT );
-        SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_SHOW_ANIM );
-        SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_SHOW_ANIM_EXT );
+        UNSETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM );
+        UNSETFLAG( item->Data.Flags, ITEM_FLAG_SHOW_ANIM_EXT );
+        SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_FLAG_SHOW_ANIM );
+        SETFLAG( item->Data.Flags, item->Proto->Flags & ITEM_FLAG_SHOW_ANIM_EXT );
         item->Data.AnimShow[0] = item->Proto->AnimShow[0];
         item->Data.AnimShow[1] = item->Proto->AnimShow[1];
         item->Data.AnimStay[0] = item->Proto->AnimStay[0];

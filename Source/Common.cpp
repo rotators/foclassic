@@ -973,7 +973,6 @@ MapperScriptFunctions MapperFunctions;
 
 bool FOQuit = false;
 int  ServerGameSleep = 10;
-int  MemoryDebugLevel = 10;
 uint VarsGarbageTime = 3600000;
 bool WorldSaveManager = true;
 bool LogicMT = false;

@@ -7,7 +7,7 @@
 /* Base                                                                 */
 /************************************************************************/
 
-#define MAKE_NETMSG_HEADER( number )    ( (uint)( (0xDEAD << 17) | (number << 8) | (0xAA) ) )
+#define MAKE_NETMSG_HEADER( number )          ( (uint)( (0xDEAD << 17) | (number << 8) | (0xAA) ) )
 #define PING_CLIENT_LIFE_TIME                 (15000)    // Time to ping client life
 
 // Special message

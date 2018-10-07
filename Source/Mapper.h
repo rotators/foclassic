@@ -94,7 +94,7 @@ public:
     #define ANIMRUN_FROM_END           (0x0002)
     #define ANIMRUN_CYCLE              (0x0004)
     #define ANIMRUN_STOP               (0x0008)
-    #define ANIMRUN_SET_FRM( frm )    ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
+    #define ANIMRUN_SET_FRM( frm )     ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
 

@@ -1742,11 +1742,11 @@ void CritterCl::DrawTextOnHead()
         if( fadingEnable )
         {
             uint alpha = GetFadeAlpha();
-            SprMngr.DrawStr( r, str, FT_CENTERX | FT_BOTTOM | FT_BORDERED, (alpha << 24) | (color & 0xFFFFFF) );
+            SprMngr.DrawStr( r, str, FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM | FONT_FLAG_BORDERED, (alpha << 24) | (color & 0xFFFFFF) );
         }
         else if( !IsFinishing() )
         {
-            SprMngr.DrawStr( r, str, FT_CENTERX | FT_BOTTOM | FT_BORDERED, color );
+            SprMngr.DrawStr( r, str, FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM | FONT_FLAG_BORDERED, color );
         }
     }
 

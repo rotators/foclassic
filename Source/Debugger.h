@@ -36,6 +36,8 @@
 #define MEMORY_SCRIPT_STRING    (14)
 #define MEMORY_ANGEL_SCRIPT     (15)
 
+extern int  MemoryDebugLevel;
+
 namespace Debugger
 {
     void BeginCycle();

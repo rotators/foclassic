@@ -1563,7 +1563,7 @@ void FOMapper::MainLoop()
                 uint   color = t.Color;
                 if( t.Fade )
                     color = (color ^ 0xFF000000) | ( (0xFF * (100 - procent) / 100) << 24 );
-                SprMngr.DrawStr( Rect( x, y, x + 200, y + 70 ), t.Text.c_str(), FT_CENTERX | FT_BOTTOM | FT_BORDERED, color );
+                SprMngr.DrawStr( Rect( x, y, x + 200, y + 70 ), t.Text.c_str(), FONT_FLAG_CENTERX | FONT_FLAG_BOTTOM | FONT_FLAG_BORDERED, color );
                 it++;
             }
         }
@@ -1808,15 +1808,15 @@ void FOMapper::IntDraw()
     }
 
     for( int i = INT_MODE_CUSTOM0; i <= INT_MODE_CUSTOM9; i++ )
-        SprMngr.DrawStr( Rect( IntBCust[i], IntX, IntY ), TabsName[INT_MODE_CUSTOM0 + i].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBItem, IntX, IntY ), TabsName[INT_MODE_ITEM].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBTile, IntX, IntY ), TabsName[INT_MODE_TILE].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBCrit, IntX, IntY ), TabsName[INT_MODE_CRIT].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBFast, IntX, IntY ), TabsName[INT_MODE_FAST].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBIgnore, IntX, IntY ), TabsName[INT_MODE_IGNORE].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBInCont, IntX, IntY ), TabsName[INT_MODE_INCONT].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBMess, IntX, IntY ), TabsName[INT_MODE_MESS].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
-    SprMngr.DrawStr( Rect( IntBList, IntX, IntY ), TabsName[INT_MODE_LIST].c_str(), FT_NOBREAK | FT_CENTERX | FT_CENTERY, COLOR_TEXT_WHITE );
+        SprMngr.DrawStr( Rect( IntBCust[i], IntX, IntY ), TabsName[INT_MODE_CUSTOM0 + i].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBItem, IntX, IntY ), TabsName[INT_MODE_ITEM].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBTile, IntX, IntY ), TabsName[INT_MODE_TILE].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBCrit, IntX, IntY ), TabsName[INT_MODE_CRIT].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBFast, IntX, IntY ), TabsName[INT_MODE_FAST].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBIgnore, IntX, IntY ), TabsName[INT_MODE_IGNORE].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBInCont, IntX, IntY ), TabsName[INT_MODE_INCONT].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBMess, IntX, IntY ), TabsName[INT_MODE_MESS].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+    SprMngr.DrawStr( Rect( IntBList, IntX, IntY ), TabsName[INT_MODE_LIST].c_str(), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
 
     if( GameOpt.ShowItem )
         SprMngr.DrawSprite( IntPShow, IntBShowItem[0] + IntX, IntBShowItem[1] + IntY );
@@ -1871,7 +1871,7 @@ void FOMapper::IntDraw()
                     SprMngr.DrawSpriteSize( anim->GetCurSprId(), x, y + h / 2, (float)w, (float)(h / 2), false, true, col );
             }
 
-            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "%u", proto_item->ProtoId ), FT_NOBREAK, COLOR_TEXT_WHITE );
+            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "%u", proto_item->ProtoId ), FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
         }
 
         if( GetTabIndex() < (uint)(*CurItemProtos).size() )
@@ -1902,9 +1902,9 @@ void FOMapper::IntDraw()
             string& name = (*CurTileNames)[i];
             size_t  pos = name.find_last_of( '\\' );
             if( pos != string::npos )
-                SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), name.substr( pos + 1 ).c_str(), FT_NOBREAK, COLOR_TEXT_WHITE );
+                SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), name.substr( pos + 1 ).c_str(), FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
             else
-                SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), name.c_str(), FT_NOBREAK, COLOR_TEXT_WHITE );
+                SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), name.c_str(), FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
         }
 
         if( GetTabIndex() < CurTileNames->size() )
@@ -1930,7 +1930,7 @@ void FOMapper::IntDraw()
                 col = COLOR_IFACE_RED;
 
             SprMngr.DrawSpriteSize( spr_id, x, y, (float)w, (float)(h / 2), false, true, col );
-            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "%u", pnpc->ProtoId ), FT_NOBREAK, COLOR_TEXT_WHITE );
+            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "%u", pnpc->ProtoId ), FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
         }
 
         if( GetTabIndex() < CurNpcProtos->size() )
@@ -1970,22 +1970,22 @@ void FOMapper::IntDraw()
                 cnt = proto_item->StartCount;
             if( !cnt )
                 cnt = 1;
-            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "x%u", cnt ), FT_NOBREAK, COLOR_TEXT_WHITE );
+            SprMngr.DrawStr( Rect( x, y + h - 15, x + w, y + h ), Str::FormatBuf( "x%u", cnt ), FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
             if( mobj->MItem.ItemSlot != SLOT_INV )
             {
                 if( mobj->MItem.ItemSlot == SLOT_HAND1 )
-                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Main", FT_NOBREAK, COLOR_TEXT_WHITE );
+                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Main", FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
                 else if( mobj->MItem.ItemSlot == SLOT_HAND2 )
-                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Ext", FT_NOBREAK, COLOR_TEXT_WHITE );
+                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Ext", FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
                 else if( mobj->MItem.ItemSlot == SLOT_ARMOR )
-                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Armor", FT_NOBREAK, COLOR_TEXT_WHITE );
+                    SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Armor", FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
                 else
                 {
                     auto it = Self->SlotsExt.find( mobj->MItem.ItemSlot );
                     if( it != Self->SlotsExt.end() )
-                        SprMngr.DrawStr( Rect( x, y, x + w, y + h ), (*it).second.SlotName, FT_NOBREAK, COLOR_TEXT_WHITE );
+                        SprMngr.DrawStr( Rect( x, y, x + w, y + h ), (*it).second.SlotName, FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
                     else
-                        SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Error", FT_NOBREAK, COLOR_TEXT_WHITE );
+                        SprMngr.DrawStr( Rect( x, y, x + w, y + h ), "Error", FONT_FLAG_NOBREAK, COLOR_TEXT_WHITE );
                 }
             }
         }
@@ -2065,7 +2065,7 @@ void FOMapper::IntDraw()
                              GameOpt.FPS,
                              TileLayer,
                              GameOpt.ScrollCheck ? "Scroll check" : "" ),
-                         FT_NOBREAK_LINE );
+                         FONT_FLAG_NOBREAK_LINE );
     }
 }
 
@@ -2124,25 +2124,25 @@ void FOMapper::ObjDraw()
                 col = COLOR_TEXT_WHITE;                                                                                   \
             Str::Copy( str_, name );                                                                                      \
             Str::Append( str_, "...................................................." );                                  \
-            SprMngr.DrawStr( Rect( Rect( x, y, x + w / 3, y + h ), 0, 0 ), str_, FT_NOBREAK, col );                       \
+            SprMngr.DrawStr( Rect( Rect( x, y, x + w / 3, y + h ), 0, 0 ), str_, FONT_FLAG_NOBREAK, col );                \
             (unsign == true) ? Str::Format( str_, "%u (0x%0X)", val, val ) : Str::Format( str_, "%d (0x%0X)", val, val ); \
-            SprMngr.DrawStr( Rect( Rect( x + w / 3, y, x + w, y + h ), 0, 0 ), str_, FT_NOBREAK, col );                   \
+            SprMngr.DrawStr( Rect( Rect( x + w / 3, y, x + w, y + h ), 0, 0 ), str_, FONT_FLAG_NOBREAK, col );            \
             y += step;                                                                                                    \
         } while( 0 )
-    #define DRAW_COMPONENT_TEXT( name, text, cnst )                                                     \
-        do {                                                                                            \
-            char str_[256];                                                                             \
-            col = COLOR_TEXT;                                                                           \
-            if( ObjCurLine == (y - ObjWWork[1] - ObjY) / DRAW_NEXT_HEIGHT )                             \
-                col = COLOR_TEXT_RED;                                                                   \
-            if( (cnst) == true )                                                                        \
-                col = COLOR_TEXT_WHITE;                                                                 \
-            Str::Copy( str_, name );                                                                    \
-            Str::Append( str_, "...................................................." );                \
-            SprMngr.DrawStr( Rect( Rect( x, y, x + w / 3, y + h ), 0, 0 ), str_, FT_NOBREAK, col );     \
-            Str::Copy( str_, text ? text : "" );                                                        \
-            SprMngr.DrawStr( Rect( Rect( x + w / 3, y, x + w, y + h ), 0, 0 ), str_, FT_NOBREAK, col ); \
-            y += step;                                                                                  \
+    #define DRAW_COMPONENT_TEXT( name, text, cnst )                                                            \
+        do {                                                                                                   \
+            char str_[256];                                                                                    \
+            col = COLOR_TEXT;                                                                                  \
+            if( ObjCurLine == (y - ObjWWork[1] - ObjY) / DRAW_NEXT_HEIGHT )                                    \
+                col = COLOR_TEXT_RED;                                                                          \
+            if( (cnst) == true )                                                                               \
+                col = COLOR_TEXT_WHITE;                                                                        \
+            Str::Copy( str_, name );                                                                           \
+            Str::Append( str_, "...................................................." );                       \
+            SprMngr.DrawStr( Rect( Rect( x, y, x + w / 3, y + h ), 0, 0 ), str_, FONT_FLAG_NOBREAK, col );     \
+            Str::Copy( str_, text ? text : "" );                                                               \
+            SprMngr.DrawStr( Rect( Rect( x + w / 3, y, x + w, y + h ), 0, 0 ), str_, FONT_FLAG_NOBREAK, col ); \
+            y += step;                                                                                         \
         } while( 0 )
 // ====================================================================================
 
@@ -4677,7 +4677,7 @@ void FOMapper::ConsoleDraw()
     {
         char* buf = (char*)Str::FormatBuf("%s", ConsoleStr.c_str() );
         Str::Insert(& buf[ConsoleCur], Timer::FastTick() % 800 < 400 ? "!" : ".");
-        SprMngr.DrawStr(Rect(IntX + ConsoleTextX, (IntVisible ? IntY : MODE_HEIGHT) + ConsoleTextY, MODE_WIDTH, MODE_HEIGHT), buf, FT_NOBREAK);
+        SprMngr.DrawStr(Rect(IntX + ConsoleTextX, (IntVisible ? IntY : MODE_HEIGHT) + ConsoleTextY, MODE_WIDTH, MODE_HEIGHT), buf, FONT_FLAG_NOBREAK);
     }
 }
 
@@ -5239,7 +5239,7 @@ void FOMapper::MessBoxDraw()
 
     uint flags = 0;
     if( !GameOpt.MsgboxInvert )
-        flags |= FT_UPPER | FT_BOTTOM;
+        flags |= FONT_FLAG_UPPER | FONT_FLAG_BOTTOM;
 
     SprMngr.DrawStr( Rect( IntWWork[0] + IntX, IntWWork[1] + IntY, IntWWork[2] + IntX, IntWWork[3] + IntY ), MessBoxCurText.c_str(), flags );
 }
@@ -5288,7 +5288,7 @@ void FOMapper::InitScriptSystem()
     // Bind vars and functions, look bind.h
     asIScriptEngine* engine = Script::GetEngine();
     #define BIND_MAPPER
-    #define BIND_CLASS    FOMapper::SScriptFunc::
+    #define BIND_CLASS                 FOMapper::SScriptFunc::
     #define BIND_ASSERT( x )           if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); }
     #include <ScriptBind.h>
 
@@ -6901,7 +6901,7 @@ void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
         return;
 
     ProtoItem* proto_item = ItemMngr.GetProtoItem( proto_id );
-    bool       is_flat = (proto_item ? FLAG( proto_item->Flags, ITEM_FLAT ) : false);
+    bool       is_flat = (proto_item ? FLAG( proto_item->Flags, ITEM_FLAG_FLAT ) : false);
     bool       is_item = (proto_item ? proto_item->IsItem() : false);
     bool       is_wall = (proto_item ? proto_item->IsWall() : false);
     bool       no_light = (is_flat && !is_item);
@@ -6939,13 +6939,13 @@ void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
             spr.SetEgg( egg_type );
         }
 
-        if( FLAG( proto_item->Flags, ITEM_COLORIZE ) )
+        if( FLAG( proto_item->Flags, ITEM_FLAG_COLORIZE ) )
         {
             spr.SetAlpha( ( (uchar*)&proto_item->LightColor ) + 3 );
             spr.SetColor( proto_item->LightColor & 0xFFFFFF );
         }
 
-        if( FLAG( proto_item->Flags, ITEM_BAD_ITEM ) )
+        if( FLAG( proto_item->Flags, ITEM_FLAG_BAD_ITEM ) )
             spr.SetContour( CONTOUR_RED );
     }
 }

@@ -303,25 +303,25 @@ bool FOClient::Init()
     GET_UID1( UID1 );
 
     // Fonts
-    if( !SprMngr.LoadFontFO( FONT_FO, "OldDefault" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_FO, "OldDefault" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_NUM, "Numbers" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_NUM, "Numbers" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_BIG_NUM, "BigNumbers" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_BIG_NUM, "BigNumbers" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_SAND_NUM, "SandNumbers" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_SAND_NUM, "SandNumbers" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_SPECIAL, "Special" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_SPECIAL, "Special" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_DEFAULT, "Default" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_DEFAULT, "Default" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_THIN, "Thin" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_THIN, "Thin" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_FAT, "Fat" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_FAT, "Fat" ) )
         return false;
-    if( !SprMngr.LoadFontFO( FONT_BIG, "Big" ) )
+    if( !SprMngr.LoadFontFO( FONT_TYPE_BIG, "Big" ) )
         return false;
-    SprMngr.SetDefaultFont( FONT_DEFAULT, COLOR_TEXT );
+    SprMngr.SetDefaultFont( FONT_TYPE_DEFAULT, COLOR_TEXT );
 
     // BMF to FOFNT convertation
     if( false )
@@ -2430,7 +2430,7 @@ void FOClient::ProcessMouseWheel( int data )
             {
                 int scroll = 1;
                 if( Keyb::ShiftDwn )
-                    scroll = SprMngr.GetLinesCount( 0, PipWMonitor.H(), NULL, FONT_DEFAULT );
+                    scroll = SprMngr.GetLinesCount( 0, PipWMonitor.H(), NULL, FONT_TYPE_DEFAULT );
                 if( data > 0 )
                     scroll = -scroll;
                 PipScroll[PipMode] += scroll;
@@ -3958,7 +3958,7 @@ void FOClient::Net_OnAddCritter( bool is_npc )
             HexMngr.RebuildLight();
         }
 
-        const char* look = FmtCritLook( cr, CRITTER_ONLY_NAME );
+        const char* look = FmtCritLook( cr, CRITTER_LOOK_NAME );
         if( look )
             cr->Name = look;
         if( Script::PrepareContext( ClientFunctions.CritterIn, _FUNC_, "Game" ) )
@@ -6707,7 +6707,7 @@ void FOClient::Net_OnCritterLexems()
     if( cr )
     {
         cr->Lexems = lexems;
-        const char* look = FmtCritLook( cr, CRITTER_ONLY_NAME );
+        const char* look = FmtCritLook( cr, CRITTER_LOOK_NAME );
         if( look )
             cr->Name = look;
     }
@@ -9702,7 +9702,7 @@ bool FOClient::ReloadScripts()
 
     // Bind stuff
     #define BIND_CLIENT
-    #define BIND_CLASS    FOClient::SScriptFunc::
+    #define BIND_CLASS          FOClient::SScriptFunc::
     #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
     asIScriptEngine* engine = Script::GetEngine();
     int              bind_errors = 0;
@@ -11712,7 +11712,7 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
         return;
 
     ProtoItem* proto_item = ItemMngr.GetProtoItem( proto_id );
-    bool       is_flat = (proto_item ? FLAG( proto_item->Flags, ITEM_FLAT ) : false);
+    bool       is_flat = (proto_item ? FLAG( proto_item->Flags, ITEM_FLAG_FLAT ) : false);
     bool       is_item = (proto_item ? proto_item->IsItem() : false);
     bool       is_wall = (proto_item ? proto_item->IsWall() : false);
     bool       no_light = (is_flat && !is_item);
@@ -11749,13 +11749,13 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
             spr.SetEgg( egg_type );
         }
 
-        if( FLAG( proto_item->Flags, ITEM_COLORIZE ) )
+        if( FLAG( proto_item->Flags, ITEM_FLAG_COLORIZE ) )
         {
             spr.SetAlpha( ( (uchar*)&proto_item->LightColor ) + 3 );
             spr.SetColor( proto_item->LightColor & 0xFFFFFF );
         }
 
-        if( FLAG( proto_item->Flags, ITEM_BAD_ITEM ) )
+        if( FLAG( proto_item->Flags, ITEM_FLAG_BAD_ITEM ) )
             spr.SetContour( CONTOUR_RED );
     }
 }

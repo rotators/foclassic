@@ -41,27 +41,27 @@ uint UIDDUMMY10 = -1;
 #define UID_FLAGS( result, set, unset )    SETFLAG( result, set ); UNSETFLAG( result, unset )
 #define UID_CALC( result )                 UIDXOR ^= result; UIDOR |= result; UIDCALC += result
 
-#define UID_DUMMY_CALCS0           for( int i = 0; i < Random( 50, 100 ); i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
-#define UID_DUMMY_CALCS1           UIDDUMMY3[16] &= UIDDUMMY9[44]; UID_DUMMY_CALCS3
-#define UID_DUMMY_CALCS2           for( int i = 0; i < 96; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
-#define UID_DUMMY_CALCS3           for( int i = 0, j = Random( 111, 569 ); i < j; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
-#define UID_DUMMY_CALCS4           UIDDUMMY9[6] = UIDDUMMY9[44]; UIDDUMMY1 = UIDDUMMY4[5]; UID_DUMMY_CALCS9
-#define UID_DUMMY_CALCS5           UIDDUMMY1 = UIDDUMMY9[11]; UIDDUMMY7 = UIDDUMMY9[5]; UIDDUMMY9[5] = Random( 0, 11 )
-#define UID_DUMMY_CALCS6           UIDDUMMY3[5] ^= UIDDUMMY0; UID_DUMMY_CALCS0
-#define UID_DUMMY_CALCS7           for( int i = 0; i < 12; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
-#define UID_DUMMY_CALCS8           UIDDUMMY4[1] ^= UIDDUMMY4[2] |= UIDDUMMY4[6] *= UIDDUMMY4[7]
-#define UID_DUMMY_CALCS9           UIDDUMMY9[23] = Random( 0, 11 )
+#define UID_DUMMY_CALCS0                   for( int i = 0; i < Random( 50, 100 ); i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
+#define UID_DUMMY_CALCS1                   UIDDUMMY3[16] &= UIDDUMMY9[44]; UID_DUMMY_CALCS3
+#define UID_DUMMY_CALCS2                   for( int i = 0; i < 96; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
+#define UID_DUMMY_CALCS3                   for( int i = 0, j = Random( 111, 569 ); i < j; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
+#define UID_DUMMY_CALCS4                   UIDDUMMY9[6] = UIDDUMMY9[44]; UIDDUMMY1 = UIDDUMMY4[5]; UID_DUMMY_CALCS9
+#define UID_DUMMY_CALCS5                   UIDDUMMY1 = UIDDUMMY9[11]; UIDDUMMY7 = UIDDUMMY9[5]; UIDDUMMY9[5] = Random( 0, 11 )
+#define UID_DUMMY_CALCS6                   UIDDUMMY3[5] ^= UIDDUMMY0; UID_DUMMY_CALCS0
+#define UID_DUMMY_CALCS7                   for( int i = 0; i < 12; i++ ) { UIDDUMMY3[Random( 5, 25 )] ^= UIDDUMMY5; }
+#define UID_DUMMY_CALCS8                   UIDDUMMY4[1] ^= UIDDUMMY4[2] |= UIDDUMMY4[6] *= UIDDUMMY4[7]
+#define UID_DUMMY_CALCS9                   UIDDUMMY9[23] = Random( 0, 11 )
 
 // Create uid_str4 and write "C:\" to it
-#define UID_PREPARE_UID4_0         char uid4_str[4] = { 40, 29, 30, 12 }
-#define UID_PREPARE_UID4_1         uid4_str[3] -= 6
-#define UID_PREPARE_UID4_2         uid4_str[2] *= 3
-#define UID_PREPARE_UID4_3         uid4_str[1] *= 2
-#define UID_PREPARE_UID4_4         uid4_str[3] -= 6
-#define UID_PREPARE_UID4_5         uid4_str[0] += 27
-#define UID_PREPARE_UID4_6         uid4_str[2] += 2
+#define UID_PREPARE_UID4_0                 char uid4_str[4] = { 40, 29, 30, 12 }
+#define UID_PREPARE_UID4_1                 uid4_str[3] -= 6
+#define UID_PREPARE_UID4_2                 uid4_str[2] *= 3
+#define UID_PREPARE_UID4_3                 uid4_str[1] *= 2
+#define UID_PREPARE_UID4_4                 uid4_str[3] -= 6
+#define UID_PREPARE_UID4_5                 uid4_str[0] += 27
+#define UID_PREPARE_UID4_6                 uid4_str[2] += 2
 
-#define UID_CHANGE                 (1)
+#define UID_CHANGE                         (1)
 
 #if defined (FO_WINDOWS)
 # define GET_UID0( result )                                                \
@@ -360,16 +360,16 @@ uint UIDDUMMY10 = -1;
 
 uint       MulWndArray[100] = { 0 };
 Randomizer MulWndRandom;
-#define MULTIPLY_WINDOWS_FAIL0     NetDisconnect();
-#define MULTIPLY_WINDOWS_FAIL1     CritterCl::DefaultAnim = NULL;
-#define MULTIPLY_WINDOWS_FAIL2     HexMngr.UnloadMap();
-#define MULTIPLY_WINDOWS_FAIL3     SprMngr.Restore();
-#define MULTIPLY_WINDOWS_FAIL4     ResMngr.FreeResources( RES_IFACE );
-#define MULTIPLY_WINDOWS_FAIL5     HexMngr.Init();
-#define MULTIPLY_WINDOWS_FAIL6     SprMngr.Finish();
-#define MULTIPLY_WINDOWS_FAIL7     GraphicLoader::LoadModel( 0, NULL );
-#define MULTIPLY_WINDOWS_FAIL8     Finish();
-#define MULTIPLY_WINDOWS_FAIL9     SndMngr.ClearSounds(); SndMngr.Finish();
+#define MULTIPLY_WINDOWS_FAIL0             NetDisconnect();
+#define MULTIPLY_WINDOWS_FAIL1             CritterCl::DefaultAnim = NULL;
+#define MULTIPLY_WINDOWS_FAIL2             HexMngr.UnloadMap();
+#define MULTIPLY_WINDOWS_FAIL3             SprMngr.Restore();
+#define MULTIPLY_WINDOWS_FAIL4             ResMngr.FreeResources( RES_IFACE );
+#define MULTIPLY_WINDOWS_FAIL5             HexMngr.Init();
+#define MULTIPLY_WINDOWS_FAIL6             SprMngr.Finish();
+#define MULTIPLY_WINDOWS_FAIL7             GraphicLoader::LoadModel( 0, NULL );
+#define MULTIPLY_WINDOWS_FAIL8             Finish();
+#define MULTIPLY_WINDOWS_FAIL9             SndMngr.ClearSounds(); SndMngr.Finish();
 #define CHECK_MULTIPLY_WINDOWS( num, f1, f2, f3 )                           \
     do                                                                      \
     {                                                                       \
@@ -380,15 +380,15 @@ Randomizer MulWndRandom;
             if( MulWndRandom.Random( 0, num ) == 10 ) { f3 }                \
         }                                                                   \
     } while( 0 )
-#define CHECK_MULTIPLY_WINDOWS0    CHECK_MULTIPLY_WINDOWS( 10, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL1, MULTIPLY_WINDOWS_FAIL2 )
-#define CHECK_MULTIPLY_WINDOWS1    CHECK_MULTIPLY_WINDOWS( 36, MULTIPLY_WINDOWS_FAIL3, MULTIPLY_WINDOWS_FAIL4, MULTIPLY_WINDOWS_FAIL5 )
-#define CHECK_MULTIPLY_WINDOWS2    CHECK_MULTIPLY_WINDOWS( 27, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL7, MULTIPLY_WINDOWS_FAIL8 )
-#define CHECK_MULTIPLY_WINDOWS3    CHECK_MULTIPLY_WINDOWS( 12, MULTIPLY_WINDOWS_FAIL9, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL3 )
-#define CHECK_MULTIPLY_WINDOWS4    CHECK_MULTIPLY_WINDOWS( 32, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL1, MULTIPLY_WINDOWS_FAIL2 )
-#define CHECK_MULTIPLY_WINDOWS5    CHECK_MULTIPLY_WINDOWS( 75, MULTIPLY_WINDOWS_FAIL9, MULTIPLY_WINDOWS_FAIL2, MULTIPLY_WINDOWS_FAIL1 )
-#define CHECK_MULTIPLY_WINDOWS6    CHECK_MULTIPLY_WINDOWS( 54, MULTIPLY_WINDOWS_FAIL8, MULTIPLY_WINDOWS_FAIL3, MULTIPLY_WINDOWS_FAIL0 )
-#define CHECK_MULTIPLY_WINDOWS7    CHECK_MULTIPLY_WINDOWS( 33, MULTIPLY_WINDOWS_FAIL7, MULTIPLY_WINDOWS_FAIL4, MULTIPLY_WINDOWS_FAIL9 )
-#define CHECK_MULTIPLY_WINDOWS8    CHECK_MULTIPLY_WINDOWS( 90, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL5, MULTIPLY_WINDOWS_FAIL8 )
-#define CHECK_MULTIPLY_WINDOWS9    CHECK_MULTIPLY_WINDOWS( 45, MULTIPLY_WINDOWS_FAIL5, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL7 )
+#define CHECK_MULTIPLY_WINDOWS0            CHECK_MULTIPLY_WINDOWS( 10, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL1, MULTIPLY_WINDOWS_FAIL2 )
+#define CHECK_MULTIPLY_WINDOWS1            CHECK_MULTIPLY_WINDOWS( 36, MULTIPLY_WINDOWS_FAIL3, MULTIPLY_WINDOWS_FAIL4, MULTIPLY_WINDOWS_FAIL5 )
+#define CHECK_MULTIPLY_WINDOWS2            CHECK_MULTIPLY_WINDOWS( 27, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL7, MULTIPLY_WINDOWS_FAIL8 )
+#define CHECK_MULTIPLY_WINDOWS3            CHECK_MULTIPLY_WINDOWS( 12, MULTIPLY_WINDOWS_FAIL9, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL3 )
+#define CHECK_MULTIPLY_WINDOWS4            CHECK_MULTIPLY_WINDOWS( 32, MULTIPLY_WINDOWS_FAIL0, MULTIPLY_WINDOWS_FAIL1, MULTIPLY_WINDOWS_FAIL2 )
+#define CHECK_MULTIPLY_WINDOWS5            CHECK_MULTIPLY_WINDOWS( 75, MULTIPLY_WINDOWS_FAIL9, MULTIPLY_WINDOWS_FAIL2, MULTIPLY_WINDOWS_FAIL1 )
+#define CHECK_MULTIPLY_WINDOWS6            CHECK_MULTIPLY_WINDOWS( 54, MULTIPLY_WINDOWS_FAIL8, MULTIPLY_WINDOWS_FAIL3, MULTIPLY_WINDOWS_FAIL0 )
+#define CHECK_MULTIPLY_WINDOWS7            CHECK_MULTIPLY_WINDOWS( 33, MULTIPLY_WINDOWS_FAIL7, MULTIPLY_WINDOWS_FAIL4, MULTIPLY_WINDOWS_FAIL9 )
+#define CHECK_MULTIPLY_WINDOWS8            CHECK_MULTIPLY_WINDOWS( 90, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL5, MULTIPLY_WINDOWS_FAIL8 )
+#define CHECK_MULTIPLY_WINDOWS9            CHECK_MULTIPLY_WINDOWS( 45, MULTIPLY_WINDOWS_FAIL5, MULTIPLY_WINDOWS_FAIL6, MULTIPLY_WINDOWS_FAIL7 )
 
 #endif  // __DEFENCE__

@@ -574,10 +574,10 @@ public:
         DWORD         Flags;
         DWORD         Bytes;
     }* NetIOIn, * NetIOOut;
-    # define WSA_BUF_SIZE    (4096)
-    # define WSAOP_FREE      (0)
-    # define WSAOP_SEND      (1)
-    # define WSAOP_RECV      (2)
+    # define WSA_BUF_SIZE         (4096)
+    # define WSAOP_FREE           (0)
+    # define WSAOP_SEND           (1)
+    # define WSAOP_RECV           (2)
     typedef void ( * SendCallback )( NetIOArg* );
     static SendCallback SendData;
     # define BIN_BEGIN( cl_ )     cl_->Bin.Lock()

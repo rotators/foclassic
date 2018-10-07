@@ -21,9 +21,9 @@
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;
 
-#define TEX_FRMT             D3DFMT_A8R8G8B8
-#define SPR_BUFFER_COUNT     (10000)
-#define SURF_SPRITES_OFFS    (2)
+#define TEX_FRMT                   D3DFMT_A8R8G8B8
+#define SPR_BUFFER_COUNT           (10000)
+#define SURF_SPRITES_OFFS          (2)
 
 #ifdef FO_D3D
 # define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )

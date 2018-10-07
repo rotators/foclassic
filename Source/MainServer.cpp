@@ -63,7 +63,7 @@ int              GUISizeMod = 0;
 # define GUI_SIZE1( x )                 ( (int)(x) * 175 * (100 + GUISizeMod) / 100 / 100 )
 # define GUI_SIZE2( x1, x2 )            GUI_SIZE1( x1 ), GUI_SIZE1( x2 )
 # define GUI_SIZE4( x1, x2, x3, x4 )    GUI_SIZE1( x1 ), GUI_SIZE1( x2 ), GUI_SIZE1( x3 ), GUI_SIZE1( x4 )
-# define GUI_LABEL_BUF_SIZE    (128)
+# define GUI_LABEL_BUF_SIZE             (128)
 
 // Windows service
 # ifdef FO_WINDOWS
@@ -167,20 +167,20 @@ int main( int argc, char** argv )
 
     WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
 
-    # if 0
+    # if 1
     WriteLog( "STATIC_ASSERT\n" );
-    WriteLog( "sizeof(char)   == %u\n", sizeof(char) );
-    WriteLog( "sizeof(short)  == %u\n", sizeof(short) );
-    WriteLog( "sizeof(int)    == %u\n", sizeof(int) );
-    WriteLog( "sizeof(int64)  == %u\n", sizeof(int64) );
-    WriteLog( "sizeof(uchar)  == %u\n", sizeof(uchar) );
-    WriteLog( "sizeof(ushort) == %u\n", sizeof(ushort) );
-    WriteLog( "sizeof(uint)   == %u\n", sizeof(uint) );
-    WriteLog( "sizeof(uint64) == %u\n", sizeof(uint64) );
-    WriteLog( "sizeof(bool)   == %u\n", sizeof(bool) );
-    WriteLog( "sizeof(size_t) == %u\n", sizeof(size_t) );
-    WriteLog( "sizeof(void*)  == %u\n", sizeof(void*) );
-    WriteLog( "sizeof(string) == %u\n", sizeof(string) );
+    STATIC_ASSERT_PRINT( WriteLog, char );
+    STATIC_ASSERT_PRINT( WriteLog, short );
+    STATIC_ASSERT_PRINT( WriteLog, int );
+    STATIC_ASSERT_PRINT( WriteLog, int64 );
+    STATIC_ASSERT_PRINT( WriteLog, uchar );
+    STATIC_ASSERT_PRINT( WriteLog, ushort );
+    STATIC_ASSERT_PRINT( WriteLog, uint );
+    STATIC_ASSERT_PRINT( WriteLog, uint64 );
+    STATIC_ASSERT_PRINT( WriteLog, bool );
+    STATIC_ASSERT_PRINT( WriteLog, size_t );
+    STATIC_ASSERT_PRINT( WriteLog, void* );
+    STATIC_ASSERT_PRINT( WriteLog, string );
     # endif
 
     FOQuit = true;

@@ -24,7 +24,7 @@
 // #endif
 
 // Check buffer for error
-#define CHECK_IN_BUFF_ERROR( client )    CHECK_IN_BUFF_ERROR_EX( client, 0 )
+#define CHECK_IN_BUFF_ERROR( client )        CHECK_IN_BUFF_ERROR_EX( client, 0 )
 #define CHECK_IN_BUFF_ERROR_EX( client, ext )                                           \
     if( client->Bin.IsError() )                                                         \
     {                                                                                   \

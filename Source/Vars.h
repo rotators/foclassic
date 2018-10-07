@@ -3,10 +3,10 @@
 
 #include "Common.h"
 
-#define VAR_NAME_LEN      (256)
-#define VAR_DESC_LEN      (2048)
-#define VAR_FNAME_VARS    "_vars.fos"
-#define VAR_DESC_MARK     "**********"
+#define VAR_NAME_LEN                  (256)
+#define VAR_DESC_LEN                  (2048)
+#define VAR_FNAME_VARS                "_vars.fos"
+#define VAR_DESC_MARK                 "**********"
 #define VAR_CALC_QUEST( tid, val )    ( (tid) * 1000 + (val) )
 
 // Typedefs

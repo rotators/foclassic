@@ -10,11 +10,11 @@
 # define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif
 
-#define FONT_BUF_LEN          (0x5000)
-#define FONT_MAX_LINES        (1000)
-#define FORMAT_TYPE_DRAW      (0)
-#define FORMAT_TYPE_SPLIT     (1)
-#define FORMAT_TYPE_LCOUNT    (2)
+#define FONT_BUF_LEN               (0x5000)
+#define FONT_MAX_LINES             (1000)
+#define FORMAT_TYPE_DRAW           (0)
+#define FORMAT_TYPE_SPLIT          (1)
+#define FORMAT_TYPE_LCOUNT         (2)
 
 struct Letter
 {
@@ -681,7 +681,7 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
     char* str_ = str;
     char* big_buf = Str::GetBigBuf();
     big_buf[0] = 0;
-    if( fmt_type == FORMAT_TYPE_DRAW && !FLAG( flags, FT_NO_COLORIZE ) )
+    if( fmt_type == FORMAT_TYPE_DRAW && !FLAG( flags, FONT_FLAG_NO_COLORIZE ) )
         dots = fi.ColorDots;
 
     while( *str_ )
@@ -714,8 +714,8 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
     Str::Copy( str, FONT_BUF_LEN, big_buf );
 
     // Skip lines
-    uint skip_line = (FLAG( flags, FT_SKIPLINES( 0 ) ) ? flags >> 16 : 0);
-    uint skip_line_end = (FLAG( flags, FT_SKIPLINES_END( 0 ) ) ? flags >> 16 : 0);
+    uint skip_line = (FLAG( flags, FONT_FLAG_SKIPLINES( 0 ) ) ? flags >> 16 : 0);
+    uint skip_line_end = (FLAG( flags, FONT_FLAG_SKIPLINES_END( 0 ) ) ? flags >> 16 : 0);
 
     // Format
     curx = r.L;
@@ -751,12 +751,12 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
             if( curx - r.L > fi.MaxCurX )
                 fi.MaxCurX = curx - r.L;
 
-            if( fmt_type == FORMAT_TYPE_DRAW && FLAG( flags, FT_NOBREAK ) )
+            if( fmt_type == FORMAT_TYPE_DRAW && FLAG( flags, FONT_FLAG_NOBREAK ) )
             {
                 str[i] = '\0';
                 break;
             }
-            else if( FLAG( flags, FT_NOBREAK_LINE ) )
+            else if( FLAG( flags, FONT_FLAG_NOBREAK_LINE ) )
             {
                 int j = i;
                 for( ; str[j]; j++ )
@@ -800,7 +800,7 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
                             fi.ColorDots[k] = fi.ColorDots[k - 1];
                 }
 
-                if( FLAG( flags, FT_ALIGN ) && !skip_line )
+                if( FLAG( flags, FONT_FLAG_ALIGN ) && !skip_line )
                 {
                     fi.LineSpaceWidth[fi.LinesAll - 1] = 1;
                     // Erase next first spaces
@@ -830,7 +830,7 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
 
                     if( fmt_type == FORMAT_TYPE_DRAW )
                     {
-                        if( fi.LinesInRect && !FLAG( flags, FT_UPPER ) )
+                        if( fi.LinesInRect && !FLAG( flags, FONT_FLAG_UPPER ) )
                         {
                             // fi.LinesAll++;
                             str[i] = '\0';
@@ -927,7 +927,7 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
     }
 
     // Up text
-    if( FLAG( flags, FT_UPPER ) && fi.LinesAll > fi.LinesInRect )
+    if( FLAG( flags, FONT_FLAG_UPPER ) && fi.LinesAll > fi.LinesInRect )
     {
         uint j = 0;
         uint line_cur = 0;
@@ -945,7 +945,7 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
                 last_col = fi.ColorDots[j];
         }
 
-        if( !FLAG( flags, FT_NO_COLORIZE ) )
+        if( !FLAG( flags, FONT_FLAG_NO_COLORIZE ) )
         {
             offs_col += j + 1;
             if( last_col && !fi.ColorDots[j + 1] )
@@ -1030,14 +1030,14 @@ void FormatText( FontFormatInfo& fi, int fmt_type )
     cury = r.T;
 
     // Align X
-    if( FLAG( flags, FT_CENTERX ) )
+    if( FLAG( flags, FONT_FLAG_CENTERX ) )
         curx += (r.R - fi.LineWidth[0]) / 2;
-    else if( FLAG( flags, FT_CENTERR ) )
+    else if( FLAG( flags, FONT_FLAG_CENTERR ) )
         curx += r.R - fi.LineWidth[0];
     // Align Y
-    if( FLAG( flags, FT_CENTERY ) )
+    if( FLAG( flags, FONT_FLAG_CENTERY ) )
         cury = r.T + (r.H() - fi.LinesAll * font->LineHeight - (fi.LinesAll - 1) * font->YAdvance) / 2 + 1;
-    else if( FLAG( flags, FT_BOTTOM ) )
+    else if( FLAG( flags, FONT_FLAG_BOTTOM ) )
         cury = r.B - (fi.LinesAll * font->LineHeight + (fi.LinesAll - 1) * font->YAdvance);
 }
 
@@ -1068,12 +1068,12 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
     int      curx = fi.CurX;
     int      cury = fi.CurY;
     int      curstr = 0;
-    Texture* texture = (FLAG( flags, FT_BORDERED ) ? font->FontTexBordered : font->FontTex);
+    Texture* texture = (FLAG( flags, FONT_FLAG_BORDERED ) ? font->FontTexBordered : font->FontTex);
 
     if( curSprCnt )
         Flush();
 
-    if( !FLAG( flags, FT_NO_COLORIZE ) )
+    if( !FLAG( flags, FONT_FLAG_NO_COLORIZE ) )
     {
         for( int i = offs_col; i >= 0; i-- )
         {
@@ -1091,7 +1091,7 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
     bool variable_space = false;
     for( int i = 0, i_advance = 1; str_[i]; i += i_advance )
     {
-        if( !FLAG( flags, FT_NO_COLORIZE ) )
+        if( !FLAG( flags, FONT_FLAG_NO_COLORIZE ) )
         {
             uint new_color = fi.ColorDots[i + offs_col];
             if( new_color )
@@ -1120,9 +1120,9 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
                 curx = r.L;
                 curstr++;
                 variable_space = false;
-                if( FLAG( flags, FT_CENTERX ) )
+                if( FLAG( flags, FONT_FLAG_CENTERX ) )
                     curx += (r.R - fi.LineWidth[curstr]) / 2;
-                else if( FLAG( flags, FT_CENTERR ) )
+                else if( FLAG( flags, FONT_FLAG_CENTERR ) )
                     curx += r.R - fi.LineWidth[curstr];
                 continue;
             case '\r':
@@ -1140,7 +1140,7 @@ bool SpriteManager::DrawStr( const Rect& r, const char* str, uint flags, uint co
                 int     w = l.W + 2;
                 int     h = l.H + 2;
 
-                RectF&  texture_uv = (FLAG( flags, FT_BORDERED ) ? l.TexBorderedUV : l.TexUV);
+                RectF&  texture_uv = (FLAG( flags, FONT_FLAG_BORDERED ) ? l.TexBorderedUV : l.TexUV);
                 float   x1 = texture_uv[0];
                 float   y1 = texture_uv[1];
                 float   x2 = texture_uv[2];

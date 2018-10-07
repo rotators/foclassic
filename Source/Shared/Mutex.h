@@ -3,17 +3,17 @@
 
 #include "Core.h"
 
-#define DEFAULT_SPIN_COUNT              (4000)
+#define DEFAULT_SPIN_COUNT                                (4000)
 #define SCOPE_LOCK( mutex )                               volatile MutexLocker<decltype(mutex)> scope_lock__( mutex )
 
 #ifdef FO_WINDOWS
 
 # ifdef FO_MSVC
 #  include <intrin.h>
-#  define InterlockedCompareExchange    _InterlockedCompareExchange
-#  define InterlockedExchange           _InterlockedExchange
-#  define InterlockedIncrement          _InterlockedIncrement
-#  define InterlockedDecrement          _InterlockedDecrement
+#  define InterlockedCompareExchange                      _InterlockedCompareExchange
+#  define InterlockedExchange                             _InterlockedExchange
+#  define InterlockedIncrement                            _InterlockedIncrement
+#  define InterlockedDecrement                            _InterlockedDecrement
 # endif
 
 #else

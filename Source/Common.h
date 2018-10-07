@@ -19,7 +19,7 @@
 # include <errno.h>
 # include <string.h> // strerror
 # include <unistd.h>
-# define ERRORSTR             strerror( errno )
+# define ERRORSTR                      strerror( errno )
 # define ExitProcess( code )           exit( code )
 #endif
 
@@ -27,7 +27,7 @@
 const char* GetLastSocketError();
 #ifdef FO_WINDOWS
 # include <winsock2.h>
-# define socklen_t            int
+# define socklen_t                     int
 # if defined (FO_MSVC)
 #  pragma comment( lib, "Ws2_32.lib" )
 # endif
@@ -37,13 +37,13 @@ const char* GetLastSocketError();
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
-# define SOCKET               int
-# define INVALID_SOCKET       (-1)
-# define SOCKET_ERROR         (-1)
-# define closesocket          close
-# define SD_RECEIVE           SHUT_RD
-# define SD_SEND              SHUT_WR
-# define SD_BOTH              SHUT_RDWR
+# define SOCKET                        int
+# define INVALID_SOCKET                (-1)
+# define SOCKET_ERROR                  (-1)
+# define closesocket                   close
+# define SD_RECEIVE                    SHUT_RD
+# define SD_SEND                       SHUT_WR
+# define SD_BOTH                       SHUT_RDWR
 #endif
 
 // DLL
@@ -112,7 +112,7 @@ void GetHexOffsets( bool odd, short*& sx, short*& sy );
 void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int& y );
 
 // Config file
-#define CLIENT_CONFIG_APP     "Game Options"
+#define CLIENT_CONFIG_APP              "Game Options"
 const char* GetConfigFileName();
 
 // Window name
@@ -131,9 +131,7 @@ struct ScoreType
 /************************************************************************/
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
-# define PI_VALUE             (3.141592654f)
-# define COLOR_ARGB( a, r, g, b )      ( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
-# define COLOR_XRGB( r, g, b )         COLOR_ARGB( 0xff, r, g, b )
+# define PI_VALUE                      (3.141592654f)
 
 
 # ifdef FO_D3D
@@ -151,15 +149,15 @@ struct ScoreType
 
 # ifdef FOCLASSIC_CLIENT
 #  include "ResourceClient.h"
-#  define CFG_DEF_INT_FILE    "default800x600.ini"
+#  define CFG_DEF_INT_FILE             "default800x600.ini"
 # else // FOCLASSIC_MAPPER
 #  include "ResourceMapper.h"
 const uchar SELECT_ALPHA = 100;
-#  define CFG_DEF_INT_FILE    "mapper_default.ini"
+#  define CFG_DEF_INT_FILE             "mapper_default.ini"
 # endif
 
-# define PATH_MAP_FLAGS       DIR_SLASH_SD "Data" DIR_SLASH_S "maps" DIR_SLASH_S ""
-# define PATH_TEXT_FILES      DIR_SLASH_SD "Data" DIR_SLASH_S "text" DIR_SLASH_S ""
+# define PATH_MAP_FLAGS                DIR_SLASH_SD "Data" DIR_SLASH_S "maps" DIR_SLASH_S ""
+# define PATH_TEXT_FILES               DIR_SLASH_SD "Data" DIR_SLASH_S "text" DIR_SLASH_S ""
 
 uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light );
 void GetClientOptions();
@@ -242,7 +240,6 @@ struct MapperScriptFunctions
 
 extern bool FOQuit;
 extern int  ServerGameSleep;
-extern int  MemoryDebugLevel;
 extern uint VarsGarbageTime;
 extern bool WorldSaveManager;
 extern bool LogicMT;

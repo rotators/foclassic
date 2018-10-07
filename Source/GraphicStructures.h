@@ -24,20 +24,20 @@ typedef vector<Matrix*>    MatrixPtrVec;
 
 # define COLOR_FIX( c )           (c)
 
-# define Device_           LPDIRECT3DDEVICE9
-# define Surface_          LPDIRECT3DSURFACE9
-# define EffectValue_      D3DXHANDLE
-# define Material_         D3DMATERIAL9
-# define PresentParams_    D3DPRESENT_PARAMETERS
-# define Caps_             D3DCAPS9
-# define VertexBuffer_     LPDIRECT3DVERTEXBUFFER9
-# define IndexBuffer_      LPDIRECT3DINDEXBUFFER9
-# define PixelShader_      IDirect3DPixelShader9
-# define ConstantTable_    ID3DXConstantTable
-# define SkinInfo_         LPD3DXSKININFO
-# define Light_            D3DLIGHT9
-# define ViewPort_         D3DVIEWPORT9
-# define LockRect_         D3DLOCKED_RECT
+# define Device_                  LPDIRECT3DDEVICE9
+# define Surface_                 LPDIRECT3DSURFACE9
+# define EffectValue_             D3DXHANDLE
+# define Material_                D3DMATERIAL9
+# define PresentParams_           D3DPRESENT_PARAMETERS
+# define Caps_                    D3DCAPS9
+# define VertexBuffer_            LPDIRECT3DVERTEXBUFFER9
+# define IndexBuffer_             LPDIRECT3DINDEXBUFFER9
+# define PixelShader_             IDirect3DPixelShader9
+# define ConstantTable_           ID3DXConstantTable
+# define SkinInfo_                LPD3DXSKININFO
+# define Light_                   D3DLIGHT9
+# define ViewPort_                D3DVIEWPORT9
+# define LockRect_                D3DLOCKED_RECT
 
 # define D3D_HR( expr )           { HRESULT hr__ = expr; if( hr__ != D3D_OK ) { WriteLogF( _FUNC_, " - " # expr ", error<%s - %s>.\n", DXGetErrorString( hr__ ), DXGetErrorDescription( hr__ ) ); return 0; } }
 # define MATRIX_TRANSPOSE( m )    m.Transpose()
@@ -53,20 +53,20 @@ typedef vector<Matrix*>    MatrixPtrVec;
 # endif
 
 # define COLOR_FIX( c )           COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )
-# define Device_           GLuint
-# define Surface_          GLuint
-# define EffectValue_      GLint
-# define Material_         GLuint
-# define PresentParams_    GLuint
-# define Caps_             GLuint
-# define VertexBuffer_     GLuint
-# define IndexBuffer_      GLuint
-# define PixelShader_      GLuint
-# define ConstantTable_    GLuint
-# define SkinInfo_         GLuint
-# define Light_            GLuint
-# define ViewPort_         GLuint
-# define LockRect_         GLuint
+# define Device_                  GLuint
+# define Surface_                 GLuint
+# define EffectValue_             GLint
+# define Material_                GLuint
+# define PresentParams_           GLuint
+# define Caps_                    GLuint
+# define VertexBuffer_            GLuint
+# define IndexBuffer_             GLuint
+# define PixelShader_             GLuint
+# define ConstantTable_           GLuint
+# define SkinInfo_                GLuint
+# define Light_                   GLuint
+# define ViewPort_                GLuint
+# define LockRect_                GLuint
 
 # define MATRIX_TRANSPOSE( m )
 #endif

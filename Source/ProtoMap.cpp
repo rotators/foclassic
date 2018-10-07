@@ -1939,9 +1939,9 @@ bool ProtoMap::Refresh()
         {
             case ITEM_TYPE_WALL:
             {
-                if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
+                if( !FLAG( proto_item->Flags, ITEM_FLAG_NO_BLOCK ) )
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
-                if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
+                if( !FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU ) )
                 {
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_NOTRAKE );
@@ -1984,9 +1984,9 @@ bool ProtoMap::Refresh()
 
                 if( type == ITEM_TYPE_GRID )
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_SCEN_GRID );
-                if( !FLAG( proto_item->Flags, ITEM_NO_BLOCK ) )
+                if( !FLAG( proto_item->Flags, ITEM_FLAG_NO_BLOCK ) )
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
-                if( !FLAG( proto_item->Flags, ITEM_SHOOT_THRU ) )
+                if( !FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU ) )
                 {
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_BLOCK );
                     SETFLAG( HexFlags[hy * maxhx + hx], HEX_FLAG_NOTRAKE );

@@ -11,9 +11,6 @@
 #define CRIT_DWELLER_FEMALE    (4)
 #define CRIT_RAT               (24)
 
-#define ANIM_TYPE_FALLOUT      (0)
-#define ANIM_TYPE_3D           (1)
-
 class FOMsg;
 
 struct CritTypeType

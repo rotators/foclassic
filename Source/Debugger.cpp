@@ -1,14 +1,11 @@
-#include <algorithm>
+#include "Core.h"
 
-#include "Defines.h"
 #include "Debugger.h"
 #include "Log.h"
 #include "Mutex.h"
 #include "Text.h"
 #include "Thread.h"
 #include "Timer.h"
-#include "Types.h"
-#include "Common.h"
 
 #define MAX_BLOCKS       (25)
 #define MAX_ENTRY        (2000)
@@ -17,6 +14,8 @@ static double Ticks[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
 static int    Identifiers[MAX_BLOCKS][MAX_ENTRY][MAX_PROCESS];
 static uint   CurTick[MAX_BLOCKS][MAX_ENTRY];
 static int    CurEntry[MAX_BLOCKS];
+
+int           MemoryDebugLevel = 10;
 
 void Debugger::BeginCycle()
 {

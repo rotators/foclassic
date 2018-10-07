@@ -4,13 +4,13 @@
 #include "Common.h"
 #include "GraphicStructures.h"
 
-#define LAYERS3D_COUNT         (30)
+#define LAYERS3D_COUNT              (30)
 
-#define ANIMATION_STAY         (0x01)
-#define ANIMATION_ONE_TIME     (0x02)
+#define ANIMATION_STAY              (0x01)
+#define ANIMATION_ONE_TIME          (0x02)
 #define ANIMATION_PERIOD( proc )    (0x04 | ( (proc) << 16 ) )
-#define ANIMATION_NO_SMOOTH    (0x08)
-#define ANIMATION_INIT         (0x10)
+#define ANIMATION_NO_SMOOTH         (0x08)
+#define ANIMATION_INIT              (0x10)
 
 class AnimController;
 class AnimSet;
