@@ -255,7 +255,8 @@ Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, i
         Resize( spritesTreeSize + SPRITES_RESIZE_COUNT );
     if( index < spritesTreeSize - 1 )
     {
-        spritesTree.insert( spritesTree.begin() + index, spritesTree.back() );
+        Sprite* back = spritesTree.back();
+        spritesTree.insert( spritesTree.begin() + index, back );
         spritesTree.pop_back();
     }
 
