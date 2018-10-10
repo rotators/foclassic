@@ -2,6 +2,7 @@ message( STATUS "Configuring libraries..." )
 
 add_subdirectory( acm )
 add_subdirectory( distorm )
+add_subdirectory( dx9 )
 add_subdirectory( fltk )
 add_subdirectory( glew )
 add_subdirectory( il )

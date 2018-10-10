@@ -22,7 +22,7 @@ if( WIN32 )
 	link_directories( "${CMAKE_SOURCE_DIR}/Lib/Dx9/x86/" )
 
 	# DX needs glew/glu32 due to 3dStuff.cpp VecProject() VecUnproject()
-	set( DX_LIBS d3d9 dxguid dxerr d3dxof glew glu32 )
+	set( DX_LIBS dx9 glew glu32 )
 endif()
 
 set( GL_LIBS fltkgl glew glu32 opengl32 theora )

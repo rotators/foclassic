@@ -131,17 +131,6 @@ struct ScoreType
 /************************************************************************/
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
-# define PI_VALUE                      (3.141592654f)
-
-
-# ifdef FO_D3D
-#  ifndef D3D_DEBUG_INFO
-#   pragma comment(lib,"d3dx9.lib")
-#  else
-#   pragma comment(lib,"d3dx9d.lib")
-#  endif
-# endif
-
 # include "Assimp/aiTypes.h"
 
 // Todo: Complete shadow maps
