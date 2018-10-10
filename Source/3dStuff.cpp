@@ -12,6 +12,7 @@
 #include "GraphicLoader.h"
 #include "Text.h"
 #include "Script.h"
+#include "ScriptFunctions.h"
 
 Device_   D3DDevice = 0;
 Caps_     D3DCaps;

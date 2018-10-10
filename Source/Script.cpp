@@ -52,7 +52,6 @@ public:
     }
 };
 typedef vector<BindFunction> BindFunctionVec;
-
 asIScriptEngine* Engine = NULL;
 void*            EngineLogFile = NULL;
 int              ScriptsPath = PT_SCRIPTS;
@@ -589,7 +588,7 @@ void Script::UnloadScripts()
 
 bool Script::ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix /* = NULL */ )
 {
-    WriteLog( "Reload scripts...\n" );
+    WriteLog( "Reload %s scripts...\n", key );
 
     Script::UnloadScripts();
 
@@ -617,13 +616,13 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
         if( !fail )
         {
             #ifdef FOCLASSIC_SERVER
-            WriteLog( "Load server module<%s>\n", value.c_str() );
+            WriteLog( "Load %s module<%s>\n", key, value.c_str() );
             #endif
             fail = !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix );
         }
         if( fail )
         {
-            WriteLog( "Load module fail, name<%s>.\n", value.c_str() );
+            WriteLog( "Load %s module fail, name<%s>.\n", key, value.c_str() );
             errors++;
         }
         #ifdef FOCLASSIC_SERVER
@@ -640,17 +639,17 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
 
     if( errors )
     {
-        WriteLog( "Reload scripts fail.\n" );
+        WriteLog( "Reload %s scripts... failed\n", key );
         return false;
     }
 
-    WriteLog( "Reload scripts complete.\n" );
+    WriteLog( "Reload %s scripts... complete\n", key );
     return true;
 }
 
-bool Script::BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count )
+bool Script::BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp /* = false */ )
 {
-    WriteLog( "Bind reserved functions...\n" );
+    WriteLog( "Bind reserved %s functions...\n", key );
 
     int    errors = 0;
     char   buf[1024];
@@ -659,8 +658,12 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
     {
         ReservedScriptFunction* bf = &bind_func[i];
         int                     bind_id = 0;
-
         istrstream              config_( config );
+
+        #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+        WriteLog( "Bind %s function %s -> ", key, bf->FuncName );
+        #endif
+
         while( !config_.eof() )
         {
             config_.getline( buf, 1024 );
@@ -680,29 +683,34 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
 
             str >> value;
             if( !str.fail() )
-                bind_id = Bind( value.c_str(), bf->FuncName, bf->FuncDecl, false );
+            {
+                #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+                WriteLogX( "%s -> ", value.c_str() );
+                #endif
+                bind_id = Bind( value.c_str(), bf->FuncName, bf->FuncDecl, use_temp );
+            }
             break;
         }
 
         if( bind_id > 0 )
         {
+            #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+            WriteLogX( "OK\n" );
+            #endif
             *bf->BindId = bind_id;
         }
         else
         {
-            WriteLog( "Bind reserved function fail, name<%s>.\n", bf->FuncName );
+            #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+            WriteLogX( "ERROR\n" );
+            #endif
+            WriteLog( "Bind reserved %s function fail, name<%s>.\n", key, bf->FuncName );
             errors++;
         }
     }
 
-    if( errors )
-    {
-        WriteLog( "Bind reserved functions fail.\n" );
-        return false;
-    }
-
-    WriteLog( "Bind reserved functions complete.\n" );
-    return true;
+    WriteLog( "Bind reserved %s functions... %s\n", key, errors == 0 ? "complete" : "failed" );
+    return errors == 0;
 }
 
 #ifdef FOCLASSIC_SERVER

@@ -2546,7 +2546,7 @@ void FOClient::GameKeyDown( uchar dik, const char* dik_text )
                 break;
             // Skills
             case DIK_1:
-                SetAction( CHOSEN_USE_SKL_ON_CRITTER, SK_SNEAK );
+                SetAction( CHOSEN_USE_SKILL_ON_CRITTER, SK_SNEAK );
                 break;
             case DIK_2:
                 CurSkill = SK_LOCKPICK;
@@ -2657,14 +2657,14 @@ void FOClient::GameLMouseDown()
         // Use skill
         if( cr )
         {
-            SetAction( CHOSEN_USE_SKL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate() );
+            SetAction( CHOSEN_USE_SKILL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate() );
         }
         else if( item && item->IsCanUseSkill() )
         {
             if( item->IsScenOrGrid() )
-                SetAction( CHOSEN_USE_SKL_ON_SCEN, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY() );
+                SetAction( CHOSEN_USE_SKILL_ON_SCENERY, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY() );
             else
-                SetAction( CHOSEN_USE_SKL_ON_ITEM, false, CurSkill, item->GetId() );
+                SetAction( CHOSEN_USE_SKILL_ON_ITEM, false, CurSkill, item->GetId() );
         }
 
         SetCurMode( CUR_DEFAULT );
@@ -4540,7 +4540,7 @@ void FOClient::LMenuTryCreate()
         if( !LMenuCurNodes )
             return;
 
-        SndMngr.PlaySound( SND_LMENU );
+        SndMngr.PlaySound( SOUND_LMENU );
         int height = (int)LMenuCurNodes->size() * LMenuNodeHeight;
         if( LMenuY + height > MODE_HEIGHT )
             LMenuY -= LMenuY + height - MODE_HEIGHT;
@@ -5009,7 +5009,7 @@ void FOClient::LMenuMouseUp()
                     Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
                     break;
                 case LMENU_NODE_USE:
-                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+                    SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
                     break;
                 case LMENU_NODE_ROTATE:
                     SetAction( CHOSEN_DIR, 0 );
@@ -5018,7 +5018,7 @@ void FOClient::LMenuMouseUp()
                     TryPickItemOnGround();
                     break;
                 case LMENU_NODE_PUSH:
-                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
+                    SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 1 );
                     break;
                 case LMENU_NODE_BAG:
                     UseSelect = TargetSmth;
@@ -5067,10 +5067,10 @@ void FOClient::LMenuMouseUp()
                     Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
                     break;
                 case LMENU_NODE_USE:
-                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+                    SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
                     break;
                 case LMENU_NODE_PUSH:
-                    SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 1 );
+                    SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 1 );
                     break;
                 case LMENU_NODE_BAG:
                     UseSelect = TargetSmth;
@@ -6859,7 +6859,7 @@ void FOClient::SboxLMouseUp()
             {
                 if( !SboxUseOn.IsSmth() || (SboxUseOn.IsCritter() && SboxUseOn.GetId() == Chosen->GetId() ) )
                 {
-                    SetAction( CHOSEN_USE_SKL_ON_CRITTER, SK_SNEAK );
+                    SetAction( CHOSEN_USE_SKILL_ON_CRITTER, SK_SNEAK );
                     ShowScreen( SCREEN_NONE );
                 }
                 IfaceHold = IFACE_NONE;
@@ -6873,7 +6873,7 @@ void FOClient::SboxLMouseUp()
                 {
                     CritterCl* cr = GetCritter( SboxUseOn.GetId() );
                     if( cr )
-                        SetAction( CHOSEN_USE_SKL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate() );
+                        SetAction( CHOSEN_USE_SKILL_ON_CRITTER, CurSkill, cr->GetId(), Chosen->GetFullRate() );
                 }
                 else if( SboxUseOn.IsItem() )
                 {
@@ -6881,16 +6881,16 @@ void FOClient::SboxLMouseUp()
                     if( item && item->IsCanUseSkill() )
                     {
                         if( item->IsScenOrGrid() )
-                            SetAction( CHOSEN_USE_SKL_ON_SCEN, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY() );
+                            SetAction( CHOSEN_USE_SKILL_ON_SCENERY, CurSkill, item->GetProtoId(), item->GetHexX(), item->GetHexY() );
                         else
-                            SetAction( CHOSEN_USE_SKL_ON_ITEM, false, CurSkill, item->GetId() );
+                            SetAction( CHOSEN_USE_SKILL_ON_ITEM, false, CurSkill, item->GetId() );
                     }
                 }
                 else if( SboxUseOn.IsContItem() )
                 {
                     Item* item = Chosen->GetItem( SboxUseOn.GetId() );
                     if( item )
-                        SetAction( CHOSEN_USE_SKL_ON_ITEM, true, CurSkill, item->GetId() );
+                        SetAction( CHOSEN_USE_SKILL_ON_ITEM, true, CurSkill, item->GetId() );
                 }
 
                 SboxUseOn.Clear();
@@ -8098,8 +8098,8 @@ void FOClient::ChaAgeLMouseUp()
                 break;
             if( !RegNewCr )
                 break;
-            if( RegNewCr->ParamsReg[ST_AGE] >= AGE_MAX )
-                RegNewCr->ParamsReg[ST_AGE] = AGE_MIN;
+            if( RegNewCr->ParamsReg[ST_AGE] >= MAX_AGE )
+                RegNewCr->ParamsReg[ST_AGE] = MIN_AGE;
             else
                 RegNewCr->ParamsReg[ST_AGE]++;
             RegNewCr->GenParams();
@@ -8108,8 +8108,8 @@ void FOClient::ChaAgeLMouseUp()
                 break;
             if( !RegNewCr )
                 break;
-            if( RegNewCr->ParamsReg[ST_AGE] <= AGE_MIN )
-                RegNewCr->ParamsReg[ST_AGE] = AGE_MAX;
+            if( RegNewCr->ParamsReg[ST_AGE] <= MIN_AGE )
+                RegNewCr->ParamsReg[ST_AGE] = MAX_AGE;
             else
                 RegNewCr->ParamsReg[ST_AGE]--;
             RegNewCr->GenParams();
@@ -9311,7 +9311,7 @@ void FOClient::PupLMouseUp()
                 if( item.GetCount() > 1 )
                     SplitStart( &item, IFACE_PUP_CONT2 );
                 else
-                    SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT2, 1 );
+                    SetAction( CHOSEN_MOVE_ITEM_CONTAINER, PupHoldId, IFACE_PUP_CONT2, 1 );
             }
         }
         break;
@@ -9327,7 +9327,7 @@ void FOClient::PupLMouseUp()
                 if( item.GetCount() > 1 )
                     SplitStart( &item, IFACE_PUP_CONT1 );
                 else
-                    SetAction( CHOSEN_MOVE_ITEM_CONT, PupHoldId, IFACE_PUP_CONT1, 1 );
+                    SetAction( CHOSEN_MOVE_ITEM_CONTAINER, PupHoldId, IFACE_PUP_CONT1, 1 );
             }
         }
         break;
@@ -9395,7 +9395,7 @@ void FOClient::PupLMouseUp()
             CritterCl* cr = PupGetLootCrit( PupScrollCrit );
             if( !cr )
                 break;
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+            SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
         }
         break;
         case IFACE_PUP_SCRCR_R:
@@ -9414,7 +9414,7 @@ void FOClient::PupLMouseUp()
             CritterCl* cr = PupGetLootCrit( PupScrollCrit );
             if( !cr )
                 break;
-            SetAction( CHOSEN_PICK_CRIT, cr->GetId(), 0 );
+            SetAction( CHOSEN_PICK_CRITTER, cr->GetId(), 0 );
         }
         break;
         default:
@@ -10329,7 +10329,7 @@ label_DropItems:
             PupHoldId = 0;
             if( !change )
                 break;
-            SetAction( CHOSEN_MOVE_ITEM_CONT, SplitItemId, SplitCont & 0xFFFF, SplitValue );
+            SetAction( CHOSEN_MOVE_ITEM_CONTAINER, SplitItemId, SplitCont & 0xFFFF, SplitValue );
             break;
         default:
             break;
@@ -11310,7 +11310,7 @@ void FOClient::IboxLMouseUp()
         {
             if( !IsCurInRect( IboxBDone, IboxX, IboxY ) )
                 break;
-            AddActionBack( CHOSEN_WRITE_HOLO, IboxHolodiskId );
+            AddActionBack( CHOSEN_WRITE_HOLODISK, IboxHolodiskId );
             ShowScreen( SCREEN_NONE );
         }
         break;

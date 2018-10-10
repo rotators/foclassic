@@ -22,7 +22,8 @@ bool               ToDebugOutput = false;
 bool               LoggingWithTime = false;
 bool               LoggingWithThread = false;
 uint               StartLogTime = 0;
-void WriteLogInternal( const char* func, const char* frmt, va_list& list );
+
+void WriteLogInternal( bool prefixes, const char* func, const char* frmt, va_list& list );
 
 void LogToFile( const char* fname )
 {
@@ -95,7 +96,7 @@ void WriteLog( const char* frmt, ... )
 {
     va_list list;
     va_start( list, frmt );
-    WriteLogInternal( NULL, frmt, list );
+    WriteLogInternal( true, NULL, frmt, list );
     va_end( list );
 }
 
@@ -103,11 +104,19 @@ void WriteLogF( const char* func, const char* frmt, ... )
 {
     va_list list;
     va_start( list, frmt );
-    WriteLogInternal( func, frmt, list );
+    WriteLogInternal( true, func, frmt, list );
     va_end( list );
 }
 
-void WriteLogInternal( const char* func, const char* frmt, va_list& list )
+void WriteLogX( const char* frmt, ... )
+{
+    va_list list;
+    va_start( list, frmt );
+    WriteLogInternal( false, NULL, frmt, list );
+    va_end( list );
+}
+
+void WriteLogInternal( bool prefixes, const char* func, const char* frmt, va_list& list )
 {
     SCOPE_LOCK( LogLocker );
 
@@ -115,33 +124,37 @@ void WriteLogInternal( const char* func, const char* frmt, va_list& list )
         return;
 
     char str_tid[64] = { 0 };
-    #if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
-    if( LoggingWithThread )
-    {
-        const char* name = Thread::GetCurrentName();
-        if( name[0] )
-            Str::Format( str_tid, "[%s]", name );
-        else
-            Str::Format( str_tid, "[%04u]", Thread::GetCurrentId() );
-    }
-    #endif
-
     char str_time[64] = { 0 };
-    if( LoggingWithTime )
-    {
-        if( StartLogTime == 0 )
-            StartLogTime = Timer::FastTick();
 
-        uint delta = Timer::FastTick() - StartLogTime;
-        uint seconds = delta / 1000;
-        uint minutes = seconds / 60 % 60;
-        uint hours = seconds / 60 / 60;
-        // if( hours )
-        Str::Format( str_time, "[%04u:%02u:%02u:%03u]", hours, minutes, seconds % 60, delta % 1000 );
-        // else if( minutes )
-        //    Str::Format( str_time, "[%02u:%02u:%03u]", minutes, seconds % 60, delta % 1000 );
-        // else
-        //    Str::Format( str_time, "[%02u:%03u]", seconds % 60, delta % 1000 );
+    if( prefixes )
+    {
+        #if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
+        if( LoggingWithThread )
+        {
+            const char* name = Thread::GetCurrentName();
+            if( name[0] )
+                Str::Format( str_tid, "[%s]", name );
+            else
+                Str::Format( str_tid, "[%04u]", Thread::GetCurrentId() );
+        }
+        #endif
+
+        if( LoggingWithTime )
+        {
+            if( StartLogTime == 0 )
+                StartLogTime = Timer::FastTick();
+
+            uint delta = Timer::FastTick() - StartLogTime;
+            uint seconds = delta / 1000;
+            uint minutes = seconds / 60 % 60;
+            uint hours = seconds / 60 / 60;
+            // if( hours )
+            Str::Format( str_time, "[%04u:%02u:%02u:%03u]", hours, minutes, seconds % 60, delta % 1000 );
+            // else if( minutes )
+            //    Str::Format( str_time, "[%02u:%02u:%03u]", minutes, seconds % 60, delta % 1000 );
+            // else
+            //    Str::Format( str_time, "[%02u:%03u]", seconds % 60, delta % 1000 );
+        }
     }
 
     char str[MAX_LOGTEXT] = { 0 };

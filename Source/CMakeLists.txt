@@ -47,6 +47,49 @@ set( MAPPER_DX_LIBS ${MAPPER_LIBS} ${DX_LIBS} )
 set( MAPPER_GL_LIBS ${MAPPER_LIBS} ${GL_LIBS} )
 
 ##
+## Mixed sources
+##
+
+set( CLIENT_SERVER_SOURCES
+	Access.cpp
+	Access.h
+	BufferManager.cpp
+	BufferManager.h
+	CraftManager.cpp
+	CraftManager.h
+	Network.h
+)
+
+set( CLIENT_MAPPER_SOURCES
+	3dAnimation.h
+	3dStuff.cpp
+	3dStuff.h
+	CritterCl.cpp
+	CritterCl.h
+	SpriteManager.cpp
+	SpriteManager.h
+	SpriteManagerFont.cpp
+	Window.cpp
+	Window.h
+)
+
+set( MAPPER_SERVER_SOURCES
+	ProtoMap.cpp
+	ProtoMap.h
+)
+
+set( CLIENT_MAPPER_SERVER_SOURCES
+	ConstantsManager.cpp
+	ConstantsManager.h
+	CritterType.cpp
+	CritterType.h
+	IniParser.cpp
+	IniParser.h
+	ScriptFunctions.cpp
+	ScriptFunctions.h
+)
+
+##
 ## ASCompiler
 ##
 
@@ -81,26 +124,11 @@ target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 ##
 
 set( CLIENT_SOURCES
-	3dAnimation.h
-	3dStuff.cpp
-	3dStuff.h
-	Access.cpp
-	Access.h
-	BufferManager.cpp
-	BufferManager.h
 	Client.cpp
 	Client.h
 	ClientInterface.cpp
 	Common.cpp
 	Common.h
-	ConstantsManager.cpp
-	ConstantsManager.h
-	CraftManager.cpp
-	CraftManager.h
-	CritterCl.cpp
-	CritterCl.h
-	CritterType.cpp
-	CritterType.h
 	DataFile.cpp
 	DataFile.h
 	DataMask.h
@@ -115,8 +143,6 @@ set( CLIENT_SOURCES
 	GraphicStructures.h
 	HexManager.cpp
 	HexManager.h
-	IniParser.cpp
-	IniParser.h
 	Item.cpp
 	Item.h
 	ItemHex.cpp
@@ -133,7 +159,6 @@ set( CLIENT_SOURCES
 	MsgFiles.h
 	MsgStr.h
 	NetProtocol.h
-	Network.h
 	QuestManager.cpp
 	QuestManager.h
 	ResourceClient.h
@@ -146,14 +171,9 @@ set( CLIENT_SOURCES
 	ScriptPragmas.h
 	SoundManager.cpp
 	SoundManager.h
-	SpriteManager.cpp
-	SpriteManager.h
-	SpriteManagerFont.cpp
 	Sprites.cpp
 	Sprites.h
 	Version.h
-	Window.cpp
-	Window.h
 )
 
 ##
@@ -164,6 +184,9 @@ if( WIN32 )
 	add_executable( ClientDX WIN32 "" )
 	target_sources( ClientDX
 		PRIVATE
+			${CLIENT_MAPPER_SERVER_SOURCES}
+			${CLIENT_MAPPER_SOURCES}
+			${CLIENT_SERVER_SOURCES}
 			${CLIENT_SOURCES}
 	)
 	target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
@@ -178,6 +201,9 @@ endif()
 add_executable( ClientGL WIN32 "" )
 target_sources( ClientGL
 	PRIVATE
+		${CLIENT_MAPPER_SERVER_SOURCES}
+		${CLIENT_MAPPER_SOURCES}
+		${CLIENT_SERVER_SOURCES}
 		${CLIENT_SOURCES}
 )
 target_compile_definitions( ClientGL PRIVATE FOCLASSIC_CLIENT )
@@ -189,20 +215,11 @@ target_link_libraries( ClientGL ${CLIENT_GL_LIBS} )
 ##
 
 set( MAPPER_SOURCES
-	3dAnimation.h
-	3dStuff.cpp
-	3dStuff.h
 	Common.cpp
 	Common.h
-	ConstantsManager.cpp
-	ConstantsManager.h
-	CritterCl.cpp
-	CritterCl.h
 	CritterData.h
 	CritterManager.cpp
 	CritterManager.h
-	CritterType.cpp
-	CritterType.h
 	DataFile.cpp
 	DataFile.h
 	Exception.cpp
@@ -217,8 +234,6 @@ set( MAPPER_SOURCES
 	GraphicLoader.h
 	HexManager.cpp
 	HexManager.h
-	IniParser.cpp
-	IniParser.h
 	Item.cpp
 	Item.h
 	ItemHex.cpp
@@ -236,8 +251,6 @@ set( MAPPER_SOURCES
 	MsgFiles.cpp
 	MsgFiles.h
 	MsgStr.h
-	ProtoMap.cpp
-	ProtoMap.h
 	ResourceManager.cpp
 	ResourceManager.h
 	ResourceMapper.h
@@ -246,14 +259,9 @@ set( MAPPER_SOURCES
 	ScriptBind.h
 	ScriptPragmas.cpp
 	ScriptPragmas.h
-	SpriteManager.cpp
-	SpriteManager.h
-	SpriteManagerFont.cpp
 	Sprites.cpp
 	Sprites.h
 	Version.h
-	Window.cpp
-	Window.h
 )
 
 ##
@@ -263,6 +271,9 @@ if( WIN32 )
 	add_executable( MapperDX WIN32 "" )
 	target_sources( MapperDX
 		PRIVATE
+			${CLIENT_MAPPER_SERVER_SOURCES}
+			${CLIENT_MAPPER_SOURCES}
+			${MAPPER_SERVER_SOURCES}
 			${MAPPER_SOURCES}
 	)
 	target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
@@ -277,6 +288,9 @@ endif()
 add_executable( MapperGL WIN32 "" )
 target_sources( MapperGL
 	PRIVATE
+		${CLIENT_MAPPER_SERVER_SOURCES}
+		${CLIENT_MAPPER_SOURCES}
+		${MAPPER_SERVER_SOURCES}
 		${MAPPER_SOURCES}
 )
 target_compile_definitions( MapperGL PRIVATE FOCLASSIC_MAPPER )
@@ -290,25 +304,18 @@ target_link_libraries( MapperGL ${MAPPER_GL_LIBS} )
 add_executable( Server WIN32 "" )
 target_sources( Server
 	PRIVATE
-		Access.cpp
-		Access.h
+		${CLIENT_MAPPER_SERVER_SOURCES}
+		${CLIENT_SERVER_SOURCES}
+		${MAPPER_SERVER_SOURCES}
 		AI.cpp
 		AI.h
-		BufferManager.cpp
-		BufferManager.h
 		Common.cpp
 		Common.h
-		ConstantsManager.cpp
-		ConstantsManager.h
-		CraftManager.cpp
-		CraftManager.h
 		Critter.cpp
 		Critter.h
 		CritterData.h
 		CritterManager.cpp
 		CritterManager.h
-		CritterType.cpp
-		CritterType.h
 		DataFile.cpp
 		DataFile.h
 		DataMask.h
@@ -322,8 +329,6 @@ target_sources( Server
 		FileManager.cpp
 		FileManager.h
 		FlexRect.h
-		IniParser.cpp
-		IniParser.h
 		Item.cpp
 		Item.h
 		ItemManager.cpp
@@ -342,9 +347,6 @@ target_sources( Server
 		MsgFiles.h
 		MsgStr.h
 		NetProtocol.h
-		Network.h
-		ProtoMap.cpp
-		ProtoMap.h
 		Script.cpp
 		Script.h
 		ScriptBind.h

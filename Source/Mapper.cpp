@@ -5,6 +5,7 @@
 #include "GraphicLoader.h"
 #include "Mapper.h"
 #include "MsgStr.h"
+#include "ScriptFunctions.h"
 #include "Thread.h"
 #include "Window.h"
 
@@ -5313,24 +5314,7 @@ void FOMapper::InitScriptSystem()
     FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
 
     // Bind game functions
-    ReservedScriptFunction BindGameFunc[] =
-    {
-        { &MapperFunctions.Start, "start", "void %s()" },
-        { &MapperFunctions.Loop, "loop", "uint %s()" },
-        { &MapperFunctions.ConsoleMessage, "console_message", "bool %s(string&)" },
-        { &MapperFunctions.RenderIface, "render_iface", "void %s(uint)" },
-        { &MapperFunctions.RenderMap, "render_map", "void %s()" },
-        { &MapperFunctions.MouseDown, "mouse_down", "bool %s(int)" },
-        { &MapperFunctions.MouseUp, "mouse_up", "bool %s(int)" },
-        { &MapperFunctions.MouseMove, "mouse_move", "void %s(int,int)" },
-        { &MapperFunctions.KeyDown, "key_down", "bool %s(uint8,string&)" },
-        { &MapperFunctions.KeyUp, "key_up", "bool %s(uint8,string&)" },
-        { &MapperFunctions.InputLost, "input_lost", "void %s()" },
-        { &MapperFunctions.CritterAnimation, "critter_animation", "string@ %s(int,uint,uint,uint,uint&,uint&,int&,int&)" },
-        { &MapperFunctions.CritterAnimationSubstitute, "critter_animation_substitute", "bool %s(int,uint,uint,uint,uint&,uint&,uint&)" },
-        { &MapperFunctions.CritterAnimationFallout, "critter_animation_fallout", "bool %s(uint,uint&,uint&,uint&,uint&,uint&)" },
-    };
-    Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "mapper", BindGameFunc, sizeof(BindGameFunc) / sizeof(BindGameFunc[0]) );
+    Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "mapper", MapperReservedFunctions, sizeof(MapperScriptFunctions) / sizeof(int) );
 
     WriteLog( "Script system initialization complete.\n" );
 }

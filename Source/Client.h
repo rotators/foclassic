@@ -1811,25 +1811,6 @@ public:
 #define LMENU_NODE_VOTE_UP             (20)
 #define LMENU_NODE_VOTE_DOWN           (21)
 
-// Chosen actions
-#define CHOSEN_NONE                    (0)    //
-#define CHOSEN_MOVE                    (1)    // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_MOVE_TO_CRIT            (2)    // Critter id, None, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_DIR                     (3)    // 0 (CW) or 1 (CCW)
-#define CHOSEN_SHOW_ITEM               (4)    // Item id
-#define CHOSEN_HIDE_ITEM               (5)    // Item id
-#define CHOSEN_USE_ITEM                (6)    // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
-#define CHOSEN_MOVE_ITEM               (7)    // Item id, Item count, To slot, Is barter container, Is second try
-#define CHOSEN_MOVE_ITEM_CONT          (8)    // From container, Item id, Count
-#define CHOSEN_TAKE_ALL                (9)    //
-#define CHOSEN_USE_SKL_ON_CRITTER      (10)   // Skill, Critter id
-#define CHOSEN_USE_SKL_ON_ITEM         (11)   // Is inventory, Skill index, Item id
-#define CHOSEN_USE_SKL_ON_SCEN         (12)   // Skill, Pid, HexX, HexY
-#define CHOSEN_TALK_NPC                (13)   // Critter id
-#define CHOSEN_PICK_ITEM               (14)   // Pid, HexX, HexY
-#define CHOSEN_PICK_CRIT               (15)   // Critter id, (loot - 0, push - 1)
-#define CHOSEN_WRITE_HOLO              (16)   // Holodisk id
-
 // Proxy types
 #define PROXY_SOCKS4                   (1)
 #define PROXY_SOCKS5                   (2)
@@ -2078,18 +2059,5 @@ public:
 #define ACCELERATE_DLG_TEXT_DOWN       (35)
 #define ACCELERATE_SAVE_LOAD_SCR_UP    (36)
 #define ACCELERATE_SAVE_LOAD_SCR_DN    (37)
-
-// Sounds
-#define SND_BUTTON1_IN                 "BUTIN1"
-#define SND_BUTTON2_IN                 "BUTIN2"
-#define SND_BUTTON3_IN                 "BUTIN3"
-#define SND_BUTTON4_IN                 "BUTIN4"
-#define SND_BUTTON1_OUT                "BUTOUT1"
-#define SND_BUTTON2_OUT                "BUTOUT2"
-#define SND_BUTTON3_OUT                "BUTOUT3"
-#define SND_BUTTON4_OUT                "BUTOUT4"
-#define SND_LMENU                      "IACCUXX1"
-#define SND_COMBAT_MODE_ON             "ICIBOXX1"
-#define SND_COMBAT_MODE_OFF            "ICIBCXX1"
 
 #endif // __CLIENT__

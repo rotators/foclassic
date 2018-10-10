@@ -86,10 +86,9 @@ void CritterCl::InitForRegistration()
 
     memzero( Params, sizeof(Params) );
     memzero( ParamsReg, sizeof(ParamsReg) );
-    ParamsReg[0] = ParamsReg[1] = ParamsReg[2] = ParamsReg[3] =
-                                                     ParamsReg[4] = ParamsReg[5] = ParamsReg[6] = 5;
-    ParamsReg[ST_AGE] = Random( AGE_MIN, AGE_MAX );
-    ParamsReg[ST_GENDER] = GENDER_MALE;
+    ParamsReg[0] = ParamsReg[1] = ParamsReg[2] = ParamsReg[3] = ParamsReg[4] = ParamsReg[5] = ParamsReg[6] = 5;
+    ParamsReg[ST_AGE] = Random( MIN_AGE, MAX_AGE );
+    ParamsReg[ST_GENDER] = Random( GENDER_MALE, GENDER_FEMALE );
     GenParams();
 }
 

@@ -7,6 +7,7 @@
 #include "MapManager.h"
 #include "MsgStr.h"
 #include "Script.h"
+#include "ScriptFunctions.h"
 
 MapManager MapMngr;
 
@@ -120,17 +121,17 @@ MapManager::MapManager() : lastMapId( 0 ), lastLocId( 0 ), runGarbager( true )
 
 bool MapManager::Init()
 {
-    WriteLog( "Map manager initialization...\n" );
+    WriteLog( "Initialize map manager...\n" );
 
     if( !ItemMngr.IsInit() )
     {
-        WriteLog( "Error, Item manager not initialized.\n" );
+        WriteLog( "Initialize map manager... ERROR: item manager not initialized\n" );
         return false;
     }
 
     if( !CrMngr.IsInit() )
     {
-        WriteLog( "Error, Critter manager not initialized.\n" );
+        WriteLog( "Initialize map manager... ERROR: critter manager not initialized.\n" );
         return false;
     }
 
@@ -138,13 +139,13 @@ bool MapManager::Init()
     for( int i = 1; i < FPATH_DATA_SIZE; i++ )
         pathesPool[i].reserve( 100 );
 
-    WriteLog( "Map manager initialization complete.\n" );
+    WriteLog( "Initialize map manager... complete.\n" );
     return true;
 }
 
 void MapManager::Finish()
 {
-    WriteLog( "Map manager finish...\n" );
+    WriteLog( "Finish map manager...\n" );
 
     for( auto it = allLocations.begin(); it != allLocations.end(); ++it )
     {
@@ -158,7 +159,7 @@ void MapManager::Finish()
     for( int i = 0; i < MAX_PROTO_MAPS; i++ )
         ProtoMaps[i].Clear();
 
-    WriteLog( "Map manager finish complete.\n" );
+    WriteLog( "Finish map manager... complete.\n" );
 }
 
 void MapManager::Clear()
@@ -209,11 +210,11 @@ bool MapManager::LoadLocationsProtos()
 
         ProtoLocation& ploc = ProtoLoc[i];
         city_txt.GetStr( app, "name", "UNKNOWN", res );
-        WriteLog( "Load location<%d:%s>\n", i, res );
+        WriteLog( "Load location proto<%d:%s>\n", i, res );
         if( !LoadLocationProto( city_txt, ploc, i ) )
         {
             errors++;
-            WriteLog( "Load location<%u> fail.\n", i );
+            WriteLog( "Load location proto<%u> fail.\n", i );
             continue;
         }
         loaded++;
@@ -222,11 +223,11 @@ bool MapManager::LoadLocationsProtos()
     // Check for errors
     if( errors )
     {
-        WriteLog( "Load location and map prototypes fail, errors<%d>.\n", errors );
+        WriteLog( "Load location and map prototypes... failed, errors<%d>.\n", errors );
         return false;
     }
 
-    WriteLog( "Load location and map prototypes complete, loaded<%u> location protos.\n", loaded );
+    WriteLog( "Load location and map prototypes... complete, count<%u>\n", loaded );
     return true;
 }
 
@@ -285,6 +286,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
             return false;
         }
 
+        WriteLog( "Load map proto<%u:%s>\n", map_pid, map_name );
         if( !pmap.IsInit() && !pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
         {
             WriteLogF( _FUNC_, " - Init proto map<%s> for location<%s> fail.\n", map_name, ploc.Name.c_str() );
@@ -463,7 +465,7 @@ bool MapManager::LoadAllLocationsAndMapsFile( void* f )
         locaded++;
     }
 
-    WriteLog( "Load locations complete, count<%u>.\n", locaded );
+    WriteLog( "Load locations... loaded<%u>.\n", locaded );
     return true;
 }
 
@@ -544,7 +546,7 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
             return false;
         }
 
-        WriteLog( "Location: pid<%u>, worldX<%u>, worldY<%u>.\n", loc_pid, loc_wx, loc_wy );
+        WriteLog( "Generate location<%u>, position<%u:%u>\n", loc_pid, loc_wx, loc_wy );
 
         Location* nloc = CreateLocation( loc_pid, loc_wx, loc_wy, 0 );
         if( !nloc )
@@ -562,7 +564,7 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
         return false;
     }
 
-    WriteLog( "Generate world complete, created/generated <%u> locations.\n", count_gen );
+    WriteLog( "Generate world... locations<%u>\n", count_gen );
     return true;
 }
 

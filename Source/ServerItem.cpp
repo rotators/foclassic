@@ -55,7 +55,7 @@ Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uin
 
 bool FOServer::TransferAllItems()
 {
-    WriteLog( "Transfer all items to npc, maps and containers...\n" );
+    WriteLog( "Transfer items...\n" );
 
     if( !ItemMngr.IsInit() )
     {
@@ -170,6 +170,6 @@ bool FOServer::TransferAllItems()
         cr->ProcessVisibleItems();
     }
 
-    WriteLog( "Transfer game items complete.\n" );
+    WriteLog( "Transfer items... complete\n" );
     return true;
 }

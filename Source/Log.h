@@ -10,6 +10,7 @@ typedef void ( * LogFuncPtr )( const char* str );
 // Write formatted text
 void WriteLog( const char* frmt, ... );
 void WriteLogF( const char* func, const char* frmt, ... );
+void WriteLogX( const char* frmt, ... );
 
 // Append logging to
 void LogToFile( const char* fname );                // File

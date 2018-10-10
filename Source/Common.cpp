@@ -39,8 +39,6 @@ void SetCommandLine( uint argc, char** argv )
     }
 }
 
-
-
 // Math stuff
 int Procent( int full, int peace )
 {
@@ -963,8 +961,6 @@ void GetClientOptions()
     # endif
 }
 
-ClientScriptFunctions ClientFunctions;
-MapperScriptFunctions MapperFunctions;
 #endif
 /************************************************************************/
 /*                                                                      */
@@ -985,8 +981,6 @@ void GetServerOptions()
     Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
     WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
 }
-
-ServerScriptFunctions ServerFunctions;
 
 #endif
 /************************************************************************/

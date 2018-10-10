@@ -3239,7 +3239,7 @@ void FOServer::SaveGameInfoFile()
 
 bool FOServer::LoadGameInfoFile( void* f )
 {
-    WriteLog( "Load game info..." );
+    WriteLog( "Load game info...\n" );
 
     // Singleplayer info
     uint sp = 0;
@@ -3247,7 +3247,7 @@ bool FOServer::LoadGameInfoFile( void* f )
         return false;
     if( sp != 0 )
     {
-        WriteLog( "singleplayer..." );
+        WriteLog( "Load singleplayer info...\n" );
 
         // Critter data
         ClientSaveData& csd = SingleplayerSave.CrData;
@@ -3305,7 +3305,7 @@ bool FOServer::LoadGameInfoFile( void* f )
     if( !FileRead( f, &BestScores[0], sizeof(BestScores) ) )
         return false;
 
-    WriteLog( "complete.\n" );
+    WriteLog( "Load game info... complete\n" );
     return true;
 }
 
@@ -3730,7 +3730,7 @@ bool FOServer::InitReal()
 
 bool FOServer::InitCrafts( LangPackVec& lang_packs )
 {
-    WriteLog( "FixBoy load crafts...\n" );
+    WriteLog( "Load crafting...\n" );
     MrFixit.Finish();
 
     LanguagePack* main_lang = NULL;
@@ -3762,13 +3762,13 @@ bool FOServer::InitCrafts( LangPackVec& lang_packs )
             return false;
         }
     }
-    WriteLog( "FixBoy load crafts complete.\n" );
+    WriteLog( "Load crafting... complete\n" );
     return true;
 }
 
 bool FOServer::InitLangPacks( LangPackVec& lang_packs )
 {
-    WriteLog( "Loading language packs...\n" );
+    WriteLog( "Load language packs...\n" );
 
     IniParser cfg;
     cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
@@ -3781,25 +3781,31 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         Str::Format( cur_str_lang, "Language_%u", cur_lang );
 
         if( !cfg.GetStr( cur_str_lang, "", lang_name ) )
+        {
+            WriteLog( "Language settings not found.\n" );
             break;
+        }
+        ;
 
         if( Str::Length( lang_name ) != 4 )
         {
-            WriteLog( "Language name not equal to four letters.\n" );
+            WriteLog( "Language pack<%u> name not equal to four letters.\n", cur_lang );
             return false;
         }
 
         uint pack_id = *(uint*)&lang_name;
         if( std::find( lang_packs.begin(), lang_packs.end(), pack_id ) != lang_packs.end() )
         {
-            WriteLog( "Language pack<%u> is already initialized.\n", cur_lang );
+            WriteLog( "Language pack<%u:%s> is already initialized.\n", cur_lang, lang_name );
             return false;
         }
+
+        WriteLog( "Load language pack<%u:%s>\n", cur_lang, lang_name );
 
         LanguagePack lang;
         if( !lang.Init( lang_name, PT_SERVER_TEXTS ) )
         {
-            WriteLog( "Unable to init Language pack<%u>.\n", cur_lang );
+            WriteLog( "Language pack<%u:%s> cannot be initialized.\n", cur_lang, lang_name );
             return false;
         }
 
@@ -3807,7 +3813,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         cur_lang++;
     }
 
-    WriteLog( "Loading language packs complete, loaded<%u> packs.\n", cur_lang );
+    WriteLog( "Load language packs... complete\n" );
     return cur_lang > 0;
 }
 
@@ -4059,7 +4065,7 @@ void FOServer::LoadBans()
 
 bool FOServer::LoadClientsData()
 {
-    WriteLog( "Indexing client data.\n" );
+    WriteLog( "Load clients data...\n" );
     LastClientId = 0;
     ClientsData.reserve( 10000 );
 
@@ -4300,7 +4306,7 @@ bool FOServer::LoadClientsData()
     if( ClientsData.size() > 10000 )
         ClientsData.reserve( ClientsData.size() * 2 );
 
-    WriteLog( "Indexing complete, clients found<%u>.\n", ClientsData.size() );
+    WriteLog( "Load clients data.. loaded<%u>.\n", ClientsData.size() );
     return true;
 }
 
@@ -4561,7 +4567,8 @@ bool FOServer::LoadWorld( const char* fname )
             f = FileOpen( auto_fname, false );
             if( f )
             {
-                WriteLog( "Begin load world from dump file<%s>.\n", auto_fname );
+                WriteLog( "Load world<%s>...\n", auto_fname );
+                fname = Str::Duplicate( auto_fname );
                 SaveWorldIndex = i;
                 break;
             }
@@ -4569,7 +4576,7 @@ bool FOServer::LoadWorld( const char* fname )
 
         if( !f )
         {
-            WriteLog( "World dump file not found.\n" );
+            WriteLog( "Load world... worldsave not found.\n" );
             SaveWorldIndex = 0;
             return true;
         }
@@ -4579,11 +4586,11 @@ bool FOServer::LoadWorld( const char* fname )
         f = FileOpen( fname, false );
         if( !f )
         {
-            WriteLog( "World dump file<%s> not found.\n", fname );
+            WriteLog( "Load world<%s>... not found\n", fname );
             return false;
         }
 
-        WriteLog( "Begin load world from dump file<%s>.\n", fname );
+        WriteLog( "Load world<%s>...\n", fname );
     }
 
     // File begin
@@ -4655,15 +4662,24 @@ bool FOServer::LoadWorld( const char* fname )
     }
     FileClose( f );
 
+    WriteLog( "Load world<%s>... complete\n", fname );
+
     // Initialize data
     InitGameTime();
     if( !TransferAllNpc() )
         return false;                // Transfer critter copies to maps
     if( !TransferAllItems() )
         return false;                // Transfer items copies to critters and maps
+
+    WriteLog( "Run map init scripts...\n" );
     MapMngr.RunInitScriptMaps();     // Init scripts for maps
+
+    WriteLog( "Run critters init scripts...\n" );
     CrMngr.RunInitScriptCritters();  // Init scripts for critters
-    ItemMngr.RunInitScriptItems();   // Init scripts for maps
+
+    WriteLog( "Run items init scripts...\n" );
+    ItemMngr.RunInitScriptItems();   // Init scripts for items
+
     return true;
 }
 
@@ -4976,7 +4992,7 @@ void FOServer::SaveTimeEventsFile()
 
 bool FOServer::LoadTimeEventsFile( void* f )
 {
-    WriteLog( "Load time events..." );
+    WriteLog( "Load time events...\n" );
 
     TimeEventsLastNum = 0;
 
@@ -5047,7 +5063,7 @@ bool FOServer::LoadTimeEventsFile( void* f )
             TimeEventsLastNum = num;
     }
 
-    WriteLog( "complete, count<%u>.\n", count );
+    WriteLog( "Load time events... loaded<%u>\n", count );
     return true;
 }
 

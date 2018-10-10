@@ -98,7 +98,7 @@ bool FOServer::InitScriptSystem()
     // Init
     if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_SERVER ), "SERVER" ) )
     {
-        WriteLog( "Script System initialization failed.\n" );
+        WriteLog( "Script system initialization... failed\n" );
         return false;
     }
     Script::SetScriptsPath( PT_SERVER_SCRIPTS );
@@ -137,6 +137,8 @@ bool FOServer::InitScriptSystem()
 
     // Load script modules
     Script::Undef( NULL );
+    Script::Define( Str::FormatBuf( "FOCLASSIC_STAGE %u", FOCLASSIC_STAGE ) );
+    Script::Define( Str::FormatBuf( "FOCLASSIC_VERSION %u", FOCLASSIC_VERSION ) );
     Script::Define( "__SERVER" );
     if( !Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
     {
@@ -146,51 +148,7 @@ bool FOServer::InitScriptSystem()
     }
 
     // Bind game functions
-    ReservedScriptFunction BindGameFunc[] =
-    {
-        { &ServerFunctions.Init, "init", "void %s()" },
-        { &ServerFunctions.Start, "start", "bool %s()" },
-        { &ServerFunctions.GetStartTime, "get_start_time", "void %s(uint16&,uint16&,uint16&,uint16&,uint16&,uint16&)" },
-        { &ServerFunctions.Finish, "finish", "void %s()" },
-        { &ServerFunctions.Loop, "loop", "uint %s()" },
-        { &ServerFunctions.GlobalProcess, "global_process", "void %s(int,Critter&,Item@,float&,float&,float&,float&,float&,uint&,bool&)" },
-        { &ServerFunctions.GlobalInvite, "global_invite", "void %s(Critter&,Item@,uint,int,uint&,uint16&,uint16&,uint8&)" },
-        { &ServerFunctions.CritterAttack, "critter_attack", "void %s(Critter&,Critter&,ProtoItem&,uint8,ProtoItem@)" },
-        { &ServerFunctions.CritterAttacked, "critter_attacked", "void %s(Critter&,Critter&)" },
-        { &ServerFunctions.CritterStealing, "critter_stealing", "bool %s(Critter&,Critter&,Item&,uint)" },
-        { &ServerFunctions.CritterUseItem, "critter_use_item", "bool %s(Critter&,Item&,Critter@,Item@,Scenery@,uint)" },
-        { &ServerFunctions.CritterUseSkill, "critter_use_skill", "bool %s(Critter&,int,Critter@,Item@,Scenery@)" },
-        { &ServerFunctions.CritterReloadWeapon, "critter_reload_weapon", "void %s(Critter&,Item&,Item@)" },
-        { &ServerFunctions.CritterInit, "critter_init", "void %s(Critter&,bool)" },
-        { &ServerFunctions.CritterFinish, "critter_finish", "void %s(Critter&,bool)" },
-        { &ServerFunctions.CritterIdle, "critter_idle", "void %s(Critter&)" },
-        { &ServerFunctions.CritterDead, "critter_dead", "void %s(Critter&,Critter@)" },
-        { &ServerFunctions.CritterRespawn, "critter_respawn", "void %s(Critter&)" },
-        { &ServerFunctions.CritterCheckMoveItem, "critter_check_move_item", "bool %s(Critter&,Item&,uint8,Item@)" },
-        { &ServerFunctions.CritterMoveItem, "critter_move_item", "void %s(Critter&,Item&,uint8)" },
-        { &ServerFunctions.MapCritterIn, "map_critter_in", "void %s(Map&,Critter&)" },
-        { &ServerFunctions.MapCritterOut, "map_critter_out", "void %s(Map&,Critter&)" },
-        { &ServerFunctions.NpcPlaneBegin, "npc_plane_begin", "bool %s(Critter&,NpcPlane&,int,Critter@,Item@)" },
-        { &ServerFunctions.NpcPlaneEnd, "npc_plane_end", "bool %s(Critter&,NpcPlane&,int,Critter@,Item@)" },
-        { &ServerFunctions.NpcPlaneRun, "npc_plane_run", "bool %s(Critter&,NpcPlane&,int,uint&,uint&,uint&)" },
-        { &ServerFunctions.KarmaVoting, "karma_voting", "void %s(Critter&,Critter&,bool)" },
-        { &ServerFunctions.CheckLook, "check_look", "bool %s(Map&,Critter&,Critter&)" },
-        { &ServerFunctions.ItemCost, "item_cost", "uint %s(Item&,Critter&,Critter&,bool)" },
-        { &ServerFunctions.ItemsBarter, "items_barter", "bool %s(Item@[]&,uint[]&,Item@[]&,uint[]&,Critter&,Critter&)" },
-        { &ServerFunctions.ItemsCrafted, "items_crafted", "void %s(Item@[]&,uint[]&,Item@[]&,Critter&)" },
-        { &ServerFunctions.PlayerLevelUp, "player_levelup", "void %s(Critter&,uint,uint,uint)" },
-        { &ServerFunctions.TurnBasedBegin, "turn_based_begin", "void %s(Map&)" },
-        { &ServerFunctions.TurnBasedEnd, "turn_based_end", "void %s(Map&)" },
-        { &ServerFunctions.TurnBasedProcess, "turn_based_process", "void %s(Map&,Critter&,bool)" },
-        { &ServerFunctions.TurnBasedSequence, "turn_based_sequence", "void %s(Map&,Critter@[]&,Critter@)" },
-        { &ServerFunctions.WorldSave, "world_save", "void %s(uint,uint[]&)" },
-        { &ServerFunctions.PlayerRegistration, "player_registration", "bool %s(uint,string&,uint&,uint&)" },
-        { &ServerFunctions.PlayerLogin, "player_login", "bool %s(uint,string&,uint,uint&,uint&)" },
-        { &ServerFunctions.PlayerGetAccess, "player_getaccess", "bool %s(Critter&,int,string&)" },
-        { &ServerFunctions.PlayerAllowCommand, "player_allowcommand", "bool %s(Critter@,string@,uint8)" },
-        { &ServerFunctions.CheckTrapLook, "check_trap_look", "bool %s(Map&,Critter&,Item&)" },
-    };
-    if( !Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "server", BindGameFunc, sizeof(BindGameFunc) / sizeof(BindGameFunc[0]) ) )
+    if( !Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "server", ServerReservedFunctions, sizeof(ServerScriptFunctions) / sizeof(int) ) )
     {
         Script::Finish();
         WriteLog( "Bind game functions fail.\n" );
@@ -198,7 +156,7 @@ bool FOServer::InitScriptSystem()
     }
 
     ASDbgMemoryCanWork = true;
-    WriteLog( "Script system initialization complete.\n" );
+    WriteLog( "Script system initialization... complete.\n" );
     return true;
 }
 
@@ -206,7 +164,7 @@ void FOServer::FinishScriptSystem()
 {
     WriteLog( "Script system finish...\n" );
     Script::Finish();
-    WriteLog( "Script system finish complete.\n" );
+    WriteLog( "Script system finish... complete\n" );
 }
 
 void FOServer::ScriptSystemUpdate()
@@ -261,8 +219,8 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 #undef BIND_CLASS
 #undef BIND_ASSERT
 #define BIND_CLIENT
-#define BIND_CLASS          BindClass::
-#define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+#define BIND_CLASS              BindClass::
+#define BIND_ASSERT( x )        if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
 
 namespace ClientBind
 {
@@ -294,24 +252,24 @@ bool FOServer::ReloadClientScripts()
     asSetGlobalMemoryFunctions( malloc, free );
     #endif
 
-    asIScriptEngine* old_engine = Script::GetEngine();
-    asIScriptEngine* engine = Script::CreateEngine( new ScriptPragmaCallback( PRAGMA_CLIENT ), "CLIENT" );
-    if( engine )
-        Script::SetEngine( engine );
+    asIScriptEngine* server_engine = Script::GetEngine();
+    asIScriptEngine* client_engine = Script::CreateEngine( new ScriptPragmaCallback( PRAGMA_CLIENT ), "CLIENT" );
+    if( client_engine )
+        Script::SetEngine( client_engine );
 
     // Bind vars and functions
     int bind_errors = 0;
-    if( engine )
-        bind_errors = ClientBind::Bind( engine );
+    if( client_engine )
+        bind_errors = ClientBind::Bind( client_engine );
 
     // Check errors
-    if( !engine || bind_errors )
+    if( !client_engine || bind_errors )
     {
-        if( !engine )
+        if( !client_engine )
             WriteLogF( _FUNC_, " - asCreateScriptEngine fail.\n" );
         else
             WriteLog( "Bind fail, errors<%d>.\n", bind_errors );
-        Script::FinishEngine( engine );
+        Script::FinishEngine( client_engine );
 
         #ifdef MEMORY_DEBUG
         if( MemoryDebugLevel >= 2 )
@@ -321,6 +279,7 @@ bool FOServer::ReloadClientScripts()
         else
             asSetGlobalMemoryFunctions( malloc, free );
         #endif
+
         return false;
     }
 
@@ -365,7 +324,7 @@ bool FOServer::ReloadClientScripts()
                 continue;
             }
 
-            asIScriptModule* module = engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
+            asIScriptModule* module = client_engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
             CBytecodeStream  binary;
             if( !module || module->SaveByteCode( &binary ) < 0 )
             {
@@ -429,7 +388,7 @@ bool FOServer::ReloadClientScripts()
 
     // Add native dlls to MSG
     int         dll_num = STR_INTERNAL_SCRIPT_DLLS;
-    EngineData* ed = (EngineData*)engine->GetUserData();
+    EngineData* ed = (EngineData*)client_engine->GetUserData();
     for( auto it = ed->LoadedDlls.begin(), end = ed->LoadedDlls.end(); it != end; ++it )
     {
         const string& dll_name = (*it).first;
@@ -477,8 +436,14 @@ bool FOServer::ReloadClientScripts()
         }
     }
 
+    if( !Script::BindReservedFunctions( config.c_str(), "client", ClientReservedFunctions, sizeof(ClientScriptFunctions) / sizeof(int), true ) )
+    {
+        WriteLog( "Bind game functions fail.\n" );
+        return false;
+    }
+
     // Finish
-    Script::FinishEngine( engine );
+    Script::FinishEngine( client_engine );
     Script::Undef( "__CLIENT" );
     Script::Define( "__SERVER" );
 
@@ -494,7 +459,7 @@ bool FOServer::ReloadClientScripts()
     else
         asSetGlobalMemoryFunctions( malloc, free );
     #endif
-    Script::SetEngine( old_engine );
+    Script::SetEngine( server_engine );
 
     // Add config text and pragmas, calculate hash
     for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )

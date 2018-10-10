@@ -208,6 +208,7 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
 #define FOCLASSIC_EXTENSION_ENTRY( isCompiler )    \
     GameOptions * FOClassic;                       \
+    GameOptions*     FOnline;                      \
     asIScriptEngine* ASEngine;                     \
     EXPORT void TARGET_NAME() {}                   \
     void (*Log)(const char* frmt, ...);            \

@@ -9,6 +9,9 @@
 #include <vector>
 #include <string>
 
+#include "Mutex.h"
+#include "ScriptFunctions.h"
+
 #define GLOBAL_CONTEXT_STACK_SIZE    (10)
 #define CONTEXT_BUFFER_SIZE          (512)
 
@@ -21,13 +24,6 @@ struct EngineData
     Preprocessor::PragmaCallback*    PragmaCB;
     string                           DllTarget;
     map<string, pair<string, void*>> LoadedDlls;
-};
-
-struct ReservedScriptFunction
-{
-    int* BindId;
-    char FuncName[256];
-    char FuncDecl[256];
 };
 
 namespace Script
@@ -44,7 +40,7 @@ namespace Script
 
     void UnloadScripts();
     bool ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix = NULL );
-    bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count );
+    bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp = false );
 
     #ifdef FOCLASSIC_SERVER
     namespace Profiler

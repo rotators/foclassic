@@ -9,15 +9,15 @@ DialogManager DlgMngr;
 
 bool DialogManager::LoadDialogs( const char* list_name )
 {
-    WriteLog( "Load Dialogs..." );
+    WriteLog( "Load dialogs" );
 
     if( !list_name )
     {
-        WriteLog( "List name nullptr.\n" );
+        WriteLogX( " ERROR: list name nullptr.\n" );
         return false;
     }
 
-    WriteLog( "from list<%s>.\n", list_name );
+    WriteLogX( " from list<%s>...\n", list_name );
 
     FileManager lst;
     if( !lst.LoadFile( list_name, PT_SERVER_DIALOGS ) )
@@ -71,6 +71,8 @@ bool DialogManager::LoadDialogs( const char* list_name )
             continue;
         }
 
+        WriteLog( "Load dialog<%u:%s>\n", dlg_id, dlg_name );
+
         DialogPack* pack = ParseDialog( dlg_name, dlg_id, (char*)fdlg.GetBuf() );
         if( !pack )
         {
@@ -87,7 +89,11 @@ bool DialogManager::LoadDialogs( const char* list_name )
         dlg_loaded++;
     }
 
-    WriteLog( "Loading dialogs finish, loaded<%u/%u>.\n", dlg_loaded, dlg_count );
+    WriteLog( "Load dialogs... loaded<%u", dlg_loaded );
+    if( dlg_loaded != dlg_count )
+        WriteLogX( "/%u", dlg_count );
+    WriteLogX( ">\n" );
+
     return dlg_count == dlg_loaded;
 }
 
@@ -162,10 +168,10 @@ void DialogManager::EraseDialogs( string name_pack )
 
 void DialogManager::Finish()
 {
-    WriteLog( "Dialog manager finish...\n" );
+    WriteLog( "Dialog manager finish..." );
     DialogsPacks.clear();
     DlgPacksNames.clear();
-    WriteLog( "Dialog manager finish complete.\n" );
+    WriteLogX( " complete.\n" );
 }
 
 string ParseLangKey( const char* str )

@@ -4902,13 +4902,13 @@ void FOClient::Net_OnCritterXY()
 
 void FOClient::Net_OnChosenParams()
 {
-    WriteLog( "Chosen parameters..." );
+    WriteLog( "Chosen parameters... " );
 
     if( !Chosen )
     {
         char buf[NETMSG_ALL_PARAMS_SIZE - sizeof(uint)];
         Bin.Pop( buf, NETMSG_ALL_PARAMS_SIZE - sizeof(uint) );
-        WriteLog( "chosen not created, skip.\n" );
+        WriteLogX( "chosen not created, skip.\n" );
         return;
     }
 
@@ -4935,7 +4935,7 @@ void FOClient::Net_OnChosenParams()
     // Refresh borders
     RebuildLookBorders = true;
 
-    WriteLog( "complete.\n" );
+    WriteLogX( "complete\n" );
 }
 
 void FOClient::Net_OnChosenParam()
@@ -4980,13 +4980,13 @@ void FOClient::Net_OnChosenParam()
             {
                 AnimRun( IntWCombatAnim, ANIMRUN_TO_END );
                 if( AnimGetCurSprCnt( IntWCombatAnim ) == 0 )
-                    SndMngr.PlaySound( SND_COMBAT_MODE_ON );
+                    SndMngr.PlaySound( SOUND_COMBAT_MODE_ON );
             }
             else
             {
                 AnimRun( IntWCombatAnim, ANIMRUN_FROM_END );
                 if( AnimGetCurSprCnt( IntWCombatAnim ) == AnimGetSprCount( IntWCombatAnim ) - 1 )
-                    SndMngr.PlaySound( SND_COMBAT_MODE_OFF );
+                    SndMngr.PlaySound( SOUND_COMBAT_MODE_OFF );
             }
         }
         break;
@@ -5712,7 +5712,7 @@ void FOClient::Net_OnLoadMap()
         #else
         SndMngr.PlayMusic( MsgGM->GetStr( STR_MAP_MUSIC_( map_pid ) ) );
         #endif
-        WriteLog( "Global map loaded.\n" );
+        WriteLog( "WorldMap loaded.\n" );
         return;
     }
 
@@ -5753,7 +5753,7 @@ void FOClient::Net_OnLoadMap()
 
 void FOClient::Net_OnMap()
 {
-    WriteLog( "Get map..." );
+    WriteLog( "Get map" );
 
     uint   msg_len;
     ushort map_pid;
@@ -5765,7 +5765,7 @@ void FOClient::Net_OnMap()
     Bin >> maxhy;
     Bin >> send_info;
 
-    WriteLog( "%u...", map_pid );
+    WriteLogX( "<%u>... ", map_pid );
 
     char map_name[256];
     Str::Format( map_name, "map%u", map_pid );
@@ -5780,10 +5780,10 @@ void FOClient::Net_OnMap()
     char* scen_data = NULL;
     uint  scen_len = 0;
 
-    WriteLog( "New:" );
+    WriteLogX( "New:" );
     if( FLAG( send_info, SENDMAP_TILES ) )
     {
-        WriteLog( " Tiles" );
+        WriteLogX( " Tiles" );
         uint count_tiles;
         Bin >> count_tiles;
         if( count_tiles )
@@ -5797,7 +5797,7 @@ void FOClient::Net_OnMap()
 
     if( FLAG( send_info, SENDMAP_WALLS ) )
     {
-        WriteLog( " Walls" );
+        WriteLogX( " Walls" );
         uint count_walls = 0;
         Bin >> count_walls;
         if( count_walls )
@@ -5811,7 +5811,7 @@ void FOClient::Net_OnMap()
 
     if( FLAG( send_info, SENDMAP_SCENERY ) )
     {
-        WriteLog( " Scenery" );
+        WriteLogX( " Scenery" );
         uint count_scen = 0;
         Bin >> count_scen;
         if( count_scen )
@@ -5829,7 +5829,7 @@ void FOClient::Net_OnMap()
     uchar*      cache = Crypt.GetCache( map_name, cache_len );
     FileManager fm;
 
-    WriteLog( " Old:" );
+    WriteLogX( " Old:" );
     if( cache && fm.LoadStream( cache, cache_len ) )
     {
         uint   buf_len = fm.GetFsize();
@@ -5854,7 +5854,7 @@ void FOClient::Net_OnMap()
 
                 if( !tiles )
                 {
-                    WriteLog( " Tiles" );
+                    WriteLogX( " Tiles" );
                     tiles_len = old_tiles_len;
                     fm.SetCurPos( 0x2C );
                     tiles_data = new char[tiles_len];
@@ -5864,7 +5864,7 @@ void FOClient::Net_OnMap()
 
                 if( !walls )
                 {
-                    WriteLog( " Walls" );
+                    WriteLogX( " Walls" );
                     walls_len = old_walls_len;
                     fm.SetCurPos( 0x2C + old_tiles_len );
                     walls_data = new char[walls_len];
@@ -5874,7 +5874,7 @@ void FOClient::Net_OnMap()
 
                 if( !scen )
                 {
-                    WriteLog( " Scenery" );
+                    WriteLogX( " Scenery" );
                     scen_len = old_scen_len;
                     fm.SetCurPos( 0x2C + old_tiles_len + old_walls_len );
                     scen_data = new char[scen_len];
@@ -5887,7 +5887,6 @@ void FOClient::Net_OnMap()
         }
     }
     SAFEDELA( cache );
-    WriteLog( ". " );
 
     if( tiles && walls && scen )
     {
@@ -6902,7 +6901,7 @@ void FOClient::Net_OnProtoItemData()
 
 void FOClient::Net_OnQuest( bool many )
 {
-    WriteLog( "Quest%s...", many ? "s" : "" );
+    WriteLog( "Quest%s... ", many ? "s" : "" );
 
     if( many )
     {
@@ -6933,7 +6932,7 @@ void FOClient::Net_OnQuest( bool many )
             AddMess( FOMB_GAME, quest->str.c_str() );
     }
 
-    WriteLog( "Complete.\n" );
+    WriteLogX( "complete\n" );
 }
 
 void FOClient::Net_OnHoloInfo()
@@ -7409,7 +7408,7 @@ void FOClient::CrittersProcess()
         {
             AnimRun( IntWCombatAnim, ANIMRUN_FROM_END );
             if( AnimGetCurSprCnt( IntWCombatAnim ) == AnimGetSprCount( IntWCombatAnim ) - 1 )
-                SndMngr.PlaySound( SND_COMBAT_MODE_OFF );
+                SndMngr.PlaySound( SOUND_COMBAT_MODE_OFF );
         }
 
         // Roof Visible
@@ -7484,7 +7483,7 @@ void FOClient::CrittersProcess()
                                                                                                                                                                                                                                              return; } }
 
     // Force end move
-    if( act.Type != CHOSEN_MOVE && act.Type != CHOSEN_MOVE_TO_CRIT && MoveDirs.size() )
+    if( act.Type != CHOSEN_MOVE && act.Type != CHOSEN_MOVE_TO_CRITTER && MoveDirs.size() )
     {
         MoveLastHx = -1;
         MoveLastHy = -1;
@@ -7499,7 +7498,7 @@ void FOClient::CrittersProcess()
     {
         case CHOSEN_NONE:
             break;
-        case CHOSEN_MOVE_TO_CRIT:
+        case CHOSEN_MOVE_TO_CRITTER:
         case CHOSEN_MOVE:
         {
             ushort hx = act.Param[0];
@@ -7517,7 +7516,7 @@ void FOClient::CrittersProcess()
             if( !HexMngr.IsMapLoaded() )
                 break;
 
-            if( act.Type == CHOSEN_MOVE_TO_CRIT )
+            if( act.Type == CHOSEN_MOVE_TO_CRITTER )
             {
                 CritterCl* cr = GetCritter( act.Param[0] );
                 if( !cr )
@@ -7915,7 +7914,7 @@ label_EndMove:
                             break;
                         bool is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                         if( target_cr )
-                            SetAction( CHOSEN_MOVE_TO_CRIT, target_cr->GetId(), 0, is_run, max_dist );
+                            SetAction( CHOSEN_MOVE_TO_CRITTER, target_cr->GetId(), 0, is_run, max_dist );
                         else
                             SetAction( CHOSEN_MOVE, hx, hy, is_run, max_dist, 0 );
                         if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, max_dist ) )
@@ -8109,7 +8108,7 @@ label_EndMove:
             Chosen->SubAp( ap_cost );
         }
         break;
-        case CHOSEN_MOVE_ITEM_CONT:
+        case CHOSEN_MOVE_ITEM_CONTAINER:
         {
             uint item_id = act.Param[0];
             uint cont = act.Param[1];
@@ -8166,7 +8165,7 @@ label_EndMove:
             }
         }
         break;
-        case CHOSEN_USE_SKL_ON_CRITTER:
+        case CHOSEN_USE_SKILL_ON_CRITTER:
         {
             ushort     skill = act.Param[0];
             uint       crid = act.Param[1];
@@ -8197,7 +8196,7 @@ label_EndMove:
                                 break;
                             bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                             uint   cut_dist = Chosen->GetUseDist() + cr->GetMultihex();
-                            SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, cut_dist );
+                            SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, cut_dist );
                             ushort hx = cr->GetHexX(), hy = cr->GetHexY();
                             if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, cut_dist ) )
                                 AddActionBack( act );
@@ -8228,7 +8227,7 @@ label_EndMove:
             WaitPing();
         }
         break;
-        case CHOSEN_USE_SKL_ON_ITEM:
+        case CHOSEN_USE_SKILL_ON_ITEM:
         {
             bool   is_inv = act.Param[0] != 0;
             ushort skill = act.Param[1];
@@ -8300,7 +8299,7 @@ label_EndMove:
             WaitPing();
         }
         break;
-        case CHOSEN_USE_SKL_ON_SCEN:
+        case CHOSEN_USE_SKILL_ON_SCENERY:
         {
             ushort skill = act.Param[0];
             ushort pid = act.Param[1];
@@ -8369,7 +8368,7 @@ label_EndMove:
                 if( IsTurnBased )
                     break;
                 bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
-                SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, talk_distance );
+                SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, talk_distance );
                 ushort hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, talk_distance ) )
                     AddActionBack( act );
@@ -8436,7 +8435,7 @@ label_EndMove:
             // WaitPing();
         }
         break;
-        case CHOSEN_PICK_CRIT:
+        case CHOSEN_PICK_CRITTER:
         {
             uint crid = act.Param[0];
             bool is_loot = (act.Param[1] == 0);
@@ -8460,7 +8459,7 @@ label_EndMove:
                 if( IsTurnBased )
                     break;
                 bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
-                SetAction( CHOSEN_MOVE_TO_CRIT, cr->GetId(), 0, is_run, pick_dist );
+                SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, pick_dist );
                 ushort hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, pick_dist ) )
                     AddActionBack( act );
@@ -8491,7 +8490,7 @@ label_EndMove:
             WaitPing();
         }
         break;
-        case CHOSEN_WRITE_HOLO:
+        case CHOSEN_WRITE_HOLODISK:
         {
             uint holodisk_id = act.Param[0];
             if( holodisk_id != IboxHolodiskId )
@@ -9783,54 +9782,8 @@ bool FOClient::ReloadScripts()
     errors += Script::RebindFunctions();
 
     // Bind reserved functions
-    ReservedScriptFunction BindGameFunc[] =
-    {
-        { &ClientFunctions.Start, "start", "bool %s()" },
-        { &ClientFunctions.Loop, "loop", "uint %s()" },
-        { &ClientFunctions.GetActiveScreens, "get_active_screens", "void %s(int[]&)" },
-        { &ClientFunctions.ScreenChange, "screen_change", "void %s(bool,int,int,int,int)" },
-        { &ClientFunctions.RenderIface, "render_iface", "void %s(uint)" },
-        { &ClientFunctions.RenderMap, "render_map", "void %s()" },
-        { &ClientFunctions.MouseDown, "mouse_down", "bool %s(int)" },
-        { &ClientFunctions.MouseUp, "mouse_up", "bool %s(int)" },
-        { &ClientFunctions.MouseMove, "mouse_move", "void %s(int,int)" },
-        { &ClientFunctions.KeyDown, "key_down", "bool %s(uint8,string&)" },
-        { &ClientFunctions.KeyUp, "key_up", "bool %s(uint8,string&)" },
-        { &ClientFunctions.InputLost, "input_lost", "void %s()" },
-        { &ClientFunctions.CritterIn, "critter_in", "void %s(CritterCl&)" },
-        { &ClientFunctions.CritterOut, "critter_out", "void %s(CritterCl&)" },
-        { &ClientFunctions.ItemMapIn, "item_map_in", "void %s(ItemCl&)" },
-        { &ClientFunctions.ItemMapChanged, "item_map_changed", "void %s(ItemCl&,ItemCl&)" },
-        { &ClientFunctions.ItemMapOut, "item_map_out", "void %s(ItemCl&)" },
-        { &ClientFunctions.ItemInvIn, "item_inv_in", "void %s(ItemCl&)" },
-        { &ClientFunctions.ItemInvOut, "item_inv_out", "void %s(ItemCl&)" },
-        { &ClientFunctions.MapMessage, "map_message", "bool %s(string&,uint16&,uint16&,uint&,uint&)" },
-        { &ClientFunctions.InMessage, "in_message", "bool %s(string&,int&,uint&,uint&)" },
-        { &ClientFunctions.OutMessage, "out_message", "bool %s(string&,int&)" },
-        { &ClientFunctions.ToHit, "to_hit", "int %s(CritterCl&,CritterCl&,ProtoItem&,uint8)" },
-        { &ClientFunctions.HitAim, "hit_aim", "void %s(uint8&)" },
-        { &ClientFunctions.CombatResult, "combat_result", "void %s(uint[]&)" },
-        { &ClientFunctions.GenericDesc, "generic_description", "string %s(int,int&,int&)" },
-        { &ClientFunctions.ItemLook, "item_description", "string %s(ItemCl&,int)" },
-        { &ClientFunctions.CritterLook, "critter_description", "string %s(CritterCl&,int)" },
-        { &ClientFunctions.GetElevator, "get_elevator", "bool %s(uint,uint[]&)" },
-        { &ClientFunctions.ItemCost, "item_cost", "uint %s(ItemCl&,CritterCl&,CritterCl&,bool)" },
-        { &ClientFunctions.PerkCheck, "check_perk", "bool %s(CritterCl&,uint)" },
-        { &ClientFunctions.PlayerGeneration, "player_data_generate", "void %s(int[]&)" },
-        { &ClientFunctions.PlayerGenerationCheck, "player_data_check", "bool %s(string&, int[]&)" },
-        { &ClientFunctions.CritterAction, "critter_action", "void %s(bool,CritterCl&,int,int,ItemCl@)" },
-        { &ClientFunctions.Animation2dProcess, "animation2d_process", "void %s(bool,CritterCl&,uint,uint,ItemCl@)" },
-        { &ClientFunctions.Animation3dProcess, "animation3d_process", "void %s(bool,CritterCl&,uint,uint,ItemCl@)" },
-        { &ClientFunctions.ItemsCollection, "items_collection", "void %s(int,ItemCl@[]&)" },
-        { &ClientFunctions.CritterAnimation, "critter_animation", "string@ %s(int,uint,uint,uint,uint&,uint&,int&,int&)" },
-        { &ClientFunctions.CritterAnimationSubstitute, "critter_animation_substitute", "bool %s(int,uint,uint,uint,uint&,uint&,uint&)" },
-        { &ClientFunctions.CritterAnimationFallout, "critter_animation_fallout", "bool %s(uint,uint&,uint&,uint&,uint&,uint&)" },
-        { &ClientFunctions.FilenameLogfile, "filename_logfile", "void %s( string& )" },
-        { &ClientFunctions.FilenameScreenshot, "filename_screenshot", "void %s( string& )" },
-        { &ClientFunctions.CritterCheckMoveItem, "critter_check_move_item", "bool %s(CritterCl&,ItemCl&,uint8,ItemCl@)" },
-    };
-    const char*            config = msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG );
-    if( !Script::BindReservedFunctions( config, "client", BindGameFunc, sizeof(BindGameFunc) / sizeof(BindGameFunc[0]) ) )
+    const char* config = msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG );
+    if( !Script::BindReservedFunctions( config, "client", ClientReservedFunctions, sizeof(ClientScriptFunctions) / sizeof(int) ) )
         errors++;
 
     if( errors )

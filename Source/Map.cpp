@@ -4,6 +4,7 @@
 #include "CritterManager.h"
 #include "ItemManager.h"
 #include "MapManager.h"
+#include "ScriptFunctions.h"
 
 const char* MapEventFuncName[MAP_EVENT_MAX] =
 {

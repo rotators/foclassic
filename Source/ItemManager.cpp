@@ -19,11 +19,11 @@ ItemManager ItemMngr;
 
 bool ItemManager::Init()
 {
-    WriteLog( "Item manager initialization...\n" );
+    WriteLog( "Initialize item manager...\n" );
 
     if( IsInit() )
     {
-        WriteLog( "already init.\n" );
+        WriteLog( "Initialize item manager... already initialized\n" );
         return true;
     }
 
@@ -31,17 +31,17 @@ bool ItemManager::Init()
     ClearProtos();
 
     isActive = true;
-    WriteLog( "Item manager initialization complete.\n" );
+    WriteLog( "Initialize item manager... complete.\n" );
     return true;
 }
 
 void ItemManager::Finish()
 {
-    WriteLog( "Item manager finish...\n" );
+    WriteLog( "Finish item manager...\n" );
 
     if( !isActive )
     {
-        WriteLog( "already finish or not init.\n" );
+        WriteLog( "Finish item manager... already finished or not initialized\n" );
         return;
     }
 
@@ -62,7 +62,7 @@ void ItemManager::Finish()
     ClearProtos();
 
     isActive = false;
-    WriteLog( "Item manager finish complete.\n" );
+    WriteLog( "Finish item manager... complete.\n" );
 }
 
 void ItemManager::Clear()
@@ -95,7 +95,7 @@ T ResolveProtoValue( const char* str )
 
 bool ItemManager::LoadProtos()
 {
-    WriteLog( "Loading items prototypes...\n" );
+    WriteLog( "Load items prototypes...\n" );
 
     FileManager fm;
     if( !fm.LoadFile( "items.lst", PT_SERVER_PRO_ITEMS ) )
@@ -126,6 +126,7 @@ bool ItemManager::LoadProtos()
         Str::Format( collection_name, "%03d - %s", i + 1, fnames[i].c_str() );
         FileManager::EraseExtension( collection_name );
 
+        WriteLog( "Load items proto<%s>\n", fnames[i].c_str() );
         if( LoadProtos( item_protos, fname ) )
         {
             ParseProtos( item_protos, collection_name );
@@ -133,7 +134,7 @@ bool ItemManager::LoadProtos()
         }
     }
 
-    WriteLog( "Items prototypes successfully loaded, count<%u>.\n", loaded );
+    WriteLog( "Load items prototypes... loaded<%u>\n", loaded );
     return true;
 }
 
@@ -599,7 +600,7 @@ void ItemManager::SaveAllItemsFile( void (*save_func)( void*, size_t ) )
 
 bool ItemManager::LoadAllItemsFile( void* f, int version )
 {
-    WriteLog( "Load items..." );
+    WriteLog( "Load items...\n" );
 
     lastItemId = 0;
 
@@ -607,7 +608,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
     FileRead( f, &count, sizeof(count) );
     if( !count )
     {
-        WriteLog( "items not found.\n" );
+        WriteLog( "Items not found.\n" );
         return true;
     }
 
@@ -660,7 +661,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
     if( errors )
         return false;
 
-    WriteLog( "complete, count<%u>.\n", count );
+    WriteLog( "Load items... loaded<%u>\n", count );
     return true;
 }
 

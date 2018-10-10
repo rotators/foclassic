@@ -911,7 +911,7 @@ bool FOServer::AI_ReloadWeapon( Npc* npc, Map* map, Item* weap, uint ammo_id )
 
 bool FOServer::TransferAllNpc()
 {
-    WriteLog( "Transfer all npc to game...\n" );
+    WriteLog( "Transfer NPCs...\n" );
 
     int   errors = 0;
     CrMap critters = CrMngr.GetCrittersNoLock();
@@ -970,7 +970,10 @@ bool FOServer::TransferAllNpc()
         cr->ProcessVisibleItems();
     }
 
-    WriteLog( "Transfer npc complete. Errors<%d>.\n", errors );
+    WriteLog( "Transfer NPCs... complete" );
+    if( errors )
+        WriteLogX( ", errors<%d>", errors );
+    WriteLogX( "\n" );
     return true;
 }
 

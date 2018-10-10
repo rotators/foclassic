@@ -25,6 +25,7 @@ target_sources( Shared
 		${AS_DIR}/scriptmath.h
 		${AS_DIR}/scriptstring.h
 	PRIVATE
+		Core.cpp
 		Crypt.cpp
 		FileSystem.cpp
 		GameOptions.cpp

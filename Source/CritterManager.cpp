@@ -4,6 +4,7 @@
 #include "ConstantsManager.h"
 #include "ItemManager.h"
 #include "IniParser.h"
+#include "ScriptFunctions.h"
 
 #ifdef FOCLASSIC_SERVER
 # include "MapManager.h"
@@ -15,17 +16,17 @@ CritterManager CrMngr;
 
 bool CritterManager::Init()
 {
-    WriteLog( "Critter manager initialization...\n" );
+    WriteLog( "Initialize critter manager...\n" );
 
     if( isActive )
     {
-        WriteLog( "already initialized.\n" );
+        WriteLog( "Initialize critter manager... already initialized\n" );
         return true;
     }
 
     if( !ItemMngr.IsInit() )
     {
-        WriteLog( "Error, Items manager not init.\n" );
+        WriteLog( "Initialize critter manager... ERROR\n" );
         return false;
     }
 
@@ -33,7 +34,7 @@ bool CritterManager::Init()
     Clear();
 
     isActive = true;
-    WriteLog( "Critter manager initialization complete.\n" );
+    WriteLog( "Initialize critter manager... complete.\n" );
     return true;
 }
 
@@ -67,7 +68,7 @@ void CritterManager::Clear()
 
 bool CritterManager::LoadProtos()
 {
-    WriteLog( "Loading critters prototypes...\n" );
+    WriteLog( "Load critters prototypes...\n" );
 
     if( !IsInit() )
     {
@@ -102,6 +103,7 @@ bool CritterManager::LoadProtos()
         FileManager::EraseExtension( collection_name );
         #endif
 
+        WriteLog( "Load critters proto<%s>\n", fnames[i].c_str() );
         if( protos_txt.LoadFile( fname, PT_SERVER_PRO_CRITTERS ) )
         {
             while( protos_txt.GotoNextApp( CRPROTO_APP ) )
@@ -163,7 +165,11 @@ bool CritterManager::LoadProtos()
         }
     }
 
-    WriteLog( "Loaded<%d> critter protos, errors<%d>.\n", loaded_count, errors );
+    WriteLog( "Load critters prototypes... loaded<%d>", loaded_count );
+    if( errors )
+        WriteLogX( ", errors<%d>", errors );
+    WriteLogX( "\n" );
+
     return errors == 0;
 }
 
@@ -208,7 +214,7 @@ void CritterManager::SaveCrittersFile( void (*save_func)( void*, size_t ) )
 
 bool CritterManager::LoadCrittersFile( void* f, uint version )
 {
-    WriteLog( "Load npc...\n" );
+    WriteLog( "Load NPCs...\n" );
 
     lastNpcId = 0;
 
@@ -263,10 +269,11 @@ bool CritterManager::LoadCrittersFile( void* f, uint version )
         AddCritter( npc );
     }
 
+    WriteLog( "Load NPCs... loaded<%u>", count - errors );
     if( errors )
-        WriteLog( "Load npc complete, count<%u>, errors<%u>.\n", count - errors, errors );
-    else
-        WriteLog( "Load npc complete, count<%u>.\n", count );
+        WriteLogX( ", errors<%u>", errors );
+    WriteLogX( "\n" );
+
     return true;
 }
 

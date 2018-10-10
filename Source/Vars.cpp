@@ -14,7 +14,7 @@ FileLogger* DbgLog = NULL;
 
 bool VarManager::Init( const char* fpath )
 {
-    WriteLog( "Var manager initialization.\n" );
+    WriteLog( "Initialize var manager...\n" );
 
     if( !fpath )
         varsPath = DIR_SLASH_SD;
@@ -30,7 +30,7 @@ bool VarManager::Init( const char* fpath )
         DbgLog = new FileLogger( "vars.log" );
 
     isInit = true;
-    WriteLog( "Var manager initialization complete.\n" );
+    WriteLog( "Initialize var manager... complete.\n" );
     return true;
 }
 
@@ -65,7 +65,7 @@ void VarManager::SaveVarsDataFile( void (*save_func)( void*, size_t ) )
 
 bool VarManager::LoadVarsDataFile( void* f, int version )
 {
-    WriteLog( "Load vars..." );
+    WriteLog( "Load vars...\n" );
     allQuestVars.reserve( 10000 );   // 40kb
 
     UShortUIntMap failed_tvars;
@@ -121,7 +121,7 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
             WriteLog( "Template var not found, tid<%u>, total<%u>.\n", it->first, failed );
     }
 
-    WriteLog( "complete, count<%u>.\n", count );
+    WriteLog( "Load vars... loaded<%u>\n", count );
     return true;
 }
 #endif // FOCLASSIC_SERVER
@@ -185,7 +185,7 @@ bool VarManager::UpdateVarsTemplate()
         if( !AddTemplateVar( *it ) )
             return false;
 
-    WriteLog( "Update template vars complete.\n" );
+    WriteLog( "Update template vars... complete.\n" );
     return true;
 }
 

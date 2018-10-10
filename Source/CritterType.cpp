@@ -126,6 +126,7 @@ int CritType::GetRunFrmCnt( uint cr_type, uint step )
 
 bool CritType::InitFromFile( FOMsg* fill_msg )
 {
+    WriteLog( "Load critters types...\n" );
     AutoPtrArr<CritTypeType> CrTypesReserved( new CritTypeType[MAX_CRIT_TYPES] );
     if( !CrTypesReserved.IsValid() )
         return false;
@@ -302,7 +303,7 @@ bool CritType::InitFromFile( FOMsg* fill_msg )
         }
     }
 
-    WriteLog( "Loaded<%d> critter types.\n", success );
+    WriteLog( "Load critters types... loaded<%d>\n", success );
     return true;
 }
 

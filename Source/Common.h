@@ -162,72 +162,6 @@ const uchar SELECT_ALPHA = 100;
 uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light );
 void GetClientOptions();
 
-struct ClientScriptFunctions
-{
-    int Start;
-    int Loop;
-    int GetActiveScreens;
-    int ScreenChange;
-    int RenderIface;
-    int RenderIfaceScreen;
-    int RenderMap;
-    int MouseDown;
-    int MouseUp;
-    int MouseMove;
-    int KeyDown;
-    int KeyUp;
-    int InputLost;
-    int CritterIn;
-    int CritterOut;
-    int ItemMapIn;
-    int ItemMapChanged;
-    int ItemMapOut;
-    int ItemInvIn;
-    int ItemInvOut;
-    int MapMessage;
-    int InMessage;
-    int OutMessage;
-    int ToHit;
-    int HitAim;
-    int CombatResult;
-    int GenericDesc;
-    int ItemLook;
-    int CritterLook;
-    int GetElevator;
-    int ItemCost;
-    int PerkCheck;
-    int PlayerGeneration;
-    int PlayerGenerationCheck;
-    int CritterAction;
-    int Animation2dProcess;
-    int Animation3dProcess;
-    int ItemsCollection;
-    int CritterAnimation;
-    int CritterAnimationSubstitute;
-    int CritterAnimationFallout;
-    int FilenameLogfile;
-    int FilenameScreenshot;
-    int CritterCheckMoveItem;
-} extern ClientFunctions;
-
-struct MapperScriptFunctions
-{
-    int Start;
-    int Loop;
-    int ConsoleMessage;
-    int RenderIface;
-    int RenderMap;
-    int MouseDown;
-    int MouseUp;
-    int MouseMove;
-    int KeyDown;
-    int KeyUp;
-    int InputLost;
-    int CritterAnimation;
-    int CritterAnimationSubstitute;
-    int CritterAnimationFallout;
-} extern MapperFunctions;
-
 #endif
 /************************************************************************/
 /* Server                                                               */
@@ -246,51 +180,6 @@ extern bool LogicMT;
 
 void GetServerOptions();
 
-struct ServerScriptFunctions
-{
-    int Init;
-    int Start;
-    int GetStartTime;
-    int Finish;
-    int Loop;
-    int GlobalProcess;
-    int GlobalInvite;
-    int CritterAttack;
-    int CritterAttacked;
-    int CritterStealing;
-    int CritterUseItem;
-    int CritterUseSkill;
-    int CritterReloadWeapon;
-    int CritterInit;
-    int CritterFinish;
-    int CritterIdle;
-    int CritterDead;
-    int CritterRespawn;
-    int CritterCheckMoveItem;
-    int CritterMoveItem;
-    int MapCritterIn;
-    int MapCritterOut;
-    int NpcPlaneBegin;
-    int NpcPlaneEnd;
-    int NpcPlaneRun;
-    int KarmaVoting;
-    int CheckLook;
-    int ItemCost;
-    int ItemsBarter;
-    int ItemsCrafted;
-    int PlayerLevelUp;
-    int TurnBasedBegin;
-    int TurnBasedEnd;
-    int TurnBasedProcess;
-    int TurnBasedSequence;
-    int WorldSave;
-    int PlayerRegistration;
-    int PlayerLogin;
-    int PlayerGetAccess;
-    int PlayerAllowCommand;
-    int CheckTrapLook;
-} extern ServerFunctions;
-
 // Net events
 # if defined (USE_LIBEVENT)
 #  if defined (FO_MSVC)
@@ -307,12 +196,12 @@ struct ServerScriptFunctions
 # include <fstream>
 
 # define _CRT_SECURE_NO_DEPRECATE
-# define MAX_TEXT_DIALOG    (1000)
+# define MAX_TEXT_DIALOG               (1000)
 
-# define ScriptString       string
+# define ScriptString                  string
 #endif
 #ifdef FONLINE_MRFIXIT
-# define ScriptString       string
+# define ScriptString                  string
 #endif
 
 

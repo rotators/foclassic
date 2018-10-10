@@ -9,6 +9,7 @@
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 # include "Script.h"
+# include "ScriptFunctions.h"
 #endif
 
 /************************************************************************/
