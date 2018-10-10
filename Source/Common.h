@@ -131,8 +131,6 @@ struct ScoreType
 /************************************************************************/
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
-# include "Assimp/aiTypes.h"
-
 // Todo: Complete shadow maps
 // # define SHADOW_MAP
 

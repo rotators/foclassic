@@ -1,6 +1,7 @@
 message( STATUS "Configuring libraries..." )
 
 add_subdirectory( acm )
+add_subdirectory( assimp )
 add_subdirectory( distorm )
 add_subdirectory( dx9 )
 add_subdirectory( fltk )

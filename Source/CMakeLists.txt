@@ -32,8 +32,8 @@ set( GL_LIBS fltkgl glew glu32 opengl32 theora )
 # - il requires jpeg, png
 
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm fltk il jpeg ogg png portaudio )
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} fltk il jpeg png )
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 
 if( WIN32 )
