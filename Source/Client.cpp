@@ -3259,6 +3259,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
 
     uint uid1 = *UID1;
     Bout << NETMSG_LOGIN;
+    Bout << (ushort)FOCLASSIC_STAGE;
     Bout << (ushort)FOCLASSIC_VERSION;
     uint uid4 = *UID4;
     Bout << uid4;

@@ -7,7 +7,8 @@
 /* Base                                                                 */
 /************************************************************************/
 
-#define MAKE_NETMSG_HEADER( number )          ( (uint)( (0xDEAD << 17) | (number << 8) | (0xAA) ) )
+// ID collisions: 3610 <-> 23753, 151765 <-> 187454; much more after 200k
+#define MAKE_NETMSG_HEADER( number )          ( (uint)( (0xF0C1A51C ^ number) * (number ## ull << (number % 24) ) % 0xFFFFFFFF ) )
 #define PING_CLIENT_LIFE_TIME                 (15000)    // Time to ping client life
 
 // Special message
@@ -25,13 +26,14 @@
 // ************************************************************************
 
 #define NETMSG_LOGIN                          MAKE_NETMSG_HEADER( 1 )
-#define NETMSG_LOGIN_SIZE                                        \
-    (sizeof(uint) + sizeof(ushort) + sizeof(uint) * 8 /*UIDs*/ + \
+#define NETMSG_LOGIN_SIZE                                                         \
+    (sizeof(uint) + sizeof(ushort) + sizeof(ushort) + sizeof(uint) * 8 /*UIDs*/ + \
      UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(uint) + sizeof(uint) * 10 /*MSG*/ + sizeof(uint) * 14 /*Proto*/ + sizeof(uchar) + 100)
 // ////////////////////////////////////////////////////////////////////////
 // Enter to game
 // Params:
-// ushort protocol_version
+// ushort engine_stage
+// ushort engine_version
 // !uint uid4
 // char name[MAX_NAME]
 // !uint uid1

@@ -34,19 +34,19 @@ uint DistGame( int x1, int y1, int x2, int y2 )
     {
         int dx = (x1 > x2 ? x1 - x2 : x2 - x1);
 
-		if( !(x1 & 1) )
+        if( !(x1 & 1) )
         {
             if( y2 <= y1 )
             {
                 int rx = y1 - y2 - dx / 2;
-                
-				return dx + (rx > 0 ? rx : 0);
+
+                return dx + (rx > 0 ? rx : 0);
             }
             else
             {
                 int rx = y2 - y1 - (dx + 1) / 2;
-                
-				return dx + (rx > 0 ? rx : 0);
+
+                return dx + (rx > 0 ? rx : 0);
             }
         }
         else
@@ -54,14 +54,14 @@ uint DistGame( int x1, int y1, int x2, int y2 )
             if( y2 >= y1 )
             {
                 int rx = y2 - y1 - dx / 2;
-                
-				return dx + (rx > 0 ? rx : 0);
+
+                return dx + (rx > 0 ? rx : 0);
             }
             else
             {
                 int rx = y1 - y2 - (dx + 1) / 2;
-        
-				return dx + (rx > 0 ? rx : 0);
+
+                return dx + (rx > 0 ? rx : 0);
             }
         }
     }
@@ -242,8 +242,8 @@ bool CheckDist( ushort x1, ushort y1, ushort x2, ushort y2, uint dist )
 int ReverseDir( int dir )
 {
     int dirs_count = DIRS_COUNT;
-    
-	return (dir + dirs_count / 2) % dirs_count;
+
+    return (dir + dirs_count / 2) % dirs_count;
 }
 
 void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 )
@@ -265,8 +265,8 @@ void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 )
 void ChangeStepsXY( float& sx, float& sy, float deq )
 {
     float rad = deq * PI_FLOAT / 180.0f;
-    
-	sx = sx * cos( rad ) - sy * sin( rad );
+
+    sx = sx * cos( rad ) - sy * sin( rad );
     sy = sx * sin( rad ) + sy * cos( rad );
 }
 
@@ -274,15 +274,15 @@ bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy
 {
     int hx_ = hx;
     int hy_ = hy;
-    
-	MoveHexByDirUnsafe( hx_, hy_, dir );
+
+    MoveHexByDirUnsafe( hx_, hy_, dir );
 
     if( hx_ >= 0 && hx_ < maxhx && hy_ >= 0 && hy_ < maxhy )
     {
         hx = hx_;
         hy = hy_;
-    
-		return true;
+
+        return true;
     }
 
     return false;

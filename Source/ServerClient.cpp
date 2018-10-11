@@ -1725,9 +1725,10 @@ void FOServer::Process_CreateClient( Client* cl )
 void FOServer::Process_LogIn( ClientPtr& cl )
 {
     // Net protocol
-    ushort proto_ver = 0;
-    cl->Bin >> proto_ver;
-    if( proto_ver != FOCLASSIC_VERSION )
+    ushort engine_stage = 0, engine_version = 0;
+    cl->Bin >> engine_stage;
+    cl->Bin >> engine_version;
+    if( engine_stage != FOCLASSIC_STAGE || engine_version != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
         cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
