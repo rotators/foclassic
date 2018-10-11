@@ -63,8 +63,9 @@
 // ////////////////////////////////////////////////////////////////////////
 // Registration query
 // Params:
-// uint mag_len
-// ushort proto_ver
+// uint msg_len
+// ushort engine_stage
+// ushort engine_version
 // MAX_NAME name
 // char pass_hash[PASS_HASH_SIZE]
 // ushort params_count
