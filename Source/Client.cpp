@@ -3326,6 +3326,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     Bout << NETMSG_CREATE_CLIENT;
     Bout << msg_len;
 
+    Bout << (ushort)FOCLASSIC_STAGE;
     Bout << (ushort)FOCLASSIC_VERSION;
 
     // Begin data encrypting
@@ -3827,7 +3828,7 @@ void FOClient::Net_OnLoginSuccess()
 {
     if( !Singleplayer )
         AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_LOGINOK ) );
-    WriteLog( "Auntification success.\n" );
+    WriteLog( "Authentication success.\n" );
 
     GmapFreeResources();
     ResMngr.FreeResources( RES_ITEMS );

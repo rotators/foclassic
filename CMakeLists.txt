@@ -49,7 +49,7 @@ set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
-include(PdbStrip)
+include(PdbSetup)
 include(SourceOptions)
 
 # globals
@@ -64,6 +64,11 @@ set( ASSIMP_DIR     "${FO_DIR}/Assimp" )
 set( DAT_DIR        "${FO_DIR}/DatFile" )
 set( EXTENSIONS_DIR "${CMAKE_SOURCE_DIR}/Extensions" )
 
+##
+## Source options
+##
+source_options()
+
 if( MSVC )
 	set( COMPILER_DEFINES "" )
 	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_WARNINGS" )
@@ -75,15 +80,10 @@ if( MSVC )
 	set( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_DEFINES} /MTd /MP" )
 	set( CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" )
+	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" ) # /FA /Fa$(IntDir)
 	set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO" )
 endif()
-
-##
-## Source options
-##
-source_options()
 
 ##
 ## Find threads
@@ -99,6 +99,10 @@ endif( HAVE_STRUCT_TIMESPEC )
 
 add_subdirectory( Source )
 add_subdirectory( Extensions )
+
+# create global header
+set( GLOBAL_HEADER "${CMAKE_BINARY_DIR}/include/CMake.h" )
+configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${CMAKE_BINARY_DIR}/include/CMake.h" @ONLY NEWLINE_STYLE LF )
 
 ##
 ## Prettify IDE
