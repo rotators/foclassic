@@ -54,7 +54,7 @@ void FOClient::IfaceLoadSpr( AnyFrames*& comp, const char* name )
     if( !IfaceIni.GetStr( name, "none.png", res ) )
         WriteLog( "Signature<%s> not found.\n", name );
     SprMngr.SurfType = RES_IFACE;
-    comp = SprMngr.LoadAnimation( res, PT_ART_INTRFACE, ANIM_USE_DUMMY );
+    comp = SprMngr.LoadAnimation( res, PATH_ART_INTRFACE, ANIM_USE_DUMMY );
     if( comp == SpriteManager::DummyAnimation )
         WriteLog( "File<%s> not found.\n", res );
     SprMngr.SurfType = RES_NONE;
@@ -65,7 +65,7 @@ void FOClient::IfaceLoadAnim( uint& comp, const char* name )
     char res[MAX_FOTEXT];
     if( !IfaceIni.GetStr( name, "none.png", res ) )
         WriteLog( "Signature<%s> not found.\n", name );
-    if( !(comp = AnimLoad( res, PT_ART_INTRFACE, RES_IFACE ) ) )
+    if( !(comp = AnimLoad( res, PATH_ART_INTRFACE, RES_IFACE ) ) )
         WriteLog( "Can't load animation<%s>.\n", res );
 }
 
@@ -110,7 +110,7 @@ bool FOClient::AppendIfaceIni( const char* ini_name )
         // Create name
         string file_name = IfaceIniNames[i];
         if( !Str::Substring( ini_name, "\\" ) && !Str::Substring( ini_name, "/" ) )
-            file_name = string( FileManager::GetPath( PT_ART_INTRFACE ) ) + file_name;
+            file_name = string( FileManager::GetPath( PATH_ART_INTRFACE ) ) + file_name;
 
         // Data files
         DataFileVec& pfiles = FileManager::GetDataFiles();
@@ -129,7 +129,7 @@ bool FOClient::AppendIfaceIni( const char* ini_name )
         }
 
         // Folder
-        file_name = string( FileManager::GetDataPath( PT_ART_INTRFACE ) ) + file_name;
+        file_name = string( FileManager::GetDataPath( PATH_ART_INTRFACE ) ) + file_name;
         FileManager fm;
         if( fm.LoadFile( file_name.c_str(), -1 ) )
             AppendIfaceIni( fm.GetBuf(), fm.GetFsize() );
@@ -999,8 +999,8 @@ int FOClient::InitIface()
 
     // Default animations
     SprMngr.SurfType = RES_IFACE;
-    ItemHex::DefaultAnim = SprMngr.LoadAnimation( "art\\items\\reserved.frm", PT_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
-    CritterCl::DefaultAnim = SprMngr.LoadAnimation( "art\\critters\\reservaa.frm", PT_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
+    ItemHex::DefaultAnim = SprMngr.LoadAnimation( "art\\items\\reserved.frm", PATH_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
+    CritterCl::DefaultAnim = SprMngr.LoadAnimation( "art\\critters\\reservaa.frm", PATH_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
     SprMngr.SurfType = RES_NONE;
 
     // Inventory
@@ -1056,21 +1056,21 @@ int FOClient::InitIface()
 
     // Cursors
     SprMngr.SurfType = RES_IFACE;
-    CurPMove = SprMngr.LoadAnimation( "msef001.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPMoveBlock = SprMngr.LoadAnimation( "msef002.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPUseItem = SprMngr.LoadAnimation( "acttohit.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPUseSkill = SprMngr.LoadAnimation( "crossuse.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPWait = SprMngr.LoadAnimation( "wait2.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPHand = SprMngr.LoadAnimation( "hand.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPDef = SprMngr.LoadAnimation( "actarrow.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrRt = SprMngr.LoadAnimation( "screast.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrLt = SprMngr.LoadAnimation( "scrwest.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrUp = SprMngr.LoadAnimation( "scrnorth.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrDw = SprMngr.LoadAnimation( "scrsouth.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrRU = SprMngr.LoadAnimation( "scrneast.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrLU = SprMngr.LoadAnimation( "scrnwest.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrRD = SprMngr.LoadAnimation( "scrseast.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPScrLD = SprMngr.LoadAnimation( "scrswest.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPMove = SprMngr.LoadAnimation( "msef001.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPMoveBlock = SprMngr.LoadAnimation( "msef002.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPUseItem = SprMngr.LoadAnimation( "acttohit.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPUseSkill = SprMngr.LoadAnimation( "crossuse.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPWait = SprMngr.LoadAnimation( "wait2.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPHand = SprMngr.LoadAnimation( "hand.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPDef = SprMngr.LoadAnimation( "actarrow.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrRt = SprMngr.LoadAnimation( "screast.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrLt = SprMngr.LoadAnimation( "scrwest.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrUp = SprMngr.LoadAnimation( "scrnorth.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrDw = SprMngr.LoadAnimation( "scrsouth.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrRU = SprMngr.LoadAnimation( "scrneast.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrLU = SprMngr.LoadAnimation( "scrnwest.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrRD = SprMngr.LoadAnimation( "scrseast.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPScrLD = SprMngr.LoadAnimation( "scrswest.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
     SprMngr.SurfType = RES_NONE;
     if( !CurPMove )
         return __LINE__;
@@ -1151,7 +1151,7 @@ int FOClient::InitIface()
     IfaceLoadSpr( LmapPBScanDw, "LmapScanPicDn" );
     IfaceLoadSpr( LmapPBLoHiDw, "LmapLoHiPicDn" );
     SprMngr.SurfType = RES_IFACE;
-    LmapPPix = SprMngr.LoadAnimation( "green_pix.png", PT_ART_INTRFACE, ANIM_USE_DUMMY );
+    LmapPPix = SprMngr.LoadAnimation( "green_pix.png", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
     SprMngr.SurfType = RES_NONE;
     if( !LmapPPix )
         return __LINE__;
@@ -2524,7 +2524,7 @@ void FOClient::GameKeyDown( uchar dik, const char* dik_text )
                 ShowScreen( SCREEN__SKILLBOX );
                 break;
             case DIK_SLASH:
-                AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
+                AddMess( MSGBOX_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
                 break;
             case DIK_COMMA:
                 SetAction( CHOSEN_DIR, 1 /*CW*/ );
@@ -2633,7 +2633,7 @@ void FOClient::GameLMouseDown()
             if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES && cr != Chosen && Chosen->IsAim() )
             {
                 if( !CritType::IsCanAim( Chosen->GetCrType() ) )
-                    AddMess( FOMB_GAME, "Aim attack is not aviable for this critter type." );
+                    AddMess( MSGBOX_GAME, "Aim attack is not aviable for this critter type." );
                 else if( !Chosen->IsRawParam( MODE_NO_AIM ) )
                     ShowScreen( SCREEN__AIM );
                 return;
@@ -2745,11 +2745,11 @@ void FOClient::IntDraw()
         SprMngr.DrawSprite( IntPBAddMessDn, IntBAddMess[0], IntBAddMess[1] );
     }
 
-    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_COMBAT_RESULT ) != MessBoxFilters.end() )
+    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_COMBAT_RESULT ) != MessBoxFilters.end() )
         SprMngr.DrawSprite( IntPBMessFilter1Dn, IntBMessFilter1[0], IntBMessFilter1[1] );
-    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_TALK ) != MessBoxFilters.end() )
+    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_TALK ) != MessBoxFilters.end() )
         SprMngr.DrawSprite( IntPBMessFilter2Dn, IntBMessFilter2[0], IntBMessFilter2[1] );
-    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_VIEW ) != MessBoxFilters.end() )
+    if( std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_VIEW ) != MessBoxFilters.end() )
         SprMngr.DrawSprite( IntPBMessFilter3Dn, IntBMessFilter3[0], IntBMessFilter3[1] );
 
     switch( IfaceHold )
@@ -3047,31 +3047,31 @@ void FOClient::IntLMouseUp()
     else if( IfaceHold == IFACE_INT_FILTER1 && IsCurInRect( IntBMessFilter1 ) )
     {
         MessBoxScroll = 0;
-        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_COMBAT_RESULT );
+        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_COMBAT_RESULT );
         if( it != MessBoxFilters.end() )
             MessBoxFilters.erase( it );
         else
-            MessBoxFilters.push_back( FOMB_COMBAT_RESULT );
+            MessBoxFilters.push_back( MSGBOX_COMBAT_RESULT );
         MessBoxGenerate();
     }
     else if( IfaceHold == IFACE_INT_FILTER2 && IsCurInRect( IntBMessFilter2 ) )
     {
         MessBoxScroll = 0;
-        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_TALK );
+        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_TALK );
         if( it != MessBoxFilters.end() )
             MessBoxFilters.erase( it );
         else
-            MessBoxFilters.push_back( FOMB_TALK );
+            MessBoxFilters.push_back( MSGBOX_TALK );
         MessBoxGenerate();
     }
     else if( IfaceHold == IFACE_INT_FILTER3 && IsCurInRect( IntBMessFilter3 ) )
     {
         MessBoxScroll = 0;
-        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), FOMB_VIEW );
+        auto it = std::find( MessBoxFilters.begin(), MessBoxFilters.end(), MSGBOX_VIEW );
         if( it != MessBoxFilters.end() )
             MessBoxFilters.erase( it );
         else
-            MessBoxFilters.push_back( FOMB_VIEW );
+            MessBoxFilters.push_back( MSGBOX_VIEW );
         MessBoxGenerate();
     }
     else if( IfaceHold == IFACE_INT_COMBAT_TURN && IsCurInRect( IntBCombatTurn ) && IsTurnBasedMyTurn() )
@@ -3103,13 +3103,13 @@ void FOClient::AddMess( int mess_type, const char* msg )
 {
     if( !msg )
         return;
-    if( mess_type == FOMB_GAME && !strcmp( msg, "error" ) )
+    if( mess_type == MSGBOX_GAME && !strcmp( msg, "error" ) )
         return;
 
     // Text
     const uint str_color[] = { COLOR_TEXT_DGREEN, COLOR_TEXT, COLOR_TEXT_DRED, COLOR_TEXT_DDGREEN };
     static char str[MAX_FOTEXT];
-    if( mess_type < 0 || mess_type > FOMB_VIEW )
+    if( mess_type < 0 || mess_type > MSGBOX_VIEW )
         Str::Format( str, "%s\n", msg );
     else
         Str::Format( str, "|%u %c |%u %s\n", str_color[mess_type], TEXT_SYMBOL_DOT, COLOR_TEXT, msg );
@@ -3397,7 +3397,7 @@ void FOClient::LogLMouseUp()
     }
     else if( IfaceHold == IFACE_LOG_OPTIONS && IsCurInRect( LogBOptions ) )
     {
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_OPTIONS_NOT_AVIABLE ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OPTIONS_NOT_AVIABLE ) );
     }
     else if( IfaceHold == IFACE_LOG_CREDITS && IsCurInRect( LogBCredits ) )
     {
@@ -3426,13 +3426,13 @@ void FOClient::LogTryConnect()
         if( name_len_utf8 < MIN_NAME || name_len_utf8 < GameOpt.MinNameLength ||
             name_len_utf8 > MAX_NAME || name_len_utf8 > GameOpt.MaxNameLength )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_WRONG_LOGIN ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_WRONG_LOGIN ) );
             return;
         }
 
         if( !Str::IsValidUTF8( GameOpt.Name.c_str() ) || Str::Substring( GameOpt.Name.c_str(), "*" ) )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_NAME_WRONG_CHARS ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_NAME_WRONG_CHARS ) );
             return;
         }
 
@@ -3440,13 +3440,13 @@ void FOClient::LogTryConnect()
         if( pass_len_utf8 < MIN_NAME || pass_len_utf8 < GameOpt.MinNameLength ||
             pass_len_utf8 > MAX_NAME || pass_len_utf8 > GameOpt.MaxNameLength )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_WRONG_PASS ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_WRONG_PASS ) );
             return;
         }
 
         if( !Str::IsValidUTF8( Password.c_str() ) || Str::Substring( Password.c_str(), "*" ) )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_PASS_WRONG_CHARS ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_PASS_WRONG_CHARS ) );
             return;
         }
 
@@ -3454,7 +3454,7 @@ void FOClient::LogTryConnect()
         Crypt.SetCache( "__name", (uchar*)GameOpt.Name.c_str(), (uint)GameOpt.Name.length() + 1 );
         Crypt.SetCache( "__pass", (uchar*)Password.c_str(), (uint)Password.length() + 1 );
 
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_CONNECTION ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_CONNECTION ) );
     }
 
     // Connect to server
@@ -4474,14 +4474,14 @@ void FOClient::LMenuTryCreate()
         {
             ItemHex* item = GetItem( TargetSmth.GetId() );
             if( item )
-                AddMess( FOMB_VIEW, FmtItemLook( item, ITEM_LOOK_ONLY_NAME ) );
+                AddMess( MSGBOX_VIEW, FmtItemLook( item, ITEM_LOOK_ONLY_NAME ) );
             last_look = TargetSmth;
         }
         if( TargetSmth.IsCritter() && TargetSmth != last_look )
         {
             CritterCl* cr = GetCritter( TargetSmth.GetId() );
             if( cr )
-                AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_SHORT ) );
+                AddMess( MSGBOX_VIEW, FmtCritLook( cr, CRITTER_LOOK_SHORT ) );
             last_look = TargetSmth;
         }
         if( TargetSmth.IsContItem() && TargetSmth != last_look )
@@ -4514,7 +4514,7 @@ void FOClient::LMenuTryCreate()
                 }
                 else
                 {
-                    AddMess( FOMB_VIEW, FmtItemLook( cont_item, ITEM_LOOK_ONLY_NAME ) );
+                    AddMess( MSGBOX_VIEW, FmtItemLook( cont_item, ITEM_LOOK_ONLY_NAME ) );
                 }
             }
             last_look = TargetSmth;
@@ -5003,7 +5003,7 @@ void FOClient::LMenuMouseUp()
             switch( *it_l )
             {
                 case LMENU_NODE_LOOK:
-                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
+                    AddMess( MSGBOX_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
                     break;
                 case LMENU_NODE_GMFOLLOW:
                     Net_SendRuleGlobal( GM_CMD_FOLLOW_CRIT, cr->GetId() );
@@ -5058,7 +5058,7 @@ void FOClient::LMenuMouseUp()
             switch( *it_l )
             {
                 case LMENU_NODE_LOOK:
-                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
+                    AddMess( MSGBOX_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
                     break;
                 case LMENU_NODE_TALK:
                     SetAction( CHOSEN_TALK_NPC, cr->GetId() );
@@ -5098,7 +5098,7 @@ void FOClient::LMenuMouseUp()
             switch( *it_l )
             {
                 case LMENU_NODE_LOOK:
-                    AddMess( FOMB_VIEW, FmtItemLook( item, ITEM_LOOK_MAP ) );
+                    AddMess( MSGBOX_VIEW, FmtItemLook( item, ITEM_LOOK_MAP ) );
                     break;
                 case LMENU_NODE_PICK:
                     SetAction( CHOSEN_PICK_ITEM, item->GetProtoId(), item->HexX, item->HexY );
@@ -5164,7 +5164,7 @@ void FOClient::LMenuMouseUp()
                         }
                     }
                     else if( GetActiveScreen() == SCREEN__PICKUP )
-                        AddMess( FOMB_VIEW, FmtItemLook( cont_item, ITEM_LOOK_DEFAULT ) );
+                        AddMess( MSGBOX_VIEW, FmtItemLook( cont_item, ITEM_LOOK_DEFAULT ) );
                     break;
                 case LMENU_NODE_DROP:
                     if( !cont_item )
@@ -5239,7 +5239,7 @@ void FOClient::LMenuMouseUp()
             switch( *it_l )
             {
                 case LMENU_NODE_LOOK:
-                    AddMess( FOMB_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
+                    AddMess( MSGBOX_VIEW, FmtCritLook( cr, CRITTER_LOOK_FULL ) );
                     break;
                 case LMENU_NODE_SKILL:
                     SboxUseOn = TargetSmth;
@@ -6014,7 +6014,7 @@ void FOClient::GmapDraw()
             if( !GmapPic[index] )
             {
                 SprMngr.SurfType = RES_GLOBAL_MAP;
-                GmapPic[index] = SprMngr.LoadAnimation( Str::FormatBuf( GmapTilesPic, index ), PT_ART_INTRFACE, ANIM_USE_DUMMY );
+                GmapPic[index] = SprMngr.LoadAnimation( Str::FormatBuf( GmapTilesPic, index ), PATH_ART_INTRFACE, ANIM_USE_DUMMY );
                 SprMngr.SurfType = RES_NONE;
             }
             if( !GmapPic[index] )
@@ -6635,7 +6635,7 @@ void FOClient::GmapKeyDown( uchar dik, const char* dik_text )
             ShowScreen( SCREEN__MENU_OPTION );
             break;
         case DIK_SLASH:
-            AddMess( FOMB_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
+            AddMess( MSGBOX_GAME, Str::FormatBuf( "Time: %02d.%02d.%d %02d:%02d:%02d x%u", GameOpt.Day, GameOpt.Month, GameOpt.Year, GameOpt.Hour, GameOpt.Minute, GameOpt.Second, GameOpt.TimeMultiplier ) );
             break;
         case DIK_EQUALS:
         case DIK_ADD:
@@ -6985,7 +6985,7 @@ void FOClient::MoptLMouseUp()
         ShowScreen( SCREEN__SAVE_LOAD );
     }
     else if( IfaceHold == IFACE_MOPT_OPTIONS && IsCurInRect( MoptOptions, 0, 0 ) )
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_OPTIONS_NOT_AVIABLE ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OPTIONS_NOT_AVIABLE ) );
     else if( IfaceHold == IFACE_MOPT_EXIT && IsCurInRect( MoptExit, 0, 0 ) )
         NetDisconnect();
     else if( IfaceHold == IFACE_MOPT_RESUME && IsCurInRect( MoptResume, 0, 0 ) )
@@ -9135,8 +9135,8 @@ AnyFrames* FOClient::AimGetPic( CritterCl* cr, const char* ext )
     // Make names
     char aim_name[MAX_FOPATH];
     char aim_name_alias[MAX_FOPATH];
-    Str::Format( aim_name, "%s%sna.%s", FileManager::GetPath( PT_ART_CRITTERS ), CritType::GetName( cr->GetCrType() ), ext );
-    Str::Format( aim_name_alias, "%s%sna.%s", FileManager::GetPath( PT_ART_CRITTERS ), CritType::GetName( cr->GetCrTypeAlias() ), ext );
+    Str::Format( aim_name, "%s%sna.%s", FileManager::GetPath( PATH_ART_CRITTERS ), CritType::GetName( cr->GetCrType() ), ext );
+    Str::Format( aim_name_alias, "%s%sna.%s", FileManager::GetPath( PATH_ART_CRITTERS ), CritType::GetName( cr->GetCrTypeAlias() ), ext );
 
     // Load
     AnyFrames* anim = ResMngr.GetAnim( Str::GetHash( aim_name ), 0, RES_IFACE_EXT );
@@ -11393,14 +11393,14 @@ void FOClient::SaveLoadCollect()
 
     // For each all saves in folder
     StrVec fnames;
-    FileManager::GetFolderFileNames( FileManager::GetPath( PT_SAVE ), true, "fo", fnames );
+    FileManager::GetFolderFileNames( FileManager::GetPath( PATH_SAVE ), true, "fo", fnames );
     PtrVec open_handles;
     for( uint i = 0; i < fnames.size(); i++ )
     {
         const string& fname = fnames[i];
 
         // Open file
-        void* f = FileOpen( FileManager::GetFullPath( fname.c_str(), PT_DATA ), false );
+        void* f = FileOpen( FileManager::GetFullPath( fname.c_str(), PATH_DATA ), false );
         if( !f )
             continue;
         open_handles.push_back( f );
@@ -11491,7 +11491,7 @@ void FOClient::SaveLoadCollect()
 
         // Extract full path
         char fname_ex[MAX_FOPATH];
-        FileManager::GetFullPath( name, PT_SAVE, fname_ex );
+        FileManager::GetFullPath( name, PATH_SAVE, fname_ex );
         ResolvePath( fname_ex );
         Str::Append( fname_ex, ".fo" );
 
@@ -11534,7 +11534,7 @@ void FOClient::SaveLoadSaveGame( const char* name )
 {
     // Get name of new save
     char fname[MAX_FOPATH];
-    FileManager::GetFullPath( NULL, PT_SAVE, fname );
+    FileManager::GetFullPath( NULL, PATH_SAVE, fname );
     ResolvePath( fname );
     Str::Append( fname, name );
     Str::Append( fname, ".fo" );

@@ -129,9 +129,9 @@ bool NpcAIMngr::LoadNpcBags()
     WriteLog( "Load bags...\n" );
 
     IniParser bags_txt;
-    if( !bags_txt.LoadFile( BAGS_FILE_NAME, PT_SERVER_DATA ) )
+    if( !bags_txt.LoadFile( BAGS_FILE_NAME, PATH_SERVER_DATA ) )
     {
-        WriteLog( "Load bags... file<%s> not found\n", FileManager::GetFullPath( BAGS_FILE_NAME, PT_SERVER_DATA ) );
+        WriteLog( "Load bags... file<%s> not found\n", FileManager::GetFullPath( BAGS_FILE_NAME, PATH_SERVER_DATA ) );
         return false;
     }
 

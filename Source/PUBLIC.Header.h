@@ -1,12 +1,15 @@
-#ifndef __FOCLASSIC__
-#define __FOCLASSIC__
+#ifndef __FOCLASSIC_H__
+#define __FOCLASSIC_H__
 
 //
-// FOClassic engine structures, for native working
-// Last update 30.09.2018
+// FOClassic engine structures, for native extensions
+// Last update 13.10.2018
 // Engine version 1, MSVS 2010
 // Default calling convention - cdecl
 //
+
+#define FOCLASSIC_STAGE             (1)
+#define FOCLASSIC_VERSION           (1)
 
 // Detect operating system
 #if defined (_WIN32) || defined (_WIN64)
@@ -94,10 +97,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <algorithm>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <map>
 using namespace std;
 
 // AngelScript
@@ -608,6 +612,7 @@ struct GameOptions
     void               ( * GetRainOffset )( int16* ox, int16* oy );
 };
 EXPORT_UNINITIALIZED GameOptions* FOClassic;
+EXPORT_UNINITIALIZED GameOptions* FOnline;
 
 struct Mutex
 {
@@ -1918,4 +1923,4 @@ inline void static_asserts()
     STATIC_ASSERT( sizeof(string) == 28 );
 }
 
-#endif // __FOCLASSIC__ //
+#endif // __FOCLASSIC_H__ //

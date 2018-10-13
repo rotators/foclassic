@@ -18,24 +18,24 @@ void ResourceManager::Refresh()
     {
         // All names
         StrVec file_names;
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_DATA ), true, NULL, file_names );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_DATA ), true, NULL, file_names );
         for( auto it = file_names.begin(), end = file_names.end(); it != end; ++it )
             Str::AddNameHash( (*it).c_str() );
 
         // Splashes
         StrVec splashes;
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "rix", splashes );
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "png", splashes );
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "jpg", splashes );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "rix", splashes );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "png", splashes );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "jpg", splashes );
         for( auto it = splashes.begin(), end = splashes.end(); it != end; ++it )
             if( std::find( splashNames.begin(), splashNames.end(), *it ) == splashNames.end() )
                 splashNames.push_back( *it );
 
         // Sound names
         StrVec sounds;
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_SND_SFX ), true, "wav", sounds );
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_SND_SFX ), true, "acm", sounds );
-        FileManager::GetFolderFileNames( FileManager::GetPath( PT_SND_SFX ), true, "ogg", sounds );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "wav", sounds );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "acm", sounds );
+        FileManager::GetFolderFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "ogg", sounds );
         char fname[MAX_FOPATH];
         char name[MAX_FOPATH];
         for( auto it = sounds.begin(), end = sounds.end(); it != end; ++it )
@@ -63,24 +63,24 @@ void ResourceManager::Refresh()
         {
             // All names
             StrVec file_names;
-            pfile->GetFileNames( FileManager::GetPath( PT_DATA ), true, NULL, file_names );
+            pfile->GetFileNames( FileManager::GetPath( PATH_DATA ), true, NULL, file_names );
             for( auto it = file_names.begin(), end = file_names.end(); it != end; ++it )
                 Str::AddNameHash( (*it).c_str() );
 
             // Splashes
             StrVec splashes;
-            pfile->GetFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "rix", splashes );
-            pfile->GetFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "png", splashes );
-            pfile->GetFileNames( FileManager::GetPath( PT_ART_SPLASH ), true, "jpg", splashes );
+            pfile->GetFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "rix", splashes );
+            pfile->GetFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "png", splashes );
+            pfile->GetFileNames( FileManager::GetPath( PATH_ART_SPLASH ), true, "jpg", splashes );
             for( auto it = splashes.begin(), end = splashes.end(); it != end; ++it )
                 if( std::find( splashNames.begin(), splashNames.end(), *it ) == splashNames.end() )
                     splashNames.push_back( *it );
 
             // Sound names
             StrVec sounds;
-            pfile->GetFileNames( FileManager::GetPath( PT_SND_SFX ), true, "wav", sounds );
-            pfile->GetFileNames( FileManager::GetPath( PT_SND_SFX ), true, "acm", sounds );
-            pfile->GetFileNames( FileManager::GetPath( PT_SND_SFX ), true, "ogg", sounds );
+            pfile->GetFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "wav", sounds );
+            pfile->GetFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "acm", sounds );
+            pfile->GetFileNames( FileManager::GetPath( PATH_SND_SFX ), true, "ogg", sounds );
             char fname[MAX_FOPATH];
             char name[MAX_FOPATH];
             for( auto it = sounds.begin(), end = sounds.end(); it != end; ++it )
@@ -182,7 +182,7 @@ AnyFrames* ResourceManager::GetAnim( uint name_hash, int dir, int res_type )
         return NULL;
 
     SprMngr.SurfType = res_type;
-    AnyFrames* anim = SprMngr.LoadAnimation( fname, PT_DATA, ANIM_DIR( dir ) | ANIM_FRM_ANIM_PIX );
+    AnyFrames* anim = SprMngr.LoadAnimation( fname, PATH_DATA, ANIM_DIR( dir ) | ANIM_FRM_ANIM_PIX );
     SprMngr.SurfType = RES_NONE;
 
     loadedAnims.insert( PAIR( id, LoadedAnim( res_type, anim ) ) );
@@ -258,9 +258,9 @@ AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, 
                         if( str->length() )
                         {
                             SprMngr.SurfType = RES_CRITTERS;
-                            anim = SprMngr.LoadAnimation( str->c_str(), PT_DATA, ANIM_DIR( dir ) );
+                            anim = SprMngr.LoadAnimation( str->c_str(), PATH_DATA, ANIM_DIR( dir ) );
                             if( !anim )
-                                anim = SprMngr.LoadAnimation( str->c_str(), PT_DATA, ANIM_DIR( 0 ) );
+                                anim = SprMngr.LoadAnimation( str->c_str(), PATH_DATA, ANIM_DIR( 0 ) );
                             SprMngr.SurfType = RES_NONE;
 
                             // Process flags
@@ -478,17 +478,17 @@ AnyFrames* ResourceManager::LoadFalloutAnimSpr( uint crtype, uint anim1, uint an
     // Try load fofrm
     const char* name = CritType::GetName( crtype );
     Str::Format( spr_name, "%s%c%c.fofrm", name, frm_ind[anim1], frm_ind[anim2] );
-    AnyFrames* frames = SprMngr.LoadAnimation( spr_name, PT_ART_CRITTERS, ANIM_DIR( dir ) );
+    AnyFrames* frames = SprMngr.LoadAnimation( spr_name, PATH_ART_CRITTERS, ANIM_DIR( dir ) );
 
     // Try load fallout frames
     if( !frames )
     {
         Str::Format( spr_name, "%s%c%c.frm", name, frm_ind[anim1], frm_ind[anim2] );
-        frames = SprMngr.LoadAnimation( spr_name, PT_ART_CRITTERS, ANIM_DIR( dir ) );
+        frames = SprMngr.LoadAnimation( spr_name, PATH_ART_CRITTERS, ANIM_DIR( dir ) );
         if( !frames )
         {
             Str::Format( spr_name, "%s%c%c.fr%u", name, frm_ind[anim1], frm_ind[anim2], dir );
-            frames = SprMngr.LoadAnimation( spr_name, PT_ART_CRITTERS, ANIM_DIR( 0 ) );
+            frames = SprMngr.LoadAnimation( spr_name, PATH_ART_CRITTERS, ANIM_DIR( 0 ) );
         }
     }
     SprMngr.SurfType = RES_NONE;
@@ -694,7 +694,7 @@ Animation3d* ResourceManager::GetCrit3dAnim( uint crtype, uint anim1, uint anim2
 
     char name[MAX_FOPATH];
     Str::Format( name, "%s.fo3d", CritType::GetName( crtype ) );
-    Animation3d* anim3d = SprMngr.LoadPure3dAnimation( name, PT_ART_CRITTERS );
+    Animation3d* anim3d = SprMngr.LoadPure3dAnimation( name, PATH_ART_CRITTERS );
     if( !anim3d )
         return NULL;
 
@@ -730,7 +730,7 @@ AnyFrames* ResourceManager::GetRandomSplash()
     int rnd = Random( 0, (int)splashNames.size() - 1 );
     static AnyFrames* splash = NULL;
     SprMngr.SurfType = RES_SPLASH;
-    splash = SprMngr.ReloadAnimation( splash, splashNames[rnd].c_str(), PT_DATA );
+    splash = SprMngr.ReloadAnimation( splash, splashNames[rnd].c_str(), PATH_DATA );
     SprMngr.SurfType = RES_NONE;
     return splash;
 }

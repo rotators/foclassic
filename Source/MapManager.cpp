@@ -190,9 +190,9 @@ bool MapManager::LoadLocationsProtos()
 
     // Load location prototypes
     IniParser city_txt;
-    if( !city_txt.LoadFile( "Locations.cfg", PT_SERVER_MAPS ) )
+    if( !city_txt.LoadFile( "Locations.cfg", PATH_SERVER_MAPS ) )
     {
-        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( "Locations.cfg", PT_SERVER_MAPS ) );
+        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( "Locations.cfg", PATH_SERVER_MAPS ) );
         return false;
     }
 
@@ -287,7 +287,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
         }
 
         WriteLog( "Load map proto<%u:%s>\n", map_pid, map_name );
-        if( !pmap.IsInit() && !pmap.Init( map_pid, map_name, PT_SERVER_MAPS ) )
+        if( !pmap.IsInit() && !pmap.Init( map_pid, map_name, PATH_SERVER_MAPS ) )
         {
             WriteLogF( _FUNC_, " - Init proto map<%s> for location<%s> fail.\n", map_name, ploc.Name.c_str() );
             return false;

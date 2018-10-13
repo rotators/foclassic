@@ -54,7 +54,7 @@ public:
 typedef vector<BindFunction> BindFunctionVec;
 asIScriptEngine* Engine = NULL;
 void*            EngineLogFile = NULL;
-int              ScriptsPath = PT_SCRIPTS;
+int              ScriptsPath = PATH_SCRIPTS;
 bool             LogDebugInfo = true;
 StrVec           WrongGlobalObjects;
 
@@ -479,7 +479,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
 
     // Client path fixes
     #if defined (FOCLASSIC_CLIENT)
-    Str::Insert( dll_path, FileManager::GetPath( PT_SERVER_SCRIPTS ) );
+    Str::Insert( dll_path, FileManager::GetPath( PATH_SERVER_SCRIPTS ) );
     Str::Replacement( dll_path, '\\', '.' );
     Str::Replacement( dll_path, '/', '.' );
     #endif
@@ -637,14 +637,8 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     errors += BindImportedFunctions();
     errors += RebindFunctions();
 
-    if( errors )
-    {
-        WriteLog( "Reload %s scripts... failed\n", key );
-        return false;
-    }
-
-    WriteLog( "Reload %s scripts... complete\n", key );
-    return true;
+    WriteLog( "Reload %s scripts... %s\n", key, errors == 0 ? "complete" : "failed" );
+    return errors == 0;
 }
 
 bool Script::BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp /* = false */ )
@@ -758,7 +752,7 @@ void Script::Profiler::Init()
     Timer::GetCurrentDateTime( dt );
 
     char dump_file_path[MAX_FOPATH];
-    FileManager::GetFullPath( NULL, PT_SERVER_PROFILER, dump_file_path );
+    FileManager::GetFullPath( NULL, PATH_SERVER_PROFILER, dump_file_path );
     FileManager::CreateDirectoryTree( dump_file_path );
 
     char dump_file[MAX_FOPATH];
@@ -1874,7 +1868,7 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         if( !dll )
         {
             if( !disable_log )
-                WriteLogF( _FUNC_, " - Dll<%s> not found in scripts folder, error<%s>.\n", module_name, DLL_Error() );
+                WriteLogF( _FUNC_, " - Extensions<%s> not found in scripts folder, error<%s>.\n", module_name, DLL_Error() );
             return 0;
         }
 
@@ -1883,7 +1877,7 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
         if( !func )
         {
             if( !disable_log )
-                WriteLogF( _FUNC_, " - Function<%s> in dll<%s> not found, error<%s>.\n", func_name, module_name, DLL_Error() );
+                WriteLogF( _FUNC_, " - Function<%s> in extension<%s> not found, error<%s>.\n", func_name, module_name, DLL_Error() );
             return 0;
         }
 

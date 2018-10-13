@@ -101,7 +101,7 @@ bool FOServer::InitScriptSystem()
         WriteLog( "Script system initialization... failed\n" );
         return false;
     }
-    Script::SetScriptsPath( PT_SERVER_SCRIPTS );
+    Script::SetScriptsPath( PATH_SERVER_SCRIPTS );
     Script::Profiler::Init();
 
     // Wrong global objects
@@ -128,10 +128,10 @@ bool FOServer::InitScriptSystem()
 
     // Get config file
     FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PT_SERVER_SCRIPTS );
+    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
     if( !scripts_cfg.IsLoaded() )
     {
-        WriteLog( "Config file<%s> not found.\n", FileManager::GetFullPath( SCRIPTS_LST, PT_SERVER_SCRIPTS ) );
+        WriteLog( "Config file<%s> not found.\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
         return false;
     }
 
@@ -240,7 +240,7 @@ bool FOServer::ReloadClientScripts()
 
     // Get config file
     FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PT_SERVER_SCRIPTS );
+    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
     if( !scripts_cfg.IsLoaded() )
     {
         WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
@@ -6085,7 +6085,7 @@ bool FOServer::SScriptFunc::Global_LoadDataFile( ScriptString& dat_name )
 {
     if( FileManager::LoadDataFile( dat_name.c_str() ) )
     {
-        ConstantsManager::Initialize( PT_SERVER_DATA );
+        ConstantsManager::Initialize( PATH_SERVER_DATA );
         return true;
     }
     return false;
@@ -6230,7 +6230,7 @@ bool FOServer::SScriptFunc::Global_LoadImage( uint index, ScriptString* image_na
 
     // Load file to memory
     FileManager fm;
-    if( !fm.LoadFile( image_name->c_str(), PT_SERVER_MAPS ) )
+    if( !fm.LoadFile( image_name->c_str(), PATH_SERVER_MAPS ) )
         SCRIPT_ERROR_R0( "File not found." );
 
     // Load PNG from memory

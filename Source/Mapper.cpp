@@ -128,7 +128,7 @@ bool FOMapper::Init()
     FileManager::InitDataFiles( ".\\" );
 
     // Cache
-    FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PT_CACHE ) );
+    FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PATH_CACHE ) );
     char cache_name[MAX_FOPATH] = { "singleplayer" };
     if( !Singleplayer )
         Str::Format( cache_name, "%s.%u", GameOpt.Host.c_str(), GameOpt.Port );
@@ -163,9 +163,9 @@ bool FOMapper::Init()
     SprMngr.SetDefaultFont( FONT_DEFAULT, COLOR_TEXT );
 
     // Names
-    ConstantsManager::Initialize( PT_DATA );
+    ConstantsManager::Initialize( PATH_DATA );
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
-    ConstantsManager::Initialize( PT_SERVER_DATA );
+    ConstantsManager::Initialize( PATH_SERVER_DATA );
     FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
 
     // Resource manager
@@ -189,20 +189,20 @@ bool FOMapper::Init()
 
     // Language Packs
     IniParser cfg_mapper;
-    cfg_mapper.LoadFile( GetConfigFileName(), PT_MAPPER_ROOT );
+    cfg_mapper.LoadFile( GetConfigFileName(), PATH_MAPPER_ROOT );
     char      server_cfg_name[MAX_FOPATH];
     cfg_mapper.GetStr( "ServerName", "FOnlineServer", server_cfg_name );
     Str::Append( server_cfg_name, ".cfg" );
 
     IniParser cfg_server;
-    cfg_server.LoadFile( server_cfg_name, PT_SERVER_ROOT );
+    cfg_server.LoadFile( server_cfg_name, PATH_SERVER_ROOT );
     char      lang_name[MAX_FOTEXT];
     cfg_server.GetStr( "Language_0", DEFAULT_LANGUAGE, lang_name );
     if( strlen( lang_name ) != 4 )
         Str::Copy( lang_name, DEFAULT_LANGUAGE );
     Str::Lower( lang_name );
 
-    if( !CurLang.Init( lang_name, PT_SERVER_TEXTS ) )
+    if( !CurLang.Init( lang_name, PATH_SERVER_TEXTS ) )
         return false;
 
     MsgText = &CurLang.Msg[TEXTMSG_TEXT];
@@ -269,7 +269,7 @@ bool FOMapper::Init()
         TabsActive[i] = &(*Tabs[i].begin() ).second;
     }
 
-    TabsTiles[INT_MODE_TILE].TileDirs.push_back( FileManager::GetPath( PT_ART_TILES ) );
+    TabsTiles[INT_MODE_TILE].TileDirs.push_back( FileManager::GetPath( PATH_ART_TILES ) );
     TabsTiles[INT_MODE_TILE].TileSubDirs.push_back( true );
 
     // Initialize tabs scroll and names
@@ -305,7 +305,7 @@ bool FOMapper::Init()
         FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
 
         ProtoMap* pmap = new ProtoMap();
-        bool      initialized = pmap->Init( 0xFFFF, map_name, PT_SERVER_MAPS );
+        bool      initialized = pmap->Init( 0xFFFF, map_name, PATH_SERVER_MAPS );
 
         FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
 
@@ -378,12 +378,12 @@ int FOMapper::InitIface()
     char       int_file[256];
 
     IniParser  cfg;
-    cfg.LoadFile( GetConfigFileName(), PT_MAPPER_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_MAPPER_ROOT );
     cfg.GetStr( "MapperInterface", CFG_DEF_INT_FILE, int_file );
 
-    if( !ini.LoadFile( int_file, PT_MAPPER_DATA ) )
+    if( !ini.LoadFile( int_file, PATH_MAPPER_DATA ) )
     {
-        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( int_file, PT_MAPPER_DATA ) );
+        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( int_file, PATH_MAPPER_DATA ) );
         return __LINE__;
     }
 
@@ -520,40 +520,40 @@ int FOMapper::InitIface()
     ConsoleHistory.clear();
     ConsoleHistoryCur = 0;
 
-    ItemHex::DefaultAnim = SprMngr.LoadAnimation( "art\\items\\reserved.frm", PT_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
-    CritterCl::DefaultAnim = SprMngr.LoadAnimation( "art\\critters\\reservaa.frm", PT_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
+    ItemHex::DefaultAnim = SprMngr.LoadAnimation( "art\\items\\reserved.frm", PATH_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
+    CritterCl::DefaultAnim = SprMngr.LoadAnimation( "art\\critters\\reservaa.frm", PATH_DATA, ANIM_USE_DUMMY | ANIM_FRM_ANIM_PIX );
 
     // Messbox
     MessBoxScroll = 0;
 
     // Cursor
-    CurPDef = SprMngr.LoadAnimation( "actarrow.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
-    CurPHand = SprMngr.LoadAnimation( "hand.frm", PT_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPDef = SprMngr.LoadAnimation( "actarrow.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
+    CurPHand = SprMngr.LoadAnimation( "hand.frm", PATH_ART_INTRFACE, ANIM_USE_DUMMY );
 
     // Iface
     char f_name[1024];
     ini.GetStr( "IntMainPic", "error", f_name );
-    IntMainPic = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    IntMainPic = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
     ini.GetStr( "IntTabPic", "error", f_name );
-    IntPTab = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    IntPTab = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
     ini.GetStr( "IntSelectPic", "error", f_name );
-    IntPSelect = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    IntPSelect = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
     ini.GetStr( "IntShowPic", "error", f_name );
-    IntPShow = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    IntPShow = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
 
     // Object
     ini.GetStr( "ObjMainPic", "error", f_name );
-    ObjWMainPic = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    ObjWMainPic = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
     ini.GetStr( "ObjToAllPicDn", "error", f_name );
-    ObjPBToAllDn = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    ObjPBToAllDn = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
 
     // Sub tabs
     ini.GetStr( "SubTabsPic", "error", f_name );
-    SubTabsPic = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    SubTabsPic = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
 
     // Console
     ini.GetStr( "ConsolePic", "error", f_name );
-    ConsolePic = SprMngr.LoadAnimation( f_name, PT_MAPPER_DATA, ANIM_USE_DUMMY );
+    ConsolePic = SprMngr.LoadAnimation( f_name, PATH_MAPPER_DATA, ANIM_USE_DUMMY );
 
     WriteLog( "Init interface complete.\n" );
     return 0;
@@ -4806,7 +4806,7 @@ void FOMapper::ParseCommand( const char* cmd )
 
         ProtoMap* pmap = new ProtoMap();
         FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
-        if( !pmap->Init( 0xFFFF, map_name, PT_SERVER_MAPS ) )
+        if( !pmap->Init( 0xFFFF, map_name, PATH_SERVER_MAPS ) )
         {
             AddMess( "File not found or truncated." );
             FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
@@ -4849,7 +4849,7 @@ void FOMapper::ParseCommand( const char* cmd )
         SelectClear();
         HexMngr.RefreshMap();
         FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
-        if( CurProtoMap->Save( map_name, PT_SERVER_MAPS ) )
+        if( CurProtoMap->Save( map_name, PATH_SERVER_MAPS ) )
             AddMess( "Save map success." );
         else
             AddMess( "Save map fail, see log." );
@@ -5295,11 +5295,11 @@ void FOMapper::InitScriptSystem()
 
     // Load scripts
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
-    Script::SetScriptsPath( PT_SERVER_SCRIPTS );
+    Script::SetScriptsPath( PATH_SERVER_SCRIPTS );
 
     // Get config file
     FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PT_SERVER_SCRIPTS );
+    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
     if( !scripts_cfg.IsLoaded() )
     {
         WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
@@ -5976,7 +5976,7 @@ int FOMapper::SScriptFunc::Global_GetLoadedMaps( ScriptArray* maps )
 uint FOMapper::SScriptFunc::Global_GetMapFileNames( ScriptString* dir, ScriptArray* names )
 {
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
-    string dir_ = FileManager::GetFullPath( NULL, PT_SERVER_MAPS );
+    string dir_ = FileManager::GetFullPath( NULL, PATH_SERVER_MAPS );
     uint   n = 0;
     if( dir )
         dir_ = dir->c_std_str();
@@ -6974,7 +6974,7 @@ void FOMapper::SScriptFunc::Global_DrawCritter3d( uint instance, uint crtype, ui
                 SprMngr.FreePure3dAnimation( anim );
             char fname[MAX_FOPATH];
             Str::Format( fname, "%s.fo3d", CritType::GetName( crtype ) );
-            anim = SprMngr.LoadPure3dAnimation( fname, PT_ART_CRITTERS );
+            anim = SprMngr.LoadPure3dAnimation( fname, PATH_ART_CRITTERS );
             DrawCritter3dCrType[instance] = crtype;
             DrawCritter3dFailToLoad[instance] = false;
 

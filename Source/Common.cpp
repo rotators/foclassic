@@ -660,13 +660,13 @@ const char* GetWindowName()
     // Default config names
     #if defined (FOCLASSIC_SERVER)
     static char window_name[MAX_FOPATH] = { "FOnline Server\0--default-server-name--" };
-    int         path_type = PT_SERVER_ROOT;
+    int         path_type = PATH_SERVER_ROOT;
     #elif defined (FOCLASSIC_MAPPER)
     static char window_name[MAX_FOPATH] = { "FOnline Mapper\0--default-mapper-name--" };
-    int         path_type = PT_MAPPER_ROOT;
+    int         path_type = PATH_MAPPER_ROOT;
     #else // FOCLASSIC_CLIENT and others
     static char window_name[MAX_FOPATH] = { "FOnline\0--default-client-name--" };
-    int         path_type = PT_ROOT;
+    int         path_type = PATH_ROOT;
     #endif
 
     // Extract config name from current exe
@@ -795,7 +795,7 @@ void GetClientOptions()
     // Load config file
     # ifdef FOCLASSIC_MAPPER
     IniParser cfg_mapper;
-    cfg_mapper.LoadFile( GetConfigFileName(), PT_MAPPER_ROOT );
+    cfg_mapper.LoadFile( GetConfigFileName(), PATH_MAPPER_ROOT );
 
     cfg_mapper.GetStr( "ClientPath", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-ClientPath" );
@@ -816,10 +816,10 @@ void GetClientOptions()
     IniParser cfg;
     cfg_mapper.GetStr( "ClientName", "FOClassic", buf );
     Str::Append( buf, ".cfg" );
-    cfg.LoadFile( buf, PT_ROOT );
+    cfg.LoadFile( buf, PATH_ROOT );
     # else
     IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PT_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
     # endif
 
     // Language
@@ -976,7 +976,7 @@ bool LogicMT = false;
 void GetServerOptions()
 {
     IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
     ServerGameSleep = cfg.GetInt( "GameSleep", 10 );
     Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
     WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
@@ -1255,7 +1255,7 @@ PCharVec LstNames[PATH_LIST_COUNT];
 void LoadList( const char* lst_name, int path_type )
 {
     FileManager fm;
-    if( !fm.LoadFile( lst_name, PT_ROOT ) )
+    if( !fm.LoadFile( lst_name, PATH_ROOT ) )
         return;
 
     char        str[1024];
@@ -1325,35 +1325,35 @@ string Deprecated_GetPicName( int pid, int type, ushort pic_num )
 {
     if( !ListsLoaded )
     {
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "tiles.lst", PT_ART_TILES );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "items.lst", PT_ART_ITEMS );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "scenery.lst", PT_ART_SCENERY );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "walls.lst", PT_ART_WALLS );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "misc.lst", PT_ART_MISC );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "intrface.lst", PT_ART_INTRFACE );
-        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "inven.lst", PT_ART_INVEN );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "tiles.lst", PATH_ART_TILES );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "items.lst", PATH_ART_ITEMS );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "scenery.lst", PATH_ART_SCENERY );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "walls.lst", PATH_ART_WALLS );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "misc.lst", PATH_ART_MISC );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "intrface.lst", PATH_ART_INTRFACE );
+        LoadList( "data" DIR_SLASH_S "deprecated_lists" DIR_SLASH_S "inven.lst", PATH_ART_INVEN );
         ListsLoaded = true;
     }
 
     if( pid == -1 )
-        return GetPicName( PT_ART_INTRFACE, pic_num );
+        return GetPicName( PATH_ART_INTRFACE, pic_num );
     if( pid == -2 )
-        return GetPicName( PT_ART_TILES, pic_num );
+        return GetPicName( PATH_ART_TILES, pic_num );
     if( pid == -3 )
-        return GetPicName( PT_ART_INVEN, pic_num );
+        return GetPicName( PATH_ART_INVEN, pic_num );
 
     if( type == ITEM_TYPE_DOOR )
-        return GetPicName( PT_ART_SCENERY, pic_num );                       // For doors from Scenery
+        return GetPicName( PATH_ART_SCENERY, pic_num );                       // For doors from Scenery
     else if( pid == SP_MISC_SCRBLOCK || SP_MISC_GRID_MAP( pid ) || SP_MISC_GRID_GM( pid ) )
-        return GetPicName( PT_ART_MISC, pic_num );                          // For exit grids from Misc
+        return GetPicName( PATH_ART_MISC, pic_num );                          // For exit grids from Misc
     else if( pid >= 4000 && pid <= 4200 )
-        return GetPicName( PT_ART_MISC, pic_num );                          // From Misc
+        return GetPicName( PATH_ART_MISC, pic_num );                          // From Misc
     else if( type >= ITEM_TYPE_ARMOR && type <= ITEM_TYPE_DOOR )
-        return GetPicName( PT_ART_ITEMS, pic_num );                         // From Items
+        return GetPicName( PATH_ART_ITEMS, pic_num );                         // From Items
     else if( type == ITEM_TYPE_GENERIC || type == ITEM_TYPE_GRID )
-        return GetPicName( PT_ART_SCENERY, pic_num );                       // From Scenery
+        return GetPicName( PATH_ART_SCENERY, pic_num );                       // From Scenery
     else if( type == ITEM_TYPE_WALL )
-        return GetPicName( PT_ART_WALLS, pic_num );                         // From Walls
+        return GetPicName( PATH_ART_WALLS, pic_num );                         // From Walls
     return "";
 }
 

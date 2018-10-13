@@ -1536,7 +1536,7 @@ void FOServer::Process_CreateClient( Client* cl )
         {
             // Avoid created files rewriting
             char fname[MAX_FOPATH];
-            FileManager::GetFullPath( cl->Name, PT_SERVER_CLIENTS, fname );
+            FileManager::GetFullPath( cl->Name, PATH_SERVER_CLIENTS, fname );
             Str::Append( fname, ".client" );
             exist = FileExist( fname );
         }
@@ -1644,7 +1644,7 @@ void FOServer::Process_CreateClient( Client* cl )
 
     // Refresh last id
     char  last_id_fname[MAX_FOPATH];
-    FileManager::GetFullPath( "last_id.txt", PT_SERVER_CLIENTS, last_id_fname );
+    FileManager::GetFullPath( "last_id.txt", PATH_SERVER_CLIENTS, last_id_fname );
     void* last_id_file = FileOpen( last_id_fname, true );
     if( last_id_file )
     {
@@ -1656,7 +1656,7 @@ void FOServer::Process_CreateClient( Client* cl )
 
     // Add name in clients names cache file
     char  cache_fname[MAX_FOPATH];
-    FileManager::GetFullPath( "clients_list.txt", PT_SERVER_CLIENTS, cache_fname );
+    FileManager::GetFullPath( "clients_list.txt", PATH_SERVER_CLIENTS, cache_fname );
     void* cache_file = FileOpenForAppend( cache_fname );
     if( cache_file )
     {

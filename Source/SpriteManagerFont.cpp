@@ -148,7 +148,7 @@ bool SpriteManager::BuildFont( int index, void* pfont, const char* image_name, b
     FontData& font = *(FontData*)pfont;
 
     // Load image
-    AnyFrames* image = LoadAnimation( image_name, PT_FONTS );
+    AnyFrames* image = LoadAnimation( image_name, PATH_FONTS );
     if( !image )
     {
         WriteLogF( _FUNC_, " - Image file<%s> not found.\n", image_name );
@@ -185,7 +185,7 @@ bool SpriteManager::BuildFont( int index, void* pfont, const char* image_name, b
         font.SpaceWidth = font.Letters[' '].XAdvance;
 
     // Create bordered instance
-    AnyFrames* image_bordered = LoadAnimation( image_name, PT_FONTS );
+    AnyFrames* image_bordered = LoadAnimation( image_name, PATH_FONTS );
     if( !image_bordered )
     {
         WriteLogF( _FUNC_, " - Can't load twice file<%s>.\n", image_name );
@@ -312,7 +312,7 @@ bool SpriteManager::LoadFontFO( int index, const char* font_name )
     char        fname[MAX_FOPATH];
     Str::Format( fname, "%s.fofnt", font_name );
     FileManager fm;
-    if( !fm.LoadFile( fname, PT_FONTS ) )
+    if( !fm.LoadFile( fname, PATH_FONTS ) )
     {
         WriteLogF( _FUNC_, " - File<%s> not found.\n", fname );
         return false;
@@ -525,7 +525,7 @@ bool SpriteManager::LoadFontBMF( int index, const char* font_name )
     FileManager fm;
     FileManager fm_tex;
 
-    if( !fm.LoadFile( Str::FormatBuf( "%s.fnt", font_name ), PT_FONTS ) )
+    if( !fm.LoadFile( Str::FormatBuf( "%s.fnt", font_name ), PATH_FONTS ) )
     {
         WriteLogF( _FUNC_, " - Font file<%s> not found.\n", Str::FormatBuf( "%s.fnt", font_name ) );
         return false;

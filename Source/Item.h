@@ -12,50 +12,39 @@ class MapObject;
 extern const char* ItemEventFuncName[ITEM_EVENT_MAX];
 
 // Prototypes
-#define PROTO_ITEM_DEFAULT_EXT       ".pro"
-#define PROTO_ITEM_FILENAME          "proto.fopro_"
-#define ITEM_MAX_SCRIPT_VALUES       (10)
-
-// Radio
-// Flags
-#define RADIO_DISABLE_SEND           (0x01)
-#define RADIO_DISABLE_RECV           (0x02)
-// Broadcast
-#define RADIO_BROADCAST_WORLD        (0)
-#define RADIO_BROADCAST_MAP          (20)
-#define RADIO_BROADCAST_LOCATION     (40)
-#define RADIO_BROADCAST_ZONE( x )    (100 + CLAMP( x, 1, 100 ) )   // 1..100
-#define RADIO_BROADCAST_FORCE_ALL    (250)
+#define PROTO_ITEM_DEFAULT_EXT      ".pro"
+#define PROTO_ITEM_FILENAME         "proto.fopro_"
+#define ITEM_MAX_SCRIPT_VALUES      (10)
 
 // Blocks, childs
-#define ITEM_MAX_BLOCK_LINES         (50)
-#define ITEM_MAX_CHILDS              (5)
-#define ITEM_MAX_CHILD_LINES         (6)
+#define ITEM_MAX_BLOCK_LINES        (50)
+#define ITEM_MAX_CHILDS             (5)
+#define ITEM_MAX_CHILD_LINES        (6)
 
 // Light flags
-#define LIGHT_DISABLE_DIR( dir )     (1 << CLAMP( dir, 0, 5 ) )
-#define LIGHT_GLOBAL                 (0x40)
-#define LIGHT_INVERSE                (0x80)
+#define LIGHT_DISABLE_DIR( dir )    (1 << CLAMP( dir, 0, 5 ) )
+#define LIGHT_GLOBAL                (0x40)
+#define LIGHT_INVERSE               (0x80)
 
 // Special item pids
-#define SP_SCEN_LIGHT                (2141)            // Light Source
-#define SP_SCEN_LIGHT_STOP           (4592)
-#define SP_SCEN_BLOCK                (2067)            // Secret Blocking Hex
-#define SP_SCEN_IBLOCK               (2344)            // Block Hex Auto Inviso
-#define SP_SCEN_TRIGGER              (3852)
-#define SP_WALL_BLOCK_LIGHT          (5621)            // Wall s.t. with light
-#define SP_WALL_BLOCK                (5622)            // Wall s.t.
-#define SP_GRID_EXITGRID             (2049)            // Exit Grid Map Marker
-#define SP_GRID_ENTIRE               (3853)
-#define SP_MISC_SCRBLOCK             (4012)            // Scroll block
-#define SP_MISC_GRID_MAP( pid )      ( (pid) >= 4016 && (pid) <= 4023 )
-#define SP_MISC_GRID_GM( pid )       ( (pid) >= 4031 && (pid) <= 4046 )
+#define SP_SCEN_LIGHT               (2141)             // Light Source
+#define SP_SCEN_LIGHT_STOP          (4592)
+#define SP_SCEN_BLOCK               (2067)             // Secret Blocking Hex
+#define SP_SCEN_IBLOCK              (2344)             // Block Hex Auto Inviso
+#define SP_SCEN_TRIGGER             (3852)
+#define SP_WALL_BLOCK_LIGHT         (5621)             // Wall s.t. with light
+#define SP_WALL_BLOCK               (5622)             // Wall s.t.
+#define SP_GRID_EXITGRID            (2049)             // Exit Grid Map Marker
+#define SP_GRID_ENTIRE              (3853)
+#define SP_MISC_SCRBLOCK            (4012)             // Scroll block
+#define SP_MISC_GRID_MAP( pid )     ( (pid) >= 4016 && (pid) <= 4023 )
+#define SP_MISC_GRID_GM( pid )      ( (pid) >= 4031 && (pid) <= 4046 )
 
 // Slot protos offsets
 // 1000 - 1100 protos reserved
-#define SLOT_MAIN_PROTO_OFFSET       (1000)
-#define SLOT_EXT_PROTO_OFFSET        (1030)
-#define SLOT_ARMOR_PROTO_OFFSET      (1060)
+#define SLOT_MAIN_PROTO_OFFSET      (1000)
+#define SLOT_EXT_PROTO_OFFSET       (1030)
+#define SLOT_ARMOR_PROTO_OFFSET     (1060)
 
 /************************************************************************/
 /* ProtoItem                                                            */

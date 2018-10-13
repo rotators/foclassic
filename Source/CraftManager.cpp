@@ -13,23 +13,6 @@
 # include "CritterCl.h"
 #endif
 
-// Fix boy function call states
-#define FIXBOY_LIST                 (0)
-#define FIXBOY_BUTTON               (1)
-#define FIXBOY_CRAFT                (2)
-// Fix boy craft results
-#define FIXBOY_ALLOW_CRAFT          (0x0001)
-#define FIXBOY_CHECK_TIMEOUT        (0x0002)
-#define FIXBOY_SET_TIMEOUT          (0x0004)
-#define FIXBOY_CHECK_PARAMS         (0x0008)
-#define FIXBOY_CHECK_MATERIALS      (0x0010)
-#define FIXBOY_CHECK_TOOLS          (0x0020)
-#define FIXBOY_SUB_MATERIALS        (0x0040)
-#define FIXBOY_ADD_CRAFT_ITEMS      (0x0080)
-#define FIXBOY_ADD_EXPERIENCE       (0x0100)
-#define FIXBOY_SEND_SUCC_MESSAGE    (0x0200)
-#define FIXBOY_SEND_FAIL_MESSAGE    (0x0400)
-#define FIXBOY_DEFAULT              (0xFFFF)
 #define CRAFT_RETURN_FAIL                           \
     { if( FLAG( flags, FIXBOY_SEND_FAIL_MESSAGE ) ) \
           return CRAFT_RESULT_FAIL; return CRAFT_RESULT_NONE; }

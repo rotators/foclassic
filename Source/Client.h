@@ -1690,10 +1690,6 @@ public:
 /************************************************************************/
 /* MessBox                                                              */
 /************************************************************************/
-    #define FOMB_GAME                  (0)
-    #define FOMB_TALK                  (1)
-    #define FOMB_COMBAT_RESULT         (2)
-    #define FOMB_VIEW                  (3)
     struct MessBoxMessage
     {
         int    Type;

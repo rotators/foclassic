@@ -98,7 +98,7 @@ bool ItemManager::LoadProtos()
     WriteLog( "Load items prototypes...\n" );
 
     FileManager fm;
-    if( !fm.LoadFile( "items.lst", PT_SERVER_PRO_ITEMS ) )
+    if( !fm.LoadFile( "items.lst", PATH_SERVER_PRO_ITEMS ) )
     {
         WriteLog( "Can't open \"items.lst\".\n" );
         return false;
@@ -120,7 +120,7 @@ bool ItemManager::LoadProtos()
     for( int i = 0; i < count; i++ )
     {
         char fname[MAX_FOPATH];
-        Str::Copy( fname, FileManager::GetFullPath( fnames[i].c_str(), PT_SERVER_PRO_ITEMS ) );
+        Str::Copy( fname, FileManager::GetFullPath( fnames[i].c_str(), PATH_SERVER_PRO_ITEMS ) );
 
         char collection_name[MAX_FOPATH];
         Str::Format( collection_name, "%03d - %s", i + 1, fnames[i].c_str() );

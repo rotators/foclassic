@@ -219,14 +219,14 @@ bool FOClient::Init()
     // Paths
     FileManager::SetDataPath( GameOpt.FoDataPath.c_str() );
     if( Singleplayer )
-        FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PT_SAVE ) );
+        FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PATH_SAVE ) );
 
     // Data files
     FileManager::InitDataFiles( ".\\" );
 
     // Cache
-    FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PT_CACHE ) );
-    if( !Crypt.SetCacheTable( FileManager::GetFullPath( "default.cache", PT_CACHE ) ) )
+    FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PATH_CACHE ) );
+    if( !Crypt.SetCacheTable( FileManager::GetFullPath( "default.cache", PATH_CACHE ) ) )
     {
         WriteLogF( _FUNC_, " - Can't set default cache.\n" );
         return false;
@@ -237,7 +237,7 @@ bool FOClient::Init()
         Str::Format( cache_name, "%s.%u", GameOpt.Host.c_str(), GameOpt.Port );
 
     char cache_fname[MAX_FOPATH];
-    FileManager::GetFullPath( cache_name, PT_CACHE, cache_fname );
+    FileManager::GetFullPath( cache_name, PATH_CACHE, cache_fname );
     Str::Append( cache_fname, ".cache" );
 
     bool refresh_cache = (!Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.IsCacheTable( cache_fname ) );
@@ -255,7 +255,7 @@ bool FOClient::Init()
     // Check password in config and command line
     char      pass[MAX_FOTEXT];
     IniParser cfg;     // Also used below
-    cfg.LoadFile( GetConfigFileName(), PT_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
     cfg.GetStr( CLIENT_CONFIG_APP, "UserPass", "", pass );
     char* cmd_line_pass = Str::Substring( CommandLine, "-UserPass" );
     if( cmd_line_pass )
@@ -341,7 +341,7 @@ bool FOClient::Init()
         Str::Copy( lang_name, DEFAULT_LANGUAGE );
     Str::Lower( lang_name );
 
-    CurLang.Init( lang_name, PT_TEXTS );
+    CurLang.Init( lang_name, PATH_TEXTS );
 
     MsgText = &CurLang.Msg[TEXTMSG_TEXT];
     MsgDlg = &CurLang.Msg[TEXTMSG_DLG];
@@ -354,7 +354,7 @@ bool FOClient::Init()
     MsgCraft = &CurLang.Msg[TEXTMSG_CRAFT];
     MsgInternal = &CurLang.Msg[TEXTMSG_INTERNAL];
     MsgUserHolo = new FOMsg;
-    MsgUserHolo->LoadMsgFile( USER_HOLO_TEXTMSG_FILE, PT_TEXTS );
+    MsgUserHolo->LoadMsgFile( USER_HOLO_TEXTMSG_FILE, PATH_TEXTS );
 
     // CritterCl types
     CritType::InitFromMsg( MsgInternal );
@@ -376,7 +376,7 @@ bool FOClient::Init()
     }
 
     // Constants
-    ConstantsManager::Initialize( PT_DATA );
+    ConstantsManager::Initialize( PATH_DATA );
 
     // Base ini options
     if( !AppendIfaceIni( NULL ) )
@@ -755,7 +755,7 @@ int FOClient::MainLoop()
         if( !InitNet() )
         {
             ShowMainScreen( SCREEN_LOGIN );
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_CONN_FAIL ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_CONN_FAIL ) );
             return 1;
         }
 
@@ -1225,15 +1225,15 @@ void FOClient::ParseKeyboard()
                     break;
                 case DIK_F2:
                     if( SaveLogFile() )
-                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_SAVED ) );
+                        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_LOG_SAVED ) );
                     else
-                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_LOG_NOT_SAVED ) );
+                        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_LOG_NOT_SAVED ) );
                     break;
                 case DIK_F3:
                     if( SaveScreenshot() )
-                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_SAVED ) );
+                        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_SCREENSHOT_SAVED ) );
                     else
-                        AddMess( FOMB_GAME, MsgGame->GetStr( STR_SCREENSHOT_NOT_SAVED ) );
+                        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_SCREENSHOT_NOT_SAVED ) );
                     break;
                 case DIK_F4:
                     IntVisible = !IntVisible;
@@ -2997,7 +2997,7 @@ void FOClient::NetProcess()
         if( GameOpt.DebugNet )
         {
             static uint count = 0;
-            AddMess( FOMB_GAME, Str::FormatBuf( "%04u) Input net message<%u>.", count, (msg >> 8) & 0xFF ) );
+            AddMess( MSGBOX_GAME, Str::FormatBuf( "%04u) Input net message<%u>.", count, (msg >> 8) & 0xFF ) );
             WriteLog( "%04u) Input net message<%u>.\n", count, (msg >> 8) & 0xFF );
             count++;
         }
@@ -3236,7 +3236,7 @@ void FOClient::NetProcess()
 
             default:
                 if( GameOpt.DebugNet )
-                    AddMess( FOMB_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", (msg >> 8) & 0xFF ) );
+                    AddMess( MSGBOX_GAME, Str::FormatBuf( "Invalid msg<%u>. Seek valid.", (msg >> 8) & 0xFF ) );
                 WriteLog( "Invalid msg<%u>. Seek valid.\n", msg );
                 Bin.MoveReadPos( sizeof(uint) );
                 Bin.SeekValidMsg();
@@ -3303,7 +3303,7 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     Bout.Push( dummy, 100 );
 
     if( !Singleplayer && name )
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_CONN_SUCCESS ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_CONN_SUCCESS ) );
 }
 
 void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
@@ -3429,7 +3429,7 @@ void FOClient::Net_SendCommand( char* str )
     {
         static void Message( const char* str )
         {
-            Self->AddMess( FOMB_GAME, str );
+            Self->AddMess( MSGBOX_GAME, str );
         }
     };
     PackCommand( str, Bout, LogCB::Message, Chosen->Name.c_str() );
@@ -3827,7 +3827,7 @@ void FOClient::Net_SendRefereshMe()
 void FOClient::Net_OnLoginSuccess()
 {
     if( !Singleplayer )
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_LOGINOK ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_LOGINOK ) );
     WriteLog( "Authentication success.\n" );
 
     GmapFreeResources();
@@ -4118,7 +4118,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     // Type stream
     uint fstr_cr = 0;
     uint fstr_mb = 0;
-    int  mess_type = FOMB_TALK;
+    int  mess_type = MSGBOX_TALK;
 
     switch( how_say )
     {
@@ -4152,7 +4152,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
             fstr_mb = STR_MBRADIO;
             break;
         case SAY_NETMSG:
-            mess_type = FOMB_GAME;
+            mess_type = MSGBOX_GAME;
             fstr_mb = STR_MBNET;
             break;
         default:
@@ -4792,7 +4792,7 @@ void FOClient::Net_OnCritterParam()
     Bin >> index;
     Bin >> value;
     if( GameOpt.DebugNet )
-        AddMess( FOMB_GAME, Str::FormatBuf( " - crid<%u> index<%u> value<%d>.", crid, index, value ) );
+        AddMess( MSGBOX_GAME, Str::FormatBuf( " - crid<%u> index<%u> value<%d>.", crid, index, value ) );
 
     CritterCl* cr = GetCritter( crid );
     if( !cr )
@@ -4862,7 +4862,7 @@ void FOClient::Net_OnCritterXY()
     Bin >> hy;
     Bin >> dir;
     if( GameOpt.DebugNet )
-        AddMess( FOMB_GAME, Str::FormatBuf( " - crid<%u> hx<%u> hy<%u> dir<%u>.", crid, hx, hy, dir ) );
+        AddMess( MSGBOX_GAME, Str::FormatBuf( " - crid<%u> hx<%u> hy<%u> dir<%u>.", crid, hx, hy, dir ) );
 
     if( !HexMngr.IsMapLoaded() )
         return;
@@ -4947,7 +4947,7 @@ void FOClient::Net_OnChosenParam()
     Bin >> index;
     Bin >> value;
     if( GameOpt.DebugNet )
-        AddMess( FOMB_GAME, Str::FormatBuf( " - index<%u> value<%d>.", index, value ) );
+        AddMess( MSGBOX_GAME, Str::FormatBuf( " - index<%u> value<%d>.", index, value ) );
 
     // Chosen specified parameters
     if( !Chosen )
@@ -6794,11 +6794,11 @@ void FOClient::Net_OnMsgData()
         WriteLogF( _FUNC_, " - Received text in another language, set as default.\n" );
         CurLang.Name = lang;
         IniParser cfg;
-        cfg.LoadFile( GetConfigFileName(), PT_ROOT );
+        cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
         if( cfg.IsLoaded() )
         {
             cfg.SetStr( CLIENT_CONFIG_APP, "Language", CurLang.NameStr );
-            cfg.SaveFile( GetConfigFileName(), PT_ROOT );
+            cfg.SaveFile( GetConfigFileName(), PATH_ROOT );
         }
     }
 
@@ -6820,7 +6820,7 @@ void FOClient::Net_OnMsgData()
         return;
     }
 
-    CurLang.Msg[num_msg].SaveMsgFile( Str::FormatBuf( "%s\\%s", CurLang.NameStr, TextMsgFileName[num_msg] ), PT_TEXTS );
+    CurLang.Msg[num_msg].SaveMsgFile( Str::FormatBuf( "%s\\%s", CurLang.NameStr, TextMsgFileName[num_msg] ), PATH_TEXTS );
     CurLang.Msg[num_msg].CalculateHash();
 
     switch( num_msg )
@@ -6844,13 +6844,13 @@ void FOClient::Net_OnMsgData()
                 IsConnected = false;
 
             // Names
-            ConstantsManager::Initialize( PT_DATA );
+            ConstantsManager::Initialize( PATH_DATA );
 
             // Reload interface
             if( int res = InitIface() )
             {
                 WriteLog( "Init interface fail, error<%d>.\n", res );
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_TO_LOAD_IFACE ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_TO_LOAD_IFACE ) );
                 IsConnected = false;
             }
             break;
@@ -6931,7 +6931,7 @@ void FOClient::Net_OnQuest( bool many )
         // Inform player
         Quest* quest = QuestMngr.GetQuest( q_num );
         if( quest )
-            AddMess( FOMB_GAME, quest->str.c_str() );
+            AddMess( MSGBOX_GAME, quest->str.c_str() );
     }
 
     WriteLogX( "complete\n" );
@@ -6986,7 +6986,7 @@ void FOClient::Net_OnUserHoloStr()
     if( MsgUserHolo->Count( str_num ) )
         MsgUserHolo->EraseStr( str_num );
     MsgUserHolo->AddStr( str_num, text );
-    MsgUserHolo->SaveMsgFile( USER_HOLO_TEXTMSG_FILE, PT_TEXTS );
+    MsgUserHolo->SaveMsgFile( USER_HOLO_TEXTMSG_FILE, PATH_TEXTS );
 }
 
 void FOClient::Net_OnAutomapsInfo()
@@ -7152,13 +7152,13 @@ bool FOClient::RegCheckData( CritterCl* newcr )
     if( name_len_utf8 < MIN_NAME || name_len_utf8 < GameOpt.MinNameLength ||
         name_len_utf8 > MAX_NAME || name_len_utf8 > GameOpt.MaxNameLength )
     {
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_WRONG_NAME ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_WRONG_NAME ) );
         return false;
     }
 
     if( !Str::IsValidUTF8( newcr->Name.c_str() ) || Str::Substring( newcr->Name.c_str(), "*" ) )
     {
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_NAME_WRONG_CHARS ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_NAME_WRONG_CHARS ) );
         return false;
     }
 
@@ -7169,13 +7169,13 @@ bool FOClient::RegCheckData( CritterCl* newcr )
         if( pass_len_utf8 < MIN_NAME || pass_len_utf8 < GameOpt.MinNameLength ||
             pass_len_utf8 > MAX_NAME || pass_len_utf8 > GameOpt.MaxNameLength )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_WRONG_PASS ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_WRONG_PASS ) );
             return false;
         }
 
         if( !Str::IsValidUTF8( newcr->Pass.c_str() ) || Str::Substring( newcr->Pass.c_str(), "*" ) )
         {
-            AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_PASS_WRONG_CHARS ) );
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_PASS_WRONG_CHARS ) );
             return false;
         }
     }
@@ -7472,17 +7472,17 @@ void FOClient::CrittersProcess()
     }
 
     ActionEvent act = ChosenAction[0];
-    #define CHECK_NEED_AP( need_ap )                                                                                                                                                                                                                                                                                                 \
-        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                  \
-              break; if( Chosen->GetParam( ST_ACTION_POINTS ) < (int)(need_ap) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } if( Chosen->GetParam( ST_CURRENT_AP ) < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetParam( ST_CURRENT_AP ) )                                               \
-                                                                                                                                                                                                                                                   AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } else \
-                                                                                                                                                                                                                               return; }                                                                                             \
+    #define CHECK_NEED_AP( need_ap )                                                                                                                                                                                                                                                                                                     \
+        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                      \
+              break; if( Chosen->GetParam( ST_ACTION_POINTS ) < (int)(need_ap) ) { AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } if( Chosen->GetParam( ST_CURRENT_AP ) < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetParam( ST_CURRENT_AP ) )                                                 \
+                                                                                                                                                                                                                                                     AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_AP, need_ap ) ); break; } else \
+                                                                                                                                                                                                                                 return; }                                                                                               \
         }
-    #define CHECK_NEED_REAL_AP( need_ap )                                                                                                                                                                                                                                                                                                                         \
-        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                                               \
-              break; if( Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER < (int)(need_ap) ) { AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } if( Chosen->GetRealAp() < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetRealAp() )                                                                            \
-                                                                                                                                                                                                                                                                 AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } else \
-                                                                                                                                                                                                                                             return; } }
+    #define CHECK_NEED_REAL_AP( need_ap )                                                                                                                                                                                                                                                                                                                             \
+        { if( IsTurnBased && !IsTurnBasedMyTurn() )                                                                                                                                                                                                                                                                                                                   \
+              break; if( Chosen->GetParam( ST_ACTION_POINTS ) * AP_DIVIDER < (int)(need_ap) ) { AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } if( Chosen->GetRealAp() < (int)(need_ap) ) { if( IsTurnBased ) { if( Chosen->GetRealAp() )                                                                              \
+                                                                                                                                                                                                                                                                   AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_AP, (need_ap) / AP_DIVIDER ) ); break; } else \
+                                                                                                                                                                                                                                               return; } }
 
     // Force end move
     if( act.Type != CHOSEN_MOVE && act.Type != CHOSEN_MOVE_TO_CRITTER && MoveDirs.size() )
@@ -7532,7 +7532,7 @@ void FOClient::CrittersProcess()
 
             if( Chosen->IsDoubleOverweight() )
             {
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT_TITLE ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OVERWEIGHT_TITLE ) );
                 SetAction( CHOSEN_NONE );
                 goto label_EndMove;
             }
@@ -7560,7 +7560,7 @@ void FOClient::CrittersProcess()
 
             if( !is_run && (!CritType::IsCanWalk( Chosen->GetCrType() ) || Chosen->IsRawParam( MODE_NO_WALK ) ) )
             {
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_CRITTER_CANT_MOVE ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_CRITTER_CANT_MOVE ) );
                 SetAction( CHOSEN_NONE );
                 goto label_EndMove;
             }
@@ -7819,17 +7819,17 @@ label_EndMove:
                 }
                 if( item->IsTwoHands() && Chosen->IsDmgArm() )
                 {
-                    AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_ARM ) );
+                    AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_ARM ) );
                     break;
                 }
                 if( Chosen->IsDmgTwoArm() && item->GetId() )
                 {
-                    AddMess( FOMB_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_TWO_ARMS ) );
+                    AddMess( MSGBOX_GAME, FmtCombatText( STR_COMBAT_NEED_DMG_TWO_ARMS ) );
                     break;
                 }
                 if( item->IsDeteriorable() && item->IsBroken() )
                 {
-                    AddMess( FOMB_GAME, FmtGameText( STR_INV_WEAR_WEAPON_BROKEN ) );
+                    AddMess( MSGBOX_GAME, FmtGameText( STR_INV_WEAR_WEAPON_BROKEN ) );
                     break;
                 }
             }
@@ -7923,7 +7923,7 @@ label_EndMove:
                             AddActionBack( act );
                         return;
                     }
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
+                    AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
                     break;
                 }
 
@@ -8128,12 +8128,12 @@ label_EndMove:
             {
                 if( Chosen->GetFreeWeight() < (int)(item->GetWeight1st() * count) )
                 {
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERWEIGHT ) );
+                    AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OVERWEIGHT ) );
                     break;
                 }
                 if( Chosen->GetFreeVolume() < (int)(item->GetVolume1st() * count) )
                 {
-                    AddMess( FOMB_GAME, MsgGame->GetStr( STR_OVERVOLUME ) );
+                    AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_OVERVOLUME ) );
                     break;
                 }
             }
@@ -8153,9 +8153,9 @@ label_EndMove:
             uint c, w, v;
             ContainerCalcInfo( PupCont2Init, c, w, v, MAX_INT, false );
             if( Chosen->GetFreeWeight() < (int)w )
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERWEIGHT ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_BARTER_OVERWEIGHT ) );
             else if( Chosen->GetFreeVolume() < (int)v )
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_BARTER_OVERSIZE ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_BARTER_OVERSIZE ) );
             else
             {
                 PupCont2Init.clear();
@@ -8379,7 +8379,7 @@ label_EndMove:
 
             if( !HexMngr.TraceBullet( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY(), talk_distance + Chosen->GetMultihex(), 0.0f, cr, false, NULL, 0, NULL, NULL, NULL, true ) )
             {
-                AddMess( FOMB_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
+                AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_FINDPATH_AIMBLOCK ) );
                 break;
             }
 
@@ -9022,7 +9022,7 @@ bool FOClient::SaveLogFile()
         return false;
 
     FileManager::FormatPath( log_path );
-    FileManager::CreateDirectoryTree( FileManager::GetFullPath( log_path, PT_ROOT ) );
+    FileManager::CreateDirectoryTree( FileManager::GetFullPath( log_path, PATH_ROOT ) );
 
     void* f = FileOpen( log_path, true );
     if( !f )
@@ -9072,7 +9072,7 @@ bool FOClient::SaveScreenshot()
         return false;
 
     FileManager::FormatPath( screen_path );
-    FileManager::CreateDirectoryTree( FileManager::GetFullPath( screen_path, PT_ROOT ) );
+    FileManager::CreateDirectoryTree( FileManager::GetFullPath( screen_path, PATH_ROOT ) );
 
     #ifdef FO_D3D
     LPDIRECT3DSURFACE9 surf = NULL;
@@ -9136,11 +9136,11 @@ void FOClient::AddVideo( const char* video_name, bool can_stop, bool clear_seque
         *sound = 0;
         sound++;
         if( !Str::Substring( sound, "/" ) )
-            sw.SoundName = FileManager::GetPath( PT_VIDEO );
+            sw.SoundName = FileManager::GetPath( PATH_VIDEO );
         sw.SoundName += sound;
     }
     if( !Str::Substring( str, "/" ) )
-        sw.FileName = FileManager::GetPath( PT_VIDEO );
+        sw.FileName = FileManager::GetPath( PATH_VIDEO );
     sw.FileName += str;
 
     // Add video in sequence
@@ -9169,7 +9169,7 @@ void FOClient::PlayVideo()
     CurVideo->AverageRenderTime = 0.0;
 
     // Open file
-    if( !CurVideo->RawData.LoadFile( video.FileName.c_str(), PT_DATA ) )
+    if( !CurVideo->RawData.LoadFile( video.FileName.c_str(), PATH_DATA ) )
     {
         WriteLogF( _FUNC_, " - Video file<%s> not found.\n", video.FileName.c_str() );
         SAFEDEL( CurVideo );
@@ -9681,14 +9681,14 @@ bool FOClient::ReloadScripts()
         !msg_script.Count( STR_INTERNAL_SCRIPT_MODULES + 1 ) )
     {
         WriteLog( "Main script section not found in MSG.\n" );
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
     if( msg_script.GetInt( STR_INTERNAL_SCRIPT_VERSION ) != CLIENT_SCRIPT_BINARY_VERSION )
     {
         WriteLog( "Old version of scripts.\n" );
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
@@ -9697,7 +9697,7 @@ bool FOClient::ReloadScripts()
     if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_CLIENT ), "CLIENT" ) )
     {
         WriteLog( "Unable to start script engine.\n" );
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
@@ -9712,12 +9712,12 @@ bool FOClient::ReloadScripts()
     if( bind_errors )
     {
         WriteLog( "Bind fail, errors<%d>.\n", bind_errors );
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
     // Options
-    Script::SetScriptsPath( PT_CACHE );
+    Script::SetScriptsPath( PATH_CACHE );
     Script::Define( "__CLIENT" );
 
     // Store dlls
@@ -9744,7 +9744,7 @@ bool FOClient::ReloadScripts()
         if( dll.LoadStream( dll_binary, len ) )
         {
             dll.SwitchToWrite();
-            dll.SaveOutBufToFile( dll_name, PT_CACHE );
+            dll.SaveOutBufToFile( dll_name, PATH_CACHE );
         }
     }
 
@@ -9790,7 +9790,7 @@ bool FOClient::ReloadScripts()
 
     if( errors )
     {
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
@@ -9799,7 +9799,7 @@ bool FOClient::ReloadScripts()
     if( !Script::PrepareContext( ClientFunctions.Start, _FUNC_, "Game" ) || !Script::RunPrepared() || Script::GetReturnedBool() == false )
     {
         WriteLog( "Execute start script fail.\n" );
-        AddMess( FOMB_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
@@ -10515,13 +10515,13 @@ void FOClient::SScriptFunc::Global_SetMessageFilters( ScriptArray* filters )
 
 void FOClient::SScriptFunc::Global_Message( ScriptString& msg )
 {
-    Self->AddMess( FOMB_GAME, msg.c_str() );
+    Self->AddMess( MSGBOX_GAME, msg.c_str() );
 }
 
 void FOClient::SScriptFunc::Global_MessageType( ScriptString& msg, int type )
 {
-    if( type < FOMB_GAME || type > FOMB_VIEW )
-        type = FOMB_GAME;
+    if( type < MSGBOX_GAME || type > MSGBOX_VIEW )
+        type = MSGBOX_GAME;
     Self->AddMess( type, msg.c_str() );
 }
 
@@ -10529,15 +10529,15 @@ void FOClient::SScriptFunc::Global_MessageMsg( int text_msg, uint str_num )
 {
     if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
-    Self->AddMess( FOMB_GAME, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
+    Self->AddMess( MSGBOX_GAME, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
 void FOClient::SScriptFunc::Global_MessageMsgType( int text_msg, uint str_num, int type )
 {
     if( text_msg >= TEXTMSG_MAX )
         SCRIPT_ERROR_R( "Invalid text msg arg." );
-    if( type < FOMB_GAME || type > FOMB_VIEW )
-        type = FOMB_GAME;
+    if( type < MSGBOX_GAME || type > MSGBOX_VIEW )
+        type = MSGBOX_GAME;
     Self->AddMess( type, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
@@ -11357,7 +11357,7 @@ bool FOClient::SScriptFunc::Global_LoadDataFile( ScriptString& dat_name )
     if( FileManager::LoadDataFile( dat_name.c_str() ) )
     {
         ResMngr.Refresh();
-        ConstantsManager::Initialize( PT_DATA );
+        ConstantsManager::Initialize( PATH_DATA );
         return true;
     }
     return false;
@@ -11755,7 +11755,7 @@ void FOClient::SScriptFunc::Global_DrawCritter3d( uint instance, uint crtype, ui
                 SprMngr.FreePure3dAnimation( anim );
             char fname[MAX_FOPATH];
             Str::Format( fname, "%s.fo3d", CritType::GetName( crtype ) );
-            anim = SprMngr.LoadPure3dAnimation( fname, PT_ART_CRITTERS );
+            anim = SprMngr.LoadPure3dAnimation( fname, PATH_ART_CRITTERS );
             DrawCritter3dCrType[instance] = crtype;
             DrawCritter3dFailToLoad[instance] = false;
 

@@ -267,7 +267,7 @@ bool SpriteManager::Init( SpriteMngrParams& params )
     sprEgg = NULL;
     eggHx = eggHy = eggX = eggY = 0;
 
-    AnyFrames* egg_spr = LoadAnimation( "egg.png", PT_ART_MISC );
+    AnyFrames* egg_spr = LoadAnimation( "egg.png", PATH_ART_MISC );
     if( egg_spr )
     {
         sprEgg = GetSpriteInfo( egg_spr->Ind[0] );

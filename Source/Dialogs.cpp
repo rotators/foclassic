@@ -20,7 +20,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
     WriteLogX( " from list<%s>...\n", list_name );
 
     FileManager lst;
-    if( !lst.LoadFile( list_name, PT_SERVER_DIALOGS ) )
+    if( !lst.LoadFile( list_name, PATH_SERVER_DIALOGS ) )
     {
         WriteLog( "File not found.\n" );
         return false;
@@ -65,7 +65,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
         Str::Append( name, DIALOG_FILE_EXT );
 
         FileManager fdlg;
-        if( !fdlg.LoadFile( name, PT_SERVER_DIALOGS ) )
+        if( !fdlg.LoadFile( name, PATH_SERVER_DIALOGS ) )
         {
             WriteLog( "Unable to open dialog file, id<%u>, name<%s>.\n", dlg_id, name );
             continue;

@@ -1398,11 +1398,11 @@ void CritterCl::SetBaseType( uint type )
     SprMngr.FreePure3dAnimation( Anim3d );
     SprMngr.FreePure3dAnimation( Anim3dStay );
     Anim3d = Anim3dStay = NULL;
-    Animation3d* anim3d = SprMngr.LoadPure3dAnimation( Str::FormatBuf( "%s.fo3d", CritType::GetName( BaseType ) ), PT_ART_CRITTERS );
+    Animation3d* anim3d = SprMngr.LoadPure3dAnimation( Str::FormatBuf( "%s.fo3d", CritType::GetName( BaseType ) ), PATH_ART_CRITTERS );
     if( anim3d )
     {
         Anim3d = anim3d;
-        Anim3dStay = SprMngr.LoadPure3dAnimation( Str::FormatBuf( "%s.fo3d", CritType::GetName( BaseType ) ), PT_ART_CRITTERS );
+        Anim3dStay = SprMngr.LoadPure3dAnimation( Str::FormatBuf( "%s.fo3d", CritType::GetName( BaseType ) ), PATH_ART_CRITTERS );
 
         Anim3d->SetDir( CrDir );
         SprId = Anim3d->GetSprId();

@@ -243,17 +243,17 @@ void HexManager::ReloadSprites()
     curDataPrefix = GameOpt.MapDataPrefix.c_std_str();
 
     // Must be valid
-    picHex[0] = SprMngr.LoadAnimation( (curDataPrefix + "hex1.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picHex[1] = SprMngr.LoadAnimation( (curDataPrefix + "hex2.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picHex[2] = SprMngr.LoadAnimation( (curDataPrefix + "hex3.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    cursorPrePic = SprMngr.LoadAnimation( (curDataPrefix + "move_pre.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    cursorPostPic = SprMngr.LoadAnimation( (curDataPrefix + "move_post.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    cursorXPic = SprMngr.LoadAnimation( (curDataPrefix + "move_x.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picTrack1 = SprMngr.LoadAnimation( (curDataPrefix + "track1.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picTrack2 = SprMngr.LoadAnimation( (curDataPrefix + "track2.png").c_str(), PT_DATA, ANIM_USE_DUMMY );
+    picHex[0] = SprMngr.LoadAnimation( (curDataPrefix + "hex1.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    picHex[1] = SprMngr.LoadAnimation( (curDataPrefix + "hex2.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    picHex[2] = SprMngr.LoadAnimation( (curDataPrefix + "hex3.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    cursorPrePic = SprMngr.LoadAnimation( (curDataPrefix + "move_pre.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    cursorPostPic = SprMngr.LoadAnimation( (curDataPrefix + "move_post.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    cursorXPic = SprMngr.LoadAnimation( (curDataPrefix + "move_x.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    picTrack1 = SprMngr.LoadAnimation( (curDataPrefix + "track1.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    picTrack2 = SprMngr.LoadAnimation( (curDataPrefix + "track2.png").c_str(), PATH_DATA, ANIM_USE_DUMMY );
 
     // May be null
-    picHexMask = SprMngr.LoadAnimation( (curDataPrefix + "hex_mask.png").c_str(), PT_DATA );
+    picHexMask = SprMngr.LoadAnimation( (curDataPrefix + "hex_mask.png").c_str(), PATH_DATA );
 
     // Rain
     SetRainAnimation( NULL, NULL );
@@ -706,8 +706,8 @@ void HexManager::SetRainAnimation( const char* fall_anim_name, const char* drop_
 
     SAFEDEL( picRainFall );
     SAFEDEL( picRainDrop );
-    picRainFall = SprMngr.LoadAnimation( picRainFallName.c_str(), PT_DATA, ANIM_USE_DUMMY );
-    picRainDrop = SprMngr.LoadAnimation( picRainDropName.c_str(), PT_DATA, ANIM_USE_DUMMY );
+    picRainFall = SprMngr.LoadAnimation( picRainFallName.c_str(), PATH_DATA, ANIM_USE_DUMMY );
+    picRainDrop = SprMngr.LoadAnimation( picRainDropName.c_str(), PATH_DATA, ANIM_USE_DUMMY );
 }
 
 void HexManager::SetCursorPos( int x, int y, bool show_steps, bool refresh )
@@ -793,7 +793,7 @@ void HexManager::DrawCursor( const char* text )
     int x = (int)( (float)(cursorX + GameOpt.ScrOx) / GameOpt.SpritesZoom );
     int y = (int)( (float)(cursorY + GameOpt.ScrOy) / GameOpt.SpritesZoom );
     SprMngr.DrawStr( Rect( x, y, (int)( (float)(x + HEX_W) / GameOpt.SpritesZoom ),
-                           (int)( (float)(y + HEX_REAL_H) / GameOpt.SpritesZoom ) ), text, FONT_FLAG_CENTERXY, COLOR_TEXT_WHITE );
+                           (int)( (float)(y + HEX_REAL_H) / GameOpt.SpritesZoom ) ), text, FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
 }
 
 void HexManager::RebuildMap( int rx, int ry )

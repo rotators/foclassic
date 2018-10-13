@@ -10,7 +10,7 @@ set( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
 get_filename_component( srcdir "${CMAKE_SOURCE_DIR}" REALPATH )
 get_filename_component( bindir "${CMAKE_BINARY_DIR}" REALPATH )
 if( ${srcdir} STREQUAL ${bindir} )
-	file( REMOVE ${srcdir}/cmake_install.cmake ) # removing other files wont work
+	file( REMOVE ${srcdir}/cmake_install.cmake ) # removing other files won't work
 	message( STATUS "In-Source build are not allowed,
    cmake must be ran from dedicated build directory.
 
@@ -26,6 +26,13 @@ if( ${srcdir} STREQUAL ${bindir} )
 endif()
 unset( srcdir )
 unset( bindir )
+
+# !!! REMINDER !!!
+# when changing project version, don't forget to update Source/PUBLIC.Header.h:
+# (define)  FOCLASSIC_STAGE ----> major project version (before dot)
+# (define)  FOCLASSIC_VERSION --> minor project version (after dot)
+# (comment) "Engine version" ---> same as FOCLASSIC_VERSION
+# (comment) "Last update" ------> consult with calendar
 
 project( FOClassic
 	DESCRIPTION  "FOClassic"
@@ -80,7 +87,7 @@ if( MSVC )
 	set( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_DEFINES} /MTd /MP" )
 	set( CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" ) # /FA /Fa$(IntDir)
+	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO" )
 endif()
@@ -102,7 +109,7 @@ add_subdirectory( Extensions )
 
 # create global header
 set( GLOBAL_HEADER "${CMAKE_BINARY_DIR}/include/CMake.h" )
-configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${CMAKE_BINARY_DIR}/include/CMake.h" @ONLY NEWLINE_STYLE LF )
+configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${GLOBAL_HEADER}" @ONLY NEWLINE_STYLE LF )
 
 ##
 ## Prettify IDE

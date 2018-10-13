@@ -98,7 +98,7 @@ int main( int argc, char** argv )
 
     // Config
     IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
 
     // Memory debugging
     MemoryDebugLevel = cfg.GetInt( "MemoryDebugLevel", 0 );
@@ -181,6 +181,9 @@ int main( int argc, char** argv )
     STATIC_ASSERT_PRINT( WriteLog, size_t );
     STATIC_ASSERT_PRINT( WriteLog, void* );
     STATIC_ASSERT_PRINT( WriteLog, string );
+    STATIC_ASSERT_PRINT( WriteLog, GameOptions );
+    STATIC_ASSERT_PRINT( WriteLog, ProtoItem );
+    STATIC_ASSERT_PRINT( WriteLog, Item );
     # endif
 
     FOQuit = true;
@@ -410,7 +413,7 @@ void GUICallback( Fl_Widget* widget, void* data )
         char             log_name[MAX_FOTEXT];
         char             log_name_dir[MAX_FOTEXT];
         Fl_Text_Display* log = (widget == GuiBtnSaveLog ? GuiLog : GuiInfo);
-        FileManager::GetFullPath( NULL, PT_SERVER_LOGS, log_name_dir );
+        FileManager::GetFullPath( NULL, PATH_SERVER_LOGS, log_name_dir );
         log->buffer()->savefile( Str::Format( log_name, "%sFOnlineServer_%s_%04u.%02u.%02u_%02u-%02u-%02u.log", log_name_dir,
                                               log == GuiInfo ? UpdateLogName.c_str() : "Log", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second ) );
     }
@@ -961,7 +964,7 @@ int main( int argc, char** argv )
 
     // Config
     IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PT_SERVER_ROOT );
+    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
 
     // Memory debugging
     MemoryDebugLevel = cfg.GetInt( "MemoryDebugLevel", 0 );
@@ -1045,7 +1048,7 @@ void InitAdminManager( IniParser* cfg )
     if( !cfg )
     {
         IniParser cfg_;
-        if( !cfg_.LoadFile( GetConfigFileName(), PT_SERVER_ROOT ) )
+        if( !cfg_.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT ) )
         {
             WriteLogF( _FUNC_, "Can't access to config file.\n" );
             return;

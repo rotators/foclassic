@@ -227,7 +227,7 @@ Sound* SoundManager::Load( const char* fname, int path_type )
     Str::Copy( fname_, fname );
 
     if( Str::Substring( fname_, "\\" ) || Str::Substring( fname_, "/" ) )
-        path_type = PT_DATA;
+        path_type = PATH_DATA;
 
     const char* ext = FileManager::GetExtension( fname );
     if( !ext )
@@ -386,7 +386,7 @@ bool SoundManager::LoadACM( Sound* sound, const char* fname, int path_type )
         return false;
     }
 
-    sound->Channels = (path_type == PT_SND_MUSIC ? 2 : 1);
+    sound->Channels = (path_type == PATH_SND_MUSIC ? 2 : 1);
     sound->SampleRate = 22050;
     sound->SampleSize = 2;
 
@@ -575,7 +575,7 @@ bool SoundManager::PlaySound( const char* name )
 {
     if( !isActive || !GetSoundVolume() )
         return true;
-    Sound* sound = Load( name, PT_SND_SFX );
+    Sound* sound = Load( name, PATH_SND_SFX );
     if( !sound )
         return false;
     Pa_StartStream( sound->Stream );
@@ -653,7 +653,7 @@ bool SoundManager::PlayMusic( const char* fname, uint pos, uint repeat )
     StopMusic();
 
     // Load new
-    Sound* sound = Load( fname, PT_SND_MUSIC );
+    Sound* sound = Load( fname, PATH_SND_MUSIC );
     if( !sound )
         return false;
 

@@ -116,7 +116,7 @@ Frame* GraphicLoader::LoadModel( Device_ device, const char* fname )
 
     // Load file
     FileManager fm;
-    if( !fm.LoadFile( fname, PT_DATA ) )
+    if( !fm.LoadFile( fname, PATH_DATA ) )
     {
         WriteLogF( _FUNC_, " - 3d file not found, name<%s>.\n", fname );
         return NULL;
@@ -855,13 +855,13 @@ Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, c
 
     // First try load from textures folder
     FileManager fm;
-    if( !fm.LoadFile( texture_name, PT_TEXTURES ) && model_path )
+    if( !fm.LoadFile( texture_name, PATH_TEXTURES ) && model_path )
     {
         // After try load from file folder
         char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, texture_name );
-        fm.LoadFile( path, PT_DATA );
+        fm.LoadFile( path, PATH_DATA );
     }
 
     #ifdef FO_D3D
@@ -975,13 +975,13 @@ public:
     STDMETHOD( Open ) ( THIS_ D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID * ppData, UINT * pBytes )
     {
         FileManager fm;
-        if( !fm.LoadFile( pFileName, PT_EFFECTS ) )
+        if( !fm.LoadFile( pFileName, PATH_EFFECTS ) )
         {
             if( !RootPath ) return S_FALSE;
             char path[MAX_FOPATH];
             FileManager::ExtractPath( RootPath, path );
             Str::Append( path, pFileName );
-            if( !fm.LoadFile( path, PT_DATA ) ) return S_FALSE;
+            if( !fm.LoadFile( path, PATH_DATA ) ) return S_FALSE;
         }
         *pBytes = fm.GetFsize();
         *ppData = fm.ReleaseBuffer();
@@ -1025,13 +1025,13 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
 
     // First try load from effects folder
     FileManager fm;
-    if( !fm.LoadFile( fname, PT_EFFECTS ) && model_path )
+    if( !fm.LoadFile( fname, PATH_EFFECTS ) && model_path )
     {
         // After try load from file folder
         char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, fname );
-        fm.LoadFile( path, PT_DATA );
+        fm.LoadFile( path, PATH_DATA );
     }
     if( !fm.IsLoaded() )
         return NULL;
@@ -1040,7 +1040,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     char        cache_name[MAX_FOPATH];
     Str::Format( cache_name, "%s.fxc", fname );
     FileManager fm_cache;
-    if( fm_cache.LoadFile( cache_name, PT_CACHE ) )
+    if( fm_cache.LoadFile( cache_name, PATH_CACHE ) )
     {
         uint64 last_write, last_write_cache;
         fm.GetTime( NULL, NULL, &last_write );
@@ -1072,7 +1072,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             if( SUCCEEDED( ef_comp->CompileEffect( 0, &ef_buf, &errors ) ) )
             {
                 fm_cache.SetData( ef_buf->GetBufferPointer(), ef_buf->GetBufferSize() );
-                fm_cache.SaveOutBufToFile( cache_name, PT_CACHE );
+                fm_cache.SaveOutBufToFile( cache_name, PATH_CACHE );
                 fm_cache.SwitchToRead();
             }
             else
@@ -1232,13 +1232,13 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
 
     // Load text file
     FileManager file;
-    if( !file.LoadFile( fname, PT_EFFECTS ) && model_path )
+    if( !file.LoadFile( fname, PATH_EFFECTS ) && model_path )
     {
         // Try load from model folder
         char path[MAX_FOPATH];
         FileManager::ExtractPath( model_path, path );
         Str::Append( path, fname );
-        file.LoadFile( path, PT_DATA );
+        file.LoadFile( path, PATH_DATA );
     }
     if( !file.IsLoaded() )
     {
@@ -1271,7 +1271,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
     FileManager file_binary;
     if( GLEW_ARB_get_program_binary )
     {
-        if( file_binary.LoadFile( binary_fname, PT_CACHE ) )
+        if( file_binary.LoadFile( binary_fname, PATH_CACHE ) )
         {
             uint64 last_write, last_write_binary;
             file.GetTime( NULL, NULL, &last_write );
@@ -1455,7 +1455,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             file_binary.SetBEUInt( format );
             file_binary.SetBEUInt( length );
             file_binary.SetData( &buf[0], length );
-            if( !file_binary.SaveOutBufToFile( binary_fname, PT_CACHE ) )
+            if( !file_binary.SaveOutBufToFile( binary_fname, PATH_CACHE ) )
                 WriteLogF( _FUNC_, " - Can't save effect<%s> in binary<%s>.\n", fname, binary_fname );
         }
     }

@@ -77,7 +77,7 @@ bool CritterManager::LoadProtos()
     }
 
     // Get names of proto
-    if( !fileMngr.LoadFile( "critters.lst", PT_SERVER_PRO_CRITTERS ) )
+    if( !fileMngr.LoadFile( "critters.lst", PATH_SERVER_PRO_CRITTERS ) )
     {
         WriteLog( "Cannot open \"critters.lst\".\n" );
         return false;
@@ -104,7 +104,7 @@ bool CritterManager::LoadProtos()
         #endif
 
         WriteLog( "Load critters proto<%s>\n", fnames[i].c_str() );
-        if( protos_txt.LoadFile( fname, PT_SERVER_PRO_CRITTERS ) )
+        if( protos_txt.LoadFile( fname, PATH_SERVER_PRO_CRITTERS ) )
         {
             while( protos_txt.GotoNextApp( CRPROTO_APP ) )
             {

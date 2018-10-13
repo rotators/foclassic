@@ -16,11 +16,7 @@ if( WIN32 )
 	)
 endif()
 
-link_directories( "${CMAKE_SOURCE_DIR}/Lib" )
-
 if( WIN32 )
-	link_directories( "${CMAKE_SOURCE_DIR}/Lib/Dx9/x86/" )
-
 	# DX needs glew/glu32 due to 3dStuff.cpp VecProject() VecUnproject()
 	set( DX_LIBS dx9 glew glu32 )
 endif()

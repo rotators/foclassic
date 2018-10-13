@@ -168,7 +168,7 @@ bool VarManager::UpdateVarsTemplate()
 
     FileManager fm;
     #ifdef FOCLASSIC_SERVER
-    if( !fm.LoadFile( varsPath.c_str(), PT_SERVER_ROOT ) )
+    if( !fm.LoadFile( varsPath.c_str(), PATH_SERVER_ROOT ) )
     #else
     if( !fm.LoadFile( varsPath.c_str(), -1 ) )
     #endif
@@ -395,7 +395,7 @@ void VarManager::SaveTemplateVars()
     fm.SetStr( "#endif\n" );
 
     #ifdef FOCLASSIC_SERVER
-    fm.SaveOutBufToFile( varsPath.c_str(), PT_SERVER_DATA );
+    fm.SaveOutBufToFile( varsPath.c_str(), PATH_SERVER_DATA );
     #else
     fm.LoadFile( varsPath.c_str(), -1 );
     #endif

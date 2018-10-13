@@ -76,15 +76,15 @@ void FileManager::SetDataPath( const char* path )
     if( dataPath[Str::Length( dataPath ) - 1] != DIR_SLASH_C )
         Str::Append( dataPath, DIR_SLASH_S );
     FormatPath( dataPath );
-    MakeDirectory( GetFullPath( "", PT_DATA ) );
+    MakeDirectory( GetFullPath( "", PATH_DATA ) );
 }
 
 void FileManager::SetCacheName( const char* name )
 {
     char cache_path[MAX_FOPATH];
     Str::Format( cache_path, "cache%s%s%s", DIR_SLASH_S, name && name[0] ? name : "dummy", DIR_SLASH_S );
-    PathList[PT_CACHE] = Str::Duplicate( cache_path );
-    MakeDirectory( GetFullPath( "", PT_CACHE ) );
+    PathList[PATH_CACHE] = Str::Duplicate( cache_path );
+    MakeDirectory( GetFullPath( "", PATH_CACHE ) );
 }
 
 void FileManager::InitDataFiles( const char* path )
@@ -754,13 +754,13 @@ const char* FileManager::GetDataPath( int path_type )
     static const char root_path[] = DIR_SLASH_SD;
 
     #if defined (FOCLASSIC_SERVER)
-    if( path_type == PT_SERVER_ROOT )
+    if( path_type == PATH_SERVER_ROOT )
         return root_path;
     #elif defined (FOCLASSIC_CLIENT)
-    if( path_type == PT_ROOT )
+    if( path_type == PATH_ROOT )
         return root_path;
     #elif defined (FOCLASSIC_MAPPER)
-    if( path_type == PT_MAPPER_ROOT || path_type == PT_MAPPER_DATA )
+    if( path_type == PATH_MAPPER_ROOT || path_type == PATH_MAPPER_DATA )
         return root_path;
     #endif
 
