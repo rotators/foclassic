@@ -427,8 +427,7 @@ void FormatPreprocessorOutput( string& str )
             i = FormatPreprocessorTabs( str, i + 1, 1 );
 }
 
-// Dialog box
-
+/** Show dialog box with message */
 void ShowMessage( const char* message )
 {
     #ifdef FO_WINDOWS

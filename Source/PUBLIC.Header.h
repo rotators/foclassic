@@ -3,13 +3,13 @@
 
 //
 // FOClassic engine structures, for native extensions
-// Last update 13.10.2018
-// Engine version 1, MSVS 2010
+// Last update @TIMESTAMP_DATE@
+// Engine version @PROJECT_VERSION_MINOR@, MSVC 2010
 // Default calling convention - cdecl
 //
 
-#define FOCLASSIC_STAGE             (1)
-#define FOCLASSIC_VERSION           (1)
+#define FOCLASSIC_STAGE             (@PROJECT_VERSION_MAJOR@)
+#define FOCLASSIC_VERSION           (@PROJECT_VERSION_MINOR@)
 
 // Detect operating system
 #if defined (_WIN32) || defined (_WIN64)
@@ -53,7 +53,7 @@
 #endif
 
 #if !defined (FOCLASSIC_EXTENSION)
-# warning FOCLASSIC_EXTENSION not defined
+# warning "FOCLASSIC_EXTENSION not defined."
 #endif
 
 // Platform specific options
@@ -109,11 +109,11 @@ using namespace std;
 EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 
 // AngelScript add-ons
-#include "AngelScript/scriptstring.h"
+#include "AngelScript/scriptany.h"
 #include "AngelScript/scriptarray.h"
 #include "AngelScript/scriptfile.h"
 #include "AngelScript/scriptdictionary.h"
-#include "AngelScript/scriptany.h"
+#include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptmath.h"
 
 // FOClassic types
@@ -1918,9 +1918,15 @@ inline void static_asserts()
     STATIC_ASSERT( sizeof(uint) == 4 );
     STATIC_ASSERT( sizeof(uint64) == 8 );
     STATIC_ASSERT( sizeof(bool) == 1 );
+    STATIC_ASSERT( sizeof(string) == 28 );
+    #if defined (FO_X86)
     STATIC_ASSERT( sizeof(size_t) == 4 );
     STATIC_ASSERT( sizeof(void*) == 4 );
-    STATIC_ASSERT( sizeof(string) == 28 );
+    #elif defined (FO_X64)
+    STATIC_ASSERT( sizeof(size_t) == 8 );
+    STATIC_ASSERT( sizeof(void*) == 8 );
+    #endif
+    STATIC_ASSERT( sizeof(size_t) == sizeof(void*) );
 }
 
 #endif // __FOCLASSIC_H__ //

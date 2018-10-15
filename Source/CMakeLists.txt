@@ -380,6 +380,8 @@ foreach( target ${FOCLASSIC_APPS} )
 	# inform sources about engine compilation
 	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
 
+	set( app ${target}${CMAKE_EXECUTABLE_SUFFIX} )
+
 	if( WIN32 )
 		# n/c
 		target_compile_definitions( ${target} PRIVATE WINVER=0x0501 ) # Windows XP
@@ -387,6 +389,25 @@ foreach( target ${FOCLASSIC_APPS} )
 
 		# prettify windows executables
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
+	endif()
+
+	if( "${target}" STREQUAL "ASCompiler" )
+		set( dir "${RELEASE_TOOLS_DIR}" )
+	else()
+		set( dir "${RELEASE_DIR}" )
+	endif()
+
+	add_custom_command( TARGET ${target}
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${dir}
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
+	)
+
+	if( MSVC )
+		add_custom_command( TARGET ${target}
+			POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/${target}.pdb
+		)
 	endif()
 
 endforeach()

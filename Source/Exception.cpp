@@ -327,7 +327,7 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
 
                 if( stack.AddrPC.Offset == stack.AddrReturn.Offset )
                 {
-                    fprintf( f, "\tEndless callstack!\n", 0, stack.AddrPC.Offset );
+                    fprintf( f, "\tEndless callstack!\n" );                   // , 0, stack.AddrPC.Offset );
                     break;
                 }
 

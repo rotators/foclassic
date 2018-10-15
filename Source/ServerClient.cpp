@@ -1616,9 +1616,11 @@ void FOServer::Process_CreateClient( Client* cl )
     data_ext->PlayPort[0] = cl->GetPort();
     data_ext->CurrentIp = 0;
 
-    if( !cl->SetDefaultItems( ItemMngr.GetProtoItem( ITEM_DEF_SLOT ), ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) ) )
+    ProtoItem* def_slot = ItemMngr.GetProtoItem( ITEM_DEF_SLOT );
+    ProtoItem* def_armor = ItemMngr.GetProtoItem( ITEM_DEF_ARMOR );
+    if( !cl->SetDefaultItems( def_slot, def_armor ) )
     {
-        WriteLogF( _FUNC_, " - Error set default items.\n" );
+        WriteLogF( _FUNC_, " - Cannot set default items : slot:pid<%u>, armor:pid<%u>\n", ITEM_DEF_SLOT, ITEM_DEF_ARMOR );
         cl->Send_TextMsg( cl, STR_NET_SETPROTO_ERR, SAY_NETMSG, TEXTMSG_GAME );
         cl->Disconnect();
         return;
@@ -2246,9 +2248,11 @@ void FOServer::Process_LogIn( ClientPtr& cl )
         }
 
         // Unarmed
-        if( !cl->SetDefaultItems( ItemMngr.GetProtoItem( ITEM_DEF_SLOT ), ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) ) )
+        ProtoItem* def_slot = ItemMngr.GetProtoItem( ITEM_DEF_SLOT );
+        ProtoItem* def_armor = ItemMngr.GetProtoItem( ITEM_DEF_ARMOR );
+        if( !cl->SetDefaultItems( def_slot, def_armor ) )
         {
-            WriteLogF( _FUNC_, " - Error set default items, client<%s>.\n", cl->GetInfo() );
+            WriteLogF( _FUNC_, " - Cannot set default items : client<%s> slot:pid<%u> armor:pid<%u>\n", cl->GetInfo(), ITEM_DEF_SLOT, ITEM_DEF_ARMOR );
             cl->Send_TextMsg( cl, STR_NET_SETPROTO_ERR, SAY_NETMSG, TEXTMSG_GAME );
             cl->Disconnect();
             cl->Data.Id = 0;

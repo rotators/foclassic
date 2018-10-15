@@ -27,17 +27,10 @@ endif()
 unset( srcdir )
 unset( bindir )
 
-# !!! REMINDER !!!
-# when changing project version, don't forget to update Source/PUBLIC.Header.h:
-# (define)  FOCLASSIC_STAGE ----> major project version (before dot)
-# (define)  FOCLASSIC_VERSION --> minor project version (after dot)
-# (comment) "Engine version" ---> same as FOCLASSIC_VERSION
-# (comment) "Last update" ------> consult with calendar
-
-project( FOClassic
+# next line must be in "FOClassic VERSION [0-9]+\.[0-9]+" format
+project( FOClassic VERSION 1.1
 	DESCRIPTION  "FOClassic"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
-	VERSION 1.1
 	LANGUAGES C CXX
 )
 
@@ -51,9 +44,10 @@ else()
 	set( PROJECT_VERSION_CODENAME "Shady Sands" )
 endif()
 
+set( CMAKE_CONFIGURATION_TYPES "Release" )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
-set( CMAKE_VERBOSE_MAKEFILE TRUE )
+set( CMAKE_VERBOSE_MAKEFILE TRUE ) 
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 include(PdbSetup)
@@ -67,10 +61,19 @@ set( FO_DIR         "${CMAKE_SOURCE_DIR}/Source" )
 set( LIBS_DIR       "${FO_DIR}/Libs" )
 
 set( AS_DIR         "${FO_DIR}/AngelScript" )
-set( ASSIMP_DIR     "${FO_DIR}/Assimp" )
 set( DAT_DIR        "${FO_DIR}/DatFile" )
 set( EXTENSIONS_DIR "${CMAKE_SOURCE_DIR}/Extensions" )
 
+# release directores 
+set( RELEASE_DIR_NAME               "FOClassic-v${PROJECT_VERSION_MINOR}" )
+set( RELEASE_DIR                    "${CMAKE_BINARY_DIR}/${RELEASE_DIR_NAME}" )
+set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
+set( RELEASE_TOOLS_DIR              "${RELEASE_DIR}/Tools" )
+set( RELEASE_EXTENSIONS_DIR         "${RELEASE_DIR}/Extensions" )
+set( RELEASE_EXTENSIONS_EXAMPLE_DIR "${RELEASE_EXTENSIONS_DIR}/Example" )
+
+# timestamps
+string( TIMESTAMP TIMESTAMP_DATE "%d.%m.%Y")
 ##
 ## Source options
 ##
@@ -107,9 +110,23 @@ endif( HAVE_STRUCT_TIMESPEC )
 add_subdirectory( Source )
 add_subdirectory( Extensions )
 
-# create global header
+# create engine header
 set( GLOBAL_HEADER "${CMAKE_BINARY_DIR}/include/CMake.h" )
 configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${GLOBAL_HEADER}" @ONLY NEWLINE_STYLE LF )
+
+# create extensions header
+configure_file( "${FO_DIR}/PUBLIC.Header.h" "${RELEASE_HEADERS_DIR}/foclassic.h" @ONLY NEWLINE_STYLE LF )
+
+# create scripts header
+configure_file( "${FO_DIR}/Shared/PUBLIC.Defines.h" "${RELEASE_HEADERS_DIR}/foclassic.fos" @ONLY NEWLINE_STYLE LF )
+
+# copy extensions files
+foreach( as_header angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
+	configure_file( "${AS_DIR}/${as_header}.h" "${RELEASE_DIR}/Headers/AngelScript/${as_header}.h" @ONLY NEWLINE_STYLE LF )
+endforeach()
+foreach( extension_example extension.cpp _defines.fos )
+	configure_file( "${EXTENSIONS_DIR}/${extension_example}" "${RELEASE_EXTENSIONS_EXAMPLE_DIR}/${extension_example}" @ONLY NEWLINE_STYLE LF )
+endforeach()
 
 ##
 ## Prettify IDE

@@ -183,7 +183,7 @@ string ParseLangKey( const char* str )
 
 DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* data )
 {
-    LastErrors = "";
+    LastErrors.clear();
 
     if( !data )
     {
@@ -846,7 +846,7 @@ int DialogManager::GetDRType( const char* str, bool& deprecated )
 bool DialogManager::CheckOper( char oper )
 {
     return oper == '>' || oper == '<' || oper == '=' || oper == '+' || oper == '-' || oper == '*' ||
-           oper == '/' || oper == '=' || oper == '!' || oper == '}' || oper == '{';
+           oper == '/' || oper == '!' || oper == '}' || oper == '{';
 }
 
 bool DialogManager::CheckWho( char who )

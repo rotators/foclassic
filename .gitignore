@@ -6,7 +6,10 @@
 *.user
 
 /.stuff
+
+/*.cmd
 /SDK*
+/Release
 
 /CMakeCache.txt
 /CMakeFiles

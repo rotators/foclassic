@@ -314,6 +314,8 @@ uchar* FalloutDatFile::OpenFile( const char* fname, uint& len )
 
     len = real_size;
     buf[len] = 0;
+
+    delete reader;
     return buf;
 }
 

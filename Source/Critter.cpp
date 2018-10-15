@@ -5690,7 +5690,7 @@ void Npc::SetBestCurPlane()
         else if( dist == best_dist )
         {
             Critter* cr2 = GetCritSelf( aiPlanes[best_plane]->Attack.TargId, false );
-            if( !cr || cr->Data.Params[ST_CURRENT_HP] >= cr2->Data.Params[ST_CURRENT_HP] )
+            if( cr->Data.Params[ST_CURRENT_HP] >= cr2->Data.Params[ST_CURRENT_HP] )
                 continue;
         }
 

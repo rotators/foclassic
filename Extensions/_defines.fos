@@ -2,8 +2,8 @@
 #define __DEFINES__
 
 #ifndef FOCLASSIC_EXTENSION
- #define FOCLASSIC_SCRIPT
- #include "foclassic.fos"
+# define FOCLASSIC_SCRIPT
+# include "foclassic.fos"
 #endif
 
 #endif // __DEFINES__ //

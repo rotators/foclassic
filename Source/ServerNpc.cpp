@@ -991,7 +991,7 @@ bool FOServer::Dialog_Compile( Npc* npc, Client* cl, const Dialog& base_dlg, Dia
         if( !Dialog_CheckDemand( npc, cl, *it_a, false ) )
             it_a = compiled_dlg.Answers.erase( it_a );
         else
-            it_a++;
+            ++it_a;
     }
 
     if( !GameOpt.NoAnswerShuffle && !compiled_dlg.IsNoShuffle() )

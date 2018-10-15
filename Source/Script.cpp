@@ -1467,12 +1467,10 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
 
         if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(uint) )
         {
-            bool load = true;
-
             // Load signature
             uchar signature[sizeof(ScriptSaveSignature)];
             bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
-            load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
+            bool  load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
 
             // Load file dependencies and pragmas
             char   str[1024];
@@ -1588,7 +1586,7 @@ public:
     int                           errors_count;
     errors_count = Preprocessor::Preprocess( FileManager::GetFullPath( fname_real, ScriptsPath ), result, &errors, &loader );
 
-    if( errors.String != "" )
+    if( !errors.String.empty() )
     {
         while( errors.String[errors.String.length() - 1] == '\n' )
             errors.String.pop_back();

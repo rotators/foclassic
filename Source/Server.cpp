@@ -3081,7 +3081,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
 
-            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
+            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) != 0 )
             {
                 logcb( "Invalid password." );
             }
@@ -3110,7 +3110,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             CHECK_ALLOW_COMMAND;
             CHECK_ADMIN_PANEL;
 
-            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) )
+            if( memcmp( cl_->PassHash, pass_hash, PASS_HASH_SIZE ) != 0 )
             {
                 logcb( "Invalid current password." );
             }
@@ -3377,9 +3377,15 @@ bool FOServer::InitReal()
     STATIC_ASSERT( sizeof(uint) == 4 );
     STATIC_ASSERT( sizeof(uint64) == 8 );
     STATIC_ASSERT( sizeof(bool) == 1 );
+    STATIC_ASSERT( sizeof(string) == 28 );
+    #if defined (FO_X86)
     STATIC_ASSERT( sizeof(size_t) == 4 );
     STATIC_ASSERT( sizeof(void*) == 4 );
-    STATIC_ASSERT( sizeof(string) == 28 );
+    #elif defined (FO_X64)
+    STATIC_ASSERT( sizeof(size_t) == 8 );
+    STATIC_ASSERT( sizeof(void*) == 8 );
+    #endif
+    STATIC_ASSERT( sizeof(size_t) == sizeof(void*) );
 
     // Critters parameters
     Critter::ParamsSendMsgLen = sizeof(Critter::ParamsSendCount);
@@ -3813,7 +3819,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         cur_lang++;
     }
 
-    WriteLog( "Load language packs... complete\n" );
+    WriteLog( "Load language packs... %s\n", cur_lang > 0 ? "complete" : "failed" );
     return cur_lang > 0;
 }
 
@@ -4622,7 +4628,7 @@ bool FOServer::LoadWorld( const char* fname )
         }
         // handle version mismatch
         ushort sigversion = BINARY_SIGNATURE_VERSION( signature );
-        if( !sigversion || sigversion < WORLD_SAVE_V1 || sigversion > WORLD_SAVE_LAST )
+        if( sigversion < WORLD_SAVE_V1 || sigversion > WORLD_SAVE_LAST )
         {
             WriteLog( "Unknown version<%u> of world dump file.\n", version );
             FileClose( f );

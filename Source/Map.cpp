@@ -1777,7 +1777,7 @@ void Map::EventTurnBasedBegin()
 
 void Map::EventTurnBasedEnd()
 {
-    if( PrepareScriptFunc( MAP_EVENT_TURN_BASED_BEGIN ) )
+    if( PrepareScriptFunc( MAP_EVENT_TURN_BASED_END ) )
     {
         Script::SetArgObject( this );
         Script::RunPrepared();
@@ -1786,7 +1786,7 @@ void Map::EventTurnBasedEnd()
 
 void Map::EventTurnBasedProcess( Critter* cr, bool begin_turn )
 {
-    if( PrepareScriptFunc( MAP_EVENT_TURN_BASED_BEGIN ) )
+    if( PrepareScriptFunc( MAP_EVENT_TURN_BASED_PROCESS ) )
     {
         Script::SetArgObject( this );
         Script::SetArgObject( cr );

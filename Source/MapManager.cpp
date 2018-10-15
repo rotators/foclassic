@@ -523,8 +523,8 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
     FileManager fm;
     if( !fm.LoadFile( fname, path_type ) )
     {
-        WriteLog( "Load file<%s%s> fail.\n", fm.GetFullPath( fname, path_type ) );
-        return false;
+        WriteLog( "Generate world... file<%s> not loaded.\n", fm.GetFullPath( fname, path_type ) );
+        return true;
     }
 
     int  count_gen = 0;
@@ -557,6 +557,7 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
 
         count_gen++;
     }
+
 
     if( !count_gen )
     {
