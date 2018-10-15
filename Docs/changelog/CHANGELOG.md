@@ -20,6 +20,7 @@ Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc
     - recompile scripts from source whenever any mismatch is detected (older version, source newer than bytecode, etc.)
     - removed warning message
 - server simulates binding reserved functions after compilation of client scripts
+- GenerateWorld.cfg no longer required during initialization
 - core applications (ASCompiler, Client, Mapper, Server) now share global version number
     - version contains two parts - `STAGE` and `VERSION`
         - `STAGE` - internal version number, increased on completion of major milestones
