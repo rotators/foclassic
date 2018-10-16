@@ -1,3 +1,19 @@
+#
+# Automated build
+# cmake -P Build.cmake
+#
+# Options
+# cmake [options] -P Build.cmake
+#
+# -DNO_FORMAT=1
+# skips source formatting
+#
+# -DNO_BUILD=1
+# skips source building
+#
+# -DNO_ZIP=1
+# skips creating of release package
+#
 cmake_minimum_required( VERSION 3.12 )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
@@ -13,7 +29,14 @@ if( WIN32 )
 	endforeach()
 endif()
 
-FormatSource()
+if( NOT NO_FORMAT )
+	FormatSource()
+endif()
 
-RunAllBuilds()
-ZipAllBuilds()
+if( NOT NO_BUILD )
+	RunAllBuilds()
+endif()
+
+if( NOT NO_ZIP )
+	ZipAllBuilds()
+endif()

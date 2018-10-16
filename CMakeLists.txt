@@ -108,6 +108,7 @@ if( HAVE_STRUCT_TIMESPEC )
 endif( HAVE_STRUCT_TIMESPEC )
 
 add_subdirectory( Source )
+set( EXTENSIONS_EXTRA_SOURCES "${FO_DIR}/PUBLIC.Header.h" )
 add_subdirectory( Extensions )
 
 # create engine header
@@ -138,4 +139,4 @@ set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 set_target_properties( AngelScript AngelScriptPreprocessor PROPERTIES FOLDER "AngelScript" )
 set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
 set_target_properties( acm DatFile glew sha2 zlib PROPERTIES FOLDER "Libs" )
-set_target_properties( ExtensionClient ExtensionMapper ExtensionServer PROPERTIES FOLDER "Extensions" )
+

@@ -1,11 +1,12 @@
 function( GetProjectInfo )
+
 	if( NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" )
 		message( FATAL_ERROR "CMakeLists.txt not found" )
 	endif()
 
 	file( READ "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" content )
 
-	if( "${content}" MATCHES "FOClassic VERSION ([0-9]+)\\.([0-9]+)" )
+	if( "${content}" MATCHES "FOClassic[\\t\\ ]+VERSION[\\t\\ ]+([0-9]+)\\.([0-9]+)" )
 		set( FOCLASSIC_STAGE ${CMAKE_MATCH_1} PARENT_SCOPE )
 		set( FOCLASSIC_VERSION ${CMAKE_MATCH_2} PARENT_SCOPE )
 	else()
@@ -15,23 +16,33 @@ function( GetProjectInfo )
 endfunction()
 
 function( FormatSource )
+
 	set( tmp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
 	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
 	foreach( dir Extensions Source/Shared Source )
-		foreach( ext h;cpp;fos )
+		foreach( ext IN ITEMS h cpp fos )
 			file( GLOB files LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/${dir}/*.${ext} )
 			if( files )
 				set( all_files "${all_files};${files}" )
+				list( LENGTH files count )
+				if( count GREATER 1 )
+					set( suffix "s" )
+				endif()
+				message( STATUS "${dir}/*.${ext} : ${count} file${suffix}" )
 			endif()
 		endforeach()
 	endforeach()
 	foreach( file ${all_files} )
-		execute_process( COMMAND "${uncrustify}.exe" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${tmp}" --if-changed )
+		message( STATUS "Processing ${file}..." )
+		execute_process(
+			COMMAND "${uncrustify}.exe" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${tmp}" -q --if-changed
+		)
 		if( EXISTS "${tmp}" )
-			message( STATUS "      FormatSource prevails" )
+			message( STATUS "           FormatSource prevails" )
 			file( RENAME "${tmp}" "${file}" )
 		endif()
 	endforeach()
+
 endfunction()
 
 # Prepare build 
@@ -53,15 +64,15 @@ function( CreateBuildDirectory compiler file )
 	else()
 		message( FATAL_ERROR "Unknown compiler '${compiler}'" )
 	endif()
-	
+
 	# use full path
 	set( dir "${CMAKE_CURRENT_LIST_DIR}/${dir}" )
-	
+
 	if( NOT EXISTS ${dir} )
 		message( STATUS "Creating ${dir}" )
 		file( MAKE_DIRECTORY ${dir} )
 	endif()
-	
+
 	if( NOT EXISTS ${dir}/${file} )
 		message( STATUS "Running generator for ${compiler}" )
 		execute_process(
@@ -73,13 +84,16 @@ function( CreateBuildDirectory compiler file )
 	if( EXISTS ${dir}/${file} )
 		set( BUILD_DIRS "${BUILD_DIRS};${dir}" PARENT_SCOPE )
 	endif()
+
 endfunction()
 
 function( RunAllBuilds )
+
 	foreach( dir ${BUILD_DIRS} )
 		message( STATUS "Running build (${dir})" )
 		execute_process( COMMAND ${CMAKE_COMMAND} --build ${dir} --config Release )
 	endforeach()
+
 endfunction()
 
 function( ZipAllBuilds )
@@ -87,7 +101,7 @@ function( ZipAllBuilds )
 	if( NOT FOCLASSIC_VERSION )
 		GetProjectInfo()
 	endif()
-	
+
 	string( TIMESTAMP ts "%Y-%m-%d %H:%M:%S" )
 
 	foreach( dir ${BUILD_DIRS} )
@@ -103,7 +117,7 @@ function( ZipAllBuilds )
 			message( STATUS "Skipped ${zip_file}" )
 			continue()
 		endif()
-		
+
 		message( STATUS "Creating ${zip_file}" )
 
 		file( REMOVE "${zip_file}" )
@@ -121,13 +135,14 @@ function( ZipAllBuilds )
 			WORKING_DIRECTORY ${zip_dir}
 			OUTPUT_FILE ${inner_sum}
 		)
-		
+
 		set( files "${files};CHECKSUM.${sum}" )
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E tar cfv ${zip_file} --format=zip --mtime=${ts} ${files}
 			WORKING_DIRECTORY ${zip_dir}
 			OUTPUT_QUIET
 		)
+
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${root}.zip
 			WORKING_DIRECTORY ${dir}
