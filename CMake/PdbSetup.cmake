@@ -1,5 +1,5 @@
 ## Prepare .pdb files in all VS configurations, including Release
-function( pdb_setup target )
+function( PdbSetup target )
 	if( MSVC )
 		set( pdb "${target}.pdb" )
 		set( pdb_public "${target}.pdb.PUBLIC" )

@@ -1,10 +1,20 @@
 #include "Core.h"
 
-#include "Map.h"
+#include "scriptarray.h"
+
+#include "ConfigFile.h"
 #include "CritterManager.h"
 #include "ItemManager.h"
+#include "Log.h"
+#include "Jobs.h"
+#include "Map.h"
 #include "MapManager.h"
+#include "Random.h"
+#include "Script.h"
 #include "ScriptFunctions.h"
+#include "Text.h"
+#include "Timer.h"
+#include "Utils.h"
 
 const char* MapEventFuncName[MAP_EVENT_MAX] =
 {

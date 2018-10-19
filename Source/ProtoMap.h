@@ -1,8 +1,9 @@
 #ifndef __PROTO_MAP__
 #define __PROTO_MAP__
 
-#include "Common.h"
+#include "Defines.h"
 #include "FileManager.h"
+#include "Types.h"
 
 // Generic
 #define MAPOBJ_SCRIPT_NAME       (25)
@@ -275,6 +276,12 @@ private:
     bool   isInit;
 
 public:
+    ProtoMap();
+    #ifdef FOCLASSIC_SERVER
+    ProtoMap( const ProtoMap& r );
+    #endif
+    ~ProtoMap();
+
     bool Init( ushort pid, const char* name, int path_type );
     void Clear();
     bool Refresh();
@@ -299,21 +306,6 @@ public:
     void       GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs );
     void       GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs );
     MapObject* GetMapGrid( ushort hx, ushort hy );
-    ProtoMap() : isInit( false ), pathType( 0 ), HexFlags( NULL ) { MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) ); }
-    ProtoMap( const ProtoMap& r )
-    {
-        *this = r;
-        MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) );
-    }
-    ~ProtoMap()
-    {
-        isInit = false;
-        HexFlags = NULL;
-        MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)sizeof(ProtoMap) );
-    }
-    #else
-    ProtoMap() : isInit( false ), pathType( 0 ), RefCounter( 1 ) {}
-    ~ProtoMap() { isInit = false; }
     #endif
 };
 typedef vector<ProtoMap>  ProtoMapVec;

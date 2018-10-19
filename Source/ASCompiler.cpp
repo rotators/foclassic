@@ -1,10 +1,8 @@
-#include "Common.h"
-#include "ASCompiler.h"
-#include "PlatformSpecific.h"
-#include "ScriptPragmas.h"
-#include "Debugger.h"
-#include "Exception.h"
-#include "FileManager.h"
+#include "Core.h"
+
+#include <stdio.h>
+#include <locale.h>
+
 #include "AngelScript/angelscript.h"
 #include "AngelScript/preprocessor.h"
 #include "AngelScript/as_config.h"
@@ -14,16 +12,15 @@
 #include "AngelScript/scriptmath.h"
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptarray.h"
-#include <stdio.h>
-#include <list>
-#include <set>
-#include <strstream>
-#include <algorithm>
-#include <locale.h>
-#ifdef FO_WINDOWS
-# include <Windows.h>
-#endif
-using namespace std;
+
+#include "ASCompiler.h"
+#include "Debugger.h"
+#include "Exception.h"
+#include "FileManager.h"
+#include "FileSystem.h"
+#include "ScriptPragmas.h"
+#include "Text.h"
+#include "Timer.h"
 
 #ifdef FO_LINUX
 # include <unistd.h>

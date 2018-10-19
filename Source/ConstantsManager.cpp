@@ -1,4 +1,4 @@
-#include <algorithm>
+#include "Core.h"
 
 #include "ConstantsManager.h"
 #include "FileManager.h"

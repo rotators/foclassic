@@ -1,10 +1,12 @@
-#include "CMake.h"
+#include "Core.h"
 
 #include "CritterType.h"
 #include "Crypt.h"
 #include "DataFile.h"
-#include "GameOptions.h"
 #include "FileManager.h"
+#include "GameOptions.h"
+#include "Log.h"
+#include "Random.h"
 #include "ResourceManager.h"
 #include "Script.h"
 

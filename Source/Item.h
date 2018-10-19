@@ -1,10 +1,13 @@
 #ifndef __ITEM__
 #define __ITEM__
 
-#include "Common.h"
-#include "FileManager.h"
-#include "Text.h"
-#include "Crypt.h"
+#ifdef FOCLASSIC_CLIENT
+# include "scriptstring.h"
+#endif
+
+#include "Defines.h"
+#include "ThreadSync.h"
+#include "Types.h"
 
 class Critter;
 class MapObject;
@@ -115,13 +118,13 @@ public:
     int    Weapon_MinStrength;
     int    Weapon_Perk;
     uint   Weapon_ActiveUses;
-    int    Weapon_Skill[MAX_USES];
-    uint   Weapon_PicUse[MAX_USES];
-    uint   Weapon_MaxDist[MAX_USES];
-    uint   Weapon_Round[MAX_USES];
-    uint   Weapon_ApCost[MAX_USES];
-    bool   Weapon_Aim[MAX_USES];
-    uchar  Weapon_SoundId[MAX_USES];
+    int    Weapon_Skill[USE_MAX];
+    uint   Weapon_PicUse[USE_MAX];
+    uint   Weapon_MaxDist[USE_MAX];
+    uint   Weapon_Round[USE_MAX];
+    uint   Weapon_ApCost[USE_MAX];
+    bool   Weapon_Aim[USE_MAX];
+    uchar  Weapon_SoundId[USE_MAX];
     int    Ammo_Caliber;
     bool   Door_NoBlockMove;
     bool   Door_NoBlockShoot;
@@ -145,8 +148,8 @@ public:
     void AddRef()  {}
     void Release() {}
 
-    void Clear()   { memzero( this, sizeof(ProtoItem) ); }
-    uint GetHash() { return Crypt.Crc32( (uchar*)this, sizeof(ProtoItem) ); }
+    void Clear() { memzero( this, sizeof(ProtoItem) ); }
+    uint GetHash();
 
     bool IsItem() { return !IsScen() && !IsWall() && !IsGrid(); }
     bool IsScen() { return Type == ITEM_TYPE_GENERIC; }
@@ -297,6 +300,13 @@ public:
     ScriptString Lexems;
     #endif
 
+    #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_SERVER)
+    Item();
+    ~Item();
+    #endif
+
+    bool operator==( const uint& id ) { return Id == id; }
+
     void AddRef()  { RefCounter++; }
     void Release() { if( --RefCounter <= 0 ) delete this; }
 
@@ -404,7 +414,7 @@ public:
     uint WeapGetMaxAmmoCount()       { return Proto->Weapon_MaxAmmoCount; }
     int  WeapGetAmmoCaliber()        { return Proto->Weapon_Caliber; }
     bool WeapIsUseAviable( int use ) { return use >= USE_PRIMARY && use <= USE_THIRD ? ( ( (Proto->Weapon_ActiveUses >> use) & 1 ) != 0 ) : false; }
-    bool WeapIsCanAim( int use )     { return use >= 0 && use < MAX_USES && Proto->Weapon_Aim[use]; }
+    bool WeapIsCanAim( int use )     { return use >= 0 && use < USE_MAX && Proto->Weapon_Aim[use]; }
     void WeapLoadHolder();
 
     // Container
@@ -457,12 +467,7 @@ public:
 
     // Light
     bool IsLight() { return FLAG( Data.Flags, ITEM_FLAG_LIGHT ); }
-    uint LightGetHash()
-    {
-        if( !IsLight() ) return 0;
-        if( Data.LightIntensity ) return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_FLAG_LIGHT );
-        return (uint)Proto;
-    }
+    uint LightGetHash();
     int  LightGetIntensity() { return Data.LightIntensity ? Data.LightIntensity : Proto->LightIntensity; }
     int  LightGetDistance()  { return Data.LightDistance ? Data.LightDistance : Proto->LightDistance; }
     int  LightGetFlags()     { return Data.LightFlags ? Data.LightFlags : Proto->LightFlags; }
@@ -489,33 +494,6 @@ public:
     bool IsTrap()                { return FLAG( Data.Flags, ITEM_FLAG_TRAP ); }
     void TrapSetValue( int val ) { Data.TrapValue = val; }
     int  TrapGetValue()          { return Data.TrapValue; }
-
-    bool operator==( const uint& id ) { return Id == id;  }
-
-    #ifdef FOCLASSIC_SERVER
-    Item()
-    {
-        memzero( this, sizeof(Item) );
-        RefCounter = 1;
-        IsNotValid = false;
-        MEMORY_PROCESS( MEMORY_ITEM, sizeof(Item) );
-    }
-    ~Item()
-    {
-        Proto = NULL;
-        if( PLexems ) MEMORY_PROCESS( MEMORY_ITEM, -LEXEMS_SIZE );
-        SAFEDELA( PLexems );
-        MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof(Item) );
-    }
-    #elif FOCLASSIC_CLIENT
-    Item()
-    {
-        memzero( this, OFFSETOF( Item, IsNotValid ) );
-        RefCounter = 1;
-        IsNotValid = false;
-    }
-    ~Item() { Proto = NULL; }
-    #endif
 };
 
 /************************************************************************/

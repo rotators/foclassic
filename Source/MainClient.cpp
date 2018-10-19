@@ -1,3 +1,5 @@
+#include "Core.h"
+
 #include <locale.h>
 #ifndef FO_WINDOWS
 # include <signal.h>
@@ -5,11 +7,15 @@
 
 #include "FL/Fl.H"
 
-#include "Core.h"
-
+#include "CommandLine.h"
+#include "ConfigFile.h"
 #include "Client.h"
 #include "Exception.h"
+#include "GameOptions.h"
 #include "Keyboard.h"
+#include "Log.h"
+#include "SinglePlayer.h"
+#include "Timer.h"
 #include "Thread.h"
 #include "Version.h"
 #include "Window.h"

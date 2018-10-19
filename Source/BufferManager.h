@@ -1,7 +1,8 @@
 #ifndef __BUFFER_MANAGER__
 #define __BUFFER_MANAGER__
 
-#include "Common.h"
+#include "Mutex.h"
+#include "Types.h"
 
 #define CRYPT_KEYS_COUNT    (50)
 

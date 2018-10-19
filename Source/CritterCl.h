@@ -1,14 +1,15 @@
 #ifndef __CRITTER_CL__
 #define __CRITTER_CL__
 
-#include "NetProtocol.h"
-#include "Common.h"
-#include "SpriteManager.h"
-#include "BufferManager.h"
-#include "Item.h"
-#include "ItemManager.h"
+#include "scriptstring.h"
+
 #include "3dStuff.h"
-#include "GameOptions.h"
+#include "Defines.h"
+#include "FlexRect.h"
+#include "GraphicStructures.h"
+#include "Item.h"
+#include "SpriteManager.h"
+#include "Types.h"
 
 class CritterCl
 {
@@ -204,21 +205,17 @@ private:
     uint reSetTick;
 
 public:
-    bool IsNeedReSet() { return needReSet && Timer::GameTick() >= reSetTick; }
-    void ReSetOk()     { needReSet = false; }
+    bool IsNeedReSet();
+    void ReSetOk();
 
     // Time
 public:
     uint TickCount;
     uint StartTick;
 
-    void TickStart( uint ms )
-    {
-        TickCount = ms;
-        StartTick = Timer::GameTick();
-    }
-    void TickNull() { TickCount = 0; }
-    bool IsFree()   { return Timer::GameTick() - StartTick >= TickCount;  }
+    void TickStart( uint ms );
+    void TickNull();
+    bool IsFree();
 
     // Animation
 public:
@@ -295,8 +292,8 @@ private:
     uint finishingTime;
 
 public:
-    bool IsFinishing() { return finishingTime != 0; }
-    bool IsFinish()    { return finishingTime && Timer::GameTick() > finishingTime;  }
+    bool IsFinishing();
+    bool IsFinish();
 
     // Fade
 private:
@@ -325,18 +322,13 @@ private:
 
     // Ap cost
 public:
-    int GetApCostCritterMove( bool is_run ) { return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * (IsDmgTwoLeg() ? 4 : (IsDmgLeg() ? 2 : 1) ) : (GetParam( TO_BATTLE ) ? (is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk) : 0); }
-    int GetApCostMoveItemContainer()        { return IsTurnBased() ? GameOpt.TbApCostMoveItemContainer : GameOpt.RtApCostMoveItemContainer; }
-    int GetApCostMoveItemInventory()
-    {
-        int val = IsTurnBased() ? GameOpt.TbApCostMoveItemInventory : GameOpt.RtApCostMoveItemInventory;
-        if( IsRawParam( PE_QUICK_POCKETS ) ) val /= 2;
-        return val;
-    }
-    int GetApCostPickItem()    { return IsTurnBased() ? GameOpt.TbApCostPickItem : GameOpt.RtApCostPickItem; }
-    int GetApCostDropItem()    { return IsTurnBased() ? GameOpt.TbApCostDropItem : GameOpt.RtApCostDropItem; }
-    int GetApCostPickCritter() { return IsTurnBased() ? GameOpt.TbApCostPickCritter : GameOpt.RtApCostPickCritter; }
-    int GetApCostUseSkill()    { return IsTurnBased() ? GameOpt.TbApCostUseSkill : GameOpt.RtApCostUseSkill; }
+    int GetApCostCritterMove( bool is_run );
+    int GetApCostMoveItemContainer();
+    int GetApCostMoveItemInventory();
+    int GetApCostPickItem();
+    int GetApCostDropItem();
+    int GetApCostPickCritter();
+    int GetApCostUseSkill();
 
     // Ref counter
 public:
@@ -354,4 +346,4 @@ typedef map<uint, CritterCl*, less<uint>> CritMap;
 typedef vector<CritterCl*>                CritVec;
 typedef CritterCl*                        CritterClPtr;
 
-#endif // __CRITTER_CL__
+#endif // __CRITTER_CL__ //

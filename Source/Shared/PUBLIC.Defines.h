@@ -1,15 +1,16 @@
 /////
 //
-// Magic Numbers
+// FOClassic v@FOCLASSIC_VERSION@
+// Last update @SCRIPTS_HEADER_TIMESTAMP@
 //
 /////
 //
 // This file contains all exposed 'magic numbers' used in FOClassic.
-// It should not be edited directly by servers.
+// It should not be edited directly by game developers.
 //
-// Used by engine, extensions, and scripts.
+// Used by engine, native extensions, and scripts.
 //
-///// Optional defines
+/////
 //
 // FOCLASSIC_EXTENSION
 // Enables macros, C++ syntax; cannot be used with FOCLASSIC_SCRIPT
@@ -25,7 +26,7 @@
 // Critter parameters indexes won't be defined.
 //
 // FOCLASSIC_SKIP_PID
-// Prototype item IDs won't be defined.
+// Items prototypes IDs won't be defined.
 //
 /////
 
@@ -35,6 +36,9 @@
 #ifdef FOCLASSIC_ENGINE
 # define FOCLASSIC_EXTENSION
 # define FOCLASSIC_BLEEDING_EDGE
+# if !defined (__DEFINES__) && !defined (__INTELLISENSE__)
+#  error "Use Defines.h instead"
+# endif
 #endif
 
 #ifdef FOCLASSIC_EXTENSION
@@ -56,16 +60,26 @@
 
 // macros for engine/extensions only
 # ifdef FOCLASSIC_EXTENSION
+
+#  define ___TOD1( x )                               # x
+#  define ___TOD0( x )                               ___TOD1( x )
+#  define TODO( msg )                                message( __FILE__ "(" ___TOD0( __LINE__ ) "): [TODO] "  # msg )
+#  define STAGE( stage, msg )                        message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "] "  # msg )
+#  define DEPRECATE( msg )                           message( __FILE__ "(" ___TOD0( __LINE__ ) "): [DEPRECATE] "  # msg )
+#  define STAGE_DEPRECATE( stage, msg )              message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "][DEPRECATE] "  # msg )
+#  define STATIC_ASSERT( a )                         static_assert( a, # a )
+#  define STATIC_ASSERT_PRINT( func, a )             func( "STATIC_ASSERT( sizeof(%s) == %u );\n", # a, sizeof(a) )
+
 #  define memzero( ptr, size )                       memset( ptr, 0, size )
 #  define MAKEUINT( ch0, ch1, ch2, ch3 )             ( (uint)(uchar)(ch0) | ( (uint)(uchar)(ch1) << 8 ) | ( (uint)(uchar)(ch2) << 16 ) | ( (uint)(uchar)(ch3) << 24 ) )
 #  define OFFSETOF( type, member )                   ( (int)offsetof( type, member ) )
 #  define PACKUINT64( u32hi, u32lo )                 ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
-#  define STATIC_ASSERT( a )                         static_assert( a, # a )
-#  define STATIC_ASSERT_PRINT( func, a )             func( "STATIC_ASSERT( sizeof(%s) == %u );\n", # a, sizeof(a) )
-# endif
+
+# endif // FOCLASSIC_EXTENSION
 
 // macros for everyone
 # ifdef FOCLASSIC_EXTENSION
+
 #  define BIN__N( x )                                (x) | x >> 3 | x >> 6 | x >> 9
 #  define BIN__B( x )                                (x) & 0xf | (x) >> 12 & 0xf0
 #  define BIN8( v )                                  (BIN__B( BIN__N( 0x ## v ) ) )
@@ -83,9 +97,12 @@
 #  define IS_DIR_CORNER( dir )                       ( ( (dir) & 1 ) != 0 ) // 1, 3, 5, 7
 #  define RAD( deg )                                 ( (deg) * 3.141592654f / 180.0f )
 #  define UTF8_BUF_SIZE( count )                     ( (count) * 4 )
+
+#  define GAME_OPTION( option )                      (FOClassic->option)
 # endif  // FOCLASSIC_EXTENSION
 
 # ifdef FOCLASSIC_SCRIPT
+
 #  define BIN__N                                     # (x)(x) | x >> 3 | x >> 6 | x >> 9
 #  define BIN__B                                     # (x)(x) & 0xf | (x) >> 12 & 0xf0
 #  define BIN8                                       # (v)(BIN__B( BIN__N( 0x ## v ) ) )
@@ -103,8 +120,9 @@
 #  define IS_DIR_CORNER                              # (dir)( ( (dir) & 1 ) != 0 ) // 1, 3, 5, 7
 #  define RAD                                        # (deg)( (deg) * 3.141592654f / 180.0f )
 #  define UTF8_BUF_SIZE                              # (count)( (count) * 4 )
-# endif  // FOCLASSIC_SCRIPT
 
+#  define GAME_OPTION                                # (option)(__ ## option)
+# endif // FOCLASSIC_SCRIPT
 #endif  // FOCLASSIC_MACROS_ALLOWED
 
 ////////// Misc //////////
@@ -270,7 +288,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate shortened CHOSEN_action")
+#  pragma STAGE_DEPRECATE(3, "short CHOSEN_action")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -326,7 +344,7 @@
 // Commands
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] renumber COMMAND")
+#  pragma STAGE(3,"renumber COMMAND")
 # endif
 #endif // FOCLASSIC_ENGINE
 #define COMMAND_EXIT                                 (1)
@@ -367,7 +385,7 @@
 #define COMMAND_LOG                                  (37)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate CMD")
+#  pragma STAGE_DEPRECATE(3,"CMD")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -428,7 +446,7 @@
 #define CONTAINER_PUTALL                             (4)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate CONT")
+#  pragma STAGE_DEPRECATE(3,"CONT")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -457,7 +475,7 @@
 #define CRITTER_CONDITION_DEAD                       (3)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate COND")
+#  pragma STAGE_DEPRECATE(3,"COND")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -521,7 +539,7 @@
 #define CRITTER_FLAG_RULEGROUP                       (0x00200000) // Group rule
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate FCRIT")
+#  pragma STAGE_DEPRECATE(3,"FCRIT")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -537,8 +555,8 @@
 #define CRITTER_ID_START_NPC                         (5000001)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate NPC_START_ID")
-#  pragma MESSAGE("[STAGE 3] deprecate USER_START_ID")
+#  pragma STAGE_DEPRECATE(3,"NPC_START_ID")
+#  pragma STAGE_DEPRECATE(3,"USER_START_ID")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -567,7 +585,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate CRITTER_ONLY_NAME")
+#  pragma STAGE_DEPRECATE(3,"CRITTER_ONLY_NAME")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -689,7 +707,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate FONT_type")
+#  pragma STAGE_DEPRECATE(3,"FONT_type")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -706,7 +724,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate FT")
+#  pragma STAGE_DEPRECATE(3,"FT")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -875,7 +893,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate ITEM_flag")
+#  pragma STAGE_DEPRECATE(3,"ITEM_flag")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -992,7 +1010,7 @@
 #define MSGBOX_VIEW                                  (3)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate FOMB")
+#  pragma STAGE_DEPRECATE(3,"FOMB")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -1057,7 +1075,7 @@
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate PT" )
+#  pragma STAGE_DEPRECATE(3,"PT" )
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -1255,8 +1273,16 @@
 #define USE_THIRD                                    (2)
 #define USE_RELOAD                                   (3)
 #define USE_USE                                      (4)
-#define MAX_USES                                     (3)
 #define USE_NONE                                     (15)
+#define USE_MAX                                      (3) // array size
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE_DEPRECATE(3,"MAX_USES")
+# endif
+#endif // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_BLEEDING_EDGE
+# define MAX_USES                                    (USE_MAX)
+#endif
 
 #ifdef FOCLASSIC_MACROS_ALLOWED
 
@@ -1292,7 +1318,7 @@
 #define VAR_TYPE_LOCAL_ITEM                          (5)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate VAR_GLOBAL VAR_LOCAL VAR_UNICUM")
+#  pragma STAGE_DEPRECATE(3,"VAR_GLOBAL VAR_LOCAL VAR_UNICUM")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -1316,7 +1342,7 @@
 #define WORLDMAP_FOG_NONE                            (3)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate GM_FOG")
+#  pragma STAGE_DEPRECATE(3,"GM_FOG")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -1337,7 +1363,7 @@
 #define WORLDMAP_PROCESS_KICK                        (7)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate GLOBAL_PROCESS")
+#  pragma STAGE_DEPRECATE(3,"GLOBAL_PROCESS")
 # endif
 #endif   // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
@@ -1357,7 +1383,7 @@
 #define WORLDMAP_WALK_WATER                          (2)
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma MESSAGE("[STAGE 3] deprecate GM")
+#  pragma STAGE_DEPRECATE(3,"GM")
 # endif
 #endif // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE

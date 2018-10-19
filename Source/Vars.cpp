@@ -1,8 +1,14 @@
 #include "Core.h"
 
-#include "Vars.h"
-#include "Text.h"
 #include "FileManager.h"
+#include "FileSystem.h"
+#include "Jobs.h"
+#include "Log.h"
+#include "LogFile.h"
+#include "Random.h"
+#include "Text.h"
+#include "ThreadSync.h"
+#include "Vars.h"
 
 #ifdef FOCLASSIC_SERVER
 # include "Critter.h"
@@ -934,6 +940,17 @@ void SendQuestVar( GameVar* var )
     Client* cl = CrMngr.GetPlayer( var->GetMasterId(), false );
     if( cl )
         cl->Send_Quest( var->GetQuestStr() );
+}
+
+GameVar::GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val ) : MasterId( master_id ), SlaveId( slave_id ), VarTemplate( var_template ), QuestVarIndex( 0 ),
+    Type( var_template->Type ), VarValue( val ), RefCount( 1 )
+{
+    MEMORY_PROCESS( MEMORY_VAR, sizeof(GameVar) );
+}
+
+GameVar::~GameVar()
+{
+    MEMORY_PROCESS( MEMORY_VAR, -(int)sizeof(GameVar) );
 }
 
 GameVar& GameVar::operator+=( const int _right )

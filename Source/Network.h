@@ -19,4 +19,6 @@
 # define SD_BOTH           SHUT_RDWR
 #endif
 
+extern const char* GetLastSocketError();
+
 #endif // __NETWORK__ //

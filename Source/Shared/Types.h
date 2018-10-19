@@ -12,6 +12,10 @@
 
 #include "PlatformSpecific.h"
 
+#if defined (FO_WINDOWS)
+# include <windows.h>
+#endif
+
 using namespace std;
 
 #if defined (FO_MSVC)
@@ -82,4 +86,4 @@ typedef std::vector<UIntPair>              UIntPairVec;
 typedef std::vector<PCharPair>             PCharPairVec;
 typedef std::vector<UCharPair>             UCharPairVec;
 
-#endif // ___TYPES___
+#endif // ___TYPES___ //

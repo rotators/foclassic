@@ -1,8 +1,6 @@
-#include <strstream>
+#include "Core.h"
 
 #include "FL/Fl.H"
-
-#include "Core.h"
 
 #include "GameOptions.h"
 #include "SpriteManager.h"

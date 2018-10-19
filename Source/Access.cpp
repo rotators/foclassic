@@ -1,3 +1,5 @@
+#include "Core.h"
+
 #include "Access.h"
 #include "BufferManager.h"
 #include "Crypt.h"

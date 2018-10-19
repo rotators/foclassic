@@ -1,5 +1,6 @@
 #include "Core.h"
 
+#include "AutoPointers.h"
 #include "CritterType.h"
 #include "FileManager.h"
 #include "Log.h"

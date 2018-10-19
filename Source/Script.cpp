@@ -1,4 +1,4 @@
-#include <strstream>
+#include "Core.h"
 
 #include "AngelScript/angelscript.h"
 #include "AngelScript/scriptany.h"
@@ -9,15 +9,24 @@
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/preprocessor.h"
 
-#include "CMake.h"
-
+#include "ConfigFile.h" // LogicMT
+#include "DynamicLibrary.h"
+#include "Exception.h"
 #include "FileManager.h"
+#include "FileSystem.h"
 #include "GameOptions.h"
+#include "Log.h"
 #include "Script.h"
 #include "Text.h"
 #include "Thread.h"
+#include "Timer.h"
 #include "Types.h"
 #include "Version.h"
+
+#ifdef SCRIPT_MULTITHREADING
+# include "Mutex.h"
+# include "ThreadSync.h"
+#endif
 
 const char* ContextStatesStr[] =
 {

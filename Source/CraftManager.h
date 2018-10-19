@@ -1,8 +1,8 @@
 #ifndef __CRAFT_MANAGER__
 #define __CRAFT_MANAGER__
 
-#include "Common.h"
 #include "MsgFiles.h"
+#include "Types.h"
 
 #define MRFIXIT_METADATA      '!'
 #define MRFIXIT_NEXT          '@'
@@ -15,8 +15,6 @@
 #define MRFIXIT_SPACE_S       " "
 #define MRFIXIT_AND_S         "&"
 #define MRFIXIT_OR_S          "|"
-
-#define FIXBOY_TIME_OUT       (GameOpt.TimeMultiplier * 60)   // 1 minute
 
 struct CraftItem
 {
@@ -152,4 +150,4 @@ public:
 
 extern CraftManager MrFixit;
 
-#endif // __CRAFT_MANAGER__
+#endif // __CRAFT_MANAGER__ //

@@ -1,5 +1,18 @@
+#include "Core.h"
+
+#include "ConfigFile.h" // LogicMT
+#include "Crypt.h"
+#include "Debugger.h"
 #include "Item.h"
 #include "ItemManager.h"
+#include "Log.h"
+#include "Random.h"
+#include "Script.h"
+#include "Text.h"
+
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
+# include "Timer.h"
+#endif
 
 #ifdef FOCLASSIC_SERVER
 # include "MapManager.h"
@@ -34,6 +47,31 @@ char Item::ItemData::SendMask[ITEM_DATA_MASK_MAX][120] =
     // ITEM_DATA_MASK_MAP                                                                                              ITEM_DATA_MASK_MAP                                                                                                   ITEM_DATA_MASK_MAP
     {  -1, -1,     -1,    0,     -1, -1, -1, -1,     0, 0, 0, 0,    -1, -1,     -1, -1,      -1, -1,      -1, -1,     -1, -1, -1, -1,  -1,       -1,            -1,        -1,     -1, -1, -1, -1,   0, 0,     0, 0,     0,  0,  0,  0,   0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0 },
 };
+
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_SERVER)
+Item::Item()
+{
+    # if defined (FOCLASSIC_CLIENT)
+    memzero( this, OFFSETOF( Item, IsNotValid ) );
+    # elif defined (FOCLASSIC_SERVER)
+    memzero( this, sizeof(Item) );
+    # endif
+    RefCounter = 1;
+    IsNotValid = false;
+    MEMORY_PROCESS( MEMORY_ITEM, sizeof(Item) );
+}
+
+Item::~Item()
+{
+    Proto = NULL;
+    # ifdef FOCLASSIC_SERVER
+    if( PLexems )
+        MEMORY_PROCESS( MEMORY_ITEM, -LEXEMS_SIZE );
+    SAFEDELA( PLexems );
+    MEMORY_PROCESS( MEMORY_ITEM, -(int)sizeof(Item) );
+    # endif
+}
+#endif // FOCLASSIC_CLIENT || FOCLASSIC_SERVER
 
 void Item::Init( ProtoItem* proto )
 {
@@ -413,7 +451,7 @@ void Item::SetMode( uchar mode )
                 break;
         }
 
-        if( use < MAX_USES && aim && !Proto->Weapon_Aim[use] )
+        if( use < USE_MAX && aim && !Proto->Weapon_Aim[use] )
             aim = 0;
         mode = (aim << 4) | (use & 0xF);
     }
@@ -682,6 +720,20 @@ Item* Item::GetChild( uint child_index )
     return NULL;
 }
 #endif // FOCLASSIC_SERVER
+
+uint Item::LightGetHash()
+{
+    if( !IsLight() )
+        return 0;
+    if( Data.LightIntensity )
+        return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_FLAG_LIGHT );
+    return (uint)Proto;
+}
+
+uint ProtoItem::GetHash()
+{
+    return Crypt.Crc32( (uchar*)this, sizeof(ProtoItem) );
+}
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 # include "ResourceManager.h"

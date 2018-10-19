@@ -1,12 +1,29 @@
-#include "FL/Fl.h"
-
 #include "Core.h"
 
+#include "FL/Fl.h"
+
+#include "CommandLine.h"
+#include "ConfigFile.h"
+#include "ConstantsManager.h"
+#include "CritterManager.h"
+#include "CritterType.h"
+#include "FileSystem.h"
+#include "GameOptions.h"
 #include "GraphicLoader.h"
+#include "ItemManager.h"
+#include "Keyboard.h"
+#include "Log.h"
 #include "Mapper.h"
 #include "MsgStr.h"
+#include "Random.h"
+#include "ResourceManager.h"
+#include "Script.h"
 #include "ScriptFunctions.h"
+#include "ScriptPragmas.h"
+#include "SinglePlayer.h"
 #include "Thread.h"
+#include "Timer.h"
+#include "Utils.h"
 #include "Window.h"
 
 void _PreRestore()
@@ -19,6 +36,9 @@ void _PostRestore()
     FOMapper::Self->HexMngr.PostRestore();
     FOMapper::Self->ChangeGameTime();
 }
+
+FOMapper::IfaceAnim::IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::FastTick() ), ResType( res_type )
+{}
 
 bool      FOMapper::SpritesCanDraw = false;
 FOMapper* FOMapper::Self = NULL;
@@ -4649,6 +4669,21 @@ void FOMapper::CurMMouseDown()
     }
 }
 
+bool FOMapper::IsCurInRect(Rect& rect, int ax, int ay)
+{
+    return GameOpt.MouseX >= rect[0] + ax && GameOpt.MouseY >= rect[1] + ay && GameOpt.MouseX <= rect[2] + ax && GameOpt.MouseY <= rect[3] + ay;
+}
+
+bool FOMapper::IsCurInRect(Rect& rect)
+{
+    return GameOpt.MouseX >= rect[0] && GameOpt.MouseY >= rect[1] && GameOpt.MouseX <= rect[2] && GameOpt.MouseY <= rect[3];
+}
+
+bool FOMapper::IsCurInRectNoTransp(uint spr_id, Rect& rect, int ax, int ay)
+{
+    return IsCurInRect(rect, ax, ay) && SprMngr.IsPixNoTransp(spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false);
+}
+
 bool FOMapper::IsCurInInterface()
 {
     if( IntVisible && SubTabsActive && IsCurInRectNoTransp(SubTabsPic->GetCurSprId(), SubTabsRect, SubTabsX, SubTabsY) )
@@ -6560,6 +6595,11 @@ MapObject* FOMapper::SScriptFunc::Global_GetMonitorObject( int x, int y, bool ig
         mobj = Self->FindMapObject( cr->GetHexX(), cr->GetHexY(), MAP_OBJECT_CRITTER, cr->Flags, false );
     }
     return mobj;
+}
+
+uint FOMapper::SScriptFunc::Global_GetTick()
+{
+    return Timer::FastTick();
 }
 
 uint FOMapper::SScriptFunc::Global_GetAngelScriptProperty( int property )

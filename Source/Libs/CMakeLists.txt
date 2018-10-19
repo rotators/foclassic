@@ -16,4 +16,6 @@ add_subdirectory( sha2 )
 add_subdirectory( theora )
 add_subdirectory( zlib )
 
+set_target_properties( acm glew sha2 zlib PROPERTIES FOLDER "Libs" )
+
 message( STATUS "Configuring libraries... OK" )

@@ -1,12 +1,18 @@
+#include "Core.h"
+
 #include <locale.h>
 
 #include "FL/Fl.H"
 
-#include "Core.h"
-
+#include "CommandLine.h"
+#include "ConfigFile.h"
 #include "Exception.h"
+#include "GameOptions.h"
+#include "Log.h"
 #include "Mapper.h"
+#include "SinglePlayer.h"
 #include "Thread.h"
+#include "Timer.h"
 #include "Version.h"
 #include "Window.h"
 

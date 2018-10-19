@@ -1,7 +1,5 @@
-#include <strstream>
+#include "Core.h"
 
-#include "Crypt.h"
-#include "Common.h"
 #include "FileManager.h"
 #include "IniParser.h"
 #include "Text.h"

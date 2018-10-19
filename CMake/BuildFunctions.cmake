@@ -1,16 +1,18 @@
-function( GetProjectInfo )
+function( GetProjectVersion )
 
-	if( NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" )
-		message( FATAL_ERROR "CMakeLists.txt not found" )
+	set( cmakelists "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" )
+
+	if( NOT EXISTS "${cmakelists}" )
+		message( FATAL_ERROR "${cmakelists} not found" )
 	endif()
 
-	file( READ "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" content )
+	file( READ "${cmakelists}" content )
 
 	if( "${content}" MATCHES "FOClassic[\\t\\ ]+VERSION[\\t\\ ]+([0-9]+)\\.([0-9]+)" )
 		set( FOCLASSIC_STAGE ${CMAKE_MATCH_1} PARENT_SCOPE )
 		set( FOCLASSIC_VERSION ${CMAKE_MATCH_2} PARENT_SCOPE )
 	else()
-		message( FATAL_ERROR "FOClassic version information not found" )
+		message( FATAL_ERROR "FOClassic version information not found in ${cmakelists}" )
 	endif()
 
 endfunction()
@@ -19,7 +21,10 @@ function( FormatSource )
 
 	set( tmp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
 	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
-	foreach( dir Extensions Source/Shared Source )
+
+	message( STATUS "Formatting source..." )
+
+	foreach( dir CMake/Templates Extensions Extensions/Example Source/Shared Source )
 		foreach( ext IN ITEMS h cpp fos )
 			file( GLOB files LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/${dir}/*.${ext} )
 			if( files )
@@ -28,12 +33,12 @@ function( FormatSource )
 				if( count GREATER 1 )
 					set( suffix "s" )
 				endif()
-				message( STATUS "${dir}/*.${ext} : ${count} file${suffix}" )
 			endif()
 		endforeach()
 	endforeach()
+
 	foreach( file ${all_files} )
-		message( STATUS "Processing ${file}..." )
+		message( STATUS "Processing ${file}" )
 		execute_process(
 			COMMAND "${uncrustify}.exe" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${tmp}" -q --if-changed
 		)
@@ -54,10 +59,7 @@ function( CreateBuildDirectory compiler file )
 	elseif( ${compiler} STREQUAL "VS2017.v100" )
 		set( dir SDK.VS2017.v100 )
 		set( generator "Visual Studio 15 2017" )
-		set( extras "-T v100" )
-	elseif( ${compiler} STREQUAL "VS2015" )
-		set( dir SDK.VS2015 )
-		set( generator "Visual Studio 14 2015" )
+		set( extras "-Tv100" )
 	elseif( ${compiler} STREQUAL "VS2017" )
 		set( dir SDK.VS2017 )
 		set( generator "Visual Studio 15 2017" )
@@ -68,21 +70,23 @@ function( CreateBuildDirectory compiler file )
 	# use full path
 	set( dir "${CMAKE_CURRENT_LIST_DIR}/${dir}" )
 
-	if( NOT EXISTS ${dir} )
+	message( STATUS "Checking ${dir}" )
+	if( NOT EXISTS "${dir}" )
 		message( STATUS "Creating ${dir}" )
-		file( MAKE_DIRECTORY ${dir} )
+		file( MAKE_DIRECTORY "${dir}" )
 	endif()
 
-	if( NOT EXISTS ${dir}/${file} )
-		message( STATUS "Running generator for ${compiler}" )
+	if( NOT EXISTS "${dir}/${file}" )
+		message( STATUS "Starting generator (${generator})" )
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -G ${generator} ${extras} ${CMAKE_CURRENT_LIST_DIR}
+			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${extras} ${CMAKE_CURRENT_LIST_DIR}
 			WORKING_DIRECTORY ${dir}
 		)
 	endif()
 
 	if( EXISTS ${dir}/${file} )
-		set( BUILD_DIRS "${BUILD_DIRS};${dir}" PARENT_SCOPE )
+		list( APPEND BUILD_DIRS "${dir}" )
+		set( BUILD_DIRS "${BUILD_DIRS}" PARENT_SCOPE )
 	endif()
 
 endfunction()
@@ -90,7 +94,7 @@ endfunction()
 function( RunAllBuilds )
 
 	foreach( dir ${BUILD_DIRS} )
-		message( STATUS "Running build (${dir})" )
+		message( STATUS "Starting build (${dir})" )
 		execute_process( COMMAND ${CMAKE_COMMAND} --build ${dir} --config Release )
 	endforeach()
 
@@ -130,6 +134,7 @@ function( ZipAllBuilds )
 		file( GLOB_RECURSE extensions LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Extensions/* )
 
 		set( files ${core} ${tools} ${headers} ${extensions} )
+
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${files}
 			WORKING_DIRECTORY ${zip_dir}
@@ -137,6 +142,7 @@ function( ZipAllBuilds )
 		)
 
 		set( files "${files};CHECKSUM.${sum}" )
+
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E tar cfv ${zip_file} --format=zip --mtime=${ts} ${files}
 			WORKING_DIRECTORY ${zip_dir}

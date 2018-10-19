@@ -1,6 +1,15 @@
+#include "Core.h"
+
+#include "Crypt.h"
+#include "GameOptions.h"
 #include "HexManager.h"
+#include "ItemManager.h"
+#include "Log.h"
+#include "Random.h"
 #include "ResourceManager.h"
 #include "LineTracer.h"
+#include "Timer.h"
+#include "Utils.h"
 
 #ifdef FOCLASSIC_MAPPER
 # include "CritterData.h"
@@ -11,6 +20,14 @@
 # include "Script.h"
 # include "ScriptFunctions.h"
 #endif
+
+#define MAX_FIND_PATH    (600)
+#define TILE_ALPHA       (0xFF)
+#define VIEW_WIDTH       ( (int)( (MODE_WIDTH / GameOpt.MapHexWidth + ( (MODE_WIDTH % GameOpt.MapHexWidth) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define VIEW_HEIGHT      ( (int)( (MODE_HEIGHT / GameOpt.MapHexLineHeight + ( (MODE_HEIGHT % GameOpt.MapHexLineHeight) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
+#define SCROLL_OX        (GameOpt.MapHexWidth)
+#define SCROLL_OY        (GameOpt.MapHexLineHeight * 2)
+
 
 /************************************************************************/
 /* FIELD                                                                */

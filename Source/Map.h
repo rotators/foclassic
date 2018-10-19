@@ -1,11 +1,15 @@
 #ifndef __MAP__
 #define __MAP__
 
-#include "Common.h"
-#include "ProtoMap.h"
-#include "Item.h"
+#include "scriptarray.h"
+
 #include "Critter.h"
 #include "Defines.h"
+#include "Item.h"
+#include "Mutex.h"
+#include "ProtoMap.h"
+#include "ThreadSync.h"
+#include "Types.h"
 
 extern const char* MapEventFuncName[MAP_EVENT_MAX];
 
@@ -202,7 +206,7 @@ public:
 
     void BeginTurnBased( Critter* first_cr );
     void EndTurnBased();
-    bool TryEndTurnBased();
+    bool TryEndTurnBased(); // ?!?
     void ProcessTurnBased();
     bool IsCritterTurn( Critter* cr );
     uint GetCritterTurnId();

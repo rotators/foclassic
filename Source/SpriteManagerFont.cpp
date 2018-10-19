@@ -2,7 +2,9 @@
 
 #include "Crypt.h"
 #include "FileManager.h"
+#include "FileSystem.h"
 #include "GameOptions.h"
+#include "Log.h"
 #include "SpriteManager.h"
 #include "Types.h"
 

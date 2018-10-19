@@ -9,8 +9,11 @@
 #include "Critter.h"
 #include "CritterManager.h"
 #include "ProtoMap.h"
+#include "Scores.h"
+#include "Timer.h"
 #include "Thread.h"
 #include "Types.h"
+#include "Vars.h"
 
 #if defined (USE_LIBEVENT)
 # include "event2/event.h"
@@ -367,16 +370,17 @@ public:
     #define BANS_FNAME_EXPIRED             "expired.txt"
     struct ClientBanned
     {
-        DateTime    BeginTime;
-        DateTime    EndTime;
-        uint        ClientIp;
-        char        ClientName[UTF8_BUF_SIZE( MAX_NAME )];
-        char        BannedBy[UTF8_BUF_SIZE( MAX_NAME )];
-        char        BanInfo[UTF8_BUF_SIZE( 128 )];
-        bool operator==( const char* name ) { return Str::CompareCaseUTF8( name, ClientName ); }
-        bool operator==( const uint ip )    { return ClientIp == ip; }
+        DateTime BeginTime;
+        DateTime EndTime;
+        uint     ClientIp;
+        char     ClientName[UTF8_BUF_SIZE( MAX_NAME )];
+        char     BannedBy[UTF8_BUF_SIZE( MAX_NAME )];
+        char     BanInfo[UTF8_BUF_SIZE( 128 )];
 
-        const char* GetBanLexems() { return Str::FormatBuf( "$banby%s$time%d$reason%s", BannedBy[0] ? BannedBy : "?", Timer::GetTimeDifference( EndTime, BeginTime ) / 60 / 60, BanInfo[0] ? BanInfo : "just for fun" ); }
+        bool operator==( const char* name );
+        bool operator==( const uint ip );
+
+        const char* GetBanLexems();
     };
     typedef vector<ClientBanned> ClientBannedVec;
     static ClientBannedVec Banned;
@@ -407,10 +411,10 @@ public:
         uint SaveIndex;
         uint UID[5];
         uint UIDEndTick;
-        void Clear()                        { memzero( this, sizeof(ClientData) ); }
-        bool operator==( const char* name ) { return Str::CompareCaseUTF8( name, ClientName ); }
-        bool operator==( const uint id )    { return ClientId == id; }
-        ClientData() { Clear(); }
+        ClientData();
+        bool operator==( const char* name );
+        bool operator==( const uint id );
+        void Clear();
     };
     typedef vector<ClientData> ClientDataVec;
     static ClientDataVec ClientsData;

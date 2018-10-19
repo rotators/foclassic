@@ -1,6 +1,7 @@
 #ifndef _GAP_FDAT_UNLZSS_H
 #define _GAP_FDAT_UNLZSS_H
 
+#include "Types.h"
 
 /* number of bits for index and length respectively */
 #define INDEX_BC                12

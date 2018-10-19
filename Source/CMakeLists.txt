@@ -1,3 +1,7 @@
+##
+## process subdirectories
+##
+
 add_subdirectory( AngelScript )
 add_subdirectory( Libs )
 
@@ -6,22 +10,30 @@ message( STATUS "Configuring engine..." )
 add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
+##
+## configure libraries
+##
+
+# libraries used by all applications
 set( FOCLASSIC_LIBS AngelScript AngelScriptPreprocessor DatFile Shared )
-set( FOCLASSIC_INCLUDES ${CMAKE_BINARY_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Libs )
+
+set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if( WIN32 )
 	set( FOCLASSIC_LIBS ${FOCLASSIC_LIBS}
 		dbghelp # Debugger.cpp Exception.cpp
 		psapi # Exception.cpp
+		ws2_32 # pthreads?
 	)
 endif()
 
+# libraries used on windows platform
 if( WIN32 )
 	# DX needs glew/glu32 due to 3dStuff.cpp VecProject() VecUnproject()
 	set( DX_LIBS dx9 glew glu32 )
 endif()
 
-set( GL_LIBS fltkgl glew glu32 opengl32 theora )
+set( GL_LIBS fltkgl glew glu32 opengl32 )
 
 # predefine libs used by engine applications
 # NOTES
@@ -33,17 +45,16 @@ set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 
 if( WIN32 )
-	set( CLIENT_LIBS ${CLIENT_LIBS} ws2_32 )
-	set( SERVER_LIBS ${SERVER_LIBS} ws2_32 )
+	list( APPEND CLIENT_LIBS Iphlpapi )
 endif()
 
 set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
-set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} )
+set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} theora )
 set( MAPPER_DX_LIBS ${MAPPER_LIBS} ${DX_LIBS} )
 set( MAPPER_GL_LIBS ${MAPPER_LIBS} ${GL_LIBS} )
 
 ##
-## Mixed sources
+## mixed sources
 ##
 
 set( CLIENT_SERVER_SOURCES
@@ -53,7 +64,9 @@ set( CLIENT_SERVER_SOURCES
 	BufferManager.h
 	CraftManager.cpp
 	CraftManager.h
+	Network.cpp
 	Network.h
+	Scores.h
 )
 
 set( CLIENT_MAPPER_SOURCES
@@ -65,16 +78,18 @@ set( CLIENT_MAPPER_SOURCES
 	SpriteManager.cpp
 	SpriteManager.h
 	SpriteManagerFont.cpp
-	Window.cpp
-	Window.h
 )
 
 set( MAPPER_SERVER_SOURCES
+	Deprecated.cpp
+	Deprecated.h
 	ProtoMap.cpp
 	ProtoMap.h
 )
 
 set( CLIENT_MAPPER_SERVER_SOURCES
+	ConfigFile.cpp
+	ConfigFile.h
 	ConstantsManager.cpp
 	ConstantsManager.h
 	CritterType.cpp
@@ -83,37 +98,13 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	IniParser.h
 	ScriptFunctions.cpp
 	ScriptFunctions.h
+	SinglePlayer.cpp
+	SinglePlayer.h
+	Utils.cpp
+	Utils.h
+	Window.cpp
+	Window.h
 )
-
-##
-## ASCompiler
-##
-
-add_executable( ASCompiler "" )
-target_sources( ASCompiler
-	PRIVATE
-		ASCompiler.cpp
-		ASCompiler.h
-		Common.cpp
-		Common.h
-		DataFile.cpp
-		DataFile.h
-		Exception.cpp
-		Exception.h
-		DummyData.h
-		FileManager.cpp
-		FileManager.h
-		IniParser.cpp
-		IniParser.h
-		Log.cpp
-		Log.h
-		ScriptBind.h
-		ScriptPragmas.cpp
-		ScriptPragmas.h
-)
-target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
-target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
-target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 
 ##
 ## Client
@@ -123,8 +114,6 @@ set( CLIENT_SOURCES
 	Client.cpp
 	Client.h
 	ClientInterface.cpp
-	Common.cpp
-	Common.h
 	DataFile.cpp
 	DataFile.h
 	DataMask.h
@@ -186,8 +175,8 @@ if( WIN32 )
 			${CLIENT_SOURCES}
 	)
 	target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
-	target_include_directories( ClientDX PRIVATE ${FOCLASSIC_INCLUDES} ${CMAKE_CURRENT_SOURCE_DIR}/Dx9 )
-	target_link_libraries( ClientDX  ${CLIENT_DX_LIBS} )
+	target_include_directories( ClientDX PRIVATE ${FOCLASSIC_INCLUDES} )
+	target_link_libraries( ClientDX ${CLIENT_DX_LIBS} )
 endif()
 
 ##
@@ -211,8 +200,6 @@ target_link_libraries( ClientGL ${CLIENT_GL_LIBS} )
 ##
 
 set( MAPPER_SOURCES
-	Common.cpp
-	Common.h
 	CritterData.h
 	CritterManager.cpp
 	CritterManager.h
@@ -263,6 +250,7 @@ set( MAPPER_SOURCES
 ##
 ## MapperDX
 ##
+
 if( WIN32 )
 	add_executable( MapperDX WIN32 "" )
 	target_sources( MapperDX
@@ -273,7 +261,7 @@ if( WIN32 )
 			${MAPPER_SOURCES}
 	)
 	target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
-	target_include_directories( MapperDX PRIVATE ${FOCLASSIC_INCLUDES} ${FO_DIR} ${FO_DIR}/Dx9 )
+	target_include_directories( MapperDX PRIVATE ${FOCLASSIC_INCLUDES} )
 	target_link_libraries( MapperDX ${MAPPER_DX_LIBS} )
 endif()
 
@@ -305,8 +293,6 @@ target_sources( Server
 		${MAPPER_SERVER_SOURCES}
 		AI.cpp
 		AI.h
-		Common.cpp
-		Common.h
 		Critter.cpp
 		Critter.h
 		CritterData.h
@@ -334,6 +320,8 @@ target_sources( Server
 		LineTracer.h
 		Log.cpp
 		Log.h
+		LogFile.cpp
+		LogFile.h
 		MainServer.cpp
 		Map.cpp
 		Map.h
@@ -363,68 +351,112 @@ target_sources( Server
 target_compile_definitions( Server PRIVATE FOCLASSIC_SERVER SCRIPT_MULTITHREADING )
 target_include_directories( Server PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( Server ${SERVER_LIBS} )
+
 ##
-## Finalize
+## ASCompiler
 ##
 
-set( FOCLASSIC_APPS ASCompiler ClientDX ClientGL MapperDX MapperGL Server )
+add_executable( ASCompiler "" )
+target_sources( ASCompiler
+	PRIVATE
+		ASCompiler.cpp
+		ASCompiler.h
+		DataFile.cpp
+		DataFile.h
+		Exception.cpp
+		Exception.h
+		DummyData.h
+		FileManager.cpp
+		FileManager.h
+		IniParser.cpp
+		IniParser.h
+		Log.cpp
+		Log.h
+		ScriptBind.h
+		ScriptPragmas.cpp
+		ScriptPragmas.h
+)
+target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
+target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
+target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
+set_property( TARGET ASCompiler PROPERTY FOLDER "Tools" )
+set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
-foreach( target ${FOCLASSIC_APPS} )
+get_property( FOCLASSIC_APPS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS )
+foreach( target IN LISTS FOCLASSIC_APPS )
 
-	# append headers generated by CMake
-	target_sources( ${target} PRIVATE "${CMAKE_BINARY_DIR}/include/CMake.h" )
+	##
+	## shared configuration
+	##
 
-	# setup released .pdb files
-	pdb_setup( ${target} )
+	# configure .pdb files creation
+	PdbSetup( ${target} )
 
-	# inform sources about engine compilation
+	# released sources/headers should be aware of engine compilation
 	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
 
-	set( app ${target}${CMAKE_EXECUTABLE_SUFFIX} )
-
+	# windows-specific configuration
 	if( WIN32 )
 		# n/c
 		target_compile_definitions( ${target} PRIVATE WINVER=0x0501 ) # Windows XP
 		target_compile_definitions( ${target} PRIVATE WIN32_LEAN_AND_MEAN )
 
-		# prettify windows executables
+		# include version informations
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
 
-	if( "${target}" STREQUAL "ASCompiler" )
-		set( dir "${RELEASE_TOOLS_DIR}" )
-	else()
-		set( dir "${RELEASE_DIR}" )
+	##
+	## prepare for release
+	## see notes about PRE_BUILD in cmake documentation
+	##
+
+	set( dir "${RELEASE_DIR}" )
+	get_property( subdir TARGET ${target} PROPERTY RELEASE_SUBDIRECTORY )
+	if( subdir )
+		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
 
+	# delete executable before build
+	add_custom_command( TARGET ${target}
+		PRE_BUILD
+		COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
+	)
+	# prepare executable for release after build
 	add_custom_command( TARGET ${target}
 		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${dir}
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
+		COMMAND ${CMAKE_COMMAND} -E echo "${target} -> ${dir}/$<TARGET_FILE_NAME:${target}>"
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
 	)
 
 	if( MSVC )
+		# delete .pdb file before build
+		add_custom_command( TARGET ${target}
+			PRE_BUILD
+				COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
+		)
+		# prepare .pdb files for release after build
 		add_custom_command( TARGET ${target}
 			POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/${target}.pdb
+				COMMAND ${CMAKE_COMMAND} -E echo "${target} -> ${dir}/$<TARGET_PDB_FILE_NAME:${target}>"
+				COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
 		)
 	endif()
+
+	message( STATUS "Configured ${target}" )
 
 endforeach()
 
 ##
-## Prettify IDE
+## prettify IDE
 ##
 
 source_group( " "           REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "AngelScript" REGULAR_EXPRESSION "${FO_DIR}/AngelScript" )
+source_group( "CMake"       REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 source_group( "Shared"      REGULAR_EXPRESSION "${FO_DIR}/Shared" )
 source_group( "Misc"
 	FILES
-		"${CMAKE_BINARY_DIR}/include/CMake.h"
 		"${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc"
-	REGULAR_EXPRESSION
-		"CMakeLists"
 )
 
 message( STATUS "Configuring engine... OK" )

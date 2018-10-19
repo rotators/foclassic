@@ -1,9 +1,10 @@
 #ifndef _GAP_FDAT_CFILE_H
 #define _GAP_FDAT_CFILE_H
 
-#include <Common.h>
 #include <zlib.h>
 #include "unlzss.h"
+
+#include "FileSystem.h"
 
 // Since no audio plugin for Fallout performs backward seek and large
 // forward moves, we do not need block caching when reading LZ_Block Files.

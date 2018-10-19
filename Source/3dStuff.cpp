@@ -1,18 +1,19 @@
+#include "Core.h"
+
 #include "glew.h"
 #include "GL/glu.h"
 
-#include "Core.h"
-
 #include "3dStuff.h"
 #include "3dAnimation.h"
-#include "Common.h"
 #include "ConstantsManager.h"
-#include "CritterType.h"
+#include "FileManager.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h"
-#include "Text.h"
+#include "Log.h"
 #include "Script.h"
 #include "ScriptFunctions.h"
+#include "Text.h"
+#include "Timer.h"
 
 Device_   D3DDevice = 0;
 Caps_     D3DCaps;

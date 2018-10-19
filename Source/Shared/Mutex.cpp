@@ -3,6 +3,12 @@
 #include "Mutex.h"
 #include "Thread.h"
 
+#ifndef FO_WINDOWS
+// Mutex static stuff
+bool                Mutex::attrInitialized = false;
+pthread_mutexattr_t Mutex::mutexAttr;
+#endif
+
 Mutex::Mutex()
 {
     #ifdef FO_WINDOWS

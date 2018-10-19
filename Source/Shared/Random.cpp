@@ -1,15 +1,18 @@
-#include <time.h>
-
 #include "Core.h"
+
+#include <time.h>
 
 #include "Random.h"
 
 // Default randomizer
 Randomizer DefaultRandomizer;
+
 int Random( int minimum, int maximum )
 {
     return DefaultRandomizer.Random( minimum, maximum );
 }
+
+//
 
 Randomizer::Randomizer()
 {

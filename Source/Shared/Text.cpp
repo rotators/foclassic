@@ -1,8 +1,8 @@
+#include "Core.h"
+
 #include <stdarg.h>
 
 #include "FL/case.h"
-
-#include "Core.h"
 
 #include "Crypt.h"
 #include "Text.h"

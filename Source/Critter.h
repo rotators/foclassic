@@ -1,23 +1,21 @@
 #ifndef __CRITTER__
 #define __CRITTER__
 
-#include "Common.h"
+#if defined (FO_WINDOWS) && !defined (USE_LIBEVENT)
+# include <WinSock2.h>
+#endif
+
 #include "zlib.h"
-#include "BufferManager.h"
-#include "Item.h"
-#include "Dialogs.h"
+
 #include "AI.h"
-#include "Vars.h"
+#include "BufferManager.h"
 #include "CritterData.h"
 #include "DataMask.h"
-#include "NetProtocol.h"
+#include "Defines.h"
+#include "Dialogs.h"
 #include "GameOptions.h"
-
-#if defined (USE_LIBEVENT)
-# include "event2/event.h"
-# include "event2/bufferevent.h"
-# include "event2/buffer.h"
-#endif
+#include "ThreadSync.h"
+#include "Types.h"
 
 extern const char* CritterEventFuncName[CRITTER_EVENT_MAX];
 
@@ -268,25 +266,13 @@ private:
     uint waitEndTick;
 
 public:
-    bool IsFree() { return Timer::GameTick() - startBreakTime >= breakTime;  }
-    bool IsBusy() { return !IsFree(); }
-    void SetBreakTime( uint ms )
-    {
-        breakTime = ms;
-        startBreakTime = Timer::GameTick();
-        ApRegenerationTick = 0;
-    }
-    void SetBreakTimeDelta( uint ms )
-    {
-        uint dt = (Timer::GameTick() - startBreakTime);
-        if( dt > breakTime ) dt -= breakTime;
-        else dt = 0;
-        if( dt > ms ) dt = 0;
-        SetBreakTime( ms - dt );
-    }
+    bool IsFree();
+    bool IsBusy();
+    void SetBreakTime( uint ms );
+    void SetBreakTimeDelta( uint ms );
 
-    void SetWait( uint ms ) { waitEndTick = Timer::GameTick() + ms; }
-    bool IsWait()           { return Timer::GameTick() < waitEndTick; }
+    void SetWait( uint ms );
+    bool IsWait();
 
     void FullClear();
 
@@ -595,15 +581,11 @@ public:
     ushort      GetPort();
 
 public:
-    bool IsOnline()  { return !IsDisconnected; }
-    bool IsOffline() { return IsDisconnected; }
-    void Disconnect()
-    {
-        IsDisconnected = true;
-        if( !DisconnectTick ) DisconnectTick = Timer::FastTick();
-    }
-    void RemoveFromGame() { CanBeRemoved = true; }
-    uint GetOfflineTime() { return Timer::FastTick() - DisconnectTick; }
+    bool IsOnline();
+    bool IsOffline();
+    void Disconnect();
+    void RemoveFromGame();
+    uint GetOfflineTime();
 
     // Ping
 private:
@@ -611,13 +593,9 @@ private:
     bool pingOk;
 
 public:
-    bool IsToPing() { return GameState == STATE_PLAYING && Timer::FastTick() >= pingNextTick && !GetParam( TO_TRANSFER ) && !Singleplayer; }
+    bool IsToPing();
     void PingClient();
-    void PingOk( uint next_ping )
-    {
-        pingOk = true;
-        pingNextTick = Timer::FastTick() + next_ping;
-    }
+    void PingOk( uint next_ping );
 
     // Sends
     void Send_Move( Critter* from_cr, uint move_params );
@@ -735,7 +713,7 @@ class Npc: public Critter
     // Bag
 public:
     uint NextRefreshBagTick;
-    bool IsNeedRefreshBag() { return IsLife() && Timer::GameTick() > NextRefreshBagTick && IsNoPlanes(); }
+    bool IsNeedRefreshBag();
     void RefreshBag();
 
     // AI plane

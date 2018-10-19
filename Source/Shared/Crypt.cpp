@@ -1,8 +1,9 @@
+#include "Core.h"
+
 #include "zlib.h"
 #include "sha2.h"
 
-#include "Core.h"
-
+#include "AutoPointers.h"
 #include "Crypt.h"
 #include "Random.h"
 #include "Text.h"

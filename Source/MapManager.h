@@ -1,9 +1,12 @@
 #ifndef __MAP_MANAGER__
 #define __MAP_MANAGER__
 
-#include "Common.h"
-#include "Map.h"
+#include "Critter.h"
 #include "IniParser.h"
+#include "Item.h"
+#include "Map.h"
+#include "ProtoMap.h"
+#include "Types.h"
 
 class GlobalMapGroup
 {

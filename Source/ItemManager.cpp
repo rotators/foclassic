@@ -1,12 +1,21 @@
-#include "ItemManager.h"
+#include "Core.h"
+
+#include "Crypt.h"
 #include "ConstantsManager.h"
-#include "IniParser.h"
+#include "Debugger.h"
+#include "FileManager.h"
 #include "GameOptions.h"
+#include "IniParser.h"
+#include "ItemManager.h"
+#include "Log.h"
+#include "Text.h"
 
 #ifdef FOCLASSIC_SERVER
 # include "Critter.h"
-# include "Map.h"
 # include "CritterManager.h"
+# include "FileSystem.h"
+# include "Jobs.h"
+# include "Map.h"
 # include "MapManager.h"
 # include "Script.h"
 #endif
@@ -16,6 +25,11 @@
 #endif
 
 ItemManager ItemMngr;
+
+ItemManager::ItemManager() : isActive( false )
+{
+    MEMORY_PROCESS( MEMORY_STATIC, sizeof(ItemManager) );
+}
 
 bool ItemManager::Init()
 {

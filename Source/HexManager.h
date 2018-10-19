@@ -1,31 +1,26 @@
 #ifndef __HEX_MANAGER__
 #define __HEX_MANAGER__
 
-#include "Common.h"
-#include "SpriteManager.h"
-#include "Item.h"
-#include "ItemManager.h"
 #include "CritterCl.h"
 #include "ItemHex.h"
 #include "ProtoMap.h"
+#include "SpriteManager.h"
+#include "Types.h"
 
-#define MAX_FIND_PATH    (600)
-#define TILE_ALPHA       (0xFF)
-#define VIEW_WIDTH       ( (int)( (MODE_WIDTH / GameOpt.MapHexWidth + ( (MODE_WIDTH % GameOpt.MapHexWidth) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
-#define VIEW_HEIGHT      ( (int)( (MODE_HEIGHT / GameOpt.MapHexLineHeight + ( (MODE_HEIGHT % GameOpt.MapHexLineHeight) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )
-#define SCROLL_OX        (GameOpt.MapHexWidth)
-#define SCROLL_OY        (GameOpt.MapHexLineHeight * 2)
-#define HEX_W            (GameOpt.MapHexWidth)
-#define HEX_LINE_H       (GameOpt.MapHexLineHeight)
-#define HEX_REAL_H       (GameOpt.MapHexHeight)
-#define HEX_OX           (GameOpt.MapHexWidth / 2)
-#define HEX_OY           (GameOpt.MapHexHeight / 2)
-#define TILE_OX          (GameOpt.MapTileOffsX)
-#define TILE_OY          (GameOpt.MapTileOffsY)
-#define ROOF_OX          (GameOpt.MapRoofOffsX)
-#define ROOF_OY          (GameOpt.MapRoofOffsY)
-#define MAX_MOVE_OX      (99)
-#define MAX_MOVE_OY      (99)
+#define HEX_W          (GameOpt.MapHexWidth)
+#define HEX_LINE_H     (GameOpt.MapHexLineHeight)
+#define HEX_REAL_H     (GameOpt.MapHexHeight)
+#define HEX_OX         (GameOpt.MapHexWidth / 2)
+#define HEX_OY         (GameOpt.MapHexHeight / 2)
+
+#define TILE_OX        (GameOpt.MapTileOffsX)
+#define TILE_OY        (GameOpt.MapTileOffsY)
+
+#define ROOF_OX        (GameOpt.MapRoofOffsX)
+#define ROOF_OY        (GameOpt.MapRoofOffsY)
+
+#define MAX_MOVE_OX    (99)
+#define MAX_MOVE_OY    (99)
 
 /************************************************************************/
 /* ViewField                                                            */
@@ -413,4 +408,4 @@ public:
 
 };
 
-#endif // __HEX_MANAGER__
+#endif // __HEX_MANAGER__ //

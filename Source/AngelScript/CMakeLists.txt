@@ -8,6 +8,7 @@ target_sources( AngelScript
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/angelscript.h
 	PRIVATE
+		${CMAKE_CURRENT_LIST_FILE}
 		as_array.h
 		as_atomic.cpp
 		as_atomic.h
@@ -80,7 +81,7 @@ target_sources( AngelScript
 target_compile_definitions( AngelScript PUBLIC AS_NO_THREADS )
 target_include_directories( AngelScript PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 target_link_libraries( AngelScript Threads::Threads )
-
+set_property( TARGET AngelScript PROPERTY FOLDER "AngelScript" )
 
 ##
 ## AngelScriptPreprocessor
@@ -91,9 +92,17 @@ target_sources( AngelScriptPreprocessor
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/preprocessor.h
 	PRIVATE
+		${CMAKE_CURRENT_LIST_FILE}
 		preprocessor.cpp
 )
 target_include_directories( AngelScriptPreprocessor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 target_link_libraries( AngelScriptPreprocessor Threads::Threads )
+set_property( TARGET AngelScriptPreprocessor PROPERTY FOLDER "AngelScript" )
 
-source_group( " " REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
+
+# create extensions files
+foreach( header IN ITEMS angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
+	configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
+endforeach()

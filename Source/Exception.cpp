@@ -1,10 +1,9 @@
-#include "CMake.h"
+#include "Core.h"
 
-#include "Common.h"
 #include "Exception.h"
+#include "FileManager.h"
 #include "Text.h"
 #include "Thread.h"
-#include "Types.h"
 
 char DumpMess[] =
 {
@@ -22,13 +21,12 @@ char ManualDumpAppendix[128] = { 0 };
 
 #ifdef FO_WINDOWS
 
-# include <windows.h>
 # include <stdio.h>
 # include <DbgHelp.h>
 # include <Psapi.h>
-# include <tlhelp32.h>
+# include <TlHelp32.h>
+
 # include "Timer.h"
-# include "FileManager.h"
 
 LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except );
 LONG WINAPI TopLevelFilterMiniDump( EXCEPTION_POINTERS* except );
@@ -502,7 +500,6 @@ void CreateDump( const char* appendix )
 
 #else
 
-# include "FileManager.h"
 # include <signal.h>
 # include <execinfo.h>
 # include <cxxabi.h>

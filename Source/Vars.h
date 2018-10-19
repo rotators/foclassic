@@ -1,7 +1,10 @@
 #ifndef __VARS__
 #define __VARS__
 
-#include "Common.h"
+#include "Defines.h"
+#include "Mutex.h"
+#include "ThreadSync.h"
+#include "Types.h"
 
 #define VAR_NAME_LEN                  (256)
 #define VAR_DESC_LEN                  (2048)
@@ -101,9 +104,8 @@ public:
     void AddRef()  { RefCount++; }
     void Release() { if( !--RefCount ) delete this; }
 
-    GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val ) : MasterId( master_id ), SlaveId( slave_id ), VarTemplate( var_template ), QuestVarIndex( 0 ),
-        Type( var_template->Type ), VarValue( val ), RefCount( 1 ) { MEMORY_PROCESS( MEMORY_VAR, sizeof(GameVar) ); }
-    ~GameVar() { MEMORY_PROCESS( MEMORY_VAR, -(int)sizeof(GameVar) ); }
+    GameVar( uint master_id, uint slave_id, TemplateVar* var_template, int val );
+    ~GameVar();
 private: GameVar() {}
 };
 

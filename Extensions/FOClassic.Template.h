@@ -1,15 +1,28 @@
+/////
+//
+// FOClassic v@FOCLASSIC_VERSION@
+// Last update @EXTENSIONS_HEADER_TIMESTAMP@
+//
+/////
+//
+// This file contains all exposed engine structures used in FOClassic.
+// It should not be edited directly by game developers.
+//
+// Used by native extensions.
+//
+/////
+//
+// Engine compiled with MSVC 2010
+// Default calling convention - cdecl
+//
+/////
+
 #ifndef __FOCLASSIC_H__
 #define __FOCLASSIC_H__
 
-//
-// FOClassic engine structures, for native extensions
-// Last update @TIMESTAMP_DATE@
-// Engine version @PROJECT_VERSION_MINOR@, MSVC 2010
-// Default calling convention - cdecl
-//
-
-#define FOCLASSIC_STAGE             (@PROJECT_VERSION_MAJOR@)
-#define FOCLASSIC_VERSION           (@PROJECT_VERSION_MINOR@)
+// Engine version
+#define FOCLASSIC_STAGE             (@FOCLASSIC_STAGE@)
+#define FOCLASSIC_VERSION           (@FOCLASSIC_VERSION@)
 
 // Detect operating system
 #if defined (_WIN32) || defined (_WIN64)
@@ -52,8 +65,12 @@
 # error __SERVER / __CLIENT / __MAPPER any of this must be defined
 #endif
 
+#ifndef __FOCLASSIC_FOS__
+# include <FOClassic.fos>
+#endif
+
 #if !defined (FOCLASSIC_EXTENSION)
-# warning "FOCLASSIC_EXTENSION not defined."
+# error "FOCLASSIC_EXTENSION not defined."
 #endif
 
 // Platform specific options
@@ -148,6 +165,7 @@ struct TemplateVar;
 typedef Critter                             CritterMutual;
 #else
 typedef CritterCl                           CritterMutual;
+typedef Item                                ItemCl;
 #endif
 
 typedef char                                int8;
@@ -221,20 +239,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
     const char* (ScriptGetLibraryVersion)();       \
     EXPORT void DllMainEx( bool isCompiler )
 
-#define STATIC_ASSERT( a )               static_assert( a, # a )
-#define BIN__N( x )                      (x) | x >> 3 | x >> 6 | x >> 9
-#define BIN__B( x )                      (x) & 0xf | (x) >> 12 & 0xf0
-#define BIN8( v )                        (BIN__B( BIN__N( 0x ## v ) ) )
-#define BIN16( bin16, bin8 )             ( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
-
-#define FLAG( x, y )                     ( ( (x) & (y) ) != 0 )
-#define CLAMP( x, low, high )            ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
-#define SQRT3T2_FLOAT                    (3.4641016151f)
-#define SQRT3_FLOAT                      (1.732050807568877f)
-#define RAD2DEG                          (57.29577951f)
-#define CONVERT_GRAMM( x )               ( (x) * 453 )
-#define UTF8_BUF_SIZE( count )           ( (count) * 4 )
-
 #define LEXEMS_SIZE                      (128)
 #define MAX_HOLO_INFO                    (250)
 #define SCORES_MAX                       (50)
@@ -247,7 +251,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 #define MAPOBJ_SCRIPT_NAME               (25)
 #define MAPOBJ_CRITTER_PARAMS            (40)
 #define MAX_PARAMETERS_ARRAYS            (100)
-#define MAX_NAME                         (30)
 #define PASS_HASH_SIZE                   (32)
 #define MAX_STORED_IP                    (20)
 #define MAX_HEX_OFFSET                   (50)
@@ -263,27 +266,20 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 #define ITEM_MAX_CHILDS                  (5)
 #define ITEM_MAX_CHILD_LINES             (6)
 #define ITEM_MAX_SCRIPT_VALUES           (10)
-#define USE_PRIMARY                      (0)
-#define USE_SECONDARY                    (1)
-#define USE_THIRD                        (2)
-#define USE_RELOAD                       (3)
-#define USE_USE                          (4)
-#define MAX_USES                         (3)
-#define USE_NONE                         (15)
 
 // Parameters
+#define SKILL_BEGIN                      (FOClassic->SkillBegin)
+#define SKILL_END                        (FOClassic->SkillEnd)
 #define SKILL_OFFSET( skill )            ( (skill) + (FOClassic->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
+#define PERK_BEGIN                       (FOClassic->PerkBegin)
+#define PERK_END                         (FOClassic->PerkEnd)
 #define PERK_OFFSET( perk )              ( (perk)  + (FOClassic->AbsoluteOffsets ? 0 : PERK_BEGIN) )
 #define TB_BATTLE_TIMEOUT                (100000000)
 #define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
-#define SKILL_BEGIN                      (FOClassic->SkillBegin)
-#define SKILL_END                        (FOClassic->SkillEnd)
 #define TIMEOUT_BEGIN                    (FOClassic->TimeoutBegin)
 #define TIMEOUT_END                      (FOClassic->TimeoutEnd)
 #define KILL_BEGIN                       (FOClassic->KillBegin)
 #define KILL_END                         (FOClassic->KillEnd)
-#define PERK_BEGIN                       (FOClassic->PerkBegin)
-#define PERK_END                         (FOClassic->PerkEnd)
 #define ADDICTION_BEGIN                  (FOClassic->AddictionBegin)
 #define ADDICTION_END                    (FOClassic->AddictionEnd)
 #define KARMA_BEGIN                      (FOClassic->KarmaBegin)
@@ -303,13 +299,6 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 #define SPRITE_CUT_HORIZONTAL            (1)
 #define SPRITE_CUT_VERTICAL              (2)
 
-// GameOptions::IndicatorType
-#define INDICATOR_LINES                  (0)
-#define INDICATOR_NUMBERS                (1)
-#define INDICATOR_BOTH                   (2)
-// GameOptions::Zoom
-#define MIN_ZOOM                         (0.2f)
-#define MAX_ZOOM                         (10.0f)
 
 struct GameOptions
 {
@@ -753,13 +742,13 @@ struct ProtoItem
     const int    Weapon_MinStrength;
     const int    Weapon_Perk;
     const uint   Weapon_ActiveUses;
-    const int    Weapon_Skill[MAX_USES];
-    const uint   Weapon_PicUse[MAX_USES];
-    const uint   Weapon_MaxDist[MAX_USES];
-    const uint   Weapon_Round[MAX_USES];
-    const uint   Weapon_ApCost[MAX_USES];
-    const bool   Weapon_Aim[MAX_USES];
-    const uint8  Weapon_SoundId[MAX_USES];
+    const int    Weapon_Skill[USE_MAX];
+    const uint   Weapon_PicUse[USE_MAX];
+    const uint   Weapon_MaxDist[USE_MAX];
+    const uint   Weapon_Round[USE_MAX];
+    const uint   Weapon_ApCost[USE_MAX];
+    const bool   Weapon_Aim[USE_MAX];
+    const uint8  Weapon_SoundId[USE_MAX];
     const int    Ammo_Caliber;
     const bool   Door_NoBlockMove;
     const bool   Door_NoBlockShoot;
@@ -1074,7 +1063,7 @@ struct Item
     int  WeapGetAmmoCaliber()        const { return Proto->Weapon_Caliber; }
     int  WeapGetNeedStrength()       const { return Proto->Weapon_MinStrength; }
     bool WeapIsUseAviable( int use ) const { return use >= USE_PRIMARY && use <= USE_THIRD ? ( ( (Proto->Weapon_ActiveUses >> use) & 1 ) != 0 ) : false; }
-    bool WeapIsCanAim( int use )     const { return use >= 0 && use < MAX_USES && Proto->Weapon_Aim[use]; }
+    bool WeapIsCanAim( int use )     const { return use >= 0 && use < USE_MAX && Proto->Weapon_Aim[use]; }
 
     // Container
     bool IsContainer()          const { return Proto->IsContainer(); }

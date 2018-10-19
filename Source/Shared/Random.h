@@ -27,7 +27,7 @@ public:
     int  Random( int minimum, int maximum );
 };
 
-// DefaultRandomizer
+extern Randomizer DefaultRandomizer;
 int Random( int minimum, int maximum );
 
 #endif // __RANDOM__ //

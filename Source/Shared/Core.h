@@ -7,24 +7,22 @@
 #include "Defines.h"
 #include "Types.h"
 
-#ifdef FO_WINDOWS
-# include <windows.h>
-# define DLL_Load( name )              (void*)LoadLibrary( name )
-# define DLL_Free( h )                 FreeLibrary( (HMODULE)h )
-# define DLL_GetAddress( h, pname )    (size_t*)GetProcAddress( (HMODULE)h, pname )
-# define DLL_Error()                   Str::ItoA( GetLastError() )
-#else
-# include <dlfcn.h>
-# define DLL_Load( name )              (void*)dlopen( name, RTLD_NOW | RTLD_LOCAL )
-# define DLL_Free( h )                 dlclose( h )
-# define DLL_GetAddress( h, pname )    (size_t*)dlsym( h, pname )
-# define DLL_Error()                   dlerror()# endif
+// TODO: should be part of cmake setup
+// Libevent workarounds
+// Was bugged for Windows, need retest
+#ifndef FO_WINDOWS
+# define USE_LIBEVENT
+// Linux don't want call write timeouts, need to know why and fix
+# define LIBEVENT_TIMEOUTS_WORKAROUND
 #endif
 
-/***** Externs *****/
-extern bool LogicMT; // TODO move it where it belongs
-
+/////
+//
 // Core.cpp
+//
+/////
+
+// math stuff
 
 extern int  Procent( int full, int peace );
 extern uint NumericalNumber( uint num );
@@ -40,61 +38,19 @@ extern void ChangeStepsXY( float& sx, float& sy, float deq );
 extern bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy );
 extern void MoveHexByDirUnsafe( int& hx, int& hy, uchar dir );
 extern bool IntersectCircleLine( int cx, int cy, int radius, int x1, int y1, int x2, int y2 );
+
+// hex offsets
+
+extern void GetHexOffsets( bool odd, short*& sx, short*& sy );
+extern void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int& y );
+
+// preprocessor output formatting
+
 extern void FormatPreprocessorOutput( string& str );
+
+// misc
+
+extern void RestoreMainDirectory();
 extern void ShowMessage( const char* message );
-
-// Auto pointers
-
-template<class T>
-class AutoPtr
-{
-public:
-    AutoPtr( T* ptr ) : Ptr( ptr ) {}
-    ~AutoPtr() { if( Ptr ) delete Ptr; }
-    T& operator*() const  { return *Get(); }
-    T* operator->() const { return Get(); }
-    T* Get() const        { return Ptr; }
-    T* Release()
-    {
-        T* tmp = Ptr;
-        Ptr = NULL;
-        return tmp;
-    }
-    void Reset( T* ptr )
-    {
-        if( ptr != Ptr && Ptr != 0 ) delete Ptr;
-        Ptr = ptr;
-    }
-    bool IsValid() const { return Ptr != NULL; }
-
-private:
-    T* Ptr;
-};
-
-template<class T>
-class AutoPtrArr
-{
-public:
-    AutoPtrArr( T* ptr ) : Ptr( ptr ) {}
-    ~AutoPtrArr() { if( Ptr ) delete[] Ptr; }
-    T& operator*() const  { return *Get(); }
-    T* operator->() const { return Get(); }
-    T* Get() const        { return Ptr; }
-    T* Release()
-    {
-        T* tmp = Ptr;
-        Ptr = NULL;
-        return tmp;
-    }
-    void Reset( T* ptr )
-    {
-        if( ptr != Ptr && Ptr != 0 ) delete[] Ptr;
-        Ptr = ptr;
-    }
-    bool IsValid() const { return Ptr != NULL; }
-
-private:
-    T* Ptr;
-};
 
 #endif  // __CORE__ //

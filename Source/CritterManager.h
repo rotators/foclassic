@@ -1,7 +1,7 @@
 #ifndef __CRITTER_MANAGER__
 #define __CRITTER_MANAGER__
 
-#include "Common.h"
+#include "Defines.h"
 #include "CritterData.h"
 
 #ifdef FOCLASSIC_SERVER
@@ -17,7 +17,7 @@ private:
     CritData    allProtos[MAX_PROTO_CRITTERS];
 
 public:
-    CritterManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof(CritterManager) ); }
+    CritterManager();
 
     bool Init();
     bool IsInit() { return isActive; }

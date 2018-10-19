@@ -1,10 +1,9 @@
 #ifndef __DIALOGS__
 #define __DIALOGS__
 
-#include "Common.h"
-#include "Vars.h"
-#include "Text.h"
+#include "Defines.h"
 #include "MsgFiles.h"
+#include "Types.h"
 
 // Misc
 #define DIALOG_FILE_EXT            ".fodlg"
@@ -52,16 +51,10 @@ public:
     int    ValueExt[5];         // Extra value
     #endif
 
-    #ifdef FONLINE_NPCEDITOR
-    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), ValuesCount( 0 ) {}
-    #else
-    DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) ); }
-    DemandResult( const DemandResult& r )
-    {
-        *this = r;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) );
-    }
-    ~DemandResult() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DemandResult) ); }
+    DemandResult();
+    #ifndef FONLINE_NPCEDITOR
+    DemandResult( const DemandResult& r );
+    ~DemandResult();
     #endif
 };
 typedef vector<DemandResult> DemandResultVec;
@@ -74,16 +67,10 @@ public:
     DemandResultVec Demands;
     DemandResultVec Results;
 
-    #ifdef FONLINE_NPCEDITOR
-    DialogAnswer() : Link( 0 ), TextId( 0 ) {}
-    #else
-    DialogAnswer() : Link( 0 ), TextId( 0 ) { MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) ); }
-    DialogAnswer( const DialogAnswer& r )
-    {
-        *this = r;
-        MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) );
-    }
-    ~DialogAnswer() { MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DialogAnswer) ); }
+    DialogAnswer();
+    #ifndef FONLINE_NPCEDITOR
+    DialogAnswer( const DialogAnswer& r );
+    ~DialogAnswer();
     #endif
 };
 typedef vector<DialogAnswer> AnswersVec;
@@ -142,9 +129,9 @@ typedef map<uint, DialogPack*> DialogPackMap;
 struct Talking
 {
     int    TalkType;
-    #define TALK_NONE        (0)
-    #define TALK_WITH_NPC    (1)
-    #define TALK_WITH_HEX    (2)
+    #define TALK_NONE              (0)
+    #define TALK_WITH_NPC          (1)
+    #define TALK_WITH_HEX          (2)
     uint   TalkNpc;
     uint   TalkHexMap;
     ushort TalkHexX, TalkHexY;

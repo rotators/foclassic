@@ -1,8 +1,9 @@
 #ifndef __3D_STUFF__
 #define __3D_STUFF__
 
-#include "Common.h"
+#include "FlexRect.h"
 #include "GraphicStructures.h"
+#include "Types.h"
 
 #define LAYERS3D_COUNT              (30)
 

@@ -1,23 +1,18 @@
 #ifndef __MAPPER__
 #define __MAPPER__
 
-#include "Common.h"
-#include "Keyboard.h"
-#include "SpriteManager.h"
-#include "HexManager.h"
-#include "ItemManager.h"
-#include "Item.h"
-#include "CritterCl.h"
-#include "Text.h"
-#include "ConstantsManager.h"
+#include "scriptarray.h"
+#include "scriptstring.h"
+
 #include "CritterData.h"
-#include "CritterManager.h"
-#include "ResourceManager.h"
-#include "CritterType.h"
-#include "Script.h"
-#include "ScriptPragmas.h"
-#include "MsgFiles.h"
+#include "FlexRect.h"
+#include "HexManager.h"
 #include "IniParser.h"
+#include "Item.h"
+#include "MsgFiles.h"
+#include "ProtoMap.h"
+#include "SpriteManager.h"
+#include "Types.h"
 
 // Fonts
 #define FONT_FO                        (0)
@@ -86,7 +81,7 @@ public:
         uint       LastTick;
         int        ResType;
 
-        IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::FastTick() ), ResType( res_type ) {}
+        IfaceAnim( AnyFrames* frm, int res_type );
     };
     typedef vector<IfaceAnim*> IfaceAnimVec;
 
@@ -120,9 +115,9 @@ public:
     void CurRMouseUp();
     void CurMMouseDown();
 
-    bool IsCurInRect( Rect& rect, int ax, int ay )                      { return GameOpt.MouseX >= rect[0] + ax && GameOpt.MouseY >= rect[1] + ay && GameOpt.MouseX <= rect[2] + ax && GameOpt.MouseY <= rect[3] + ay;  }
-    bool IsCurInRect( Rect& rect )                                      { return GameOpt.MouseX >= rect[0] && GameOpt.MouseY >= rect[1] && GameOpt.MouseX <= rect[2] && GameOpt.MouseY <= rect[3];  }
-    bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay ) { return IsCurInRect( rect, ax, ay ) && SprMngr.IsPixNoTransp( spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false ); }
+    bool IsCurInRect( Rect& rect, int ax, int ay );
+    bool IsCurInRect( Rect& rect );
+    bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay );
     bool IsCurInInterface();
     bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
 
@@ -496,7 +491,7 @@ public:
         static void          Global_MoveScreen( ushort hx, ushort hy, uint speed );
         static void          Global_MoveHexByDir( ushort& hx, ushort& hy, uchar dir, uint steps );
         static ScriptString* Global_GetIfaceIniStr( ScriptString& key );
-        static uint          Global_GetTick() { return Timer::FastTick(); }
+        static uint          Global_GetTick();
         static uint          Global_GetAngelScriptProperty( int property );
         static bool          Global_SetAngelScriptProperty( int property, uint value );
         static uint          Global_GetStrHash( ScriptString* str );

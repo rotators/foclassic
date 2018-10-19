@@ -4,6 +4,8 @@
 #include "ThreadSync.h"
 #include "Mutex.h"
 
+extern bool  LogicMT;    // ConfigFile.h
+
 static Mutex SyncLocker; // Defense code from simultaneously execution
 
 SyncObject::SyncObject() : curMngr( NULL )

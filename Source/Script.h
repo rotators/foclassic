@@ -1,16 +1,13 @@
 #ifndef __SCRIPT__
 #define __SCRIPT__
 
-#include "Common.h"
 #include "AngelScript/angelscript.h"
 #include "AngelScript/scriptarray.h"
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/preprocessor.h"
-#include <vector>
-#include <string>
 
-#include "Mutex.h"
 #include "ScriptFunctions.h"
+#include "Types.h"
 
 #define GLOBAL_CONTEXT_STACK_SIZE    (10)
 #define CONTEXT_BUFFER_SIZE          (512)

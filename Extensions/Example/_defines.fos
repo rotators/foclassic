@@ -3,7 +3,7 @@
 
 #ifndef FOCLASSIC_EXTENSION
 # define FOCLASSIC_SCRIPT
-# include "foclassic.fos"
+# include "FOClassic.fos"
 #endif
 
 #endif // __DEFINES__ //

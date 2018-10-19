@@ -1,7 +1,7 @@
 #ifndef __MUTEX__
 #define __MUTEX__
 
-#include "Core.h"
+#include "Types.h"
 
 #define DEFAULT_SPIN_COUNT                                (4000)
 #define SCOPE_LOCK( mutex )                               volatile MutexLocker<decltype(mutex)> scope_lock__( mutex )
@@ -16,13 +16,15 @@
 #  define InterlockedDecrement                            _InterlockedDecrement
 # endif
 
-#else
+#else // !FO_WINDOWS
+
 # include <pthread.h>
 # define InterlockedCompareExchange( val, exch, comp )    __sync_val_compare_and_swap( val, comp, exch )
 # define InterlockedExchange( val, newval )               __sync_lock_test_and_set( val, newval )
 # define InterlockedIncrement( val )                      __sync_add_and_fetch( val, 1 )
 # define InterlockedDecrement( val )                      __sync_sub_and_fetch( val, 1 )
-#endif
+
+#endif // FO_WINDOWS
 
 class Mutex
 {

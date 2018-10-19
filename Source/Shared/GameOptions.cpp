@@ -5,7 +5,7 @@
 #include "Random.h"
 #include "Timer.h"
 
-#pragma MESSAGE("Better solution for LogToFunc" )
+#pragma TODO("Better solution for LogToFunc" )
 typedef void ( * LogFuncPtr )( const char* str );
 extern void LogToFunc( LogFuncPtr func_ptr, bool enable );
 

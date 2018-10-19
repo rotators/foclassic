@@ -1,11 +1,55 @@
 #include "Core.h"
 
-#include "Dialogs.h"
 #include "ConstantsManager.h"
+#include "Debugger.h"
+#include "Dialogs.h"
 #include "FileManager.h"
+#include "Log.h"
 #include "IniParser.h"
+#include "Script.h"
+#include "Text.h"
+#include "Vars.h"
 
 DialogManager DlgMngr;
+
+DemandResult::DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 )
+{
+    MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) );
+}
+
+#ifndef FONLINE_NPC_EDITOR
+DemandResult::DemandResult( const DemandResult& r )
+{
+    *this = r;
+    MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DemandResult) );
+}
+DemandResult::~DemandResult()
+{
+    MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DemandResult) );
+}
+#endif // !FONLINE_NPC_EDITOR
+
+//
+
+DialogAnswer::DialogAnswer() : Link( 0 ), TextId( 0 )
+{
+    MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) );
+}
+
+#ifndef FONLINE_NPC_EDITOR
+DialogAnswer::DialogAnswer( const DialogAnswer& r )
+{
+    *this = r;
+    MEMORY_PROCESS( MEMORY_DIALOG, sizeof(DialogAnswer) );
+}
+
+DialogAnswer::~DialogAnswer()
+{
+    MEMORY_PROCESS( MEMORY_DIALOG, -(int)sizeof(DialogAnswer) );
+}
+#endif // !FONLINE_NPC_EDITOR
+
+//
 
 bool DialogManager::LoadDialogs( const char* list_name )
 {

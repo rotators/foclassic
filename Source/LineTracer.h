@@ -1,7 +1,7 @@
 #ifndef __LINE_TRACER__
 #define __LINE_TRACER__
 
-#include "Common.h"
+#include "Types.h"
 
 class LineTracer
 {

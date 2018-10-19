@@ -1,6 +1,9 @@
+#include "Core.h"
+
 #include "ItemHex.h"
-#include "Common.h"
+#include "Random.h"
 #include "ResourceManager.h"
+#include "Timer.h"
 
 AnyFrames* ItemHex::DefaultAnim = NULL;
 
@@ -100,6 +103,16 @@ void ItemHex::Finish()
     finishingTime = fadingTick;
     if( IsEffect() )
         finishingTime = Timer::GameTick();
+}
+
+bool ItemHex::IsFinishing()
+{
+    return finishing;
+}
+
+bool ItemHex::IsFinish()
+{
+    return finishing && Timer::GameTick() > finishingTime;
 }
 
 void ItemHex::StopFinishing()

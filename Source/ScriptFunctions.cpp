@@ -1,6 +1,7 @@
 #include "ScriptFunctions.h"
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_SERVER)
+
 ClientScriptFunctions  ClientFunctions;
 ReservedScriptFunction ClientReservedFunctions[] =
 {
@@ -48,8 +49,11 @@ ReservedScriptFunction ClientReservedFunctions[] =
     { &ClientFunctions.FilenameScreenshot, "filename_screenshot", "void %s( string& filename )" },
     { &ClientFunctions.CritterCheckMoveItem, "critter_check_move_item", "bool %s( CritterCl& cr,ItemCl& item, uint8 toSlot, ItemCl@ itemSwap )" }
 };
+
 #endif // FOCLASSIC_CLIENT || FOCLASSIC_SERVER
+
 #if defined (FOCLASSIC_MAPPER) || defined (FOCLASSIC_SERVER)
+
 MapperScriptFunctions  MapperFunctions;
 ReservedScriptFunction MapperReservedFunctions[] =
 {
@@ -69,8 +73,9 @@ ReservedScriptFunction MapperReservedFunctions[] =
     { &MapperFunctions.CritterAnimationFallout, "critter_animation_fallout", "bool %s(uint,uint&,uint&,uint&,uint&,uint&)" }
 };
 #endif // FOCLASSIC_MAPPER || FOCLASSIC_SERVER
+
 #if defined (FOCLASSIC_SERVER)
-# define SCRIPT_TARGET    Server
+
 ServerScriptFunctions  ServerFunctions;
 ReservedScriptFunction ServerReservedFunctions[] =
 {
@@ -116,4 +121,5 @@ ReservedScriptFunction ServerReservedFunctions[] =
     { &ServerFunctions.PlayerAllowCommand, "player_allowcommand", "bool %s(Critter@,string@,uint8)" },
     { &ServerFunctions.CheckTrapLook, "check_trap_look", "bool %s(Map&,Critter&,Item&)" }
 };
-#endif
+
+#endif // FOCLASSIC_SERVER

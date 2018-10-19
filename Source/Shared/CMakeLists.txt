@@ -5,9 +5,14 @@
 add_library( Shared "" )
 target_sources( Shared
 	PUBLIC
+		${ENGINE_GLOBAL_HEADER_FILE}
+
+		${CMAKE_CURRENT_SOURCE_DIR}/AutoPointers.h
+		${CMAKE_CURRENT_SOURCE_DIR}/CommandLine.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Core.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Crypt.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Defines.h
+		${CMAKE_CURRENT_SOURCE_DIR}/DynamicLibrary.h
 		${CMAKE_CURRENT_SOURCE_DIR}/GameOptions.h
 		${CMAKE_CURRENT_SOURCE_DIR}/FileSystem.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Mutex.h
@@ -25,6 +30,7 @@ target_sources( Shared
 		${AS_DIR}/scriptmath.h
 		${AS_DIR}/scriptstring.h
 	PRIVATE
+		CommandLine.cpp
 		Core.cpp
 		Crypt.cpp
 		FileSystem.cpp
@@ -57,7 +63,7 @@ target_include_directories( Shared
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${AS_DIR}
 	PRIVATE
-		${CMAKE_BINARY_DIR}/include
+		${DEFAULT_INCLUDE_DIR}
 		${CMAKE_SOURCE_DIR}/Source/Libs/fltk # Text.cpp -> FL/case.h
 )
 target_link_libraries( Shared
@@ -67,11 +73,9 @@ target_link_libraries( Shared
 		winmm
 )
 
-source_group( " " REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 source_group( "Misc"
 	FILES
-		"${CMAKE_BINARY_DIR}/include/CMake.h"
 		"${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc"
-	REGULAR_EXPRESSION
-		"CMakeLists"
 )

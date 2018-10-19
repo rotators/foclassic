@@ -1,16 +1,26 @@
-#include <locale.h>
-
 #include "Core.h"
+
+#include <locale.h>
 
 #include "Access.h"
 #include "BufferManager.h"
+#include "CommandLine.h"
+#include "ConfigFile.h"
 #include "Exception.h"
+#include "FlexRect.h"
 #include "IniParser.h"
 #include "ItemManager.h"
+#include "Log.h"
 #include "MapManager.h"
+#include "Network.h"
+#include "Script.h"
 #include "Server.h"
+#include "SinglePlayer.h"
+#include "Text.h"
 #include "Thread.h"
+#include "Vars.h"
 #include "Version.h"
+#include "Window.h"
 
 #ifndef FO_WINDOWS
 # include <signal.h>

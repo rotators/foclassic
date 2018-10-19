@@ -1,3 +1,5 @@
+#include "Core.h"
+
 #include <time.h>
 
 #ifndef FO_D3D
@@ -7,16 +9,24 @@
 #include "FL/x.H"
 #include "il.h"
 
-#include "Core.h"
-
 #include "Crypt.h"
 #include "F2Palette.h"
 #include "FileManager.h"
+#include "FileSystem.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h"
 #include "IniParser.h"
+#include "Log.h"
+#include "Random.h"
 #include "SpriteManager.h"
+#include "Timer.h"
 #include "Window.h"
+
+#if defined (FOCLASSIC_CLIENT)
+# include "ResourceClient.h"
+#elif defined (FOCLASSIC_MAPPER)
+# include "ResourceMapper.h"
+#endif
 
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;
@@ -28,6 +38,45 @@ AnyFrames*    SpriteManager::DummyAnimation = NULL;
 #ifdef FO_D3D
 # define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif
+
+AnyFrames::AnyFrames() : Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 )
+{}
+
+AnyFrames::~AnyFrames()
+{
+    SAFEDELA( Ind );
+    SAFEDELA( NextX );
+    SAFEDELA( NextY );
+}
+
+uint AnyFrames::GetSprId( uint num_frm )
+{
+    return Ind[num_frm % CntFrm];
+}
+
+short AnyFrames::GetNextX( uint num_frm )
+{
+    return NextX[num_frm % CntFrm];
+}
+short AnyFrames::GetNextY( uint num_frm )
+{
+    return NextY[num_frm % CntFrm];
+}
+
+uint AnyFrames::GetCnt()
+{
+    return CntFrm;
+}
+
+uint AnyFrames::GetCurSprId()
+{
+    return CntFrm > 1 ? Ind[( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100] : Ind[0];
+}
+
+uint AnyFrames::GetCurSprIndex()
+{
+    return CntFrm > 1 ? ( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100 : 0;
+}
 
 SpriteManager::SpriteManager() : isInit( 0 ), flushSprCnt( 0 ), curSprCnt( 0 ), SurfType( 0 ), SurfFilterNearest( false ),
 #ifdef FO_D3D

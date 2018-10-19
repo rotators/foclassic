@@ -6,6 +6,7 @@
 #include "FileManager.h"
 #include "Item.h"
 #include "IniParser.h"
+#include "Log.h"
 
 NpcAIMngr AIMngr;
 

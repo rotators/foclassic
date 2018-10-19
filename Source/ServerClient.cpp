@@ -1,10 +1,19 @@
 #include "Core.h"
 
 #include "CritterType.h"
+#include "FileSystem.h"
 #include "ItemManager.h"
+#include "Jobs.h"
+#include "Log.h"
 #include "MapManager.h"
 #include "MsgStr.h"
+#include "NetProtocol.h"
+#include "Random.h"
+#include "Script.h"
+#include "ScriptFunctions.h"
 #include "Server.h"
+#include "SinglePlayer.h"
+#include "Text.h"
 
 void FOServer::ProcessCritter( Critter* cr )
 {
@@ -545,7 +554,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
     uchar aim = rate_weap >> 4;
     uchar use = rate_weap & 0xF;
 
-    if( use >= MAX_USES )
+    if( use >= USE_MAX )
     {
         WriteLogF( _FUNC_, " - Use<%u> invalid value, critter<%s>, target critter<%s>.\n", use, cr->GetInfo(), t_cr->GetInfo() );
         return false;

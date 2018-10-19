@@ -3,6 +3,8 @@
 
 #include "Defines.h"
 #include "Item.h"
+#include "Mutex.h"
+#include "Types.h"
 
 #ifdef FOCLASSIC_SERVER
 class Critter;
@@ -106,12 +108,12 @@ private:
     MutexSpinlock itemCountLocker;
 
 public:
+    ItemManager();
+
     void   AddItemStatistics( ushort pid, uint val );
     void   SubItemStatistics( ushort pid, uint val );
     int64  GetItemStatistics( ushort pid );
     string GetItemsStatistics();
-
-    ItemManager() : isActive( false ) { MEMORY_PROCESS( MEMORY_STATIC, sizeof(ItemManager) ); };
 };
 
 extern ItemManager ItemMngr;

@@ -4,7 +4,6 @@
 #ifdef FO_WINDOWS
 # include <Iphlpapi.h>
 # include <intrin.h>
-# pragma comment(lib,"Iphlpapi.lib")
 #else
 # ifdef FO_LINUX
 #  include <linux/hdreg.h>

@@ -1,19 +1,26 @@
-// Global_LoadImage
-#include "png.h"
+#include "Core.h"
+
+#include "png.h" // Global_LoadImage
 
 #include "preprocessor.h"
-
-#include "Core.h"
 
 #include "ConstantsManager.h"
 #include "Critter.h"
 #include "CritterType.h"
+#include "Debugger.h"
+#include "FileSystem.h"
 #include "ItemManager.h"
+#include "Log.h"
 #include "Map.h"
 #include "MapManager.h"
 #include "MsgStr.h"
+#include "Random.h"
 #include "Server.h"
+#include "Script.h"
 #include "ScriptPragmas.h"
+#include "SinglePlayer.h"
+#include "Text.h"
+#include "Vars.h"
 #include "Version.h"
 
 void* ASDebugMalloc( size_t size )
@@ -5612,7 +5619,7 @@ void FOServer::SScriptFunc::Global_SetSendParameterFunc( int index, bool enabled
     Critter::ParamsSendEnabled[index] = enabled;
 }
 
-#pragma MESSAGE( "REMOVE SwapCritters")
+#pragma TODO( "REMOVE SwapCritters")
 template<typename Ty>
 void SwapArray( Ty& arr1, Ty& arr2 )
 {

@@ -3,10 +3,15 @@
 #include "Critter.h"
 #include "CritterType.h"
 #include "ItemManager.h"
+#include "Log.h"
 #include "Map.h"
 #include "MapManager.h"
 #include "MsgStr.h"
+#include "Random.h"
+#include "Script.h"
 #include "Server.h"
+#include "Text.h"
+#include "Vars.h"
 
 #define CHECK_NPC_AP( npc, map, need_ap )                                                                                     \
     do { if( npc->GetParam( ST_CURRENT_AP ) < (int)(need_ap) ) { if( map->IsTurnBasedOn ) { if( map->IsCritterTurn( npc ) )   \

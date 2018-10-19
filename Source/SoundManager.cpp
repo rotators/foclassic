@@ -1,10 +1,11 @@
+#include "Core.h"
+
 #include "acmstrm.h"
 #include "ogg/codec.h"
 #include "ogg/vorbisfile.h"
 #include "portaudio.h"
 
-#include "Core.h"
-
+#include "AutoPointers.h"
 #include "FileManager.h"
 #include "Log.h"
 #include "Random.h"

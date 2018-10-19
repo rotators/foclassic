@@ -1,6 +1,7 @@
 #include "Core.h"
 
 #include "ItemManager.h"
+#include "Log.h"
 #include "Map.h"
 #include "MapManager.h"
 #include "Server.h"

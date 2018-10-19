@@ -1,11 +1,23 @@
 #include "Core.h"
 
+#include "ConfigFile.h" // LogicMT
 #include "Critter.h"
 #include "CritterManager.h"
 #include "CritterType.h"
+#include "Exception.h"
 #include "ItemManager.h"
+#include "Log.h"
 #include "MapManager.h"
 #include "MsgStr.h"
+#include "NetProtocol.h"
+#include "Random.h"
+#include "Script.h"
+#include "SinglePlayer.h"
+#include "ThreadSync.h"
+#include "Text.h"
+#include "Timer.h"
+#include "Utils.h"
+#include "Vars.h"
 
 const char* CritterEventFuncName[CRITTER_EVENT_MAX] =
 {
@@ -132,6 +144,45 @@ CritDataExt* Critter::GetDataExt()
         #endif
     }
     return DataExt;
+}
+
+bool Critter::IsFree()
+{
+    return Timer::GameTick() - startBreakTime >= breakTime;
+}
+
+bool Critter::IsBusy()
+{
+    return !IsFree();
+}
+
+void Critter::SetBreakTime( uint ms )
+{
+    breakTime = ms;
+    startBreakTime = Timer::GameTick();
+    ApRegenerationTick = 0;
+}
+
+void Critter::SetBreakTimeDelta( uint ms )
+{
+    uint dt = (Timer::GameTick() - startBreakTime);
+    if( dt > breakTime )
+        dt -= breakTime;
+    else
+        dt = 0;
+    if( dt > ms )
+        dt = 0;
+    SetBreakTime( ms - dt );
+}
+
+void Critter::SetWait( uint ms )
+{
+    waitEndTick = Timer::GameTick() + ms;
+}
+
+bool Critter::IsWait()
+{
+    return Timer::GameTick() < waitEndTick;
 }
 
 void Critter::FullClear()
@@ -3639,6 +3690,38 @@ ushort Client::GetPort()
     return From.sin_port;
 }
 
+bool Client::IsOnline()
+{
+    return !IsDisconnected;
+}
+
+bool Client::IsOffline()
+{
+    return IsDisconnected;
+}
+
+void Client::Disconnect()
+{
+    IsDisconnected = true;
+    if( !DisconnectTick )
+        DisconnectTick = Timer::FastTick();
+}
+
+void Client::RemoveFromGame()
+{
+    CanBeRemoved = true;
+}
+
+uint Client::GetOfflineTime()
+{
+    return Timer::FastTick() - DisconnectTick;
+}
+
+bool Client::IsToPing()
+{
+    return GameState == STATE_PLAYING && Timer::FastTick() >= pingNextTick && !GetParam( TO_TRANSFER ) && !Singleplayer;
+}
+
 void Client::PingClient()
 {
     if( !pingOk )
@@ -3655,6 +3738,12 @@ void Client::PingClient()
 
     pingNextTick = Timer::FastTick() + PING_CLIENT_LIFE_TIME;
     pingOk = false;
+}
+
+void Client::PingOk( uint next_ping )
+{
+    pingOk = true;
+    pingNextTick = Timer::FastTick() + next_ping;
 }
 
 void Client::Send_AddCritter( Critter* cr )
@@ -5322,6 +5411,11 @@ Npc::~Npc()
         SAFEDEL( DataExt );
     }
     DropPlanes();
+}
+
+bool Npc::IsNeedRefreshBag()
+{
+    return IsLife() && Timer::GameTick() > NextRefreshBagTick && IsNoPlanes();
 }
 
 void Npc::RefreshBag()

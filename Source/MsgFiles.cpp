@@ -1,7 +1,6 @@
-#include "CMake.h"
+#include "Core.h"
 
 #include "Crypt.h"
-#include "Defines.h"
 #include "FileManager.h"
 #include "FileSystem.h"
 #include "Log.h"

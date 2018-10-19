@@ -1,10 +1,8 @@
 #ifndef __GRAPHIC_LOADER__
 #define __GRAPHIC_LOADER__
 
-#include "Common.h"
-#include "Defines.h"
-#include "FileManager.h"
 #include "GraphicStructures.h"
+#include "Types.h"
 
 class AnimSet;
 

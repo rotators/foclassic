@@ -1,5 +1,9 @@
+#include "Core.h"
+
 #include "BufferManager.h"
+#include "Debugger.h"
 #include "NetProtocol.h"
+#include "Log.h"
 #include "Random.h"
 
 #define NET_BUFFER_SIZE    (2048)

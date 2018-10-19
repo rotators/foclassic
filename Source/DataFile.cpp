@@ -1,6 +1,11 @@
-#include "DataFile.h"
-#include "DatFile/cfile.h"
+#include "Core.h"
+
 #include "unzip.h"
+#include "DatFile/cfile.h"
+
+#include "DataFile.h"
+#include "Log.h"
+#include "Text.h"
 
 /************************************************************************/
 /* Dat/Zip loaders                                                      */

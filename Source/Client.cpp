@@ -1,25 +1,34 @@
-#include "FL/Fl.H"
-#ifdef FO_WINDOWS
-# include "FL/win32.H"
-#endif
-#include "FL/x.H"
-
 #include "Core.h"
+
+#include "FL/Fl.H"
+#include "FL/x.H"
 
 #include "Access.h"
 #include "Client.h"
+#include "CommandLine.h"
+#include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "CraftManager.h"
 #include "CritterType.h"
+#include "Crypt.h"
 #include "Defence.h"
+#include "Exception.h"
+#include "FileSystem.h"
+#include "GameOptions.h"
 #include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
+#include "ItemManager.h"
 #include "Keyboard.h"
+#include "Log.h"
 #include "MsgStr.h"
+#include "NetProtocol.h"
 #include "Network.h"
 #include "ResourceManager.h"
 #include "Script.h"
+#include "SinglePlayer.h"
 #include "SoundManager.h"
 #include "Thread.h"
+#include "Timer.h"
+#include "Utils.h"
 #include "Version.h"
 #include "Window.h"
 
@@ -33,6 +42,9 @@
 
 void* zlib_alloc_( void* opaque, unsigned int items, unsigned int size ) { return calloc( items, size ); }
 void  zlib_free_( void* opaque, void* address )                          { free( address ); }
+
+FOClient::IfaceAnim::IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::GameTick() ), ResType( res_type )
+{}
 
 FOClient*    FOClient::Self = NULL;
 bool         FOClient::SpritesCanDraw = false;
@@ -592,6 +604,11 @@ void FOClient::EraseCritter( uint remid )
     if( Chosen && Chosen->GetId() == remid )
         Chosen = NULL;
     HexMngr.EraseCrit( remid );
+}
+
+bool FOClient::IsTurnBasedMyTurn()
+{
+    return IsTurnBased && Timer::GameTick() < TurnBasedTime && Chosen && Chosen->GetId() == TurnBasedCurCritterId && Chosen->GetAllAp() > 0;
 }
 
 void FOClient::LookBordersPrepare()
@@ -3100,7 +3117,6 @@ void FOClient::NetProcess()
                 Net_OnCheckUID2();
                 break;
 
-                break;
             case NETMSG_ALL_PARAMS:
                 Net_OnChosenParams();
                 break;
@@ -7127,6 +7143,21 @@ void FOClient::SetGameColor( uint color )
     HexMngr.RefreshMap();
 }
 
+bool FOClient::IsCurInRect( const Rect& rect, int ax, int ay )
+{
+    return !rect.IsZero() && (GameOpt.MouseX >= rect.L + ax && GameOpt.MouseY >= rect.T + ay && GameOpt.MouseX <= rect.R + ax && GameOpt.MouseY <= rect.B + ay);
+}
+
+bool FOClient::IsCurInRect( const Rect& rect )
+{
+    return !rect.IsZero() && (GameOpt.MouseX >= rect.L && GameOpt.MouseY >= rect.T && GameOpt.MouseX <= rect.R && GameOpt.MouseY <= rect.B);
+}
+
+bool FOClient::IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay )
+{
+    return IsCurInRect( rect, ax, ay ) && SprMngr.IsPixNoTransp( spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false );
+}
+
 bool FOClient::IsCurInInterface()
 {
     if( IntVisible && IsCurInRectNoTransp( IntMainPic->GetCurSprId(), IntWMain, 0, 0 ) )
@@ -7780,7 +7811,7 @@ label_EndMove:
                 break;
 
             // Parse use
-            bool is_attack = (target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < MAX_USES);
+            bool is_attack = (target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < USE_MAX);
             bool is_reload = (target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
             bool is_self = (target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM);
             if( !is_attack && !is_reload && (IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
@@ -8602,6 +8633,11 @@ void FOClient::TryExit()
                 break;
         }
     }
+}
+
+bool FOClient::IsScroll()
+{
+    return GameOpt.ScrollMouseUp || GameOpt.ScrollMouseRight || GameOpt.ScrollMouseDown || GameOpt.ScrollMouseLeft || GameOpt.ScrollKeybUp || GameOpt.ScrollKeybRight || GameOpt.ScrollKeybDown || GameOpt.ScrollKeybLeft;
 }
 
 void FOClient::ProcessMouseScroll()
@@ -11246,6 +11282,11 @@ void FOClient::SScriptFunc::Global_KeyboardPress( uchar key1, uchar key2, Script
 void FOClient::SScriptFunc::Global_SetRainAnimation( ScriptString* fall_anim_name, ScriptString* drop_anim_name )
 {
     Self->HexMngr.SetRainAnimation( fall_anim_name ? fall_anim_name->c_str() : NULL, drop_anim_name ? drop_anim_name->c_str() : NULL );
+}
+
+uint FOClient::SScriptFunc::Global_GetTick()
+{
+    return Timer::FastTick();
 }
 
 void FOClient::SScriptFunc::Global_GetTime( ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second, ushort& milliseconds )

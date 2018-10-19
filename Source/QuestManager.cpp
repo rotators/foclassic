@@ -1,3 +1,5 @@
+#include "Core.h"
+
 #include <algorithm>
 
 #include "MsgStr.h"

@@ -7,7 +7,9 @@
 #include "zlib.h"
 
 #include "scriptarray.h"
+#include "scriptstring.h"
 
+#include "BufferManager.h"
 #include "DataMask.h"
 #include "Defines.h"
 #include "HexManager.h"
@@ -15,6 +17,7 @@
 #include "MsgFiles.h"
 #include "Network.h"
 #include "QuestManager.h"
+#include "Random.h"
 #include "Types.h"
 
 class FOClient
@@ -25,7 +28,7 @@ public:
     bool Init();
     void Finish();
     void TryExit();
-    bool IsScroll() { return GameOpt.ScrollMouseUp || GameOpt.ScrollMouseRight || GameOpt.ScrollMouseDown || GameOpt.ScrollMouseLeft || GameOpt.ScrollKeybUp || GameOpt.ScrollKeybRight || GameOpt.ScrollKeybDown || GameOpt.ScrollKeybLeft; }
+    bool IsScroll();
     void ProcessMouseScroll();
     void ProcessKeybScroll( bool down, uchar dik );
     void DropScroll();
@@ -376,7 +379,7 @@ public:
         uint       LastTick;
         int        ResType;
 
-        IfaceAnim( AnyFrames* frm, int res_type ) : Frames( frm ), Flags( 0 ), CurSpr( 0 ), LastTick( Timer::GameTick() ), ResType( res_type ) {}
+        IfaceAnim( AnyFrames* frm, int res_type );
     };
     typedef vector<IfaceAnim*> IfaceAnimVec;
 
@@ -546,7 +549,7 @@ public:
         static void          Global_GetGameTime( uint full_second, ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second );
         static bool          Global_StrToInt( ScriptString* text, int& result );
         static bool          Global_StrToFloat( ScriptString* text, float& result );
-        static uint          Global_GetTick() { return Timer::FastTick(); }
+        static uint          Global_GetTick();
         static void          Global_GetTime( ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second, ushort& milliseconds );
         static bool          Global_SetParameterGetBehaviour( uint index, ScriptString& func_name );
         static bool          Global_SetParameterChangeBehaviour( uint index, ScriptString& func_name );
@@ -647,9 +650,9 @@ public:
     void IfaceLoadArray( IntVec& arr, const char* name );
     void IfaceFreeResources();
 
-    bool IsCurInRect( const Rect& rect, int ax, int ay )                { return !rect.IsZero() && (GameOpt.MouseX >= rect.L + ax && GameOpt.MouseY >= rect.T + ay && GameOpt.MouseX <= rect.R + ax && GameOpt.MouseY <= rect.B + ay); }
-    bool IsCurInRect( const Rect& rect )                                { return !rect.IsZero() && (GameOpt.MouseX >= rect.L && GameOpt.MouseY >= rect.T && GameOpt.MouseX <= rect.R && GameOpt.MouseY <= rect.B); }
-    bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay ) { return IsCurInRect( rect, ax, ay ) && SprMngr.IsPixNoTransp( spr_id, GameOpt.MouseX - rect.L - ax, GameOpt.MouseY - rect.T - ay, false ); }
+    bool IsCurInRect( const Rect& rect, int ax, int ay );
+    bool IsCurInRect( const Rect& rect );
+    bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay );
     bool IsCurInInterface();
     bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
 
@@ -1678,7 +1681,7 @@ public:
     bool  NoLogOut;
     uint* UID3, * UID2;
 
-    bool IsTurnBasedMyTurn() { return IsTurnBased && Timer::GameTick() < TurnBasedTime && Chosen && Chosen->GetId() == TurnBasedCurCritterId && Chosen->GetAllAp() > 0; }
+    bool IsTurnBasedMyTurn();
 
     bool     RebuildLookBorders;
     bool     DrawLookBorders, DrawShootBorders;

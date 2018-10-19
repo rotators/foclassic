@@ -2,17 +2,32 @@
 
 #include "CritterManager.h"
 #include "ConstantsManager.h"
+#include "Debugger.h"
+#include "FileSystem.h"
 #include "ItemManager.h"
 #include "IniParser.h"
+#include "Log.h"
+#include "Random.h"
+#include "Script.h"
 #include "ScriptFunctions.h"
+#include "Text.h"
+#include "Timer.h"
+#include "Utils.h"
 
 #ifdef FOCLASSIC_SERVER
+# include "ConfigFile.h" // LogicMT
+# include "Jobs.h"
 # include "MapManager.h"
 #endif
 
 CritterManager CrMngr;
 
 #define CRPROTO_APP    "Critter proto"
+
+CritterManager::CritterManager() : isActive( false )
+{
+    MEMORY_PROCESS( MEMORY_STATIC, sizeof(CritterManager) );
+}
 
 bool CritterManager::Init()
 {

@@ -20,7 +20,8 @@ target_include_directories( DatFile
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${FO_DIR}
 	PRIVATE
-		${CMAKE_BINARY_DIR}/include
+		${DEFAULT_INCLUDE_DIR}
 )
 
 target_link_libraries( DatFile Shared zlib )
+set_property( TARGET DatFile PROPERTY FOLDER "Libs" )

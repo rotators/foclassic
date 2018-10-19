@@ -18,13 +18,13 @@
 ## source_options()
 ##
 
-macro( source_option name description status )
+macro( SourceOption name description status )
 	list( APPEND SOURCE_OPTIONS ${name} )
 	set( SOURCE_OPTION_TEXT_${name} "${description} ..." )
 	set( SOURCE_OPTION_VALUE_${name} ${status} )
 endmacro()
 
-macro( source_options )
+macro( SourceOptions )
 	message( STATUS "Checking source options.." )
 	# prepare fancy table with all options
 	set( max_len 0 )
@@ -63,12 +63,12 @@ macro( source_options )
 				set( OPTION_${opt} "${SOURCE_OPTION_VALUE_${opt}}" )
 
 				# check if option have its own macro/function
-				if( COMMAND "source_option_${opt}" )
-					# it does, we need to call source_option_${opt}() now, but cmake doesn't like such syntax
+				if( COMMAND "SourceOption_${opt}" )
+					# it does, we need to call SourceOption_${opt}() now, but cmake doesn't like such syntax
 					# let's create and include external file to workaround that
-					set( invoke "${CMAKE_CURRENT_BINARY_DIR}/source_options/${opt}.cmake" )
+					set( invoke "${CMAKE_CURRENT_BINARY_DIR}/CMake/SourceOptions/${opt}.cmake" )
 					if( NOT EXISTS "${invoke}" )
-						file( WRITE "${invoke}" "source_option_${opt}()\n" )
+						file( WRITE "${invoke}" "SourceOption_${opt}()\n" )
 					endif()
 					# call our macro/function
 					include( "${invoke}" )

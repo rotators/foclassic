@@ -1,7 +1,12 @@
+#include "Core.h"
+
 #include "CritterCl.h"
 #include "CritterType.h"
-#include "ResourceManager.h"
+#include "GameOptions.h"
 #include "ItemManager.h"
+#include "Random.h"
+#include "ResourceManager.h"
+#include "Timer.h"
 
 #ifdef FOCLASSIC_CLIENT
 # include "SoundManager.h"
@@ -474,7 +479,7 @@ uint CritterCl::GetUsePicName( uchar num_slot )
             return reload_pic;
         if( use == USE_USE )
             return use_on_pic;
-        if( use >= MAX_USES )
+        if( use >= USE_MAX )
             return 0;
         return item->Proto->Weapon_PicUse[use];
     }
@@ -491,7 +496,7 @@ bool CritterCl::IsItemAim( uchar num_slot )
     Item* item = GetSlotUse( num_slot, use );
     if( !item )
         return false;
-    if( item->IsWeapon() && use < MAX_USES )
+    if( item->IsWeapon() && use < USE_MAX )
         return item->Proto->Weapon_Aim[use] != 0;
     return false;
 }
@@ -1315,6 +1320,32 @@ uint CritterCl::GetCrTypeAlias()
     return CritType::GetAlias( GetCrType() );
 }
 
+bool CritterCl::IsNeedReSet()
+{
+    return needReSet && Timer::GameTick() >= reSetTick;
+}
+
+void CritterCl::ReSetOk()
+{
+    needReSet = false;
+}
+
+void CritterCl::TickStart( uint ms )
+{
+    TickCount = ms;
+    StartTick = Timer::GameTick();
+}
+
+void CritterCl::TickNull()
+{
+    TickCount = 0;
+}
+
+bool CritterCl::IsFree()
+{
+    return Timer::GameTick() - StartTick >= TickCount;
+}
+
 uint CritterCl::GetAnim1( Item* anim_item /* = NULL */ )
 {
     if( !anim_item )
@@ -1682,6 +1713,16 @@ void CritterCl::GetWalkHexOffsets( int dir, int& ox, int& oy )
     GetHexInterval( hx, hy, 1, 1, ox, oy );
 }
 
+bool CritterCl::IsFinishing()
+{
+    return finishingTime != 0;
+}
+
+bool CritterCl::IsFinish()
+{
+    return finishingTime && Timer::GameTick() > finishingTime;
+}
+
 void CritterCl::SetText( const char* str, uint color, uint text_delay )
 {
     tickStartText = Timer::GameTick();
@@ -1751,4 +1792,42 @@ void CritterCl::DrawTextOnHead()
 
     if( Timer::GameTick() - tickStartText >= tickTextDelay && !strTextOnHead.empty() )
         strTextOnHead = "";
+}
+
+int CritterCl::GetApCostCritterMove( bool is_run )
+{
+    return IsTurnBased() ? GameOpt.TbApCostCritterMove * AP_DIVIDER * (IsDmgTwoLeg() ? 4 : (IsDmgLeg() ? 2 : 1) ) : (GetParam( TO_BATTLE ) ? (is_run ? GameOpt.RtApCostCritterRun : GameOpt.RtApCostCritterWalk) : 0);
+}
+
+int CritterCl::GetApCostMoveItemContainer()
+{
+    return IsTurnBased() ? GameOpt.TbApCostMoveItemContainer : GameOpt.RtApCostMoveItemContainer;
+}
+
+int CritterCl::GetApCostMoveItemInventory()
+{
+    int val = IsTurnBased() ? GameOpt.TbApCostMoveItemInventory : GameOpt.RtApCostMoveItemInventory;
+    if( IsRawParam( PE_QUICK_POCKETS ) )
+        val /= 2;
+    return val;
+}
+
+int CritterCl::GetApCostPickItem()
+{
+    return IsTurnBased() ? GameOpt.TbApCostPickItem : GameOpt.RtApCostPickItem;
+}
+
+int CritterCl::GetApCostDropItem()
+{
+    return IsTurnBased() ? GameOpt.TbApCostDropItem : GameOpt.RtApCostDropItem;
+}
+
+int CritterCl::GetApCostPickCritter()
+{
+    return IsTurnBased() ? GameOpt.TbApCostPickCritter : GameOpt.RtApCostPickCritter;
+}
+
+int CritterCl::GetApCostUseSkill()
+{
+    return IsTurnBased() ? GameOpt.TbApCostUseSkill : GameOpt.RtApCostUseSkill;
 }

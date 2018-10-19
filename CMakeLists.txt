@@ -1,83 +1,85 @@
 ##
-## https://cmake.org/cmake/help/v3.12/
+## FOClassic
+## https://rotators.fodev.net/foclassic/
+## https://github.com/rotators/foclassic/
 ##
 
-cmake_minimum_required( VERSION 3.12.2 )
+# https://cmake.org/cmake/help/v3.12/
+cmake_minimum_required( VERSION 3.12.2 FATAL_ERROR )
+
+# cmake includes
+# special directories
+set( ROOT_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" )
+list( APPEND CMAKE_MODULE_PATH "${ROOT_CMAKE_DIR}" )
 
 # disable in-source builds
-set( CMAKE_DISABLE_SOURCE_CHANGES ON )
-set( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
-get_filename_component( srcdir "${CMAKE_SOURCE_DIR}" REALPATH )
-get_filename_component( bindir "${CMAKE_BINARY_DIR}" REALPATH )
-if( ${srcdir} STREQUAL ${bindir} )
-	file( REMOVE ${srcdir}/cmake_install.cmake ) # removing other files won't work
-	message( STATUS "In-Source build are not allowed,
-   cmake must be ran from dedicated build directory.
+include(DisableInSourceBuild)
+DisableInSourceBuild()
 
-   Recommended
-	${srcdir}/SDK*/
-
-   Following files and directories MUST to be deleted
-   before running cmake again, from any location.
-	${srcdir}/CMakeCache.txt
-	${srcdir}/CMakeFiles/
-" )
-	message( FATAL_ERROR "In-Source build" )
-endif()
-unset( srcdir )
-unset( bindir )
-
-# next line must be in "FOClassic VERSION [0-9]+\.[0-9]+" format
+# this file must contain unique line with version info
+# "FOClassic VERSION [NUMBER].[NUMBER]"
 project( FOClassic VERSION 1.1
-	DESCRIPTION  "FOClassic"
+	DESCRIPTION  "FOnline Community Edition (r412 base)"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
 	LANGUAGES C CXX
 )
 
-if( PROJECT_VERSION_MAJOR EQUAL 1 )
-	set( PROJECT_VERSION_CODENAME "2077" )
-elseif( PROJECT_VERSION_MAJOR EQUAL 2 )
-	set( PROJECT_VERSION_CODENAME "V13" )
-elseif( PROJECT_VERSION_MAJOR EQUAL 3 )
-	set( PROJECT_VERSION_CODENAME "V15" )
-else()
-	set( PROJECT_VERSION_CODENAME "Shady Sands" )
-endif()
+set( FOCLASSIC_STAGE   "${PROJECT_VERSION_MAJOR}" )
+set( FOCLASSIC_VERSION "${PROJECT_VERSION_MINOR}" )
 
 set( CMAKE_CONFIGURATION_TYPES "Release" )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE ) 
 
-list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
+include(FOClassic)
+FOClassic()
+
 include(PdbSetup)
 include(SourceOptions)
 
-# globals
-unset( FOCLASSIC_APPS )
+##
+## set variables
+##
 
-# directories
-set( FO_DIR         "${CMAKE_SOURCE_DIR}/Source" )
-set( LIBS_DIR       "${FO_DIR}/Libs" )
+# sources directories
+set( FO_DIR                         "${CMAKE_SOURCE_DIR}/Source" )
+set( SHARED_DIR                     "${FO_DIR}/Shared" )
+set( LIBS_DIR                       "${FO_DIR}/Libs" )
 
-set( AS_DIR         "${FO_DIR}/AngelScript" )
-set( DAT_DIR        "${FO_DIR}/DatFile" )
-set( EXTENSIONS_DIR "${CMAKE_SOURCE_DIR}/Extensions" )
+# libraries directories
+set( AS_DIR                         "${FO_DIR}/AngelScript" )
+set( DAT_DIR                        "${FO_DIR}/DatFile" )
+set( EXTENSIONS_DIR                 "${CMAKE_SOURCE_DIR}/Extensions" )
 
-# release directores 
+# release directories
 set( RELEASE_DIR_NAME               "FOClassic-v${PROJECT_VERSION_MINOR}" )
 set( RELEASE_DIR                    "${CMAKE_BINARY_DIR}/${RELEASE_DIR_NAME}" )
 set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
-set( RELEASE_TOOLS_DIR              "${RELEASE_DIR}/Tools" )
-set( RELEASE_EXTENSIONS_DIR         "${RELEASE_DIR}/Extensions" )
-set( RELEASE_EXTENSIONS_EXAMPLE_DIR "${RELEASE_EXTENSIONS_DIR}/Example" )
+
+# other directories
+set( TEMPLATES_DIR                   "${ROOT_CMAKE_DIR}/Templates" )
+set( FOCMAKE_DIR                     "${CMAKE_BINARY_DIR}/CMake" )
+set( DEFAULT_INCLUDE_DIR             "${FOCMAKE_DIR}/include" )
+
+# templates
+set( ENGINE_GLOBAL_HEADER_TEMPLATE   "${TEMPLATES_DIR}/CMake.h" )
+set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/PUBLIC.Defines.h" )
+
+# special files
+set( ENGINE_GLOBAL_HEADER_FILE       "${DEFAULT_INCLUDE_DIR}/CMake.h" )
 
 # timestamps
-string( TIMESTAMP TIMESTAMP_DATE "%d.%m.%Y")
+file( TIMESTAMP "${SCRIPTS_HEADER_TEMPLATE}" SCRIPTS_HEADER_TIMESTAMP "%d.%m.%Y" )
+
 ##
-## Source options
+## TODO user-specific configuration
 ##
-source_options()
+SourceOptions()
+
+##
+##
+##
 
 if( MSVC )
 	set( COMPILER_DEFINES "" )
@@ -95,48 +97,32 @@ if( MSVC )
 	set( CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO" )
 endif()
 
-##
-## Find threads
-##
+# find threads
 set( THREADS_PREFER_PTHREAD_FLAG ON )
 find_package( Threads REQUIRED )
 include( CheckStructHasMember )
 check_struct_has_member( "struct timespec" "tv_sec" "time.h" HAVE_STRUCT_TIMESPEC )
-# must be defined for windows pthreads on newer MSVC
+# HAVE_STRUCT_TIMESPEC must be defined for windows pthreads on newer MSVC
 if( HAVE_STRUCT_TIMESPEC )
-	add_definitions( -DHAVE_STRUCT_TIMESPEC )
+	add_definitions( -DHAVE_STRUCT_TIMESPEC=1 )
 endif( HAVE_STRUCT_TIMESPEC )
 
-add_subdirectory( Source )
-set( EXTENSIONS_EXTRA_SOURCES "${FO_DIR}/PUBLIC.Header.h" )
-add_subdirectory( Extensions )
-
 # create engine header
-set( GLOBAL_HEADER "${CMAKE_BINARY_DIR}/include/CMake.h" )
-configure_file( "${CMAKE_SOURCE_DIR}/CMake/CMake.h.in" "${GLOBAL_HEADER}" @ONLY NEWLINE_STYLE LF )
-
-# create extensions header
-configure_file( "${FO_DIR}/PUBLIC.Header.h" "${RELEASE_HEADERS_DIR}/foclassic.h" @ONLY NEWLINE_STYLE LF )
+configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
 # create scripts header
-configure_file( "${FO_DIR}/Shared/PUBLIC.Defines.h" "${RELEASE_HEADERS_DIR}/foclassic.fos" @ONLY NEWLINE_STYLE LF )
-
-# copy extensions files
-foreach( as_header angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
-	configure_file( "${AS_DIR}/${as_header}.h" "${RELEASE_DIR}/Headers/AngelScript/${as_header}.h" @ONLY NEWLINE_STYLE LF )
-endforeach()
-foreach( extension_example extension.cpp _defines.fos )
-	configure_file( "${EXTENSIONS_DIR}/${extension_example}" "${RELEASE_EXTENSIONS_EXAMPLE_DIR}/${extension_example}" @ONLY NEWLINE_STYLE LF )
-endforeach()
+configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.fos" @ONLY NEWLINE_STYLE LF )
 
 ##
-## Prettify IDE
+## process subdirectories
+##
+
+add_subdirectory( Source )
+add_subdirectory( Extensions )
+
+##
+## prettify IDE
 ##
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
-
-set_target_properties( AngelScript AngelScriptPreprocessor PROPERTIES FOLDER "AngelScript" )
-set_target_properties( ASCompiler PROPERTIES FOLDER "Tools" )
-set_target_properties( acm DatFile glew sha2 zlib PROPERTIES FOLDER "Libs" )
-

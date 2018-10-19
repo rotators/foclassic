@@ -108,20 +108,15 @@ struct AnyFrames
     uint   Anim1;
     uint   Anim2;
 
-    uint  GetSprId( uint num_frm ) { return Ind[num_frm % CntFrm]; }
-    short GetNextX( uint num_frm ) { return NextX[num_frm % CntFrm]; }
-    short GetNextY( uint num_frm ) { return NextY[num_frm % CntFrm]; }
-    uint  GetCnt()                 { return CntFrm; }
-    uint  GetCurSprId()            { return CntFrm > 1 ? Ind[( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100] : Ind[0]; }
-    uint  GetCurSprIndex()         { return CntFrm > 1 ? ( (Timer::GameTick() % Ticks) * 100 / Ticks ) * CntFrm / 100 : 0; }
+    AnyFrames();
+    ~AnyFrames();
 
-    AnyFrames() : Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 ) {};
-    ~AnyFrames()
-    {
-        SAFEDELA( Ind );
-        SAFEDELA( NextX );
-        SAFEDELA( NextY );
-    }
+    uint  GetSprId( uint num_frm );
+    short GetNextX( uint num_frm );
+    short GetNextY( uint num_frm );
+    uint  GetCnt();
+    uint  GetCurSprId();
+    uint  GetCurSprIndex();
 };
 typedef map<uint, AnyFrames*, less<uint>> AnimMap;
 typedef vector<AnyFrames*>                AnimVec;

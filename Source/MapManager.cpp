@@ -1,13 +1,18 @@
 #include "Core.h"
 
 #include "CritterManager.h"
+#include "FileSystem.h"
+#include "FlexRect.h"
 #include "LineTracer.h"
 #include "Log.h"
 #include "ItemManager.h"
+#include "Jobs.h"
 #include "MapManager.h"
 #include "MsgStr.h"
 #include "Script.h"
 #include "ScriptFunctions.h"
+#include "Text.h"
+#include "Timer.h"
 
 MapManager MapMngr;
 

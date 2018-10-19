@@ -1,15 +1,28 @@
-#include "FL/Fl.H"
-
 #include "Core.h"
 
+#include "FL/Fl.H"
+
+#include "CommandLine.h"
+#include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "Critter.h"
 #include "CritterType.h"
+#include "FileSystem.h"
 #include "IniParser.h"
 #include "ItemManager.h"
+#include "Jobs.h"
+#include "Log.h"
 #include "MapManager.h"
 #include "MsgStr.h"
+#include "NetProtocol.h"
+#include "Network.h"
+#include "Random.h"
+#include "Scores.h"
+#include "Script.h"
 #include "Server.h"
+#include "SinglePlayer.h"
+#include "Text.h"
+#include "Vars.h"
 
 void* zlib_alloc( void* opaque, unsigned int items, unsigned int size ) { return calloc( items, size ); }
 void  zlib_free( void* opaque, void* address )                          { free( address ); }
@@ -84,6 +97,45 @@ MutexSynchronizer           FOServer::LogicThreadSync;
 
 BINARY_SIGNATURE( ClientSaveSignature, BINARY_CLIENTSAVE, CLIENT_SAVE_LAST );
 BINARY_SIGNATURE( WorldSaveSignature,  BINARY_WORLDSAVE,  WORLD_SAVE_LAST );
+
+bool FOServer::ClientBanned::operator==( const char* name )
+{
+    return Str::CompareCaseUTF8( name, ClientName );
+}
+
+bool FOServer::ClientBanned::operator==( const uint ip )
+{
+    return ClientIp == ip;
+}
+
+const char* FOServer::ClientBanned::GetBanLexems()
+{
+    return Str::FormatBuf( "$banby%s$time%d$reason%s", BannedBy[0] ? BannedBy : "?", Timer::GetTimeDifference( EndTime, BeginTime ) / 60 / 60, BanInfo[0] ? BanInfo : "just for fun" );
+}
+
+//
+
+FOServer::ClientData::ClientData()
+{
+    Clear();
+}
+
+void FOServer::ClientData::Clear()
+{
+    memzero( this, sizeof(ClientData) );
+}
+
+bool FOServer::ClientData::operator==( const char* name )
+{
+    return Str::CompareCaseUTF8( name, ClientName );
+}
+
+bool FOServer::ClientData::operator==( const uint id )
+{
+    return ClientId == id;
+}
+
+//
 
 FOServer::FOServer()
 {

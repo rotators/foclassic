@@ -62,6 +62,7 @@ extern ClientScriptFunctions  ClientFunctions;
 extern ReservedScriptFunction ClientReservedFunctions[];
 
 #endif // FOCLASSIC_CLIENT || FOCLASSIC_SERVER
+
 #if defined (FOCLASSIC_MAPPER) || defined (FOCLASSIC_SERVER)
 
 struct MapperScriptFunctions
@@ -86,6 +87,7 @@ extern MapperScriptFunctions  MapperFunctions;
 extern ReservedScriptFunction MapperReservedFunctions[];
 
 #endif // FOCLASSIC_MAPPER || FOCLASSIC_SERVER
+
 #if defined (FOCLASSIC_SERVER)
 
 struct ServerScriptFunctions

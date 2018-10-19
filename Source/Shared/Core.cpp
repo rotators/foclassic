@@ -1,8 +1,14 @@
 #include "Core.h"
 
+#include "FileSystem.h"
 #include "GameOptions.h"
 
+/////
+//
 // Math stuff
+//
+/////
+
 int Procent( int full, int peace )
 {
     if( !full )
@@ -380,7 +386,151 @@ bool IntersectCircleLine( int cx, int cy, int radius, int x1, int y1, int x2, in
     return a + b + c < 0;
 }
 
+/////
+//
+// Hex offset
+//
+/////
+
+#define HEX_OFFSET_SIZE    ( (MAX_HEX_OFFSET * MAX_HEX_OFFSET / 2 + MAX_HEX_OFFSET / 2) * DIRS_COUNT )
+int           CurHexOffset = 0; // 0 - none, 1 - hexagonal, 2 - square
+static short* SXEven = NULL;
+static short* SYEven = NULL;
+static short* SXOdd = NULL;
+static short* SYOdd = NULL;
+
+void InitializeHexOffsets()
+{
+    SAFEDELA( SXEven );
+    SAFEDELA( SYEven );
+    SAFEDELA( SXOdd );
+    SAFEDELA( SYOdd );
+
+    if( GameOpt.MapHexagonal )
+    {
+        CurHexOffset = 1;
+        SXEven = new short[HEX_OFFSET_SIZE];
+        SYEven = new short[HEX_OFFSET_SIZE];
+        SXOdd = new short[HEX_OFFSET_SIZE];
+        SYOdd = new short[HEX_OFFSET_SIZE];
+
+        int pos = 0;
+        int xe = 0, ye = 0, xo = 1, yo = 0;
+        for( int i = 0; i < MAX_HEX_OFFSET; i++ )
+        {
+            MoveHexByDirUnsafe( xe, ye, 0 );
+            MoveHexByDirUnsafe( xo, yo, 0 );
+
+            for( int j = 0; j < 6; j++ )
+            {
+                int dir = (j + 2) % 6;
+                for( int k = 0; k < i + 1; k++ )
+                {
+                    SXEven[pos] = xe;
+                    SYEven[pos] = ye;
+                    SXOdd[pos] = xo - 1;
+                    SYOdd[pos] = yo;
+                    pos++;
+                    MoveHexByDirUnsafe( xe, ye, dir );
+                    MoveHexByDirUnsafe( xo, yo, dir );
+                }
+            }
+        }
+    }
+    else
+    {
+        CurHexOffset = 2;
+        SXEven = SXOdd = new short[HEX_OFFSET_SIZE];
+        SYEven = SYOdd = new short[HEX_OFFSET_SIZE];
+
+        int pos = 0;
+        int hx = 0, hy = 0;
+        for( int i = 0; i < MAX_HEX_OFFSET; i++ )
+        {
+            MoveHexByDirUnsafe( hx, hy, 0 );
+
+            for( int j = 0; j < 5; j++ )
+            {
+                int dir = 0, steps = 0;
+                switch( j )
+                {
+                    case 0:
+                        dir = 2;
+                        steps = i + 1;
+                        break;
+                    case 1:
+                        dir = 4;
+                        steps = (i + 1) * 2;
+                        break;
+                    case 2:
+                        dir = 6;
+                        steps = (i + 1) * 2;
+                        break;
+                    case 3:
+                        dir = 0;
+                        steps = (i + 1) * 2;
+                        break;
+                    case 4:
+                        dir = 2;
+                        steps = i + 1;
+                        break;
+                    default:
+                        break;
+                }
+
+                for( int k = 0; k < steps; k++ )
+                {
+                    SXEven[pos] = hx;
+                    SYEven[pos] = hy;
+                    pos++;
+                    MoveHexByDirUnsafe( hx, hy, dir );
+                }
+            }
+        }
+    }
+}
+
+void GetHexOffsets( bool odd, short*& sx, short*& sy )
+{
+    if( CurHexOffset != (GameOpt.MapHexagonal ? 1 : 2) )
+        InitializeHexOffsets();
+    sx = (odd ? SXOdd : SXEven);
+    sy = (odd ? SYOdd : SYEven);
+}
+
+void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int& x, int& y )
+{
+    if( GameOpt.MapHexagonal )
+    {
+        int dx = to_hx - from_hx;
+        int dy = to_hy - from_hy;
+        x = dy * (GameOpt.MapHexWidth / 2) - dx * GameOpt.MapHexWidth;
+        y = dy * GameOpt.MapHexLineHeight;
+        if( from_hx & 1 )
+        {
+            if( dx > 0 )
+                dx++;
+        }
+        else if( dx < 0 )
+            dx--;
+        dx /= 2;
+        x += (GameOpt.MapHexWidth / 2) * dx;
+        y += GameOpt.MapHexLineHeight * dx;
+    }
+    else
+    {
+        int dx = to_hx - from_hx;
+        int dy = to_hy - from_hy;
+        x = (dy - dx) * GameOpt.MapHexWidth / 2;
+        y = (dy + dx) * GameOpt.MapHexLineHeight;
+    }
+}
+
+/////
+//
 // Preprocessor output formatting
+//
+/////
 
 int FormatPreprocessorTabs( string& str, int cur_pos, int level ) // internal
 {
@@ -427,7 +577,46 @@ void FormatPreprocessorOutput( string& str )
             i = FormatPreprocessorTabs( str, i + 1, 1 );
 }
 
-/** Show dialog box with message */
+/////
+//
+// Misc
+//
+/////
+
+void RestoreMainDirectory()
+{
+    #ifdef FO_WINDOWS
+    // Get executable file path
+    char path[MAX_FOPATH] = { 0 };
+    GetModuleFileName( GetModuleHandle( NULL ), path, MAX_FOPATH );
+
+    // Cut off executable name
+    int last = 0;
+    for( int i = 0; path[i]; i++ )
+        if( path[i] == DIR_SLASH_C )
+            last = i;
+    path[last + 1] = 0;
+
+    // Set executable directory
+    SetCurrentDirectory( path );
+    #else
+    // Read symlink to executable
+    char buf[MAX_FOPATH];
+    if( readlink( "/proc/self/exe", buf, MAX_FOPATH ) != -1 ||      // Linux
+        readlink( "/proc/curproc/file", buf, MAX_FOPATH ) != -1 )   // FreeBSD
+    {
+        string            sbuf = buf;
+        string::size_type pos = sbuf.find_last_of( DIR_SLASH_C );
+        if( pos != string::npos )
+        {
+            buf[pos] = 0;
+            chdir( buf );
+        }
+    }
+    #endif
+}
+
+// Show dialog box with message
 void ShowMessage( const char* message )
 {
     #ifdef FO_WINDOWS

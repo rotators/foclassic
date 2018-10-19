@@ -1,17 +1,24 @@
+#include "Core.h"
+
 #include "CraftManager.h"
 #include "ConstantsManager.h"
 #include "FileManager.h"
+#include "ItemManager.h"
+#include "Log.h"
 #include "MsgStr.h"
+#include "Script.h"
+#include "Text.h"
 
 #ifdef FOCLASSIC_SERVER
 # include "Critter.h"
 # include "CritterManager.h"
-# include "ItemManager.h"
 #endif
 
 #ifdef FOCLASSIC_CLIENT
 # include "CritterCl.h"
 #endif
+
+#define FIXBOY_TIME_OUT    (GameOpt.TimeMultiplier * 60)      // 1 minute
 
 #define CRAFT_RETURN_FAIL                           \
     { if( FLAG( flags, FIXBOY_SEND_FAIL_MESSAGE ) ) \

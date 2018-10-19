@@ -1,19 +1,27 @@
+#include "Core.h"
+
 #include "FL/x.H"
 #ifndef FO_D3D
 # include "il.h"
 #endif
 
-#include "Core.h"
-
 #include "Client.h"
 #include "ConstantsManager.h"
 #include "CraftManager.h"
 #include "CritterType.h"
+#include "Crypt.h"
+#include "FileSystem.h"
+#include "GameOptions.h"
+#include "ItemManager.h"
 #include "Keyboard.h"
+#include "Log.h"
 #include "MsgStr.h"
 #include "ResourceManager.h"
 #include "Script.h"
+#include "SinglePlayer.h"
 #include "SoundManager.h"
+#include "Timer.h"
+#include "Utils.h"
 #include "Version.h"
 #include "Window.h"
 
@@ -2481,7 +2489,7 @@ void FOClient::GameKeyDown( uchar dik, const char* dik_text )
         {
             // Hot keys
             case DIK_A:
-                if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES )
+                if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < USE_MAX )
                     SetCurMode( CUR_USE_WEAPON );
                 break;
             case DIK_C:
@@ -2612,7 +2620,7 @@ void FOClient::GameLMouseDown()
     {
         CritterCl* cr;
         ItemHex* item;
-        if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES )
+        if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < USE_MAX )
         {
             cr = HexMngr.GetCritterPixel( GameOpt.MouseX, GameOpt.MouseY, true );
             if( cr == Chosen )
@@ -2630,7 +2638,7 @@ void FOClient::GameLMouseDown()
             TargetSmth.SetCritter( cr->GetId() );
 
             // Aim shoot
-            if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < MAX_USES && cr != Chosen && Chosen->IsAim() )
+            if( Chosen->ItemSlotMain->IsWeapon() && Chosen->GetUse() < USE_MAX && cr != Chosen && Chosen->IsAim() )
             {
                 if( !CritType::IsCanAim( Chosen->GetCrType() ) )
                     AddMess( MSGBOX_GAME, "Aim attack is not aviable for this critter type." );
@@ -3023,7 +3031,7 @@ void FOClient::IntLMouseUp()
         {
             SetAction( CHOSEN_USE_ITEM, Chosen->ItemSlotMain->GetId(), 0, TARGET_SELF_ITEM, 0, USE_RELOAD );
         }
-        else if( Chosen->GetUse() < MAX_USES && Chosen->ItemSlotMain->IsWeapon() )
+        else if( Chosen->GetUse() < USE_MAX && Chosen->ItemSlotMain->IsWeapon() )
         {
             SetCurMode( CUR_USE_WEAPON );
         }
@@ -11424,7 +11432,7 @@ void FOClient::SaveLoadCollect()
         }
 
         // Read save data, offsets see SaveGameInfoFile in Server.cpp
-        #pragma MESSAGE("FULL REWRITE")
+        #pragma TODO("FULL REWRITE")
         uint pos1 = 6;
         uint pos2 = 10;
 

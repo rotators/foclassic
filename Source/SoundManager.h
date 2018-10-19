@@ -1,6 +1,7 @@
 #ifndef __SOUND_MANAGER__
 #define __SOUND_MANAGER__
 
+#include "Random.h"
 #include "Types.h"
 
 #define SOUND_DEFAULT_EXT    ".acm"

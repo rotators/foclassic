@@ -1,11 +1,17 @@
 #include "Core.h"
 
 #include "ConstantsManager.h"
+#include "Debugger.h"
+#include "Deprecated.h"
 #include "Crypt.h"
 #include "GameOptions.h"
 #include "IniParser.h"
 #include "ItemManager.h"
+#include "Log.h"
 #include "ProtoMap.h"
+#include "Random.h"
+#include "Script.h"
+#include "Text.h"
 #include "Version.h"
 
 #ifdef FOCLASSIC_MAPPER
@@ -306,6 +312,34 @@ public:
 /************************************************************************/
 /* ProtoMap                                                             */
 /************************************************************************/
+
+#ifdef FOCLASSIC_SERVER
+ProtoMap::ProtoMap() : isInit( false ), pathType( 0 ), HexFlags( NULL )
+{
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) );
+}
+
+ProtoMap::ProtoMap( const ProtoMap& r )
+{
+    *this = r;
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, sizeof(ProtoMap) );
+}
+
+ProtoMap::~ProtoMap()
+{
+    isInit = false;
+    HexFlags = NULL;
+    MEMORY_PROCESS( MEMORY_PROTO_MAP, -(int)sizeof(ProtoMap) );
+}
+#else
+ProtoMap::ProtoMap() : isInit( false ), pathType( 0 ), RefCounter( 1 )
+{}
+
+ProtoMap::~ProtoMap()
+{
+    isInit = false;
+}
+#endif
 
 bool ProtoMap::Init( ushort pid, const char* name, int path_type )
 {

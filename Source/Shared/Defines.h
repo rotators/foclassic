@@ -1,5 +1,5 @@
-#ifndef ___DEFINES___
-#define ___DEFINES___
+#ifndef __DEFINES__
+#define __DEFINES__
 
 #include "PlatformSpecific.h"
 #include "PUBLIC.Defines.h"
@@ -19,18 +19,17 @@
     { if( x )         \
           delete[] (x); (x) = NULL; }
 
-#define ___MSG1( x )                          # x
-#define ___MSG0( x )                          ___MSG1( x )
-#define MESSAGE( desc )                       message( __FILE__ "(" ___MSG0( __LINE__ ) "):" # desc )
+// legacy comments (by cvet)
+#define MESSAGE( msg )                        message( __FILE__ "(" ___TOD0( __LINE__ ) "): " # msg )
 
 // World dump versions
-#define WORLD_SAVE_V1                         (1) // unreleased
+#define WORLD_SAVE_V1                         (1)                                                    // unreleased
 #define WORLD_SAVE_LAST                       WORLD_SAVE_V1
-#define SINGLEPLAYER_SAVE_V1                  (1) // unreleased
+#define SINGLEPLAYER_SAVE_V1                  (1)                                                    // unreleased
 #define SINGLEPLAYER_SAVE_LAST                (SINGLEPLAYER_SAVE_V1)
 
 // Client save
-#define CLIENT_SAVE_V1                        (1) // unreleased
+#define CLIENT_SAVE_V1                        (1)  // unreleased
 #define CLIENT_SAVE_LAST                      (CLIENT_SAVE_V1)
 
 // Generic
@@ -38,12 +37,11 @@
 #define LEXEMS_SIZE                           (128)
 #define MAX_HOLO_INFO                         (250)
 #define MAX_PARAMETERS_ARRAYS                 (100)
-#define AMBIENT_SOUND_TIME                    (60000) // Random(X/2,X);
+#define AMBIENT_SOUND_TIME                    (60000)  // Random(X/2,X);
 #define EFFECT_TEXTURES                       (10)
 #define EFFECT_SCRIPT_VALUES                  (10)
 #define ABC_SIZE                              (26)
 #define DIRS_COUNT                            (GameOpt.MapHexagonal ? 6 : 8)
-
 
 // Script pragma bindfield sizes
 #define PROTO_ITEM_USER_DATA_SIZE             (500)
@@ -67,9 +65,9 @@
 #define SCEN_CAN_TALK                         (0x02)
 
 // Maps
-#define MAX_HEX_OFFSET                        (50)    // Must be not odd
+#define MAX_HEX_OFFSET                        (50)     // Must be not odd
 
-#define TIME_CAN_FOLLOW_GM                    (20000) // Can less than Map timeout
+#define TIME_CAN_FOLLOW_GM                    (20000)  // Can less than Map timeout
 
 // Proto maps
 #define MAP_PROTO_EXT                         ".fomap"
@@ -103,7 +101,7 @@
 // Global map
 #define GM_MAXX                               (GameOpt.GlobalMapWidth * GameOpt.GlobalMapZoneLength)
 #define GM_MAXY                               (GameOpt.GlobalMapHeight * GameOpt.GlobalMapZoneLength)
-#define GM_ZONE_LEN                           (GameOpt.GlobalMapZoneLength) // Can be multiple to GM_MAXX and GM_MAXY
+#define GM_ZONE_LEN                           (GameOpt.GlobalMapZoneLength)  // Can be multiple to GM_MAXX and GM_MAXY
 #define GM__MAXZONEX                          (100)
 #define GM__MAXZONEY                          (100)
 #define GM_ZONES_FOG_SIZE                     ( ( (GM__MAXZONEX / 4) + ( (GM__MAXZONEX % 4) ? 1 : 0 ) ) * GM__MAXZONEY )
@@ -129,11 +127,11 @@
 #define GM_INFO_LOCATION                      (0x20)
 
 // GM Rule command
-#define GM_CMD_SETMOVE                        (1) // +r-a*x,y
-#define GM_CMD_STOP                           (2) // +r-a
-#define GM_CMD_TOLOCAL                        (3) // +r-a*num_city,num_map
-#define GM_CMD_KICKCRIT                       (4) // +r-a*cr_id
-#define GM_CMD_FOLLOW_CRIT                    (5) // +r+a*cr_id
+#define GM_CMD_SETMOVE                        (1)  // +r-a*x,y
+#define GM_CMD_STOP                           (2)  // +r-a
+#define GM_CMD_TOLOCAL                        (3)  // +r-a*num_city,num_map
+#define GM_CMD_KICKCRIT                       (4)  // +r-a*cr_id
+#define GM_CMD_FOLLOW_CRIT                    (5)  // +r+a*cr_id
 #define GM_CMD_FOLLOW                         (6)
 #define GM_CMD_GIVE_RULE                      (7)
 #define GM_CMD_ANSWER                         (8)
@@ -194,15 +192,15 @@
 // Players barter
 #define BARTER_DIST                           (1)
 // Types
-#define BARTER_TRY                            (0) // opponentId, isHide
-#define BARTER_ACCEPTED                       (1) // opponentId, isHide
+#define BARTER_TRY                            (0)  // opponentId, isHide
+#define BARTER_ACCEPTED                       (1)  // opponentId, isHide
 #define BARTER_BEGIN                          (2)
 #define BARTER_END                            (3)
 #define BARTER_SET_SELF                       (4)
 #define BARTER_SET_OPPONENT                   (5)
 #define BARTER_UNSET_SELF                     (6)
 #define BARTER_UNSET_OPPONENT                 (7)
-#define BARTER_OFFER                          (8) // isSet, isOpponent
+#define BARTER_OFFER                          (8)  // isSet, isOpponent
 #define BARTER_REFRESH                        (9)
 
 // Scores
@@ -215,18 +213,18 @@
 // Show screen modes
 // Ouput: it is 'uint param' in Critter::ShowScreen.
 // Input: I - integer value 'uint answerI', S - string value 'string& answerS' in 'answer_' function.
-#define SHOW_SCREEN_CLOSE                     (0)  // Close top window.
-#define SHOW_SCREEN_TIMER                     (1)  // Timer box. Output: picture index in INVEN.LST. Input I: time in game minutes (1..599).
-#define SHOW_SCREEN_DIALOGBOX                 (2)  // Dialog box. Output: buttons count - 0..20 (exit button added automatically). Input I: Choosed button - 0..19.
-#define SHOW_SCREEN_SKILLBOX                  (3)  // Skill box. Input I: selected skill.
-#define SHOW_SCREEN_BAG                       (4)  // Bag box. Input I: id of selected item.
-#define SHOW_SCREEN_SAY                       (5)  // Say box. Output: all symbols - 0 or only numbers - any other number. Input S: typed string.
-#define SHOW_ELEVATOR                         (6)  // Elevator. Output: look ELEVATOR_* macro. Input I: Choosed level button.
-#define SHOW_SCREEN_INVENTORY                 (7)  // Inventory.
-#define SHOW_SCREEN_CHARACTER                 (8)  // Character.
-#define SHOW_SCREEN_FIXBOY                    (9)  // Fix-boy.
-#define SHOW_SCREEN_PIPBOY                    (10) // Pip-boy.
-#define SHOW_SCREEN_MINIMAP                   (11) // Mini-map.
+#define SHOW_SCREEN_CLOSE                     (0)   // Close top window.
+#define SHOW_SCREEN_TIMER                     (1)   // Timer box. Output: picture index in INVEN.LST. Input I: time in game minutes (1..599).
+#define SHOW_SCREEN_DIALOGBOX                 (2)   // Dialog box. Output: buttons count - 0..20 (exit button added automatically). Input I: Choosed button - 0..19.
+#define SHOW_SCREEN_SKILLBOX                  (3)   // Skill box. Input I: selected skill.
+#define SHOW_SCREEN_BAG                       (4)   // Bag box. Input I: id of selected item.
+#define SHOW_SCREEN_SAY                       (5)   // Say box. Output: all symbols - 0 or only numbers - any other number. Input S: typed string.
+#define SHOW_ELEVATOR                         (6)   // Elevator. Output: look ELEVATOR_* macro. Input I: Choosed level button.
+#define SHOW_SCREEN_INVENTORY                 (7)   // Inventory.
+#define SHOW_SCREEN_CHARACTER                 (8)   // Character.
+#define SHOW_SCREEN_FIXBOY                    (9)   // Fix-boy.
+#define SHOW_SCREEN_PIPBOY                    (10)  // Pip-boy.
+#define SHOW_SCREEN_MINIMAP                   (11)  // Mini-map.
 
 // Parameters
 
@@ -293,30 +291,30 @@
 // s - hardcoded server call
 // for all others critters actions call only server
 //                                          flags    actionExt                                                      item
-#define ACTION_MOVE                           (0)  // l
-#define ACTION_RUN                            (1)  // l
-#define ACTION_MOVE_ITEM                      (2)  // l s      from slot                                                      +
-#define ACTION_MOVE_ITEM_SWAP                 (3)  // l s      from slot                                                      +
-#define ACTION_USE_ITEM                       (4)  // l s                                                                     +
-#define ACTION_DROP_ITEM                      (5)  // l s      from slot                                                      +
-#define ACTION_USE_WEAPON                     (6)  // l        fail attack 8 bit, use index (0-2) 4-7 bits, aim 0-3 bits      +
-#define ACTION_RELOAD_WEAPON                  (7)  // l s                                                                     +
-#define ACTION_USE_SKILL                      (8)  // l s      skill index (see SK_*)
-#define ACTION_PICK_ITEM                      (9)  // l s                                                                     +
-#define ACTION_PICK_CRITTER                   (10) // l        0 - loot, 1 - steal, 2 - push
-#define ACTION_OPERATE_CONTAINER              (11) // l s      transfer type * 10 + [0 - get, 1 - get all, 2 - put]           + (exclude get all)
-#define ACTION_BARTER                         (12) //   s      0 - item taken, 1 - item given                                 +
-#define ACTION_DODGE                          (13) //          0 - front, 1 - back
-#define ACTION_DAMAGE                         (14) //          0 - front, 1 - back
-#define ACTION_DAMAGE_FORCE                   (15) //          0 - front, 1 - back
-#define ACTION_KNOCKOUT                       (16) //   s      0 - knockout anim2begin
-#define ACTION_STANDUP                        (17) //   s      0 - knockout anim2end
-#define ACTION_FIDGET                         (18) // l
-#define ACTION_DEAD                           (19) //   s      dead type anim2 (see Anim2 in _animation.fos)
-#define ACTION_CONNECT                        (20) //
-#define ACTION_DISCONNECT                     (21) //
-#define ACTION_RESPAWN                        (22) //   s
-#define ACTION_REFRESH                        (23) //   s
+#define ACTION_MOVE                           (0)   // l
+#define ACTION_RUN                            (1)   // l
+#define ACTION_MOVE_ITEM                      (2)   // l s      from slot                                                      +
+#define ACTION_MOVE_ITEM_SWAP                 (3)   // l s      from slot                                                      +
+#define ACTION_USE_ITEM                       (4)   // l s                                                                     +
+#define ACTION_DROP_ITEM                      (5)   // l s      from slot                                                      +
+#define ACTION_USE_WEAPON                     (6)   // l        fail attack 8 bit, use index (0-2) 4-7 bits, aim 0-3 bits      +
+#define ACTION_RELOAD_WEAPON                  (7)   // l s                                                                     +
+#define ACTION_USE_SKILL                      (8)   // l s      skill index (see SK_*)
+#define ACTION_PICK_ITEM                      (9)   // l s                                                                     +
+#define ACTION_PICK_CRITTER                   (10)  // l        0 - loot, 1 - steal, 2 - push
+#define ACTION_OPERATE_CONTAINER              (11)  // l s      transfer type * 10 + [0 - get, 1 - get all, 2 - put]           + (exclude get all)
+#define ACTION_BARTER                         (12)  //   s      0 - item taken, 1 - item given                                 +
+#define ACTION_DODGE                          (13)  //          0 - front, 1 - back
+#define ACTION_DAMAGE                         (14)  //          0 - front, 1 - back
+#define ACTION_DAMAGE_FORCE                   (15)  //          0 - front, 1 - back
+#define ACTION_KNOCKOUT                       (16)  //   s      0 - knockout anim2begin
+#define ACTION_STANDUP                        (17)  //   s      0 - knockout anim2end
+#define ACTION_FIDGET                         (18)  // l
+#define ACTION_DEAD                           (19)  //   s      dead type anim2 (see Anim2 in _animation.fos)
+#define ACTION_CONNECT                        (20)  //
+#define ACTION_DISCONNECT                     (21)  //
+#define ACTION_RESPAWN                        (22)  //   s
+#define ACTION_REFRESH                        (23)  //   s
 
 // In SendMessage
 #define MESSAGE_TO_VISIBLE_ME                 (0)
@@ -341,4 +339,4 @@
 #define USER_HOLO_MAX_TITLE_LEN               (40)
 #define USER_HOLO_MAX_LEN                     (2000)
 
-#endif // ___DEFINES___
+#endif  // ___DEFINES___

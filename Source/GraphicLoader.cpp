@@ -1,18 +1,21 @@
+#include "Core.h"
+
+#include "Assimp/assimp.h"
+#include "Assimp/aiPostProcess.h"
 #ifndef FO_D3D
 # include "il.h"
 #endif
 
-#include "CMake.h"
-
+#include "3dAnimation.h"
+#include "DynamicLibrary.h"
+#include "FileManager.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h"
-#include "3dAnimation.h"
+#include "Log.h"
+#include "Random.h"
 #include "Text.h"
 #include "Timer.h"
 #include "Version.h"
-
-#include "Assimp/assimp.h"
-#include "Assimp/aiPostProcess.h"
 
 // Assimp functions
 const aiScene* (*Ptr_aiImportFileFromMemory)( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );

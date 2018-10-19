@@ -8,6 +8,7 @@
 /************************************************************************/
 
 // ID collisions: 3610 <-> 23753, 151765 <-> 187454; much more after 200k
+
 #define MAKE_NETMSG_HEADER( number )          ( (uint)( (0xF0C1A51C ^ number) * (number ## ull << (number % 24) ) % 0xFFFFFFFF ) )
 #define PING_CLIENT_LIFE_TIME                 (15000)    // Time to ping client life
 

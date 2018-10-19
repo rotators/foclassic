@@ -1,7 +1,8 @@
+#include "Core.h"
+
 #include <stdarg.h>
 
-#include "Common.h"
-#include "Defines.h"
+#include "FileSystem.h"
 #include "Log.h"
 #include "Mutex.h"
 #include "Text.h"
