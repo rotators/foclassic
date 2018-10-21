@@ -1856,6 +1856,9 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     }
 
     // Check for ban by ip
+    #if FOCLASSIC_STAGE >= 3
+    # pragma STAGE_DEPRECATE(3,"FOServer::ClientBanned")
+    #endif
     {
         SCOPE_LOCK( BannedLocker );
 

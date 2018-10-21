@@ -75,6 +75,8 @@ set( CLIENT_MAPPER_SOURCES
 	3dStuff.h
 	CritterCl.cpp
 	CritterCl.h
+	Keyboard.cpp
+	Keyboard.h
 	SpriteManager.cpp
 	SpriteManager.h
 	SpriteManagerFont.cpp
@@ -96,8 +98,14 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	CritterType.h
 	IniParser.cpp
 	IniParser.h
+	Log.cpp
+	Log.h
+	Script.cpp
+	Script.h
 	ScriptFunctions.cpp
 	ScriptFunctions.h
+	ScriptPragmas.cpp
+	ScriptPragmas.h
 	SinglePlayer.cpp
 	SinglePlayer.h
 	Utils.cpp
@@ -134,11 +142,7 @@ set( CLIENT_SOURCES
 	ItemHex.h
 	ItemManager.cpp
 	ItemManager.h
-	Keyboard.cpp
-	Keyboard.h
 	LineTracer.h
-	Log.cpp
-	Log.h
 	MainClient.cpp
 	MsgFiles.cpp
 	MsgFiles.h
@@ -149,11 +153,7 @@ set( CLIENT_SOURCES
 	ResourceClient.h
 	ResourceManager.cpp
 	ResourceManager.h
-	Script.cpp
-	Script.h
 	ScriptBind.h
-	ScriptPragmas.cpp
-	ScriptPragmas.h
 	SoundManager.cpp
 	SoundManager.h
 	Sprites.cpp
@@ -223,11 +223,7 @@ set( MAPPER_SOURCES
 	ItemHex.h
 	ItemManager.cpp
 	ItemManager.h
-	Keyboard.cpp
-	Keyboard.h
 	LineTracer.h
-	Log.cpp
-	Log.h
 	MainMapper.cpp
 	Mapper.cpp
 	Mapper.h
@@ -237,11 +233,7 @@ set( MAPPER_SOURCES
 	ResourceManager.cpp
 	ResourceManager.h
 	ResourceMapper.h
-	Script.cpp
-	Script.h
 	ScriptBind.h
-	ScriptPragmas.cpp
-	ScriptPragmas.h
 	Sprites.cpp
 	Sprites.h
 	Version.h
@@ -318,8 +310,6 @@ target_sources( Server
 		Jobs.cpp
 		Jobs.h
 		LineTracer.h
-		Log.cpp
-		Log.h
 		LogFile.cpp
 		LogFile.h
 		MainServer.cpp
@@ -331,11 +321,7 @@ target_sources( Server
 		MsgFiles.h
 		MsgStr.h
 		NetProtocol.h
-		Script.cpp
-		Script.h
 		ScriptBind.h
-		ScriptPragmas.cpp
-		ScriptPragmas.h
 		Server.cpp
 		Server.h
 		ServerClient.cpp
@@ -407,7 +393,6 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 
 	##
 	## prepare for release
-	## see notes about PRE_BUILD in cmake documentation
 	##
 
 	set( dir "${RELEASE_DIR}" )
@@ -417,14 +402,24 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	endif()
 
 	# delete executable before build
+
+	# NOTES
+	# https://cmake.org/cmake/help/v3.12/command/add_custom_command.html#build-events
+	# PRE_BUILD
+    #   On Visual Studio Generators, run before any other rules are executed within the target.
+	#   On other generators, run just before PRE_LINK commands.
+	if( NOT MSVC )
+		message( AUTHOR_WARNING "PRE_BUILD custom commands are not working as intended with current generator" )
+	endif()
+
 	add_custom_command( TARGET ${target}
 		PRE_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
+		COMMAND ${CMAKE_COMMAND} -E remove ${dir}/$<TARGET_FILE_NAME:${target}>
 	)
 	# prepare executable for release after build
 	add_custom_command( TARGET ${target}
 		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo "${target} -> ${dir}/$<TARGET_FILE_NAME:${target}>"
+		COMMAND ${CMAKE_COMMAND} -E echo "${target} -> $<SHELL_PATH:${dir}/$<TARGET_FILE_NAME:${target}>>"
 		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
 	)
 
@@ -432,12 +427,12 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		# delete .pdb file before build
 		add_custom_command( TARGET ${target}
 			PRE_BUILD
-				COMMAND ${CMAKE_COMMAND} -E remove $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
+				COMMAND ${CMAKE_COMMAND} -E remove ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
 		)
 		# prepare .pdb files for release after build
 		add_custom_command( TARGET ${target}
 			POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E echo "${target} -> ${dir}/$<TARGET_PDB_FILE_NAME:${target}>"
+				COMMAND ${CMAKE_COMMAND} -E echo "${target} -> $<SHELL_PATH:${dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
 				COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
 		)
 	endif()

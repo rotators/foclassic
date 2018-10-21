@@ -35,7 +35,9 @@
 #define FO_MAP_VERSION_TEXT3    (3)
 #define FO_MAP_VERSION_TEXT4    (4)
 
-BINARY_SIGNATURE( MapSaveSignature, BINARY_MAPSAVE, FOCLASSIC_VERSION );
+#ifdef FOCLASSIC_SERVER
+ BINARY_SIGNATURE( MapSaveSignature, BINARY_TYPE_MAPSAVE, FOCLASSIC_VERSION );
+#endif
 
 #define APP_HEADER              "Header"
 #define APP_TILES               "Tiles"

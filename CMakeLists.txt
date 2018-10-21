@@ -32,11 +32,12 @@ set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 set( CMAKE_VERBOSE_MAKEFILE TRUE ) 
 
-include(FOClassic)
-FOClassic()
+include( FOClassicVersion )
+FOClassicVersion()
 
-include(PdbSetup)
-include(SourceOptions)
+include( FormatSource )
+include( PdbSetup )
+include( SourceOptions )
 
 ##
 ## set variables
@@ -55,6 +56,7 @@ set( EXTENSIONS_DIR                 "${CMAKE_SOURCE_DIR}/Extensions" )
 # release directories
 set( RELEASE_DIR_NAME               "FOClassic-v${PROJECT_VERSION_MINOR}" )
 set( RELEASE_DIR                    "${CMAKE_BINARY_DIR}/${RELEASE_DIR_NAME}" )
+set( RELEASE_CMAKE_DIR              "${RELEASE_DIR}/CMake" )
 set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
 
 # other directories
@@ -86,6 +88,7 @@ if( MSVC )
 	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_WARNINGS" )
 #	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_DEPRECATE" )
 #	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_WINSOCK_DEPRECATED_NO_WARNINGS" )
+
 	set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${COMPILER_DEFINES} /MTd /MP" )
 	set( CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" )
@@ -111,6 +114,7 @@ endif( HAVE_STRUCT_TIMESPEC )
 configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
 # create scripts header
+# this must be done before any extension configuration
 configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.fos" @ONLY NEWLINE_STYLE LF )
 
 ##
@@ -121,8 +125,24 @@ add_subdirectory( Source )
 add_subdirectory( Extensions )
 
 ##
+## collect cmake files which are not part of any target
+##
+
+file( GLOB ROOT_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "*.cmake" )
+file( GLOB_RECURSE ROOT_CMAKE_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${ROOT_CMAKE_DIR}/*" )
+add_custom_target( Configuration
+	SOURCES
+		${CMAKE_CURRENT_LIST_FILE}
+		${ROOT_CMAKE_FILES}
+		${ROOT_CMAKE_CMAKE_FILES}
+)
+source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
+source_group( "CMake" FILES "${CMAKE_CURRENT_LIST_FILE}" )
+
+##
 ## prettify IDE
 ##
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
+set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake/Internal" )
+set_property( TARGET Configuration PROPERTY FOLDER CMake )

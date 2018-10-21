@@ -1,48 +1,84 @@
+#####
 #
-# Global version validation, sets FOCLASSIC_CODENAME
+# FOClassic v@FOCLASSIC_VERSION@
+# Last update: @EXTENSIONS_CONTENT_TIMESTAMP@
 # 
-function( FOClassic )
+#####
 
-	foreach( var IN ITEMS FOCLASSIC_STAGE FOCLASSIC_VERSION )
-		if( NOT ${var} )
-			message( FATAL_ERROR "Variable ${var} not set" )
-		elseif( NOT "${${var}}" MATCHES "^[0-9]+$" )
-			message( FATAL_ERROR "Variable ${var} ('${${var}}') not a number" )
+#####
+#
+# FOClassicExtension()
+# Helper function for fast/easy creation of extension targets
+#
+#####
+#
+# Usage: FOClassicExtension( name target headers )
+#
+# name    - cmake target name
+# target  - CLIENT / MAPPER / SERVER
+#           case insensitive
+# headers - directory with FOClassic.h and FOClassic.fos
+#           absolute path is required
+#
+#####
+#
+# CMake properties set for each created target:
+#
+#  FOCLASSIC_EXTENSION              -  always TRUE
+#  FOCLASSIC_EXTENSION_TARGET       -  copy of 'target' argument (uppercase)
+#  FOCLASSIC_EXTENSION_HEADERS_DIR  -  copy of 'headers' argument (cmake path)
+#
+function( FOClassicExtension name target headers )
+
+	# create empty target
+	if( TARGET ${name} )
+		message( FATAL_ERROR "CMake target '${name}' already exists" )
+	endif()
+	add_library( ${name} SHARED "" )
+	set_property( TARGET ${name} PROPERTY FOCLASSIC_EXTENSION TRUE )
+
+	# add required defines
+	# TaRgEt -> __TARGET
+	if( NOT "${target}" MATCHES "^([Cc][Ll][Ii][Ee][Nn][Tt]|[Mm][Aa][Pp][Pp][Ee][Rr]|[Ss][Ee][Rr][Vv][Ee][Rr])$" )
+		message( FATAL_ERROR "Invalid extension target '${target}'" )
+	endif()
+	string( TOUPPER ${target} target )
+	set_property( TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_TARGET "${target}" )
+	set( target "__${target}" )
+	target_compile_definitions( ${name} PUBLIC FOCLASSIC_EXTENSION ${target} )
+
+	# add headers directory to include list
+	file( TO_CMAKE_PATH "${headers}" headers )
+	file( TO_NATIVE_PATH "${headers}" headers_native )
+	if( NOT EXISTS "${headers}" )
+		message( FATAL_ERROR "Path '${headers_native}' does not exists" )
+	endif()
+	if( NOT IS_DIRECTORY "${headers}" )
+		message( FATAL_ERROR "Path '${headers_native}' is not a directory" )
+	endif()
+	if( NOT IS_ABSOLUTE "${headers}" )
+		message( FATAL_ERROR "Path '${headers_native}' is not an absolute directory" )
+	endif()
+	target_include_directories( ${name} PUBLIC ${headers} )
+	set_property( TARGET ${name} PROPERTY FOCLASSIC_HEADERS_DIR "${headers}" )
+
+	# add engine headers to sources list
+	foreach( header IN ITEMS FOClassic.h FOClassic.fos )
+		if( NOT EXISTS "${headers}/${header}" )
+			message( FATAL_ERROR "File '${headers_native}/${header}' does not exists" )
 		endif()
+		target_sources( ${name} PUBLIC "${headers}/${header}" )
 	endforeach()
 
-	set( names
-		"Wasteland"
-
-		"2077"
-		"V13"
-		"V15"
-		"Shady Sands"
-		"Junktown"
-		"Hub"
-	)
-
-	list( LENGTH names length )
-	if( ${FOCLASSIC_STAGE} GREATER 0 AND ${FOCLASSIC_STAGE} LESS ${length} )
-		list( GET names ${FOCLASSIC_STAGE} codename )
-	else()
-		list( GET names 0 codename )
+	# add required compilation options
+	if( MSVC )
+		set_property( TARGET ${name} APPEND_STRING PROPERTY COMPILE_OPTIONS "/MT" )
 	endif()
 
-	if( "${codename}" STREQUAL "" )
-		message( FATAL_ERROR "Codename is empty" )
-	endif()
-
-	message( STATUS )
-	message( STATUS "FOClassic v${FOCLASSIC_VERSION} (${codename})" )
-	if( PROJECT_DESCRIPTION )
-		message( STATUS "${PROJECT_DESCRIPTION}" )
-	endif()
-	if( PROJECT_HOMEPAGE_URL )
-		message( STATUS "${PROJECT_HOMEPAGE_URL}" )
-	endif()
-	message( STATUS )
-
-	set( FOCLASSIC_CODENAME "${codename}" PARENT_SCOPE )
+	# add information for developer
+	# __TARGET -> target
+	string( REPLACE "__" "" target "${target}" )
+	string( TOLOWER "${target}" target )
+	message( STATUS "Configured ${target} extension '${name}'" )
 
 endfunction()

@@ -29,7 +29,7 @@
 // ******************************************************************************************************************************
 // ==============================================================================================================================
 
-BINARY_SIGNATURE( WorldSaveSignature, BINARY_WORLDSAVE, WORLD_SAVE_LAST );
+BINARY_SIGNATURE( WorldSaveSignature, BINARY_TYPE_WORLDSAVE, WORLD_SAVE_LAST );
 
 bool FOClient::IfaceLoadRect( Rect& comp, const char* name )
 {

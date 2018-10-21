@@ -17,39 +17,6 @@ function( GetProjectVersion )
 
 endfunction()
 
-function( FormatSource )
-
-	set( tmp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
-	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
-
-	message( STATUS "Formatting source..." )
-
-	foreach( dir CMake/Templates Extensions Extensions/Example Source/Shared Source )
-		foreach( ext IN ITEMS h cpp fos )
-			file( GLOB files LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/${dir}/*.${ext} )
-			if( files )
-				set( all_files "${all_files};${files}" )
-				list( LENGTH files count )
-				if( count GREATER 1 )
-					set( suffix "s" )
-				endif()
-			endif()
-		endforeach()
-	endforeach()
-
-	foreach( file ${all_files} )
-		message( STATUS "Processing ${file}" )
-		execute_process(
-			COMMAND "${uncrustify}.exe" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${tmp}" -q --if-changed
-		)
-		if( EXISTS "${tmp}" )
-			message( STATUS "           FormatSource prevails" )
-			file( RENAME "${tmp}" "${file}" )
-		endif()
-	endforeach()
-
-endfunction()
-
 # Prepare build 
 function( CreateBuildDirectory compiler file )
 
@@ -129,11 +96,12 @@ function( ZipAllBuilds )
 		file( REMOVE "${outer_sum}" )
 
 		file( GLOB         core       LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/* )
-		file( GLOB_RECURSE tools      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Tools/* )
+		file( GLOB_RECURSE cmake      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/CMake/* )
 		file( GLOB_RECURSE headers    LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Headers/* )
 		file( GLOB_RECURSE extensions LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Extensions/* )
+		file( GLOB_RECURSE tools      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Tools/* )
 
-		set( files ${core} ${tools} ${headers} ${extensions} )
+		set( files ${core} ${tools} ${cmake} ${headers} ${extensions} )
 
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${files}

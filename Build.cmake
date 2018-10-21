@@ -14,14 +14,14 @@
 # -DNO_ZIP=1
 # skips creating of release package
 #
-cmake_minimum_required( VERSION 3.12 )
+cmake_minimum_required( VERSION 3.12.2 FATAL_ERROR )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 include(BuildFunctions)
-include(FOClassic)
+include(FOClassicVersion)
 
 GetProjectVersion()
-FOClassic()
+FOClassicVersion()
 
 if( WIN32 )
 	foreach( compiler VS2010 VS2017.v100 VS2017 )

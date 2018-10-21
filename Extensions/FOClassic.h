@@ -1,7 +1,7 @@
 /////
 //
 // FOClassic v@FOCLASSIC_VERSION@
-// Last update @EXTENSIONS_HEADER_TIMESTAMP@
+// Last update @EXTENSIONS_CONTENT_TIMESTAMP@
 //
 /////
 //
@@ -21,8 +21,8 @@
 #define __FOCLASSIC_H__
 
 // Engine version
-#define FOCLASSIC_STAGE             (@FOCLASSIC_STAGE@)
-#define FOCLASSIC_VERSION           (@FOCLASSIC_VERSION@)
+#define FOCLASSIC_STAGE             (@FOCLASSIC_STAGE@) // increased on major milestones, available in scripts
+#define FOCLASSIC_VERSION           (@FOCLASSIC_VERSION@) // increased on each release, available in scripts
 
 // Detect operating system
 #if defined (_WIN32) || defined (_WIN64)
@@ -65,12 +65,14 @@
 # error __SERVER / __CLIENT / __MAPPER any of this must be defined
 #endif
 
-#ifndef __FOCLASSIC_FOS__
-# include <FOClassic.fos>
-#endif
-
+// Detect ill setup
 #if !defined (FOCLASSIC_EXTENSION)
 # error "FOCLASSIC_EXTENSION not defined."
+#endif
+
+// Detect scripts header
+#ifndef __FOCLASSIC_FOS__
+# include <FOClassic.fos>
 #endif
 
 // Platform specific options
@@ -229,10 +231,10 @@ EXPORT_UNINITIALIZED const char* (ScriptGetLibraryOptions)();
 EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
 
 #define FOCLASSIC_EXTENSION_ENTRY( isCompiler )    \
+    EXPORT void TARGET_NAME() {}                   \
     GameOptions * FOClassic;                       \
     GameOptions*     FOnline;                      \
     asIScriptEngine* ASEngine;                     \
-    EXPORT void TARGET_NAME() {}                   \
     void (*Log)(const char* frmt, ...);            \
     asIScriptContext* (*ScriptGetActiveContext)(); \
     const char* (ScriptGetLibraryOptions)();       \

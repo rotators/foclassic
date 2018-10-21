@@ -188,9 +188,10 @@ void ProcessStack( CallStack* stack )
     path->StackEnd();
 }
 
-BINARY_SIGNATURE( ProfilerSaveSignature, BINARY_PROFILERSAVE, 1 );
+BINARY_SIGNATURE( ProfilerSaveSignature, BINARY_TYPE_PROFILERSAVE, 1 );
 #endif
-BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_SCRIPTSAVE, FOCLASSIC_VERSION );
+
+BINARY_SIGNATURE( ScriptSaveSignature,   BINARY_TYPE_SCRIPTSAVE, FOCLASSIC_VERSION );
 
 bool LoadLibraryCompiler = false;
 

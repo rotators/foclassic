@@ -95,8 +95,8 @@ Mutex                       FOServer::BestScoresLocker;
 FOServer::SingleplayerSave_ FOServer::SingleplayerSave;
 MutexSynchronizer           FOServer::LogicThreadSync;
 
-BINARY_SIGNATURE( ClientSaveSignature, BINARY_CLIENTSAVE, CLIENT_SAVE_LAST );
-BINARY_SIGNATURE( WorldSaveSignature,  BINARY_WORLDSAVE,  WORLD_SAVE_LAST );
+BINARY_SIGNATURE( ClientSaveSignature, BINARY_TYPE_CLIENTSAVE, CLIENT_SAVE_LAST );
+BINARY_SIGNATURE( WorldSaveSignature,  BINARY_TYPE_WORLDSAVE,  WORLD_SAVE_LAST );
 
 bool FOServer::ClientBanned::operator==( const char* name )
 {

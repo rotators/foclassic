@@ -13,10 +13,10 @@
 /////
 //
 // FOCLASSIC_EXTENSION
-// Enables macros, C++ syntax; cannot be used with FOCLASSIC_SCRIPT
+// Enables macros, C++ syntax; cannot be used with FOCLASSIC_SCRIPT.
 //
 // FOCLASSIC_SCRIPT
-// Enables macros, AngelScript syntax; cannot be used with FOCLASSIC_EXTENSION
+// Enables macros, AngelScript syntax; cannot be used with FOCLASSIC_EXTENSION.
 // They're weirdly formatted currently; uncrustify cannot correctly handle "#" between "MACRO_NAME" and "()"
 //
 // FOCLASSIC_BLEEDING_EDGE
@@ -54,7 +54,11 @@
 # define FOCLASSIC_MACROS_ALLOWED
 #endif
 
-///// Macros /////
+/////
+//
+// Macros
+//
+/////
 
 #ifdef FOCLASSIC_MACROS_ALLOWED
 
@@ -135,7 +139,11 @@
 #define BIAS_FLOAT                                   (0.02f)
 #define RAD2DEG                                      (57.29577951f)
 
-////////// Limits //////////
+/////
+//
+// Limits
+//
+//////
 
 #define MIN_INT                                      (0x80000000)
 #define MAX_UINT8                                    (0xFF)
@@ -176,7 +184,11 @@
 
 #endif  // FOCLASSIC_MACROS_ALLOWED
 
-////////// Magic //////////
+/////
+//
+// Magic
+//
+/////
 
 // Access levels
 #define ACCESS_CLIENT                                (0)
@@ -260,12 +272,12 @@
 
 #endif  // FOCLASSIC_MACROS_ALLOWED
 
-#define BINARY_CLIENTSAVE                            'C'
-#define BINARY_MAPSAVE                               'M'
-#define BINARY_PROFILERSAVE                          'P'
-#define BINARY_SCRIPTSAVE                            'S'
-#define BINARY_WORLDSAVE                             'W'
-#define BINARY_CACHE                                 'c'  // reserved
+#define BINARY_TYPE_CLIENTSAVE                            'C'
+#define BINARY_TYPE_MAPSAVE                               'M'
+#define BINARY_TYPE_PROFILERSAVE                          'P'
+#define BINARY_TYPE_SCRIPTSAVE                            'S'
+#define BINARY_TYPE_WORLDSAVE                             'W'
+#define BINARY_TYPE_CACHE                                 'c'  // reserved
 
 // Chosen actions
 #define CHOSEN_NONE                                  (0)  //
@@ -302,7 +314,8 @@
 #endif // !FOCLASSIC_BLEEDING_EDGE
 
 // Colors
-// see SpriteManager.h: COLOR_GAME_RGB(r,g,b), COLOR_IFACE, COLOR_IFACE_A(a), COLOR_IFACE_RED, COLOR_IFACE_GREEN
+// not included (see SpriteManager.h):
+// COLOR_GAME_RGB(r,g,b), COLOR_IFACE, COLOR_IFACE_A(a), COLOR_IFACE_RED, COLOR_IFACE_GREEN
 #ifdef FOCLASSIC_MACROS_ALLOWED
 
 # ifdef FOCLASSIC_EXTENSION

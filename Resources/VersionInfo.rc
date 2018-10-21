@@ -31,31 +31,6 @@
 	#define IDI_VER 1
 #endif
 
-#ifndef IDI_ICON
-	#define IDI_ICON 101
-#endif
-
-#ifdef APSTUDIO_INVOKED
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-2 TEXTINCLUDE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
-END
-3 TEXTINCLUDE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-#endif
-
-#ifdef APPLICATION_ICON
-	IDI_ICON ICON APPLICATION_ICON
-#endif
-
 IDI_VER VERSIONINFO
 	FILEVERSION    	FOCLASSIC_FILEVERSION
 	PRODUCTVERSION  FOCLASSIC_PRODUCTVERSION
@@ -66,6 +41,7 @@ BEGIN
 		BEGIN
 			VALUE "ProductName",		"FOClassic"
 			VALUE "FileDescription",	"FOClassic " APPLICATION_NAME
+			VALUE "CompanyName"			"Rotators"
 			VALUE "LegalCopyright",		"Copyright (C) 2010-2018 Cvet, Rotators"
 
 			VALUE "InternalName",		APPLICATION_NAME APPLICATION_NAME_SUFFIX
@@ -80,6 +56,13 @@ BEGIN
 		VALUE "Translation", 0x409, 1200
 	END
 END
+
+#ifdef APPLICATION_ICON
+	#ifndef IDI_ICON
+		#define IDI_ICON 101
+	#endif
+	IDI_ICON ICON APPLICATION_ICON
+#endif
 
 #if defined(FOCLASSIC_CLIENT) || defined(FOCLASSIC_MAPPER)
 	IDR_EFFECT_SKINNING RCDATA "../Source/3dSkinning.fx"
