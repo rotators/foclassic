@@ -11,9 +11,6 @@
 #define ANIM_USE_DUMMY               (0x100)
 #define ANIM_FRM_ANIM_PIX            (0x200)
 
-// Sprites cutting
-#define SPRITE_CUT_HORIZONTAL        (1)
-#define SPRITE_CUT_VERTICAL          (2)
 #define SPRITE_CUT_CUSTOM            (3)               // Todo
 
 // Egg types

@@ -179,21 +179,21 @@ int main( int argc, char** argv )
 
     # if 1
     WriteLog( "STATIC_ASSERT\n" );
-    STATIC_ASSERT_PRINT( WriteLog, char );
-    STATIC_ASSERT_PRINT( WriteLog, short );
-    STATIC_ASSERT_PRINT( WriteLog, int );
-    STATIC_ASSERT_PRINT( WriteLog, int64 );
-    STATIC_ASSERT_PRINT( WriteLog, uchar );
-    STATIC_ASSERT_PRINT( WriteLog, ushort );
-    STATIC_ASSERT_PRINT( WriteLog, uint );
-    STATIC_ASSERT_PRINT( WriteLog, uint64 );
-    STATIC_ASSERT_PRINT( WriteLog, bool );
-    STATIC_ASSERT_PRINT( WriteLog, size_t );
-    STATIC_ASSERT_PRINT( WriteLog, void* );
-    STATIC_ASSERT_PRINT( WriteLog, string );
-    STATIC_ASSERT_PRINT( WriteLog, GameOptions );
-    STATIC_ASSERT_PRINT( WriteLog, ProtoItem );
-    STATIC_ASSERT_PRINT( WriteLog, Item );
+    STATIC_ASSERT_PRINTF( WriteLog, char );
+    STATIC_ASSERT_PRINTF( WriteLog, short );
+    STATIC_ASSERT_PRINTF( WriteLog, int );
+    STATIC_ASSERT_PRINTF( WriteLog, int64 );
+    STATIC_ASSERT_PRINTF( WriteLog, uchar );
+    STATIC_ASSERT_PRINTF( WriteLog, ushort );
+    STATIC_ASSERT_PRINTF( WriteLog, uint );
+    STATIC_ASSERT_PRINTF( WriteLog, uint64 );
+    STATIC_ASSERT_PRINTF( WriteLog, bool );
+    STATIC_ASSERT_PRINTF( WriteLog, size_t );
+    STATIC_ASSERT_PRINTF( WriteLog, void* );
+    STATIC_ASSERT_PRINTF( WriteLog, string );
+    STATIC_ASSERT_PRINTF( WriteLog, GameOptions );
+    STATIC_ASSERT_PRINTF( WriteLog, ProtoItem );
+    STATIC_ASSERT_PRINTF( WriteLog, Item );
     # endif
 
     FOQuit = true;

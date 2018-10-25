@@ -401,8 +401,8 @@ void FOServer::ProcessAI( Npc* npc )
             {
                 npc->NextPlane( REASON_SUCCESS );
             }
+            break;
         }
-        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Attack   ================================ */
@@ -734,8 +734,8 @@ void FOServer::ProcessAI( Npc* npc )
                 plane->Attack.LastHexX = 0;
                 plane->Attack.LastHexY = 0;
             }
+            break;
         }
-        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Walk   ================================== */
@@ -768,8 +768,8 @@ void FOServer::ProcessAI( Npc* npc )
                 else
                     npc->NextPlane( REASON_CANT_WALK );
             }
+            break;
         }
-        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ========================   Pick   ================================== */
@@ -819,8 +819,8 @@ void FOServer::ProcessAI( Npc* npc )
                 if( AI_PickItem( npc, map, hx, hy, pid, use_item_id ) )
                     npc->NextPlane( REASON_SUCCESS );
             }
+            break;
         }
-        break;
 /************************************************************************/
 /* ==================================================================== */
 /* ==================================================================== */
@@ -829,8 +829,8 @@ void FOServer::ProcessAI( Npc* npc )
         default:
         {
             npc->NextPlane( REASON_SUCCESS );
+            break;
         }
-        break;
     }
 
 //	if(map->IsTurnBasedOn && map->IsCritterTurn(npc) && !is_busy && (npc->IsNoPlanes() || !npc->GetCurPlane()->IsMove) && !npc->IsBusy() && !npc->IsWait()) map->EndCritterTurn();
@@ -1071,8 +1071,8 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
                     default:
                         break;
                 }
+                break;         // or
             }
-            break;             // or
             case DR_VAR:
             {
                 TemplateVar* tvar = VarMngr.GetTemplateVar( index );
@@ -1100,8 +1100,8 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
 
                 if( VarMngr.CheckVar( index, master_id, slave_id, demand.Op, demand.Value ) )
                     continue;
+                break;         // or
             }
-            break;             // or
             case DR_ITEM:
                 switch( demand.Op )
                 {

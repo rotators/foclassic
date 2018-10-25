@@ -1122,8 +1122,8 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
             CritterAnim* anim = GetCurAnim();
             needReSet = true;
             reSetTick = Timer::GameTick() + (anim && anim->Anim ? anim->Anim->Ticks : 1000);
+            break;
         }
-        break;
         case ACTION_CONNECT:
             UNSETFLAG( Flags, CRITTER_FLAG_DISCONNECT );
             break;

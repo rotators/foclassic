@@ -3138,8 +3138,8 @@ void Critter::SendMessage( int num, int val, int to )
                 SYNC_LOCK( cr );
                 cr->EventMessage( this, num, val );
             }
+            break;
         }
-        break;
         case MESSAGE_TO_IAM_VISIBLE:
         {
             CrVec critters = VisCrSelf;
@@ -3149,8 +3149,8 @@ void Critter::SendMessage( int num, int val, int to )
                 SYNC_LOCK( cr );
                 cr->EventMessage( this, num, val );
             }
+            break;
         }
-        break;
         case MESSAGE_TO_ALL_ON_MAP:
         {
             Map* map = MapMngr.GetMap( GetMap() );
@@ -3164,8 +3164,8 @@ void Critter::SendMessage( int num, int val, int to )
                 Critter* cr = *it;
                 cr->EventMessage( this, num, val );
             }
+            break;
         }
-        break;
         default:
             break;
     }
@@ -5370,8 +5370,8 @@ void Client::CloseTalk()
                 if( !npc )
                     break;
                 npc->SetTarget( REASON_FROM_DIALOG, this, GameOpt.DeadHitPoints, false );
+                break;
             }
-            break;
             default:
                 if( func_id <= 0 )
                     break;

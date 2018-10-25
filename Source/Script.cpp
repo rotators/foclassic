@@ -1173,8 +1173,8 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
 
             last_nongarbage = GetGCStatistics();
             garbager_state = 0;
+            break;
         }
-        break;
         case 0: // Statistics stage 0, 1, 2
         case 1:
         case 2:
@@ -1195,8 +1195,8 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
             if( !garbager_count[garbager_state] )
                 break;                                             // Repeat this step
             garbager_state++;
+            break;
         }
-        break;
         case 3: // Statistics last stage, calculate best count
         {
             double obj_times[2];
@@ -1229,8 +1229,8 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
             if( overhead > MaxGarbagerTime )
                 overhead = MaxGarbagerTime;                                    // Will result on deletion on every frame
             best_count = (uint)( (MaxGarbagerTime - overhead) / object_delete_time );
+            break;
         }
-        break;
         case 4: // Normal garbage check
         {
             if( GarbagerCycle && Timer::FastTick() - last_garbager_tick >= GarbagerCycle )
@@ -1249,8 +1249,8 @@ void Script::ScriptGarbager( bool collect_now /* = false */ )
             {
                 CollectGarbage( asGC_FULL_CYCLE | asGC_DESTROY_GARBAGE );
             }
+            break;
         }
-        break;
         default:
             break;
     }

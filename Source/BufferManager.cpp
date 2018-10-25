@@ -848,8 +848,8 @@ void BufferManager::SkipMsg( uint msg )
             EncryptKey( sizeof(msg) );
             uint msg_len = *(uint*)(bufData + bufReadPos + sizeof(msg) ) ^ EncryptKey( -(int)sizeof(msg) );
             size = msg_len;
+            break;
         }
-        break;
         default:
             Reset();
             return;

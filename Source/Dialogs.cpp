@@ -521,8 +521,8 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             // Value
             READ_VALUE;
+            break;
         }
-        break;
         case DR_VAR:
         {
             // Who
@@ -551,8 +551,8 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             // Value
             READ_VALUE;
+            break;
         }
-        break;
         case DR_ITEM:
         {
             // Who
@@ -589,8 +589,8 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             // Value
             READ_VALUE;
+            break;
         }
-        break;
         case DR_SCRIPT:
         {
             // Script name
@@ -683,6 +683,7 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
 
             #ifdef FOCLASSIC_SERVER
             // Bind function
+            # pragma TODO("rewrite BIND_D/R_FUNC macros")
             # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
             # define BIND_R_FUNC( params )                                                                                    \
                 { if( (id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
@@ -728,8 +729,8 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
         case DR_LOCK:
         {
             READ_VALUE;
+            break;
         }
-        break;
         case DR_OR:
             break;
         default:

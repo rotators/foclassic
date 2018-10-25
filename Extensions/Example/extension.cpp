@@ -1,11 +1,11 @@
 /////
 //
 // FOClassic v@FOCLASSIC_VERSION@
-// Last update @EXTENSIONS_CONTENT_TIMESTAMP@
+// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
 //
 /////
 //
-// This file contains an example of extension structure.
+// This file contains an example of extension source structure.
 //
 /////
 
@@ -15,5 +15,4 @@
 #include "_defines.fos"
 
 FOCLASSIC_EXTENSION_ENTRY( compiler )
-{
-}
+{}

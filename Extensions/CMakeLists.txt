@@ -22,6 +22,7 @@ configure_file( "${EXTENSIONS_HEADER_FILE}" "${RELEASE_HEADERS_DIR}/FOClassic.h"
 ## prepare extensions directories
 ##
 
+# find CMakeLists.txt in subdirectories
 file( GLOB found LIST_DIRECTORIES false RELATIVE "${CMAKE_CURRENT_LIST_DIR}" CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/*/CMakeLists.txt" )
 foreach( file IN LISTS found )
 	# extract directory name
@@ -31,18 +32,20 @@ foreach( file IN LISTS found )
 	file( GLOB contents LIST_DIRECTORIES true RELATIVE "${CMAKE_CURRENT_LIST_DIR}/${name}" CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/${name}/*" )
 	foreach( content IN LISTS contents )
 		file( TIMESTAMP "${CMAKE_CURRENT_LIST_DIR}/${name}/${content}" EXTENSIONS_CONTENT_TIMESTAMP "%d.%m.%Y" )
-
-		list( APPEND EXTENSIONS_FILES "${CMAKE_CURRENT_LIST_DIR}/${name}/${content}" )
 		configure_file( "${CMAKE_CURRENT_LIST_DIR}/${name}/${content}" "${RELEASE_EXTENSIONS_DIR}/${name}/${content}" @ONLY NEWLINE_STYLE LF )
+
+		# prepare sources list for Extensions target
+		list( APPEND EXTENSIONS_FILES "${CMAKE_CURRENT_LIST_DIR}/${name}/${content}" )
 	endforeach()
 
-	# update Extensions target
+	# prepare subdirectory processing
 	list( APPEND EXTENSIONS_SUBDIRS "${name}" )
 
 	# prettify IDE
 	source_group( "${name}" REGULAR_EXPRESSION "^${CMAKE_CURRENT_LIST_DIR}/${name}/" )
 endforeach()
 
+# Extensions target holds content of all discovered extensions and FOClassic.h template, and cmake-related files
 add_custom_target( Extensions
 	SOURCES
 		${CMAKE_CURRENT_LIST_FILE}
@@ -51,6 +54,7 @@ add_custom_target( Extensions
 		${EXTENSIONS_FILES}
 		${EXTENSIONS_HEADER_FILE}
 )
+# prettify IDE
 set_property( TARGET Extensions PROPERTY FOLDER CMake )
 source_group( "CMake" REGULAR_EXPRESSION "^${ROOT_CMAKE_DIR}/.+" )
 
@@ -59,6 +63,7 @@ source_group( "CMake" REGULAR_EXPRESSION "^${ROOT_CMAKE_DIR}/.+" )
 ##
 
 foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
+	# cmake should be running in release directory
 	add_subdirectory( "${RELEASE_EXTENSIONS_DIR}/${dir}" "${CMAKE_CURRENT_BINARY_DIR}/${dir}.extension" )
 
 	# get all targets created in subdirectory
@@ -72,15 +77,13 @@ foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
 		# make sure target is an extension
 		get_property( extension TARGET ${name} PROPERTY FOCLASSIC_EXTENSION )
 		if( NOT extension )
-			message( STATUS "Skipped '${name}' (not FOClassic extension)")
 			continue()
 		endif()
 
-		if( "${name}" MATCHES "(.+)Old$" )
-			add_dependencies( ${name} ${CMAKE_MATCH_1} )
-		else()
-			target_compile_definitions( ${name} PUBLIC FOCLASSIC_BLEEDING_EDGE )
-		endif()
+		##
+		## each extension should depend on its target(s)
+		##
+		target_compile_definitions( ${name} PRIVATE FOCLASSIC_EXTENSION_NOTES )
 
 		##
 		## each extension should depend on its target(s)
@@ -99,9 +102,11 @@ foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
 		##
 		## prettify IDE
 		##
+
 		set_property( TARGET ${name} PROPERTY FOLDER "Extensions" )
 
 	endforeach()
 endforeach()
 
+# FOClassic.h template shouldn't be in 'Header files' group
 source_group( " " FILES "${EXTENSIONS_HEADER_FILE}" )

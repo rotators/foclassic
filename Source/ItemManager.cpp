@@ -953,15 +953,15 @@ void ItemManager::NotifyChangeItem( Item* item )
             Critter* cr = CrMngr.GetCritter( item->AccCritter.Id, false );
             if( cr )
                 cr->SendAA_ItemData( item );
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
             if( map )
                 map->ChangeDataItem( item );
+            break;
         }
-        break;
         default:
             break;
     }
@@ -978,22 +978,22 @@ void ItemManager::EraseItemHolder( Item* item )
                 cr->EraseItem( item, true );
             else if( item->IsRadio() )
                 ItemMngr.RadioRegister( item, true );
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             Map* map = MapMngr.GetMap( item->AccHex.MapId, true );
             if( map )
                 map->EraseItem( item->GetId() );
+            break;
         }
-        break;
         case ITEM_ACCESSORY_CONTAINER:
         {
             Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, true );
             if( cont )
                 cont->ContEraseItem( item );
+            break;
         }
-        break;
         default:
             break;
     }

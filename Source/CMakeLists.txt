@@ -337,7 +337,10 @@ target_sources( Server
 target_compile_definitions( Server PRIVATE FOCLASSIC_SERVER SCRIPT_MULTITHREADING )
 target_include_directories( Server PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( Server ${SERVER_LIBS} )
-
+if( MSVC )
+	# see https://docs.microsoft.com/en-us/cpp/build/reference/largeaddressaware-handle-large-addresses
+	set_property( TARGET Server APPEND_STRING PROPERTY LINK_FLAGS "/LARGEADDRESSAWARE " )
+endif()
 ##
 ## ASCompiler
 ##
@@ -387,6 +390,11 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		target_compile_definitions( ${target} PRIVATE WINVER=0x0501 ) # Windows XP
 		target_compile_definitions( ${target} PRIVATE WIN32_LEAN_AND_MEAN )
 
+		if( MSVC )
+			# see https://docs.microsoft.com/en-us/cpp/build/reference/opt-optimizations
+			set_property( TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "/OPT:REF " )
+		endif()
+
 		# include version informations
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
@@ -401,8 +409,6 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
 
-	# delete executable before build
-
 	# NOTES
 	# https://cmake.org/cmake/help/v3.12/command/add_custom_command.html#build-events
 	# PRE_BUILD
@@ -412,6 +418,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		message( AUTHOR_WARNING "PRE_BUILD custom commands are not working as intended with current generator" )
 	endif()
 
+	# delete executable before build
 	add_custom_command( TARGET ${target}
 		PRE_BUILD
 		COMMAND ${CMAKE_COMMAND} -E remove ${dir}/$<TARGET_FILE_NAME:${target}>

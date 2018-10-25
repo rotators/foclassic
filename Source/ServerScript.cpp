@@ -783,8 +783,8 @@ Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
                 SCRIPT_ERROR_R0( "Critter accessory, map not found." );
             hx = cr->GetHexX();
             hy = cr->GetHexY();
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             map = MapMngr.GetMap( item->AccHex.MapId, true );
@@ -792,8 +792,8 @@ Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
                 SCRIPT_ERROR_R0( "Hex accessory, map not found." );
             hx = item->AccHex.HexX;
             hy = item->AccHex.HexY;
+            break;
         }
-        break;
         case ITEM_ACCESSORY_CONTAINER:
         {
             if( item->GetId() == item->AccContainer.ContainerId )
@@ -802,8 +802,8 @@ Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
             if( !cont )
                 SCRIPT_ERROR_R0( "Container accessory, container not found." );
             return Item_GetMapPosition( cont, hx, hy );         // Recursion
+            break;
         }
-        break;
         default:
             SCRIPT_ERROR_R0( "Unknown accessory." );
             break;
@@ -868,8 +868,8 @@ void FOServer::SScriptFunc::Item_Animate( Item* item, uchar from_frm, uchar to_f
             //	Critter* cr=CrMngr.GetCrit(item->ACC_CRITTER.Id);
             //	if(cr) cr->Send_AnimateItem(item,from_frm,to_frm);
             //	else SCRIPT_ERROR("Critter not found, maybe client in offline.");
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             Map* map = MapMngr.GetMap( item->AccHex.MapId );
@@ -879,8 +879,8 @@ void FOServer::SScriptFunc::Item_Animate( Item* item, uchar from_frm, uchar to_f
                 break;
             }
             map->AnimateItem( item, from_frm, to_frm );
+            break;
         }
-        break;
         case ITEM_ACCESSORY_CONTAINER:
             break;
         default:
@@ -913,8 +913,8 @@ void FOServer::SScriptFunc::Item_SetLexems( Item* item, ScriptString* lexems )
                 else
                     cl->Send_ItemLexemsNull( item );
             }
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
@@ -937,8 +937,8 @@ void FOServer::SScriptFunc::Item_SetLexems( Item* item, ScriptString* lexems )
                         cl->Send_ItemLexemsNull( item );
                 }
             }
+            break;
         }
-        break;
         case ITEM_ACCESSORY_CONTAINER:
             break;
         default:

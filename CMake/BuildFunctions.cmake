@@ -101,7 +101,9 @@ function( ZipAllBuilds )
 		file( GLOB_RECURSE extensions LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Extensions/* )
 		file( GLOB_RECURSE tools      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Tools/* )
 
+		list( REMOVE_ITEM core "VERSION" )
 		set( files ${core} ${tools} ${cmake} ${headers} ${extensions} )
+		list( APPEND files "VERSION" )
 
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${files}

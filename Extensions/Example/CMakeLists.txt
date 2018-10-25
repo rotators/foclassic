@@ -14,7 +14,7 @@
 # cmake -G "Visual Studio 10" FOClassic.dir/Extensions/Example
 #
 # For fully automating building process, additional command can be used:
-# cmake --build . --config Release
+# cmake --build ExampleExtensions.dir --config Release
 #
 # Currenly only Visal Studio 2010 is supported.
 # Note that -G parameters is required if there is multiple Visual Studio versions installed.
@@ -40,7 +40,7 @@ project( ExampleExtensions
 	LANGUAGES CXX
 )
 
-set( CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@ )
+set( CMAKE_CXX_STANDARD       @CMAKE_CXX_STANDARD@ )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 
 get_filename_component( FOCLASSIC_RELEASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../" REALPATH )
@@ -51,32 +51,51 @@ get_filename_component( FOCLASSIC_RELEASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..
 set( FOCLASSIC_CMAKE_DIR   "${FOCLASSIC_RELEASE_DIR}/CMake" )
 set( FOCLASSIC_HEADERS_DIR "${FOCLASSIC_RELEASE_DIR}/Headers" )
 
-# include FOClassic.cmake
+# include cmake functions provided by engine
 list( APPEND CMAKE_MODULE_PATH "${FOCLASSIC_CMAKE_DIR}" )
 include(FOClassic)
 
 # create extension targets using provided function
-# in this example, we create dummy extension for each target
+# in this example, we create dummy extensions for each target
+FOClassicExtension( ExampleClient CLIENT "${FOCLASSIC_HEADERS_DIR}" )
+FOClassicExtension( ExampleMapper MAPPER "${FOCLASSIC_HEADERS_DIR}" )
+FOClassicExtension( ExampleServer SERVER "${FOCLASSIC_HEADERS_DIR}" )
 
-FOClassicExtension( ExampleClient    CLIENT "${FOCLASSIC_HEADERS_DIR}" )
-FOClassicExtension( ExampleMapper    MAPPER "${FOCLASSIC_HEADERS_DIR}" )
-FOClassicExtension( ExampleServer    SERVER "${FOCLASSIC_HEADERS_DIR}" )
+# for testing purposes, we add a copy of each extension;
+# previously added will be built with Bleeding Mode enabled
+# in real setup, only one scenario should be used
+FOClassicExtension( ExampleClientOld CLIENT "${FOCLASSIC_HEADERS_DIR}" )
+FOClassicExtension( ExampleMapperOld MAPPER "${FOCLASSIC_HEADERS_DIR}" )
+FOClassicExtension( ExampleServerOld SERVER "${FOCLASSIC_HEADERS_DIR}" )
 
 # iterate over a list of all targets added in current diectory
+get_property( cmake_targets DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY BUILDSYSTEM_TARGETS )
+foreach( name IN LISTS cmake_targets )
 
-get_property( FOCLASSIC_EXTENSION_LIST DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY BUILDSYSTEM_TARGETS )
-foreach( target IN LISTS FOCLASSIC_EXTENSION_LIST )
+	# example of filtering extensions out of unknown target list
+	# not useful here, as there is no non-extension targets added
+	get_property( is_extension TARGET ${name} PROPERTY FOCLASSIC_EXTENSION )
+	if( NOT is_extension )
+		continue()
+	endif()
+
+	# extensions with "Old" suffix depend on those without
+	# everything else is built with Bleeding Edge mode
+	if( "${name}" MATCHES "(.+)Old$" )
+		add_dependencies( ${name} ${CMAKE_MATCH_1} )
+	else()
+		target_compile_definitions( ${name} PUBLIC FOCLASSIC_BLEEDING_EDGE )
+	endif()
 
 	# populate sources list for all targets
-
-	target_sources( ${target}
+	target_sources( ${name}
 		PRIVATE
 			# CMakeLists.txt needs to be added for source_group("CMake") to work properly
 			${CMAKE_CURRENT_LIST_FILE}
 
 			# while extensions must compile without _defines.fos, there's high chance
 			# they'll need game-specific values. it's included in this example
-			# just to show how to setup .fos headers for both, extensions and scripts
+			# just to show how to setup .fos headers to work with extensions and scripts
 			_defines.fos
 
 			# example contains only includes and empty extension entry point
@@ -84,7 +103,7 @@ foreach( target IN LISTS FOCLASSIC_EXTENSION_LIST )
 	)
 
 	# current directory should be always in includes list
-	target_include_directories( ${target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
+	target_include_directories( ${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
 
 endforeach()
 

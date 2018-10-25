@@ -4521,8 +4521,8 @@ void FOMapper::CurDraw()
                     SprMngr.DrawSprite( anim, x, y, COLOR_IFACE );
                 }
             }
+            break;
         }
-        break;
         case CUR_MODE_PLACE_OBJECT:
             if( IsObjectMode() && (*CurItemProtos).size() )
             {

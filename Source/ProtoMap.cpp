@@ -36,7 +36,7 @@
 #define FO_MAP_VERSION_TEXT4    (4)
 
 #ifdef FOCLASSIC_SERVER
- BINARY_SIGNATURE( MapSaveSignature, BINARY_TYPE_MAPSAVE, FOCLASSIC_VERSION );
+BINARY_SIGNATURE( MapSaveSignature, BINARY_TYPE_MAPSAVE, FOCLASSIC_VERSION );
 #endif
 
 #define APP_HEADER              "Header"
@@ -2007,8 +2007,8 @@ bool ProtoMap::Refresh()
                 cur_wall.SpriteCut = mobj.MScenery.SpriteCut;
 
                 WallsToSend.push_back( cur_wall );
+                break;
             }
-            break;
             case ITEM_TYPE_GENERIC:
             case ITEM_TYPE_GRID:
             {
@@ -2107,8 +2107,8 @@ bool ProtoMap::Refresh()
                 cur_scen.SpriteCut = mobj.MScenery.SpriteCut;
 
                 SceneriesToSend.push_back( cur_scen );
+                break;
             }
-            break;
             default:
                 break;
         }

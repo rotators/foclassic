@@ -378,8 +378,8 @@ bool FOClient::Init()
     UID_PREPARE_UID4_4;
 
     // Wait screen
-    ScreenModeMain = SCREEN_WAIT;
-    CurMode = CUR_WAIT;
+    ScreenModeMain = CLIENT_MAIN_SCREEN_WAIT;
+    CurMode = CURSOR_WAIT;
     WaitPic = ResMngr.GetRandomSplash();
     if( SprMngr.BeginScene( COLOR_XRGB( 0, 0, 0 ) ) )
     {
@@ -741,8 +741,8 @@ int FOClient::MainLoop()
         if( !pause )
         {
             int main_screen = GetMainScreen();
-            if( (main_screen != SCREEN_GAME && main_screen != SCREEN_GLOBAL_MAP && main_screen != SCREEN_WAIT) ||
-                IsScreenPresent( SCREEN__MENU_OPTION ) )
+            if( (main_screen != CLIENT_MAIN_SCREEN_GAME && main_screen != CLIENT_MAIN_SCREEN_WORLDMAP && main_screen != CLIENT_MAIN_SCREEN_WAIT) ||
+                IsScreenPresent( CLIENT_SCREEN_MENU ) )
                 pause = true;
         }
 
@@ -766,12 +766,12 @@ int FOClient::MainLoop()
         InitNetReason = INIT_NET_REASON_NONE;
 
         // Wait screen
-        ShowMainScreen( SCREEN_WAIT );
+        ShowMainScreen( CLIENT_MAIN_SCREEN_WAIT );
 
         // Connect to server
         if( !InitNet() )
         {
-            ShowMainScreen( SCREEN_LOGIN );
+            ShowMainScreen( CLIENT_MAIN_SCREEN_LOGIN );
             AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_CONN_FAIL ) );
             return 1;
         }
@@ -794,8 +794,8 @@ int FOClient::MainLoop()
         ParseSocket();
 
     // Exit in Login screen if net disconnect
-    if( !IsConnected && !IsMainScreen( SCREEN_LOGIN ) && !IsMainScreen( SCREEN_REGISTRATION ) && !IsMainScreen( SCREEN_CREDITS ) )
-        ShowMainScreen( SCREEN_LOGIN );
+    if( !IsConnected && !IsMainScreen( CLIENT_MAIN_SCREEN_LOGIN ) && !IsMainScreen( CLIENT_MAIN_SCREEN_REGISTRATION ) && !IsMainScreen( CLIENT_MAIN_SCREEN_CREDITS ) )
+        ShowMainScreen( CLIENT_MAIN_SCREEN_LOGIN );
 
     // Input
     ConsoleProcess();
@@ -815,16 +815,16 @@ int FOClient::MainLoop()
     if( full_second != GameOpt.FullSecond )
         SetDayTime( false );
 
-    if( IsMainScreen( SCREEN_GLOBAL_MAP ) )
+    if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
     {
         CrittersProcess();
         GmapProcess();
         LMenuTryCreate();
     }
-    else if( IsMainScreen( SCREEN_GAME ) && HexMngr.IsMapLoaded() )
+    else if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && HexMngr.IsMapLoaded() )
     {
         int screen = GetActiveScreen();
-        if( screen == SCREEN_NONE || screen == SCREEN__TOWN_VIEW || HexMngr.AutoScroll.Active )
+        if( screen == CLIENT_SCREEN_NONE || screen == CLIENT_SCREEN_WM_TOWNVIEW || HexMngr.AutoScroll.Active )
         {
             if( HexMngr.Scroll() )
             {
@@ -837,12 +837,12 @@ int FOClient::MainLoop()
         HexMngr.ProcessRain();
         LMenuTryCreate();
     }
-    else if( IsMainScreen( SCREEN_CREDITS ) )
+    else if( IsMainScreen( CLIENT_MAIN_SCREEN_CREDITS ) )
     {
         // CreditsDraw();
     }
 
-    if( IsScreenPresent( SCREEN__ELEVATOR ) )
+    if( IsScreenPresent( CLIENT_SCREEN_ELEVATOR ) )
         ElevatorProcess();
 
     CHECK_MULTIPLY_WINDOWS2;
@@ -883,7 +883,7 @@ int FOClient::MainLoop()
 
     DrawIfaceLayer( 1 );
 
-    if( GetMainScreen() == SCREEN_GAME && HexMngr.IsMapLoaded() )
+    if( GetMainScreen() == CLIENT_MAIN_SCREEN_GAME && HexMngr.IsMapLoaded() )
     {
         GameDraw();
         if( SaveLoadProcessDraft )
@@ -893,7 +893,7 @@ int FOClient::MainLoop()
 
     DrawIfaceLayer( 2 );
 
-    if( SaveLoadProcessDraft && GetMainScreen() == SCREEN_GLOBAL_MAP )
+    if( SaveLoadProcessDraft && GetMainScreen() == CLIENT_MAIN_SCREEN_WORLDMAP )
         SaveLoadFillDraft();
     ConsoleDraw();
     MessBoxDraw();
@@ -1130,7 +1130,7 @@ void FOClient::ParseKeyboard()
     }
 
     // Accelerators
-    if( !IsCurMode( CUR_WAIT ) )
+    if( !IsCurMode( CURSOR_WAIT ) )
     {
         if( Timer::ProcessAccelerator( ACCELERATE_PAGE_UP ) )
             ProcessMouseWheel( 1 );
@@ -1311,7 +1311,7 @@ void FOClient::ParseKeyboard()
 
                 // Exit buttons
                 case DIK_TAB:
-                    if( GetActiveScreen() == SCREEN__MINI_MAP )
+                    if( GetActiveScreen() == CLIENT_SCREEN_MINIMAP )
                     {
                         TryExit();
                         continue;
@@ -1339,14 +1339,14 @@ void FOClient::ParseKeyboard()
                 switch( dikdw )
                 {
                     case DIK_C:
-                        if( GetActiveScreen() == SCREEN__CHARACTER )
+                        if( GetActiveScreen() == CLIENT_SCREEN_CHARACTER )
                         {
                             TryExit();
                             continue;
                         }
                         break;
                     case DIK_P:
-                        if( GetActiveScreen() == SCREEN__PIP_BOY )
+                        if( GetActiveScreen() == CLIENT_SCREEN_PIPBOY )
                         {
                             if( PipMode == PIP__NONE )
                                 PipMode = PIP__STATUS;
@@ -1355,28 +1355,28 @@ void FOClient::ParseKeyboard()
                             continue;
                         }
                     case DIK_F:
-                        if( GetActiveScreen() == SCREEN__FIX_BOY )
+                        if( GetActiveScreen() == CLIENT_SCREEN_FIXBOY )
                         {
                             TryExit();
                             continue;
                         }
                         break;
                     case DIK_I:
-                        if( GetActiveScreen() == SCREEN__INVENTORY )
+                        if( GetActiveScreen() == CLIENT_SCREEN_INVENTORY )
                         {
                             TryExit();
                             continue;
                         }
                         break;
                     case DIK_Q:
-                        if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
+                        if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawLookBorders = !DrawLookBorders;
                             RebuildLookBorders = true;
                         }
                         break;
                     case DIK_W:
-                        if( IsMainScreen( SCREEN_GAME ) && GetActiveScreen() == SCREEN_NONE )
+                        if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GetActiveScreen() == CLIENT_SCREEN_NONE )
                         {
                             DrawShootBorders = !DrawShootBorders;
                             RebuildLookBorders = true;
@@ -1442,7 +1442,7 @@ void FOClient::ParseKeyboard()
         }
 
         // Wait mode
-        if( IsCurMode( CUR_WAIT ) )
+        if( IsCurMode( CURSOR_WAIT ) )
         {
             ConsoleKeyDown( dikdw, event_text );
             continue;
@@ -1457,30 +1457,30 @@ void FOClient::ParseKeyboard()
         if( dikdw )
         {
             int active = GetActiveScreen();
-            if( active != SCREEN_NONE )
+            if( active != CLIENT_SCREEN_NONE )
             {
                 switch( active )
                 {
-                    case SCREEN__SPLIT:
+                    case CLIENT_SCREEN_SPLIT:
                         SplitKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__TIMER:
+                    case CLIENT_SCREEN_TIMER:
                         TimerKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__CHA_NAME:
+                    case CLIENT_SCREEN_CHAR_NAME:
                         ChaNameKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__SAY:
+                    case CLIENT_SCREEN_SAY:
                         SayKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__INPUT_BOX:
+                    case CLIENT_SCREEN_INPUTBOX:
                         IboxKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__DIALOG:
+                    case CLIENT_SCREEN_DIALOG:
                         DlgKeyDown( true, dikdw, event_text );
                         ConsoleKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN__BARTER:
+                    case CLIENT_SCREEN_BARTER:
                         DlgKeyDown( false, dikdw, event_text );
                         ConsoleKeyDown( dikdw, event_text );
                         break;
@@ -1493,16 +1493,16 @@ void FOClient::ParseKeyboard()
             {
                 switch( GetMainScreen() )
                 {
-                    case SCREEN_LOGIN:
+                    case CLIENT_MAIN_SCREEN_LOGIN:
                         LogKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN_CREDITS:
+                    case CLIENT_MAIN_SCREEN_CREDITS:
                         TryExit();
                         break;
-                    case SCREEN_GAME:
+                    case CLIENT_MAIN_SCREEN_GAME:
                         GameKeyDown( dikdw, event_text );
                         break;
-                    case SCREEN_GLOBAL_MAP:
+                    case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapKeyDown( dikdw, event_text );
                         break;
                     default:
@@ -1517,7 +1517,7 @@ void FOClient::ParseKeyboard()
         // Key up
         if( dikup )
         {
-            if( GetActiveScreen() == SCREEN__INPUT_BOX )
+            if( GetActiveScreen() == CLIENT_SCREEN_INPUTBOX )
                 IboxKeyUp( dikup );
             ConsoleKeyUp( dikup );
             ProcessKeybScroll( false, dikup );
@@ -1526,16 +1526,6 @@ void FOClient::ParseKeyboard()
     }
 }
 
-#define MOUSE_CLICK_LEFT          (0)
-#define MOUSE_CLICK_RIGHT         (1)
-#define MOUSE_CLICK_MIDDLE        (2)
-#define MOUSE_CLICK_WHEEL_UP      (3)
-#define MOUSE_CLICK_WHEEL_DOWN    (4)
-#define MOUSE_CLICK_EXT0          (5)
-#define MOUSE_CLICK_EXT1          (6)
-#define MOUSE_CLICK_EXT2          (7)
-#define MOUSE_CLICK_EXT3          (8)
-#define MOUSE_CLICK_EXT4          (9)
 void FOClient::ParseMouse()
 {
     // Mouse position
@@ -1565,7 +1555,7 @@ void FOClient::ParseMouse()
     }
 
     // Accelerators
-    if( Timer::GetAcceleratorNum() != ACCELERATE_NONE && !IsCurMode( CUR_WAIT ) )
+    if( Timer::GetAcceleratorNum() != ACCELERATE_NONE && !IsCurMode( CURSOR_WAIT ) )
     {
         int iface_hold = IfaceHold;
         if( Timer::ProcessAccelerator( ACCELERATE_MESSBOX ) )
@@ -1649,64 +1639,64 @@ void FOClient::ParseMouse()
         {
             switch( GetActiveScreen() )
             {
-                case SCREEN__SPLIT:
+                case CLIENT_SCREEN_SPLIT:
                     SplitMouseMove();
                     break;
-                case SCREEN__TIMER:
+                case CLIENT_SCREEN_TIMER:
                     TimerMouseMove();
                     break;
-                case SCREEN__DIALOGBOX:
+                case CLIENT_SCREEN_DIALOGBOX:
                     DlgboxMouseMove();
                     break;
-                case SCREEN__ELEVATOR:
+                case CLIENT_SCREEN_ELEVATOR:
                     ElevatorMouseMove();
                     break;
-                case SCREEN__SAY:
+                case CLIENT_SCREEN_SAY:
                     SayMouseMove();
                     break;
-                case SCREEN__INPUT_BOX:
+                case CLIENT_SCREEN_INPUTBOX:
                     IboxMouseMove();
                     break;
-                case SCREEN__SKILLBOX:
+                case CLIENT_SCREEN_SKILLBOX:
                     SboxMouseMove();
                     break;
-                case SCREEN__USE:
+                case CLIENT_SCREEN_USE:
                     UseMouseMove();
                     break;
-                case SCREEN__PERK:
+                case CLIENT_SCREEN_PERK:
                     PerkMouseMove();
                     break;
-                case SCREEN__TOWN_VIEW:
+                case CLIENT_SCREEN_WM_TOWNVIEW:
                     TViewMouseMove();
                     break;
-                case SCREEN__DIALOG:
+                case CLIENT_SCREEN_DIALOG:
                     DlgMouseMove( true );
                     break;
-                case SCREEN__BARTER:
+                case CLIENT_SCREEN_BARTER:
                     DlgMouseMove( false );
                     break;
-                case SCREEN__INVENTORY:
+                case CLIENT_SCREEN_INVENTORY:
                     InvMouseMove();
                     break;
-                case SCREEN__PICKUP:
+                case CLIENT_SCREEN_PICKUP:
                     PupMouseMove();
                     break;
-                case SCREEN__MINI_MAP:
+                case CLIENT_SCREEN_MINIMAP:
                     LmapMouseMove();
                     break;
-                case SCREEN__CHARACTER:
+                case CLIENT_SCREEN_CHARACTER:
                     ChaMouseMove( false );
                     break;
-                case SCREEN__PIP_BOY:
+                case CLIENT_SCREEN_PIPBOY:
                     PipMouseMove();
                     break;
-                case SCREEN__FIX_BOY:
+                case CLIENT_SCREEN_FIXBOY:
                     FixMouseMove();
                     break;
-                case SCREEN__AIM:
+                case CLIENT_SCREEN_AIM:
                     AimMouseMove();
                     break;
-                case SCREEN__SAVE_LOAD:
+                case CLIENT_SCREEN_LOADSAVE:
                     SaveLoadMouseMove();
                     break;
                 default:
@@ -1717,7 +1707,7 @@ void FOClient::ParseMouse()
         {
             switch( GetMainScreen() )
             {
-                case SCREEN_GLOBAL_MAP:
+                case CLIENT_MAIN_SCREEN_WORLDMAP:
                     GmapMouseMove();
                     break;
                 default:
@@ -1810,7 +1800,7 @@ void FOClient::ParseMouse()
             if( !script_result && !GameOpt.DisableMouseEvents && !ConsoleActive && GameOpt.MapZooming && GameOpt.SpritesZoomMin != GameOpt.SpritesZoomMax )
             {
                 int screen = GetActiveScreen();
-                if( IsMainScreen( SCREEN_GAME ) && (screen == SCREEN_NONE || screen == SCREEN__TOWN_VIEW) )
+                if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && (screen == CLIENT_SCREEN_NONE || screen == CLIENT_SCREEN_WM_TOWNVIEW) )
                 {
                     HexMngr.ChangeZoom( 0 );
                     RebuildLookBorders = true;
@@ -1880,7 +1870,7 @@ void FOClient::ParseMouse()
 
         if( script_result || GameOpt.DisableMouseEvents )
             continue;
-        if( IsCurMode( CUR_WAIT ) )
+        if( IsCurMode( CURSOR_WAIT ) )
             continue;
 
         // Wheel
@@ -1897,79 +1887,79 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                    case SCREEN__SPLIT:
+                    case CLIENT_SCREEN_SPLIT:
                         SplitLMouseDown();
                         break;
-                    case SCREEN__TIMER:
+                    case CLIENT_SCREEN_TIMER:
                         TimerLMouseDown();
                         break;
-                    case SCREEN__DIALOGBOX:
+                    case CLIENT_SCREEN_DIALOGBOX:
                         DlgboxLMouseDown();
                         break;
-                    case SCREEN__ELEVATOR:
+                    case CLIENT_SCREEN_ELEVATOR:
                         ElevatorLMouseDown();
                         break;
-                    case SCREEN__SAY:
+                    case CLIENT_SCREEN_SAY:
                         SayLMouseDown();
                         break;
-                    case SCREEN__CHA_NAME:
+                    case CLIENT_SCREEN_CHAR_NAME:
                         ChaNameLMouseDown();
                         break;
-                    case SCREEN__CHA_AGE:
+                    case CLIENT_SCREEN_CHAR_AGE:
                         ChaAgeLMouseDown();
                         break;
-                    case SCREEN__CHA_SEX:
+                    case CLIENT_SCREEN_CHAR_SEX:
                         ChaSexLMouseDown();
                         break;
-                    case SCREEN__GM_TOWN:
+                    case CLIENT_SCREEN_WM_TOWN:
                         GmapLMouseDown();
                         break;
-                    case SCREEN__INPUT_BOX:
+                    case CLIENT_SCREEN_INPUTBOX:
                         IboxLMouseDown();
                         break;
-                    case SCREEN__SKILLBOX:
+                    case CLIENT_SCREEN_SKILLBOX:
                         SboxLMouseDown();
                         break;
-                    case SCREEN__USE:
+                    case CLIENT_SCREEN_USE:
                         UseLMouseDown();
                         break;
-                    case SCREEN__PERK:
+                    case CLIENT_SCREEN_PERK:
                         PerkLMouseDown();
                         break;
-                    case SCREEN__TOWN_VIEW:
+                    case CLIENT_SCREEN_WM_TOWNVIEW:
                         TViewLMouseDown();
                         break;
-                    case SCREEN__INVENTORY:
+                    case CLIENT_SCREEN_INVENTORY:
                         InvLMouseDown();
                         break;
-                    case SCREEN__PICKUP:
+                    case CLIENT_SCREEN_PICKUP:
                         PupLMouseDown();
                         break;
-                    case SCREEN__DIALOG:
+                    case CLIENT_SCREEN_DIALOG:
                         DlgLMouseDown( true );
                         break;
-                    case SCREEN__BARTER:
+                    case CLIENT_SCREEN_BARTER:
                         DlgLMouseDown( false );
                         break;
-                    case SCREEN__MINI_MAP:
+                    case CLIENT_SCREEN_MINIMAP:
                         LmapLMouseDown();
                         break;
-                    case SCREEN__MENU_OPTION:
+                    case CLIENT_SCREEN_MENU:
                         MoptLMouseDown();
                         break;
-                    case SCREEN__CHARACTER:
+                    case CLIENT_SCREEN_CHARACTER:
                         ChaLMouseDown( false );
                         break;
-                    case SCREEN__PIP_BOY:
+                    case CLIENT_SCREEN_PIPBOY:
                         PipLMouseDown();
                         break;
-                    case SCREEN__FIX_BOY:
+                    case CLIENT_SCREEN_FIXBOY:
                         FixLMouseDown();
                         break;
-                    case SCREEN__AIM:
+                    case CLIENT_SCREEN_AIM:
                         AimLMouseDown();
                         break;
-                    case SCREEN__SAVE_LOAD:
+                    case CLIENT_SCREEN_LOADSAVE:
                         SaveLoadLMouseDown();
                         break;
                     default:
@@ -1980,20 +1970,20 @@ void FOClient::ParseMouse()
             {
                 switch( GetMainScreen() )
                 {
-                    case SCREEN_GAME:
+                    case CLIENT_MAIN_SCREEN_GAME:
                         if( IntLMouseDown() == IFACE_NONE )
                             GameLMouseDown();
                         break;
-                    case SCREEN_GLOBAL_MAP:
+                    case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapLMouseDown();
                         break;
-                    case SCREEN_LOGIN:
+                    case CLIENT_MAIN_SCREEN_LOGIN:
                         LogLMouseDown();
                         break;
-                    case SCREEN_REGISTRATION:
+                    case CLIENT_MAIN_SCREEN_REGISTRATION:
                         ChaLMouseDown( true );
                         break;
-                    case SCREEN_CREDITS:
+                    case CLIENT_MAIN_SCREEN_CREDITS:
                         TryExit();
                         break;
                     default:
@@ -2013,76 +2003,76 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                    case SCREEN__SPLIT:
+                    case CLIENT_SCREEN_SPLIT:
                         SplitLMouseUp();
                         break;
-                    case SCREEN__TIMER:
+                    case CLIENT_SCREEN_TIMER:
                         TimerLMouseUp();
                         break;
-                    case SCREEN__DIALOGBOX:
+                    case CLIENT_SCREEN_DIALOGBOX:
                         DlgboxLMouseUp();
                         break;
-                    case SCREEN__ELEVATOR:
+                    case CLIENT_SCREEN_ELEVATOR:
                         ElevatorLMouseUp();
                         break;
-                    case SCREEN__SAY:
+                    case CLIENT_SCREEN_SAY:
                         SayLMouseUp();
                         break;
-                    case SCREEN__CHA_AGE:
+                    case CLIENT_SCREEN_CHAR_AGE:
                         ChaAgeLMouseUp();
                         break;
-                    case SCREEN__CHA_SEX:
+                    case CLIENT_SCREEN_CHAR_SEX:
                         ChaSexLMouseUp();
                         break;
-                    case SCREEN__GM_TOWN:
+                    case CLIENT_SCREEN_WM_TOWN:
                         GmapLMouseUp();
                         break;
-                    case SCREEN__INPUT_BOX:
+                    case CLIENT_SCREEN_INPUTBOX:
                         IboxLMouseUp();
                         break;
-                    case SCREEN__SKILLBOX:
+                    case CLIENT_SCREEN_SKILLBOX:
                         SboxLMouseUp();
                         break;
-                    case SCREEN__USE:
+                    case CLIENT_SCREEN_USE:
                         UseLMouseUp();
                         break;
-                    case SCREEN__PERK:
+                    case CLIENT_SCREEN_PERK:
                         PerkLMouseUp();
                         break;
-                    case SCREEN__TOWN_VIEW:
+                    case CLIENT_SCREEN_WM_TOWNVIEW:
                         TViewLMouseUp();
                         break;
-                    case SCREEN__INVENTORY:
+                    case CLIENT_SCREEN_INVENTORY:
                         InvLMouseUp();
                         break;
-                    case SCREEN__PICKUP:
+                    case CLIENT_SCREEN_PICKUP:
                         PupLMouseUp();
                         break;
-                    case SCREEN__DIALOG:
+                    case CLIENT_SCREEN_DIALOG:
                         DlgLMouseUp( true );
                         break;
-                    case SCREEN__BARTER:
+                    case CLIENT_SCREEN_BARTER:
                         DlgLMouseUp( false );
                         break;
-                    case SCREEN__MINI_MAP:
+                    case CLIENT_SCREEN_MINIMAP:
                         LmapLMouseUp();
                         break;
-                    case SCREEN__MENU_OPTION:
+                    case CLIENT_SCREEN_MENU:
                         MoptLMouseUp();
                         break;
-                    case SCREEN__CHARACTER:
+                    case CLIENT_SCREEN_CHARACTER:
                         ChaLMouseUp( false );
                         break;
-                    case SCREEN__PIP_BOY:
+                    case CLIENT_SCREEN_PIPBOY:
                         PipLMouseUp();
                         break;
-                    case SCREEN__FIX_BOY:
+                    case CLIENT_SCREEN_FIXBOY:
                         FixLMouseUp();
                         break;
-                    case SCREEN__AIM:
+                    case CLIENT_SCREEN_AIM:
                         AimLMouseUp();
                         break;
-                    case SCREEN__SAVE_LOAD:
+                    case CLIENT_SCREEN_LOADSAVE:
                         SaveLoadLMouseUp();
                         break;
                     default:
@@ -2093,16 +2083,16 @@ void FOClient::ParseMouse()
             {
                 switch( GetMainScreen() )
                 {
-                    case SCREEN_GAME:
+                    case CLIENT_MAIN_SCREEN_GAME:
                         (IfaceHold == IFACE_NONE) ? GameLMouseUp() : IntLMouseUp();
                         break;
-                    case SCREEN_GLOBAL_MAP:
+                    case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapLMouseUp();
                         break;
-                    case SCREEN_LOGIN:
+                    case CLIENT_MAIN_SCREEN_LOGIN:
                         LogLMouseUp();
                         break;
-                    case SCREEN_REGISTRATION:
+                    case CLIENT_MAIN_SCREEN_REGISTRATION:
                         ChaLMouseUp( true );
                         break;
                     default:
@@ -2122,22 +2112,22 @@ void FOClient::ParseMouse()
             {
                 switch( GetActiveScreen() )
                 {
-                    case SCREEN__USE:
+                    case CLIENT_SCREEN_USE:
                         UseRMouseDown();
                         break;
-                    case SCREEN__INVENTORY:
+                    case CLIENT_SCREEN_INVENTORY:
                         InvRMouseDown();
                         break;
-                    case SCREEN__DIALOG:
+                    case CLIENT_SCREEN_DIALOG:
                         DlgRMouseDown( true );
                         break;
-                    case SCREEN__BARTER:
+                    case CLIENT_SCREEN_BARTER:
                         DlgRMouseDown( false );
                         break;
-                    case SCREEN__PICKUP:
+                    case CLIENT_SCREEN_PICKUP:
                         PupRMouseDown();
                         break;
-                    case SCREEN__PIP_BOY:
+                    case CLIENT_SCREEN_PIPBOY:
                         PipRMouseDown();
                         break;
                     default:
@@ -2148,11 +2138,11 @@ void FOClient::ParseMouse()
             {
                 switch( GetMainScreen() )
                 {
-                    case SCREEN_GAME:
+                    case CLIENT_MAIN_SCREEN_GAME:
                         IntRMouseDown();
                         GameRMouseDown();
                         break;
-                    case SCREEN_GLOBAL_MAP:
+                    case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapRMouseDown();
                         break;
                     default:
@@ -2169,10 +2159,10 @@ void FOClient::ParseMouse()
             {
                 switch( GetMainScreen() )
                 {
-                    case SCREEN_GAME:
+                    case CLIENT_MAIN_SCREEN_GAME:
                         GameRMouseUp();
                         break;
-                    case SCREEN_GLOBAL_MAP:
+                    case CLIENT_MAIN_SCREEN_WORLDMAP:
                         GmapRMouseUp();
                         break;
                     default:
@@ -2206,7 +2196,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Split value                                                          */
 /************************************************************************/
-    if( screen == SCREEN__SPLIT )
+    if( screen == CLIENT_SCREEN_SPLIT )
     {
         if( IsCurInRect( SplitWValue, SplitX, SplitY ) || IsCurInRect( SplitWItem, SplitX, SplitY ) )
         {
@@ -2219,7 +2209,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Timer value                                                          */
 /************************************************************************/
-    else if( screen == SCREEN__TIMER )
+    else if( screen == CLIENT_SCREEN_TIMER )
     {
         if( IsCurInRect( TimerWValue, TimerX, TimerY ) || IsCurInRect( TimerWItem, TimerX, TimerY ) )
         {
@@ -2232,7 +2222,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Use scroll                                                           */
 /************************************************************************/
-    else if( screen == SCREEN__USE )
+    else if( screen == CLIENT_SCREEN_USE )
     {
         if( IsCurInRect( UseWInv, UseX, UseY ) )
             ContainerWheelScroll( (int)UseCont.size(), UseWInv.H(), UseHeightItem, UseScroll, data );
@@ -2240,7 +2230,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* PerkUp scroll                                                        */
 /************************************************************************/
-    else if( screen == SCREEN__PERK )
+    else if( screen == CLIENT_SCREEN_PERK )
     {
         if( data > 0 && IsCurInRect( PerkWPerks, PerkX, PerkY ) && PerkScroll > 0 )
             PerkScroll--;
@@ -2250,7 +2240,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Local, global map zoom, global tabs scroll, mess box scroll          */
 /************************************************************************/
-    else if( screen == SCREEN_NONE || screen == SCREEN__TOWN_VIEW )
+    else if( screen == CLIENT_SCREEN_NONE || screen == CLIENT_SCREEN_WM_TOWNVIEW )
     {
         Rect r = MessBoxCurRectDraw();
         if( !r.IsZero() && IsCurInRect( r ) )
@@ -2272,7 +2262,7 @@ void FOClient::ProcessMouseWheel( int data )
                 MessBoxGenerate();
             }
         }
-        else if( IsMainScreen( SCREEN_GAME ) )
+        else if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) )
         {
             if( IntVisible && Chosen && IsCurInRect( IntBItem ) )
             {
@@ -2285,13 +2275,13 @@ void FOClient::ProcessMouseWheel( int data )
                     Net_SendRateItem();
             }
 
-            if( !ConsoleActive && GameOpt.MapZooming && IsMainScreen( SCREEN_GAME ) && GameOpt.SpritesZoomMin != GameOpt.SpritesZoomMax )
+            if( !ConsoleActive && GameOpt.MapZooming && IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && GameOpt.SpritesZoomMin != GameOpt.SpritesZoomMax )
             {
                 HexMngr.ChangeZoom( data > 0 ? -1 : 1 );
                 RebuildLookBorders = true;
             }
         }
-        else if( IsMainScreen( SCREEN_GLOBAL_MAP ) )
+        else if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
         {
             GmapChangeZoom( (float)-data / 20.0f );
             if( IsCurInRect( GmapWTabs ) )
@@ -2332,7 +2322,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Inventory scroll                                                     */
 /************************************************************************/
-    else if( screen == SCREEN__INVENTORY )
+    else if( screen == CLIENT_SCREEN_INVENTORY )
     {
         if( IsCurInRect( InvWInv, InvX, InvY ) )
             ContainerWheelScroll( (int)InvCont.size(), InvWInv.H(), InvHeightItem, InvScroll, data );
@@ -2353,7 +2343,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Dialog texts, answers                                                */
 /************************************************************************/
-    else if( screen == SCREEN__DIALOG )
+    else if( screen == CLIENT_SCREEN_DIALOG )
     {
         if( IsCurInRect( DlgWText, DlgX, DlgY ) )
         {
@@ -2370,7 +2360,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Barter scroll                                                        */
 /************************************************************************/
-    else if( screen == SCREEN__BARTER )
+    else if( screen == CLIENT_SCREEN_BARTER )
     {
         if( IsCurInRect( BarterWCont1, DlgX, DlgY ) )
             ContainerWheelScroll( (int)BarterCont1.size(), BarterWCont1.H(), BarterCont1HeightItem, BarterScroll1, data );
@@ -2391,7 +2381,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* PickUp scroll                                                        */
 /************************************************************************/
-    else if( screen == SCREEN__PICKUP )
+    else if( screen == CLIENT_SCREEN_PICKUP )
     {
         if( IsCurInRect( PupWCont1, PupX, PupY ) )
             ContainerWheelScroll( (int)PupCont1.size(), PupWCont1.H(), PupHeightItem1, PupScroll1, data );
@@ -2401,7 +2391,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Character switch scroll                                              */
 /************************************************************************/
-    else if( screen == SCREEN__CHARACTER )
+    else if( screen == CLIENT_SCREEN_CHARACTER )
     {
         if( data > 0 )
         {
@@ -2424,7 +2414,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Minimap zoom                                                         */
 /************************************************************************/
-    else if( screen == SCREEN__MINI_MAP )
+    else if( screen == CLIENT_SCREEN_MINIMAP )
     {
         if( IsCurInRect( LmapWMap, LmapX, LmapY ) )
         {
@@ -2439,7 +2429,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* PipBoy scroll                                                        */
 /************************************************************************/
-    else if( screen == SCREEN__PIP_BOY )
+    else if( screen == CLIENT_SCREEN_PIPBOY )
     {
         if( IsCurInRect( PipWMonitor, PipX, PipY ) )
         {
@@ -2472,7 +2462,7 @@ void FOClient::ProcessMouseWheel( int data )
 /************************************************************************/
 /* Save/Load                                                            */
 /************************************************************************/
-    else if( screen == SCREEN__SAVE_LOAD )
+    else if( screen == CLIENT_SCREEN_LOADSAVE )
     {
         int ox = (SaveLoadLoginScreen ? SaveLoadCX : SaveLoadX);
         int oy = (SaveLoadLoginScreen ? SaveLoadCY : SaveLoadY);
@@ -2808,7 +2798,7 @@ void FOClient::NetDisconnect()
     WriteLog( "Traffic: send<%u>, receive<%u>, whole<%u>, receive real<%u>.\n",
               BytesSend, BytesReceive, BytesReceive + BytesSend, BytesRealReceive );
 
-    SetCurMode( CUR_DEFAULT );
+    SetCurMode( CURSOR_DEFAULT );
     HexMngr.UnloadMap();
     ClearCritters();
     QuestMngr.Finish();
@@ -3964,14 +3954,14 @@ void FOClient::Net_OnAddCritter( bool is_npc )
 
         AddCritter( cr );
 
-        if( cr->IsChosen() && !IsMainScreen( SCREEN_GLOBAL_MAP ) )
+        if( cr->IsChosen() && !IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
         {
             MoveDirs.clear();
             cr->MoveSteps.clear();
             HexMngr.FindSetCenter( cr->HexX, cr->HexY );
             cr->AnimateStay();
             SndMngr.PlayAmbient( MsgGM->GetStr( STR_MAP_AMBIENT_( HexMngr.GetCurPidMap() ) ) );
-            ShowMainScreen( SCREEN_GAME );
+            ShowMainScreen( CLIENT_MAIN_SCREEN_GAME );
             ScreenFadeOut();
             HexMngr.RebuildLight();
         }
@@ -4221,8 +4211,8 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     }
 
     // Dialog text
-    bool is_dialog = IsScreenPresent( SCREEN__DIALOG );
-    bool is_barter = IsScreenPresent( SCREEN__BARTER );
+    bool is_dialog = IsScreenPresent( CLIENT_SCREEN_DIALOG );
+    bool is_barter = IsScreenPresent( CLIENT_SCREEN_BARTER );
     if( (how_say == SAY_DIALOG || how_say == SAY_APPEND) && (is_dialog || is_barter) )
     {
         CritterCl* npc = GetCritter( DlgNpcId );
@@ -4249,9 +4239,9 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     }
 
     // Encounter question
-    if( how_say >= SAY_ENCOUNTER_ANY && how_say <= SAY_ENCOUNTER_TB && IsMainScreen( SCREEN_GLOBAL_MAP ) )
+    if( how_say >= SAY_ENCOUNTER_ANY && how_say <= SAY_ENCOUNTER_TB && IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
     {
-        ShowScreen( SCREEN__DIALOGBOX );
+        ShowScreen( CLIENT_SCREEN_DIALOGBOX );
         if( how_say == SAY_ENCOUNTER_ANY )
         {
             DlgboxType = DIALOGBOX_ENCOUNTER_ANY;
@@ -4938,7 +4928,7 @@ void FOClient::Net_OnChosenParams()
         AnimRun( IntWCombatAnim, ANIMRUN_SET_FRM( 244 ) );
     else
         AnimRun( IntWCombatAnim, ANIMRUN_SET_FRM( 0 ) );
-    if( IsScreenPresent( SCREEN__CHARACTER ) )
+    if( IsScreenPresent( CLIENT_SCREEN_CHARACTER ) )
         ChaPrepareSwitch();
 
     // Process all changed parameters
@@ -4990,8 +4980,8 @@ void FOClient::Net_OnChosenParam()
         case ST_CURRENT_AP:
         {
             Chosen->ApRegenerationTick = 0;
+            break;
         }
-        break;
         case TO_BATTLE:
         {
             if( Chosen->GetParam( TO_BATTLE ) )
@@ -5006,8 +4996,8 @@ void FOClient::Net_OnChosenParam()
                 if( AnimGetCurSprCnt( IntWCombatAnim ) == AnimGetSprCount( IntWCombatAnim ) - 1 )
                     SndMngr.PlaySound( SOUND_COMBAT_MODE_OFF );
             }
+            break;
         }
-        break;
         case OTHER_BREAK_TIME:
         {
             if( value < 0 )
@@ -5016,13 +5006,13 @@ void FOClient::Net_OnChosenParam()
             SetAction( CHOSEN_NONE );
             MoveDirs.clear();
             Chosen->MoveSteps.clear();
+            break;
         }
-        break;
         case OTHER_FLAGS:
         {
             Chosen->Flags = value;
+            break;
         }
-        break;
         case OTHER_BASE_TYPE:
         {
             if( Chosen->Multihex < 0 && CritType::GetMultihex( Chosen->GetCrType() ) != CritType::GetMultihex( value ) )
@@ -5034,8 +5024,8 @@ void FOClient::Net_OnChosenParam()
             Chosen->SetBaseType( value );
             if( !Chosen->IsAnim() )
                 Chosen->Action( ACTION_REFRESH, 0, NULL, false );
+            break;
         }
-        break;
         case OTHER_MULTIHEX:
         {
             int old_mh = Chosen->GetMultihex();
@@ -5045,8 +5035,8 @@ void FOClient::Net_OnChosenParam()
                 HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), old_mh, false );
                 HexMngr.SetMultihex( Chosen->GetHexX(), Chosen->GetHexY(), Chosen->GetMultihex(), true );
             }
+            break;
         }
-        break;
         case OTHER_YOU_TURN:
         {
             if( value < 0 )
@@ -5056,8 +5046,8 @@ void FOClient::Net_OnChosenParam()
             TurnBasedCurCritterId = Chosen->GetId();
             HexMngr.SetCritterContour( 0, 0 );
             FlashGameWindow();
+            break;
         }
-        break;
         case OTHER_CLEAR_MAP:
         {
             CritMap crits = HexMngr.GetCritters();
@@ -5074,8 +5064,8 @@ void FOClient::Net_OnChosenParam()
                 if( item->IsItem() )
                     HexMngr.DeleteItem( *it, true );
             }
+            break;
         }
-        break;
         case OTHER_TELEPORT:
         {
             ushort hx = (value >> 16) & 0xFFFF;
@@ -5093,13 +5083,13 @@ void FOClient::Net_OnChosenParam()
                 HexMngr.SetCrit( Chosen );
                 HexMngr.ScrollToHex( Chosen->GetHexX(), Chosen->GetHexY(), 0.1, true );
             }
+            break;
         }
-        break;
         default:
             break;
     }
 
-    if( IsScreenPresent( SCREEN__CHARACTER ) )
+    if( IsScreenPresent( CLIENT_SCREEN_CHARACTER ) )
         ChaPrepareSwitch();
     RebuildLookBorders = true;     // Maybe changed some parameter influencing on look borders
 }
@@ -5453,8 +5443,8 @@ void FOClient::Net_OnPing()
 
     if( ping == PING_WAIT )
     {
-        if( GetActiveScreen() == SCREEN__BARTER )
-            SetCurMode( CUR_HAND );
+        if( GetActiveScreen() == CLIENT_SCREEN_BARTER )
+            SetCurMode( CURSOR_HAND );
         else
             SetLastCurMode();
     }
@@ -5499,10 +5489,10 @@ void FOClient::Net_OnChosenTalk()
     if( !count_answ )
     {
         // End dialog or barter
-        if( IsScreenPresent( SCREEN__DIALOG ) )
-            HideScreen( SCREEN__DIALOG );
-        if( IsScreenPresent( SCREEN__BARTER ) )
-            HideScreen( SCREEN__BARTER );
+        if( IsScreenPresent( CLIENT_SCREEN_DIALOG ) )
+            HideScreen( CLIENT_SCREEN_DIALOG );
+        if( IsScreenPresent( CLIENT_SCREEN_BARTER ) )
+            HideScreen( CLIENT_SCREEN_BARTER );
         return;
     }
 
@@ -5620,9 +5610,9 @@ void FOClient::Net_OnChosenTalk()
         DlgEndTick = Timer::GameTick() + talk_time;
     else
         DlgEndTick = 0;
-    if( IsScreenPresent( SCREEN__BARTER ) )
-        HideScreen( SCREEN__BARTER );
-    ShowScreen( SCREEN__DIALOG );
+    if( IsScreenPresent( CLIENT_SCREEN_BARTER ) )
+        HideScreen( CLIENT_SCREEN_BARTER );
+    ShowScreen( CLIENT_SCREEN_DIALOG );
 }
 
 void FOClient::Net_OnCheckUID2()
@@ -5699,7 +5689,7 @@ void FOClient::Net_OnLoadMap()
     HexMngr.UnloadMap();
     SndMngr.ClearSounds();
     FlashGameWindow();
-    ShowMainScreen( SCREEN_WAIT );
+    ShowMainScreen( CLIENT_MAIN_SCREEN_WAIT );
     ClearCritters();
 
     ResMngr.FreeResources( RES_IFACE_EXT );
@@ -5720,7 +5710,7 @@ void FOClient::Net_OnLoadMap()
     if( !map_pid )
     {
         GmapNullParams();
-        ShowMainScreen( SCREEN_GLOBAL_MAP );
+        ShowMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP );
         Net_SendLoadMapOk();
         #ifndef FO_D3D
         if( IsVideoPlayed() )
@@ -6064,7 +6054,7 @@ void FOClient::Net_OnGlobalInfo()
             if( GmapOffsetY < GmapWMap[3] - h )
                 GmapOffsetY = GmapWMap[3] - h;
 
-            SetCurMode( CUR_DEFAULT );
+            SetCurMode( CURSOR_DEFAULT );
         }
 
         // Car master id
@@ -6139,10 +6129,10 @@ void FOClient::Net_OnContainerInfo()
 
     if( transfer_type == TRANSFER_CLOSE )
     {
-        if( IsScreenPresent( SCREEN__BARTER ) )
-            HideScreen( SCREEN__BARTER );
-        if( IsScreenPresent( SCREEN__PICKUP ) )
-            HideScreen( SCREEN__PICKUP );
+        if( IsScreenPresent( CLIENT_SCREEN_BARTER ) )
+            HideScreen( CLIENT_SCREEN_BARTER );
+        if( IsScreenPresent( CLIENT_SCREEN_PICKUP ) )
+            HideScreen( CLIENT_SCREEN_PICKUP );
         return;
     }
 
@@ -6199,10 +6189,10 @@ void FOClient::Net_OnContainerInfo()
 
         if( open_screen )
         {
-            if( IsScreenPresent( SCREEN__DIALOG ) )
-                HideScreen( SCREEN__DIALOG );
-            if( !IsScreenPresent( SCREEN__BARTER ) )
-                ShowScreen( SCREEN__BARTER );
+            if( IsScreenPresent( CLIENT_SCREEN_DIALOG ) )
+                HideScreen( CLIENT_SCREEN_DIALOG );
+            if( !IsScreenPresent( CLIENT_SCREEN_BARTER ) )
+                ShowScreen( CLIENT_SCREEN_BARTER );
             BarterScroll1 = 0;
             BarterScroll2 = 0;
             BarterText = "";
@@ -6222,8 +6212,8 @@ void FOClient::Net_OnContainerInfo()
 
         if( open_screen )
         {
-            if( !IsScreenPresent( SCREEN__PICKUP ) )
-                ShowScreen( SCREEN__PICKUP );
+            if( !IsScreenPresent( CLIENT_SCREEN_PICKUP ) )
+                ShowScreen( CLIENT_SCREEN_PICKUP );
             PupScroll1 = 0;
             PupScroll2 = 0;
         }
@@ -6256,7 +6246,7 @@ void FOClient::Net_OnFollow()
     Bin >> map_pid;
     Bin >> wait_time;
 
-    ShowScreen( SCREEN__DIALOGBOX );
+    ShowScreen( CLIENT_SCREEN_DIALOGBOX );
     DlgboxType = DIALOGBOX_FOLLOW;
     FollowRuleId = rule;
     FollowType = follow_type;
@@ -6320,10 +6310,10 @@ void FOClient::Net_OnPlayersBarter()
             if( !cr )
                 break;
 
-            if( IsScreenPresent( SCREEN__DIALOG ) )
-                HideScreen( SCREEN__DIALOG );
-            if( !IsScreenPresent( SCREEN__BARTER ) )
-                ShowScreen( SCREEN__BARTER );
+            if( IsScreenPresent( CLIENT_SCREEN_DIALOG ) )
+                HideScreen( CLIENT_SCREEN_DIALOG );
+            if( !IsScreenPresent( CLIENT_SCREEN_BARTER ) )
+                ShowScreen( CLIENT_SCREEN_BARTER );
 
             BarterIsPlayers = true;
             BarterOpponentId = param;
@@ -6334,20 +6324,20 @@ void FOClient::Net_OnPlayersBarter()
             BarterCont1oInit.clear();
             BarterCont2oInit.clear();
             CollectContItems();
+            break;
         }
-        break;
         case BARTER_END:
         {
             if( IsScreenPlayersBarter() )
                 ShowScreen( 0 );
+            break;
         }
-        break;
         case BARTER_TRY:
         {
             CritterCl* cr = GetCritter( param );
             if( !cr )
                 break;
-            ShowScreen( SCREEN__DIALOGBOX );
+            ShowScreen( CLIENT_SCREEN_DIALOGBOX );
             DlgboxType = DIALOGBOX_BARTER;
             PBarterPlayerId = param;
             BarterOpponentHide = (param_ext != 0);
@@ -6358,8 +6348,8 @@ void FOClient::Net_OnPlayersBarter()
             DlgboxButtonText[1] = MsgGame->GetStr( STR_DIALOGBOX_BARTER_HIDE );
             DlgboxButtonText[2] = MsgGame->GetStr( STR_DIALOGBOX_CANCEL );
             DlgboxButtonsCount = 3;
+            break;
         }
-        break;
         case BARTER_SET_SELF:
         case BARTER_SET_OPPONENT:
         {
@@ -6403,8 +6393,8 @@ void FOClient::Net_OnPlayersBarter()
                 // See void FOClient::Net_OnPlayersBarterSetHide()
             }
             CollectContItems();
+            break;
         }
-        break;
         case BARTER_UNSET_SELF:
         case BARTER_UNSET_OPPONENT:
         {
@@ -6457,8 +6447,8 @@ void FOClient::Net_OnPlayersBarter()
                 }
             }
             CollectContItems();
+            break;
         }
-        break;
         case BARTER_OFFER:
         {
             if( !IsScreenPlayersBarter() )
@@ -6481,8 +6471,8 @@ void FOClient::Net_OnPlayersBarter()
                 BarterText += "\n";
                 DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
             }
+            break;
         }
-        break;
         default:
             Net_SendPlayersBarter( BARTER_END, 0, 0 );
             break;
@@ -6553,10 +6543,10 @@ void FOClient::Net_OnShowScreen()
         case SHOW_SCREEN_SKILLBOX:
         case SHOW_SCREEN_BAG:
         case SHOW_SCREEN_SAY:
-            ShowScreen( SCREEN_NONE );
+            ShowScreen( CLIENT_SCREEN_NONE );
             break;
         default:
-            ShowScreen( SCREEN_NONE );
+            ShowScreen( CLIENT_SCREEN_NONE );
             break;
     }
 
@@ -6567,7 +6557,7 @@ void FOClient::Net_OnShowScreen()
             TimerStart( 0, ResMngr.GetInvAnim( param ), 0 );
             break;
         case SHOW_SCREEN_DIALOGBOX:
-            ShowScreen( SCREEN__DIALOGBOX );
+            ShowScreen( CLIENT_SCREEN_DIALOGBOX );
             DlgboxWait = 0;
             DlgboxText[0] = 0;
             DlgboxType = DIALOGBOX_MANUAL;
@@ -6580,37 +6570,37 @@ void FOClient::Net_OnShowScreen()
             break;
         case SHOW_SCREEN_SKILLBOX:
             SboxUseOn.Clear();
-            ShowScreen( SCREEN__SKILLBOX );
+            ShowScreen( CLIENT_SCREEN_SKILLBOX );
             break;
         case SHOW_SCREEN_BAG:
             UseSelect.Clear();
-            ShowScreen( SCREEN__USE );
+            ShowScreen( CLIENT_SCREEN_USE );
             break;
         case SHOW_SCREEN_SAY:
-            ShowScreen( SCREEN__SAY );
+            ShowScreen( CLIENT_SCREEN_SAY );
             SayType = DIALOGSAY_TEXT;
             SayText = "";
             if( param )
                 SayOnlyNumbers = true;
             break;
-        case SHOW_ELEVATOR:
+        case SHOW_SCREEN_ELEVATOR:
             ElevatorGenerate( param );
             break;
         // Just open
         case SHOW_SCREEN_INVENTORY:
-            ShowScreen( SCREEN__INVENTORY );
+            ShowScreen( CLIENT_SCREEN_INVENTORY );
             return;
         case SHOW_SCREEN_CHARACTER:
-            ShowScreen( SCREEN__CHARACTER );
+            ShowScreen( CLIENT_SCREEN_CHARACTER );
             return;
         case SHOW_SCREEN_FIXBOY:
-            ShowScreen( SCREEN__FIX_BOY );
+            ShowScreen( CLIENT_SCREEN_FIXBOY );
             return;
         case SHOW_SCREEN_PIPBOY:
-            ShowScreen( SCREEN__PIP_BOY );
+            ShowScreen( CLIENT_SCREEN_PIPBOY );
             return;
         case SHOW_SCREEN_MINIMAP:
-            ShowScreen( SCREEN__MINI_MAP );
+            ShowScreen( CLIENT_SCREEN_MINIMAP );
             return;
         case SHOW_SCREEN_CLOSE:
             return;
@@ -7091,10 +7081,10 @@ void FOClient::Net_OnViewMap()
 
     HexMngr.FindSetCenter( hx, hy );
     SndMngr.PlayAmbient( MsgGM->GetStr( STR_MAP_AMBIENT_( HexMngr.GetCurPidMap() ) ) );
-    ShowMainScreen( SCREEN_GAME );
+    ShowMainScreen( CLIENT_MAIN_SCREEN_GAME );
     ScreenFadeOut();
     HexMngr.RebuildLight();
-    ShowScreen( SCREEN__TOWN_VIEW );
+    ShowScreen( CLIENT_SCREEN_WM_TOWNVIEW );
 
     if( loc_id )
     {
@@ -7121,7 +7111,7 @@ void FOClient::Net_OnCraftAsk()
 
     CHECK_IN_BUFF_ERROR;
 
-    if( IsScreenPresent( SCREEN__FIX_BOY ) && FixMode == FIX_MODE_LIST )
+    if( IsScreenPresent( CLIENT_SCREEN_FIXBOY ) && FixMode == FIX_MODE_LIST )
         FixGenerate( FIX_MODE_LIST );
 }
 
@@ -7274,14 +7264,14 @@ Item* FOClient::GetTargetContItem()
         return NULL;
     uint item_id = TargetSmth.GetId();
 
-    if( GetActiveScreen() != SCREEN_NONE )
+    if( GetActiveScreen() != CLIENT_SCREEN_NONE )
     {
         switch( GetActiveScreen() )
         {
-            case SCREEN__USE:
+            case CLIENT_SCREEN_USE:
                 TRY_SEARCH_IN_CONT( UseCont );
                 break;
-            case SCREEN__INVENTORY:
+            case CLIENT_SCREEN_INVENTORY:
                 TRY_SEARCH_IN_CONT( InvCont );
                 if( Chosen )
                 {
@@ -7290,11 +7280,11 @@ Item* FOClient::GetTargetContItem()
                         TRY_SEARCH_IN_SLOT( item );
                 }
                 break;
-            case SCREEN__PICKUP:
+            case CLIENT_SCREEN_PICKUP:
                 TRY_SEARCH_IN_CONT( PupCont1 );
                 TRY_SEARCH_IN_CONT( PupCont2 );
                 break;
-            case SCREEN__BARTER:
+            case CLIENT_SCREEN_BARTER:
                 if( TargetSmth.GetParam() == 0 )
                     TRY_SEARCH_IN_CONT( BarterCont1 );
                 if( TargetSmth.GetParam() == 0 )
@@ -7393,7 +7383,7 @@ void FOClient::ChosenChangeSlot()
 
 void FOClient::WaitPing()
 {
-    SetCurMode( CUR_WAIT );
+    SetCurMode( CURSOR_WAIT );
     Net_SendPing( PING_WAIT );
 }
 
@@ -7434,7 +7424,7 @@ void FOClient::CrittersProcess()
     if( !Chosen )
         return;
 
-    if( IsMainScreen( SCREEN_GAME ) )
+    if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) )
     {
         // Timeout mode
         if( !Chosen->GetParam( TO_BATTLE ) && AnimGetCurSprCnt( IntWCombatAnim ) > 0 )
@@ -7719,8 +7709,8 @@ label_EndMove:
                 Chosen->MoveSteps.resize( 1 );
                 return;
             }
+            break;
         }
-        break;
         case CHOSEN_DIR:
         {
             int cw = act.Param[0];
@@ -7743,8 +7733,8 @@ label_EndMove:
             }
             Chosen->SetDir( dir );
             Net_SendDir();
+            break;
         }
-        break;
         case CHOSEN_USE_ITEM:
         {
             uint   item_id = act.Param[0];
@@ -7814,8 +7804,8 @@ label_EndMove:
             bool is_attack = (target_type == TARGET_CRITTER && is_main_item && item->IsWeapon() && use < USE_MAX);
             bool is_reload = (target_type == TARGET_SELF_ITEM && use == USE_RELOAD && item->IsWeapon() );
             bool is_self = (target_type == TARGET_SELF || target_type == TARGET_SELF_ITEM);
-            if( !is_attack && !is_reload && (IsCurMode( CUR_USE_ITEM ) || IsCurMode( CUR_USE_WEAPON ) ) )
-                SetCurMode( CUR_DEFAULT );
+            if( !is_attack && !is_reload && (IsCurMode( CURSOR_USE_ITEM ) || IsCurMode( CURSOR_USE_WEAPON ) ) )
+                SetCurMode( CURSOR_DEFAULT );
 
             // Aim overriding
             if( is_attack && ClientFunctions.HitAim && Script::PrepareContext( ClientFunctions.HitAim, _FUNC_, "Game" ) )
@@ -7875,8 +7865,8 @@ label_EndMove:
                 {
                     item->SetMode( USE_PRIMARY );
                     Net_SendRateItem();
-                    if( GetActiveScreen() == SCREEN_NONE )
-                        SetCurMode( CUR_USE_WEAPON );
+                    if( GetActiveScreen() == CLIENT_SCREEN_NONE )
+                        SetCurMode( CURSOR_USE_WEAPON );
                 }
 
                 if( !item->WeapGetMaxAmmoCount() )
@@ -7991,8 +7981,8 @@ label_EndMove:
                 AddActionBack( act );
                 return;
             }
+            break;
         }
-        break;
         case CHOSEN_MOVE_ITEM:
         {
             uint  item_id = act.Param[0];
@@ -8114,7 +8104,7 @@ label_EndMove:
             }
 
             // Affect barter screen
-            if( to_slot == SLOT_GROUND && is_barter_cont && IsScreenPresent( SCREEN__BARTER ) )
+            if( to_slot == SLOT_GROUND && is_barter_cont && IsScreenPresent( CLIENT_SCREEN_BARTER ) )
             {
                 auto it = std::find( BarterCont1oInit.begin(), BarterCont1oInit.end(), item_id );
                 if( it != BarterCont1oInit.end() )
@@ -8139,8 +8129,8 @@ label_EndMove:
 
             // Spend AP
             Chosen->SubAp( ap_cost );
+            break;
         }
-        break;
         case CHOSEN_MOVE_ITEM_CONTAINER:
         {
             uint item_id = act.Param[0];
@@ -8172,8 +8162,8 @@ label_EndMove:
             Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + (cont == IFACE_PUP_CONT2 ? 0 : 2), item );
             PupTransfer( item_id, cont, count );
             Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
+            break;
         }
-        break;
         case CHOSEN_TAKE_ALL:
         {
             CHECK_NEED_AP( Chosen->GetApCostMoveItemContainer() );
@@ -8196,8 +8186,8 @@ label_EndMove:
                 Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
                 CollectContItems();
             }
+            break;
         }
-        break;
         case CHOSEN_USE_SKILL_ON_CRITTER:
         {
             ushort     skill = act.Param[0];
@@ -8258,8 +8248,8 @@ label_EndMove:
             Net_SendUseSkill( skill, cr );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
+            break;
         }
-        break;
         case CHOSEN_USE_SKILL_ON_ITEM:
         {
             bool   is_inv = act.Param[0] != 0;
@@ -8276,7 +8266,7 @@ label_EndMove:
 
                 if( skill == SK_SCIENCE && item->IsHolodisk() )
                 {
-                    ShowScreen( SCREEN__INPUT_BOX );
+                    ShowScreen( CLIENT_SCREEN_INPUTBOX );
                     IboxMode = IBOX_MODE_HOLO;
                     IboxHolodiskId = item->GetId();
                     IboxTitle = GetHoloText( STR_HOLO_INFO_NAME_( item->HolodiskGetNum() ) );
@@ -8330,8 +8320,8 @@ label_EndMove:
             Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item_action );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
+            break;
         }
-        break;
         case CHOSEN_USE_SKILL_ON_SCENERY:
         {
             ushort skill = act.Param[0];
@@ -8372,8 +8362,8 @@ label_EndMove:
             Net_SendUseSkill( skill, item );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             // WaitPing();
+            break;
         }
-        break;
         case CHOSEN_TALK_NPC:
         {
             uint crid = act.Param[0];
@@ -8424,8 +8414,8 @@ label_EndMove:
 
             Net_SendTalk( true, cr->GetId(), ANSWER_BEGIN );
             WaitPing();
+            break;
         }
-        break;
         case CHOSEN_PICK_ITEM:
         {
             ushort pid = act.Param[0];
@@ -8466,8 +8456,8 @@ label_EndMove:
             Chosen->Action( ACTION_PICK_ITEM, 0, item );
             Chosen->SubAp( Chosen->GetApCostPickItem() );
             // WaitPing();
+            break;
         }
-        break;
         case CHOSEN_PICK_CRITTER:
         {
             uint crid = act.Param[0];
@@ -8521,8 +8511,8 @@ label_EndMove:
             }
             Chosen->SubAp( Chosen->GetApCostPickCritter() );
             WaitPing();
+            break;
         }
-        break;
         case CHOSEN_WRITE_HOLODISK:
         {
             uint holodisk_id = act.Param[0];
@@ -8538,8 +8528,8 @@ label_EndMove:
                 Net_SendSetUserHoloStr( holo, IboxTitle.c_str(), IboxText.c_str() );
                 Chosen->Action( ACTION_USE_ITEM, 0, holo );
             }
+            break;
         }
-        break;
     }
 
     EraseFrontAction();
@@ -8568,44 +8558,44 @@ void FOClient::TryPickItemOnGround()
 void FOClient::TryExit()
 {
     int active = GetActiveScreen();
-    if( active != SCREEN_NONE )
+    if( active != CLIENT_SCREEN_NONE )
     {
         switch( active )
         {
-            case SCREEN__TIMER:
+            case CLIENT_SCREEN_TIMER:
                 TimerClose( false );
                 break;
-            case SCREEN__SPLIT:
+            case CLIENT_SCREEN_SPLIT:
                 SplitClose( false );
                 break;
-            case SCREEN__TOWN_VIEW:
+            case CLIENT_SCREEN_WM_TOWNVIEW:
                 Net_SendRefereshMe();
                 break;
-            case SCREEN__DIALOG:
+            case CLIENT_SCREEN_DIALOG:
                 DlgKeyDown( true, DIK_ESCAPE, "" );
                 break;
-            case SCREEN__BARTER:
+            case CLIENT_SCREEN_BARTER:
                 DlgKeyDown( false, DIK_ESCAPE, "" );
                 break;
-            case SCREEN__DIALOGBOX:
+            case CLIENT_SCREEN_DIALOGBOX:
                 if( DlgboxType >= DIALOGBOX_ENCOUNTER_ANY && DlgboxType <= DIALOGBOX_ENCOUNTER_TB )
                     Net_SendRuleGlobal( GM_CMD_ANSWER, -1 );
-            case SCREEN__PERK:
-            case SCREEN__ELEVATOR:
-            case SCREEN__SAY:
-            case SCREEN__SKILLBOX:
-            case SCREEN__USE:
-            case SCREEN__AIM:
-            case SCREEN__INVENTORY:
-            case SCREEN__PICKUP:
-            case SCREEN__MINI_MAP:
-            case SCREEN__CHARACTER:
-            case SCREEN__PIP_BOY:
-            case SCREEN__FIX_BOY:
-            case SCREEN__MENU_OPTION:
-            case SCREEN__SAVE_LOAD:
+            case CLIENT_SCREEN_PERK:
+            case CLIENT_SCREEN_ELEVATOR:
+            case CLIENT_SCREEN_SAY:
+            case CLIENT_SCREEN_SKILLBOX:
+            case CLIENT_SCREEN_USE:
+            case CLIENT_SCREEN_AIM:
+            case CLIENT_SCREEN_INVENTORY:
+            case CLIENT_SCREEN_PICKUP:
+            case CLIENT_SCREEN_MINIMAP:
+            case CLIENT_SCREEN_CHARACTER:
+            case CLIENT_SCREEN_PIPBOY:
+            case CLIENT_SCREEN_FIXBOY:
+            case CLIENT_SCREEN_MENU:
+            case CLIENT_SCREEN_LOADSAVE:
             default:
-                ShowScreen( SCREEN_NONE );
+                ShowScreen( CLIENT_SCREEN_NONE );
                 break;
         }
     }
@@ -8613,21 +8603,21 @@ void FOClient::TryExit()
     {
         switch( GetMainScreen() )
         {
-            case SCREEN_LOGIN:
+            case CLIENT_MAIN_SCREEN_LOGIN:
                 GameOpt.Quit = true;
                 break;
-            case SCREEN_REGISTRATION:
-            case SCREEN_CREDITS:
-                ShowMainScreen( SCREEN_LOGIN );
+            case CLIENT_MAIN_SCREEN_REGISTRATION:
+            case CLIENT_MAIN_SCREEN_CREDITS:
+                ShowMainScreen( CLIENT_MAIN_SCREEN_LOGIN );
                 break;
-            case SCREEN_WAIT:
+            case CLIENT_MAIN_SCREEN_WAIT:
                 NetDisconnect();
                 break;
-            case SCREEN_GLOBAL_MAP:
-                ShowScreen( SCREEN__MENU_OPTION );
+            case CLIENT_MAIN_SCREEN_WORLDMAP:
+                ShowScreen( CLIENT_SCREEN_MENU );
                 break;
-            case SCREEN_GAME:
-                ShowScreen( SCREEN__MENU_OPTION );
+            case CLIENT_MAIN_SCREEN_GAME:
+                ShowScreen( CLIENT_SCREEN_MENU );
                 break;
             default:
                 break;
@@ -8668,7 +8658,7 @@ void FOClient::ProcessMouseScroll()
 
 void FOClient::ProcessKeybScroll( bool down, uchar dik )
 {
-    if( down && IsMainScreen( SCREEN_GAME ) && ConsoleActive )
+    if( down && IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && ConsoleActive )
         return;
 
     switch( dik )
@@ -9070,7 +9060,7 @@ bool FOClient::SaveLogFile()
     {
         MessBoxMessage& m = MessBox[i];
         // Skip
-        if( IsMainScreen( SCREEN_GAME ) && std::find( MessBoxFilters.begin(), MessBoxFilters.end(), m.Type ) != MessBoxFilters.end() )
+        if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && std::find( MessBoxFilters.begin(), MessBoxFilters.end(), m.Type ) != MessBoxFilters.end() )
             continue;
         // Concat
         Str::Copy( cur_mess, m.Mess.c_str() );
@@ -9147,7 +9137,7 @@ void FOClient::SoundProcess()
     static uint next_ambient = 0;
     if( Timer::GameTick() > next_ambient )
     {
-        if( IsMainScreen( SCREEN_GAME ) )
+        if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) )
             SndMngr.PlayAmbient( MsgGM->GetStr( STR_MAP_AMBIENT_( HexMngr.GetCurPidMap() ) ) );
         next_ambient = Timer::GameTick() + Random( AMBIENT_SOUND_TIME / 2, AMBIENT_SOUND_TIME );
     }
@@ -10244,14 +10234,14 @@ bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
                 SCRIPT_ERROR_R0( "CritterCl accessory, CritterCl not found." );
             hx = cr->GetHexX();
             hy = cr->GetHexY();
+            break;
         }
-        break;
         case ITEM_ACCESSORY_HEX:
         {
             hx = item->AccHex.HexX;
             hy = item->AccHex.HexY;
+            break;
         }
-        break;
         case ITEM_ACCESSORY_CONTAINER:
         {
 
@@ -10261,8 +10251,8 @@ bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
             if( !cont )
                 SCRIPT_ERROR_R0( "Container accessory, Container not found." );
             return Item_GetMapPosition( cont, hx, hy );         // Recursion
+            break;
         }
-        break;
         default:
             SCRIPT_ERROR_R0( "Unknown accessory." );
             return false;
@@ -10726,62 +10716,35 @@ void FOClient::SScriptFunc::Global_RefreshItemsCollection( int collection )
 {
     switch( collection )
     {
-        case ITEMS_INVENTORY:
-            Self->ProcessItemsCollection( ITEMS_INVENTORY, Self->InvContInit, Self->InvCont );
+        case ITEM_COLLECTION_INVENTORY:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_INVENTORY, Self->InvContInit, Self->InvCont );
             break;
-        case ITEMS_USE:
-            Self->ProcessItemsCollection( ITEMS_USE, Self->InvContInit, Self->UseCont );
+        case ITEM_COLLECTION_USE:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_USE, Self->InvContInit, Self->UseCont );
             break;
-        case ITEMS_BARTER:
-            Self->ProcessItemsCollection( ITEMS_BARTER, Self->InvContInit, Self->BarterCont1 );
+        case ITEM_COLLECTION_BARTER:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_BARTER, Self->InvContInit, Self->BarterCont1 );
             break;
-        case ITEMS_BARTER_OFFER:
-            Self->ProcessItemsCollection( ITEMS_BARTER_OFFER, Self->BarterCont1oInit, Self->BarterCont1o );
+        case ITEM_COLLECTION_BARTER_OFFER:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_BARTER_OFFER, Self->BarterCont1oInit, Self->BarterCont1o );
             break;
-        case ITEMS_BARTER_OPPONENT:
-            Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT, Self->BarterCont2Init, Self->BarterCont2 );
+        case ITEM_COLLECTION_BARTER_OPPONENT:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_BARTER_OPPONENT, Self->BarterCont2Init, Self->BarterCont2 );
             break;
-        case ITEMS_BARTER_OPPONENT_OFFER:
-            Self->ProcessItemsCollection( ITEMS_BARTER_OPPONENT_OFFER, Self->BarterCont2oInit, Self->BarterCont2o );
+        case ITEM_COLLECTION_BARTER_OPPONENT_OFFER:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_BARTER_OPPONENT_OFFER, Self->BarterCont2oInit, Self->BarterCont2o );
             break;
-        case ITEMS_PICKUP:
-            Self->ProcessItemsCollection( ITEMS_PICKUP, Self->InvContInit, Self->PupCont1 );
+        case ITEM_COLLECTION_PICKUP:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_PICKUP, Self->InvContInit, Self->PupCont1 );
             break;
-        case ITEMS_PICKUP_FROM:
-            Self->ProcessItemsCollection( ITEMS_PICKUP_FROM, Self->PupCont2Init, Self->PupCont2 );
+        case ITEM_COLLECTION_PICKUP_FROM:
+            Self->ProcessItemsCollection( ITEM_COLLECTION_PICKUP_FROM, Self->PupCont2Init, Self->PupCont2 );
             break;
         default:
             SCRIPT_ERROR( "Invalid items collection." );
             break;
     }
 }
-
-#define SCROLL_MESSBOX                  (0)
-#define SCROLL_INVENTORY                (1)
-#define SCROLL_INVENTORY_ITEM_INFO      (2)
-#define SCROLL_PICKUP                   (3)
-#define SCROLL_PICKUP_FROM              (4)
-#define SCROLL_USE                      (5)
-#define SCROLL_BARTER                   (6)
-#define SCROLL_BARTER_OFFER             (7)
-#define SCROLL_BARTER_OPPONENT          (8)
-#define SCROLL_BARTER_OPPONENT_OFFER    (9)
-#define SCROLL_GLOBAL_MAP_CITIES_X      (10)
-#define SCROLL_GLOBAL_MAP_CITIES_Y      (11)
-#define SCROLL_SPLIT_VALUE              (12)
-#define SCROLL_TIMER_VALUE              (13)
-#define SCROLL_PERK                     (14)
-#define SCROLL_DIALOG_TEXT              (15)
-#define SCROLL_MAP_ZOOM_VALUE           (16)
-#define SCROLL_CHARACTER_PERKS          (17)
-#define SCROLL_CHARACTER_KARMA          (18)
-#define SCROLL_CHARACTER_KILLS          (19)
-#define SCROLL_PIPBOY_STATUS            (20)
-#define SCROLL_PIPBOY_STATUS_QUESTS     (21)
-#define SCROLL_PIPBOY_STATUS_SCORES     (22)
-#define SCROLL_PIPBOY_AUTOMAPS          (23)
-#define SCROLL_PIPBOY_ARCHIVES          (24)
-#define SCROLL_PIPBOY_ARCHIVES_INFO     (25)
 
 int FOClient::SScriptFunc::Global_GetScroll( int scroll_element )
 {
@@ -11848,126 +11811,126 @@ void FOClient::SScriptFunc::Global_HideScreen( int screen, int p0, int p1, int p
     if( screen )
         Self->HideScreen( screen, p0, p1, p2 );
     else
-        Self->ShowScreen( SCREEN_NONE, p0, p1, p2 );
+        Self->ShowScreen( CLIENT_SCREEN_NONE, p0, p1, p2 );
 }
 
 void FOClient::SScriptFunc::Global_GetHardcodedScreenPos( int screen, int& x, int& y )
 {
     switch( screen )
     {
-        case SCREEN_LOGIN:
+        case CLIENT_MAIN_SCREEN_LOGIN:
             x = Self->LogX;
             y = Self->LogY;
             break;
-        case SCREEN_REGISTRATION:
+        case CLIENT_MAIN_SCREEN_REGISTRATION:
             x = Self->ChaX;
             y = Self->ChaY;
             break;
-        case SCREEN_GAME:
+        case CLIENT_MAIN_SCREEN_GAME:
             x = Self->IntX;
             y = Self->IntY;
             break;
-        case SCREEN_GLOBAL_MAP:
+        case CLIENT_MAIN_SCREEN_WORLDMAP:
             x = Self->GmapX;
             y = Self->GmapY;
             break;
-        case SCREEN_WAIT:
+        case CLIENT_MAIN_SCREEN_WAIT:
             x = 0;
             y = 0;
             break;
-        case SCREEN__INVENTORY:
+        case CLIENT_SCREEN_INVENTORY:
             x = Self->InvX;
             y = Self->InvY;
             break;
-        case SCREEN__PICKUP:
+        case CLIENT_SCREEN_PICKUP:
             x = Self->PupX;
             y = Self->PupY;
             break;
-        case SCREEN__MINI_MAP:
+        case CLIENT_SCREEN_MINIMAP:
             x = Self->LmapX;
             y = Self->LmapY;
             break;
-        case SCREEN__CHARACTER:
+        case CLIENT_SCREEN_CHARACTER:
             x = Self->ChaX;
             y = Self->ChaY;
             break;
-        case SCREEN__DIALOG:
+        case CLIENT_SCREEN_DIALOG:
             x = Self->DlgX;
             y = Self->DlgY;
             break;
-        case SCREEN__BARTER:
+        case CLIENT_SCREEN_BARTER:
             x = Self->DlgX;
             y = Self->DlgY;
             break;
-        case SCREEN__PIP_BOY:
+        case CLIENT_SCREEN_PIPBOY:
             x = Self->PipX;
             y = Self->PipY;
             break;
-        case SCREEN__FIX_BOY:
+        case CLIENT_SCREEN_FIXBOY:
             x = Self->FixX;
             y = Self->FixY;
             break;
-        case SCREEN__MENU_OPTION:
+        case CLIENT_SCREEN_MENU:
             x = Self->MoptX;
             y = Self->MoptY;
             break;
-        case SCREEN__AIM:
+        case CLIENT_SCREEN_AIM:
             x = Self->AimX;
             y = Self->AimY;
             break;
-        case SCREEN__SPLIT:
+        case CLIENT_SCREEN_SPLIT:
             x = Self->SplitX;
             y = Self->SplitY;
             break;
-        case SCREEN__TIMER:
+        case CLIENT_SCREEN_TIMER:
             x = Self->TimerX;
             y = Self->TimerY;
             break;
-        case SCREEN__DIALOGBOX:
+        case CLIENT_SCREEN_DIALOGBOX:
             x = Self->DlgboxX;
             y = Self->DlgboxY;
             break;
-        case SCREEN__ELEVATOR:
+        case CLIENT_SCREEN_ELEVATOR:
             x = Self->ElevatorX;
             y = Self->ElevatorY;
             break;
-        case SCREEN__SAY:
+        case CLIENT_SCREEN_SAY:
             x = Self->SayX;
             y = Self->SayY;
             break;
-        case SCREEN__CHA_NAME:
+        case CLIENT_SCREEN_CHAR_NAME:
             x = Self->ChaNameX;
             y = Self->ChaNameY;
             break;
-        case SCREEN__CHA_AGE:
+        case CLIENT_SCREEN_CHAR_AGE:
             x = Self->ChaAgeX;
             y = Self->ChaAgeY;
             break;
-        case SCREEN__CHA_SEX:
+        case CLIENT_SCREEN_CHAR_SEX:
             x = Self->ChaSexX;
             y = Self->ChaSexY;
             break;
-        case SCREEN__GM_TOWN:
+        case CLIENT_SCREEN_WM_TOWN:
             x = 0;
             y = 0;
             break;
-        case SCREEN__INPUT_BOX:
+        case CLIENT_SCREEN_INPUTBOX:
             x = Self->IboxX;
             y = Self->IboxY;
             break;
-        case SCREEN__SKILLBOX:
+        case CLIENT_SCREEN_SKILLBOX:
             x = Self->SboxX;
             y = Self->SboxY;
             break;
-        case SCREEN__USE:
+        case CLIENT_SCREEN_USE:
             x = Self->UseX;
             y = Self->UseY;
             break;
-        case SCREEN__PERK:
+        case CLIENT_SCREEN_PERK:
             x = Self->PerkX;
             y = Self->PerkY;
             break;
-        case SCREEN__SAVE_LOAD:
+        case CLIENT_SCREEN_LOADSAVE:
             x = Self->SaveLoadX;
             y = Self->SaveLoadY;
             break;
@@ -11982,99 +11945,99 @@ void FOClient::SScriptFunc::Global_DrawHardcodedScreen( int screen )
 {
     switch( screen )
     {
-        case SCREEN_LOGIN:
+        case CLIENT_MAIN_SCREEN_LOGIN:
             Self->LogDraw();
             break;
-        case SCREEN_REGISTRATION:
+        case CLIENT_MAIN_SCREEN_REGISTRATION:
             Self->ChaDraw( true );
             break;
-        case SCREEN_CREDITS:
+        case CLIENT_MAIN_SCREEN_CREDITS:
             Self->CreditsDraw();
             break;
-        case SCREEN_OPTIONS:
+        case CLIENT_MAIN_SCREEN_OPTIONS:
             break;
-        case SCREEN_GAME:
+        case CLIENT_MAIN_SCREEN_GAME:
             Self->IntDraw();
             break;
-        case SCREEN_GLOBAL_MAP:
+        case CLIENT_MAIN_SCREEN_WORLDMAP:
             Self->GmapDraw();
             break;
-        case SCREEN_WAIT:
+        case CLIENT_MAIN_SCREEN_WAIT:
             Self->WaitDraw();
             break;
-        case SCREEN__INVENTORY:
+        case CLIENT_SCREEN_INVENTORY:
             Self->InvDraw();
             break;
-        case SCREEN__PICKUP:
+        case CLIENT_SCREEN_PICKUP:
             Self->PupDraw();
             break;
-        case SCREEN__MINI_MAP:
+        case CLIENT_SCREEN_MINIMAP:
             Self->LmapDraw();
             break;
-        case SCREEN__DIALOG:
+        case CLIENT_SCREEN_DIALOG:
             Self->DlgDraw( true );
             break;
-        case SCREEN__BARTER:
+        case CLIENT_SCREEN_BARTER:
             Self->DlgDraw( false );
             break;
-        case SCREEN__PIP_BOY:
+        case CLIENT_SCREEN_PIPBOY:
             Self->PipDraw();
             break;
-        case SCREEN__FIX_BOY:
+        case CLIENT_SCREEN_FIXBOY:
             Self->FixDraw();
             break;
-        case SCREEN__MENU_OPTION:
+        case CLIENT_SCREEN_MENU:
             Self->MoptDraw();
             break;
-        case SCREEN__CHARACTER:
+        case CLIENT_SCREEN_CHARACTER:
             Self->ChaDraw( false );
             break;
-        case SCREEN__AIM:
+        case CLIENT_SCREEN_AIM:
             Self->AimDraw();
             break;
-        case SCREEN__SPLIT:
+        case CLIENT_SCREEN_SPLIT:
             Self->SplitDraw();
             break;
-        case SCREEN__TIMER:
+        case CLIENT_SCREEN_TIMER:
             Self->TimerDraw();
             break;
-        case SCREEN__DIALOGBOX:
+        case CLIENT_SCREEN_DIALOGBOX:
             Self->DlgboxDraw();
             break;
-        case SCREEN__ELEVATOR:
+        case CLIENT_SCREEN_ELEVATOR:
             Self->ElevatorDraw();
             break;
-        case SCREEN__SAY:
+        case CLIENT_SCREEN_SAY:
             Self->SayDraw();
             break;
-        case SCREEN__CHA_NAME:
+        case CLIENT_SCREEN_CHAR_NAME:
             Self->ChaNameDraw();
             break;
-        case SCREEN__CHA_AGE:
+        case CLIENT_SCREEN_CHAR_AGE:
             Self->ChaAgeDraw();
             break;
-        case SCREEN__CHA_SEX:
+        case CLIENT_SCREEN_CHAR_SEX:
             Self->ChaSexDraw();
             break;
-        case SCREEN__GM_TOWN:
+        case CLIENT_SCREEN_WM_TOWN:
             Self->GmapTownDraw();
             break;
-        case SCREEN__INPUT_BOX:
+        case CLIENT_SCREEN_INPUTBOX:
             Self->IboxDraw();
             break;
-        case SCREEN__SKILLBOX:
+        case CLIENT_SCREEN_SKILLBOX:
             Self->SboxDraw();
             break;
-        case SCREEN__USE:
+        case CLIENT_SCREEN_USE:
             Self->UseDraw();
             break;
-        case SCREEN__PERK:
+        case CLIENT_SCREEN_PERK:
             Self->PerkDraw();
             break;
-        case SCREEN__TOWN_VIEW:
+        case CLIENT_SCREEN_WM_TOWNVIEW:
             Self->TViewDraw();
             break;
-        case SCREEN__SAVE_LOAD:
+        case CLIENT_SCREEN_LOADSAVE:
             Self->SaveLoadDraw();
             break;
         default:

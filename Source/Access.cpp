@@ -94,15 +94,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_MYINFO:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_GAMEINFO:
         {
             int type;
@@ -117,8 +117,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << type;
+            break;
         }
-        break;
         case COMMAND_CRITID:
         {
             char name[MAX_FOTEXT];
@@ -135,8 +135,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf.Push( name, name_size_utf8 );
+            break;
         }
-        break;
         case COMMAND_MOVECRIT:
         {
             uint   crid;
@@ -155,8 +155,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << crid;
             buf << hex_x;
             buf << hex_y;
+            break;
         }
-        break;
         case COMMAND_KILLCRIT:
         {
             uint crid;
@@ -171,8 +171,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << crid;
+            break;
         }
-        break;
         case COMMAND_DISCONCRIT:
         {
             uint crid;
@@ -187,15 +187,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << crid;
+            break;
         }
-        break;
         case COMMAND_TOGLOBAL:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_RESPAWN:
         {
             uint crid;
@@ -210,8 +210,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << crid;
+            break;
         }
-        break;
         case COMMAND_PARAM:
         {
             uint   crid;
@@ -230,8 +230,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << crid;
             buf << param_num;
             buf << param_val;
+            break;
         }
-        break;
         case COMMAND_GETACCESS:
         {
             char name_access[MAX_FOTEXT];
@@ -253,8 +253,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
 
             buf.Push( name_access, name_size_utf8 );
             buf.Push( pasw_access, pasw_size_utf8 );
+            break;
         }
-        break;
         case COMMAND_ADDITEM:
         {
             ushort hex_x;
@@ -275,8 +275,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << hex_y;
             buf << pid;
             buf << count;
+            break;
         }
-        break;
         case COMMAND_ADDITEM_SELF:
         {
             ushort pid;
@@ -293,8 +293,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << cmd;
             buf << pid;
             buf << count;
+            break;
         }
-        break;
         case COMMAND_ADDNPC:
         {
             ushort hex_x;
@@ -315,8 +315,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << hex_y;
             buf << dir;
             buf << pid;
+            break;
         }
-        break;
         case COMMAND_ADDLOCATION:
         {
             ushort wx;
@@ -335,15 +335,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << wx;
             buf << wy;
             buf << pid;
+            break;
         }
-        break;
         case COMMAND_RELOADSCRIPTS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_LOADSCRIPT:
         {
             char script_name[MAX_SCRIPT_NAME + 1];
@@ -359,15 +359,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf.Push( script_name, MAX_SCRIPT_NAME );
+            break;
         }
-        break;
         case COMMAND_RELOAD_CLIENT_SCRIPTS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_RUNSCRIPT:
         {
             char script_name[MAX_SCRIPT_NAME + 1];
@@ -390,15 +390,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << param0;
             buf << param1;
             buf << param2;
+            break;
         }
-        break;
         case COMMAND_RELOADLOCATIONS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_LOADLOCATION:
         {
             ushort loc_pid;
@@ -413,15 +413,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << loc_pid;
+            break;
         }
-        break;
         case COMMAND_RELOADMAPS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_LOADMAP:
         {
             ushort map_pid;
@@ -436,22 +436,22 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf << map_pid;
+            break;
         }
-        break;
         case COMMAND_REGENMAP:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_RELOADDIALOGS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_LOADDIALOG:
         {
             char dlg_name[128];
@@ -469,22 +469,22 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << cmd;
             buf.Push( dlg_name, 128 );
             buf << dlg_id;
+            break;
         }
-        break;
         case COMMAND_RELOADTEXTS:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_RELOADAI:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_CHECKVAR:
         {
             ushort tid_var;
@@ -507,8 +507,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << master_id;
             buf << slave_id;
             buf << full_info;
+            break;
         }
-        break;
         case COMMAND_SETVAR:
         {
             ushort tid_var;
@@ -531,8 +531,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << master_id;
             buf << slave_id;
             buf << value;
+            break;
         }
-        break;
         case COMMAND_SETTIME:
         {
             int multiplier;
@@ -559,8 +559,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << hour;
             buf << minute;
             buf << second;
+            break;
         }
-        break;
         case COMMAND_BAN:
         {
             istrstream str_( args );
@@ -601,8 +601,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf.Push( params, params_size_utf8 );
             buf << ban_hours;
             buf.Push( info, info_size_utf8 );
+            break;
         }
-        break;
         case COMMAND_DELETE_ACCOUNT:
         {
             if( !name )
@@ -626,8 +626,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf.Push( pass_hash, PASS_HASH_SIZE );
+            break;
         }
-        break;
         case COMMAND_CHANGE_PASSWORD:
         {
             if( !name )
@@ -665,15 +665,15 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << cmd;
             buf.Push( pass_hash, PASS_HASH_SIZE );
             buf.Push( new_pass_hash, PASS_HASH_SIZE );
+            break;
         }
-        break;
         case COMMAND_DROP_UID:
         {
             buf << msg;
             buf << msg_len;
             buf << cmd;
+            break;
         }
-        break;
         case COMMAND_LOG:
         {
             char flags[128];
@@ -688,8 +688,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
             buf << msg_len;
             buf << cmd;
             buf.Push( flags, 16 );
+            break;
         }
-        break;
         default:
             break;
     }

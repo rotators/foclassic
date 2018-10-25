@@ -101,8 +101,8 @@ bool FOServer::TransferAllItems()
                 }
 
                 npc->SetItem( item );
+                break;
             }
-            break;
             case ITEM_ACCESSORY_HEX:
             {
                 Map* map = MapMngr.GetMap( item->AccHex.MapId, false );
@@ -128,8 +128,8 @@ bool FOServer::TransferAllItems()
                 }
 
                 map->SetItem( item, item->AccHex.HexX, item->AccHex.HexY );
+                break;
             }
-            break;
             case ITEM_ACCESSORY_CONTAINER:
             {
                 Item* cont = ItemMngr.GetItem( item->AccContainer.ContainerId, false );
@@ -148,8 +148,8 @@ bool FOServer::TransferAllItems()
                 }
 
                 cont->ContSetItem( item );
+                break;
             }
-            break;
             default:
                 WriteLog( "Unknown accessory id<%u>, acc<%u>.\n", item->Id, item->Accessory );
                 bad_items.push_back( item );

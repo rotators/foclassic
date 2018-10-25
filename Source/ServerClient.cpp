@@ -1185,8 +1185,8 @@ bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
                 cr->SendAA_Action( ACTION_PICK_ITEM, 0, &pick_item );
 
                 MapMngr.TryTransitCrGrid( cr, map, hx, hy, false );
+                break;
             }
-            break;
             default:
                 cr->Send_TextMsg( cr, STR_USE_NOTHING, SAY_NETMSG, TEXTMSG_GAME );
                 break;
@@ -3260,8 +3260,8 @@ void FOServer::Process_ContainerItem( Client* cl )
                 // Transfer
                 if( !ItemMngr.MoveItemCritterFromCont( cont, cl, item->GetId(), item_count ) )
                     WriteLogF( _FUNC_, " - Transfer item, from container to player (get), fail.\n" );
+                break;
             }
-            break;
             case CONTAINER_GETALL:
             {
                 // Send
@@ -3323,8 +3323,8 @@ void FOServer::Process_ContainerItem( Client* cl )
                         cl->AddItem( item, true );
                     }
                 }
+                break;
             }
-            break;
             case CONTAINER_PUT:
             {
                 // Get item
@@ -3382,13 +3382,13 @@ void FOServer::Process_ContainerItem( Client* cl )
                 // Transfer
                 if( !ItemMngr.MoveItemCritterToCont( cl, cont, item->GetId(), item_count, 0 ) )
                     WriteLogF( _FUNC_, " - Transfer item, from player to container (put), fail.\n" );
+                break;
             }
-            break;
             case CONTAINER_PUTALL:
             {
                 cl->Send_ContainerInfo();
+                break;
             }
-            break;
             //	case CONT_UNLOAD:
             //		{
             //			//TODO:
@@ -3543,8 +3543,8 @@ void FOServer::Process_ContainerItem( Client* cl )
                 // Transfer
                 if( !ItemMngr.MoveItemCritters( cr, cl, item->GetId(), item_count ) )
                     WriteLogF( _FUNC_, " - Transfer item, from player to player (get), fail.\n" );
+                break;
             }
-            break;
             case CONTAINER_GETALL:
             {
                 // Check for steal
@@ -3608,8 +3608,8 @@ void FOServer::Process_ContainerItem( Client* cl )
                         cl->AddItem( items[i], true );
                     }
                 }
+                break;
             }
-            break;
             case CONTAINER_PUT:
             {
                 // Get item
@@ -3683,13 +3683,13 @@ void FOServer::Process_ContainerItem( Client* cl )
                 // Transfer
                 if( !ItemMngr.MoveItemCritters( cl, cr, item->GetId(), item_count ) )
                     WriteLogF( _FUNC_, " - transfer item, from player to player (put), fail.\n" );
+                break;
             }
-            break;
             case CONTAINER_PUTALL:
             {
                 cl->Send_ContainerInfo();
+                break;
             }
-            break;
             default:
                 break;
         }
@@ -4411,8 +4411,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
                 cl->SetFollowCrId( 0 );
             else
                 cl->SetFollowCrId( cr->GetId() );
+            break;
         }
-        break;
         case GM_CMD_SETMOVE:
             if( cl->GetMap() || !cl->GroupMove || cl != cl->GroupMove->Rule )
                 break;
@@ -4513,8 +4513,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
             }
 
             MapMngr.GM_GlobalProcess( kick_cr, cl->GroupMove, WORLDMAP_PROCESS_KICK );
+            break;
         }
-        break;
         case GM_CMD_GIVE_RULE:
         {
             // Check
@@ -4526,8 +4526,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
 
             MapMngr.GM_GiveRule( cl, new_rule );
             MapMngr.GM_StopGroup( cl );
+            break;
         }
-        break;
         case GM_CMD_ENTRANCES:
         {
             if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
@@ -4591,8 +4591,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
                     cl->Bout << i;
                 BOUT_END( cl );
             }
+            break;
         }
-        break;
         case GM_CMD_VIEW_MAP:
         {
             if( cl->GetMap() || !cl->GroupMove || cl->GroupMove->EncounterDescriptor )
@@ -4638,8 +4638,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
             cl->ViewMapLocId = loc_id;
             cl->ViewMapLocEnt = entrance;
             cl->Send_LoadMap( map );
+            break;
         }
-        break;
         default:
             WriteLogF( _FUNC_, " - Unknown command<%u>, from client<%s>.\n", cl->GetInfo() );
             break;

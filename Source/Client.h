@@ -1733,52 +1733,6 @@ public:
 /************************************************************************/
 };
 
-// Screens
-#define SCREEN_NONE                    (0)
-// Primary screens
-#define SCREEN_LOGIN                   (1)
-#define SCREEN_REGISTRATION            (2)
-#define SCREEN_CREDITS                 (3)
-#define SCREEN_OPTIONS                 (4)
-#define SCREEN_GAME                    (5)
-#define SCREEN_GLOBAL_MAP              (6)
-#define SCREEN_WAIT                    (7)
-// Secondary screens
-#define SCREEN__INVENTORY              (10)
-#define SCREEN__PICKUP                 (11)
-#define SCREEN__MINI_MAP               (12)
-#define SCREEN__CHARACTER              (13)
-#define SCREEN__DIALOG                 (14)
-#define SCREEN__BARTER                 (15)
-#define SCREEN__PIP_BOY                (16)
-#define SCREEN__FIX_BOY                (17)
-#define SCREEN__MENU_OPTION            (18)
-#define SCREEN__AIM                    (19)
-#define SCREEN__SPLIT                  (20)
-#define SCREEN__TIMER                  (21)
-#define SCREEN__DIALOGBOX              (22)
-#define SCREEN__ELEVATOR               (23)
-#define SCREEN__SAY                    (24)
-#define SCREEN__CHA_NAME               (25)
-#define SCREEN__CHA_AGE                (26)
-#define SCREEN__CHA_SEX                (27)
-#define SCREEN__GM_TOWN                (28)
-#define SCREEN__INPUT_BOX              (29)
-#define SCREEN__SKILLBOX               (30)
-#define SCREEN__USE                    (31)
-#define SCREEN__PERK                   (32)
-#define SCREEN__TOWN_VIEW              (33)
-#define SCREEN__SAVE_LOAD              (34)
-
-// Cur modes
-#define CUR_DEFAULT                    (0)
-#define CUR_MOVE                       (1)
-#define CUR_USE_ITEM                   (2)
-#define CUR_USE_WEAPON                 (3)
-#define CUR_USE_SKILL                  (4)
-#define CUR_WAIT                       (5)
-#define CUR_HAND                       (6)
-
 // Lmenu
 #define LMENU_SHOW_TIME                (400)
 #define LMENU_OFF                      (0)
@@ -1821,16 +1775,6 @@ public:
 #define INIT_NET_REASON_LOGIN          (2)
 #define INIT_NET_REASON_REG            (3)
 #define INIT_NET_REASON_LOAD           (4)
-
-// Items collections
-#define ITEMS_INVENTORY                (0)
-#define ITEMS_USE                      (1)
-#define ITEMS_BARTER                   (2)
-#define ITEMS_BARTER_OFFER             (3)
-#define ITEMS_BARTER_OPPONENT          (4)
-#define ITEMS_BARTER_OPPONENT_OFFER    (5)
-#define ITEMS_PICKUP                   (6)
-#define ITEMS_PICKUP_FROM              (7)
 
 // Interface elements
 #define IFACE_NONE                     (0)

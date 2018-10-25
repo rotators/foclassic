@@ -1,7 +1,7 @@
 /////
 //
 // FOClassic v@FOCLASSIC_VERSION@
-// Last update @SCRIPTS_HEADER_TIMESTAMP@
+// Timestamp @SCRIPTS_HEADER_TIMESTAMP@
 //
 /////
 //
@@ -14,6 +14,7 @@
 //
 // FOCLASSIC_EXTENSION
 // Enables macros, C++ syntax; cannot be used with FOCLASSIC_SCRIPT.
+// Enables macros/values useful in C++ code only.
 //
 // FOCLASSIC_SCRIPT
 // Enables macros, AngelScript syntax; cannot be used with FOCLASSIC_EXTENSION.
@@ -33,25 +34,33 @@
 #ifndef __FOCLASSIC_FOS__
 #define __FOCLASSIC_FOS__
 
+/////
+//
+// Init
+//
+/////
+
+// Detect engine
 #ifdef FOCLASSIC_ENGINE
+# if !defined (__DEFINES__)
+#  include "Defines.h"
+# endif
 # define FOCLASSIC_EXTENSION
 # define FOCLASSIC_BLEEDING_EDGE
-# if !defined (__DEFINES__) && !defined (__INTELLISENSE__)
-#  error "Use Defines.h instead"
+#endif  // FOCLASSIC_ENGINE
+
+// Detect bad setup
+#ifndef FOCLASSIC_EXTENSION
+# ifndef FOCLASSIC_SCRIPT
+#  error "FOCLASSIC_EXTENSION or FOCLASSIC_SCRIPT must be defined"
 # endif
 #endif
 
+// Detect bad setup
 #ifdef FOCLASSIC_EXTENSION
 # ifdef FOCLASSIC_SCRIPT
 #  error "FOCLASSIC_EXTENSION and FOCLASSIC_SCRIPT cannot be both defined at same time"
 # endif
-#endif
-
-#ifdef FOCLASSIC_EXTENSION
-# define FOCLASSIC_MACROS_ALLOWED
-#endif
-#ifdef FOCLASSIC_SCRIPT
-# define FOCLASSIC_MACROS_ALLOWED
 #endif
 
 /////
@@ -60,76 +69,82 @@
 //
 /////
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
 
 // macros for engine/extensions only
-# ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_EXTENSION
 
-#  define ___TOD1( x )                               # x
-#  define ___TOD0( x )                               ___TOD1( x )
-#  define TODO( msg )                                message( __FILE__ "(" ___TOD0( __LINE__ ) "): [TODO] "  # msg )
-#  define STAGE( stage, msg )                        message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "] "  # msg )
-#  define DEPRECATE( msg )                           message( __FILE__ "(" ___TOD0( __LINE__ ) "): [DEPRECATE] "  # msg )
-#  define STAGE_DEPRECATE( stage, msg )              message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "][DEPRECATE] "  # msg )
-#  define STATIC_ASSERT( a )                         static_assert( a, # a )
-#  define STATIC_ASSERT_PRINT( func, a )             func( "STATIC_ASSERT( sizeof(%s) == %u );\n", # a, sizeof(a) )
+# define ___TOD1( x )                                # x
+# define ___TOD0( x )                                ___TOD1( x )
+# define TODO( msg )                                 message( __FILE__ "(" ___TOD0( __LINE__ ) "): [TODO] "  # msg )
+# define STAGE( stage, msg )                         message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "] "  # msg )
+# define DEPRECATE( msg )                            message( __FILE__ "(" ___TOD0( __LINE__ ) "): [DEPRECATE] "  # msg )
+# define STAGE_DEPRECATE( stage, msg )               message( __FILE__ "(" ___TOD0( __LINE__ ) "): [STAGE " ___TOD0( stage ) "][DEPRECATE] "  # msg )
+# define STATIC_ASSERT( a )                          static_assert( a, # a )
+# define STATIC_ASSERT_PRINTF( function, a )         function( "STATIC_ASSERT( sizeof(%s) == %u );\n", # a, sizeof(a) )
 
-#  define memzero( ptr, size )                       memset( ptr, 0, size )
-#  define MAKEUINT( ch0, ch1, ch2, ch3 )             ( (uint)(uchar)(ch0) | ( (uint)(uchar)(ch1) << 8 ) | ( (uint)(uchar)(ch2) << 16 ) | ( (uint)(uchar)(ch3) << 24 ) )
-#  define OFFSETOF( type, member )                   ( (int)offsetof( type, member ) )
-#  define PACKUINT64( u32hi, u32lo )                 ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
+# define memzero( ptr, size )                        memset( ptr, 0, size )
+# define MAKEUINT( ch0, ch1, ch2, ch3 )              ( (uint)(uchar)(ch0) | ( (uint)(uchar)(ch1) << 8 ) | ( (uint)(uchar)(ch2) << 16 ) | ( (uint)(uchar)(ch3) << 24 ) )
+# define OFFSETOF( type, member )                    ( (int)offsetof( type, member ) )
+# define PACKUINT64( u32hi, u32lo )                  ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
 
-# endif // FOCLASSIC_EXTENSION
+#endif   // FOCLASSIC_EXTENSION
 
 // macros for everyone
-# ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_EXTENSION
 
-#  define BIN__N( x )                                (x) | x >> 3 | x >> 6 | x >> 9
-#  define BIN__B( x )                                (x) & 0xf | (x) >> 12 & 0xf0
-#  define BIN8( v )                                  (BIN__B( BIN__N( 0x ## v ) ) )
-#  define BIN16( bin16, bin8 )                       ( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
+# define BIN__N( x )                                 (x) | x >> 3 | x >> 6 | x >> 9
+# define BIN__B( x )                                 (x) & 0xf | (x) >> 12 & 0xf0
+# define BIN8( v )                                   (BIN__B( BIN__N( 0x ## v ) ) )
+# define BIN16( bin16, bin8 )                        ( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
 
-#  define CLAMP( x, low, high )                      ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
-#  define MIN( a, b )                                ( ( (a) < (b) ) ? (a) : (b) )
-#  define MAX( a, b )                                ( ( (a) > (b) ) ? (a) : (b) )
+# define CLAMP( x, low, high )                       ( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
+# define MIN( a, b )                                 ( ( (a) < (b) ) ? (a) : (b) )
+# define MAX( a, b )                                 ( ( (a) > (b) ) ? (a) : (b) )
 
-#  define FLAG( x, y )                               ( ( (x) & (y) ) != 0 )
-#  define SETFLAG( x, y )                            ( (x) = (x) | (y) )
-#  define UNSETFLAG( x, y )                          ( (x) = ( (x) | (y) ) ^ (y) )
+# define FLAG( x, y )                                ( ( (x) & (y) ) != 0 )
+# define SETFLAG( x, y )                             ( (x) = (x) | (y) )
+# define UNSETFLAG( x, y )                           ( (x) = ( (x) | (y) ) ^ (y) )
 
-#  define CONVERT_GRAMM( x )                         ( (x) * 453 )
-#  define IS_DIR_CORNER( dir )                       ( ( (dir) & 1 ) != 0 ) // 1, 3, 5, 7
-#  define RAD( deg )                                 ( (deg) * 3.141592654f / 180.0f )
-#  define UTF8_BUF_SIZE( count )                     ( (count) * 4 )
+# define CONVERT_GRAMM( x )                          ( (x) * 453 )
+# define IS_DIR_CORNER( dir )                        ( ( (dir) & 1 ) != 0 )  // 1, 3, 5, 7
+# define RAD( deg )                                  ( (deg) * 3.141592654f / 180.0f )
+# define UTF8_BUF_SIZE( count )                      ( (count) * 4 )
 
+# ifndef FOCLASSIC_ENGINE
 #  define GAME_OPTION( option )                      (FOClassic->option)
-# endif  // FOCLASSIC_EXTENSION
+# endif  // !FOCLASSIC_ENGINE
 
-# ifdef FOCLASSIC_SCRIPT
+#endif   // FOCLASSIC_EXTENSION
 
-#  define BIN__N                                     # (x)(x) | x >> 3 | x >> 6 | x >> 9
-#  define BIN__B                                     # (x)(x) & 0xf | (x) >> 12 & 0xf0
-#  define BIN8                                       # (v)(BIN__B( BIN__N( 0x ## v ) ) )
-#  define BIN16                                      # (bin16, bin8)( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
+#ifdef FOCLASSIC_SCRIPT
 
-#  define CLAMP                                      # (x, low, high)( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
-#  define MIN                                        # (a, b)( ( (a) < (b) ) ? (a) : (b) )
-#  define MAX                                        # (a, b)( ( (a) > (b) ) ? (a) : (b) )
+# define BIN__N                                      # (x)(x) | x >> 3 | x >> 6 | x >> 9
+# define BIN__B                                      # (x)(x) & 0xf | (x) >> 12 & 0xf0
+# define BIN8                                        # (v)(BIN__B( BIN__N( 0x ## v ) ) )
+# define BIN16                                       # (bin16, bin8)( (BIN8( bin16 ) << 8) | (BIN8( bin8 ) ) )
 
-#  define FLAG                                       # (x, y)( ( (x) & (y) ) != 0 )
-#  define SETFLAG                                    # (x, y)( (x) = (x) | (y) )
-#  define UNSETFLAG                                  # (x, y)( (x) = ( (x) | (y) ) ^ (y) )
+# define CLAMP                                       # (x, low, high)( ( (x) > (high) ) ? (high) : ( ( (x) < (low) ) ? (low) : (x) ) )
+# define MIN                                         # (a, b)( ( (a) < (b) ) ? (a) : (b) )
+# define MAX                                         # (a, b)( ( (a) > (b) ) ? (a) : (b) )
 
-#  define CONVERT_GRAMM                              # (x)( (x) * 453 )
-#  define IS_DIR_CORNER                              # (dir)( ( (dir) & 1 ) != 0 ) // 1, 3, 5, 7
-#  define RAD                                        # (deg)( (deg) * 3.141592654f / 180.0f )
-#  define UTF8_BUF_SIZE                              # (count)( (count) * 4 )
+# define FLAG                                        # (x, y)( ( (x) & (y) ) != 0 )
+# define SETFLAG                                     # (x, y)( (x) = (x) | (y) )
+# define UNSETFLAG                                   # (x, y)( (x) = ( (x) | (y) ) ^ (y) )
 
-#  define GAME_OPTION                                # (option)(__ ## option)
-# endif // FOCLASSIC_SCRIPT
-#endif  // FOCLASSIC_MACROS_ALLOWED
+# define CONVERT_GRAMM                               # (x)( (x) * 453 )
+# define IS_DIR_CORNER                               # (dir)( ( (dir) & 1 ) != 0 )  // 1, 3, 5, 7
+# define RAD                                         # (deg)( (deg) * 3.141592654f / 180.0f )
+# define UTF8_BUF_SIZE                               # (count)( (count) * 4 )
 
-////////// Misc //////////
+# define GAME_OPTION                                 # (option)(__ ## option) // TODO? separate globalvars registered by engine
+
+#endif                                                                        // FOCLASSIC_SCRIPT
+
+/////
+//
+// Misc
+//
+/////
 
 #define PI_FLOAT                                     (3.14159265f)
 #define PI_VALUE                                     (3.141592654f)
@@ -139,19 +154,24 @@
 #define BIAS_FLOAT                                   (0.02f)
 #define RAD2DEG                                      (57.29577951f)
 
+#define DIRS_COUNT                                   (GAME_OPTION( MapHexagonal ) ? 6 : 8)
+#define LEXEMS_SIZE                                  (128)
+
 /////
 //
 // Limits
 //
 //////
 
-#define MIN_INT                                      (0x80000000)
 #define MAX_UINT8                                    (0xFF)
 #define MAX_UINT16                                   (0xFFFF)
-#define MAX_UINT                                     (0xFFFFFFFF)
+#define MIN_INT                                      (0x80000000)
 #define MAX_INT                                      (0x7FFFFFFF)
+#define MAX_UINT                                     (0xFFFFFFFF)
 
-#define MAX_DETERIORATION                            (10000)
+#define MAX_FOPATH                                   UTF8_BUF_SIZE( 1024 )
+#define MAX_FOTEXT                                   UTF8_BUF_SIZE( 2048 )
+#define MAX_LOGTEXT                                  UTF8_BUF_SIZE( 2048 )
 
 // Used for name and password
 #define MIN_NAME                                     (1)
@@ -161,7 +181,9 @@
 #define MIN_AGE                                      (14)
 #define MAX_AGE                                      (60)
 
-#define MAX_PARAMS                                   (1000) // array size
+#define MAX_DETERIORATION                            (10000)
+
+#define MAX_HOLO_INFO                                (250)  // array size
 
 // Proto
 #define MAX_PROTO_CRITTERS                           (10000)
@@ -176,14 +198,6 @@
 #define MIN_ZOOM                                     (0.2f)
 #define MAX_ZOOM                                     (10.0f)
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
-
-# define MAX_FOPATH                                  UTF8_BUF_SIZE( 1024 )
-# define MAX_LOGTEXT                                 UTF8_BUF_SIZE( 2048 )
-# define MAX_FOTEXT                                  UTF8_BUF_SIZE( 2048 )
-
-#endif  // FOCLASSIC_MACROS_ALLOWED
-
 /////
 //
 // Magic
@@ -195,7 +209,7 @@
 #define ACCESS_TESTER                                (1)
 #define ACCESS_MODER                                 (2)
 #define ACCESS_ADMIN                                 (3)
-#define ACCESS_CUSTOM                                (ACCESS_ADMIN) // scripts/extensions
+#define ACCESS_LAST                                  (ACCESS_ADMIN)  // extensions/scripts
 
 #ifdef FOCLASSIC_ENGINE
 # ifdef DEV_VERSION
@@ -203,25 +217,25 @@
 # else
 #  define ACCESS_DEFAULT                             (ACCESS_CLIENT)
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 
 // AI Planes
 #define AI_PLANE_MISC                                (0)
 #define AI_PLANE_ATTACK                              (1)
 #define AI_PLANE_WALK                                (2)
 #define AI_PLANE_PICK                                (3)
-#define AI_PLANE_LAST                                (AI_PLANE_PICK) // scripts/extensions
+#define AI_PLANE_LAST                                (AI_PLANE_PICK)  // extensions/scripts
 
 // AI Planes priorities
-#define AI_PLANE_MISC_PRIORITY                       (10)            // unused
+#define AI_PLANE_MISC_PRIORITY                       (10)             // unused
 #define AI_PLANE_ATTACK_PRIORITY                     (50)
 #define AI_PLANE_WALK_PRIORITY                       (20)
-#define AI_PLANE_PICK_PRIORITY                       (35)            // unused
+#define AI_PLANE_PICK_PRIORITY                       (35)             // unused
 
 // Animation
 #define ANIM_TYPE_FALLOUT                            (0)
 #define ANIM_TYPE_3D                                 (1)
-#define ANIM_TYPE_LAST                               (ANIM_TYPE_3D) // scripts/extensions
+#define ANIM_TYPE_LAST                               (ANIM_TYPE_3D)  // extensions/scripts
 
 // Anim1
 #define ANIM1_UNARMED                                (1)
@@ -239,70 +253,66 @@
 #define ANIM2_DEAD_BACK                              (103)
 
 // AngelScript properties
-#define ANGELSCRIPT_ALLOW_UNSAFE_REFERENCES          (1) // true
-#define ANGELSCRIPT_OPTIMIZE_BYTECODE                (2) // true
+#define ANGELSCRIPT_ALLOW_UNSAFE_REFERENCES          (1)  // engine default: true
+#define ANGELSCRIPT_OPTIMIZE_BYTECODE                (2)  // engine default: true
 #define ANGELSCRIPT_COPY_SCRIPT_SECTIONS             (3)
 #define ANGELSCRIPT_MAX_STACK_SIZE                   (4)
-#define ANGELSCRIPT_USE_CHARACTER_LITERALS           (5) // 1
+#define ANGELSCRIPT_USE_CHARACTER_LITERALS           (5)  // engine default: 1
 #define ANGELSCRIPT_ALLOW_MULTILINE_STRINGS          (6)
 #define ANGELSCRIPT_ALLOW_IMPLICIT_HANDLE_TYPES      (7)
 #define ANGELSCRIPT_BUILD_WITHOUT_LINE_CUES          (8)
 #define ANGELSCRIPT_INIT_GLOBAL_VARS_AFTER_BUILD     (9)
 #define ANGELSCRIPT_REQUIRE_ENUM_SCOPE               (10)
-#define ANGELSCRIPT_SCRIPT_SCANNER                   (11) // 1
+#define ANGELSCRIPT_SCRIPT_SCANNER                   (11)  // engine default: 1
 #define ANGELSCRIPT_INCLUDE_JIT_INSTRUCTIONS         (12)
 #define ANGELSCRIPT_STRING_ENCODING                  (13)
 #define ANGELSCRIPT_PROPERTY_ACCESSOR_MODE           (14)
 #define ANGELSCRIPT_EXPAND_DEF_ARRAY_TO_TMPL         (15)
-#define ANGELSCRIPT_AUTO_GARBAGE_COLLECT             (16) // false
+#define ANGELSCRIPT_AUTO_GARBAGE_COLLECT             (16)  // engine default: false
 #define ANGELSCRIPT_DISALLOW_GLOBAL_VARS             (17)
-#define ANGELSCRIPT_ALWAYS_IMPL_DEFAULT_CONSTRUCT    (18) // true
+#define ANGELSCRIPT_ALWAYS_IMPL_DEFAULT_CONSTRUCT    (18)  // engine default: true
 
 // Item deterioration info
 #define BI_BROKEN                                    (0x0F)
 
 // Binary files signatures
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define BINARY_SIGNATURE( name, type, ver )         const unsigned char name[6] = { 'F', 'O', type, ( (ver) >> 8 ) & 0xFF, ( (ver) ) & 0xFF, 0 }
+# define BINARY_SIGNATURE_VALID( sig1, sig2 )        (sig1[0] == sig2[0] && sig1[1] == sig2[1] && sig1[2] == sig2[2] && sig1[5] == sig2[5]) // skip version check
+# define BINARY_SIGNATURE_VERSION( sig )             ( (sig[3] << 8) | sig[4] )
+#endif                                                                                                                                      // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define BINARY_SIGNATURE( name, type, ver )        const unsigned char name[6] = { 'F', 'O', type, ( (ver) >> 8 ) & 0xFF, ( (ver) ) & 0xFF, 0 }
-#  define BINARY_SIGNATURE_VALID( sig1, sig2 )       (sig1[0] == sig2[0] && sig1[1] == sig2[1] && sig1[2] == sig2[2] && sig1[5] == sig2[5])              // skip version check
-#  define BINARY_SIGNATURE_VERSION( sig )            ( (sig[3] << 8) | sig[4] )
-# endif  // FOCLASSIC_EXTENSION
-
-#endif  // FOCLASSIC_MACROS_ALLOWED
-
-#define BINARY_TYPE_CLIENTSAVE                            'C'
-#define BINARY_TYPE_MAPSAVE                               'M'
-#define BINARY_TYPE_PROFILERSAVE                          'P'
-#define BINARY_TYPE_SCRIPTSAVE                            'S'
-#define BINARY_TYPE_WORLDSAVE                             'W'
-#define BINARY_TYPE_CACHE                                 'c'  // reserved
+#define BINARY_TYPE_CLIENTSAVE                       'C'
+#define BINARY_TYPE_MAPSAVE                          'M'
+#define BINARY_TYPE_PROFILERSAVE                     'P'
+#define BINARY_TYPE_SCRIPTSAVE                       'S'
+#define BINARY_TYPE_WORLDSAVE                        'W'
+#define BINARY_TYPE_CACHE                            'c'   // reserved
 
 // Chosen actions
-#define CHOSEN_NONE                                  (0)  //
-#define CHOSEN_MOVE                                  (1)  // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_MOVE_TO_CRITTER                       (2)  // Critter id, None, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_DIR                                   (3)  // 0 (CW) or 1 (CCW)
-#define CHOSEN_SHOW_ITEM                             (4)  // Item id
-#define CHOSEN_HIDE_ITEM                             (5)  // Item id
-#define CHOSEN_USE_ITEM                              (6)  // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
-#define CHOSEN_MOVE_ITEM                             (7)  // Item id, Item count, To slot, Is barter container, Is second try
-#define CHOSEN_MOVE_ITEM_CONTAINER                   (8)  // From container, Item id, Count
-#define CHOSEN_TAKE_ALL                              (9)  //
-#define CHOSEN_USE_SKILL_ON_CRITTER                  (10) // Skill, Critter id
-#define CHOSEN_USE_SKILL_ON_ITEM                     (11) // Is inventory, Skill index, Item id
-#define CHOSEN_USE_SKILL_ON_SCENERY                  (12) // Skill, Pid, HexX, HexY
-#define CHOSEN_TALK_NPC                              (13) // Critter id
-#define CHOSEN_PICK_ITEM                             (14) // Pid, HexX, HexY
-#define CHOSEN_PICK_CRITTER                          (15) // Critter id, (loot - 0, push - 1)
-#define CHOSEN_WRITE_HOLODISK                        (16) // Holodisk id
+#define CHOSEN_NONE                                  (0)   //
+#define CHOSEN_MOVE                                  (1)   // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_MOVE_TO_CRITTER                       (2)   // Critter id, None, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_DIR                                   (3)   // 0 (CW) or 1 (CCW)
+#define CHOSEN_SHOW_ITEM                             (4)   // Item id
+#define CHOSEN_HIDE_ITEM                             (5)   // Item id
+#define CHOSEN_USE_ITEM                              (6)   // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
+#define CHOSEN_MOVE_ITEM                             (7)   // Item id, Item count, To slot, Is barter container, Is second try
+#define CHOSEN_MOVE_ITEM_CONTAINER                   (8)   // From container, Item id, Count
+#define CHOSEN_TAKE_ALL                              (9)   //
+#define CHOSEN_USE_SKILL_ON_CRITTER                  (10)  // Skill, Critter id
+#define CHOSEN_USE_SKILL_ON_ITEM                     (11)  // Is inventory, Skill index, Item id
+#define CHOSEN_USE_SKILL_ON_SCENERY                  (12)  // Skill, Pid, HexX, HexY
+#define CHOSEN_TALK_NPC                              (13)  // Critter id
+#define CHOSEN_PICK_ITEM                             (14)  // Pid, HexX, HexY
+#define CHOSEN_PICK_CRITTER                          (15)  // Critter id, (loot - 0, push - 1)
+#define CHOSEN_WRITE_HOLODISK                        (16)  // Holodisk id
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3, "short CHOSEN_action")
+#  pragma STAGE_DEPRECATE(3, "shortened CHOSEN_action")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define CHOSEN_MOVE_TO_CRIT                         (CHOSEN_MOVE_TO_CRITTER)
 # define CHOSEN_MOVE_ITEM_CONT                       (CHOSEN_MOVE_ITEM_CONTAINER)
@@ -311,55 +321,111 @@
 # define CHOSEN_USE_SKL_ON_SCEN                      (CHOSEN_USE_SKILL_ON_SCENERY)
 # define CHOSEN_PICK_CRIT                            (CHOSEN_PICK_CRITTER)
 # define CHOSEN_WRITE_HOLO                           (CHOSEN_WRITE_HOLODISK)
-#endif // !FOCLASSIC_BLEEDING_EDGE
+#endif  // !FOCLASSIC_BLEEDING_EDGE
+
+// Hardcoded screens
+#define CLIENT_SCREEN_NONE                           (0)  // Used in primary, secondary and additional screen types
+// Hardcoded screens, primary
+#define CLIENT_MAIN_SCREEN_LOGIN                     (1)
+#define CLIENT_MAIN_SCREEN_REGISTRATION              (2)
+#define CLIENT_MAIN_SCREEN_CREDITS                   (3)
+#define CLIENT_MAIN_SCREEN_OPTIONS                   (4)
+#define CLIENT_MAIN_SCREEN_GAME                      (5)
+#define CLIENT_MAIN_SCREEN_WORLDMAP                  (6)
+#define CLIENT_MAIN_SCREEN_WAIT                      (7)
+
+// Hardcoded screens, secondary
+#define CLIENT_SCREEN_INVENTORY                      (10)
+#define CLIENT_SCREEN_PICKUP                         (11)
+#define CLIENT_SCREEN_MINIMAP                        (12)
+#define CLIENT_SCREEN_CHARACTER                      (13)
+#define CLIENT_SCREEN_DIALOG                         (14)
+#define CLIENT_SCREEN_BARTER                         (15)
+#define CLIENT_SCREEN_PIPBOY                         (16)
+#define CLIENT_SCREEN_FIXBOY                         (17)
+#define CLIENT_SCREEN_MENU                           (18)
+#define CLIENT_SCREEN_AIM                            (19)
+#define CLIENT_SCREEN_SPLIT                          (20)
+#define CLIENT_SCREEN_TIMER                          (21)
+#define CLIENT_SCREEN_DIALOGBOX                      (22)
+#define CLIENT_SCREEN_ELEVATOR                       (23)
+#define CLIENT_SCREEN_SAY                            (24)
+#define CLIENT_SCREEN_CHAR_NAME                      (25)
+#define CLIENT_SCREEN_CHAR_AGE                       (26)
+#define CLIENT_SCREEN_CHAR_SEX                       (27)
+#define CLIENT_SCREEN_WM_TOWN                        (28)
+#define CLIENT_SCREEN_INPUTBOX                       (29)
+#define CLIENT_SCREEN_SKILLBOX                       (30)
+#define CLIENT_SCREEN_USE                            (31)
+#define CLIENT_SCREEN_PERK                           (32)
+#define CLIENT_SCREEN_WM_TOWNVIEW                    (33)
+#define CLIENT_SCREEN_LOADSAVE                       (34)
+
+#define CLIENT_SCREEN_LAST                           (CLIENT_SCREEN_LOADSAVE)  // extensions/scripts
+
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE_DEPRCATE(3,"CLIENT_MAIN_SCREEN_GLOBAL_MAP")
+#  pragma STAGE_DEPRCATE(3,"CLIENT_SCREEN_oldnames")
+# endif
+#endif  // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_BLEEDING_EDGE
+# define CLIENT_MAIN_SCREEN_GLOBAL_MAP               (CLIENT_MAIN_SCREEN_WORLDMAP)
+# define CLIENT_SCREEN_PIP_BOY                       (CLIENT_SCREEN_PIPBOY)
+# define CLIENT_SCREEN_FIX_BOY                       (CLIENT_SCREEN_FIXBOY)
+# define CLIENT_SCREEN_CHA_NAME                      (CLIENT_SCREEN_CHAR_NAME)
+# define CLIENT_SCREEN_CHA_AGE                       (CLIENT_SCREEN_CHAR_AGE)
+# define CLIENT_SCREEN_CHA_SEX                       (CLIENT_SCREEN_CHAR_SEX)
+# define CLIENT_SCREEN_GM_TOWN                       (CLIENT_SCREEN_WM_TOWN)
+# define CLIENT_SCREEN_INPUT_BOX                     (CLIENT_SCREEN_INPUTBOX)
+# define CLIENT_SCREEN_TOWN_VIEW                     (CLIENT_SCREEN_WM_TOWNVIEW)
+# define CLIENT_SCREEN_SAVE_LOAD                     (CLIENT_SCREEN_LOADSAVE)
+#endif
 
 // Colors
 // not included (see SpriteManager.h):
 // COLOR_GAME_RGB(r,g,b), COLOR_IFACE, COLOR_IFACE_A(a), COLOR_IFACE_RED, COLOR_IFACE_GREEN
-#ifdef FOCLASSIC_MACROS_ALLOWED
 
-# ifdef FOCLASSIC_EXTENSION
-#  define COLOR_ARGB( a, r, g, b )                   ( (uint)( ( ( (a) & 0xFF ) << 24 ) | ( ( (r) & 0xFF ) << 16 ) | ( ( (g) & 0xFF ) << 8 ) | ( (b) & 0xFF ) ) )
-#  define COLOR_XRGB( r, g, b )                      COLOR_ARGB( 0xFF, r, g, b )
-#  define COLOR_CHANGE_ALPHA( v, a )                 ( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
-# endif   // FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_EXTENSION
+# define COLOR_ARGB( a, r, g, b )                    ( (uint)( ( ( (a) & 0xFF ) << 24 ) | ( ( (r) & 0xFF ) << 16 ) | ( ( (g) & 0xFF ) << 8 ) | ( (b) & 0xFF ) ) )
+# define COLOR_XRGB( r, g, b )                       COLOR_ARGB( 0xFF, r, g, b )
+# define COLOR_CHANGE_ALPHA( v, a )                  ( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
+#endif    // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_SCRIPT
-#  define COLOR_ARGB                                 # (a, r, g, b)( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
-#  define COLOR_XRGB                                 # (r, g, b)COLOR_ARGB( 0xff, r, g, b )
-#  define COLOR_CHANGE_ALPHA                         # (v, a)( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
-# endif   // FOCLASSIC_SCRIPT
+#ifdef FOCLASSIC_SCRIPT
+# define COLOR_ARGB                                  # (a, r, g, b)( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
+# define COLOR_XRGB                                  # (r, g, b)COLOR_ARGB( 0xff, r, g, b )
+# define COLOR_CHANGE_ALPHA                          # (v, a)( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
+#endif    // FOCLASSIC_SCRIPT
 
-# define COLOR_IFACE_FIX                             COLOR_XRGB( 103, 95, 86 )
-# define COLOR_CRITTER_NAME                          COLOR_XRGB( 0xAD, 0xAD, 0xB9 )
-# define COLOR_TEXT                                  COLOR_XRGB( 60, 248, 0 )
-# define COLOR_TEXT_WHITE                            COLOR_XRGB( 0xFF, 0xFF, 0xFF )
-# define COLOR_TEXT_DWHITE                           COLOR_XRGB( 0xBF, 0xBF, 0xBF )
-# define COLOR_TEXT_RED                              COLOR_XRGB( 0xC8, 0, 0 )
-# define COLOR_TEXT_DRED                             COLOR_XRGB( 0xAA, 0, 0 )
-# define COLOR_TEXT_DDRED                            COLOR_XRGB( 0x66, 0, 0 )
-# define COLOR_TEXT_LRED                             COLOR_XRGB( 0xFF, 0, 0 )
-# define COLOR_TEXT_BLUE                             COLOR_XRGB( 0, 0, 0xC8 )
-# define COLOR_TEXT_DBLUE                            COLOR_XRGB( 0, 0, 0xAA )
-# define COLOR_TEXT_LBLUE                            COLOR_XRGB( 0, 0, 0xFF )
-# define COLOR_TEXT_GREEN                            COLOR_XRGB( 0, 0xC8, 0 )
-# define COLOR_TEXT_DGREEN                           COLOR_XRGB( 0, 0xAA, 0 )
-# define COLOR_TEXT_DDGREEN                          COLOR_XRGB( 0, 0x66, 0 )
-# define COLOR_TEXT_LGREEN                           COLOR_XRGB( 0, 0xFF, 0 )
-# define COLOR_TEXT_BLACK                            COLOR_XRGB( 0, 0, 0 )
-# define COLOR_TEXT_SBLACK                           COLOR_XRGB( 0x10, 0x10, 0x10 )
-# define COLOR_TEXT_DARK                             COLOR_XRGB( 0x30, 0x30, 0x30 )
-# define COLOR_TEXT_GREEN_RED                        COLOR_XRGB( 0, 0xC8, 0xC8 )
-# define COLOR_TEXT_SAND                             COLOR_XRGB( 0x8F, 0x6F, 0 )
-
-#endif   // FOCLASSIC_MACROS_ALLOWED
+#define COLOR_IFACE_FIX                              COLOR_XRGB( 103, 95, 86 )
+#define COLOR_CRITTER_NAME                           COLOR_XRGB( 0xAD, 0xAD, 0xB9 )
+#define COLOR_TEXT                                   COLOR_XRGB( 60, 248, 0 )
+#define COLOR_TEXT_WHITE                             COLOR_XRGB( 0xFF, 0xFF, 0xFF )
+#define COLOR_TEXT_DWHITE                            COLOR_XRGB( 0xBF, 0xBF, 0xBF )
+#define COLOR_TEXT_RED                               COLOR_XRGB( 0xC8, 0, 0 )
+#define COLOR_TEXT_DRED                              COLOR_XRGB( 0xAA, 0, 0 )
+#define COLOR_TEXT_DDRED                             COLOR_XRGB( 0x66, 0, 0 )
+#define COLOR_TEXT_LRED                              COLOR_XRGB( 0xFF, 0, 0 )
+#define COLOR_TEXT_BLUE                              COLOR_XRGB( 0, 0, 0xC8 )
+#define COLOR_TEXT_DBLUE                             COLOR_XRGB( 0, 0, 0xAA )
+#define COLOR_TEXT_LBLUE                             COLOR_XRGB( 0, 0, 0xFF )
+#define COLOR_TEXT_GREEN                             COLOR_XRGB( 0, 0xC8, 0 )
+#define COLOR_TEXT_DGREEN                            COLOR_XRGB( 0, 0xAA, 0 )
+#define COLOR_TEXT_DDGREEN                           COLOR_XRGB( 0, 0x66, 0 )
+#define COLOR_TEXT_LGREEN                            COLOR_XRGB( 0, 0xFF, 0 )
+#define COLOR_TEXT_BLACK                             COLOR_XRGB( 0, 0, 0 )
+#define COLOR_TEXT_SBLACK                            COLOR_XRGB( 0x10, 0x10, 0x10 )
+#define COLOR_TEXT_DARK                              COLOR_XRGB( 0x30, 0x30, 0x30 )
+#define COLOR_TEXT_GREEN_RED                         COLOR_XRGB( 0, 0xC8, 0xC8 )
+#define COLOR_TEXT_SAND                              COLOR_XRGB( 0x8F, 0x6F, 0 )
 
 // Commands
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE(3,"renumber COMMAND")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #define COMMAND_EXIT                                 (1)
 #define COMMAND_MYINFO                               (2)
 #define COMMAND_GAMEINFO                             (3)
@@ -375,19 +441,19 @@
 #define COMMAND_ADDITEM_SELF                         (14)
 #define COMMAND_ADDNPC                               (15)
 #define COMMAND_ADDLOCATION                          (16)
-#define COMMAND_RELOADSCRIPTS                        (17) // investigate
+#define COMMAND_RELOADSCRIPTS                        (17)  // investigate
 #define COMMAND_LOADSCRIPT                           (18)
 #define COMMAND_RELOAD_CLIENT_SCRIPTS                (19)
 #define COMMAND_RUNSCRIPT                            (20)
-#define COMMAND_RELOADLOCATIONS                      (21) // investigate
+#define COMMAND_RELOADLOCATIONS                      (21)  // investigate
 #define COMMAND_LOADLOCATION                         (22)
-#define COMMAND_RELOADMAPS                           (23) // investigate
+#define COMMAND_RELOADMAPS                           (23)  // investigate
 #define COMMAND_LOADMAP                              (24)
 #define COMMAND_REGENMAP                             (25)
-#define COMMAND_RELOADDIALOGS                        (26) // investigate
+#define COMMAND_RELOADDIALOGS                        (26)  // investigate
 #define COMMAND_LOADDIALOG                           (27)
-#define COMMAND_RELOADTEXTS                          (28) // investigate
-#define COMMAND_RELOADAI                             (29) // investigate
+#define COMMAND_RELOADTEXTS                          (28)  // investigate
+#define COMMAND_RELOADAI                             (29)  // investigate
 #define COMMAND_CHECKVAR                             (30)
 #define COMMAND_SETVAR                               (31)
 #define COMMAND_SETTIME                              (32)
@@ -400,7 +466,7 @@
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"CMD")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define CMD_EXIT                                    (COMMAND_EXIT)
 # define CMD_MYINFO                                  (COMMAND_MYINFO)
@@ -461,7 +527,7 @@
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"CONT")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define CONT_GET                                    (CONTAINER_GET)
 # define CONT_PUT                                    (CONTAINER_PUT)
@@ -482,6 +548,42 @@
 #define CORNER_NORTH                                 (4)
 #define CORNER_EAST_WEST                             (5)
 
+// Critter actions
+// Flags for chosen:
+// l - hardcoded local call
+// s - hardcoded server call
+// for all others critters actions call only server
+//                                                           flags    actionExt                                                      item
+#define ACTION_MOVE                                  (0)  // l
+#define ACTION_RUN                                   (1)  // l
+#define ACTION_MOVE_ITEM                             (2)  // l s      from slot                                                      +
+#define ACTION_MOVE_ITEM_SWAP                        (3)  // l s      from slot                                                      +
+#define ACTION_USE_ITEM                              (4)  // l s                                                                     +
+#define ACTION_DROP_ITEM                             (5)  // l s      from slot                                                      +
+#define ACTION_USE_WEAPON                            (6)  // l        fail attack 8 bit, use index (0-2) 4-7 bits, aim 0-3 bits      +
+#define ACTION_RELOAD_WEAPON                         (7)  // l s                                                                     +
+#define ACTION_USE_SKILL                             (8)  // l s      skill index (see SK_*)
+#define ACTION_PICK_ITEM                             (9)  // l s                                                                     +
+#define ACTION_PICK_CRITTER                          (10) // l        0 - loot, 1 - steal, 2 - push
+#define ACTION_OPERATE_CONTAINER                     (11) // l s      transfer type * 10 + [0 - get, 1 - get all, 2 - put]           + (exclude get all)
+#define ACTION_BARTER                                (12) //   s      0 - item taken, 1 - item given                                 +
+#define ACTION_DODGE                                 (13) //          0 - front, 1 - back
+#define ACTION_DAMAGE                                (14) //          0 - front, 1 - back
+#define ACTION_DAMAGE_FORCE                          (15) //          0 - front, 1 - back
+#define ACTION_KNOCKOUT                              (16) //   s      0 - knockout anim2begin
+#define ACTION_STANDUP                               (17) //   s      0 - knockout anim2end
+#define ACTION_FIDGET                                (18) // l
+#define ACTION_DEAD                                  (19) //   s      dead type anim2 (see Anim2 in _animation.fos)
+#define ACTION_CONNECT                               (20) //
+#define ACTION_DISCONNECT                            (21) //
+#define ACTION_RESPAWN                               (22) //   s
+#define ACTION_REFRESH                               (23) //   s
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma FOCLASSIC_STAGE(3,"ACTION -> CRITTER_ACTION")
+# endif
+#endif // FOCLASSIC_ENGINE
+
 // Critter conditions
 #define CRITTER_CONDITION_LIFE                       (1)
 #define CRITTER_CONDITION_KNOCKOUT                   (2)
@@ -490,7 +592,7 @@
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"COND")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define COND_LIFE                                   (CRITTER_CONDITION_LIFE)
 # define COND_KNOCKOUT                               (CRITTER_CONDITION_KNOCKOUT)
@@ -545,16 +647,16 @@
 #define CRITTER_EVENT_MAX                            (44)
 
 // Critters flags
-#define CRITTER_FLAG_PLAYER                          (0x00010000) // Player
-#define CRITTER_FLAG_NPC                             (0x00020000) // Npc
-#define CRITTER_FLAG_DISCONNECT                      (0x00080000) // In offline
-#define CRITTER_FLAG_CHOSEN                          (0x00100000) // Chosen
-#define CRITTER_FLAG_RULEGROUP                       (0x00200000) // Group rule
+#define CRITTER_FLAG_PLAYER                          (0x00010000)  // Player
+#define CRITTER_FLAG_NPC                             (0x00020000)  // Npc
+#define CRITTER_FLAG_DISCONNECT                      (0x00080000)  // In offline
+#define CRITTER_FLAG_CHOSEN                          (0x00100000)  // Chosen
+#define CRITTER_FLAG_RULEGROUP                       (0x00200000)  // Group rule
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"FCRIT")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define FCRIT_PLAYER                                (CRITTER_FLAG_PLAYER)
 # define FCRIT_NPC                                   (CRITTER_FLAG_NPC)
@@ -571,25 +673,21 @@
 #  pragma STAGE_DEPRECATE(3,"NPC_START_ID")
 #  pragma STAGE_DEPRECATE(3,"USER_START_ID")
 # endif
-#endif // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define NPC_START_ID                                (CRITTER_ID_START_NPC)
 # define USER_START_ID                               (CRITTER_ID_START_PLAYER)
 #endif   // !FOCLASSIC_BLEEDING_EDGE
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define CRITTER_ID_IS_NPC( id )                     ( (id) >= CRITTER_ID_START_NPC )
+# define CRITTER_ID_IS_PLAYER( id )                  ( (id) >= CRITTER_ID_START_PLAYER && (id) < CRITTER_ID_START_NPC )
+#endif    // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define CRITTER_ID_IS_NPC( id )                    ( (id) >= CRITTER_ID_START_NPC )
-#  define CRITTER_ID_IS_PLAYER( id )                 ( (id) >= CRITTER_ID_START_PLAYER && (id) < CRITTER_ID_START_NPC )
-# endif   // FOCLASSIC_EXTENSION
-
-# ifdef FOCLASSIC_SCRIPT
-#  define CRITTER_ID_IS_NPC                          # (id)( (id) >= CRITTER_ID_START_NPC )
-#  define CRITTER_ID_IS_PLAYER                       # (id)( (id) >= CRITTER_ID_START_PLAYER && (id) < CRITTER_ID_START_NPC )
-# endif   // FOCLASSIC_SCRIPT
-
-#endif    // FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_SCRIPT
+# define CRITTER_ID_IS_NPC                           # (id)( (id) >= CRITTER_ID_START_NPC )
+# define CRITTER_ID_IS_PLAYER                        # (id)( (id) >= CRITTER_ID_START_PLAYER && (id) < CRITTER_ID_START_NPC )
+#endif    // FOCLASSIC_SCRIPT
 
 // Critter description
 #define CRITTER_LOOK_NAME                            (0)
@@ -600,10 +698,19 @@
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"CRITTER_ONLY_NAME")
 # endif
-#endif   // FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_ENGINE
 #ifndef FOCLASSIC_BLEEDING_EDGE
 # define CRITTER_ONLY_NAME                           (CRITTER_LOOK_NAME)
-#endif // !FOCLASSIC_BLEEDING_EDGE
+#endif  // !FOCLASSIC_BLEEDING_EDGE
+
+// Cur modes
+#define CURSOR_DEFAULT                               (0)
+#define CURSOR_MOVE                                  (1)
+#define CURSOR_USE_ITEM                              (2)
+#define CURSOR_USE_WEAPON                            (3)
+#define CURSOR_USE_SKILL                             (4)
+#define CURSOR_WAIT                                  (5)
+#define CURSOR_HAND                                  (6)
 
 // Damage types
 #define DAMAGE_TYPE_UNCALLED                         (0)
@@ -621,8 +728,8 @@
 #define DESC_INVENTORY_STATS                         (2)
 #define DESC_INVENTORY_RESIST                        (3)
 
-#ifdef FOCLASSIC_ENGINE
 // Sprite layers
+#ifdef FOCLASSIC_ENGINE
 # define DRAW_ORDER                                  (20)
 # define DRAW_ORDER_FLAT                             (0)
 # define DRAW_ORDER_TILE                             (DRAW_ORDER_FLAT + 0)
@@ -640,13 +747,37 @@
 # define DRAW_ORDER_LAST                             (39)
 # define DRAW_ORDER_ITEM_AUTO( i )                   (i->IsFlat() ? (i->IsItem() ? DRAW_ORDER_FLAT_ITEM : DRAW_ORDER_FLAT_SCENERY) : (i->IsItem() ? DRAW_ORDER_ITEM : DRAW_ORDER_SCENERY) )
 # define DRAW_ORDER_CRIT_AUTO( c )                   (c->IsDead() && !c->IsRawParam( MODE_NO_FLATTEN ) ? DRAW_ORDER_DEAD_CRITTER : DRAW_ORDER_CRITTER)
+#endif  // FOCLASSIC_ENGINE
+
+// Primitives
+// Engine uses values shifted by 1, _probably_ leftover from first GL implementation (or laziness ;>)
+// simple to change, but let's delay it until V13 end, giving servers time to verify they're using defines and not raw values
+// see FOClient::SScriptFunc::Global_DrawPrimitive() for extra fun
+#define PRIMITIVE_POINTLIST                          (1)
+#define PRIMITIVE_LINELIST                           (2)
+#define PRIMITIVE_LINESTRIP                          (3)
+#define PRIMITIVE_TRIANGLELIST                       (4)
+#define PRIMITIVE_TRIANGLESTRIP                      (5)
+#define PRIMITIVE_TRIANGLEFAN                        (6)
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE(3,"synchronize PRIMITIVE and DRAW_PRIMIVE (favor engine values)")
+# endif
+#endif // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_ENGINE
+# define DRAW_PRIMITIVE_POINTLIST                    (PRIMITIVE_POINTLIST - 1)
+# define DRAW_PRIMITIVE_LINELIST                     (PRIMITIVE_LINELIST - 1)
+# define DRAW_PRIMITIVE_LINESTRIP                    (PRIMITIVE_LINESTRIP - 1)
+# define DRAW_PRIMITIVE_TRIANGLELIST                 (PRIMITIVE_TRIANGLELIST - 1)
+# define DRAW_PRIMITIVE_TRIANGLESTRIP                (PRIMITIVE_TRIANGLESTRIP - 1)
+# define DRAW_PRIMITIVE_TRIANGLEFAN                  (PRIMITIVE_TRIANGLEFAN - 1)
 #endif
 
 // Entires
 #define ENTIRE_DEFAULT                               (0)
 #define ENTIRE_LOG_OUT                               (241)
 
-// Critter find types
+// Critter finding flags
 #define FIND_LIFE                                    (0x01)
 #define FIND_KO                                      (0x02)
 #define FIND_DEAD                                    (0x04)
@@ -693,19 +824,15 @@
 # define FONT_FLAG_CENTERXY                          (FONT_FLAG_CENTERX | FONT_FLAG_CENTERY)
 #endif // !FOCLASSIC_ENGINE
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define FONT_FLAG_SKIPLINES( l )                    (0x0400 | ( (l) << 16 ) )
+# define FONT_FLAG_SKIPLINES_END( l )                (0x0800 | ( (l) << 16 ) )
+#endif  // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define FONT_FLAG_SKIPLINES( l )                   (0x0400 | ( (l) << 16 ) )
-#  define FONT_FLAG_SKIPLINES_END( l )               (0x0800 | ( (l) << 16 ) )
-# endif // FOCLASSIC_EXTENSION
-
-# ifdef FOCLASSIC_SCRIPT
-#  define FONT_FLAG_SKIPLINES                        # (l)(0x0400 | ( (l) << 16 ) )
-#  define FONT_FLAG_SKIPLINES_END                    # (l)(0x0800 | ( (l) << 16 ) )
-# endif // FOCLASSIC_SCRIPT
-
-#endif   // FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_SCRIPT
+# define FONT_FLAG_SKIPLINES                         # (l)(0x0400 | ( (l) << 16 ) )
+# define FONT_FLAG_SKIPLINES_END                     # (l)(0x0800 | ( (l) << 16 ) )
+#endif  // FOCLASSIC_SCRIPT
 
 // Fonts
 #define FONT_TYPE_FO                                 (0)
@@ -753,19 +880,16 @@
 # define FT_ALIGN                                    (FONT_FLAG_ALIGN)
 # define FT_BORDERED                                 (FONT_FLAG_BORDERED)
 
-# ifdef FOCLASSIC_MACROS_ALLOWED
+# ifdef FOCLASSIC_EXTENSION
+#  define FT_SKIPLINES( l )                          (0x0400 | ( (l) << 16 ) )
+#  define FT_SKIPLINES_END( l )                      (0x0800 | ( (l) << 16 ) )
+# endif    // FOCLASSIC_EXTENSION
 
-#  ifdef FOCLASSIC_EXTENSION
-#   define FT_SKIPLINES( l )                         (0x0400 | ( (l) << 16 ) )
-#   define FT_SKIPLINES_END( l )                     (0x0800 | ( (l) << 16 ) )
-#  endif   // FOCLASSIC_EXTENSION
+# ifdef FOCLASSIC_SCRIPT
+#  define FT_SKIPLINES                               # (l)(0x0400 | ( (l) << 16 ) )
+#  define FT_SKIPLINES_END                           # (l)(0x0800 | ( (l) << 16 ) )
+# endif    // FOCLASSIC_EXTENSION
 
-#  ifdef FOCLASSIC_SCRIPT
-#   define FT_SKIPLINES                              # (l)(0x0400 | ( (l) << 16 ) )
-#   define FT_SKIPLINES_END                          # (l)(0x0800 | ( (l) << 16 ) )
-#  endif   // FOCLASSIC_EXTENSION
-
-# endif    // FOCLASSIC_MACROS_ALLOWED
 #endif     // !FOCLASSIC_BLEEDING_EDGE
 
 #define GENDER_MALE                                  (0)
@@ -779,53 +903,49 @@
 #define GRID_ELEVATOR                                (5)
 
 // Hex flags
-// ProtoMap
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#define HEX_FLAG_BLOCK                               BIN8( 00000001 ) // ProtoMap
+#define HEX_FLAG_NOTRAKE                             BIN8( 00000010 ) // ProtoMap
+#define HEX_FLAG_WALL                                BIN8( 00000100 ) // ProtoMap
+#define HEX_FLAG_SCEN                                BIN8( 00001000 ) // ProtoMap
+#define HEX_FLAG_SCEN_GRID                           BIN8( 00010000 ) // ProtoMap
+#define HEX_FLAG_TRIGGER                             BIN8( 00100000 ) // ProtoMap
+#define HEX_FLAG_CRITTER                             BIN8( 00000001 ) // Map
+#define HEX_FLAG_DEAD_CRITTER                        BIN8( 00000010 ) // Map
+#define HEX_FLAG_ITEM                                BIN8( 00000100 ) // Map
+#define HEX_FLAG_DOOR                                BIN8( 00001000 ) // Map
+#define HEX_FLAG_BLOCK_ITEM                          BIN8( 00010000 ) // Map
+#define HEX_FLAG_NRAKE_ITEM                          BIN8( 00100000 ) // Map
+#define HEX_FLAG_WALK_ITEM                           BIN8( 01000000 ) // Map
+#define HEX_FLAG_GAG_ITEM                            BIN8( 10000000 ) // Map
 
-# define HEX_FLAG_BLOCK                              BIN8( 00000001 )
-# define HEX_FLAG_NOTRAKE                            BIN8( 00000010 )
-# define HEX_FLAG_WALL                               BIN8( 00000100 )
-# define HEX_FLAG_SCEN                               BIN8( 00001000 )
-# define HEX_FLAG_SCEN_GRID                          BIN8( 00010000 )
-# define HEX_FLAG_TRIGGER                            BIN8( 00100000 )
-// Map
-# define HEX_FLAG_CRITTER                            BIN8( 00000001 )
-# define HEX_FLAG_DEAD_CRITTER                       BIN8( 00000010 )
-# define HEX_FLAG_ITEM                               BIN8( 00000100 )
-# define HEX_FLAG_DOOR                               BIN8( 00001000 )
-# define HEX_FLAG_BLOCK_ITEM                         BIN8( 00010000 )
-# define HEX_FLAG_NRAKE_ITEM                         BIN8( 00100000 )
-# define HEX_FLAG_WALK_ITEM                          BIN8( 01000000 )
-# define HEX_FLAG_GAG_ITEM                           BIN8( 10000000 )
+#define HEX_FLAG_NOWAY                               BIN16( 00010001, 00000001 )
+#define HEX_FLAG_NOSHOOT                             BIN16( 00100000, 00000010 )
 
-# define HEX_FLAG_NOWAY                              BIN16( 00010001, 00000001 )
-# define HEX_FLAG_NOSHOOT                            BIN16( 00100000, 00000010 )
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE_DEPRECATE(3,"FH")
+# endif
+#endif  // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_BLEEDING_EDGE
+# define FH_BLOCK                                    (HEX_FLAG_BLOCK)
+# define FH_NOTRAKE                                  (HEX_FLAG_NOTRAKE)
+# define FH_WALL                                     (HEX_FLAG_WALL)
+# define FH_SCEN                                     (HEX_FLAG_SCEN)
+# define FH_SCEN_GRID                                (HEX_FLAG_SCEN_GRID)
+# define FH_TRIGGER                                  (HEX_FLAG_TRIGGER)
+# define FH_CRITTER                                  (HEX_FLAG_CRITTER)
+# define FH_DEAD_CRITTER                             (HEX_FLAG_DEAD_CRITTER)
+# define FH_ITEM                                     (HEX_FLAG_ITEM)
+# define FH_DOOR                                     (HEX_FLAG_DOOR)
+# define FH_BLOCK_ITEM                               (HEX_FLAG_BLOCK_ITEM)
+# define FH_NRAKE_ITEM                               (HEX_FLAG_NRAKE_ITEM)
+# define FH_WALK_ITEM                                (HEX_FLAG_WALK_ITEM)
+# define FH_GAG_ITEM                                 (HEX_FLAG_GAG_ITEM)
+# define FH_NOWAY                                    (HEX_FLAG_NOWAY)
+# define FH_NOSHOOT                                  (HEX_FLAG_NOSHOOT)
 
-# ifdef FOCLASSIC_ENGINE
-#  if FOCLASSIC_STAGE >= 3
-#   pragma MESSAGE("deprecate FH")
-#  endif
-# endif // FOCLASSIC_ENGINE
-# ifndef FOCLASSIC_BLEEDING_EDGE
-#  define FH_BLOCK                                   (HEX_FLAG_BLOCK)
-#  define FH_NOTRAKE                                 (HEX_FLAG_NOTRAKE)
-#  define FH_WALL                                    (HEX_FLAG_WALL)
-#  define FH_SCEN                                    (HEX_FLAG_SCEN)
-#  define FH_SCEN_GRID                               (HEX_FLAG_SCEN_GRID)
-#  define FH_TRIGGER                                 (HEX_FLAG_TRIGGER)
-#  define FH_CRITTER                                 (HEX_FLAG_CRITTER)
-#  define FH_DEAD_CRITTER                            (HEX_FLAG_DEAD_CRITTER)
-#  define FH_ITEM                                    (HEX_FLAG_ITEM)
-#  define FH_DOOR                                    (HEX_FLAG_DOOR)
-#  define FH_BLOCK_ITEM                              (HEX_FLAG_BLOCK_ITEM)
-#  define FH_NRAKE_ITEM                              (HEX_FLAG_NRAKE_ITEM)
-#  define FH_WALK_ITEM                               (HEX_FLAG_WALK_ITEM)
-#  define FH_GAG_ITEM                                (HEX_FLAG_GAG_ITEM)
-#  define FH_NOWAY                                   (HEX_FLAG_NOWAY)
-#  define FH_NOSHOOT                                 (HEX_FLAG_NOSHOOT)
-# endif   // !FOCLASSIC_BLEEDING_EDGE
+#endif    // !FOCLASSIC_BLEEDING_EDGE
 
-#endif    // FOCLASSIC_MACROS_ALLOWED
 
 // Hit locations
 #define HIT_LOCATION_NONE                            (0)
@@ -851,13 +971,39 @@
 #define ITEM_ACCESSORY_HEX                           (2)
 #define ITEM_ACCESSORY_CONTAINER                     (3)
 
+// Items collections
+#define ITEM_COLLECTION_INVENTORY                    (0)
+#define ITEM_COLLECTION_USE                          (1)
+#define ITEM_COLLECTION_BARTER                       (2)
+#define ITEM_COLLECTION_BARTER_OFFER                 (3)
+#define ITEM_COLLECTION_BARTER_OPPONENT              (4)
+#define ITEM_COLLECTION_BARTER_OPPONENT_OFFER        (5)
+#define ITEM_COLLECTION_PICKUP                       (6)
+#define ITEM_COLLECTION_PICKUP_FROM                  (7)
+
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE_DEPRECATE(3,"ITEMS")
+# endif
+#endif // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_BLEEDING_EDGE
+# define ITEMS_INVENTORY                             (ITEM_COLLECTION_INVENTORY)
+# define ITEMS_USE                                   (ITEM_COLLECTION_USE)
+# define ITEMS_BARTER                                (ITEM_COLLECTION_BARTER)
+# define ITEMS_BARTER_OFFER                          (ITEM_COLLECTION_BARTER_OFFER)
+# define ITEMS_BARTER_OPPONENT                       (ITEM_COLLECTION_BARTER_OPPONENT)
+# define ITEMS_BARTER_OPPONENT_OFFER                 (ITEM_COLLECTION_BARTER_OPPONENT_OFFER)
+# define ITEMS_PICKUP                                (ITEM_COLLECTION_PICKUP)
+# define ITEMS_PICKUP_FROM                           (ITEM_COLLECTION_PICKUP_FROM)
+#endif // !FOCLASSIC_BLEEDING_EDGE
+
 // Item data masks
 #define ITEM_DATA_MASK_CHOSEN                        (0)
 #define ITEM_DATA_MASK_CRITTER                       (1)
 #define ITEM_DATA_MASK_CRITTER_EXT                   (2)
 #define ITEM_DATA_MASK_CONTAINER                     (3)
 #define ITEM_DATA_MASK_MAP                           (4)
-#define ITEM_DATA_MASK_MAX                           (ITEM_DATA_MASK_MAP + 1) // array size
+#define ITEM_DATA_MASK_MAX                           (ITEM_DATA_MASK_MAP + 1)  // array size
 
 // Item events
 #define ITEM_EVENT_FINISH                            (0)
@@ -868,7 +1014,7 @@
 #define ITEM_EVENT_DROP                              (5)
 #define ITEM_EVENT_MOVE                              (6)
 #define ITEM_EVENT_WALK                              (7)
-#define ITEM_EVENT_MAX                               (ITEM_EVENT_WALK + 1) // array size
+#define ITEM_EVENT_MAX                               (ITEM_EVENT_WALK + 1)  // array size
 
 // Item flags
 #define ITEM_FLAG_HIDDEN                             (0x00000001)
@@ -954,10 +1100,10 @@
 // Types
 #define ITEM_TYPE_OTHER                              (0)
 #define ITEM_TYPE_ARMOR                              (1)
-#define ITEM_TYPE_DRUG                               (2) // stacked
-#define ITEM_TYPE_WEAPON                             (3) // combined
-#define ITEM_TYPE_AMMO                               (4) // stacked
-#define ITEM_TYPE_MISC                               (5) // combined
+#define ITEM_TYPE_DRUG                               (2)  // stacked
+#define ITEM_TYPE_WEAPON                             (3)  // combined
+#define ITEM_TYPE_AMMO                               (4)  // stacked
+#define ITEM_TYPE_MISC                               (5)  // combined
 #define ITEM_TYPE_KEY                                (7)
 #define ITEM_TYPE_CONTAINER                          (8)
 #define ITEM_TYPE_DOOR                               (9)
@@ -965,25 +1111,25 @@
 #define ITEM_TYPE_GENERIC                            (11)
 #define ITEM_TYPE_WALL                               (12)
 #define ITEM_TYPE_CAR                                (13)
-#define ITEM_TYPE_LAST                               (ITEM_TYPE_CAR)      // scripts/extensions
-#define ITEM_TYPE_MAX                                (ITEM_TYPE_LAST + 1) // array size
+#define ITEM_TYPE_LAST                               (ITEM_TYPE_CAR)       // extensions/scripts
+#define ITEM_TYPE_MAX                                (ITEM_TYPE_LAST + 1)  // array size
 
 // Script events
 #define LOCATION_EVENT_FINISH                        (0)
 #define LOCATION_EVENT_ENTER                         (1)
-#define LOCATION_EVENT_MAX                           (LOCATION_EVENT_ENTER + 1) // array size
+#define LOCATION_EVENT_MAX                           (LOCATION_EVENT_ENTER + 1)  // array size
 
 // Locker
 #define LOCKER_ISOPEN                                (0x01)
 #define LOCKER_NOOPEN                                (0x10)
 
 // Look checks
-#define LOOK_CHECK_DIR                               (0x01) // Nerf look by directions of look
-#define LOOK_CHECK_SNEAK_DIR                         (0x02) // Nerf opponent sneak by directions of look
-#define LOOK_CHECK_SNEAK_WEIGHT                      (0x04) // Nerf sneak by current weight
-#define LOOK_CHECK_TRACE                             (0x08) // Tracing for wall aviablility
-#define LOOK_CHECK_SCRIPT                            (0x10) // Use bool check_look() from scripts
-#define LOOK_CHECK_ITEM_SCRIPT                       (0x20) // Use bool check_trap_look() from scripts, for items with ITEM_TRAP flag
+#define LOOK_CHECK_DIR                               (0x01)  // Nerf look by directions of look
+#define LOOK_CHECK_SNEAK_DIR                         (0x02)  // Nerf opponent sneak by directions of look
+#define LOOK_CHECK_SNEAK_WEIGHT                      (0x04)  // Nerf sneak by current weight
+#define LOOK_CHECK_TRACE                             (0x08)  // Tracing for wall aviablility
+#define LOOK_CHECK_SCRIPT                            (0x10)  // Use bool check_look() from scripts
+#define LOOK_CHECK_ITEM_SCRIPT                       (0x20)  // Use bool check_trap_look() from scripts, for items with ITEM_TRAP flag
 
 // Script events
 #define MAP_EVENT_FINISH                             (0)
@@ -998,7 +1144,7 @@
 #define MAP_EVENT_TURN_BASED_BEGIN                   (9)
 #define MAP_EVENT_TURN_BASED_END                     (10)
 #define MAP_EVENT_TURN_BASED_PROCESS                 (11)
-#define MAP_EVENT_MAX                                (MAP_EVENT_TURN_BASED_PROCESS + 1) // aray size
+#define MAP_EVENT_MAX                                (MAP_EVENT_TURN_BASED_PROCESS + 1)  // aray size
 
 // Map object types
 #define MAP_OBJECT_CRITTER                           (0)
@@ -1017,6 +1163,19 @@
 # define MATERIAL_LEATHER                            (7)
 #endif   // !FOCLASSIC_ENGINE
 
+// Mouse click state
+#define MOUSE_CLICK_LEFT                             (0)
+#define MOUSE_CLICK_RIGHT                            (1)
+#define MOUSE_CLICK_MIDDLE                           (2)
+#define MOUSE_CLICK_WHEEL_UP                         (3)
+#define MOUSE_CLICK_WHEEL_DOWN                       (4)
+#define MOUSE_CLICK_EXT0                             (5)
+#define MOUSE_CLICK_EXT1                             (6)
+#define MOUSE_CLICK_EXT2                             (7)
+#define MOUSE_CLICK_EXT3                             (8)
+#define MOUSE_CLICK_EXT4                             (9)
+
+// Message box
 #define MSGBOX_GAME                                  (0)
 #define MSGBOX_TALK                                  (1)
 #define MSGBOX_COMBAT_RESULT                         (2)
@@ -1032,14 +1191,6 @@
 # define FOMB_COMBAT_RESULT                          (MSGBOX_COMBAT_RESULT)
 # define FOMB_VIEW                                   (MSGBOX_VIEW)
 #endif // !FOCLASSIC_BLEEDING_EDGE
-
-// Primitives
-#define PRIMITIVE_POINTLIST                          (1)
-#define PRIMITIVE_LINELIST                           (2)
-#define PRIMITIVE_LINESTRIP                          (3)
-#define PRIMITIVE_TRIANGLELIST                       (4)
-#define PRIMITIVE_TRIANGLESTRIP                      (5)
-#define PRIMITIVE_TRIANGLEFAN                        (6)
 
 // Client and mapper paths
 #define PATH_ROOT                                    (0)
@@ -1142,17 +1293,13 @@
 #define RADIO_BROADCAST_LOCATION                     (40)
 #define RADIO_BROADCAST_FORCE_ALL                    (250)
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define RADIO_BROADCAST_ZONE( x )                   (100 + CLAMP( x, 1, 100 ) )  // 1..100
+#endif  // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define RADIO_BROADCAST_ZONE( x )                  (100 + CLAMP( x, 1, 100 ) ) // 1..100
-# endif // FOCLASSIC_EXTENSION
-
-# ifdef FOCLASSIC_SCRIPT
-#  define RADIO_BROADCAST_ZONE                       # (x)(100 + CLAMP( x, 1, 100 ) ) // 1..100
-# endif // FOCLASSIC_SCRIPT
-
-#endif // FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_SCRIPT
+# define RADIO_BROADCAST_ZONE                        # (x)(100 + CLAMP( x, 1, 100 ) )  // 1..100
+#endif  // FOCLASSIC_SCRIPT
 
 // AI Plane begin/end/run reasons
 // Begin
@@ -1182,23 +1329,15 @@
 #define REASON_ATTACK_DISTANTION                     (52)
 #define REASON_ATTACK_USE_AIM                        (53)
 
-// Slots
-#define SLOT_INV                                     (0)
-#define SLOT_HAND1                                   (1)
-#define SLOT_HAND2                                   (2)
-#define SLOT_ARMOR                                   (3)
-#define SLOT_GROUND                                  (255)
-#define SLOT_LAST                                    (SLOT_ARMOR) // scripts/extensions
-
 // Say types
-#define SAY_NORM                                     (1)
-#define SAY_NORM_ON_HEAD                             (2)
-#define SAY_SHOUT                                    (3)
-#define SAY_SHOUT_ON_HEAD                            (4)
-#define SAY_EMOTE                                    (5)
-#define SAY_EMOTE_ON_HEAD                            (6)
-#define SAY_WHISP                                    (7)
-#define SAY_WHISP_ON_HEAD                            (8)
+#define SAY_NORM                                     (1)  // public
+#define SAY_NORM_ON_HEAD                             (2)  // public
+#define SAY_SHOUT                                    (3)  // public
+#define SAY_SHOUT_ON_HEAD                            (4)  // public
+#define SAY_EMOTE                                    (5)  // public
+#define SAY_EMOTE_ON_HEAD                            (6)  // public
+#define SAY_WHISP                                    (7)  // public
+#define SAY_WHISP_ON_HEAD                            (8)  // public
 #define SAY_SOCIAL                                   (9)
 #define SAY_RADIO                                    (10)
 #define SAY_NETMSG                                   (11)
@@ -1209,23 +1348,106 @@
 #define SAY_ENCOUNTER_TB                             (16)
 #define SAY_FIX_RESULT                               (17)
 #define SAY_DIALOGBOX_TEXT                           (18)
+// 19..38 SAY_DIALOGBOX_BUTTON
 #define SAY_SAY_TITLE                                (39)
 #define SAY_SAY_TEXT                                 (40)
 #define SAY_FLASH_WINDOW                             (41)
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
-
 // Max 20 buttons (0..19)
 
-# ifdef FOCLASSIC_EXTENSION
-#  define SAY_DIALOGBOX_BUTTON( b )                  (19 + (b) )
-# endif   // FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_EXTENSION
+# define SAY_DIALOGBOX_BUTTON( b )                   (19 + (b) )
+#endif    // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_SCRIPT
-#  define SAY_DIALOGBOX_BUTTON                       # (b)(19 + (b) )
-# endif   // FOCLASSIC_SCRIPT
+#ifdef FOCLASSIC_SCRIPT
+# define SAY_DIALOGBOX_BUTTON                        # (b)(19 + (b) )
+#endif    // FOCLASSIC_SCRIPT
 
-#endif    // FOCLASSIC_MACROS_ALLOWED
+// Scores
+#define SCORE_SPEAKER                                (3)
+#define SCORE_TRADER                                 (4)
+#define SCORES_MAX                                   (50)
+
+// Scroll elements
+#define SCROLL_MESSBOX                               (0)
+#define SCROLL_INVENTORY                             (1)
+#define SCROLL_INVENTORY_ITEM_INFO                   (2)
+#define SCROLL_PICKUP                                (3)
+#define SCROLL_PICKUP_FROM                           (4)
+#define SCROLL_USE                                   (5)
+#define SCROLL_BARTER                                (6)
+#define SCROLL_BARTER_OFFER                          (7)
+#define SCROLL_BARTER_OPPONENT                       (8)
+#define SCROLL_BARTER_OPPONENT_OFFER                 (9)
+#define SCROLL_GLOBAL_MAP_CITIES_X                   (10)
+#define SCROLL_GLOBAL_MAP_CITIES_Y                   (11)
+#define SCROLL_SPLIT_VALUE                           (12)
+#define SCROLL_TIMER_VALUE                           (13)
+#define SCROLL_PERK                                  (14)
+#define SCROLL_DIALOG_TEXT                           (15)
+#define SCROLL_MAP_ZOOM_VALUE                        (16)
+#define SCROLL_CHARACTER_PERKS                       (17)
+#define SCROLL_CHARACTER_KARMA                       (18)
+#define SCROLL_CHARACTER_KILLS                       (19)
+#define SCROLL_PIPBOY_STATUS                         (20)
+#define SCROLL_PIPBOY_STATUS_QUESTS                  (21)
+#define SCROLL_PIPBOY_STATUS_SCORES                  (22)
+#define SCROLL_PIPBOY_AUTOMAPS                       (23)
+#define SCROLL_PIPBOY_ARCHIVES                       (24)
+#define SCROLL_PIPBOY_ARCHIVES_INFO                  (25)
+
+// SendMessage()
+#define MESSAGE_TO_VISIBLE_ME                        (0)
+#define MESSAGE_TO_IAM_VISIBLE                       (1)
+#define MESSAGE_TO_ALL_ON_MAP                        (2)
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE(3,"MESSAGE -> SENDMESSAGE")
+# endif
+#endif // FOCLASSIC_ENGINE
+
+// Slots
+#define SLOT_INV                                     (0)
+#define SLOT_HAND1                                   (1)
+#define SLOT_HAND2                                   (2)
+#define SLOT_ARMOR                                   (3)
+#define SLOT_GROUND                                  (255)
+#define SLOT_LAST                                    (SLOT_ARMOR)  // extensions/scripts
+
+// Show screen modes
+// Ouput: it is 'uint param' in Critter::ShowScreen.
+// Input: I - integer value 'uint answerI', S - string value 'string& answerS' in 'answer_' function.
+#define SHOW_SCREEN_CLOSE                            (0)  // Close top window.
+#define SHOW_SCREEN_TIMER                            (1)  // Timer box. Output: picture index in INVEN.LST. Input I: time in game minutes (1..599).
+#define SHOW_SCREEN_DIALOGBOX                        (2)  // Dialog box. Output: buttons count - 0..20 (exit button added automatically). Input I: Choosed button - 0..19.
+#define SHOW_SCREEN_SKILLBOX                         (3)  // Skill box. Input I: selected skill.
+#define SHOW_SCREEN_BAG                              (4)  // Bag box. Input I: id of selected item.
+#define SHOW_SCREEN_SAY                              (5)  // Say box. Output: all symbols - 0 or only numbers - any other number. Input S: typed string.
+#define SHOW_SCREEN_ELEVATOR                         (6)  // Elevator. Output: look ELEVATOR_* macro. Input I: Choosed level button.
+#define SHOW_SCREEN_INVENTORY                        (7)  // Inventory.
+#define SHOW_SCREEN_CHARACTER                        (8)  // Character.
+#define SHOW_SCREEN_FIXBOY                           (9)  // Fix-boy.
+#define SHOW_SCREEN_PIPBOY                           (10) // Pip-boy.
+#define SHOW_SCREEN_MINIMAP                          (11) // Mini-map.
+#ifdef FOCLASSIC_ENGINE
+# if FOCLASSIC_STAGE >= 3
+#  pragma STAGE_DEPRECATE(3,"SCREEN_showscreen")
+# endif
+#endif // FOCLASSIC_ENGINE
+#ifndef FOCLASSIC_BLEEDING_EDGE
+# define SCREEN_CLOSE                                (SHOW_SCREEN_CLOSE)
+# define SCREEN_TIMER                                (SHOW_SCREEN_TIMER)
+# define SCREEN_DIALOGBOX                            (SHOW_SCREEN_DIALOGBOX)
+# define SCREEN_SKILLBOX                             (SHOW_SCREEN_SKILLBOX)
+# define SCREEN_BAG                                  (SHOW_SCREEN_BAG)
+# define SCREEN_SAY                                  (SHOW_SCREEN_SAY)
+# define SCREEN_ELEVATOR                             (SHOW_SCREEN_ELEVATOR)
+# define SCREEN_INVENTORY                            (SHOW_SCREEN_INVENTORY)
+# define SCREEN_CHARACTER                            (SHOW_SCREEN_CHARACTER)
+# define SCREEN_FIXBOY                               (SHOW_SCREEN_FIXBOY)
+# define SCREEN_PIPBOY                               (SHOW_SCREEN_PIPBOY)
+# define SCREEN_MINIMAP                              (SHOW_SCREEN_MINIMAP)
+#endif // !FOCLASSIC_BLEEDING_EDGE
 
 // Special skill values
 #define SKILL_PICK_ON_GROUND                         (-1)
@@ -1249,13 +1471,16 @@
 #define SOUND_COMBAT_MODE_ON                         "ICIBOXX1"
 #define SOUND_COMBAT_MODE_OFF                        "ICIBCXX1"
 
+// Sprites cutting
+#define SPRITE_CUT_HORIZONTAL                        (1)
+#define SPRITE_CUT_VERTICAL                          (2)
+
 // Target types
 #define TARGET_SELF                                  (0)
 #define TARGET_SELF_ITEM                             (1)
 #define TARGET_CRITTER                               (2)
 #define TARGET_ITEM                                  (3)
 #define TARGET_SCENERY                               (4)
-#define TARGET_LAST                                  (TARGET_SCENERY + 1) // scripts/extensions
 
 #define TEXTMSG_TEXT                                 (0)
 #define TEXTMSG_DLG                                  (1)
@@ -1267,7 +1492,7 @@
 #define TEXTMSG_HOLO                                 (7)
 #define TEXTMSG_CRAFT                                (8)
 #define TEXTMSG_INTERNAL                             (9)
-#define TEXTMSG_MAX                                  (TEXTMSG_INTERNAL + 1) // array size
+#define TEXTMSG_MAX                                  (TEXTMSG_INTERNAL + 1)  // array size
 
 // Transfer types
 #define TRANSFER_CLOSE                               (0)
@@ -1287,7 +1512,7 @@
 #define USE_RELOAD                                   (3)
 #define USE_USE                                      (4)
 #define USE_NONE                                     (15)
-#define USE_MAX                                      (3) // array size
+#define USE_MAX                                      (3)  // array size
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3
 #  pragma STAGE_DEPRECATE(3,"MAX_USES")
@@ -1297,30 +1522,26 @@
 # define MAX_USES                                    (USE_MAX)
 #endif
 
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define MAKE_ITEM_MODE( use, aim )                  ( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
+#endif    // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define MAKE_ITEM_MODE( use, aim )                 ( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
-# endif   // FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_SCRIPT
+# define MAKE_ITEM_MODE                              # (use, aim)( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
+#endif    // FOCLASSIC_SCRIPT
 
-# ifdef FOCLASSIC_SCRIPT
-#  define MAKE_ITEM_MODE                             # (use, aim)( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
-# endif   // FOCLASSIC_SCRIPT
-
-#endif    // FOCLASSIC_MACROS_ALLOWED
+// User data
+#define CRITTER_USER_DATA_SIZE                       (400)
+#define PROTO_ITEM_USER_DATA_SIZE                    (500)
 
 // Vars calc
-#ifdef FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_EXTENSION
+# define VAR_CALC_QUEST( tid, val )                  ( (tid) * 1000 + (val) )
+#endif    // FOCLASSIC_EXTENSION
 
-# ifdef FOCLASSIC_EXTENSION
-#  define VAR_CALC_QUEST( tid, val )                 ( (tid) * 1000 + (val) )
-# endif   // FOCLASSIC_EXTENSION
-
-# ifdef FOCLASSIC_SCRIPT
-#  define VAR_CALC_QUEST                             # (tid, val)( (tid) * 1000 + (val) )
-# endif   // FOCLASSIC_SCRIPT
-
-#endif    // FOCLASSIC_MACROS_ALLOWED
+#ifdef FOCLASSIC_SCRIPT
+# define VAR_CALC_QUEST                              # (tid, val)( (tid) * 1000 + (val) )
+#endif    // FOCLASSIC_SCRIPT
 
 // Vars types
 #define VAR_TYPE_GLOBAL                              (0)
@@ -1405,7 +1626,11 @@
 # define GM_WALK_WATER                               (WORLDMAP_WALK_WATER)
 #endif   // !FOCLASSIC_BLEEDING_EDGE
 
-///// Items //////
+/////
+//
+// Prototype ID
+//
+/////
 
 #ifndef FOCLASSIC_SKIP_PID
 
@@ -1413,57 +1638,120 @@
 
 #endif   // !FOCLASSIC_SKIP_PID
 
-///// Parameters /////
+/////
+//
+// Parameters
+//
+/////
+
+// Limits
+#define MAX_PARAMS                                   (1000) // array size
+#define MAX_PARAMETERS_ARRAYS                        (100)  // array size
+
+// Skill
+#define SKILL_BEGIN                                  (GAME_OPTION( SkillBegin ) )
+#define SKILL_END                                    (GAME_OPTION( SkillEnd ) )
+#define SKILL_COUNT                                  (SKILL_END - SKILL_BEGIN + 1)
+#define MAX_SKILL_VAL                                (GAME_OPTION( SkillMaxValue ) )
+
+// Perk
+#define PERK_BEGIN                                   (GAME_OPTION( PerkBegin ) )
+#define PERK_END                                     (GAME_OPTION( PerkEnd ) )
+#define PERK_COUNT                                   (PERK_END - PERK_BEGIN + 1)
+
+// Timeout
+#define TIMEOUT_BEGIN                                (GAME_OPTION( TimeoutBegin ) )
+#define TIMEOUT_END                                  (GAME_OPTION( TimeoutEnd ) )
+#define TIMEOUT_COUNT                                (TIMEOUT_END - TIMEOUT_BEGIN + 1)
+#define TB_BATTLE_TIMEOUT                            (100000000)
+#define TB_BATTLE_TIMEOUT_CHECK( to )                ( (to) > 10000000 )
+// Kill
+#define KILL_BEGIN                                   (GAME_OPTION( KillBegin ) )
+#define KILL_END                                     (GAME_OPTION( KillEnd ) )
+
+// Addiction
+#define ADDICTION_BEGIN                              (GAME_OPTION( AddictionBegin ) )
+#define ADDICTION_END                                (GAME_OPTION( AddictionEnd ) )
+
+// Karma
+#define KARMA_BEGIN                                  (GAME_OPTION( KarmaBegin ) )
+#define KARMA_END                                    (GAME_OPTION( KarmaEnd ) )
+
+// Damage
+#define DAMAGE_BEGIN                                 (GAME_OPTION( DamageBegin ) )
+#define DAMAGE_END                                   (GAME_OPTION( DamageEnd ) )
+
+// Trait
+#define TRAIT_BEGIN                                  (GAME_OPTION( TraitBegin ) )
+#define TRAIT_END                                    (GAME_OPTION( TraitEnd ) )
+#define TRAIT_COUNT                                  (TRAIT_END - TRAIT_BEGIN + 1)
+
+// Reputation
+#define REPUTATION_BEGIN                             (GAME_OPTION( ReputationBegin ) )
+#define REPUTATION_END                               (GAME_OPTION( ReputationEnd ) )
+
+#ifdef FOCLASSIC_EXTENSION
+# ifndef FOCLASSIC_ENGINE
+#  define SKILL_OFFSET( skill )                      ( (skill) + (GAME_OPTION( AbsoluteOffsets ) ? 0 : SKILL_BEGIN) ) // investigate
+#  define PERK_OFFSET( perk )                        ( (perk)  + (GAME_OPTION( AbsoluteOffsets ) ? 0 : PERK_BEGIN) )  // investigate
+# endif  // !FOCLASSIC_ENGINE
+#endif  // FOCLASSIC_EXTENSION
+
+#ifdef FOCLASSIC_SCRIPT
+# define SKILL_OFFSET                                # (skill)( (skill) + (GAME_OPTION( AbsoluteOffsets ) ? 0 : SKILL_BEGIN) )
+# define PERK_OFFSET                                 # (perk)( (perk)  + (GAME_OPTION( AbsoluteOffsets ) ? 0 : PERK_BEGIN) )
+#endif  // FOCLASSIC_SCRIPT
+
 
 #ifndef FOCLASSIC_SKIP_PARAM
 
 // Stats
-// Param[0..6] is always set to 5 on registration
-# define ST_STRENGTH                                 (0)  // Weapon_MinStrength check
-# define ST_PERCEPTION                               (1)  // Critter look = LookNormal + ST_PERCEPTION * 3 + ST_BONUS_LOOK + MultiHex
-# define ST_CHARISMA                                 (3)  // MapManager::GM_LeaveGroup( Critter* cr )
-# define ST_INTELLECT                                (4)  // Critter::IntellectCacheValue
-# define ST_AGILITY                                  (5)  // Weapon_UnarmedMinAgility check
-# define ST_MAX_LIFE                                 (7)  // ClientInterface.cpp
+// Param[0..6] is always set to 5 on registration (without defines used)
+# define ST_STRENGTH                                 (0)   // Weapon_MinStrength check
+# define ST_PERCEPTION                               (1)   // Critter look = LookNormal + ST_PERCEPTION * 3 + ST_BONUS_LOOK + MultiHex
+# define ST_CHARISMA                                 (3)   // MapManager::GM_LeaveGroup( Critter* cr )
+# define ST_INTELLECT                                (4)   // Critter::IntellectCacheValue
+# define ST_AGILITY                                  (5)   // Weapon_UnarmedMinAgility check
+# define ST_MAX_LIFE                                 (7)   // ClientInterface.cpp
 # define ST_ACTION_POINTS                            (8)
-# define ST_ARMOR_CLASS                              (9)  // ClientInterface.cpp
-# define ST_MELEE_DAMAGE                             (10) // ClientInterface.cpp
+# define ST_ARMOR_CLASS                              (9)   // ClientInterface.cpp
+# define ST_MELEE_DAMAGE                             (10)  // ClientInterface.cpp
 # define ST_CARRY_WEIGHT                             (11)
-# define ST_SEQUENCE                                 (12) // ClientInterface.cpp
-# define ST_HEALING_RATE                             (13) // ClientInterface.cpp
-# define ST_CRITICAL_CHANCE                          (14) // ClientInterface.cpp
-# define ST_NORMAL_RESIST                            (23) // ClientInterface.cpp
-# define ST_RADIATION_RESISTANCE                     (30) // ClientInterface.cpp
-# define ST_POISON_RESISTANCE                        (31) // ClientInterface.cpp
-# define ST_AGE                                      (70) // ClientInterface.cpp, character registration
-# define ST_GENDER                                   (71) // ClientInterface.cpp, character registration
+# define ST_SEQUENCE                                 (12)  // ClientInterface.cpp
+# define ST_HEALING_RATE                             (13)  // ClientInterface.cpp
+# define ST_CRITICAL_CHANCE                          (14)  // ClientInterface.cpp
+# define ST_NORMAL_RESIST                            (23)  // ClientInterface.cpp
+# define ST_RADIATION_RESISTANCE                     (30)  // ClientInterface.cpp
+# define ST_POISON_RESISTANCE                        (31)  // ClientInterface.cpp
+# define ST_AGE                                      (70)  // ClientInterface.cpp, character registration
+# define ST_GENDER                                   (71)  // ClientInterface.cpp, character registration
 # define ST_CURRENT_HP                               (72)
-# define ST_POISONING_LEVEL                          (73) // ClientInterface.cpp
-# define ST_RADIATION_LEVEL                          (74) // ClientInterface.cpp
+# define ST_POISONING_LEVEL                          (73)  // ClientInterface.cpp
+# define ST_RADIATION_LEVEL                          (74)  // ClientInterface.cpp
 # define ST_CURRENT_AP                               (75)
 # define ST_EXPERIENCE                               (76)
 # define ST_LEVEL                                    (77)
 # define ST_UNSPENT_SKILL_POINTS                     (78)
 # define ST_UNSPENT_PERKS                            (79)
-# define ST_KARMA                                    (80) // ClientInterface.cpp
+# define ST_KARMA                                    (80)  // ClientInterface.cpp
 # define ST_FOLLOW_CRIT                              (81)
-# define ST_REPLICATION_MONEY                        (82) // ClientInterface.cpp
-# define ST_REPLICATION_COUNT                        (83) // ClientInterface.cpp
+# define ST_REPLICATION_MONEY                        (82)  // ClientInterface.cpp
+# define ST_REPLICATION_COUNT                        (83)  // ClientInterface.cpp
 # define ST_REPLICATION_TIME                         (84)
-# define ST_REPLICATION_COST                         (85) // ClientInterface.cpp
+# define ST_REPLICATION_COST                         (85)  // ClientInterface.cpp
 # define ST_TURN_BASED_AC                            (86)
 # define ST_MAX_MOVE_AP                              (87)
 # define ST_MOVE_AP                                  (88)
 # define ST_NPC_ROLE                                 (89)
-# define ST_BONUS_LOOK                               (101) // Critter look = LookNormal + ST_PERCEPTION * 3 + ST_BONUS_LOOK + MultiHex
+# define ST_BONUS_LOOK                               (101)  // Critter look = LookNormal + ST_PERCEPTION * 3 + ST_BONUS_LOOK + MultiHex
 # define ST_HANDS_ITEM_AND_MODE                      (102)
 # define ST_FREE_BARTER_PLAYER                       (103)
 # define ST_DIALOG_ID                                (104)
-# define ST_AI_ID                                    (105) // Mapper.cpp, ProtoMap.cpp ('version < 6' block)
+# define ST_AI_ID                                    (105)  // Mapper.cpp, ProtoMap.cpp ('version < 6' block)
 # define ST_TEAM_ID                                  (106)
 # define ST_BAG_ID                                   (107)
 # define ST_LAST_WEAPON_ID                           (110)
-# define ST_BASE_CRTYPE                              (112) // Mapper.cpp
+# define ST_BASE_CRTYPE                              (112)  // Mapper.cpp
 # define ST_TALK_DISTANCE                            (115)
 # define ST_SCALE_FACTOR                             (116)
 # define ST_WALK_TIME                                (117)
@@ -1482,7 +1770,7 @@
 # define SK_TRAPS                                    (211)
 # define SK_SCIENCE                                  (212)
 # define SK_REPAIR                                   (213)
-# define SK_SPEECH                                   (214) // TalkTime = MAX( RAW(SK_SPEECH) ) * 1000, DlgTalkMinTime )
+# define SK_SPEECH                                   (214)  // TalkTime = MAX( RAW(SK_SPEECH) ) * 1000, DlgTalkMinTime )
 # define SK_BARTER                                   (215)
 
 // Tagged skills
@@ -1503,8 +1791,8 @@
 # define PE_MASTER_TRADER                            (318)
 # define PE_QUICK_POCKETS                            (349)
 
-# define DAMAGE_POISONED                             (500) // ClientInterface.cpp
-# define DAMAGE_RADIATED                             (501) // ClientInterface.cpp
+# define DAMAGE_POISONED                             (500)  // ClientInterface.cpp
+# define DAMAGE_RADIATED                             (501)  // ClientInterface.cpp
 # define DAMAGE_RIGHT_ARM                            (503)
 # define DAMAGE_LEFT_ARM                             (504)
 # define DAMAGE_RIGHT_LEG                            (505)
@@ -1524,8 +1812,8 @@
 # define MODE_NO_ITEM_GARBAGER                       (520)
 # define MODE_DLG_SCRIPT_BARTER                      (521)
 # define MODE_UNLIMITED_AMMO                         (522)
-# define MODE_INVULNERABLE                           (527) // Critter::ToDead() does nothing
-# define MODE_NO_FLATTEN                             (528) // dead && !RAW( MODE_NO_FLATTEN ) ? DRAW_ORDER_DEAD_CRITTER : DRAW_ORDER_CRITTER
+# define MODE_INVULNERABLE                           (527)  // Critter::ToDead() does nothing
+# define MODE_NO_FLATTEN                             (528)  // dead && !RAW( MODE_NO_FLATTEN ) ? DRAW_ORDER_DEAD_CRITTER : DRAW_ORDER_CRITTER
 # define MODE_RANGE_HTH                              (530)
 # define MODE_NO_LOOT                                (532)
 # define MODE_NO_PUSH                                (536)
@@ -1538,9 +1826,6 @@
 #endif   // !FOCLASSIC_SKIP_PARAMS
 
 // Cleanup
-#ifndef FOCLASSIC_SCRIPT
-# undef FOCLASSIC_MACROS_ALLOWED   // TODO scripts don't have #undef
-#endif
 
 #ifdef FOCLASSIC_ENGINE
 # undef FOCLASSIC_EXTENSION

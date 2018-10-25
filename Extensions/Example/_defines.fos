@@ -1,11 +1,11 @@
 /////
 //
 // FOClassic v@FOCLASSIC_VERSION@
-// Last update @EXTENSIONS_CONTENT_TIMESTAMP@
+// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
 //
 /////
 //
-// This file contains an example of game header structure.
+// This file contains an example of script header structure.
 //
 /////
 

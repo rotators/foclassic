@@ -49,6 +49,9 @@ function( FormatSourceNew )
 		endif()
 	endforeach()
 
+	if( NOT FORMAT_SOURCE_DIRECTORY AND NOT FORMAT_SOURCE_FILES )
+	endif()
+
 	set( tmp "${FOCMAKE_DIR}/FormatSource.tmp" )
 
 	foreach( file IN LISTS FORMAT_SOURCE_FILES )

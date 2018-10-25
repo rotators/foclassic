@@ -1,7 +1,7 @@
 /////
 //
 // FOClassic v@FOCLASSIC_VERSION@
-// Last update @EXTENSIONS_CONTENT_TIMESTAMP@
+// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
 //
 /////
 //
@@ -21,8 +21,8 @@
 #define __FOCLASSIC_H__
 
 // Engine version
-#define FOCLASSIC_STAGE             (@FOCLASSIC_STAGE@) // increased on major milestones, available in scripts
-#define FOCLASSIC_VERSION           (@FOCLASSIC_VERSION@) // increased on each release, available in scripts
+#define FOCLASSIC_STAGE                  (@FOCLASSIC_STAGE@)
+#define FOCLASSIC_VERSION                (@FOCLASSIC_VERSION@)
 
 // Detect operating system
 #if defined (_WIN32) || defined (_WIN64)
@@ -56,11 +56,11 @@
 
 // Detect target
 #if defined (__SERVER)
-# define TARGET_NAME                SERVER
+# define TARGET_NAME                     SERVER
 #elif defined (__CLIENT)
-# define TARGET_NAME                CLIENT
+# define TARGET_NAME                     CLIENT
 #elif defined (__MAPPER)
-# define TARGET_NAME                MAPPER
+# define TARGET_NAME                     MAPPER
 #else
 # error __SERVER / __CLIENT / __MAPPER any of this must be defined
 #endif
@@ -68,11 +68,6 @@
 // Detect ill setup
 #if !defined (FOCLASSIC_EXTENSION)
 # error "FOCLASSIC_EXTENSION not defined."
-#endif
-
-// Detect scripts header
-#ifndef __FOCLASSIC_FOS__
-# include <FOClassic.fos>
 #endif
 
 // Platform specific options
@@ -92,35 +87,38 @@
 # define _MBCS
 # define _CRT_SECURE_NO_WARNINGS
 # define _CRT_SECURE_NO_DEPRECATE
-# define _HAS_ITERATOR_DEBUGGING    0
-# define _SECURE_SCL                0
-# define _HAS_EXCEPTIONS            0
+# define _HAS_ITERATOR_DEBUGGING         0
+# define _SECURE_SCL                     0
+# define _HAS_EXCEPTIONS                 0
 #endif // FO_MSVC
 
 #undef EXPORT
 #undef EXPORT_UNINITIALIZED
 #ifdef FO_WINDOWS
 # ifdef FO_MSVC
-#  define EXPORT                    extern "C" __declspec( dllexport )
-#  define EXPORT_UNINITIALIZED      extern "C" __declspec( dllexport ) extern
+#  define EXPORT                         extern "C" __declspec( dllexport )
+#  define EXPORT_UNINITIALIZED           extern "C" __declspec( dllexport ) extern
 # else // FO_GCC
-#  define EXPORT                    extern "C" __attribute__( (dllexport) )
-#  define EXPORT_UNINITIALIZED      extern "C" __attribute__( (dllexport) ) extern
+#  define EXPORT                         extern "C" __attribute__( (dllexport) )
+#  define EXPORT_UNINITIALIZED           extern "C" __attribute__( (dllexport) ) extern
 # endif
 #else
-# define EXPORT                     extern "C" __attribute__( (visibility( "default" ) ) )
-# define EXPORT_UNINITIALIZED       extern "C" __attribute__( (visibility( "default" ) ) )
+# define EXPORT                          extern "C" __attribute__( (visibility( "default" ) ) )
+# define EXPORT_UNINITIALIZED            extern "C" __attribute__( (visibility( "default" ) ) )
 #endif
 
 // STL
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
 #include <algorithm>
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
+
 using namespace std;
 
 // AngelScript
@@ -134,6 +132,35 @@ EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 #include "AngelScript/scriptdictionary.h"
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptmath.h"
+
+
+
+#define MAX_NPC_BAGS_PACKS               (20)   // array size
+#define MAX_ENEMY_STACK                  (30)
+#define MAX_NPC_BAGS                     (50)
+#define MAX_STORED_LOCATIONS             (1000) // aray size
+#define GM_ZONES_FOG_SIZE                (2500)
+#define MAX_SCRIPT_NAME                  (64)
+#define MAPOBJ_SCRIPT_NAME               (25)
+#define MAPOBJ_CRITTER_PARAMS            (40)
+#define PASS_HASH_SIZE                   (32)
+#define MAX_STORED_IP                    (20)
+#define MAX_HEX_OFFSET                   (50)
+#define AP_DIVIDER                       (100)
+#define MAX_CRIT_TYPES                   (1000)
+#define EFFECT_TEXTURES                  (10)
+#define EFFECT_SCRIPT_VALUES             (10)
+
+#define ITEM_MAX_BLOCK_LINES             (50)
+#define ITEM_MAX_CHILDS                  (5)
+#define ITEM_MAX_CHILD_LINES             (6)
+#define ITEM_MAX_SCRIPT_VALUES           (10)
+
+#define TB_BATTLE_TIMEOUT                (100000000)
+#define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
+
+#define MAP_LOOP_FUNC_MAX                (5)
+#define MAP_MAX_DATA                     (100)
 
 // FOClassic types
 struct Client;
@@ -225,82 +252,21 @@ typedef vector<Location*>                   LocVec;
 typedef vector<Location*>::const_iterator   LocVecIt;
 
 // Generic
-EXPORT_UNINITIALIZED void              ( * Log )( const char* frmt, ... );
 EXPORT_UNINITIALIZED asIScriptContext* ( * ScriptGetActiveContext )();
-EXPORT_UNINITIALIZED const char* (ScriptGetLibraryOptions)();
-EXPORT_UNINITIALIZED const char* (ScriptGetLibraryVersion)();
+EXPORT_UNINITIALIZED const char*       (ScriptGetLibraryOptions)();
+EXPORT_UNINITIALIZED const char*       (ScriptGetLibraryVersion)();
+EXPORT_UNINITIALIZED void ( * Log )( const char* frmt, ... );
 
 #define FOCLASSIC_EXTENSION_ENTRY( isCompiler )    \
     EXPORT void TARGET_NAME() {}                   \
-    GameOptions * FOClassic;                       \
-    GameOptions*     FOnline;                      \
     asIScriptEngine* ASEngine;                     \
-    void (*Log)(const char* frmt, ...);            \
     asIScriptContext* (*ScriptGetActiveContext)(); \
     const char* (ScriptGetLibraryOptions)();       \
     const char* (ScriptGetLibraryVersion)();       \
+    GameOptions* FOClassic;                        \
+    GameOptions* FOnline;                          \
+    void (*Log)(const char* frmt, ...);            \
     EXPORT void DllMainEx( bool isCompiler )
-
-#define LEXEMS_SIZE                      (128)
-#define MAX_HOLO_INFO                    (250)
-#define SCORES_MAX                       (50)
-#define MAX_NPC_BAGS_PACKS               (20)
-#define MAX_ENEMY_STACK                  (30)
-#define MAX_NPC_BAGS                     (50)
-#define MAX_STORED_LOCATIONS             (1000)
-#define GM_ZONES_FOG_SIZE                (2500)
-#define MAX_SCRIPT_NAME                  (64)
-#define MAPOBJ_SCRIPT_NAME               (25)
-#define MAPOBJ_CRITTER_PARAMS            (40)
-#define MAX_PARAMETERS_ARRAYS            (100)
-#define PASS_HASH_SIZE                   (32)
-#define MAX_STORED_IP                    (20)
-#define MAX_HEX_OFFSET                   (50)
-#define AP_DIVIDER                       (100)
-#define MAX_CRIT_TYPES                   (1000)
-#define EFFECT_TEXTURES                  (10)
-#define EFFECT_SCRIPT_VALUES             (10)
-#define CRITTER_USER_DATA_SIZE           (400)
-
-// Items
-#define PROTO_ITEM_USER_DATA_SIZE        (500)
-#define ITEM_MAX_BLOCK_LINES             (50)
-#define ITEM_MAX_CHILDS                  (5)
-#define ITEM_MAX_CHILD_LINES             (6)
-#define ITEM_MAX_SCRIPT_VALUES           (10)
-
-// Parameters
-#define SKILL_BEGIN                      (FOClassic->SkillBegin)
-#define SKILL_END                        (FOClassic->SkillEnd)
-#define SKILL_OFFSET( skill )            ( (skill) + (FOClassic->AbsoluteOffsets ? 0 : SKILL_BEGIN) )
-#define PERK_BEGIN                       (FOClassic->PerkBegin)
-#define PERK_END                         (FOClassic->PerkEnd)
-#define PERK_OFFSET( perk )              ( (perk)  + (FOClassic->AbsoluteOffsets ? 0 : PERK_BEGIN) )
-#define TB_BATTLE_TIMEOUT                (100000000)
-#define TB_BATTLE_TIMEOUT_CHECK( to )    ( (to) > 10000000 )
-#define TIMEOUT_BEGIN                    (FOClassic->TimeoutBegin)
-#define TIMEOUT_END                      (FOClassic->TimeoutEnd)
-#define KILL_BEGIN                       (FOClassic->KillBegin)
-#define KILL_END                         (FOClassic->KillEnd)
-#define ADDICTION_BEGIN                  (FOClassic->AddictionBegin)
-#define ADDICTION_END                    (FOClassic->AddictionEnd)
-#define KARMA_BEGIN                      (FOClassic->KarmaBegin)
-#define KARMA_END                        (FOClassic->KarmaEnd)
-#define DAMAGE_BEGIN                     (FOClassic->DamageBegin)
-#define DAMAGE_END                       (FOClassic->DamageEnd)
-#define TRAIT_BEGIN                      (FOClassic->TraitBegin)
-#define TRAIT_END                        (FOClassic->TraitEnd)
-#define REPUTATION_BEGIN                 (FOClassic->ReputationBegin)
-#define REPUTATION_END                   (FOClassic->ReputationEnd)
-
-// Events
-#define MAP_LOOP_FUNC_MAX                (5)
-#define MAP_MAX_DATA                     (100)
-
-// Sprites cutting
-#define SPRITE_CUT_HORIZONTAL            (1)
-#define SPRITE_CUT_VERTICAL              (2)
-
 
 struct GameOptions
 {
@@ -562,6 +528,7 @@ struct GameOptions
     const char*        ( * GetNameByHash )( uint hash );                                                   // Get name of file by hash
     uint               ( * GetHashByName )( const char* name );                                            // Get hash of file name
 
+    // TODO move whole block to separate object - GameScript* Script;
     bool               ( * ScriptLoadModule )( const char* moduleName );
     uint               ( * ScriptBind )( const char* moduleName, const char* funcDecl, bool temporaryId ); // Returning bindId
     bool               ( * ScriptPrepare )( uint bindId );
@@ -787,8 +754,8 @@ struct ProtoItem
     bool IsCar()       const { return Type == ITEM_TYPE_CAR; }
     bool LockerIsChangeble() const
     {
-        if( IsDoor() ) return true;
-        if( IsContainer() ) return Container_Changeble;
+        if( IsDoor() ) { return true; }
+        if( IsContainer() ) { return Container_Changeble; }
         return false;
     }
     bool IsCanPickUp() { return FLAG( Flags, ITEM_FLAG_CAN_PICKUP ); }
@@ -904,8 +871,8 @@ struct NpcPlane
         uint index = 0;
         for( const NpcPlane* child_ = this; child_; index++ )
         {
-            if( child_ == child ) break;
-            else child_ = child_->ChildPlane;
+            if( child_ == child ) { break; }
+            else { child_ = child_->ChildPlane; }
         }
         return index;
     }
@@ -913,7 +880,7 @@ struct NpcPlane
     {
         uint            count = 0;
         const NpcPlane* child = ChildPlane;
-        for( ; child; count++, child = child->ChildPlane );
+        for( ; child; count++, child = child->ChildPlane ) {}
         return count;
     }
 };
@@ -1313,7 +1280,7 @@ struct Critter
         for( ItemVecIt it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
         {
             const Item* item = *it;
-            if( !item->IsHidden() ) res += item->GetWeight();
+            if( !item->IsHidden() ) { res += item->GetWeight(); }
         }
         return res;
     }
@@ -1324,7 +1291,7 @@ struct Critter
         for( ItemVecIt it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
         {
             const Item* item = *it;
-            if( !item->IsHidden() ) res += item->GetVolume();
+            if( !item->IsHidden() ) { res += item->GetVolume(); }
         }
         return res;
     }
@@ -1574,7 +1541,7 @@ struct ProtoMap
     const MapObjectVec       SceneriesVec;
     const MapObjectVec       GridsVec;
     const uint8*             HexFlags;
-    #endif
+    #endif // ifdef __SERVER
 
     const EntiresVec         MapEntires;
 
@@ -1797,14 +1764,18 @@ struct Sprite
 inline Field* GetField( uint hexX, uint hexY )
 {
     if( !FOClassic->ClientMap || hexX >= FOClassic->ClientMapWidth || hexY >= FOClassic->ClientMapHeight )
+    {
         return NULL;
+    }
     return &FOClassic->ClientMap[hexY * FOClassic->ClientMapWidth + hexX];
 }
 
 inline uint GetFieldLight( uint hexX, uint hexY )
 {
     if( !FOClassic->ClientMapLight || hexX >= FOClassic->ClientMapWidth || hexY >= FOClassic->ClientMapHeight )
+    {
         return 0;
+    }
     uint r = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 0];
     uint g = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 1];
     uint b = FOClassic->ClientMapLight[hexY * FOClassic->ClientMapWidth * 3 + hexX * 3 + 2];
@@ -1825,15 +1796,25 @@ inline int GetDirection( int x1, int y1, int x2, int y2 )
         float dir = 180.0f + RAD2DEG * atan2f( ny, nx );
 
         if( dir >= 60.0f  && dir < 120.0f )
+        {
             return 5;
+        }
         if( dir >= 120.0f && dir < 180.0f )
+        {
             return 4;
+        }
         if( dir >= 180.0f && dir < 240.0f )
+        {
             return 3;
+        }
         if( dir >= 240.0f && dir < 300.0f )
+        {
             return 2;
+        }
         if( dir >= 300.0f )
+        {
             return 1;
+        }
         return 0;
     }
     else
@@ -1841,19 +1822,33 @@ inline int GetDirection( int x1, int y1, int x2, int y2 )
         float dir = 180.0f + RAD2DEG * atan2( (float)(x2 - x1), (float)(y2 - y1) );
 
         if( dir >= 22.5f  && dir <  67.5f )
+        {
             return 7;
+        }
         if( dir >= 67.5f  && dir < 112.5f )
+        {
             return 0;
+        }
         if( dir >= 112.5f && dir < 157.5f )
+        {
             return 1;
+        }
         if( dir >= 157.5f && dir < 202.5f )
+        {
             return 2;
+        }
         if( dir >= 202.5f && dir < 247.5f )
+        {
             return 3;
+        }
         if( dir >= 247.5f && dir < 292.5f )
+        {
             return 4;
+        }
         if( dir >= 292.5f && dir < 337.5f )
+        {
             return 5;
+        }
         return 6;
     }
 }

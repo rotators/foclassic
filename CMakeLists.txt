@@ -66,7 +66,8 @@ set( DEFAULT_INCLUDE_DIR             "${FOCMAKE_DIR}/include" )
 
 # templates
 set( ENGINE_GLOBAL_HEADER_TEMPLATE   "${TEMPLATES_DIR}/CMake.h" )
-set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/PUBLIC.Defines.h" )
+set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/Defines.Public.h" )
+set( VERSION_TEMPLATE                "${TEMPLATES_DIR}/VERSION" )
 
 # special files
 set( ENGINE_GLOBAL_HEADER_FILE       "${DEFAULT_INCLUDE_DIR}/CMake.h" )
@@ -110,6 +111,9 @@ if( HAVE_STRUCT_TIMESPEC )
 	add_definitions( -DHAVE_STRUCT_TIMESPEC=1 )
 endif( HAVE_STRUCT_TIMESPEC )
 
+# create version file
+configure_file( "${VERSION_TEMPLATE}" "${RELEASE_DIR}/VERSION" @ONLY NEWLINE_STYLE LF )
+
 # create engine header
 configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
@@ -132,12 +136,10 @@ file( GLOB ROOT_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "*.cmake" )
 file( GLOB_RECURSE ROOT_CMAKE_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${ROOT_CMAKE_DIR}/*" )
 add_custom_target( Configuration
 	SOURCES
-		${CMAKE_CURRENT_LIST_FILE}
 		${ROOT_CMAKE_FILES}
 		${ROOT_CMAKE_CMAKE_FILES}
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
-source_group( "CMake" FILES "${CMAKE_CURRENT_LIST_FILE}" )
 
 ##
 ## prettify IDE
