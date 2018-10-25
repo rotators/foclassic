@@ -11,35 +11,35 @@ All binary files created by engine share same signature which contains informati
 ### Signature types
 
 ```cpp
-#define BINARY_CLIENTSAVE   'C'
-#define BINARY_MAPSAVE      'M'
-#define BINARY_PROFILERSAVE 'P'
-#define BINARY_SCRIPTSAVE   'S'
-#define BINARY_WORLDSAVE    'W'
-#define BINARY_CACHE        'c' // reserved 
+#define BINARY_TYPE_CLIENTSAVE   'C'
+#define BINARY_TYPE_MAPSAVE      'M'
+#define BINARY_TYPE_PROFILERSAVE 'P'
+#define BINARY_TYPE_SCRIPTSAVE   'S'
+#define BINARY_TYPE_WORLDSAVE    'W'
+#define BINARY_TYPE_CACHE        'c' // reserved 
 ```
 
 ### Validating signature
-* Add signature template with current version.
+- Add signature template with current version.
 ```cpp
-#define FILE_FORMAT_V1  (1)
-#define FILE_FORMAT_V2  (2)
+#define FILE_FORMAT_V1   (1)
+#define FILE_FORMAT_V2   (2)
 // ...
-#define FILE_FORMAT_LAST FILE_FORMAT_V10
-BINARY_SIGNATURE( EngineSignature, BINARY_TYPE, FILE_FORMAT_LAST );
+#define FILE_FORMAT_LAST (FILE_FORMAT_V10)
+BINARY_SIGNATURE( EngineSignature, BINARY_TYPE_XXX, FILE_FORMAT_LAST );
 ```
-* Open file and store first N bytes; if it fails, processing **must** be stopped
+- Open file and store first N bytes; if it fails, processing **must** be stopped
 ```cpp
 unsigned char file_signature[sizeof( EngineSignature )];
 if( !ReadFile( file, file_signature, sizeof( file_signature )))
 	return;
 ```
-* Global version check
+- Global version check
 ```cpp
 if( memcmp( EngineSignature, file_signature, sizeof( file_signature )) != 0 )
 	return;
 ```
-* Format version check
+- Format version check
 ```cpp
 if( memcmp( EngineSignature, file_signature, sizeof( file_signature )) != 0 )
 {
@@ -55,10 +55,10 @@ if( memcmp( EngineSignature, file_signature, sizeof( file_signature )) != 0 )
 ```
 ### Version types
 As stated above, engine saves binary files with global version, or format version.
-* Global version, also know as *application* version, is used for files which can be easily recreated during initialization.
-* Format version is used for all other scenarios.
+- Global version, also know as _application_ version, is used for files which can be easily recreated during initialization.
+- Format version is used for all other scenarios.
 
-In some cases, additional version check is performed by adding version number at the end of file to make sure it's saved correctly.
+In some cases, additional version check is performed by adding version number at the end of file, to make sure it's saved correctly.
 
 |                     | Format             | Global             | EOF                |
 |:--------------------|:------------------:|:------------------:|:------------------:|
