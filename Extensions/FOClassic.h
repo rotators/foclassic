@@ -107,8 +107,6 @@
 # define EXPORT_UNINITIALIZED            extern "C" __attribute__( (visibility( "default" ) ) )
 #endif
 
-// STL
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -132,8 +130,6 @@ EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 #include "AngelScript/scriptdictionary.h"
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptmath.h"
-
-
 
 #define MAX_NPC_BAGS_PACKS               (20)   // array size
 #define MAX_ENEMY_STACK                  (30)

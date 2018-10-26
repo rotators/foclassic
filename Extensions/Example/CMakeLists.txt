@@ -5,7 +5,7 @@
 #
 #####
 #
-# This file contains example setup for FOClassic extensions.
+# This file contains an example CMake setup for FOClassic extensions.
 #
 #####
 #
@@ -16,7 +16,7 @@
 # For fully automating building process, additional command can be used:
 # cmake --build ExampleExtensions.dir --config Release
 #
-# Currenly only Visal Studio 2010 is supported.
+# Only Visal Studio 2010 is supported.
 # Note that -G parameters is required if there is multiple Visual Studio versions installed.
 #
 #####
@@ -80,7 +80,7 @@ foreach( name IN LISTS cmake_targets )
 	endif()
 
 	# extensions with "Old" suffix depend on those without
-	# everything else is built with Bleeding Edge mode
+	# extensions without "Old" suffix are built with Bleeding Edge mode enabled
 	if( "${name}" MATCHES "(.+)Old$" )
 		add_dependencies( ${name} ${CMAKE_MATCH_1} )
 	else()
@@ -92,6 +92,15 @@ foreach( name IN LISTS cmake_targets )
 		PRIVATE
 			# CMakeLists.txt needs to be added for source_group("CMake") to work properly
 			${CMAKE_CURRENT_LIST_FILE}
+
+			# AngelScript headers
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/angelscript.h
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptany.h
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptarray.h
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptdictionary
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptfile.h
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptmath.h
+			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptstring.h
 
 			# while extensions must compile without _defines.fos, there's high chance
 			# they'll need game-specific values. it's included in this example
@@ -107,14 +116,17 @@ foreach( name IN LISTS cmake_targets )
 
 endforeach()
 
-# Extensions sources are split into following categories:
+# extensions sources are split into following categories:
 #
 # TARGET
-# |- CMake      - all files with "CMake" in name
-# |- Engine     - FOClassic.h and FOClassic.fos
-# |- Scripts    - all other *.fos files
-# `- source.ext - *.c, *.cpp, *.h, *.hpp are extracted from default groups
-source_group( " "       REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh]|[Hh][Pp][Pp])$" )
-source_group( "Scripts" REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )
-source_group( "Engine"  REGULAR_EXPRESSION "FOClassic\.(h|fos)$" )
-source_group( "CMake"   REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" ) 
+# |- CMake          - all files with "CMake" in name
+# |- Engine         - FOClassic.h and FOClassic.fos
+# |  `- AngelScript - AngelScript headers
+# |- Scripts        - all other *.fos files
+# `- source.ext     - *.c, *.cpp, *.h, *.hpp are extracted from default groups
+
+source_group( " "                   REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh]|[Hh][Pp][Pp])$" )
+source_group( "Scripts"             REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )
+source_group( "Engine"              REGULAR_EXPRESSION "FOClassic\.(h|fos)$" )
+source_group( "Engine\\AngelScript" REGULAR_EXPRESSION "^${FOCLASSIC_HEADERS_DIR}/AngelScript/.+")
+source_group( "CMake"               REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" ) 

@@ -96,14 +96,20 @@ function( ZipAllBuilds )
 		file( REMOVE "${outer_sum}" )
 
 		file( GLOB         core       LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/* )
+		file( GLOB         core_md    LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/*.md )
 		file( GLOB_RECURSE cmake      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/CMake/* )
 		file( GLOB_RECURSE headers    LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Headers/* )
 		file( GLOB_RECURSE extensions LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Extensions/* )
 		file( GLOB_RECURSE tools      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/Tools/* )
 
-		list( REMOVE_ITEM core "VERSION" )
-		set( files ${core} ${tools} ${cmake} ${headers} ${extensions} )
-		list( APPEND files "VERSION" )
+		list( APPEND core_md "VERSION" )
+		foreach( name IN LISTS core_md )
+			if( EXISTS "${zip_dir}/${name}" )
+				list( REMOVE_ITEM core "${name}" )
+			endif()
+		endforeach()
+
+		set( files ${core} ${tools} ${cmake} ${headers} ${extensions} ${core_md} )
 
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${files}

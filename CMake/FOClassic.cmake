@@ -1,7 +1,7 @@
 #####
 #
 # FOClassic v@FOCLASSIC_VERSION@
-# Last update: @EXTENSIONS_CONTENT_TIMESTAMP@
+# Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
 # 
 #####
 
@@ -14,7 +14,7 @@
 #
 # Usage: FOClassicExtension( name target headers )
 #
-# name    - cmake target name
+# name    - CMake target name
 # target  - CLIENT / MAPPER / SERVER
 #           case insensitive
 # headers - directory with FOClassic.h and FOClassic.fos
@@ -26,7 +26,7 @@
 #
 #  FOCLASSIC_EXTENSION              -  always TRUE
 #  FOCLASSIC_EXTENSION_TARGET       -  copy of 'target' argument (uppercase)
-#  FOCLASSIC_EXTENSION_HEADERS_DIR  -  copy of 'headers' argument (cmake path)
+#  FOCLASSIC_EXTENSION_HEADERS_DIR  -  copy of 'headers' argument (CMake path)
 #
 function( FOClassicExtension name target headers )
 
