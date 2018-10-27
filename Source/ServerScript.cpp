@@ -162,6 +162,14 @@ bool FOServer::InitScriptSystem()
         return false;
     }
 
+    // Verify critical variables
+    if( GameOpt.ApRegeneration == 0 )
+    {
+        WriteLog( "Script system initialization... failed\n" );
+        WriteLog( "Game option 'ApRegeneration' cannot be 0\n" );       // division by zero
+
+        return false;
+    }
     ASDbgMemoryCanWork = true;
     WriteLog( "Script system initialization... complete.\n" );
     return true;
@@ -226,8 +234,8 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 #undef BIND_CLASS
 #undef BIND_ASSERT
 #define BIND_CLIENT
-#define BIND_CLASS              BindClass::
-#define BIND_ASSERT( x )        if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+#define BIND_CLASS          BindClass::
+#define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
 
 namespace ClientBind
 {
