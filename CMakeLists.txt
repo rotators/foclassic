@@ -17,8 +17,8 @@ include(DisableInSourceBuild)
 DisableInSourceBuild()
 
 # this file must contain unique line with version info
-# "FOClassic VERSION [NUMBER].[NUMBER]"
-project( FOClassic VERSION 1.1
+# "FOClassic VERSION [number:STAGE].[number:VERSION]"
+project( FOClassic VERSION 2.1
 	DESCRIPTION  "FOnline Community Edition (r412 base)"
 	HOMEPAGE_URL "https://rotators.fodev.net/foclassic/"
 	LANGUAGES C CXX

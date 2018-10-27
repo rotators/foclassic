@@ -177,7 +177,7 @@ int main( int argc, char** argv )
 
     WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
 
-    # if 1
+    # if 0
     WriteLog( "STATIC_ASSERT\n" );
     STATIC_ASSERT_PRINTF( WriteLog, char );
     STATIC_ASSERT_PRINTF( WriteLog, short );
