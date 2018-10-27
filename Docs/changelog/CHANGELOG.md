@@ -2,10 +2,10 @@
 
 Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc/76003/412/).
 
-## [v1](SOON) (WIP)
+## [v1](https://github.com/rotators/foclassic/releases/tag/v1/)
 - Hello world!
 
-  `TODO` short intro with link to announcement on FOdev
+FOClassic is born; see [official announcement](https://fodev.net/forum/index.php/topic,30043.0.html) for detailed information about the project.
 
 - engine building process has been migrated to [CMake](https://cmake.org/) and heavily integrated with it
     - many tasks has been automated to avoid human mistakes when preparing release
