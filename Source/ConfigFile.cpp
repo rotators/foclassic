@@ -5,10 +5,13 @@
 #include "FileManager.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
+#include "Ini.h"
 #include "IniParser.h"
 #include "Log.h"
 #include "Script.h"
 #include "Text.h"
+
+Ini* ConfigFile = NULL;
 
 const char* GetConfigFileName()
 {
@@ -268,8 +271,41 @@ void GetServerOptions()
 {
     IniParser cfg;
     cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-    ServerGameSleep = cfg.GetInt( "GameSleep", 10 );
-    Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
-    WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
+    if( cfg.IsApp( "Server" ) )
+    {
+        ServerGameSleep = cfg.GetInt( SERVER_CONFIG_APP, "GameSleep", 10 );
+        Script::SetConcurrentExecution( cfg.GetInt( SERVER_CONFIG_APP, "ScriptConcurrentExecution", 0 ) != 0 );
+        WorldSaveManager = (cfg.GetInt( SERVER_CONFIG_APP, "WorldSaveManager", 1 ) == 1);
+    }
+    else
+    {
+        # if FOCLASSIC_STAGE >= 3
+        #  pragma STAGE_DEPRECATE(3,"Server config without section")
+        # endif
+        ServerGameSleep = cfg.GetInt( "GameSleep", 10 );
+        Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
+        WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
+    }
 }
 #endif
+
+bool LoadConfigFile( const char* fname )
+{
+    if( ConfigFile )
+        return false;
+
+    ConfigFile = new Ini();
+
+    return ConfigFile->LoadFile( fname );
+}
+
+void UnloadConfigFile()
+{
+    if( !ConfigFile )
+        return;
+
+    ConfigFile->Unload();
+
+    delete ConfigFile;
+    ConfigFile = NULL;
+}

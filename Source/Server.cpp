@@ -8,7 +8,7 @@
 #include "Critter.h"
 #include "CritterType.h"
 #include "FileSystem.h"
-#include "IniParser.h"
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Jobs.h"
 #include "Log.h"
@@ -3414,8 +3414,7 @@ bool FOServer::InitReal()
 {
     FileManager::InitDataFiles( DIR_SLASH_SD );
 
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
 
     WriteLog( "***   Starting initialization   ****\n" );
 
@@ -3475,15 +3474,15 @@ bool FOServer::InitReal()
     VarsGarbageLastTick = Timer::FastTick();
 
     // Profiler
-    uint sample_time = cfg.GetInt( "ProfilerSampleInterval", 0 );
-    uint profiler_mode = cfg.GetInt( "ProfilerMode", 0 );
+    uint sample_time = ConfigFile->GetInt( "Server", "ProfilerSampleInterval", 0 );
+    uint profiler_mode = ConfigFile->GetInt( "Server", "ProfilerMode", 0 );
     if( !profiler_mode )
         sample_time = 0;
     Script::Profiler::SetData( sample_time, ( (profiler_mode & 1) != 0 ) ? 300000 : 0, ( (profiler_mode & 2) != 0 ) );
 
     // Threading
-    LogicThreadSetAffinity = cfg.GetInt( "LogicThreadSetAffinity", 0 ) != 0;
-    LogicThreadCount = cfg.GetInt( "LogicThreadCount", 0 );
+    LogicThreadSetAffinity = ConfigFile->GetInt( "Server", "LogicThreadSetAffinity", 0 ) > 0;
+    LogicThreadCount = ConfigFile->GetInt( "Server", "LogicThreadCount", 0 );
     if( sample_time )
         LogicThreadCount = 1;
     else if( !LogicThreadCount )
@@ -3592,7 +3591,7 @@ bool FOServer::InitReal()
     ushort port;
     if( !Singleplayer )
     {
-        port = cfg.GetInt( "Port", 4000 );
+        port = ConfigFile->GetInt( "Server", "Port", 4000 );
         WriteLog( "Starting server on port<%u>.\n", port );
     }
     else
@@ -3631,7 +3630,7 @@ bool FOServer::InitReal()
         return false;
     }
 
-    NetIOThreadsCount = cfg.GetInt( "NetWorkThread", 0 );
+    NetIOThreadsCount = ConfigFile->GetInt( "Server", "NetWorkThread", 0 );
     if( !NetIOThreadsCount )
         NetIOThreadsCount = CpuCount;
 
@@ -3763,7 +3762,7 @@ bool FOServer::InitReal()
         DumpEndEvent.Allow();
         DumpThread.Start( Dump_Work, "WorldSaveManager" );
     }
-    SaveWorldTime = cfg.GetInt( "WorldSaveTime", 60 ) * 60 * 1000;
+    SaveWorldTime = ConfigFile->GetInt( "Server", "WorldSaveTime", 60 ) * 60 * 1000;
     SaveWorldNextTick = Timer::FastTick() + SaveWorldTime;
 
     Active = true;
@@ -3828,28 +3827,28 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
 {
     WriteLog( "Load language packs...\n" );
 
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-    uint      cur_lang = 0;
+    uint cur_lang = 0;
 
     while( true )
     {
         char cur_str_lang[MAX_FOTEXT];
-        char lang_name[MAX_FOTEXT];
         Str::Format( cur_str_lang, "Language_%u", cur_lang );
 
-        if( !cfg.GetStr( cur_str_lang, "", lang_name ) )
+        string lang = ConfigFile->GetStr( "Server", cur_str_lang );
+        if( lang.empty() )
         {
-            WriteLog( "Language settings not found.\n" );
+            if( cur_lang == 0 )
+                WriteLog( "Language settings not found.\n" );
             break;
         }
-        ;
-
-        if( Str::Length( lang_name ) != 4 )
+        else if( lang.length() != 4 )
         {
             WriteLog( "Language pack<%u> name not equal to four letters.\n", cur_lang );
             return false;
         }
+
+        char lang_name[MAX_FOTEXT];
+        Str::Copy( lang_name, lang.c_str() );
 
         uint pack_id = *(uint*)&lang_name;
         if( std::find( lang_packs.begin(), lang_packs.end(), pack_id ) != lang_packs.end() )
@@ -3860,14 +3859,14 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
 
         WriteLog( "Load language pack<%u:%s>\n", cur_lang, lang_name );
 
-        LanguagePack lang;
-        if( !lang.Init( lang_name, PATH_SERVER_TEXTS ) )
+        LanguagePack language;
+        if( !language.Init( lang_name, PATH_SERVER_TEXTS ) )
         {
             WriteLog( "Language pack<%u:%s> cannot be initialized.\n", cur_lang, lang_name );
             return false;
         }
 
-        lang_packs.push_back( lang );
+        lang_packs.push_back( language );
         cur_lang++;
     }
 

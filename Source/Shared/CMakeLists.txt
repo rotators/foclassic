@@ -16,6 +16,7 @@ target_sources( Shared
 		${CMAKE_CURRENT_SOURCE_DIR}/DynamicLibrary.h
 		${CMAKE_CURRENT_SOURCE_DIR}/GameOptions.h
 		${CMAKE_CURRENT_SOURCE_DIR}/FileSystem.h
+		${CMAKE_CURRENT_SOURCE_DIR}/Ini.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Mutex.h
 		${CMAKE_CURRENT_SOURCE_DIR}/PlatformSpecific.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Random.h
@@ -35,6 +36,7 @@ target_sources( Shared
 		Crypt.cpp
 		FileSystem.cpp
 		GameOptions.cpp
+		Ini.cpp
 		Mutex.cpp
 		Random.cpp
 		Thread.cpp
