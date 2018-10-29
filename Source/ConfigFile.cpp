@@ -13,6 +13,27 @@
 
 Ini* ConfigFile = NULL;
 
+bool LoadConfigFile( const char* fname )
+{
+    if( !ConfigFile )
+        ConfigFile = new Ini();
+
+    return ConfigFile->LoadFile( fname );
+}
+
+void UnloadConfigFile()
+{
+    if( ConfigFile )
+    {
+        ConfigFile->Unload();
+
+        delete ConfigFile;
+        ConfigFile = NULL;
+    }
+}
+
+//
+
 const char* GetConfigFileName()
 {
     // Default config names
@@ -121,86 +142,86 @@ void GetClientOptions()
     # endif
 
     // Language
-    cfg.GetStr( CLIENT_CONFIG_APP, "Language", "engl", buf );
+    cfg.GetStr( CLIENT_SECTION, "Language", "engl", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "Language" );
 
     // Int / Bool
-    GameOpt.OpenGLDebug = cfg.GetInt( CLIENT_CONFIG_APP, "OpenGLDebug", false ) != 0;
+    GameOpt.OpenGLDebug = cfg.GetInt( CLIENT_SECTION, "OpenGLDebug", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.OpenGLDebug, "-OpenGLDebug" );
-    GameOpt.AssimpLogging = cfg.GetInt( CLIENT_CONFIG_APP, "AssimpLogging", false ) != 0;
+    GameOpt.AssimpLogging = cfg.GetInt( CLIENT_SECTION, "AssimpLogging", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.AssimpLogging, "-AssimpLogging" );
-    GameOpt.FullScreen = cfg.GetInt( CLIENT_CONFIG_APP, "FullScreen", false ) != 0;
+    GameOpt.FullScreen = cfg.GetInt( CLIENT_SECTION, "FullScreen", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.FullScreen, "-FullScreen" );
-    GameOpt.VSync = cfg.GetInt( CLIENT_CONFIG_APP, "VSync", false ) != 0;
+    GameOpt.VSync = cfg.GetInt( CLIENT_SECTION, "VSync", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.VSync, "-VSync" );
-    GameOpt.Light = cfg.GetInt( CLIENT_CONFIG_APP, "Light", 20 );
+    GameOpt.Light = cfg.GetInt( CLIENT_SECTION, "Light", 20 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.Light, "-Light" );
     GETOPTIONS_CHECK( GameOpt.Light, 0, 100, 20 );
-    GameOpt.ScrollDelay = cfg.GetInt( CLIENT_CONFIG_APP, "ScrollDelay", 10 );
+    GameOpt.ScrollDelay = cfg.GetInt( CLIENT_SECTION, "ScrollDelay", 10 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ScrollDelay, "-ScrollDelay" );
     GETOPTIONS_CHECK( GameOpt.ScrollDelay, 0, 100, 10 );
-    GameOpt.ScrollStep = cfg.GetInt( CLIENT_CONFIG_APP, "ScrollStep", 12 );
+    GameOpt.ScrollStep = cfg.GetInt( CLIENT_SECTION, "ScrollStep", 12 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ScrollStep, "-ScrollStep" );
     GETOPTIONS_CHECK( GameOpt.ScrollStep, 4, 32, 12 );
-    GameOpt.TextDelay = cfg.GetInt( CLIENT_CONFIG_APP, "TextDelay", 3000 );
+    GameOpt.TextDelay = cfg.GetInt( CLIENT_SECTION, "TextDelay", 3000 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.TextDelay, "-TextDelay" );
     GETOPTIONS_CHECK( GameOpt.TextDelay, 1000, 3000, 30000 );
-    GameOpt.DamageHitDelay = cfg.GetInt( CLIENT_CONFIG_APP, "DamageHitDelay", 0 );
+    GameOpt.DamageHitDelay = cfg.GetInt( CLIENT_SECTION, "DamageHitDelay", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.DamageHitDelay, "-OptDamageHitDelay" );
     GETOPTIONS_CHECK( GameOpt.DamageHitDelay, 0, 30000, 0 );
-    GameOpt.ScreenWidth = cfg.GetInt( CLIENT_CONFIG_APP, "ScreenWidth", 0 );
+    GameOpt.ScreenWidth = cfg.GetInt( CLIENT_SECTION, "ScreenWidth", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ScreenWidth, "-ScreenWidth" );
     GETOPTIONS_CHECK( GameOpt.ScreenWidth, 100, 30000, 800 );
-    GameOpt.ScreenHeight = cfg.GetInt( CLIENT_CONFIG_APP, "ScreenHeight", 0 );
+    GameOpt.ScreenHeight = cfg.GetInt( CLIENT_SECTION, "ScreenHeight", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ScreenHeight, "-ScreenHeight" );
     GETOPTIONS_CHECK( GameOpt.ScreenHeight, 100, 30000, 600 );
-    GameOpt.MultiSampling = cfg.GetInt( CLIENT_CONFIG_APP, "MultiSampling", 0 );
+    GameOpt.MultiSampling = cfg.GetInt( CLIENT_SECTION, "MultiSampling", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.MultiSampling, "-MultiSampling" );
     GETOPTIONS_CHECK( GameOpt.MultiSampling, -1, 16, -1 );
-    GameOpt.AlwaysOnTop = cfg.GetInt( CLIENT_CONFIG_APP, "AlwaysOnTop", false ) != 0;
+    GameOpt.AlwaysOnTop = cfg.GetInt( CLIENT_SECTION, "AlwaysOnTop", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.AlwaysOnTop, "-AlwaysOnTop" );
-    GameOpt.FlushVal = cfg.GetInt( CLIENT_CONFIG_APP, "FlushValue", 50 );
+    GameOpt.FlushVal = cfg.GetInt( CLIENT_SECTION, "FlushValue", 50 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.FlushVal, "-FlushValue" );
     GETOPTIONS_CHECK( GameOpt.FlushVal, 1, 1000, 50 );
-    GameOpt.BaseTexture = cfg.GetInt( CLIENT_CONFIG_APP, "BaseTexture", 1024 );
+    GameOpt.BaseTexture = cfg.GetInt( CLIENT_SECTION, "BaseTexture", 1024 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.BaseTexture, "-BaseTexture" );
     GETOPTIONS_CHECK( GameOpt.BaseTexture, 128, 8192, 1024 );
-    GameOpt.FixedFPS = cfg.GetInt( CLIENT_CONFIG_APP, "FixedFPS", 100 );
+    GameOpt.FixedFPS = cfg.GetInt( CLIENT_SECTION, "FixedFPS", 100 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.FixedFPS, "-FixedFPS" );
     GETOPTIONS_CHECK( GameOpt.FixedFPS, -10000, 10000, 100 );
-    GameOpt.MsgboxInvert = cfg.GetInt( CLIENT_CONFIG_APP, "InvertMessBox", false ) != 0;
+    GameOpt.MsgboxInvert = cfg.GetInt( CLIENT_SECTION, "InvertMessBox", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.MsgboxInvert, "-InvertMessBox" );
-    GameOpt.MessNotify = cfg.GetInt( CLIENT_CONFIG_APP, "WinNotify", true ) != 0;
+    GameOpt.MessNotify = cfg.GetInt( CLIENT_SECTION, "WinNotify", true ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.MessNotify, "-WinNotify" );
-    GameOpt.SoundNotify = cfg.GetInt( CLIENT_CONFIG_APP, "SoundNotify", false ) != 0;
+    GameOpt.SoundNotify = cfg.GetInt( CLIENT_SECTION, "SoundNotify", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.SoundNotify, "-SoundNotify" );
-    GameOpt.Port = cfg.GetInt( CLIENT_CONFIG_APP, "RemotePort", 4000 );
+    GameOpt.Port = cfg.GetInt( CLIENT_SECTION, "RemotePort", 4000 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.Port, "-RemotePort" );
     GETOPTIONS_CHECK( GameOpt.Port, 0, 0xFFFF, 4000 );
-    GameOpt.ProxyType = cfg.GetInt( CLIENT_CONFIG_APP, "ProxyType", 0 );
+    GameOpt.ProxyType = cfg.GetInt( CLIENT_SECTION, "ProxyType", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ProxyType, "-ProxyType" );
     GETOPTIONS_CHECK( GameOpt.ProxyType, 0, 3, 0 );
-    GameOpt.ProxyPort = cfg.GetInt( CLIENT_CONFIG_APP, "ProxyPort", 8080 );
+    GameOpt.ProxyPort = cfg.GetInt( CLIENT_SECTION, "ProxyPort", 8080 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.ProxyPort, "-ProxyPort" );
     GETOPTIONS_CHECK( GameOpt.ProxyPort, 0, 0xFFFF, 1080 );
-    GameOpt.AlwaysRun = cfg.GetInt( CLIENT_CONFIG_APP, "AlwaysRun", false ) != 0;
+    GameOpt.AlwaysRun = cfg.GetInt( CLIENT_SECTION, "AlwaysRun", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( GameOpt.AlwaysRun, "-AlwaysRun" );
-    GameOpt.DefaultCombatMode = cfg.GetInt( CLIENT_CONFIG_APP, "DefaultCombatMode", COMBAT_MODE_ANY );
+    GameOpt.DefaultCombatMode = cfg.GetInt( CLIENT_SECTION, "DefaultCombatMode", COMBAT_MODE_ANY );
     GETOPTIONS_CMD_LINE_INT( GameOpt.DefaultCombatMode, "-DefaultCombatMode" );
     GETOPTIONS_CHECK( GameOpt.DefaultCombatMode, COMBAT_MODE_ANY, COMBAT_MODE_TURN_BASED, COMBAT_MODE_ANY );
-    GameOpt.IndicatorType = cfg.GetInt( CLIENT_CONFIG_APP, "IndicatorType", COMBAT_MODE_ANY );
+    GameOpt.IndicatorType = cfg.GetInt( CLIENT_SECTION, "IndicatorType", COMBAT_MODE_ANY );
     GETOPTIONS_CMD_LINE_INT( GameOpt.IndicatorType, "-IndicatorType" );
     GETOPTIONS_CHECK( GameOpt.IndicatorType, INDICATOR_LINES, INDICATOR_BOTH, INDICATOR_LINES );
-    GameOpt.DoubleClickTime = cfg.GetInt( CLIENT_CONFIG_APP, "DoubleClickTime", COMBAT_MODE_ANY );
+    GameOpt.DoubleClickTime = cfg.GetInt( CLIENT_SECTION, "DoubleClickTime", COMBAT_MODE_ANY );
     GETOPTIONS_CMD_LINE_INT( GameOpt.DoubleClickTime, "-DoubleClickTime" );
     GETOPTIONS_CHECK( GameOpt.DoubleClickTime, 0, 1000, 0 );
-    GameOpt.CombatMessagesType = cfg.GetInt( CLIENT_CONFIG_APP, "CombatMessagesType", 0 );
+    GameOpt.CombatMessagesType = cfg.GetInt( CLIENT_SECTION, "CombatMessagesType", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.CombatMessagesType, "-CombatMessagesType" );
     GETOPTIONS_CHECK( GameOpt.CombatMessagesType, 0, 1, 0 );
-    GameOpt.Animation3dFPS = cfg.GetInt( CLIENT_CONFIG_APP, "Animation3dFPS", 10 );
+    GameOpt.Animation3dFPS = cfg.GetInt( CLIENT_SECTION, "Animation3dFPS", 10 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.Animation3dFPS, "-Animation3dFPS" );
     GETOPTIONS_CHECK( GameOpt.Animation3dFPS, 0, 1000, 10 );
-    GameOpt.Animation3dSmoothTime = cfg.GetInt( CLIENT_CONFIG_APP, "Animation3dSmoothTime", 0 );
+    GameOpt.Animation3dSmoothTime = cfg.GetInt( CLIENT_SECTION, "Animation3dSmoothTime", 0 );
     GETOPTIONS_CMD_LINE_INT( GameOpt.Animation3dSmoothTime, "-Animation3dSmoothTime" );
     GETOPTIONS_CHECK( GameOpt.Animation3dSmoothTime, 0, 10000, 250 );
 
@@ -210,31 +231,31 @@ void GetClientOptions()
     GETOPTIONS_CMD_LINE_BOOL_ON( GameOpt.DebugSprites, "-DebugSprites" );
 
     // Str
-    cfg.GetStr( CLIENT_CONFIG_APP, "FonlineDataPath", DIR_SLASH_SD "data", buf );
+    cfg.GetStr( CLIENT_SECTION, "FonlineDataPath", DIR_SLASH_SD "data", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-FonlineDataPath" );
     FileManager::FormatPath( buf );
     GameOpt.FoDataPath = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "RemoteHost", "localhost", buf );
+    cfg.GetStr( CLIENT_SECTION, "RemoteHost", "localhost", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-RemoteHost" );
     GameOpt.Host = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "ProxyHost", "localhost", buf );
+    cfg.GetStr( CLIENT_SECTION, "ProxyHost", "localhost", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-ProxyHost" );
     GameOpt.ProxyHost = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "ProxyUser", "", buf );
+    cfg.GetStr( CLIENT_SECTION, "ProxyUser", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-ProxyUser" );
     GameOpt.ProxyUser = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "ProxyPass", "", buf );
+    cfg.GetStr( CLIENT_SECTION, "ProxyPass", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-ProxyPass" );
     GameOpt.ProxyPass = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "UserName", "", buf );
+    cfg.GetStr( CLIENT_SECTION, "UserName", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-UserName" );
     GameOpt.Name = buf;
-    cfg.GetStr( CLIENT_CONFIG_APP, "KeyboardRemap", "", buf );
+    cfg.GetStr( CLIENT_SECTION, "KeyboardRemap", "", buf );
     GETOPTIONS_CMD_LINE_STR( buf, "-KeyboardRemap" );
     GameOpt.KeyboardRemap = buf;
 
     // Logging
-    bool logging = cfg.GetInt( CLIENT_CONFIG_APP, "Logging", 1 ) != 0;
+    bool logging = cfg.GetInt( CLIENT_SECTION, "Logging", 1 ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( logging, "-Logging" );
     if( !logging )
     {
@@ -242,15 +263,15 @@ void GetClientOptions()
         LogToFile( NULL );
     }
 
-    logging = cfg.GetInt( CLIENT_CONFIG_APP, "LoggingDebugOutput", 0 ) != 0;
+    logging = cfg.GetInt( CLIENT_SECTION, "LoggingDebugOutput", 0 ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( logging, "-LoggingDebugOutput" );
     if( logging )
         LogToDebugOutput( true );
 
-    logging = cfg.GetInt( CLIENT_CONFIG_APP, "LoggingTime", false ) != 0;
+    logging = cfg.GetInt( CLIENT_SECTION, "LoggingTime", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( logging, "-LoggingTime" );
     LogWithTime( logging );
-    logging = cfg.GetInt( CLIENT_CONFIG_APP, "LoggingThread", false ) != 0;
+    logging = cfg.GetInt( CLIENT_SECTION, "LoggingThread", false ) != 0;
     GETOPTIONS_CMD_LINE_BOOL( logging, "-LoggingThread" );
     LogWithThread( logging );
 
@@ -269,43 +290,8 @@ bool LogicMT = false;
 
 void GetServerOptions()
 {
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-    if( cfg.IsApp( "Server" ) )
-    {
-        ServerGameSleep = cfg.GetInt( SERVER_CONFIG_APP, "GameSleep", 10 );
-        Script::SetConcurrentExecution( cfg.GetInt( SERVER_CONFIG_APP, "ScriptConcurrentExecution", 0 ) != 0 );
-        WorldSaveManager = (cfg.GetInt( SERVER_CONFIG_APP, "WorldSaveManager", 1 ) == 1);
-    }
-    else
-    {
-        # if FOCLASSIC_STAGE >= 3
-        #  pragma STAGE_DEPRECATE(3,"Server config without section")
-        # endif
-        ServerGameSleep = cfg.GetInt( "GameSleep", 10 );
-        Script::SetConcurrentExecution( cfg.GetInt( "ScriptConcurrentExecution", 0 ) != 0 );
-        WorldSaveManager = (cfg.GetInt( "WorldSaveManager", 1 ) == 1);
-    }
+    ServerGameSleep = ConfigFile->GetInt( SERVER_SECTION, "GameSleep", 10 );
+    Script::SetConcurrentExecution( ConfigFile->GetBool( SERVER_SECTION, "ScriptConcurrentExecution", false ) );
+    WorldSaveManager = ConfigFile->GetInt( SERVER_SECTION, "WorldSaveManager", 1 ) == 1;
 }
 #endif
-
-bool LoadConfigFile( const char* fname )
-{
-    if( ConfigFile )
-        return false;
-
-    ConfigFile = new Ini();
-
-    return ConfigFile->LoadFile( fname );
-}
-
-void UnloadConfigFile()
-{
-    if( !ConfigFile )
-        return;
-
-    ConfigFile->Unload();
-
-    delete ConfigFile;
-    ConfigFile = NULL;
-}

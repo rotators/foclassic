@@ -5,17 +5,42 @@
 
 class Ini;
 
-// Config file
-#define CLIENT_CONFIG_APP    "Game Options"
-#define SERVER_CONFIG_APP    "Server"
+// Config files sections
+#define EMPTY_SECTION           ""
+#define CLIENT_SECTION          "Game Options"
+#define CLIENT_DX_SECTION       "ClientDX"
+#define CLIENT_GL_SECTION       "ClientGL"
+#define MAPPER_SECTION          "Mapper"
+#define MAPPER_DX_SECTION       "MapperDX"
+#define MAPPER_GL_SECTION       "MapperGL"
+#define SERVER_SECTION          "Server"
 
 #if defined (FOCLASSIC_CLIENT)
-# define CFG_DEF_INT_FILE    "default800x600.ini"
+# define APP_SECTION            (CLIENT_SECTION)
+# ifdef FO_D3D
+#  define APP_SECTION_DETAIL    (CLIENT_DX_SECTION)
+# else
+#  define APP_SECTION_DETAIL    (CLIENT_GL_SECTION)
+# endif
 #elif defined (FOCLASSIC_MAPPER)
-# define CFG_DEF_INT_FILE    "mapper_default.ini"
+# define APP_SECTION            (MAPPER_SECTION)
+# ifdef FO_D3D
+#  define APP_SECTION_DETAIL    (MAPPER_DX_SECTION)
+# else
+#  define APP_SECTION_DETAIL    (MAPPER_GL_SECTION)
+# endif
+#elif defined (FOCLASSIC_SERVER)
+# define APP_SECTION            (SERVER_SECTION)
+#endif
+
+#if defined (FOCLASSIC_CLIENT)
+# define CFG_DEF_INT_FILE       "default800x600.ini"
+#elif defined (FOCLASSIC_MAPPER)
+# define CFG_DEF_INT_FILE       "mapper_default.ini"
 #endif
 
 extern Ini* ConfigFile;
+
 extern bool LoadConfigFile( const char* fname );
 extern void UnloadConfigFile();
 

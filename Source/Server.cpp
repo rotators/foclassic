@@ -289,6 +289,7 @@ string FOServer::GetIngamePlayersStatistics()
 }
 
 // Accesses
+#pragma TODO()
 void FOServer::GetAccesses( StrVec& client, StrVec& tester, StrVec& moder, StrVec& admin, StrVec& admin_names )
 {
     client.clear();
@@ -296,22 +297,12 @@ void FOServer::GetAccesses( StrVec& client, StrVec& tester, StrVec& moder, StrVe
     moder.clear();
     admin.clear();
     admin_names.clear();
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-    if( cfg.IsLoaded() )
-    {
-        char buf[MAX_FOTEXT];
-        if( cfg.GetStr( "Access_client", "", buf ) )
-            Str::ParseLine( buf, ' ', client, Str::ParseLineDummy );
-        if( cfg.GetStr( "Access_tester", "", buf ) )
-            Str::ParseLine( buf, ' ', tester, Str::ParseLineDummy );
-        if( cfg.GetStr( "Access_moder", "", buf ) )
-            Str::ParseLine( buf, ' ', moder, Str::ParseLineDummy );
-        if( cfg.GetStr( "Access_admin", "", buf ) )
-            Str::ParseLine( buf, ' ', admin, Str::ParseLineDummy );
-        if( cfg.GetStr( "AccessNames_admin", "", buf ) )
-            Str::ParseLine( buf, ' ', admin_names, Str::ParseLineDummy );
-    }
+
+    client = ConfigFile->GetStrVec( SERVER_SECTION, "Access_client" );
+    tester = ConfigFile->GetStrVec( SERVER_SECTION, "Access_tester" );
+    moder = ConfigFile->GetStrVec( SERVER_SECTION, "Access_moder" );
+    admin = ConfigFile->GetStrVec( SERVER_SECTION, "Access_admin" );
+    admin_names = ConfigFile->GetStrVec( SERVER_SECTION, "AccessNames_admin" );
 }
 
 void FOServer::DisconnectClient( Client* cl )
@@ -2148,7 +2139,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
 
             char str[MAX_FOTEXT];
             ConnectedClientsLocker.Lock();
-            Str::Format( str, "Connections: %u, Players: %u, Npc: %u. FOServer machine uptime: %u min., FOServer uptime: %u min.",
+            Str::Format( str, "Connections: %u, Players: %u, Npc: %u. Machine uptime: %u min., Server uptime: %u min.",
                          ConnectedClients.size(), CrMngr.PlayersInGame(), CrMngr.NpcInGame(),
                          Timer::FastTick() / 1000 / 60, (Timer::FastTick() - Statistics.ServerStartTick) / 1000 / 60 );
             ConnectedClientsLocker.Unlock();
@@ -3354,6 +3345,7 @@ bool FOServer::LoadGameInfoFile( void* f )
         return false;
 
     // Scores
+    WriteLog( "Load best scores...\n" );
     if( !FileRead( f, &BestScores[0], sizeof(BestScores) ) )
         return false;
 
@@ -3413,8 +3405,6 @@ bool FOServer::Init()
 bool FOServer::InitReal()
 {
     FileManager::InitDataFiles( DIR_SLASH_SD );
-
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
 
     WriteLog( "***   Starting initialization   ****\n" );
 
@@ -3827,6 +3817,63 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
 {
     WriteLog( "Load language packs...\n" );
 
+    StrVec names;
+    for( auto it = lang_packs.begin(); it != lang_packs.end(); ++it )
+    {
+        LanguagePack& lang = *it;
+        string        name = string( lang.NameStr );
+
+        std::transform( name.begin(), name.end(), name.begin(), ::tolower );
+        names.push_back( name );
+    }
+
+    StrVec langs = ConfigFile->GetStrVec( SERVER_SECTION, "Languages" );
+    if( !langs.empty() )
+    {
+        uint idx = 0;
+        for( auto it = langs.begin(); it != langs.end(); ++it, idx++ )
+        {
+            string& name = *it;
+            std::transform( name.begin(), name.end(), name.begin(), ::tolower );
+
+            if( name.length() != 4 )
+            {
+                WriteLog( "Language<%s> invalid - name must have exactly four letters.\n", name.c_str() );
+                return false;
+            }
+            else if( std::find( names.begin(), names.end(), name ) != names.end() )
+            {
+                WriteLog( "Language<%s> already loaded.\n", name.c_str() );
+                return false;
+            }
+
+            WriteLog( "Load language<%s>\n", name.c_str() );
+
+            LanguagePack language;
+            if( !language.Init( name.c_str(), PATH_SERVER_TEXTS ) )
+            {
+                WriteLog( "Language<%s> cannot be initialized.\n", name.c_str() );
+                return false;
+            }
+
+            lang_packs.push_back( language );
+            names.push_back( name );
+        }
+
+        WriteLog( "Load language packs... " );
+        if( idx > 0 )
+            WriteLogX( "loaded<%u>", idx );
+        else
+            WriteLogX( "failed" );
+        WriteLogX( "\n" );
+
+        return idx > 0;
+    }
+
+    #if FOCLASSIC_STAGE >= 3
+    # pragma STAGE_DEPRECATE(3,"ConfigFile Language_N");
+    #endif
+
     uint cur_lang = 0;
 
     while( true )
@@ -3834,7 +3881,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         char cur_str_lang[MAX_FOTEXT];
         Str::Format( cur_str_lang, "Language_%u", cur_lang );
 
-        string lang = ConfigFile->GetStr( "Server", cur_str_lang );
+        string lang = ConfigFile->GetStr( SERVER_SECTION, cur_str_lang );
         if( lang.empty() )
         {
             if( cur_lang == 0 )

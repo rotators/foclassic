@@ -22,56 +22,54 @@
    SOFTWARE.
  */
 
-#ifdef FOCLASSIC_ENGINE
-# include "Core.h"
-#endif
+// This is modified version of IniPP library
+// Original source https://github.com/mcmtroffaes/inipp/
+
+// #ifdef FOCLASSIC_ENGINE
+// # include "Core.h"
+// #endif
+
+#include <errno.h>
 
 #include <algorithm>
 #include <cstring>
 #include <cctype>
 #include <fstream>
 #include <functional>
-#include <iostream>
+#include <istream>
 #include <list>
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <scriptstring.h>
 
 #include "Ini.h"
+#include "../Log.h"
+
+using namespace std;
 
 #define SECTION_START      '['
 #define SECTION_END        ']'
 #define KEY_ASSIGN         '='
 #define IS_COMMENT( c )    (c == ';' || c == '#')
 
-inline void TrimLeft( IniString& str )
+inline void TrimLeft( string& str )
 {
-    str.erase( str.begin(), std::find_if( str.begin(), str.end(), std::not1( std::ptr_fun<int, int>( std::isspace ) ) ) );
+    str.erase( str.begin(), find_if( str.begin(), str.end(), not1( ptr_fun<int, int>( isspace ) ) ) );
 }
 
-inline void TrimRight( IniString& str )
+inline void TrimRight( string& str )
 {
-    str.erase( std::find_if( str.rbegin(), str.rend(), std::not1( std::ptr_fun<int, int>( std::isspace ) ) ).base(), str.end() );
+    str.erase( find_if( str.rbegin(), str.rend(), not1( ptr_fun<int, int>( isspace ) ) ).base(), str.end() );
 }
 
-template<typename T>
-inline bool Extract( const IniString& value, T& result )
+inline void Cleanup( string& str )
 {
-    char                           c;
-    std::basic_istringstream<char> iss( value );
-    T                              res;
-
-    if( (iss >> std::boolalpha >> res) && !(iss >> c) )
-    {
-        result = res;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    str.erase( remove( str.begin(), str.end(), '\r' ), str.end() );
+    str.erase( remove( str.begin(), str.end(), '\n' ), str.end() );
+    // TODO '\t' -> ' '
 }
 
 //
@@ -86,11 +84,11 @@ Ini::~Ini()
 
 //
 
-bool Ini::LoadFile( const char* fname )
+bool Ini::LoadFile( const string& fname )
 {
     Unload();
 
-    std::ifstream fstream( fname );
+    ifstream fstream( fname );
     if( fstream.is_open() )
     {
         Parse( fstream );
@@ -101,6 +99,14 @@ bool Ini::LoadFile( const char* fname )
     return false;
 }
 
+bool Ini::LoadString( const string& str )
+{
+    Unload();
+    ParseString( str );
+
+    return true;
+}
+
 void Ini::Unload()
 {
     Sections.clear();
@@ -109,20 +115,23 @@ void Ini::Unload()
 
 //
 
-void Ini::Parse( std::basic_istream<char>& stream )
+void Ini::Parse( basic_istream<char>& stream )
 {
-    IniString line;
-    IniString section;
+    string line;
+    string section;
 
     while( !stream.eof() )
     {
-        std::getline( stream, line );
+        getline( stream, line );
+
+        Cleanup( line );
+
         TrimLeft( line );
         TrimRight( line );
 
         const size_t length = line.length();
 
-        if( line.empty() )
+        if( !length || line.empty() )
             continue;
 
         const size_t pos = line.find_first_of( KEY_ASSIGN );
@@ -139,18 +148,18 @@ void Ini::Parse( std::basic_istream<char>& stream )
             else
                 Errors.push_back( line );
         }
-        else if( pos != 0 && pos != IniString::npos )
+        else if( pos != 0 && pos != string::npos )
         {
-            IniString variable( line.substr( 0, pos ) );
-            IniString value( line.substr( pos + 1, length ) );
+            string var( line.substr( 0, pos ) );
+            string val( line.substr( pos + 1, length ) );
 
-            TrimRight( variable );
-            TrimLeft( value );
+            TrimRight( var );
+            TrimLeft( val );
 
-            IniSection& sec = Sections[section];
-            if( sec.find( variable ) == sec.end() )
+            IniSection& ini_section = Sections[section];
+            if( ini_section.find( var ) == ini_section.end() )
             {
-                sec.insert( std::make_pair( variable, value ) );
+                ini_section.insert( make_pair( var, val ) );
             }
             else
                 Errors.push_back( line );
@@ -162,78 +171,159 @@ void Ini::Parse( std::basic_istream<char>& stream )
     }
 }
 
-void Ini::ParseCharPtr( const char* str )
+void Ini::ParseString( const string& str )
 {
-    std::stringstream buf;
+    stringstream buf;
     buf << str;
 
     Parse( buf );
 }
 
-void Ini::ParseScriptString( ScriptString& str )
+void Ini::ParseScriptString( const ScriptString& str )
 {
-    std::stringstream buf;
-    buf << str.c_std_str();
-
-    Parse( buf );
+    ParseString( str.c_std_str() );
 }
 
 //
 
-bool Ini::IsSection( const char* section )
+bool Ini::IsSection( const string& section )
 {
-    return Sections.count( IniString( section ) ) > 0;
+    return Sections.find( section ) != Sections.end();
 }
 
-bool Ini::IsSectionKey( const char* section, const char* key )
+bool Ini::IsSectionKey( const string& section, const string& key )
 {
     if( !IsSection( section ) )
         return false;
 
-    return Sections[section].count( IniString( key ) ) > 0;
+    return Sections[section].find( key ) != Sections[section].end();
+}
+
+bool Ini::IsSectionKeyEmpty( const string& section, const string& key )
+{
+    if( !IsSectionKey( section, key ) )
+        return true;
+
+    return Sections[section][key].empty();
+}
+
+unsigned int Ini::GetSections( vector<string>& sections )
+{
+    unsigned int count = 0;
+    for( IniSections::iterator it = Sections.begin(); it != Sections.end(); ++it, count++ )
+    {
+        sections.push_back( it->first );
+    }
+
+    return count;
+}
+
+unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys )
+{
+    unsigned int count = 0;
+
+    if( IsSection( section ) )
+    {
+        for( IniSection::iterator it = Sections[section].begin(); it != Sections[section].end(); ++it, count++ )
+        {
+            keys.push_back( it->first );
+        }
+    }
+
+    return count;
 }
 
 //
 
-int Ini::GetInt( const char* section, const char* key, int default_value )
+void Ini::MergeSections( const string& to, const string& from, bool override /* = false */ )
 {
-    int result;
+    #if 0
+    if( from == to || !IsSection( to ) || !IsSection( from ) )
+        return;
 
-    if( !IsSectionKey( section, key ) || !Extract( Sections[section][key], result ) )
-        result = default_value;
+    IniSection& to_section = Sections[to];
+    IniSection& from_section = Sections[from];
+    #endif
+}
+
+//
+
+bool Ini::GetBool( const string& section, const string& key, const bool& default_value )
+{
+    bool result = default_value;
+
+    if( !IsSectionKeyEmpty( section, key ) )
+    {
+        string str = Sections[section][key];
+        transform( str.begin(), str.end(), str.begin(), tolower );
+
+        result = (str == "yes" || str == "true" || str == "on" || str == "enable");
+    }
 
     return result;
 }
 
-std::string Ini::GetStr( const char* section, const char* key )
+int Ini::GetInt( const string& section, const string& key, const int& default_value )
 {
-    std::string result;
+    int result = default_value;
 
-    if( !IsSectionKey( section, key ) || !Extract( Sections[section][key], result ) )
-        return std::string();
+    if( !IsSectionKeyEmpty( section, key ) )
+    {
+        string str = Sections[section][key];
+
+        // https://stackoverflow.com/a/6154614
+        const char* cstr = str.c_str();
+        char*       end;
+        long        l;
+        errno = 0;
+        l = strtol( cstr, &end, 0 );
+        if( ( (errno == ERANGE && l == LONG_MAX) || l > INT_MAX ) ||
+            ( (errno == ERANGE && l == LONG_MIN) || l < INT_MIN ) ||
+            (*cstr == '\0' || *end != '\0') )
+            result = default_value;
+        else
+            result = l;
+    }
 
     return result;
 }
 
-std::string Ini::GetStr( const char* section, const char* key, const string& default_value )
+string Ini::GetStr( const string& section, const string& key )
 {
-    std::string result;
+    if( !IsSectionKeyEmpty( section, key ) )
+        return string( Sections[section][key] );
 
-    if( !IsSectionKey( section, key ) || !Extract( Sections[section][key], result ) )
-        result = std::string( default_value );
+    return string();
+}
+
+string Ini::GetStr( const string& section, const string& key, const string& default_value )
+{
+    if( !IsSectionKeyEmpty( section, key ) )
+        return string( Sections[section][key] );
+
+    return string( default_value );
+}
+
+vector<string> Ini::GetStrVec( const string& section, const string& key, char separator /* = ' ' */ )
+{
+    string         value = GetStr( section, key );
+    vector<string> result;
+
+    if( !value.empty() )
+    {
+        string        tmp;
+        istringstream f( value );
+        while( getline( f, tmp, separator ) )
+        {
+            Cleanup( tmp );
+            if( separator != ' ' )
+            {
+                TrimLeft( tmp );
+                TrimRight( tmp );
+            }
+            result.push_back( tmp );
+        }
+    }
 
     return result;
 }
-/*
-   void Ini::Generate( std::basic_ostream<char>&os ) const
-   {
-                for( const auto& sec : Sections )
-                {
-                                os << CharSectionStart << sec.first << CharSectionEnd << std::endl;
-                                for( auto const& val : sec.second )
-                                {
-                                                os << val.first << CharAssign << val.second << std::endl;
-                                }
-                }
-   }
- */

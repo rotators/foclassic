@@ -94,7 +94,7 @@ bool CritterManager::LoadProtos()
     // Get names of proto
     if( !fileMngr.LoadFile( "critters.lst", PATH_SERVER_PRO_CRITTERS ) )
     {
-        WriteLog( "Cannot open \"critters.lst\".\n" );
+        WriteLog( "Cannot open file<%s>\n", FileManager::GetFullPath( "critters.lst", PATH_SERVER_PRO_CRITTERS ) );
         return false;
     }
 

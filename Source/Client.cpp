@@ -268,7 +268,7 @@ bool FOClient::Init()
     char      pass[MAX_FOTEXT];
     IniParser cfg;     // Also used below
     cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
-    cfg.GetStr( CLIENT_CONFIG_APP, "UserPass", "", pass );
+    cfg.GetStr( CLIENT_SECTION, "UserPass", "", pass );
     char* cmd_line_pass = Str::Substring( CommandLine, "-UserPass" );
     if( cmd_line_pass )
         sscanf( cmd_line_pass + Str::Length( "-UserPass" ) + 1, "%s", pass );
@@ -341,14 +341,14 @@ bool FOClient::Init()
 
     // Sound manager
     SndMngr.Init();
-    SndMngr.SetSoundVolume( cfg.GetInt( CLIENT_CONFIG_APP, "SoundVolume", 100 ) );
-    SndMngr.SetMusicVolume( cfg.GetInt( CLIENT_CONFIG_APP, "MusicVolume", 100 ) );
+    SndMngr.SetSoundVolume( cfg.GetInt( CLIENT_SECTION, "SoundVolume", 100 ) );
+    SndMngr.SetMusicVolume( cfg.GetInt( CLIENT_SECTION, "MusicVolume", 100 ) );
 
     UID_PREPARE_UID4_3;
 
     // Language Packs
     char lang_name[MAX_FOTEXT];
-    cfg.GetStr( CLIENT_CONFIG_APP, "Language", DEFAULT_LANGUAGE, lang_name );
+    cfg.GetStr( CLIENT_SECTION, "Language", DEFAULT_LANGUAGE, lang_name );
     if( Str::Length( lang_name ) != 4 )
         Str::Copy( lang_name, DEFAULT_LANGUAGE );
     Str::Lower( lang_name );
@@ -6803,7 +6803,7 @@ void FOClient::Net_OnMsgData()
         cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
         if( cfg.IsLoaded() )
         {
-            cfg.SetStr( CLIENT_CONFIG_APP, "Language", CurLang.NameStr );
+            cfg.SetStr( CLIENT_SECTION, "Language", CurLang.NameStr );
             cfg.SaveFile( GetConfigFileName(), PATH_ROOT );
         }
     }

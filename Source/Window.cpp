@@ -5,6 +5,7 @@
 
 #include "ConfigFile.h"
 #include "GameOptions.h"
+#include "Ini.h"
 #include "IniParser.h"
 #include "SinglePlayer.h"
 #include "Text.h"
@@ -13,18 +14,17 @@
 const char* GetWindowName()
 {
     // Default config names
-    #if defined (FOCLASSIC_SERVER)
-    static char window_name[MAX_FOPATH] = { "FOClassic Server\0--default-server-name--" };
-    int         path_type = PATH_SERVER_ROOT;
-    #elif defined (FOCLASSIC_MAPPER)
-    static char window_name[MAX_FOPATH] = { "FOClassic Mapper\0--default-mapper-name--" };
-    int         path_type = PATH_MAPPER_ROOT;
-    #else// FOCLASSIC_CLIENT and others
-    static char window_name[MAX_FOPATH] = { "FOClassic\0--default-client-name--" };
-    int         path_type = PATH_ROOT;
-    #endif
+    static char window_name[MAX_FOPATH] =
+	{
+	#if defined (FOCLASSIC_SERVER)
+		"FOClassic Server\0--default-server-name--"
+	#elif defined (FOCLASSIC_MAPPER)
+		"FOClassic Mapper\0--default-mapper-name--"
+	#else// FOCLASSIC_CLIENT and others
+		"FOClassic\0--default-client-name--"
+	#endif
+	};
 
-    // Extract config name from current exe
     static bool processed = false;
     if( !processed )
     {
@@ -32,21 +32,15 @@ const char* GetWindowName()
         processed = true;
 
         // Take name from config file
-        IniParser cfg;
-        cfg.LoadFile( GetConfigFileName(), path_type );
-        if( !cfg.IsLoaded() )
+        if( !ConfigFile )
             return window_name;
 
-        // 'WindowName' section
-        char str[MAX_FOPATH];
-        #if !defined (FOCLASSIC_CLIENT)
-        if( !cfg.GetStr( "WindowName", "", str ) || !str[0] )
+        // 'WindowName'
+        string str = ConfigFile->GetStr( APP_SECTION, "WindowName" );
+        if( str.empty() )
             return window_name;
-        #else
-        if( !cfg.GetStr( CLIENT_CONFIG_APP, "WindowName", "", str ) || !str[0] )
-            return window_name;
-        #endif
-        Str::Copy( window_name, str );
+
+        Str::Copy( window_name, str.c_str() );
 
         // Singleplayer appendix
         if( Singleplayer )
