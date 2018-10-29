@@ -2,6 +2,26 @@
 
 Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc/76003/412/).
 
+## [v2]() (WIP)
+
+- configuration files
+    - application settings are loaded from disk only once, and cached in memory (Server only)
+    - Server settings moved to `Server` section
+    - added Server setting `Languages` containing list of all languages supported
+        - if `Languages` list is empty/not set, `Language_N` is used; it will continue to work until further notice
+        - if `Languages` list is non-empty, `Language_N` entries are ignored
+        - see bottom of changelog for config file fragment
+- scripts
+    - added global define __VERSION
+
+```ini
+# List of all supported languages separated by whitespace; if empty/unset, Language_0/1/... is used
+# First language on list is used as default
+# Length of each language name must be exactly four letters
+Languages = engl russ
+```
+
+
 ## [v1](https://github.com/rotators/foclassic/releases/tag/v1/)
 - Hello world!
 
