@@ -1423,9 +1423,45 @@ bool FOServer::VerifyTrigger( Map* map, Critter* cr, ushort from_hx, ushort from
     return result;
 }
 
+// called by Process_CreateClient/Process_Login
+bool FOServer::Process_Connect( Client* cl )
+{
+    bool allow = true;
+
+    #if 0
+    // Check for ban by ip
+    if( Script::PrepareContext( ServerFunctions.PlayerConnect, _FUNC_, cl->GetIpStr() ) )
+    {
+        ScriptString* message = new ScriptString( "" );
+
+        Script::SetArgUInt( cl->GetIp() );
+        Script::SetArgObject( message );
+
+        if( Script::RunPrepared() )
+            allow = Script::GetReturnedBool();
+
+        if( !allow )
+        {
+            cl->Send_TextMsg( cl, STR_NET_BANNED_IP, SAY_NETMSG, TEXTMSG_GAME );
+            if( message->length() )
+                cl->Send_Text( cl, message->c_str(), SAY_NETMSG );
+            cl->Disconnect();
+        }
+
+        message->Release();
+    }
+    #endif
+
+    return allow;
+}
+
 void FOServer::Process_CreateClient( Client* cl )
 {
     // Check for ban by ip
+    if( !Process_Connect( cl ) )
+        return;
+
+    // TODO: deprecate
     {
         SCOPE_LOCK( BannedLocker );
 
@@ -1856,9 +1892,10 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     }
 
     // Check for ban by ip
-    #if FOCLASSIC_STAGE >= 3
-    # pragma STAGE_DEPRECATE(3,"FOServer::ClientBanned")
-    #endif
+    if( !Process_Connect( cl ) )
+        return;
+
+    // TODO: deprecate
     {
         SCOPE_LOCK( BannedLocker );
 

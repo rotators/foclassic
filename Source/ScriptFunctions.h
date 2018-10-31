@@ -17,7 +17,6 @@ struct ClientScriptFunctions
     int GetActiveScreens;
     int ScreenChange;
     int RenderIface;
-//  int RenderIfaceScreen;
     int RenderMap;
     int MouseDown;
     int MouseUp;
@@ -128,6 +127,7 @@ struct ServerScriptFunctions
     int TurnBasedProcess;
     int TurnBasedSequence;
     int WorldSave;
+//  int PlayerConnect;
     int PlayerRegistration;
     int PlayerLogin;
     int PlayerGetAccess;

@@ -23,6 +23,9 @@
    SOFTWARE.
  */
 
+// This is modified version of IniPP library
+// Original source https://github.com/mcmtroffaes/inipp/
+
 #ifndef __INI__
 #define __INI__
 
@@ -64,7 +67,9 @@ public:
     void MergeSections( const std::string& to, const std::string& from, bool override = false );
 
     bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );
-    int                      GetInt( const std::string& section, const std::string& key, const int& default_value );
+    int                      GetInt( const std::string& section, const std::string& key, const int& default_value, unsigned char base = 10 );
+    int                      GetHex( const std::string& section, const std::string& key, const int& default_value );
+    int                      GetOct( const std::string& section, const std::string& key, const int& default_value );
     std::string              GetStr( const std::string& section, const std::string& key );
     std::string              GetStr( const std::string& section, const std::string& key, const std::string& default_value );
     std::vector<std::string> GetStrVec( const std::string& section, const std::string& key, char separator = ' ' );

@@ -15,15 +15,15 @@ const char* GetWindowName()
 {
     // Default config names
     static char window_name[MAX_FOPATH] =
-	{
-	#if defined (FOCLASSIC_SERVER)
-		"FOClassic Server\0--default-server-name--"
-	#elif defined (FOCLASSIC_MAPPER)
-		"FOClassic Mapper\0--default-mapper-name--"
-	#else// FOCLASSIC_CLIENT and others
-		"FOClassic\0--default-client-name--"
-	#endif
-	};
+    {
+        #if defined (FOCLASSIC_SERVER)
+        "FOClassic Server\0--default-server-name--"
+        #elif defined (FOCLASSIC_MAPPER)
+        "FOClassic Mapper\0--default-mapper-name--"
+        #else// FOCLASSIC_CLIENT and others
+        "FOClassic\0--default-client-name--"
+        #endif
+    };
 
     static bool processed = false;
     if( !processed )

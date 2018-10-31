@@ -237,6 +237,7 @@ unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys )
 
 void Ini::MergeSections( const string& to, const string& from, bool override /* = false */ )
 {
+    #pragma message("[TODO] MergeSections")
     #if 0
     if( from == to || !IsSection( to ) || !IsSection( from ) )
         return;
@@ -263,7 +264,7 @@ bool Ini::GetBool( const string& section, const string& key, const bool& default
     return result;
 }
 
-int Ini::GetInt( const string& section, const string& key, const int& default_value )
+int Ini::GetInt( const string& section, const string& key, const int& default_value, unsigned char base /* = 10 */ )
 {
     int result = default_value;
 
@@ -276,7 +277,7 @@ int Ini::GetInt( const string& section, const string& key, const int& default_va
         char*       end;
         long        l;
         errno = 0;
-        l = strtol( cstr, &end, 0 );
+        l = strtol( cstr, &end, base );
         if( ( (errno == ERANGE && l == LONG_MAX) || l > INT_MAX ) ||
             ( (errno == ERANGE && l == LONG_MIN) || l < INT_MIN ) ||
             (*cstr == '\0' || *end != '\0') )
@@ -286,6 +287,16 @@ int Ini::GetInt( const string& section, const string& key, const int& default_va
     }
 
     return result;
+}
+
+int Ini::GetOct( const string& section, const string& key, const int& default_value )
+{
+    return GetInt( section, key, default_value, 8 );
+}
+
+int Ini::GetHex( const string& section, const string& key, const int& default_value )
+{
+    return GetInt( section, key, default_value, 16 );
 }
 
 string Ini::GetStr( const string& section, const string& key )
