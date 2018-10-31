@@ -1,0 +1,20 @@
+/////
+//
+// FOClassic v@FOCLASSIC_VERSION@
+// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
+//
+/////
+//
+// This file contains an example of script header structure.
+//
+/////
+
+#ifndef __DEFINES__
+#define __DEFINES__
+
+#ifndef FOCLASSIC_EXTENSION
+# define FOCLASSIC_SCRIPT
+# include "FOClassic.fos"
+#endif
+
+#endif // __DEFINES__ //

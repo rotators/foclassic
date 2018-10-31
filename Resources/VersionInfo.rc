@@ -1,0 +1,70 @@
+#include "CMake.h"
+
+#if defined(FOCLASSIC_CLIENT)
+    #include "../Source/ResourceClient.h"
+    #define APPLICATION_NAME "Client"
+    #define APPLICATION_ICON "Client.ico"
+#elif defined(FOCLASSIC_MAPPER)
+    #include "../Source/ResourceMapper.h"
+    #define APPLICATION_NAME "Mapper"
+    #define APPLICATION_ICON "Mapper.ico"
+#elif defined(FOCLASSIC_SERVER)
+    #define APPLICATION_NAME "Server"
+    #define APPLICATION_ICON "Server.ico"
+#elif defined(FOCLASSIC_SCRIPT_COMPILER)
+    #define APPLICATION_NAME "ASCompiler"
+#else
+    #error "Unknown application"
+#endif
+
+#if defined(FOCLASSIC_CLIENT) || defined(FOCLASSIC_MAPPER)
+    #ifdef FO_D3D
+        #define APPLICATION_NAME_SUFFIX "DX"
+    #else
+        #define APPLICATION_NAME_SUFFIX "GL"
+    #endif
+#else
+    #define APPLICATION_NAME_SUFFIX ""
+#endif
+
+#ifndef IDI_VER
+    #define IDI_VER 1
+#endif
+
+IDI_VER VERSIONINFO
+    FILEVERSION     FOCLASSIC_FILEVERSION
+    PRODUCTVERSION  FOCLASSIC_PRODUCTVERSION
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "ProductName",        "FOClassic"
+            VALUE "FileDescription",    "FOClassic " APPLICATION_NAME
+            VALUE "CompanyName",        "Rotators"
+            VALUE "LegalCopyright",     "Copyright (C) 2010-2018 Cvet, Rotators"
+
+            VALUE "InternalName",       APPLICATION_NAME APPLICATION_NAME_SUFFIX
+            VALUE "OriginalFilename",   APPLICATION_NAME APPLICATION_NAME_SUFFIX ".exe"
+
+            VALUE "FileVersion",        FOCLASSIC_FILEVERSION_STRING
+            VALUE "ProductVersion",     FOCLASSIC_PRODUCTVERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#ifdef APPLICATION_ICON
+    #ifndef IDI_ICON
+        #define IDI_ICON 101
+    #endif
+    IDI_ICON ICON APPLICATION_ICON
+#endif
+
+#if defined(FOCLASSIC_CLIENT) || defined(FOCLASSIC_MAPPER)
+    IDR_EFFECT_SKINNING RCDATA "../Source/3dSkinning.fx"
+    IDR_PS_CONTOUR      RCDATA "../Source/3dContourPS.txt"
+#endif

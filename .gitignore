@@ -1,0 +1,21 @@
+# Automated build directories
+/SDK*
+
+# External SVN repositories
+.svn
+
+# Visual Studio files
+.vs
+*.sdf
+*.suo
+
+# Developer files
+/*.dev
+/*.cmd
+/*.pl
+/*.sh
+*.user
+
+# In-Source build leftovers
+/CMakeCache.txt
+/CMakeFiles

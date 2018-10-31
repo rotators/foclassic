@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# adds a commented git diff output
+#
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+if [ "$COMMIT_SOURCE" == "" ] ; then
+	git diff --patch --cached 2>/dev/null | awk '{printf "#"; print}' >> "$COMMIT_MSG_FILE"  2>/dev/null
+fi

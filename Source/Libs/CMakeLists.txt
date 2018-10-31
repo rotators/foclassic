@@ -1,0 +1,21 @@
+message( STATUS "Configuring libraries..." )
+
+add_subdirectory( acm )
+add_subdirectory( assimp )
+add_subdirectory( distorm )
+add_subdirectory( dx9 )
+add_subdirectory( fltk )
+add_subdirectory( glew )
+add_subdirectory( il )
+add_subdirectory( jpeg )
+add_subdirectory( ogg )
+add_subdirectory( png )
+add_subdirectory( portaudio )
+add_subdirectory( pthread )
+add_subdirectory( sha2 )
+add_subdirectory( theora )
+add_subdirectory( zlib )
+
+set_target_properties( acm glew sha2 zlib PROPERTIES FOLDER "Libs" )
+
+message( STATUS "Configuring libraries... OK" )
