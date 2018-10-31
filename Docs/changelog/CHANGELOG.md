@@ -1,6 +1,6 @@
 # CHANGELOG
 
-Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc/76003/412/).
+Complete list of changes in FOClassic since [FOnline SDK r412](https://github.com/cvet/fonline/commit/3e58c94f1234173d5af234eb1f80ad0af8f3c120).
 
 ## [v2]() (WIP)
 
@@ -13,6 +13,7 @@ Complete list of changes in FOClassic since [FOnline r412](https://xp-dev.com/sc
         - see bottom of changelog for config file fragment
 - scripts
     - added global define __VERSION
+
 
 ```ini
 # List of all supported languages separated by whitespace; if empty/unset, Language_0/1/... is used
