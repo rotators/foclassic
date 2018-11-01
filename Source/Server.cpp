@@ -289,7 +289,6 @@ string FOServer::GetIngamePlayersStatistics()
 }
 
 // Accesses
-#pragma TODO()
 void FOServer::GetAccesses( StrVec& client, StrVec& tester, StrVec& moder, StrVec& admin, StrVec& admin_names )
 {
     client.clear();
@@ -4707,15 +4706,40 @@ bool FOServer::LoadWorld( const char* fname )
         return false;
     }
 
-    // ignore vanilla worldsave
+    #ifndef OPTION_LEGACY_SAVEFILE
+    // ignore legacy worldsave
     if( signature[1] == 0x0F && signature[2] == 0xAB && signature[3] == 0x01 )
     {
         WriteLog( "World dump file ignored.\n" );
         FileClose( f );
         return false;
     }
+    #else
+    bool legacy = false;
+
+    // detect legacy worldsave
+    if( signature[1] == 0x0F && signature[2] == 0xAB && signature[3] == 0x01 )
+    {
+        if( signature[0] != 0x13 )
+        {
+            WriteLog( "Legacy world dump file ignored (invalid version).\n" );
+            FileClose( f );
+            return false;
+        }
+
+        WriteLog( "Legacy world dump file.\n" );
+        FileSetPointer( f, 4, SEEK_SET );
+        version = signature[0];
+        legacy = true;
+    }
+    #endif // OPTION_LEGACY_WORLDSAVE
+
     // fast signature verification
+    #ifndef OPTION_LEGACY_SAVEFILE
     if( memcmp( WorldSaveSignature, signature, sizeof(WorldSaveSignature) ) != 0 )
+    #else
+    if( !legacy && memcmp( WorldSaveSignature, signature, sizeof(WorldSaveSignature) ) != 0 )
+    #endif
     {
         // slow signature verification
         if( !BINARY_SIGNATURE_VALID( WorldSaveSignature, signature ) )
@@ -4733,6 +4757,9 @@ bool FOServer::LoadWorld( const char* fname )
             return false;
         }
     }
+    #ifdef OPTION_LEGACY_SAVEFILE
+    if( !legacy )
+    #endif
     version = BINARY_SIGNATURE_VERSION( signature );
 
     // Main data
@@ -4758,13 +4785,33 @@ bool FOServer::LoadWorld( const char* fname )
     // File end
     ushort version_ = 0;
 
-    if( !FileRead( f, &version_, sizeof(version_) ) || version != version_ )
+    #ifdef OPTION_LEGACY_SAVEFILE
+    if( legacy )
     {
-        WriteLog( "World dump file truncated <%u != %u>.\n", version, version_ );
+        uchar legacy_version[4];         // uint
+        if( !FileRead( f, &legacy_version, sizeof(legacy_version) ) )
+        {
+            FileClose( f );
+            return false;
+        }
+        WriteLog( "LegacyVersion PostCheck 0x%X 0x%X 0x%X 0x%X\n", legacy_version[0], legacy_version[1], legacy_version[2], legacy_version[3] );
+        version_ = legacy_version[0];
+    }
+    else
+    #endif
+    if( !FileRead( f, &version_, sizeof(version_) ) )
+    {
+        WriteLog( "World dump file truncated" );
         FileClose( f );
         return false;
     }
     FileClose( f );
+
+    if( version != version_ )
+    {
+        WriteLog( "World dump file truncated <%u != %u>.\n", version, version_ );
+        return false;
+    }
 
     WriteLog( "Load world<%s>... complete\n", fname );
 

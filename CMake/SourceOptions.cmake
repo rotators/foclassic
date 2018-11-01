@@ -2,14 +2,14 @@
 ### On/Off option
 ### will set "OPTION_{NAME}" variable to 1 if enabled, which can be used in configure_file() templates
 ##
-## source_option( USE_THING "Use Thing" ON )
-## source_options()
+## SourceOption( USE_THING "Use Thing" ON )
+## SourceOptions()
 ##
 ### On/Off option which requires own function/macro
 ### will set "OPTION_{NAME}" variable to 1 if enabled, which can be used in configure_file() templates
 ### function/macro will be called only if option is enabled
 ##
-## source_option( USE_THING "Use Thing" ON )
+## SourceOption( USE_THING "Use Thing" ON )
 ##
 ## macro( source_option_USE_THING )
 ##	add_definitions( "-DUSE_THING=1" )

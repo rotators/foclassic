@@ -78,7 +78,10 @@ file( TIMESTAMP "${SCRIPTS_HEADER_TEMPLATE}" SCRIPTS_HEADER_TIMESTAMP "%d.%m.%Y"
 ##
 ## TODO user-specific configuration
 ##
-SourceOptions()
+function( SourceOption_LEGACY_SAVEFILE )
+	target_compile_definitions( Server PRIVATE OPTION_LEGACY_SAVEFILE)
+endfunction()
+SourceOption( LEGACY_SAVEFILE "Allow loading legacy savefiles" ON )
 
 ##
 ##
@@ -127,6 +130,11 @@ configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.f
 
 add_subdirectory( Source )
 add_subdirectory( Extensions )
+
+##
+## process source options
+##
+SourceOptions()
 
 ##
 ## collect cmake files which are not part of any target
