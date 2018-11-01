@@ -8,7 +8,7 @@
 #include "ConfigFile.h"
 #include "Exception.h"
 #include "FlexRect.h"
-#include "IniParser.h"
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Log.h"
 #include "MapManager.h"
@@ -35,14 +35,14 @@
 # include "FL/Fl_File_Icon.H"
 #endif
 
-void InitAdminManager( IniParser* cfg );
+void InitAdminManager();
 
 /************************************************************************/
 /* GUI & Windows service version                                        */
 /************************************************************************/
 
 #ifndef SERVER_DAEMON
-void GUIInit( IniParser& cfg );
+void GUIInit();
 void GUICallback( Fl_Widget* widget, void* data );
 void UpdateInfo();
 void UpdateLog();
@@ -89,6 +89,8 @@ int main( int argc, char** argv )
     if( !strstr( CommandLine, "--no-restore-directory" ) )
         RestoreMainDirectory();
 
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
+
     // Threading
     # ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -106,19 +108,15 @@ int main( int argc, char** argv )
     // Timer
     Timer::Init();
 
-    // Config
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-
     // Memory debugging
-    MemoryDebugLevel = cfg.GetInt( "MemoryDebugLevel", 0 );
+    MemoryDebugLevel = ConfigFile->GetInt( SERVER_SECTION, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
 
     // Logging
-    LogWithTime( cfg.GetInt( "LoggingTime", 1 ) == 0 ? false : true );
-    LogWithThread( cfg.GetInt( "LoggingThread", 1 ) == 0 ? false : true );
-    if( strstr( CommandLine, "-logdebugoutput" ) || strstr( CommandLine, "-LoggingDebugOutput" ) || cfg.GetInt( "LoggingDebugOutput", 0 ) != 0 )
+    LogWithTime( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) );
+    LogWithThread( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) );
+    if( strstr( CommandLine, "-logdebugoutput" ) || strstr( CommandLine, "-LoggingDebugOutput" ) || ConfigFile->GetBool( SERVER_SECTION, "LoggingDebugOutput", false ) )
         LogToDebugOutput( true );
 
     // Init event
@@ -170,7 +168,7 @@ int main( int argc, char** argv )
     if( !Singleplayer || strstr( CommandLine, "-showgui" ) )
     {
         Fl::lock();         // Begin GUI multi threading
-        GUIInit( cfg );
+        GUIInit();
         LogToFile( NULL );
         LogToBuffer( true );
     }
@@ -202,9 +200,9 @@ int main( int argc, char** argv )
     if( GuiWindow )
     {
         GuiCBtnAutoUpdate->value( 0 );
-        GuiCBtnLogging->value( cfg.GetInt( "Logging", 1 ) != 0 ? 1 : 0 );
-        GuiCBtnLoggingTime->value( cfg.GetInt( "LoggingTime", 1 ) != 0 ? 1 : 0 );
-        GuiCBtnLoggingThread->value( cfg.GetInt( "LoggingThread", 1 ) != 0 ? 1 : 0 );
+        GuiCBtnLogging->value( ConfigFile->GetBool( SERVER_SECTION, "Logging", true ) ? 1 : 0 );
+        GuiCBtnLoggingTime->value( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) ? 1 : 0 );
+        GuiCBtnLoggingThread->value( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) ? 1 : 0 );
         GuiCBtnScriptDebug->value( 1 );
     }
 
@@ -227,7 +225,7 @@ int main( int argc, char** argv )
     }
 
     // Start admin manager
-    InitAdminManager( &cfg );
+    InitAdminManager();
 
     // Loop
     SyncManager::GetForCurThread()->UnlockAll();
@@ -259,7 +257,7 @@ int main( int argc, char** argv )
     return 0;
 }
 
-void GUIInit( IniParser& cfg )
+void GUIInit()
 {
     // Setup
     struct
@@ -302,16 +300,16 @@ void GUIInit( IniParser& cfg )
         }
     } GUISetup;
 
-    GUISizeMod = cfg.GetInt( "GUISize", 0 );
+    GUISizeMod = ConfigFile->GetInt( SERVER_SECTION, "GUISize", 0 );
     GUISetup.FontType = FL_COURIER;
     GUISetup.FontSize = 11;
 
     // Main window
-    int wx = cfg.GetInt( "PositionX", 0 );
-    int wy = cfg.GetInt( "PositionY", 0 );
+    int wx = ConfigFile->GetInt( SERVER_SECTION, "PositionX", 0 );
+    int wy = ConfigFile->GetInt( SERVER_SECTION, "PositionY", 0 );
     if( !wx && !wy )
         wx = (Fl::w() - GUI_SIZE1( 496 ) ) / 2, wy = (Fl::h() - GUI_SIZE1( 412 ) ) / 2;
-    GuiWindow = new Fl_Window( wx, wy, GUI_SIZE2( 496, 412 ), "FOnline Server" );
+    GuiWindow = new Fl_Window( wx, wy, GUI_SIZE2( 496, 412 ), "FOClassic Server" );
     GuiWindow->labelfont( GUISetup.FontType );
     GuiWindow->labelsize( GUISetup.FontSize );
     GuiWindow->callback( GUICallback );
@@ -849,7 +847,7 @@ VOID WINAPI FOServiceStart( DWORD argc, LPTSTR* argv )
         return;
 
     // Start admin manager
-    InitAdminManager( NULL );
+    InitAdminManager();
 
     // Start game
     SetFOServiceStatus( SERVICE_START_PENDING );
@@ -1052,23 +1050,9 @@ void AdminWork( void* );
 void AdminManager( void* );
 Thread AdminManagerThread;
 
-void InitAdminManager( IniParser* cfg )
+void InitAdminManager()
 {
-    uint port = 0;
-    if( !cfg )
-    {
-        IniParser cfg_;
-        if( !cfg_.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT ) )
-        {
-            WriteLogF( _FUNC_, "Can't access to config file.\n" );
-            return;
-        }
-        port = cfg_.GetInt( "AdminPanelPort", 0 );
-    }
-    else
-    {
-        port = cfg->GetInt( "AdminPanelPort", 0 );
-    }
+    uint port = ConfigFile->GetInt( SERVER_SECTION, "AdminPanelPort", 0 );
 
     if( port )
     {

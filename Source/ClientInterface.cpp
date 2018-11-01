@@ -127,7 +127,6 @@ bool FOClient::AppendIfaceIni( const char* ini_name )
             DataFile* pfile = pfiles[k];
             uint      len;
             uchar*    data = pfile->OpenFile( file_name.c_str(), len );
-            IniParser ini;
 
             if( data )
             {

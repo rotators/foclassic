@@ -142,11 +142,14 @@ bool FOServer::InitScriptSystem()
         return false;
     }
 
-    // Load script modules
-    Script::Undef( NULL );
+    Script::Undef( NULL );     // undef all
     Script::Define( Str::FormatBuf( "FOCLASSIC_STAGE %u", FOCLASSIC_STAGE ) );
     Script::Define( Str::FormatBuf( "FOCLASSIC_VERSION %u", FOCLASSIC_VERSION ) );
+    Script::Define( Str::FormatBuf( "__VERSION %u", FOCLASSIC_VERSION ) );
+
     Script::Define( "__SERVER" );
+
+    // Load script modules
     if( !Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
     {
         Script::Finish();
@@ -162,6 +165,14 @@ bool FOServer::InitScriptSystem()
         return false;
     }
 
+    // Verify critical variables
+    if( GameOpt.ApRegeneration == 0 )
+    {
+        WriteLog( "Script system initialization... failed\n" );
+        WriteLog( "Game option 'ApRegeneration' cannot be 0\n" );       // division by zero
+
+        return false;
+    }
     ASDbgMemoryCanWork = true;
     WriteLog( "Script system initialization... complete.\n" );
     return true;
@@ -226,8 +237,8 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 #undef BIND_CLASS
 #undef BIND_ASSERT
 #define BIND_CLIENT
-#define BIND_CLASS              BindClass::
-#define BIND_ASSERT( x )        if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+#define BIND_CLASS          BindClass::
+#define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
 
 namespace ClientBind
 {

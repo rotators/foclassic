@@ -47,6 +47,7 @@ public:
     // Net proccess
     static void Process_ParseToGame( Client* cl );
     static void Process_Move( Client* cl );
+    static bool Process_Connect( Client* cl );
     static void Process_CreateClient( Client* cl );
     static void Process_LogIn( ClientPtr& cl );
     static void Process_SingleplayerSaveLoad( Client* cl );

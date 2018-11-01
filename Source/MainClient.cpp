@@ -96,9 +96,9 @@ int main( int argc, char** argv )
         char      server_path[MAX_FOPATH] = { 0 };
         char      server_cmdline[MAX_FOPATH] = { 0 };
         cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
-        cfg.GetStr( CLIENT_CONFIG_APP, "ServerAppName", "Server.exe", server_exe );
-        cfg.GetStr( CLIENT_CONFIG_APP, "ServerPath", "..\\server\\", server_path );
-        cfg.GetStr( CLIENT_CONFIG_APP, "ServerCommandLine", "", server_cmdline );
+        cfg.GetStr( CLIENT_SECTION, "ServerAppName", "Server.exe", server_exe );
+        cfg.GetStr( CLIENT_SECTION, "ServerPath", "..\\server\\", server_path );
+        cfg.GetStr( CLIENT_SECTION, "ServerCommandLine", "", server_cmdline );
 
         // Process attributes
         PROCESS_INFORMATION server;

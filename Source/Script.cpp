@@ -519,7 +519,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     if( ptr )
         *ptr = (size_t)&GameOpt;
     #else
-    # pragma MESSAGE("[STAGE 3] 'FOnline' pointer is no longer assigned")
+    # pragma STAGE(3,"'FOnline' pointer is no longer assigned")
     #endif
 
     ptr = DLL_GetAddress( dll, "FOClassic" );
