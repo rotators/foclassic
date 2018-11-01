@@ -1,3 +1,5 @@
+#FOClassic
+
 == First steps ==
 
 * Requirements
