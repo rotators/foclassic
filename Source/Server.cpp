@@ -4722,7 +4722,7 @@ bool FOServer::LoadWorld( const char* fname )
     {
         if( signature[0] != 0x13 )
         {
-            WriteLog( "Legacy world dump file ignored (invalid version).\n" );
+            WriteLog( "Legacy world dump file ignored (invalid version; expected 0x13, got 0x%X).\n", signature[0] );
             FileClose( f );
             return false;
         }
@@ -4788,14 +4788,23 @@ bool FOServer::LoadWorld( const char* fname )
     #ifdef OPTION_LEGACY_SAVEFILE
     if( legacy )
     {
-        uchar legacy_version[4];         // uint
+        // saved as uint32
+        uchar legacy_version[4];
         if( !FileRead( f, &legacy_version, sizeof(legacy_version) ) )
         {
+            WriteLog( "World dump file truncated" );
             FileClose( f );
             return false;
         }
-        WriteLog( "LegacyVersion PostCheck 0x%X 0x%X 0x%X 0x%X\n", legacy_version[0], legacy_version[1], legacy_version[2], legacy_version[3] );
-        version_ = legacy_version[0];
+
+        if( legacy_version[1] == 0x0F && legacy_version[2] == 0xAB && legacy_version[3] == 0x01 )
+            version_ = legacy_version[0];
+        else
+        {
+            WriteLog( "World dump file truncated\n" );
+            FileClose( f );
+            return false;
+        }
     }
     else
     #endif

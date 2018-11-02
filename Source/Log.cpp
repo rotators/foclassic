@@ -142,7 +142,7 @@ void WriteLogInternal( bool prefixes, const char* func, const char* frmt, va_lis
 
         if( LoggingWithTime )
         {
-            if( StartLogTime == 0 )
+            if( !StartLogTime )
                 StartLogTime = Timer::FastTick();
 
             uint delta = Timer::FastTick() - StartLogTime;
