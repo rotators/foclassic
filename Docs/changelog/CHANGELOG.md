@@ -4,8 +4,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v2]() (WIP)
 
-- restored loading of worldsave created by FOnline r412, and possibly few older versions
-    - support for loading legacy files will be kept **only** until first change of worldsave format, which is **not** planned during [migration stage](https://github.com/rotators/foclassic/milestone/2)
+[FOnline]((https://github.com/cvet/fonline) and [FOClassic]((https://github.com/rotators/foclassic/) are now fully open-source projects.
+
+- restored loading of worldsaves and characters created by FOnline r412, and possibly older versions
+    - support for loading legacy files will be kept **only** until first change of their format (eg. changing format of worldsave will disable loading legacy worldsave **and** characters)
+    - wordsave/characters files format changes are **not** planned will during [migration stage](https://github.com/rotators/foclassic/milestone/2)
 - when [checking server status](https://fodev.net/forum/index.php/topic,2351.msg19771.html#msg19771), number of currently connected players is returned instead of characters ingame; this should give more realistic numbers, especially on servers which uses NoLogout maps
 - configuration files
     - application settings are loaded from disk only once, and cached in memory (Server only)
@@ -15,7 +18,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
         - if `Languages` list is non-empty, `Language_N` entries are ignored
         - see bottom of changelog for config file fragment
 - scripts
-    - added global define __VERSION
+    - added global define `__VERSION`, for compatibility with FOnline
 
 
 ```ini

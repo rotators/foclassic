@@ -4247,6 +4247,10 @@ bool FOServer::LoadClientsData()
         Str::Copy( client_name, file_find_data.FileName );
     }
 
+    #ifdef OPTION_LEGACY_SAVEFILE
+    bool legacyInfo = false;
+    #endif
+
     // Index clients
     UIntSet id_already;
     bool    first_iteration = true;
@@ -4306,7 +4310,6 @@ bool FOServer::LoadClientsData()
             break;
         }
 
-
         uchar signature[sizeof(ClientSaveSignature)];
         if( !FileRead( f, signature, sizeof(signature) ) )
         {
@@ -4314,6 +4317,34 @@ bool FOServer::LoadClientsData()
             FileClose( f );
             continue;
         }
+
+        #ifndef OPTION_LEGACY_SAVEFILE
+        // ignore legacy clients
+        if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
+        {
+            WriteLog( "Legacy client<%s> ignored.\n", client_fname );
+            continue;
+        }
+        #else
+        bool legacy = false;
+        // detect legacy clients
+        if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
+        {
+            if( signature[3] != 2 )            // v1 is broken
+            {
+                WriteLog( "Legacy client<%s> ignored (invalid version; expected 2, got %u)\n", client_fname, signature[3] );
+                continue;
+            }
+            FileSetPointer( f, 4, SEEK_SET );
+            legacy = true;
+
+            if( !legacyInfo )
+            {
+                legacyInfo = true;
+                WriteLog( "Legacy client(s) found." );
+            }
+        }
+        #endif         // OPTION_LEGACY_SAVEFILE
 
         char pass_hash[PASS_HASH_SIZE];
         uint id;
@@ -4325,15 +4356,12 @@ bool FOServer::LoadClientsData()
         }
         FileClose( f );
 
-        // ignore all vanilla clients
-        if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
-        {
-            WriteLog( "Client save file<%s> ignored.\n", client_fname );
-            continue;
-        }
-
         // fast verification of client signature
+        #ifndef OPTION_LEGACY_SAVEFILE
         if( memcmp( ClientSaveSignature, signature, sizeof(ClientSaveSignature) ) != 0 )
+        #else
+        if( !legacy && memcmp( ClientSaveSignature, signature, sizeof(ClientSaveSignature) ) != 0 )
+        #endif
         {
             // slow verification of client signature, skip version
             if( !BINARY_SIGNATURE_VALID( ClientSaveSignature, signature ) )
@@ -4493,15 +4521,34 @@ bool FOServer::LoadClient( Client* cl )
         return false;
     }
 
-    // ignore all vanilla clients
+    #ifndef OPTION_LEGACY_SAVEFILE
+    // ignore legacy clients
     if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
     {
         WriteLog( "Client save file<%s> ignored.\n", fname );
         FileClose( f );
         return false;
     }
+    #else
+    bool legacy = false;
+    // detect legacy clients
+    if( signature[0] == 'F' && signature[1] == 'O' && signature[2] == 0 )
+    {
+        if( signature[3] != 2 )        // v1 is broken
+        {
+            WriteLog( "Legacy client<%s> ignored (invalid version; expected 2, got %u)\n", fname, signature[3] );
+            return false;
+        }
+        FileSetPointer( f, 4, SEEK_SET );
+        legacy = true;
+    }
+    #endif
 
+    #ifndef OPTION_LEGACY_SAVEFILE
     if( memcmp( ClientSaveSignature, signature, sizeof(ClientSaveSignature) ) != 0 )
+    #else
+    if( !legacy && memcmp( ClientSaveSignature, signature, sizeof(ClientSaveSignature) ) != 0 )
+    #endif
     {
         if( !BINARY_SIGNATURE_VALID( ClientSaveSignature, signature ) )
         {

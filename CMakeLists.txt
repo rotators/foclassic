@@ -60,6 +60,7 @@ set( RELEASE_CMAKE_DIR              "${RELEASE_DIR}/CMake" )
 set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
 
 # other directories
+set( DOCS_DIR                        "${CMAKE_SOURCE_DIR}/Docs" )
 set( TEMPLATES_DIR                   "${ROOT_CMAKE_DIR}/Templates" )
 set( FOCMAKE_DIR                     "${CMAKE_BINARY_DIR}/CMake" )
 set( DEFAULT_INCLUDE_DIR             "${FOCMAKE_DIR}/include" )
@@ -70,6 +71,7 @@ set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/Defines.Public.h" )
 set( VERSION_TEMPLATE                "${TEMPLATES_DIR}/VERSION" )
 
 # special files
+set( CHANGELOG_FILE                  "${DOCS_DIR}/changelog/CHANGELOG.md" )
 set( ENGINE_GLOBAL_HEADER_FILE       "${DEFAULT_INCLUDE_DIR}/CMake.h" )
 
 # timestamps
@@ -83,25 +85,15 @@ function( SourceOption_LEGACY_SAVEFILE )
 endfunction()
 SourceOption( LEGACY_SAVEFILE "Allow loading legacy savefiles" ON )
 
-##
-##
-##
-
+# TODO move to subdirectories
 if( MSVC )
 	set( COMPILER_DEFINES "" )
 	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_WARNINGS" )
 #	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_DEPRECATE" )
 #	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_WINSOCK_DEPRECATED_NO_WARNINGS" )
 
-	set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${COMPILER_DEFINES} /MTd /MP" )
-	set( CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_DEFINES} /MTd /MP" )
-	set( CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_DEFINES} /MT /MP" )
 	set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
-	set( CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO" )
 endif()
 
 # find threads
@@ -114,13 +106,16 @@ if( HAVE_STRUCT_TIMESPEC )
 	add_definitions( -DHAVE_STRUCT_TIMESPEC=1 )
 endif( HAVE_STRUCT_TIMESPEC )
 
-# create version file
-configure_file( "${VERSION_TEMPLATE}" "${RELEASE_DIR}/VERSION" @ONLY NEWLINE_STYLE LF )
-
 # create engine header
 configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
-# create scripts header
+# release changelog
+configure_file( "${CHANGELOG_FILE}" "${RELEASE_DIR}/CHANGELOG.md" @ONLY NEWLINE_STYLE LF )
+
+# release version file
+configure_file( "${VERSION_TEMPLATE}" "${RELEASE_DIR}/VERSION" @ONLY NEWLINE_STYLE LF )
+
+# release scripts header
 # this must be done before any extension configuration
 configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.fos" @ONLY NEWLINE_STYLE LF )
 
