@@ -4,7 +4,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v2]() (WIP)
 
-[FOnline]((https://github.com/cvet/fonline) and [FOClassic]((https://github.com/rotators/foclassic/) are now fully open-source projects.
+[FOnline](https://github.com/cvet/fonline) and [FOClassic](https://github.com/rotators/foclassic/) are now fully open-source projects.
 
 - restored loading of worldsaves and characters created by FOnline r412, and possibly older versions
     - support for loading legacy files will be kept **only** until first change of their format (eg. changing format of worldsave will disable loading legacy worldsave **and** characters)
