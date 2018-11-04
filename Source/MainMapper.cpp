@@ -10,6 +10,7 @@
 #include "GameOptions.h"
 #include "Log.h"
 #include "Mapper.h"
+#include "Script.h"
 #include "SinglePlayer.h"
 #include "Thread.h"
 #include "Timer.h"
@@ -22,8 +23,6 @@ FOMapper* Mapper = NULL;
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "English" );
-    RestoreMainDirectory();
-
     // Threading
     #ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -37,17 +36,24 @@ int main( int argc, char** argv )
     CatchExceptions( "MapperGL" );
     #endif
 
-    // Make command line
-    SetCommandLine( argc, argv );
+    //
+    CommandLine = new CommandLineOptions( argc, argv );
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_MAPPER_ROOT ) );
+
+    if( !CommandLine->IsOption( "no-restore-directory" ) )
+        RestoreMainDirectory();
 
     // Timer
     Timer::Init();
 
-    LogToFile( "FOMapper.log" );
+    LogToFile( "Mapper.log" );
+    WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
 
+    GetMapperOptions();     // reads client config
     GetClientOptions();
+    GetServerOptions();
+    Script::SetRunTimeout( 0, 0 );
 
-    WriteLog( "Starting Mapper (%s)...\n", MAPPER_VERSION_STR );
 
     // Create window
     MainWindow = new FOWindow();
@@ -77,6 +83,9 @@ int main( int argc, char** argv )
     #endif
     WriteLog( "FOnline finished.\n" );
     LogFinish();
+
+    delete CommandLine;
+    UnloadConfigFile();
 
     return 0;
 }

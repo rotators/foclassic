@@ -12,6 +12,7 @@
 #include "Client.h"
 #include "Exception.h"
 #include "GameOptions.h"
+#include "Ini.h"
 #include "Keyboard.h"
 #include "Log.h"
 #include "SinglePlayer.h"
@@ -25,22 +26,11 @@ FOClient* FOEngine = NULL;
 
 int main( int argc, char** argv )
 {
-    // Make command line
-    SetCommandLine( argc, argv );
-
-    if( !strstr( CommandLine, "--no-restore-directory" ) )
-        RestoreMainDirectory();
-
     // Threading
     #ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
     #endif
     Thread::SetCurrentName( "Main" );
-
-    // Disable SIGPIPE signal
-    #ifndef FO_WINDOWS
-    signal( SIGPIPE, SIG_IGN );
-    #endif
 
     // Exceptions
     #if defined (FO_D3D)
@@ -49,9 +39,25 @@ int main( int argc, char** argv )
     CatchExceptions( "ClientGL" );
     #endif
 
+    // Command line
+    CommandLine = new CommandLineOptions( argc, argv );
+    if( !CommandLine->IsOption( "--no-restore-directory" ) )
+        RestoreMainDirectory();
+
+    // Options
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
+    GetClientOptions();
+
+    // Disable SIGPIPE signal
+    #ifndef FO_WINDOWS
+    signal( SIGPIPE, SIG_IGN );
+    #endif
+
     // Stuff
     Timer::Init();
+    // Start message
     LogToFile( "FOClassic.log" );
+    WriteLog( "Starting FOClassic (version %u)...\n", FOCLASSIC_VERSION );
 
     // Singleplayer mode initialization
     #ifdef FO_WINDOWS
@@ -61,7 +67,7 @@ int main( int argc, char** argv )
     GetModuleFileName( NULL, full_path, MAX_FOPATH );
     FileManager::ExtractPath( full_path, path );
     FileManager::ExtractFileName( full_path, name );
-    if( Str::Substring( name, "Singleplayer" ) || Str::Substring( CommandLine, "Singleplayer" ) )
+    if( Str::Substring( name, "Singleplayer" ) || CommandLine->IsOption( "Singleplayer" ) )
     {
         WriteLog( "Singleplayer mode.\n" );
         Singleplayer = true;
@@ -91,14 +97,9 @@ int main( int argc, char** argv )
         }
 
         // Config parsing
-        IniParser cfg;
-        char      server_exe[MAX_FOPATH] = { 0 };
-        char      server_path[MAX_FOPATH] = { 0 };
-        char      server_cmdline[MAX_FOPATH] = { 0 };
-        cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
-        cfg.GetStr( CLIENT_SECTION, "ServerAppName", "Server.exe", server_exe );
-        cfg.GetStr( CLIENT_SECTION, "ServerPath", "..\\server\\", server_path );
-        cfg.GetStr( CLIENT_SECTION, "ServerCommandLine", "", server_cmdline );
+        string server_exe = ConfigFile->GetStr( CLIENT_SECTION, "ServerAppName", "Server.exe" );
+        string server_path = ConfigFile->GetStr( CLIENT_SECTION, "ServerPath", "..\\Server\\" );
+        string server_cmdline = ConfigFile->GetStr( CLIENT_SECTION, "ServerCommandLine" );
 
         // Process attributes
         PROCESS_INFORMATION server;
@@ -110,8 +111,8 @@ int main( int argc, char** argv )
         char   command_line[2048];
 
         // Start server
-        Str::Format( command_line, "\"%s%s\" -singleplayer %p %p %s -logpath %s", server_path, server_exe, map_file, client_process, server_cmdline, path );
-        if( !CreateProcess( NULL, command_line, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, server_path, &sui, &server ) )
+        Str::Format( command_line, "\"%s%s\" --SinglePlayer %p %p %s -LogPath %s", server_path.c_str(), server_exe.c_str(), map_file, client_process, server_cmdline.c_str(), path );
+        if( !CreateProcess( NULL, command_line, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, server_path.c_str(), &sui, &server ) )
         {
             WriteLog( "Can't start server process, error<%u>.\n", GetLastError() );
             return 0;
@@ -121,13 +122,13 @@ int main( int argc, char** argv )
     }
     #endif
 
-    // Check for already runned window
+    // Check for already opened window
     #ifndef DEV_VERSION
     # ifdef FO_WINDOWS
     HANDLE h = CreateEvent( NULL, FALSE, FALSE, "foclassic_instance" ); // last change 20.09.2018
     if( !h || h == INVALID_HANDLE_VALUE || GetLastError() == ERROR_ALREADY_EXISTS )
     {
-        ShowMessage( "FOClassic engine instance is already running." );
+        ShowMessage( "FOClassic client is already running." );
         return 0;
     }
     # else
@@ -135,14 +136,9 @@ int main( int argc, char** argv )
     # endif
     #endif
 
-    // Options
-    GetClientOptions();
-
     // Create window
     MainWindow = new FOWindow();
 
-    // Start message
-    WriteLog( "Starting FOClassic (version %u)...\n", FOCLASSIC_VERSION );
 
     // Create engine
     FOEngine = new FOClient();
@@ -173,6 +169,8 @@ int main( int argc, char** argv )
     WriteLog( "FOClassic finished.\n" );
     LogFinish();
     Timer::Finish();
+    delete CommandLine;
+    UnloadConfigFile();
 
     return 0;
 }

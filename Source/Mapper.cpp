@@ -10,6 +10,7 @@
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h"
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Keyboard.h"
 #include "Log.h"
@@ -208,21 +209,18 @@ bool FOMapper::Init()
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
 
     // Language Packs
-    IniParser cfg_mapper;
-    cfg_mapper.LoadFile( GetConfigFileName(), PATH_MAPPER_ROOT );
-    char      server_cfg_name[MAX_FOPATH];
-    cfg_mapper.GetStr( "ServerName", "FOnlineServer", server_cfg_name );
-    Str::Append( server_cfg_name, ".cfg" );
+    string lang_name;
+    if( !ConfigFile->IsSectionKeyEmpty( SERVER_SECTION, "Languages" ) )
+        lang_name = ConfigFile->GetStrVec( SERVER_SECTION, "Languages" ).front();
+    else
+        lang_name = ConfigFile->GetStr( SERVER_SECTION, "Language_0", DEFAULT_LANGUAGE );
 
-    IniParser cfg_server;
-    cfg_server.LoadFile( server_cfg_name, PATH_SERVER_ROOT );
-    char      lang_name[MAX_FOTEXT];
-    cfg_server.GetStr( "Language_0", DEFAULT_LANGUAGE, lang_name );
-    if( strlen( lang_name ) != 4 )
-        Str::Copy( lang_name, DEFAULT_LANGUAGE );
-    Str::Lower( lang_name );
+    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
 
-    if( !CurLang.Init( lang_name, PATH_SERVER_TEXTS ) )
+    if( lang_name.size() != 4 )
+        lang_name = DEFAULT_LANGUAGE;
+
+    if( !CurLang.Init( lang_name.c_str(), PATH_SERVER_TEXTS ) )
         return false;
 
     MsgText = &CurLang.Msg[TEXTMSG_TEXT];
@@ -317,34 +315,20 @@ bool FOMapper::Init()
     ChangeGameTime();
     AnyId = 0x7FFFFFFF;
 
-    if( Str::Substring( CommandLine, "-Map" ) )
+    string map_name = CommandLine->GetStr( "Map" );
+    if( !map_name.empty() )
     {
-        char map_name[MAX_FOPATH];
-        sscanf( Str::Substring( CommandLine, "-Map" ) + strlen( "-Map" ) + 1, "%s", map_name );
-
         FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
 
         ProtoMap* pmap = new ProtoMap();
-        bool      initialized = pmap->Init( 0xFFFF, map_name, PATH_SERVER_MAPS );
+        bool      initialized = pmap->Init( 0xFFFF, map_name.c_str(), PATH_SERVER_MAPS );
 
         FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
 
         if( initialized && HexMngr.SetProtoMap( *pmap ) )
         {
-            #define GETOPTIONS_CMD_LINE_INT( opt, str_id )              \
-                do {                                                    \
-                    char* str = Str::Substring( CommandLine, str_id );  \
-                    if( str )                                           \
-                        opt = atoi( str + Str::Length( str_id ) + 1 );  \
-                }                                                       \
-                while( 0 )
-
-            int hexX = -1, hexY = -1;
-
-            GETOPTIONS_CMD_LINE_INT( hexX, "-HexX" );
-            GETOPTIONS_CMD_LINE_INT( hexY, "-HexY" );
-
-            #undef GETOPTIONS_CMD_LINE_INT
+            int hexX = CommandLine->GetInt( "HexX", -1 );
+            int hexY = CommandLine->GetInt( "HexY", -1 );
 
             if( hexX < 0 || hexX >= pmap->Header.MaxHexX )
                 hexX = pmap->Header.WorkHexX;

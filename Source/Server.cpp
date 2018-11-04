@@ -3706,7 +3706,7 @@ bool FOServer::InitReal()
     }
 
     // Process command line definitions
-    const char*      cmd_line = CommandLine;
+    const char*      cmd_line = CommandLine->Get().c_str();
     asIScriptEngine* engine = Script::GetEngine();
     for( int i = 0, j = engine->GetGlobalPropertyCount(); i < j; i++ )
     {
@@ -3822,7 +3822,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         LanguagePack& lang = *it;
         string        name = string( lang.NameStr );
 
-        std::transform( name.begin(), name.end(), name.begin(), ::tolower );
+        transform( name.begin(), name.end(), name.begin(), tolower );
         names.push_back( name );
     }
 
@@ -3833,7 +3833,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         for( auto it = langs.begin(); it != langs.end(); ++it, idx++ )
         {
             string& name = *it;
-            std::transform( name.begin(), name.end(), name.begin(), ::tolower );
+            transform( name.begin(), name.end(), name.begin(), tolower );
 
             if( name.length() != 4 )
             {

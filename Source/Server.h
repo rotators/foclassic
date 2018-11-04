@@ -552,7 +552,8 @@ public:
         static bool         Crit_IsCanRotate( Critter* cr );
         static bool         Crit_IsCanAim( Critter* cr );
         static bool         Crit_IsAnim1( Critter* cr, uint index );
-        static int          Cl_GetAccess( Critter* cl );
+        static uchar        Cl_GetAccess( Critter* cl );
+        static void         Cl_SetAccess( Critter* cl, uchar access );
         static bool         Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name );
         static void         Crit_SetLexems( Critter* cr, ScriptString* lexems );
         static Map*         Crit_GetMap( Critter* cr );

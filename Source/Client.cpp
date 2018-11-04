@@ -16,6 +16,7 @@
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Keyboard.h"
 #include "Log.h"
@@ -252,9 +253,9 @@ bool FOClient::Init()
     FileManager::GetFullPath( cache_name, PATH_CACHE, cache_fname );
     Str::Append( cache_fname, ".cache" );
 
-    bool refresh_cache = (!Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.IsCacheTable( cache_fname ) );
+    bool refresh_cache = (!Singleplayer && !CommandLine->IsOption( "DefCache" ) && !Crypt.IsCacheTable( cache_fname ) );
 
-    if( !Singleplayer && !Str::Substring( CommandLine, "-DefCache" ) && !Crypt.SetCacheTable( cache_fname ) )
+    if( !Singleplayer && !CommandLine->IsOption( "DefCache" ) && !Crypt.SetCacheTable( cache_fname ) )
     {
         WriteLogF( _FUNC_, " - Can't set cache<%s>.\n", cache_fname );
         return false;
@@ -264,15 +265,8 @@ bool FOClient::Init()
 
     UID_PREPARE_UID4_1;
 
-    // Check password in config and command line
-    char      pass[MAX_FOTEXT];
-    IniParser cfg;     // Also used below
-    cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
-    cfg.GetStr( CLIENT_SECTION, "UserPass", "", pass );
-    char* cmd_line_pass = Str::Substring( CommandLine, "-UserPass" );
-    if( cmd_line_pass )
-        sscanf( cmd_line_pass + Str::Length( "-UserPass" ) + 1, "%s", pass );
-    Password = pass;
+    // Check password in command line
+    Password = CommandLine->GetStr( "UserPass" );
 
     // User and password
     if( !GameOpt.Name.length() && Password.empty() && !Singleplayer )
@@ -341,19 +335,18 @@ bool FOClient::Init()
 
     // Sound manager
     SndMngr.Init();
-    SndMngr.SetSoundVolume( cfg.GetInt( CLIENT_SECTION, "SoundVolume", 100 ) );
-    SndMngr.SetMusicVolume( cfg.GetInt( CLIENT_SECTION, "MusicVolume", 100 ) );
+    SndMngr.SetSoundVolume( ConfigFile->GetInt( CLIENT_SECTION, "SoundVolume", 100 ) );
+    SndMngr.SetMusicVolume( ConfigFile->GetInt( CLIENT_SECTION, "MusicVolume", 100 ) );
 
     UID_PREPARE_UID4_3;
 
     // Language Packs
-    char lang_name[MAX_FOTEXT];
-    cfg.GetStr( CLIENT_SECTION, "Language", DEFAULT_LANGUAGE, lang_name );
-    if( Str::Length( lang_name ) != 4 )
-        Str::Copy( lang_name, DEFAULT_LANGUAGE );
-    Str::Lower( lang_name );
+    string lang_name = ConfigFile->GetStr( CLIENT_SECTION, "Language", DEFAULT_LANGUAGE );
+    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
+    if( lang_name.length() != 4 )
+        lang_name = DEFAULT_LANGUAGE;
 
-    CurLang.Init( lang_name, PATH_TEXTS );
+    CurLang.Init( lang_name.c_str(), PATH_TEXTS );
 
     MsgText = &CurLang.Msg[TEXTMSG_TEXT];
     MsgDlg = &CurLang.Msg[TEXTMSG_DLG];
@@ -493,13 +486,13 @@ bool FOClient::Init()
         InitNetReason = INIT_NET_REASON_CACHE;
     }
     // Begin game
-    else if( Str::Substring( CommandLine, "-Start" ) && !Singleplayer )
+    else if( !Singleplayer && CommandLine->IsOption( "Start" ) )
     {
         LogTryConnect();
     }
     #ifndef FO_D3D
     // Intro
-    else if( !Str::Substring( CommandLine, "-SkipIntro" ) )
+    else if( !CommandLine->IsOption( "SkipIntro" ) )
     {
         if( MsgGame->Count( STR_MUSIC_MAIN_THEME ) )
             MusicAfterVideo = MsgGame->GetStr( STR_MUSIC_MAIN_THEME );
@@ -6799,13 +6792,6 @@ void FOClient::Net_OnMsgData()
     {
         WriteLogF( _FUNC_, " - Received text in another language, set as default.\n" );
         CurLang.Name = lang;
-        IniParser cfg;
-        cfg.LoadFile( GetConfigFileName(), PATH_ROOT );
-        if( cfg.IsLoaded() )
-        {
-            cfg.SetStr( CLIENT_SECTION, "Language", CurLang.NameStr );
-            cfg.SaveFile( GetConfigFileName(), PATH_ROOT );
-        }
     }
 
     if( num_msg >= TEXTMSG_MAX )

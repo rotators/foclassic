@@ -1295,10 +1295,10 @@ struct Critter
 
 struct Client: Critter
 {
-    const char  Name[UTF8_BUF_SIZE( MAX_NAME )];
-    const char  PassHash[PASS_HASH_SIZE];
-    const uint8 Access;
-    const uint  LanguageMsg;
+    const char Name[UTF8_BUF_SIZE( MAX_NAME )];
+    const char PassHash[PASS_HASH_SIZE];
+    uint8      Access;
+    const uint LanguageMsg;
 };
 
 struct Npc: Critter

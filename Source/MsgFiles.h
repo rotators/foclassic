@@ -6,6 +6,7 @@
 
 extern const char* TextMsgFileName[TEXTMSG_MAX];
 
+// default language pack, lowercase
 #define DEFAULT_LANGUAGE    "engl"
 
 #define FOMSG_ERRNUM        (0)

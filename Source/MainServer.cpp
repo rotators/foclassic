@@ -83,14 +83,6 @@ void ServiceMain( bool as_service );
 // Main
 int main( int argc, char** argv )
 {
-    // Make command line
-    SetCommandLine( argc, argv );
-
-    if( !strstr( CommandLine, "--no-restore-directory" ) )
-        RestoreMainDirectory();
-
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
-
     // Threading
     # ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -105,6 +97,12 @@ int main( int argc, char** argv )
     // Exceptions catcher
     CatchExceptions( "Server" );
 
+    //
+    CommandLine = new CommandLineOptions( argc, argv );
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
+    if( !CommandLine->IsOption( "no-restore-directory" ) )
+        RestoreMainDirectory();
+
     // Timer
     Timer::Init();
 
@@ -116,47 +114,51 @@ int main( int argc, char** argv )
     // Logging
     LogWithTime( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) );
     LogWithThread( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) );
-    if( strstr( CommandLine, "-logdebugoutput" ) || strstr( CommandLine, "-LoggingDebugOutput" ) || ConfigFile->GetBool( SERVER_SECTION, "LoggingDebugOutput", false ) )
+    if( CommandLine->IsOption( "LoggingDebugOutput" ) || ConfigFile->GetBool( SERVER_SECTION, "LoggingDebugOutput", false ) )
         LogToDebugOutput( true );
 
     // Init event
     GameInitEvent.Disallow();
 
     // Service
-    if( strstr( CommandLine, "-service" ) )
+    if( CommandLine->IsOption( "Service" ) )
     {
         # ifdef FO_WINDOWS
-        ServiceMain( strstr( CommandLine, "--service" ) != NULL );
+        ServiceMain( true );
         # endif
         return 0;
     }
 
     // Check single player parameters
-    if( strstr( CommandLine, "-singleplayer " ) )
+    Singleplayer = CommandLine->IsOption( "SinglePlayer" );
+    if( Singleplayer )
     {
         # ifdef FO_WINDOWS
-        Singleplayer = true;
         Timer::SetGamePause( true );
 
         // Logging
-        char log_path[MAX_FOPATH] = { 0 };
-        if( !strstr( CommandLine, "-nologpath" ) && strstr( CommandLine, "-logpath " ) )
-        {
-            const char* ptr = strstr( CommandLine, "-logpath " ) + Str::Length( "-logpath " );
-            Str::Copy( log_path, ptr );
-        }
-        Str::EraseFrontBackSpecificChars( log_path );
-        Str::Append( log_path, "FOnlineServer.log" );
-        LogToFile( log_path );
 
+        if( !CommandLine->IsOption( "NoLogPath" ) )
+        {
+            string log_path = CommandLine->GetStr( "LogPath" );
+            if( !log_path.empty() )
+            {
+                // Str::EraseFrontBackSpecificChars( log_path );
+                log_path += "FOnlineServer.log";
+                LogToFile( log_path.c_str() );
+            }
+        }
         WriteLog( "Singleplayer mode.\n" );
 
         // Shared data
-        const char* ptr = strstr( CommandLine, "-singleplayer " ) + Str::Length( "-singleplayer " );
-        HANDLE      map_file = NULL;
-        if( sscanf( ptr, "%p%p", &map_file, &SingleplayerClientProcess ) != 2 || !SingleplayerData.Attach( map_file ) )
+        #  pragma TODO ("-singleplayer mess")
+        /*
+           const char* ptr = strstr( CommandLine, "-singleplayer " ) + Str::Length( "-singleplayer " );
+           HANDLE      map_file = NULL;
+           if( sscanf( ptr, "%p%p", &map_file, &SingleplayerClientProcess ) != 2 || !SingleplayerData.Attach( map_file ) )
+         */
         {
-            WriteLog( "Can't attach to mapped file<%p>.\n", map_file );
+            // WriteLog( "Can't attach to mapped file<%p>.\n", map_file );
             return 0;
         }
         # else
@@ -165,7 +167,7 @@ int main( int argc, char** argv )
     }
 
     // GUI
-    if( !Singleplayer || strstr( CommandLine, "-showgui" ) )
+    if( !Singleplayer || CommandLine->IsOption( "ShowUI" ) )
     {
         Fl::lock();         // Begin GUI multi threading
         GUIInit();
@@ -175,7 +177,7 @@ int main( int argc, char** argv )
 
     WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
 
-    # if 0
+    # if 1
     WriteLog( "STATIC_ASSERT\n" );
     STATIC_ASSERT_PRINTF( WriteLog, char );
     STATIC_ASSERT_PRINTF( WriteLog, short );
@@ -189,9 +191,12 @@ int main( int argc, char** argv )
     STATIC_ASSERT_PRINTF( WriteLog, size_t );
     STATIC_ASSERT_PRINTF( WriteLog, void* );
     STATIC_ASSERT_PRINTF( WriteLog, string );
+    STATIC_ASSERT_PRINTF( WriteLog, FOServer::ClientData );
     STATIC_ASSERT_PRINTF( WriteLog, GameOptions );
     STATIC_ASSERT_PRINTF( WriteLog, ProtoItem );
     STATIC_ASSERT_PRINTF( WriteLog, Item );
+    STATIC_ASSERT_PRINTF( WriteLog, ProtoMap );
+    STATIC_ASSERT_PRINTF( WriteLog, Map );
     # endif
 
     FOQuit = true;
@@ -207,11 +212,14 @@ int main( int argc, char** argv )
     }
 
     // Command line
-    if( CommandLineArgCount > 1 )
-        WriteLog( "Command line<%s>.\n", CommandLine );
+    {
+        string cmdline = CommandLine->Get();
+        if( !cmdline.empty() )
+            WriteLog( "Command line<%s>.\n", cmdline.c_str() );
+    }
 
     // Autostart
-    if( strstr( CommandLine, "-start" ) || Singleplayer )
+    if( Singleplayer || CommandLine->IsOption( "Start" ) )
     {
         if( GuiWindow )
         {
@@ -253,6 +261,8 @@ int main( int argc, char** argv )
 
     // Finish
     Timer::Finish();
+    delete CommandLine;
+    UnloadConfigFile();
 
     return 0;
 }
@@ -775,7 +785,7 @@ void ServiceMain( bool as_service )
     }
 
     // Delete service
-    if( strstr( CommandLine, "-delete" ) )
+    if( CommandLine->IsOption( "Delete" ) )
     {
         SC_HANDLE service = OpenService( manager, "FOnlineServer", DELETE );
 
@@ -796,7 +806,7 @@ void ServiceMain( bool as_service )
     char path1[MAX_FOPATH];
     GetModuleFileName( GetModuleHandle( NULL ), path1, MAX_FOPATH );
     char path2[MAX_FOPATH];
-    Str::Format( path2, "\"%s\" --service", path1 );
+    Str::Format( path2, "\"%s\" --Service", path1 );
 
     // Change executable path, if changed
     if( service )
@@ -952,6 +962,9 @@ int main( int argc, char** argv )
     close( STDOUT_FILENO );
     close( STDERR_FILENO );
 
+    CommandLine = new CommandLineOptions( argc, argv );
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
+
     // Stuff
     setlocale( LC_ALL, "en-US" );
     RestoreMainDirectory();
@@ -975,7 +988,7 @@ int main( int argc, char** argv )
     cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
 
     // Memory debugging
-    MemoryDebugLevel = cfg.GetInt( "MemoryDebugLevel", 0 );
+    MemoryDebugLevel = ConfigFile->GetInt( SERVER_SECTION, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
 
@@ -983,18 +996,20 @@ int main( int argc, char** argv )
     SetCommandLine( argc, argv );
 
     // Logging
-    LogWithTime( cfg.GetInt( "LoggingTime", 1 ) == 0 ? false : true );
-    LogWithThread( cfg.GetInt( "LoggingThread", 1 ) == 0 ? false : true );
-    if( strstr( CommandLine, "-logdebugoutput" ) || strstr( CommandLine, "-LoggingDebugOutput" ) || cfg.GetInt( "LoggingDebugOutput", 0 ) != 0 )
-        LogToDebugOutput( true );
+    LogWithTime( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) );
+    LogWithThread( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) );
+    LogToDebugOutput( CommandLine->IsOption( "LoggingDebugOutput" ) || ConfigFile->GetBool( "LoggingDebugOutput", false ) );
     LogToFile( "./FOnlineServerDaemon.log" );
 
     // Log version
     WriteLog( "FOClassic server daemon, version %u.\n", FOCLASSIC_VERSION );
-    if( CommandLineArgCount > 1 )
-        WriteLog( "Command line<%s>.\n", CommandLine );
+    {
+        string cmdline = CommandLine->Get();
+        if( !cmdline.empty() )
+            WriteLog( "Command line<%s>.\n", cmdline.c_str() );
+    }
 
-    DaemonLoop(); // Never out from here
+    DaemonLoop();     // Never out from here
     return 0;
 }
 
@@ -1050,6 +1065,7 @@ void AdminWork( void* );
 void AdminManager( void* );
 Thread AdminManagerThread;
 
+#pragma TODO("rework AdminPanel")
 void InitAdminManager()
 {
     uint port = ConfigFile->GetInt( SERVER_SECTION, "AdminPanelPort", 0 );

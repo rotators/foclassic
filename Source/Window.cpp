@@ -6,7 +6,6 @@
 #include "ConfigFile.h"
 #include "GameOptions.h"
 #include "Ini.h"
-#include "IniParser.h"
 #include "SinglePlayer.h"
 #include "Text.h"
 #include "Window.h"

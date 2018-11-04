@@ -5,29 +5,40 @@
 
 class Ini;
 
-// Config files sections
+// Main sections
 #define EMPTY_SECTION           ""
 #define CLIENT_SECTION          "Game Options"
+#define MAPPER_SECTION          "Mapper"
+#define SERVER_SECTION          "Server"
+
+// Detail sections
 #define CLIENT_DX_SECTION       "ClientDX"
 #define CLIENT_GL_SECTION       "ClientGL"
-#define MAPPER_SECTION          "Mapper"
 #define MAPPER_DX_SECTION       "MapperDX"
 #define MAPPER_GL_SECTION       "MapperGL"
-#define SERVER_SECTION          "Server"
+
+// Helpers
+// APP_SECTION         Main section for current target
+// APP_SECTION_DETAIL  Detail section for current target (Client/Mapper only)
+// APP_SECTION_UNUSED  Detail section not used for current target (Client/Mapper only)
 
 #if defined (FOCLASSIC_CLIENT)
 # define APP_SECTION            (CLIENT_SECTION)
 # ifdef FO_D3D
 #  define APP_SECTION_DETAIL    (CLIENT_DX_SECTION)
+#  define APP_SECTION_UNUSED    (CLIENT_GL_SECTION)
 # else
 #  define APP_SECTION_DETAIL    (CLIENT_GL_SECTION)
+#  define APP_SECTION_UNUSED    (CLIENT_DX_SECTION)
 # endif
 #elif defined (FOCLASSIC_MAPPER)
 # define APP_SECTION            (MAPPER_SECTION)
 # ifdef FO_D3D
 #  define APP_SECTION_DETAIL    (MAPPER_DX_SECTION)
+#  define APP_SECTION_UNUSED    (MAPPER_GL_SECTION)
 # else
 #  define APP_SECTION_DETAIL    (MAPPER_GL_SECTION)
+#  define APP_SECTION_UNUSED    (MAPPER_DX_SECTION)
 # endif
 #elif defined (FOCLASSIC_SERVER)
 # define APP_SECTION            (SERVER_SECTION)
@@ -50,13 +61,19 @@ const char* GetConfigFileName();
 extern void GetClientOptions();
 #endif
 
+#if defined (FOCLASSIC_MAPPER)
+extern void GetMapperOptions();
+#endif
+
 #if defined (FOCLASSIC_SERVER)
 extern bool FOQuit;
 extern int  ServerGameSleep;
 extern uint VarsGarbageTime;
 extern bool WorldSaveManager;
 extern bool LogicMT;
+#endif
 
+#if defined (FOCLASSIC_SERVER) || defined (FOCLASSIC_MAPPER)
 extern void GetServerOptions();
 #endif
 

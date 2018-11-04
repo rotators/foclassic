@@ -84,13 +84,15 @@ Ini::~Ini()
 
 //
 
-bool Ini::LoadFile( const string& fname )
+bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
 {
-    Unload();
+    if( unload )
+        Unload();
 
     ifstream fstream( fname );
     if( fstream.is_open() )
     {
+        LoadedFile = fname;
         Parse( fstream );
 
         return true;
@@ -99,9 +101,10 @@ bool Ini::LoadFile( const string& fname )
     return false;
 }
 
-bool Ini::LoadString( const string& str )
+bool Ini::LoadString( const string& str, bool unload /* = true */ )
 {
-    Unload();
+    if( unload )
+        Unload();
     ParseString( str );
 
     return true;
@@ -109,6 +112,7 @@ bool Ini::LoadString( const string& str )
 
 void Ini::Unload()
 {
+    LoadedFile.clear();
     Sections.clear();
     Errors.clear();
 }
@@ -150,17 +154,14 @@ void Ini::Parse( basic_istream<char>& stream )
         }
         else if( pos != 0 && pos != string::npos )
         {
-            string var( line.substr( 0, pos ) );
-            string val( line.substr( pos + 1, length ) );
+            string key( line.substr( 0, pos ) );
+            string value( line.substr( pos + 1, length ) );
 
-            TrimRight( var );
-            TrimLeft( val );
+            TrimRight( key );
+            TrimLeft( value );
 
-            IniSection& ini_section = Sections[section];
-            if( ini_section.find( var ) == ini_section.end() )
-            {
-                ini_section.insert( make_pair( var, val ) );
-            }
+            if( !IsSectionKey( section, key ) )
+                SetStr( section, key, value );
             else
                 Errors.push_back( line );
         }
@@ -186,6 +187,11 @@ void Ini::ParseScriptString( const ScriptString& str )
 
 //
 
+string Ini::GetLoadedFile()
+{
+    return LoadedFile;
+}
+
 bool Ini::IsSection( const string& section )
 {
     return Sections.find( section ) != Sections.end();
@@ -210,6 +216,7 @@ bool Ini::IsSectionKeyEmpty( const string& section, const string& key )
 unsigned int Ini::GetSections( vector<string>& sections )
 {
     unsigned int count = 0;
+
     for( IniSections::iterator it = Sections.begin(); it != Sections.end(); ++it, count++ )
     {
         sections.push_back( it->first );
@@ -235,16 +242,32 @@ unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys )
 
 //
 
-void Ini::MergeSections( const string& to, const string& from, bool override /* = false */ )
+bool Ini::MergeSections( const string& to, const string& from, bool overwrite /* = false */ )
 {
-    #pragma message("[TODO] MergeSections")
-    #if 0
-    if( from == to || !IsSection( to ) || !IsSection( from ) )
-        return;
+    if( from == to || !IsSection( from ) )
+        return false;
 
-    IniSection& to_section = Sections[to];
-    IniSection& from_section = Sections[from];
-    #endif
+    vector<string> keys;
+    for( unsigned int k = 0, kLen = GetSectionKeys( from, keys ); k < kLen; k++ )
+    {
+        if( overwrite || !IsSectionKey( to, keys[k] ) )
+        {
+            string key = keys[k];
+            SetStr( to, key, Sections[from][key] );
+        }
+    }
+
+    RemoveSection( from );
+    return true;
+}
+
+bool Ini::RemoveSection( const string& section )
+{
+    if( !IsSection( section ) )
+        return false;
+
+    Sections.erase( section );
+    return true;
 }
 
 //
@@ -258,13 +281,13 @@ bool Ini::GetBool( const string& section, const string& key, const bool& default
         string str = Sections[section][key];
         transform( str.begin(), str.end(), str.begin(), tolower );
 
-        result = (str == "yes" || str == "true" || str == "on" || str == "enable");
+        result = (str == "1" || str == "yes" || str == "true" || str == "on" || str == "enable");
     }
 
     return result;
 }
 
-int Ini::GetInt( const string& section, const string& key, const int& default_value, unsigned char base /* = 10 */ )
+int Ini::GetInt( const string& section, const string& key, const int& default_value, const unsigned char& base /* = 10 */ )
 {
     int result = default_value;
 
@@ -304,7 +327,8 @@ string Ini::GetStr( const string& section, const string& key )
     if( !IsSectionKeyEmpty( section, key ) )
         return string( Sections[section][key] );
 
-    return string();
+    static const string empty;
+    return empty;
 }
 
 string Ini::GetStr( const string& section, const string& key, const string& default_value )
@@ -337,4 +361,17 @@ vector<string> Ini::GetStrVec( const string& section, const string& key, char se
     }
 
     return result;
+}
+
+//
+
+void Ini::SetStr( const string& section, const string& key, string value )
+{
+    if( IsSectionKey( section, key ) )
+        Sections[section][key] = value;
+    else
+    {
+        IniSection& ini_section = Sections[section];
+        ini_section.insert( make_pair( key, value ) );
+    }
 }

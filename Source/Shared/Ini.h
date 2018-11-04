@@ -43,6 +43,7 @@ typedef std::map<std::string, IniSection>  IniSections;
 class Ini
 {
 protected:
+    std::string            LoadedFile;
     IniSections            Sections;
     std::list<std::string> Errors;
 
@@ -50,29 +51,33 @@ public:
     Ini();
     ~Ini();
 
-    bool LoadFile( const std::string& fname );
-    bool LoadString( const std::string& str );
+    bool LoadFile( const std::string& fname, bool unload = true );
+    bool LoadString( const std::string& str, bool unload = true );
     void Unload();
 
     void Parse( std::basic_istream<char>& is );
     void ParseString( const std::string& str );
     void ParseScriptString( const ScriptString& str );
 
+    std::string  GetLoadedFile();
     bool         IsSection( const std::string& section );
     bool         IsSectionKey( const std::string& section, const std::string& key );
     bool         IsSectionKeyEmpty( const std::string& section, const std::string& key );
     unsigned int GetSections( std::vector<std::string>& sections );
     unsigned int GetSectionKeys( const std::string& section, std::vector<std::string>& keys );
 
-    void MergeSections( const std::string& to, const std::string& from, bool override = false );
+    bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
+    bool RemoveSection( const std::string& section );
 
     bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );
-    int                      GetInt( const std::string& section, const std::string& key, const int& default_value, unsigned char base = 10 );
+    int                      GetInt( const std::string& section, const std::string& key, const int& default_value, const unsigned char& base = 10 );
     int                      GetHex( const std::string& section, const std::string& key, const int& default_value );
     int                      GetOct( const std::string& section, const std::string& key, const int& default_value );
     std::string              GetStr( const std::string& section, const std::string& key );
     std::string              GetStr( const std::string& section, const std::string& key, const std::string& default_value );
     std::vector<std::string> GetStrVec( const std::string& section, const std::string& key, char separator = ' ' );
+
+    void SetStr( const std::string& section, const std::string& key, std::string value );
 };
 
 #endif // __INI__ //

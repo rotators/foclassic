@@ -1362,13 +1362,23 @@ bool FOServer::SScriptFunc::Crit_IsAnim1( Critter* cr, uint index )
     return CritType::IsAnim1( cr->GetCrType(), index );
 }
 
-int FOServer::SScriptFunc::Cl_GetAccess( Critter* cl )
+uchar FOServer::SScriptFunc::Cl_GetAccess( Critter* cl )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     if( !cl->IsPlayer() )
         SCRIPT_ERROR_R0( "Critter is not player." );
     return ( (Client*)cl )->Access;
+}
+
+void FOServer::SScriptFunc::Cl_SetAccess( Critter* cl, uchar access )
+{
+    if( cl->IsNotValid )
+        SCRIPT_ERROR_R( "This nullptr." );
+    if( !cl->IsPlayer() )
+        SCRIPT_ERROR_R( "Critter is not player." );
+
+    ( (Client*)cl )->Access = access;
 }
 
 bool FOServer::SScriptFunc::Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name )

@@ -1478,48 +1478,52 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(uint) )
         {
             // Load signature
-            uchar signature[sizeof(ScriptSaveSignature)];
-            bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
-            bool  load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
+            uchar  signature[sizeof(ScriptSaveSignature)];
+            bool   bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
+            bool   load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
 
-            // Load file dependencies and pragmas
-            char   str[1024];
-            uint   dependencies_size = load ? file_bin.GetBEUInt() : 0;
-            StrVec dependencies;
-            for( uint i = 0; i < dependencies_size; i++ )
-            {
-                file_bin.GetStr( str );
-                dependencies.push_back( str );
-            }
-            uint   pragmas_size = load ? file_bin.GetBEUInt() : 0;
             StrVec pragmas;
-            for( uint i = 0; i < pragmas_size; i++ )
+            if( load )
             {
-                file_bin.GetStr( str );
-                pragmas.push_back( str );
-            }
+                // Load file dependencies and pragmas
+                StrVec dependencies;
+                char   str[1024];
+                uint   dependencies_size = file_bin.GetBEUInt();
+                for( uint i = 0; i < dependencies_size; i++ )
+                {
+                    file_bin.GetStr( str );
+                    dependencies.push_back( str );
+                }
+                uint pragmas_size = file_bin.GetBEUInt();
 
-            // Check for outdated
-            uint64 last_write, last_write_bin;
-            file_bin.GetTime( NULL, NULL, &last_write_bin );
-            // Main file
-            file.GetTime( NULL, NULL, &last_write );
-            bool no_all_files = !file.IsLoaded();
-            bool outdated = (file.IsLoaded() && last_write > last_write_bin);
-            // Include files
-            for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
-            {
-                FileManager file_dep;
-                file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
-                file_dep.GetTime( NULL, NULL, &last_write );
-                if( !no_all_files )
-                    no_all_files = !file_dep.IsLoaded();
-                if( !outdated )
-                    outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
-            }
+                for( uint i = 0; i < pragmas_size; i++ )
+                {
+                    file_bin.GetStr( str );
+                    pragmas.push_back( str );
+                }
 
-            if( no_all_files || outdated )
-                load = false;
+                // Check for outdated
+                uint64 last_write, last_write_bin;
+                file_bin.GetTime( NULL, NULL, &last_write_bin );
+                // Main file
+                file.GetTime( NULL, NULL, &last_write );
+                bool no_all_files = !file.IsLoaded();
+                bool outdated = (file.IsLoaded() && last_write > last_write_bin);
+                // Include files
+                for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
+                {
+                    FileManager file_dep;
+                    file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
+                    file_dep.GetTime( NULL, NULL, &last_write );
+                    if( !no_all_files )
+                        no_all_files = !file_dep.IsLoaded();
+                    if( !outdated )
+                        outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
+                }
+
+                if( no_all_files || outdated )
+                    load = false;
+            }
 
             if( load )
             {
