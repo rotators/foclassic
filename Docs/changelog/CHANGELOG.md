@@ -10,26 +10,24 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - support for loading legacy files will be kept **only** until first change of their format (eg. changing format of worldsave will disable loading legacy worldsave **and** characters)
     - wordsave/characters files format changes are **not** planned will during [migration stage](https://github.com/rotators/foclassic/milestone/2)
 - when [checking server status](https://fodev.net/forum/index.php/topic,2351.msg19771.html#msg19771), number of currently connected players is returned instead of characters ingame; this should give more realistic numbers, especially on servers which uses NoLogout maps
-- command line
 - configuration files / command line rework
     - application settings are loaded from disk only once, and cached in memory
     - all command line options has been renamed to use `--CamelCase` format; those which does not follow this scheme (eg. `--some-weird-option`) are intended for internal use and might be changed/removed without notice
-    - all command line options uses same names as configuration files
+    - all command line options uses same names as in configuration files
     - Client
         - removed setting `UserPass`; character password can still be provided by using `--UserPass` in command line
         - renamed setting `FonlineDataPath` to `DataPath`
-        - if settings changes are required at runtime (eg. invalid `Language` in config file), they're done in memory only, without updating config file on disk
+        - if setting requires changes at runtime (eg. invalid `Language` in config file), it's done in memory only, without updating config file on disk
         - all boolean settings are false by default
     - Mapper
         - settings moved to `Mapper` section
-        - client settings can be overwritten in Mapper.cfg, see below
+        - Client/Server settings can be overwritten in Mapper.cfg, see below
     - Server:
         - settings moved to `Server` section
         - added setting `Languages` containing list of all languages supported
             - if `Languages` list is empty/not set, `Language_N` is used; it will continue to work until further notice
             - if `Languages` list is non-empty, `Language_N` entries are ignored
             - see bottom of changelog for config file fragment
-        - command line
     - settings reading logic
         - application starts, config file is parsed, all settings are stored in memory as strings
         - Client/Mapper: detail section is handled; example for GL application using `App` as its main section:
@@ -53,7 +51,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
             - value in comand line is applied, if present
             - (integers) value is checked agains allowed minimum/maximum; if it's out of range, default value is applied
         - additional configuration based on setings not stored in `GameOptions`
-        - summary: detail sections, together with sections merging, should allows fine-tuning applications to individual developers needs without need for creating or editing multiple files between playing and developing sessions - that change is affecting Mapper the most, as it have very little own settings    - main section name is the same as original filename, without any suffix
+        - summary: detail sections, together with sections merging, should allows fine-tuning applications to individual developers needs without need for creating or editing multiple files between playing and developing sessions - that change is affecting Mapper the most, as it have very little own settings
+    - main section name is the same as original filename, without any suffix
         - exception: Client still uses `Game options`, instead of `Client`, for compatibility with _FOConfig_; it will be changed in future version together with introducing config tool changes
     - detail sections names are always the same as applications original filenames
 - extensions

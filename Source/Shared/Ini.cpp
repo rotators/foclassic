@@ -37,7 +37,6 @@
 #include <fstream>
 #include <functional>
 #include <istream>
-#include <list>
 #include <map>
 #include <sstream>
 #include <string>
@@ -46,7 +45,6 @@
 #include <scriptstring.h>
 
 #include "Ini.h"
-#include "../Log.h"
 
 using namespace std;
 
@@ -114,7 +112,6 @@ void Ini::Unload()
 {
     LoadedFile.clear();
     Sections.clear();
-    Errors.clear();
 }
 
 //
@@ -142,15 +139,11 @@ void Ini::Parse( basic_istream<char>& stream )
         const char&  front = line.front();
 
         if( IS_COMMENT( front ) )
-        {
             continue;
-        }
         else if( front == SECTION_START )
         {
             if( line.back() == SECTION_END )
                 section = line.substr( 1, length - 2 );
-            else
-                Errors.push_back( line );
         }
         else if( pos != 0 && pos != string::npos )
         {
@@ -162,12 +155,6 @@ void Ini::Parse( basic_istream<char>& stream )
 
             if( !IsSectionKey( section, key ) )
                 SetStr( section, key, value );
-            else
-                Errors.push_back( line );
-        }
-        else
-        {
-            Errors.push_back( line );
         }
     }
 }

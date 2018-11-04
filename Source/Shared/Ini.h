@@ -30,7 +30,6 @@
 #define __INI__
 
 #include <istream>
-#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -45,7 +44,6 @@ class Ini
 protected:
     std::string            LoadedFile;
     IniSections            Sections;
-    std::list<std::string> Errors;
 
 public:
     Ini();

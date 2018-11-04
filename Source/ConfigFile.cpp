@@ -6,7 +6,6 @@
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "Ini.h"
-#include "IniParser.h"
 #include "Log.h"
 #include "Script.h"
 #include "Text.h"
