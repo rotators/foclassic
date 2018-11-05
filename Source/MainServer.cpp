@@ -995,10 +995,6 @@ int main( int argc, char** argv )
     // Timer
     Timer::Init();
 
-    // Config
-    IniParser cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
-
     // Memory debugging
     MemoryDebugLevel = ConfigFile->GetInt( SECTION_SERVER, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
