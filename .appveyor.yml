@@ -1,0 +1,38 @@
+version: "{build}"
+
+environment:
+ matrix:
+  - VisualStudioVersion: 15
+  - VisualStudioVersion: 10
+
+platform:
+ - Win32
+
+configuration:
+ - Release
+
+clone_depth: 50
+
+matrix:
+ allow_failures:
+  - VisualStudioVersion: 15
+
+install:
+ - cd %APPVEYOR_BUILD_FOLDER%
+ - git submodule update --init --recursive
+ - cd C:\
+ - dir
+ - set
+
+before_build:
+ - md C:\FOClassic
+ - cd C:\FOClassic
+ - if "%VisualStudioVersion%" == "15" set VSYear=2017
+ - if "%VisualStudioVersion%" == "10" set VSYear=2010
+ - if "%PLATFORM%" == "Win32" set VSArch=
+ - if "%PLATFORM%" == "x64"   set VSArch= Win64
+ - cmake -G "Visual Studio %VisualStudioVersion% %VSYear%%VSArch%" %APPVEYOR_BUILD_FOLDER%
+
+build:
+ project: C:\FOClassic\FOClassic.sln
+ parallel: true
