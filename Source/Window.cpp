@@ -35,7 +35,7 @@ const char* GetWindowName()
             return window_name;
 
         // 'WindowName'
-        string str = ConfigFile->GetStr( APP_SECTION, "WindowName" );
+        string str = ConfigFile->GetStr( SECTION_MAIN, "WindowName" );
         if( str.empty() )
             return window_name;
 

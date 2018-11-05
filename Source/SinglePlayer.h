@@ -4,6 +4,9 @@
 #include "Types.h"
 
 #ifdef FO_WINDOWS
+
+extern HANDLE SingleplayerClientProcess;
+
 class InterprocessData
 {
 public:
@@ -24,7 +27,6 @@ public:
     bool   Refresh();
 };
 
-extern HANDLE SingleplayerClientProcess;
 #else
 // Todo: linux
 class InterprocessData

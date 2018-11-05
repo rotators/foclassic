@@ -8,6 +8,7 @@
 #include "ConfigFile.h"
 #include "Exception.h"
 #include "GameOptions.h"
+#include "Ini.h"
 #include "Log.h"
 #include "Mapper.h"
 #include "Script.h"
@@ -23,6 +24,7 @@ FOMapper* Mapper = NULL;
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "English" );
+
     // Threading
     #ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -36,12 +38,18 @@ int main( int argc, char** argv )
     CatchExceptions( "MapperGL" );
     #endif
 
-    //
-    CommandLine = new CommandLineOptions( argc, argv );
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_MAPPER_ROOT ) );
-
+    // Command line
+    CommandLine = new CmdLine( argc, argv );
     if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
+
+    // Options
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_MAPPER_ROOT ), SECTION_MAIN, SECTION_DETAIL, SECTION_UNUSED );
+    GetMapperOptions();
+    GetClientOptions();
+    GetServerOptions();
+    ConfigFile->Lock = true;
+    Script::SetRunTimeout( 0, 0 );
 
     // Timer
     Timer::Init();
@@ -49,10 +57,6 @@ int main( int argc, char** argv )
     LogToFile( "Mapper.log" );
     WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
 
-    GetMapperOptions();     // reads client config
-    GetClientOptions();
-    GetServerOptions();
-    Script::SetRunTimeout( 0, 0 );
 
 
     // Create window

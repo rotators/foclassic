@@ -25,9 +25,9 @@
 // This is modified version of IniPP library
 // Original source https://github.com/mcmtroffaes/inipp/
 
-// #ifdef FOCLASSIC_ENGINE
-// # include "Core.h"
-// #endif
+#ifdef FOCLASSIC_ENGINE
+# include "Core.h"
+#endif
 
 #include <errno.h>
 
@@ -72,7 +72,7 @@ inline void Cleanup( string& str )
 
 //
 
-Ini::Ini()
+Ini::Ini() : Lock( false )
 {}
 
 Ini::~Ini()
@@ -354,6 +354,9 @@ vector<string> Ini::GetStrVec( const string& section, const string& key, char se
 
 void Ini::SetStr( const string& section, const string& key, string value )
 {
+    if( Lock )
+        throw runtime_error( "Ini is locked" ); // temp
+
     if( IsSectionKey( section, key ) )
         Sections[section][key] = value;
     else

@@ -26,6 +26,8 @@ FOClient* FOEngine = NULL;
 
 int main( int argc, char** argv )
 {
+    setlocale( LC_ALL, "English" );
+
     // Threading
     #ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -40,13 +42,14 @@ int main( int argc, char** argv )
     #endif
 
     // Command line
-    CommandLine = new CommandLineOptions( argc, argv );
-    if( !CommandLine->IsOption( "--no-restore-directory" ) )
+    CommandLine = new CmdLine( argc, argv );
+    if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
 
     // Options
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ), SECTION_MAIN, SECTION_DETAIL, SECTION_UNUSED );
     GetClientOptions();
+    ConfigFile->Lock = true;
 
     // Disable SIGPIPE signal
     #ifndef FO_WINDOWS
@@ -67,9 +70,9 @@ int main( int argc, char** argv )
     GetModuleFileName( NULL, full_path, MAX_FOPATH );
     FileManager::ExtractPath( full_path, path );
     FileManager::ExtractFileName( full_path, name );
-    if( Str::Substring( name, "Singleplayer" ) || CommandLine->IsOption( "Singleplayer" ) )
+    if( Str::Substring( name, "SinglePlayer" ) || CommandLine->IsOption( "SinglePlayer" ) )
     {
-        WriteLog( "Singleplayer mode.\n" );
+        WriteLog( "SinglePlayer mode.\n" );
         Singleplayer = true;
         Timer::SetGamePause( true );
 
@@ -97,9 +100,9 @@ int main( int argc, char** argv )
         }
 
         // Config parsing
-        string server_exe = ConfigFile->GetStr( CLIENT_SECTION, "ServerAppName", "Server.exe" );
-        string server_path = ConfigFile->GetStr( CLIENT_SECTION, "ServerPath", "..\\Server\\" );
-        string server_cmdline = ConfigFile->GetStr( CLIENT_SECTION, "ServerCommandLine" );
+        string server_exe = ConfigFile->GetStr( SECTION_CLIENT, "ServerAppName", "Server.exe" );
+        string server_path = ConfigFile->GetStr( SECTION_CLIENT, "ServerPath", "..\\Server\\" );
+        string server_cmdline = ConfigFile->GetStr( SECTION_CLIENT, "ServerCommandLine" );
 
         // Process attributes
         PROCESS_INFORMATION server;
@@ -111,7 +114,7 @@ int main( int argc, char** argv )
         char   command_line[2048];
 
         // Start server
-        Str::Format( command_line, "\"%s%s\" --SinglePlayer %p %p %s -LogPath %s", server_path.c_str(), server_exe.c_str(), map_file, client_process, server_cmdline.c_str(), path );
+        Str::Format( command_line, "\"%s%s\" --SinglePlayer %p:%p --LogPath %s %s", server_path.c_str(), server_exe.c_str(), map_file, client_process, path, server_cmdline.c_str() );
         if( !CreateProcess( NULL, command_line, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, server_path.c_str(), &sui, &server ) )
         {
             WriteLog( "Can't start server process, error<%u>.\n", GetLastError() );

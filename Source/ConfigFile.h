@@ -1,61 +1,50 @@
 #ifndef __CONFIG_FILE__
 #define __CONFIG_FILE__
 
+#include "Defines.h"
 #include "Types.h"
 
 class Ini;
 
-// Main sections
-#define EMPTY_SECTION           ""
-#define CLIENT_SECTION          "Game Options"
-#define MAPPER_SECTION          "Mapper"
-#define SERVER_SECTION          "Server"
-
-// Detail sections
-#define CLIENT_DX_SECTION       "ClientDX"
-#define CLIENT_GL_SECTION       "ClientGL"
-#define MAPPER_DX_SECTION       "MapperDX"
-#define MAPPER_GL_SECTION       "MapperGL"
-
 // Helpers
-// APP_SECTION         Main section for current target
-// APP_SECTION_DETAIL  Detail section for current target (Client/Mapper only)
-// APP_SECTION_UNUSED  Detail section not used for current target (Client/Mapper only)
+// SECTION_MAIN    Section holding settings for application
+// SECTION_DETAIL  Section holding settings for current target (Client/Mapper only)
+// SECTION_UNUSED  Section not used for current target (Client/Mapper only)
 
 #if defined (FOCLASSIC_CLIENT)
-# define APP_SECTION            (CLIENT_SECTION)
+# define SECTION_MAIN        (SECTION_CLIENT)
 # ifdef FO_D3D
-#  define APP_SECTION_DETAIL    (CLIENT_DX_SECTION)
-#  define APP_SECTION_UNUSED    (CLIENT_GL_SECTION)
+#  define SECTION_DETAIL     (SECTION_CLIENT_DX)
+#  define SECTION_UNUSED     (SECTION_CLIENT_GL)
 # else
-#  define APP_SECTION_DETAIL    (CLIENT_GL_SECTION)
-#  define APP_SECTION_UNUSED    (CLIENT_DX_SECTION)
+#  define SECTION_DETAIL     (SECTION_CLIENT_GL)
+#  define SECTION_UNUSED     (SECTION_CLIENT_DX)
 # endif
 #elif defined (FOCLASSIC_MAPPER)
-# define APP_SECTION            (MAPPER_SECTION)
+# define SECTION_MAIN        (SECTION_MAPPER)
 # ifdef FO_D3D
-#  define APP_SECTION_DETAIL    (MAPPER_DX_SECTION)
-#  define APP_SECTION_UNUSED    (MAPPER_GL_SECTION)
+#  define SECTION_DETAIL     (SECTION_MAPPER_DX)
+#  define SECTION_UNUSED     (SECTION_MAPPER_GL)
 # else
-#  define APP_SECTION_DETAIL    (MAPPER_GL_SECTION)
-#  define APP_SECTION_UNUSED    (MAPPER_DX_SECTION)
+#  define SECTION_DETAIL     (SECTION_MAPPER_GL)
+#  define SECTION_UNUSED     (SECTION_MAPPER_DX)
 # endif
 #elif defined (FOCLASSIC_SERVER)
-# define APP_SECTION            (SERVER_SECTION)
+# define SECTION_MAIN        (SECTION_SERVER)
 #endif
 
 #if defined (FOCLASSIC_CLIENT)
-# define CFG_DEF_INT_FILE       "default800x600.ini"
+# define CFG_DEF_INT_FILE    "default800x600.ini"
 #elif defined (FOCLASSIC_MAPPER)
-# define CFG_DEF_INT_FILE       "mapper_default.ini"
+# define CFG_DEF_INT_FILE    "mapper_default.ini"
 #endif
 
 extern Ini* ConfigFile;
 
-extern bool LoadConfigFile( const char* fname );
-extern void UnloadConfigFile();
-
 const char* GetConfigFileName();
+
+extern bool LoadConfigFile( const char* fname, const char* main = NULL, const char* detail = NULL, const char* unused = NULL );
+extern void UnloadConfigFile();
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 extern void GetClientOptions();

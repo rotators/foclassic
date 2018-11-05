@@ -335,13 +335,13 @@ bool FOClient::Init()
 
     // Sound manager
     SndMngr.Init();
-    SndMngr.SetSoundVolume( ConfigFile->GetInt( CLIENT_SECTION, "SoundVolume", 100 ) );
-    SndMngr.SetMusicVolume( ConfigFile->GetInt( CLIENT_SECTION, "MusicVolume", 100 ) );
+    SndMngr.SetSoundVolume( ConfigFile->GetInt( SECTION_CLIENT, "SoundVolume", 100 ) );
+    SndMngr.SetMusicVolume( ConfigFile->GetInt( SECTION_CLIENT, "MusicVolume", 100 ) );
 
     UID_PREPARE_UID4_3;
 
     // Language Packs
-    string lang_name = ConfigFile->GetStr( CLIENT_SECTION, "Language", DEFAULT_LANGUAGE );
+    string lang_name = ConfigFile->GetStr( SECTION_CLIENT, "Language", DEFAULT_LANGUAGE );
     transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
     if( lang_name.length() != 4 )
         lang_name = DEFAULT_LANGUAGE;

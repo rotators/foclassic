@@ -110,7 +110,9 @@
 # define RAD( deg )                                  ( (deg) * 3.141592654f / 180.0f )
 # define UTF8_BUF_SIZE( count )                      ( (count) * 4 )
 
-# ifndef FOCLASSIC_ENGINE
+# ifdef FOCLASSIC_ENGINE
+#  define GAME_OPTION( option )                      (GameOpt.option)
+# else
 #  define GAME_OPTION( option )                      (FOClassic->option)
 # endif  // !FOCLASSIC_ENGINE
 
@@ -139,6 +141,26 @@
 # define GAME_OPTION                                 # (option)(__ ## option) // TODO? separate globalvars registered by engine
 
 #endif                                                                        // FOCLASSIC_SCRIPT
+
+/////
+//
+// Configuration
+//
+/////
+
+// main sections, available at runtime
+
+#define SECTION_NONE                                 ""             // for settings which doesn't belong to any section
+#define SECTION_CLIENT                               "Game Options" // main section
+#define SECTION_MAPPER                               "Mapper"       // main section
+#define SECTION_SERVER                               "Server"       // main section
+
+// detail sections, available only when reading configuration from disk
+
+#define SECTION_CLIENT_DX                            "ClientDX"     // detail section
+#define SECTION_CLIENT_GL                            "ClientGL"     // detail section
+#define SECTION_MAPPER_DX                            "MapperDX"     // detail section
+#define SECTION_MAPPER_GL                            "MapperGL"     // detail section
 
 /////
 //

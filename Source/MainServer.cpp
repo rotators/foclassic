@@ -83,6 +83,8 @@ void ServiceMain( bool as_service );
 // Main
 int main( int argc, char** argv )
 {
+    setlocale( LC_ALL, "English" );
+
     // Threading
     # ifdef FO_WINDOWS
     pthread_win32_process_attach_np();
@@ -97,24 +99,28 @@ int main( int argc, char** argv )
     // Exceptions catcher
     CatchExceptions( "Server" );
 
-    //
-    CommandLine = new CommandLineOptions( argc, argv );
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
+    // Command line
+    CommandLine = new CmdLine( argc, argv );
     if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
+
+    // Options
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
+    GetServerOptions();
+    ConfigFile->Lock = true;
 
     // Timer
     Timer::Init();
 
     // Memory debugging
-    MemoryDebugLevel = ConfigFile->GetInt( SERVER_SECTION, "MemoryDebugLevel", 0 );
+    MemoryDebugLevel = ConfigFile->GetInt( SECTION_SERVER, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
 
     // Logging
-    LogWithTime( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) );
-    LogWithThread( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) );
-    if( CommandLine->IsOption( "LoggingDebugOutput" ) || ConfigFile->GetBool( SERVER_SECTION, "LoggingDebugOutput", false ) )
+    LogWithTime( ConfigFile->GetBool( SECTION_SERVER, "LoggingTime", true ) );
+    LogWithThread( ConfigFile->GetBool( SECTION_SERVER, "LoggingThread", true ) );
+    if( CommandLine->IsOption( "LoggingDebugOutput" ) || ConfigFile->GetBool( SECTION_SERVER, "LoggingDebugOutput", false ) )
         LogToDebugOutput( true );
 
     // Init event
@@ -152,13 +158,17 @@ int main( int argc, char** argv )
 
         // Shared data
         #  pragma TODO ("-singleplayer mess")
-        /*
-           const char* ptr = strstr( CommandLine, "-singleplayer " ) + Str::Length( "-singleplayer " );
-           HANDLE      map_file = NULL;
-           if( sscanf( ptr, "%p%p", &map_file, &SingleplayerClientProcess ) != 2 || !SingleplayerData.Attach( map_file ) )
-         */
+        vector<string> sp = CommandLine->GetStrVec( "SinglePlayer", ':' );
+        if( sp.size() != 2 )
         {
-            // WriteLog( "Can't attach to mapped file<%p>.\n", map_file );
+            WriteLog( "Invalid SinglePlayer data" );
+            return 0;
+        }
+
+        HANDLE map_file = NULL;
+        if( sscanf( Str::FormatBuf( "%s %s", sp[0].c_str(), sp[1].c_str() ), "%p%p", &map_file, &SingleplayerClientProcess ) != 2 || !SingleplayerData.Attach( map_file ) )
+        {
+            WriteLog( "Can't attach to mapped file<%p>.\n", map_file );
             return 0;
         }
         # else
@@ -205,9 +215,9 @@ int main( int argc, char** argv )
     if( GuiWindow )
     {
         GuiCBtnAutoUpdate->value( 0 );
-        GuiCBtnLogging->value( ConfigFile->GetBool( SERVER_SECTION, "Logging", true ) ? 1 : 0 );
-        GuiCBtnLoggingTime->value( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) ? 1 : 0 );
-        GuiCBtnLoggingThread->value( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) ? 1 : 0 );
+        GuiCBtnLogging->value( ConfigFile->GetBool( SECTION_SERVER, "Logging", true ) ? 1 : 0 );
+        GuiCBtnLoggingTime->value( ConfigFile->GetBool( SECTION_SERVER, "LoggingTime", true ) ? 1 : 0 );
+        GuiCBtnLoggingThread->value( ConfigFile->GetBool( SECTION_SERVER, "LoggingThread", true ) ? 1 : 0 );
         GuiCBtnScriptDebug->value( 1 );
     }
 
@@ -310,13 +320,13 @@ void GUIInit()
         }
     } GUISetup;
 
-    GUISizeMod = ConfigFile->GetInt( SERVER_SECTION, "GUISize", 0 );
+    GUISizeMod = ConfigFile->GetInt( SECTION_SERVER, "GUISize", 0 );
     GUISetup.FontType = FL_COURIER;
     GUISetup.FontSize = 11;
 
     // Main window
-    int wx = ConfigFile->GetInt( SERVER_SECTION, "PositionX", 0 );
-    int wy = ConfigFile->GetInt( SERVER_SECTION, "PositionY", 0 );
+    int wx = ConfigFile->GetInt( SECTION_SERVER, "PositionX", 0 );
+    int wy = ConfigFile->GetInt( SECTION_SERVER, "PositionY", 0 );
     if( !wx && !wy )
         wx = (Fl::w() - GUI_SIZE1( 496 ) ) / 2, wy = (Fl::h() - GUI_SIZE1( 412 ) ) / 2;
     GuiWindow = new Fl_Window( wx, wy, GUI_SIZE2( 496, 412 ), "FOClassic Server" );
@@ -714,8 +724,6 @@ void CheckTextBoxSize( bool force )
 
 void GameLoopThread( void* )
 {
-    GetServerOptions();
-
     if( Server.Init() )
     {
         if( GuiWindow )
@@ -962,7 +970,7 @@ int main( int argc, char** argv )
     close( STDOUT_FILENO );
     close( STDERR_FILENO );
 
-    CommandLine = new CommandLineOptions( argc, argv );
+    CommandLine = new CmdLine( argc, argv );
     LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
 
     // Stuff
@@ -988,7 +996,7 @@ int main( int argc, char** argv )
     cfg.LoadFile( GetConfigFileName(), PATH_SERVER_ROOT );
 
     // Memory debugging
-    MemoryDebugLevel = ConfigFile->GetInt( SERVER_SECTION, "MemoryDebugLevel", 0 );
+    MemoryDebugLevel = ConfigFile->GetInt( SECTION_SERVER, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
 
@@ -996,8 +1004,8 @@ int main( int argc, char** argv )
     SetCommandLine( argc, argv );
 
     // Logging
-    LogWithTime( ConfigFile->GetBool( SERVER_SECTION, "LoggingTime", true ) );
-    LogWithThread( ConfigFile->GetBool( SERVER_SECTION, "LoggingThread", true ) );
+    LogWithTime( ConfigFile->GetBool( SECTION_SERVER, "LoggingTime", true ) );
+    LogWithThread( ConfigFile->GetBool( SECTION_SERVER, "LoggingThread", true ) );
     LogToDebugOutput( CommandLine->IsOption( "LoggingDebugOutput" ) || ConfigFile->GetBool( "LoggingDebugOutput", false ) );
     LogToFile( "./FOnlineServerDaemon.log" );
 
@@ -1028,8 +1036,6 @@ void DaemonLoop()
 
 void GameLoopThread( void* )
 {
-    GetServerOptions();
-
     if( Server.Init() )
     {
         FOQuit = false;
@@ -1068,7 +1074,7 @@ Thread AdminManagerThread;
 #pragma TODO("rework AdminPanel")
 void InitAdminManager()
 {
-    uint port = ConfigFile->GetInt( SERVER_SECTION, "AdminPanelPort", 0 );
+    uint port = ConfigFile->GetInt( SECTION_SERVER, "AdminPanelPort", 0 );
 
     if( port )
     {

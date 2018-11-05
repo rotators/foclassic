@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class CommandLineOptions
+class CmdLine
 {
 protected:
     std::vector<std::string> Cache;
@@ -12,19 +12,20 @@ protected:
 public:
     const std::string App;
 
-    CommandLineOptions( int argc, char** argv );
-    ~CommandLineOptions();
+    CmdLine( int argc, char** argv );
+    ~CmdLine();
 
     std::string Get();
 
     bool IsOption( const std::string& option );
     bool IsOptionEmpty( const std::string& option );
 
-    int         GetInt( const std::string& option, const int& default_value, const unsigned char& base = 10 );
-    std::string GetStr( const std::string& option );
-    std::string GetStr( const std::string& option, const std::string& default_value );
+    int                      GetInt( const std::string& option, const int& default_value, const unsigned char& base = 10 );
+    std::string              GetStr( const std::string& option );
+    std::string              GetStr( const std::string& option, const std::string& default_value );
+    std::vector<std::string> GetStrVec( const std::string& option, char separator );
 };
 
-extern CommandLineOptions* CommandLine;
+extern CmdLine* CommandLine;
 
 #endif // __COMMAND_LINE__ //

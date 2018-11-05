@@ -1,4 +1,6 @@
-#include "Core.h"
+#ifdef FOCLASSIC_ENGINE
+# include "Core.h"
+#endif
 
 #include <algorithm>
 #include <sstream>
@@ -10,9 +12,9 @@
 
 using namespace std;
 
-CommandLineOptions* CommandLine;
+CmdLine* CommandLine;
 
-CommandLineOptions::CommandLineOptions( int argc, char** argv ) : App( argv[0] )
+CmdLine::CmdLine( int argc, char** argv ) : App( argv[0] )
 {
     for( int arg = 1; arg < argc; arg++ )
     {
@@ -20,26 +22,26 @@ CommandLineOptions::CommandLineOptions( int argc, char** argv ) : App( argv[0] )
     }
 }
 
-CommandLineOptions::~CommandLineOptions()
+CmdLine::~CmdLine()
 {
     Cache.clear();
 }
 
 //
 
-bool CommandLineOptions::IsOption( const string& option )
+bool CmdLine::IsOption( const string& option )
 {
     return find( Cache.begin(), Cache.end(), "--" + option ) != Cache.end();
 }
 
-bool CommandLineOptions::IsOptionEmpty( const string& option )
+bool CmdLine::IsOptionEmpty( const string& option )
 {
     return GetStr( option ).empty();
 }
 
 //
 
-string CommandLineOptions::Get()
+string CmdLine::Get()
 {
     static const string empty;
 
@@ -57,7 +59,7 @@ string CommandLineOptions::Get()
     }
 }
 
-int CommandLineOptions::GetInt( const string& option, const int& default_value, const unsigned char& base /* = 10 */ )
+int CmdLine::GetInt( const string& option, const int& default_value, const unsigned char& base /* = 10 */ )
 {
     int    result = default_value;
     string str = GetStr( option );
@@ -80,14 +82,14 @@ int CommandLineOptions::GetInt( const string& option, const int& default_value, 
     return result;
 }
 
-string CommandLineOptions::GetStr( const string& option )
+string CmdLine::GetStr( const string& option )
 {
     static const std::string empty;
 
     return GetStr( option, empty );
 }
 
-string CommandLineOptions::GetStr( const string& option, const string& default_value )
+string CmdLine::GetStr( const string& option, const string& default_value )
 {
     vector<string>::const_iterator it = find( Cache.begin(), Cache.end(), "--" + option );
 
@@ -102,4 +104,22 @@ string CommandLineOptions::GetStr( const string& option, const string& default_v
     }
 
     return default_value;
+}
+
+vector<string> CmdLine::GetStrVec( const string& option, char separator )
+{
+    string         value = GetStr( option );
+    vector<string> result;
+
+    if( !value.empty() )
+    {
+        string        tmp;
+        istringstream f( value );
+        while( getline( f, tmp, separator ) )
+        {
+            result.push_back( tmp );
+        }
+    }
+
+    return result;
 }

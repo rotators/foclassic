@@ -42,10 +42,12 @@ typedef std::map<std::string, IniSection>  IniSections;
 class Ini
 {
 protected:
-    std::string            LoadedFile;
-    IniSections            Sections;
+    std::string LoadedFile;
+    IniSections Sections;
 
 public:
+    bool Lock;
+
     Ini();
     ~Ini();
 

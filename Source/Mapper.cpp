@@ -210,10 +210,10 @@ bool FOMapper::Init()
 
     // Language Packs
     string lang_name;
-    if( !ConfigFile->IsSectionKeyEmpty( SERVER_SECTION, "Languages" ) )
-        lang_name = ConfigFile->GetStrVec( SERVER_SECTION, "Languages" ).front();
+    if( !ConfigFile->IsSectionKeyEmpty( SECTION_SERVER, "Languages" ) )
+        lang_name = ConfigFile->GetStrVec( SECTION_SERVER, "Languages" ).front();
     else
-        lang_name = ConfigFile->GetStr( SERVER_SECTION, "Language_0", DEFAULT_LANGUAGE );
+        lang_name = ConfigFile->GetStr( SECTION_SERVER, "Language_0", DEFAULT_LANGUAGE );
 
     transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
 

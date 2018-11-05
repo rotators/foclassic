@@ -9,6 +9,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - restored loading of worldsaves and characters created by FOnline r412, and possibly older versions
     - support for loading legacy files will be kept **only** until first change of their format (eg. changing format of worldsave will disable loading legacy worldsave **and** characters)
     - wordsave/characters files format changes are **not** planned will during [migration stage](https://github.com/rotators/foclassic/milestone/2)
+    - loading has been briefly tested against real server state (thanks Kilgore)
 - when [checking server status](https://fodev.net/forum/index.php/topic,2351.msg19771.html#msg19771), number of currently connected players is returned instead of characters ingame; this should give more realistic numbers, especially on servers which uses NoLogout maps
 - configuration files / command line rework
     - application settings are loaded from disk only once, and cached in memory

@@ -297,11 +297,11 @@ void FOServer::GetAccesses( StrVec& client, StrVec& tester, StrVec& moder, StrVe
     admin.clear();
     admin_names.clear();
 
-    client = ConfigFile->GetStrVec( SERVER_SECTION, "Access_client" );
-    tester = ConfigFile->GetStrVec( SERVER_SECTION, "Access_tester" );
-    moder = ConfigFile->GetStrVec( SERVER_SECTION, "Access_moder" );
-    admin = ConfigFile->GetStrVec( SERVER_SECTION, "Access_admin" );
-    admin_names = ConfigFile->GetStrVec( SERVER_SECTION, "AccessNames_admin" );
+    client = ConfigFile->GetStrVec( SECTION_SERVER, "Access_client" );
+    tester = ConfigFile->GetStrVec( SECTION_SERVER, "Access_tester" );
+    moder = ConfigFile->GetStrVec( SECTION_SERVER, "Access_moder" );
+    admin = ConfigFile->GetStrVec( SECTION_SERVER, "Access_admin" );
+    admin_names = ConfigFile->GetStrVec( SECTION_SERVER, "AccessNames_admin" );
 }
 
 void FOServer::DisconnectClient( Client* cl )
@@ -3826,7 +3826,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         names.push_back( name );
     }
 
-    StrVec langs = ConfigFile->GetStrVec( SERVER_SECTION, "Languages" );
+    StrVec langs = ConfigFile->GetStrVec( SECTION_SERVER, "Languages" );
     if( !langs.empty() )
     {
         uint idx = 0;
@@ -3880,7 +3880,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         char cur_str_lang[MAX_FOTEXT];
         Str::Format( cur_str_lang, "Language_%u", cur_lang );
 
-        string lang = ConfigFile->GetStr( SERVER_SECTION, cur_str_lang );
+        string lang = ConfigFile->GetStr( SECTION_SERVER, cur_str_lang );
         if( lang.empty() )
         {
             if( cur_lang == 0 )

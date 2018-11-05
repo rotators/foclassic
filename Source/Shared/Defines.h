@@ -1,8 +1,6 @@
 #ifndef __DEFINES__
 #define __DEFINES__
 
-#define GAME_OPTION( option )                 (GameOpt.option)
-
 #include "PlatformSpecific.h"
 #include "Defines.Public.h"
 

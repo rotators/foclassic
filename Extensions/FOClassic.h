@@ -160,6 +160,7 @@ EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 
 // FOClassic types
 struct Client;
+struct CmdLine; // TODO
 struct Critter;
 struct CritterCl;
 struct CritterTimeEvent;
@@ -168,6 +169,7 @@ struct Field;
 struct GameOptions;
 struct GameVar;
 struct GlobalMapGroup;
+struct Ini; // TODO
 struct Item;
 struct Location;
 struct Map;
@@ -524,47 +526,54 @@ struct GameOptions
     const char*        ( * GetNameByHash )( uint hash );                                                   // Get name of file by hash
     uint               ( * GetHashByName )( const char* name );                                            // Get hash of file name
 
-    // TODO move whole block to separate object - GameScript* Script;
-    bool               ( * ScriptLoadModule )( const char* moduleName );
-    uint               ( * ScriptBind )( const char* moduleName, const char* funcDecl, bool temporaryId ); // Returning bindId
-    bool               ( * ScriptPrepare )( uint bindId );
-    void               ( * ScriptSetArgInt8 )( int8 value );
-    void               ( * ScriptSetArgInt16 )( int16 value );
-    void               ( * ScriptSetArgInt )( int value );
-    void               ( * ScriptSetArgInt64 )( int64 value );
-    void               ( * ScriptSetArgUInt8 )( uint8 value );
-    void               ( * ScriptSetArgUInt16 )( uint16 value );
-    void               ( * ScriptSetArgUInt )( uint value );
-    void               ( * ScriptSetArgUInt64 )( uint64 value );
-    void               ( * ScriptSetArgBool )( bool value );
-    void               ( * ScriptSetArgFloat )( float value );
-    void               ( * ScriptSetArgDouble )( double value );
-    void               ( * ScriptSetArgObject )( void* value );
-    void               ( * ScriptSetArgAddress )( void* value );
-    bool               ( * ScriptRunPrepared )();
-    int8               ( * ScriptGetReturnedInt8 )();
-    int16              ( * ScriptGetReturnedInt16 )();
-    int                ( * ScriptGetReturnedInt )();
-    int64              ( * ScriptGetReturnedInt64 )();
-    uint8              ( * ScriptGetReturnedUInt8 )();
-    uint16             ( * ScriptGetReturnedUInt16 )();
-    uint               ( * ScriptGetReturnedUInt )();
-    uint64             ( * ScriptGetReturnedUInt64 )();
-    bool               ( * ScriptGetReturnedBool )();
-    float              ( * ScriptGetReturnedFloat )();
-    double             ( * ScriptGetReturnedDouble )();
-    void*              ( * ScriptGetReturnedObject )();
-    void*              ( * ScriptGetReturnedAddress )();
+    // TODO move to GameScript
+    bool               (* ScriptLoadModule )( const char* moduleName );
+    uint               (* ScriptBind )( const char* moduleName, const char* funcDecl, bool temporaryId ); // Returning bindId
+    bool               (* ScriptPrepare )( uint bindId );
+    void               (* ScriptSetArgInt8 )( int8 value );
+    void               (* ScriptSetArgInt16 )( int16 value );
+    void               (* ScriptSetArgInt )( int value );
+    void               (* ScriptSetArgInt64 )( int64 value );
+    void               (* ScriptSetArgUInt8 )( uint8 value );
+    void               (* ScriptSetArgUInt16 )( uint16 value );
+    void               (* ScriptSetArgUInt )( uint value );
+    void               (* ScriptSetArgUInt64 )( uint64 value );
+    void               (* ScriptSetArgBool )( bool value );
+    void               (* ScriptSetArgFloat )( float value );
+    void               (* ScriptSetArgDouble )( double value );
+    void               (* ScriptSetArgObject )( void* value );
+    void               (* ScriptSetArgAddress )( void* value );
+    bool               (* ScriptRunPrepared )();
+    int8               (* ScriptGetReturnedInt8 )();
+    int16              (* ScriptGetReturnedInt16 )();
+    int                (* ScriptGetReturnedInt )();
+    int64              (* ScriptGetReturnedInt64 )();
+    uint8              (* ScriptGetReturnedUInt8 )();
+    uint16             (* ScriptGetReturnedUInt16 )();
+    uint               (* ScriptGetReturnedUInt )();
+    uint64             (* ScriptGetReturnedUInt64 )();
+    bool               (* ScriptGetReturnedBool )();
+    float              (* ScriptGetReturnedFloat )();
+    double             (* ScriptGetReturnedDouble )();
+    void*              (* ScriptGetReturnedObject )();
+    void*              (* ScriptGetReturnedAddress )();
 
-    int                ( * Random )( int minimum, int maximumInclusive );
-    uint               ( * GetTick )();
-    void               ( * SetLogCallback )( void (*function)( const char* ), bool enable );
+    int                (* Random )( int minimum, int maximumInclusive );
+    uint               (* GetTick )();
+    void               (* SetLogCallback )( void (*function)( const char* ), bool enable );
 
     // Callbacks
-    uint               ( * GetUseApCost )( CritterMutual& cr, Item& item, uint8 mode );
-    uint               ( * GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
-    void               ( * GetRainOffset )( int16* ox, int16* oy );
+    uint               (* GetUseApCost)( CritterMutual& cr, Item& item, uint8 mode );
+    uint               (* GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
+    void               (* GetRainOffset )( int16* ox, int16* oy );
+
+    #if 0 // TODO
+    GameScript*        Script;
+    CmdLine*           CommandLine;
+    Ini*               ConfigFile;
+    #endif
 };
+
 EXPORT_UNINITIALIZED GameOptions* FOClassic;
 EXPORT_UNINITIALIZED GameOptions* FOnline;
 

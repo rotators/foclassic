@@ -11,6 +11,8 @@ InterprocessData SingleplayerData;
 
 #ifdef FO_WINDOWS
 
+void* SingleplayerClientProcess = NULL;
+
 # define INTERPROCESS_DATA_SIZE    (OFFSETOF( InterprocessData, mapFileMutex ) )
 
 HANDLE InterprocessData::Init()
@@ -97,7 +99,5 @@ bool InterprocessData::Refresh()
     Unlock();
     return true;
 }
-
-void* SingleplayerClientProcess = NULL;
 
 #endif // FO_WINDOWS
