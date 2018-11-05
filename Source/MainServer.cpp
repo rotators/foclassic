@@ -945,6 +945,8 @@ Thread   LoopThread;
 
 int main( int argc, char** argv )
 {
+    setlocale( LC_ALL, "English" );
+
     // Start daemon
     pid_t parpid = fork();
     if( parpid < 0 )
@@ -970,12 +972,14 @@ int main( int argc, char** argv )
     close( STDOUT_FILENO );
     close( STDERR_FILENO );
 
+    // Command line
     CommandLine = new CmdLine( argc, argv );
-    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
+    if( !CommandLine->IsOption( "no-restore-directory" ) )
+        RestoreMainDirectory();
 
-    // Stuff
-    setlocale( LC_ALL, "en-US" );
-    RestoreMainDirectory();
+    // Options
+    LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ) );
+    GetServerOptions();
 
     // Threading
     Thread::SetCurrentName( "Daemon" );
@@ -999,9 +1003,6 @@ int main( int argc, char** argv )
     MemoryDebugLevel = ConfigFile->GetInt( SECTION_SERVER, "MemoryDebugLevel", 0 );
     if( MemoryDebugLevel >= 3 )
         Debugger::StartTraceMemory();
-
-    // Make command line
-    SetCommandLine( argc, argv );
 
     // Logging
     LogWithTime( ConfigFile->GetBool( SECTION_SERVER, "LoggingTime", true ) );
