@@ -21,11 +21,13 @@ matrix:
  allow_failures:
   - image: Visual Studio 2017
 
-clone_depth: 50
 clone_folder: C:\FOClassic
 
 install:
  - git submodule update --init --recursive
+
+before_build:
+ - git ls-files | while read file; do echo $file; touch -t $(date -jf "%s" $(git log --date=local -1 --format="@%ct" "$file" | cut -b 2-) +%Y%m%d%H%M) "$file"; done
 
 build_script:
  - cmake -P Build.cmake
