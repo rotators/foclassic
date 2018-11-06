@@ -5,7 +5,7 @@
 ##
 
 # https://cmake.org/cmake/help/v3.12/
-cmake_minimum_required( VERSION 3.12 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.12.1 FATAL_ERROR )
 
 # cmake includes
 # special directories

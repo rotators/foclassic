@@ -49,6 +49,11 @@ function( DetectCI )
 		endif()
 	endif()
 
+	if( CI )
+		message( STATUS "CI: ${CI} (CMake v${CMAKE_VERSION})" )
+		message( STATUS )
+	endif()
+
 endfunction()
 
 # Prepare repository files
@@ -64,7 +69,6 @@ function( PrepareFiles )
 	string( REGEX REPLACE "\n" ";" ls "${ls}" )
 
 	foreach( file IN LISTS ls )
-
 		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
 			continue()
 		endif()
@@ -107,11 +111,10 @@ function( PrepareFiles )
 				COMMAND git log --pretty=format:%ct -1 "HEAD" -- "${file}"
 				OUTPUT_VARIABLE timestamp
 			)
-			message( STATUS "           Timestamp: ${timestamp}" )
-			#execute_process( COMMAND touch -d @${timestamp} "${file}" )
+			execute_process( COMMAND touch -d @${timestamp} "${file}" )
 		endif()
-
 	endforeach()
+
 endfunction()
 
 # Prepare build directory

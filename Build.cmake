@@ -14,7 +14,7 @@
 # -DNO_ZIP=1
 # skips creating of release package
 #
-cmake_minimum_required( VERSION 3.12 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.12.1 FATAL_ERROR )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 include(AutomatedBuild)
@@ -29,10 +29,7 @@ DetectCI()
 PrepareFiles()
 
 if( CI )
-	message( STATUS "CI: ${CI} (CMake v${CMAKE_VERSION})" )
-	message( STATUS )
 	set( CI_ZIP_SUFFIX "-${CI_GENERATOR_SHORT}" )
-	RestoreModTime()
 	CreateBuildDirectory( "SDK" "${CI_GENERATOR}" "${CI_EXTRAS}" "${CI_FILE}" )
 elseif( WIN32 )
 	CreateBuildDirectory( "SDK.VS2010"      "Visual Studio 10 2010" ""     "${SOLUTION_FILE}" )
