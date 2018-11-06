@@ -19,13 +19,14 @@ cmake_minimum_required( VERSION 3.12 FATAL_ERROR )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 include(AutomatedBuild)
 include(FOClassicVersion)
-include(FormatSource)
 
 set( SOLUTION_FILE "FOClassic.sln" )
 
 GetProjectVersion()
 FOClassicVersion()
 DetectCI()
+
+PrepareFiles()
 
 if( CI )
 	message( STATUS "CI: ${CI} (CMake v${CMAKE_VERSION})" )
@@ -37,10 +38,6 @@ elseif( WIN32 )
 	CreateBuildDirectory( "SDK.VS2010"      "Visual Studio 10 2010" ""     "${SOLUTION_FILE}" )
 	CreateBuildDirectory( "SDK.VS2017.v100" "Visual Studio 15 2017" "v100" "${SOLUTION_FILE}" )
 	CreateBuildDirectory( "SDK.VS2017"      "Visual Studio 15 2017" ""     "${SOLUTION_FILE}" )
-endif()
-
-if( NOT NO_FORMAT )
-	FormatSource()
 endif()
 
 if( NOT NO_BUILD )

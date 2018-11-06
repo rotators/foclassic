@@ -51,6 +51,69 @@ function( DetectCI )
 
 endfunction()
 
+# Prepare repository files
+function( PrepareFiles )
+
+	set( uncrustemp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
+	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
+
+	execute_process(
+		COMMAND git ls-files
+		OUTPUT_VARIABLE ls
+	)
+	string( REGEX REPLACE "\n" ";" ls "${ls}" )
+
+	foreach( file IN LISTS ls )
+
+		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
+			continue()
+		endif()
+
+		get_filename_component( ext "${file}" EXT )
+		string( REGEX REPLACE "\\." "" ext "${ext}" )
+		if( ext STREQUAL "" )
+			continue()
+		endif()
+
+		set( mtime FALSE )
+		set( format FALSE )
+
+		if( "${ext}" MATCHES "^[Hh]$" OR "${ext}" MATCHES "^[Cc][Pp][Pp]$" OR "${ext}" MATCHES "^[Ff][Oo][Ss]$" )
+			if( NOT NO_FORMAT )
+				set( format TRUE )
+			endif()
+		endif()
+		if( CI )
+			set( mtime TRUE )
+		endif()
+
+		if( mtime OR format )
+			file( TO_NATIVE_PATH "${file}" file_native )
+			message( STATUS "Processing ${file_native}" )
+		endif()
+
+		if( format )
+			execute_process(
+				COMMAND "${uncrustify}{CMAKE_EXECUTABLE_SUFFIX}" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${uncrustemp}" -q --if-changed
+			)
+			if( EXISTS "${uncrustemp}" )
+				message( STATUS "           FormatSource prevails" )
+				file( RENAME "${uncrustemp}" "${file}" )
+			endif()
+		endif()
+
+		if( mtime )
+			execute_process(
+				COMMAND git log --pretty=format:%ct -1 "HEAD" -- "${file}"
+				OUTPUT_VARIABLE timestamp
+			)
+			message( STATUS "           Timestamp: ${timestamp}" )
+			#execute_process( COMMAND touch -d @${timestamp} "${file}" )
+		endif()
+
+	endforeach()
+endfunction()
+
 # Prepare build directory
 function( CreateBuildDirectory dir generator toolset file )
 
@@ -80,28 +143,6 @@ function( CreateBuildDirectory dir generator toolset file )
 		list( APPEND BUILD_DIRS "${dir}" )
 		set( BUILD_DIRS "${BUILD_DIRS}" PARENT_SCOPE )
 	endif()
-
-endfunction()
-
-function( RestoreModTime )
-
-	message( STATUS "Restoring modification time" )
-	execute_process(
-		COMMAND git ls-files
-		OUTPUT_VARIABLE ls
-	)
-	string( REGEX REPLACE "\n" ";" ls "${ls}" )
-	foreach( file IN LISTS ls )
-		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
-			continue()
-		endif()
-		execute_process(
-			COMMAND git log --pretty=format:%ct -1 "HEAD" -- "${file}"
-			OUTPUT_VARIABLE timestamp
-		)
-		message( STATUS "${file} -> ${timestamp}" )
-		execute_process( COMMAND touch -d @${timestamp} "${file}" )
-	endforeach()
 
 endfunction()
 
