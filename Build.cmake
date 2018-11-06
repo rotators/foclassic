@@ -28,7 +28,7 @@ FOClassicVersion()
 DetectCI()
 
 if( CI )
-	message( STATUS "CI: ${CI} (CMake x${CI_ARCH}, v${CMAKE_VERSION}" )
+	message( STATUS "CI: ${CI} (CMake v${CMAKE_VERSION}" )
 	message( STATUS )
 	CreateBuildDirectory( "SDK" "${CI_GENERATOR}" "${CI_EXTRAS}" "${CI_FILE}" )
 elseif( WIN32 )
