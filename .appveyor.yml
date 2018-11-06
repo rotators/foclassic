@@ -11,6 +11,7 @@ configuration:
  - Release
 
 clone_depth: 50
+clone_folder: C:\FOClassic
 
 matrix:
  allow_failures:
@@ -21,15 +22,5 @@ install:
  - git submodule update --init --recursive
  - set
 
-before_build:
- - md C:\FOClassic
- - cd C:\FOClassic
- - if "%PLATFORM%" == "Win32" set VSArch=
- - if "%PLATFORM%" == "x64"   set VSArch= Win64
- - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" set generator="Visual Studio 10 2010%VSArch%"
- - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" set generator="Visual Studio 15 2017%VSArch%"
- - cmake -G "%generator%" %APPVEYOR_BUILD_FOLDER%
-
-build:
- project: FOClassic.sln
- parallel: true
+build_script:
+ - cmake -P Build.cmake

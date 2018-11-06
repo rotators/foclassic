@@ -18,40 +18,27 @@ function( GetProjectVersion )
 endfunction()
 
 # Prepare build 
-function( CreateBuildDirectory compiler file )
-
-	if( ${compiler} STREQUAL "VS2010" )
-		set( dir SDK.VS2010 )
-		set( generator "Visual Studio 10 2010" )
-	elseif( ${compiler} STREQUAL "VS2017.v100" )
-		set( dir SDK.VS2017.v100 )
-		set( generator "Visual Studio 15 2017" )
-		set( extras "-Tv100" )
-	elseif( ${compiler} STREQUAL "VS2017" )
-		set( dir SDK.VS2017 )
-		set( generator "Visual Studio 15 2017" )
-	else()
-		message( FATAL_ERROR "Unknown compiler '${compiler}'" )
-	endif()
+function( CreateBuildDirectory dir generator extras file )
 
 	# use full path
-	set( dir "${CMAKE_CURRENT_LIST_DIR}/${dir}" )
+	file( TO_CMAKE_PATH "${CMAKE_CURRENT_LIST_DIR}/${dir}" dir )
+	file( TO_NATIVE_PATH "${dir}" dir_native )
 
-	message( STATUS "Checking ${dir}" )
+	message( STATUS "Checking ${dir_native}" )
 	if( NOT EXISTS "${dir}" )
-		message( STATUS "Creating ${dir}" )
+		message( STATUS "Creating ${dir_native}" )
 		file( MAKE_DIRECTORY "${dir}" )
 	endif()
 
 	if( NOT EXISTS "${dir}/${file}" )
 		message( STATUS "Starting generator (${generator})" )
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${extras} ${CMAKE_CURRENT_LIST_DIR}
-			WORKING_DIRECTORY ${dir}
+			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${extras} "${CMAKE_CURRENT_LIST_DIR}"
+			WORKING_DIRECTORY "${dir}"
 		)
 	endif()
 
-	if( EXISTS ${dir}/${file} )
+	if( EXISTS "${dir}/${file}" )
 		list( APPEND BUILD_DIRS "${dir}" )
 		set( BUILD_DIRS "${BUILD_DIRS}" PARENT_SCOPE )
 	endif()
@@ -60,9 +47,9 @@ endfunction()
 
 function( RunAllBuilds )
 
-	foreach( dir ${BUILD_DIRS} )
+	foreach( dir IN LISTS BUILD_DIRS )
 		message( STATUS "Starting build (${dir})" )
-		execute_process( COMMAND ${CMAKE_COMMAND} --build ${dir} --config Release )
+		execute_process( COMMAND ${CMAKE_COMMAND} --build "${dir}" --config Release )
 	endforeach()
 
 endfunction()
@@ -75,7 +62,7 @@ function( ZipAllBuilds )
 
 	string( TIMESTAMP ts "%Y-%m-%d %H:%M:%S" )
 
-	foreach( dir ${BUILD_DIRS} )
+	foreach( dir IN LISTS BUILD_DIRS )
 		set( root "FOClassic-v${FOCLASSIC_VERSION}" )
 		set( sum  "sha256" )
 
@@ -84,12 +71,14 @@ function( ZipAllBuilds )
 		set( inner_sum "${zip_dir}/CHECKSUM.${sum}" )
 		set( outer_sum "${zip_dir}.${sum}" )
 
+		file( TO_NATIVE_PATH "${zip_file}" zip_file_native )
+
 		if( NOT EXISTS "${zip_dir}" )
-			message( STATUS "Skipped ${zip_file}" )
+			message( STATUS "Skipped ${zip_file_native}" )
 			continue()
 		endif()
 
-		message( STATUS "Creating ${zip_file}" )
+		message( STATUS "Creating ${zip_file_native}" )
 
 		file( REMOVE "${zip_file}" )
 		file( REMOVE "${inner_sum}" )
