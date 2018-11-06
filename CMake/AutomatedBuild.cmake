@@ -188,7 +188,7 @@ function( ZipAllBuilds )
 		)
 
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${root}.zip
+			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${root}${CI_ZIP_SUFFIX}.zip
 			WORKING_DIRECTORY ${dir}
 			OUTPUT_FILE ${outer_sum}
 		)
