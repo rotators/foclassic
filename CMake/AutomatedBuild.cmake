@@ -1,3 +1,5 @@
+# extract version from CMakeLists
+# requires specific usage of project() command
 function( GetProjectVersion )
 
 	set( cmakelists "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" )
@@ -17,8 +19,38 @@ function( GetProjectVersion )
 
 endfunction()
 
-# Prepare build 
-function( CreateBuildDirectory dir generator extras file )
+# CI detection
+function( DetectCI )
+
+	if( DEFINED ENV{CI} )
+		if( CMAKE_SIZEOF_VOID_P EQUAL 4 )
+			set( CI_ARCH 32 )
+		elseif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+			set( CI_ARCH 64 )
+		else()
+			message( FATAL_ERROR "Unknown architecture (CMAKE_SIZEOF_VOID_P=${CMAKE_SIZEOF_VOID_P})" )
+		endif()
+
+		if( DEFINED ENV{APPVEYOR_BUILD_WORKER_IMAGE} )
+			set( CI "AppVeyor" PARENT_SCOPE )
+			set( CI_FILE "${SOLUTION_FILE}" PARENT_SCOPE )
+
+			if( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2013" )
+				set( CI_GENERATOR "Visual Studio 10 2010" PARENT_SCOPE )
+			elseif( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2017" )
+				set( CI_GENERATOR "Visual Studio 15 2017" PARENT_SCOPE )
+			else()
+				message( FATAL_ERROR "Unknown AppVeyor image ('$ENV{APPVEYOR_BUILD_WORKER_IMAGE}')" )
+			endif()
+		else()
+			message( FATAL_ERROR "Unknown CI" )
+		endif()
+	endif()
+
+endfunction()
+
+# Prepare build directory
+function( CreateBuildDirectory dir generator toolset file )
 
 	# use full path
 	file( TO_CMAKE_PATH "${CMAKE_CURRENT_LIST_DIR}/${dir}" dir )
@@ -31,9 +63,13 @@ function( CreateBuildDirectory dir generator extras file )
 	endif()
 
 	if( NOT EXISTS "${dir}/${file}" )
-		message( STATUS "Starting generator (${generator})" )
+		if( toolset )
+			set( info ", toolset: ${toolset}" )
+			set( toolset -T ${toolset} )
+		endif()
+		message( STATUS "Starting generator (${generator}${info})" )
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${extras} "${CMAKE_CURRENT_LIST_DIR}"
+			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${toolset} "${CMAKE_CURRENT_LIST_DIR}"
 			WORKING_DIRECTORY "${dir}"
 		)
 	endif()
@@ -48,8 +84,16 @@ endfunction()
 function( RunAllBuilds )
 
 	foreach( dir IN LISTS BUILD_DIRS )
-		message( STATUS "Starting build (${dir})" )
-		execute_process( COMMAND ${CMAKE_COMMAND} --build "${dir}" --config Release )
+		file( TO_NATIVE_PATH "${dir}" dir_native )
+		message( STATUS "Starting build (${dir_native})" )
+		execute_process(
+			COMMAND ${CMAKE_COMMAND} --build "${dir}" --config Release
+			RESULT_VARIABLE result
+		)
+		if( NOT result EQUAL 0 )
+			list( APPEND BUILD_FAIL "${dir}" )
+			set( BUILD_FAIL "${BUILD_FAIL}" PARENT_SCOPE )
+		endif()
 	endforeach()
 
 endfunction()
@@ -73,8 +117,13 @@ function( ZipAllBuilds )
 
 		file( TO_NATIVE_PATH "${zip_file}" zip_file_native )
 
+		if( dir IN_LIST BUILD_FAIL )
+			message( STATUS "Skipped ${zip_file_native} (build error)" )
+			continue()
+		endif()
+
 		if( NOT EXISTS "${zip_dir}" )
-			message( STATUS "Skipped ${zip_file_native}" )
+			message( STATUS "Skipped ${zip_file_native} (release directory not found)" )
 			continue()
 		endif()
 

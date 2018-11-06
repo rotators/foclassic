@@ -15,7 +15,7 @@ add_subdirectory( Shared )
 ##
 
 # libraries used by all applications
-set( FOCLASSIC_LIBS AngelScript AngelScriptPreprocessor DatFile Shared )
+set( FOCLASSIC_LIBS angelscript angelscript-preprocessor DatFile Shared )
 
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 

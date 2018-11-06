@@ -3,8 +3,8 @@
 ## TODO (VS2017) ac_callfunc* not handled correctly (LNK4221)
 ##
 
-add_library( AngelScript STATIC "" )
-target_sources( AngelScript
+add_library( angelscript STATIC "" )
+target_sources( angelscript
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/angelscript.h
 	PRIVATE
@@ -78,26 +78,26 @@ target_sources( AngelScript
 		as_variablescope.cpp
 		as_variablescope.h
 )
-target_compile_definitions( AngelScript PUBLIC AS_NO_THREADS )
-target_include_directories( AngelScript PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
-target_link_libraries( AngelScript Threads::Threads )
-set_property( TARGET AngelScript PROPERTY FOLDER "AngelScript" )
+target_compile_definitions( angelscript PUBLIC AS_NO_THREADS )
+target_include_directories( angelscript PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
+target_link_libraries( angelscript Threads::Threads )
+set_property( TARGET angelscript PROPERTY FOLDER "Libs" )
 
 ##
 ## AngelScriptPreprocessor
 ##
 
-add_library( AngelScriptPreprocessor STATIC "" )
-target_sources( AngelScriptPreprocessor
+add_library( angelscript-preprocessor STATIC "" )
+target_sources( angelscript-preprocessor
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/preprocessor.h
 	PRIVATE
 		${CMAKE_CURRENT_LIST_FILE}
 		preprocessor.cpp
 )
-target_include_directories( AngelScriptPreprocessor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
-target_link_libraries( AngelScriptPreprocessor Threads::Threads )
-set_property( TARGET AngelScriptPreprocessor PROPERTY FOLDER "AngelScript" )
+target_include_directories( angelscript-preprocessor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
+target_link_libraries( angelscript-preprocessor Threads::Threads )
+set_property( TARGET angelscript-preprocessor PROPERTY FOLDER "Libs" )
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )

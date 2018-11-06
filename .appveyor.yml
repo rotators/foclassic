@@ -1,26 +1,31 @@
+##
+## AppVeyor
+## https://www.appveyor.com/
+## https://ci.appveyor.com/project/rotators/foclassic/
+##
+
+# https://www.appveyor.com/docs/appveyor-yml/
+# https://www.appveyor.com/docs/build-configuration/#build-pipeline
+
 version: "{build}"
 
+# VS 2013 image = VS2010 build
 image:
- - Visual Studio 2013 # 2010 in disguise
+ - Visual Studio 2013
  - Visual Studio 2017
 
 platform:
  - Win32
 
-configuration:
- - Release
-
-clone_depth: 50
-clone_folder: C:\FOClassic
-
 matrix:
  allow_failures:
   - image: Visual Studio 2017
 
+clone_depth: 50
+clone_folder: C:\FOClassic
+
 install:
- - cd %APPVEYOR_BUILD_FOLDER%
  - git submodule update --init --recursive
- - set
 
 build_script:
  - cmake -P Build.cmake

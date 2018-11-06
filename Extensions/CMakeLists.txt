@@ -55,7 +55,7 @@ add_custom_target( Extensions
 		${EXTENSIONS_HEADER_FILE}
 )
 # prettify IDE
-set_property( TARGET Extensions PROPERTY FOLDER CMake )
+set_property( TARGET Extensions PROPERTY FOLDER Configuration )
 source_group( "CMake" REGULAR_EXPRESSION "^${ROOT_CMAKE_DIR}/.+" )
 
 ##

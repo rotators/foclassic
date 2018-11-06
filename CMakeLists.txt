@@ -141,6 +141,7 @@ add_custom_target( Configuration
 	SOURCES
 		${ROOT_CMAKE_FILES}
 		${ROOT_CMAKE_CMAKE_FILES}
+		.appveyor.yml
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
 
@@ -149,5 +150,5 @@ source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_
 ##
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake/Internal" )
-set_property( TARGET Configuration PROPERTY FOLDER CMake )
+set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Configuration/CMake" )
+set_property( TARGET Configuration PROPERTY FOLDER Configuration )
