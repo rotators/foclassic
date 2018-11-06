@@ -42,6 +42,10 @@ if( NOT NO_FORMAT )
 	FormatSource()
 endif()
 
+if( CI )
+	RestoreModTime()
+endif()
+
 if( NOT NO_BUILD )
 	RunAllBuilds()
 endif()

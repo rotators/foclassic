@@ -36,10 +36,10 @@ function( DetectCI )
 			set( CI_FILE "${SOLUTION_FILE}" PARENT_SCOPE )
 
 			if( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2013" )
-				set( CI_GENERATOR_SHORT "VS2010" )
+				set( CI_GENERATOR_SHORT "vs2010" PARENT_SCOPE )
 				set( CI_GENERATOR "Visual Studio 10 2010" PARENT_SCOPE )
 			elseif( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2017" )
-				set( CI_GENERATOR_SHORT "VS2017" )
+				set( CI_GENERATOR_SHORT "vs2017" PARENT_SCOPE )
 				set( CI_GENERATOR "Visual Studio 15 2017" PARENT_SCOPE )
 			else()
 				message( FATAL_ERROR "Unknown AppVeyor image ('$ENV{APPVEYOR_BUILD_WORKER_IMAGE}')" )
@@ -83,6 +83,28 @@ function( CreateBuildDirectory dir generator toolset file )
 
 endfunction()
 
+function( RestoreModTime )
+
+	message( STATUS "Restoring modification time" )
+	execute_process(
+		COMMAND git ls-files
+		OUTPUT_VARIABLE ls
+	)
+	string( REGEX REPLACE "\n" ";" ls "${ls}" )
+	foreach( file IN LISTS ls )
+		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
+			continue()
+		endif()
+		execute_process(
+			COMMAND git log --pretty=format:%ct -1 "HEAD" -- "${file}"
+			OUTPUT_VARIABLE timestamp
+		)
+		message( STATUS "${file} -> ${timestamp}" )
+		execute_process( COMMAND touch -d @${timestamp} "${file}" )
+	endforeach()
+
+endfunction()
+
 function( RunAllBuilds )
 
 	foreach( dir IN LISTS BUILD_DIRS )
@@ -109,13 +131,13 @@ function( ZipAllBuilds )
 	string( TIMESTAMP ts "%Y-%m-%d %H:%M:%S" )
 
 	foreach( dir IN LISTS BUILD_DIRS )
-		set( root "FOClassic-v${FOCLASSIC_VERSION}${CI_ZIP_SUFFIX}" )
+		set( root "FOClassic-v${FOCLASSIC_VERSION}" )
 		set( sum  "sha256" )
 
 		set( zip_dir   "${dir}/${root}" )
-		set( zip_file  "${zip_dir}.zip" )
+		set( zip_file  "${zip_dir}${CI_ZIP_SUFFIX}.zip" )
 		set( inner_sum "${zip_dir}/CHECKSUM.${sum}" )
-		set( outer_sum "${zip_dir}.${sum}" )
+		set( outer_sum "${zip_dir}${CI_ZIP_SUFFIX}.${sum}" )
 
 		file( TO_NATIVE_PATH "${zip_file}" zip_file_native )
 
