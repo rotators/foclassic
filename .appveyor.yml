@@ -1,7 +1,7 @@
 version: "{build}"
 
 image:
- - Visual Studio 2010
+ - Visual Studio 2013 # 2010 in disguise
  - Visual Studio 2017
 
 platform:
@@ -26,7 +26,7 @@ before_build:
  - cd C:\FOClassic
  - if "%PLATFORM%" == "Win32" set VSArch=
  - if "%PLATFORM%" == "x64"   set VSArch= Win64
- - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2010" set generator="Visual Studio 10 2010%VSArch%"
+ - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" set generator="Visual Studio 10 2010%VSArch%"
  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" set generator="Visual Studio 15 2017%VSArch%"
  - cmake -G "%generator%" %APPVEYOR_BUILD_FOLDER%
 
