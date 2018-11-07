@@ -5,7 +5,7 @@
 | Platform | Main branch | Development branch |
 |----------|:-----------:|:------------------:|
 | Windows  | [![Build status](https://ci.appveyor.com/api/projects/status/wi1iio98h45iw3nj/branch/master?svg=true)](https://ci.appveyor.com/project/rotators/foclassic/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/wi1iio98h45iw3nj/branch/dev?svg=true)](https://ci.appveyor.com/project/rotators/foclassic/branch/dev) |
-|A|B|C|
+
 ## Requirements
 
 * Visual Studio 2010 (required)  
