@@ -23,6 +23,7 @@ endfunction()
 function( DetectCI )
 
 	if( DEFINED ENV{CI} )
+		# TODO how to find x32/x64 without generator step?
 		#if( CMAKE_SIZEOF_VOID_P EQUAL 4 )
 		#	set( CI_ARCH 32 )
 		#elseif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
@@ -63,8 +64,10 @@ function( PrepareFiles )
 	set( uncrustemp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
 	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
 
+	# in case of cancelled FormatSource runs
 	file( REMOVE "${uncrustemp}" )
 
+	# get list of repository files
 	execute_process(
 		COMMAND git ls-files
 		OUTPUT_VARIABLE ls
@@ -74,11 +77,8 @@ function( PrepareFiles )
 	foreach( file IN LISTS ls )
 		file( TO_CMAKE_PATH "${file}" file )
 
+		# directories which shouldnt't be processed
 		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
-			continue()
-		endif()
-
-		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/script" )
 			continue()
 		endif()
 
@@ -91,11 +91,20 @@ function( PrepareFiles )
 		set( mtime FALSE )
 		set( format FALSE )
 
+		# mark source files for formatting
+		# all files must processed
 		if( "${ext}" MATCHES "^[Hh]$" OR "${ext}" MATCHES "^[Cc][Pp][Pp]$" OR "${ext}" MATCHES "^[Ff][Oo][Ss]$" )
 			if( NOT NO_FORMAT )
 				set( format TRUE )
 			endif()
 		endif()
+		# unmark non-addon angelscript sources
+		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/script" )
+			set( format FALSE)
+		endif()
+
+		# restore modification time when running on CI
+		# required for released files which contain timestamp
 		if( CI )
 			set( mtime TRUE )
 		endif()
@@ -181,6 +190,7 @@ function( ZipAllBuilds )
 		GetProjectInfo()
 	endif()
 
+	# synch mtime inside packages
 	string( TIMESTAMP ts "%Y-%m-%d %H:%M:%S" )
 
 	foreach( dir IN LISTS BUILD_DIRS )
@@ -210,6 +220,7 @@ function( ZipAllBuilds )
 		file( REMOVE "${inner_sum}" )
 		file( REMOVE "${outer_sum}" )
 
+		# it could be way simpler, but we want checksum to list files in very specific order
 		file( GLOB         core       LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/* )
 		file( GLOB         core_md    LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/*.md )
 		file( GLOB_RECURSE cmake      LIST_DIRECTORIES false RELATIVE ${zip_dir} ${zip_dir}/CMake/* )
@@ -226,27 +237,37 @@ function( ZipAllBuilds )
 
 		set( files ${core} ${tools} ${cmake} ${headers} ${extensions} ${core_md} )
 
+		# inner sum is a checksum of files inside package
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${files}
 			WORKING_DIRECTORY ${zip_dir}
 			OUTPUT_FILE ${inner_sum}
 		)
 
-		set( files "${files};CHECKSUM.${sum}" )
+		# include inner checksum in release files list
+		list( APPEND files "${inner_sum}" )
 
+		# cmake is used for preparing release package
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E tar cfv ${zip_file} --format=zip --mtime=${ts} ${files}
 			WORKING_DIRECTORY ${zip_dir}
 			OUTPUT_QUIET
 		)
+		file( REMOVE "${inner_sum}" )
 
+		# outer sum is a checksum of release package
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} -E ${sum}sum ${root}${CI_ZIP_SUFFIX}.zip
 			WORKING_DIRECTORY ${dir}
 			OUTPUT_FILE ${outer_sum}
 		)
 
-		file( REMOVE "${inner_sum}" )
+		if( CI )
+			# copy package and outer sum to main dir
+			# simplifies stripping build dir from CI artifacts
+			file( RENAME "${outer_sum}" "${CMAKE_CURRENT_LIST_DIR}/${root}{CI_ZIP_SUFFIX}.${sum}" )
+			file( RENAME "${zip_file}"  "${CMAKE_CURRENT_LIST_DIR}/${root}{CI_ZIP_SUFFIX}.zip" )
+		endif()
 	endforeach()
 
 endfunction()

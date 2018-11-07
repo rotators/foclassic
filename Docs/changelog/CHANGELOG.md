@@ -66,7 +66,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
         - `player_getaccess()` is not called
         - custom access level (`access > ACCESS_ADMIN`) are not allowed to use `RunServerScript()`
 - additional info
-    - project has been integrated with [AppVeyor](https://www.appveyor.com/) service, and configured to preparere (pre)release packages after succesful compilation; that allows anyone interested to use development version of each and all applications without waiting for official releases - which, from this version, will use binaries compiled by external services
+    - project has been integrated with [AppVeyor](https://www.appveyor.com/) service, and configured to prepare (pre)release packages after succesful compilation; that allows anyone interested to use development version of each and all applications without waiting for official releases - which, from this version, will use binaries compiled by external services
 	  https://ci.appveyor.com/project/rotators/foclassic/
 
 
