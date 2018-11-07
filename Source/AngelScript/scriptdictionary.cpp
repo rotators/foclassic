@@ -34,13 +34,13 @@ ScriptDictionary::~ScriptDictionary()
 void ScriptDictionary::AddRef() const
 {
     // We need to clear the GC flag
-    refCount = ( refCount & 0x7FFFFFFF ) + 1;
+    refCount = (refCount & 0x7FFFFFFF) + 1;
 }
 
 void ScriptDictionary::Release() const
 {
     // We need to clear the GC flag
-    refCount = ( refCount & 0x7FFFFFFF ) - 1;
+    refCount = (refCount & 0x7FFFFFFF) - 1;
     if( refCount == 0 )
         delete this;
 }
@@ -57,13 +57,13 @@ void ScriptDictionary::SetGCFlag()
 
 bool ScriptDictionary::GetGCFlag()
 {
-    return ( refCount & 0x80000000 ) ? true : false;
+    return (refCount & 0x80000000) ? true : false;
 }
 
 void ScriptDictionary::EnumReferences( asIScriptEngine* engine )
 {
     // Call the gc enum callback for each of the objects
-    map< string, valueStruct >::iterator it;
+    map<string, valueStruct>::iterator it;
     for( it = dict.begin(); it != dict.end(); it++ )
     {
         if( it->second.typeId & asTYPEID_MASK_OBJECT )
@@ -84,8 +84,8 @@ void ScriptDictionary::Assign( const ScriptDictionary& other )
     DeleteAll();
 
     // Do a shallow copy of the dictionary
-    ScriptString*                              tmp_str = NULL;
-    map< string, valueStruct >::const_iterator it;
+    ScriptString*                            tmp_str = NULL;
+    map<string, valueStruct>::const_iterator it;
     for( it = other.dict.begin(); it != other.dict.end(); it++ )
     {
         if( !tmp_str )
@@ -94,11 +94,11 @@ void ScriptDictionary::Assign( const ScriptDictionary& other )
             *tmp_str = it->first;
 
         if( it->second.typeId & asTYPEID_OBJHANDLE )
-            Set( *tmp_str, (void*) &it->second.valueObj, it->second.typeId );
+            Set( *tmp_str, (void*)&it->second.valueObj, it->second.typeId );
         else if( it->second.typeId & asTYPEID_MASK_OBJECT )
-            Set( *tmp_str, (void*) it->second.valueObj, it->second.typeId );
+            Set( *tmp_str, (void*)it->second.valueObj, it->second.typeId );
         else
-            Set( *tmp_str, (void*) &it->second.valueInt, it->second.typeId );
+            Set( *tmp_str, (void*)&it->second.valueInt, it->second.typeId );
     }
     if( tmp_str )
         tmp_str->Release();
@@ -111,7 +111,7 @@ void ScriptDictionary::Set( const ScriptString& key, void* value, int typeId )
     if( typeId & asTYPEID_OBJHANDLE )
     {
         // We're receiving a reference to the handle, so we need to dereference it
-        valStruct.valueObj = *(void**) value;
+        valStruct.valueObj = *(void**)value;
         engine->AddRefScriptObject( valStruct.valueObj, typeId );
     }
     else if( typeId & asTYPEID_MASK_OBJECT )
@@ -127,7 +127,7 @@ void ScriptDictionary::Set( const ScriptString& key, void* value, int typeId )
         memcpy( &valStruct.valueInt, value, size );
     }
 
-    map< string, valueStruct >::iterator it;
+    map<string, valueStruct>::iterator it;
     it = dict.find( key.c_std_str() );
     if( it != dict.end() )
     {
@@ -138,7 +138,7 @@ void ScriptDictionary::Set( const ScriptString& key, void* value, int typeId )
     }
     else
     {
-        dict.insert( map< string, valueStruct >::value_type( key.c_std_str(), valStruct ) );
+        dict.insert( map<string, valueStruct>::value_type( key.c_std_str(), valStruct ) );
     }
 }
 
@@ -164,7 +164,7 @@ void ScriptDictionary::Set( const ScriptString& key, double& value )
 // Returns true if the value was successfully retrieved
 bool ScriptDictionary::Get( const ScriptString& key, void* value, int typeId ) const
 {
-    map< string, valueStruct >::const_iterator it;
+    map<string, valueStruct>::const_iterator it;
     it = dict.find( key.c_std_str() );
     if( it != dict.end() )
     {
@@ -173,11 +173,11 @@ bool ScriptDictionary::Get( const ScriptString& key, void* value, int typeId ) c
         {
             // A handle can be retrieved if the stored type is a handle of same or compatible type
             // or if the stored type is an object that implements the interface that the handle refer to.
-            if( ( it->second.typeId & asTYPEID_MASK_OBJECT ) &&
+            if( (it->second.typeId & asTYPEID_MASK_OBJECT) &&
                 engine->IsHandleCompatibleWithObject( it->second.valueObj, it->second.typeId, typeId ) )
             {
                 engine->AddRefScriptObject( it->second.valueObj, it->second.typeId );
-                *(void**) value = it->second.valueObj;
+                *(void**)value = it->second.valueObj;
 
                 return true;
             }
@@ -209,12 +209,12 @@ bool ScriptDictionary::Get( const ScriptString& key, void* value, int typeId ) c
             // We know all numbers are stored as either int64 or double, since we register overloaded functions for those
             if( it->second.typeId == asTYPEID_INT64 && typeId == asTYPEID_DOUBLE )
             {
-                *(double*) value = double(it->second.valueInt);
+                *(double*)value = double(it->second.valueInt);
                 return true;
             }
             else if( it->second.typeId == asTYPEID_DOUBLE && typeId == asTYPEID_INT64 )
             {
-                *(asINT64*) value = asINT64( it->second.valueFlt );
+                *(asINT64*)value = asINT64( it->second.valueFlt );
                 return true;
             }
         }
@@ -239,7 +239,7 @@ bool ScriptDictionary::Get( const ScriptString& key, double& value ) const
 
 bool ScriptDictionary::Exists( const ScriptString& key ) const
 {
-    map< string, valueStruct >::const_iterator it;
+    map<string, valueStruct>::const_iterator it;
     it = dict.find( key.c_std_str() );
     if( it != dict.end() )
         return true;
@@ -262,7 +262,7 @@ asUINT ScriptDictionary::GetSize() const
 
 void ScriptDictionary::Delete( const ScriptString& key )
 {
-    map< string, valueStruct >::iterator it;
+    map<string, valueStruct>::iterator it;
     it = dict.find( key.c_std_str() );
     if( it != dict.end() )
     {
@@ -274,7 +274,7 @@ void ScriptDictionary::Delete( const ScriptString& key )
 
 void ScriptDictionary::DeleteAll()
 {
-    map< string, valueStruct >::iterator it;
+    map<string, valueStruct>::iterator it;
     for( it = dict.begin(); it != dict.end(); it++ )
         FreeValue( it->second );
 
@@ -286,17 +286,17 @@ asUINT ScriptDictionary::Keys( ScriptArray* keys )
     if( keys && !dict.empty() )
     {
         asUINT i = keys->GetSize();
-        keys->Resize( i + (asUINT) dict.size() );
+        keys->Resize( i + (asUINT)dict.size() );
 
-        map< string, valueStruct >::iterator it, end;
+        map<string, valueStruct>::iterator it, end;
         for( it = dict.begin(), end = dict.end(); it != end; ++it )
         {
-            ScriptString** p = (ScriptString**) keys->At( i );
-            *p = new ScriptString( ( *it ).first );
+            ScriptString** p = (ScriptString**)keys->At( i );
+            *p = new ScriptString( (*it).first );
             i++;
         }
     }
-    return (unsigned int) dict.size();
+    return (unsigned int)dict.size();
 }
 
 void ScriptDictionary::FreeValue( valueStruct& value )
@@ -315,7 +315,7 @@ void ScriptDictionary::FreeValue( valueStruct& value )
 
 void ScriptDictionaryFactory_Generic( asIScriptGeneric* gen )
 {
-    *(ScriptDictionary**) gen->GetAddressOfReturnLocation() = new ScriptDictionary( gen->GetEngine() );
+    *(ScriptDictionary**)gen->GetAddressOfReturnLocation() = new ScriptDictionary( gen->GetEngine() );
 }
 
 // --------------------------------------------------------------------------
@@ -335,7 +335,7 @@ void RegisterScriptDictionary_Native( asIScriptEngine* engine )
 {
     int r;
 
-    r = engine->RegisterObjectType( "dictionary", sizeof( ScriptDictionary ), asOBJ_REF | asOBJ_GC );
+    r = engine->RegisterObjectType( "dictionary", sizeof(ScriptDictionary), asOBJ_REF | asOBJ_GC );
     assert( r >= 0 );
     // Use the generic interface to construct the object since we need the engine pointer, we could also have retrieved the engine pointer from the active context
     r = engine->RegisterObjectBehaviour( "dictionary", asBEHAVE_FACTORY, "dictionary@ f()", asFUNCTION( ScriptDictionaryFactory_Generic ), asCALL_GENERIC );
@@ -345,22 +345,22 @@ void RegisterScriptDictionary_Native( asIScriptEngine* engine )
     r = engine->RegisterObjectBehaviour( "dictionary", asBEHAVE_RELEASE, "void f()", asMETHOD( ScriptDictionary, Release ), asCALL_THISCALL );
     assert( r >= 0 );
 
-    r = engine->RegisterObjectMethod( "dictionary", "dictionary &opAssign(const dictionary &in)", asMETHODPR( ScriptDictionary, operator=, ( const ScriptDictionary & ), ScriptDictionary & ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "dictionary", "dictionary &opAssign(const dictionary &in)", asMETHODPR( ScriptDictionary, operator=, (const ScriptDictionary &), ScriptDictionary& ), asCALL_THISCALL );
     assert( r >= 0 );
 
-    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, ?&in)", asMETHODPR( ScriptDictionary, Set, ( const ScriptString &, void*, int ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, ?&in)", asMETHODPR( ScriptDictionary, Set, (const ScriptString&, void*, int), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, ?&out) const", asMETHODPR( ScriptDictionary, Get, ( const ScriptString &, void*, int ) const, bool ), asCALL_THISCALL );
-    assert( r >= 0 );
-
-    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, int64&in)", asMETHODPR( ScriptDictionary, Set, ( const ScriptString &, asINT64 & ), void ), asCALL_THISCALL );
-    assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, int64&out) const", asMETHODPR( ScriptDictionary, Get, ( const ScriptString &, asINT64 & ) const, bool ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, ?&out) const", asMETHODPR( ScriptDictionary, Get, (const ScriptString&, void*, int) const, bool ), asCALL_THISCALL );
     assert( r >= 0 );
 
-    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, double&in)", asMETHODPR( ScriptDictionary, Set, ( const ScriptString &, double& ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, int64&in)", asMETHODPR( ScriptDictionary, Set, (const ScriptString&, asINT64 &), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, double&out) const", asMETHODPR( ScriptDictionary, Get, ( const ScriptString &, double& ) const, bool ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, int64&out) const", asMETHODPR( ScriptDictionary, Get, (const ScriptString&, asINT64 &) const, bool ), asCALL_THISCALL );
+    assert( r >= 0 );
+
+    r = engine->RegisterObjectMethod( "dictionary", "void set(const string &in, double&in)", asMETHODPR( ScriptDictionary, Set, (const ScriptString&, double&), void ), asCALL_THISCALL );
+    assert( r >= 0 );
+    r = engine->RegisterObjectMethod( "dictionary", "bool get(const string &in, double&out) const", asMETHODPR( ScriptDictionary, Get, (const ScriptString&, double&) const, bool ), asCALL_THISCALL );
     assert( r >= 0 );
 
     r = engine->RegisterObjectMethod( "dictionary", "bool exists(const string &in) const", asMETHOD( ScriptDictionary, Exists ), asCALL_THISCALL );

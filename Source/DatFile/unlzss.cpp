@@ -29,84 +29,102 @@
 #include "unlzss.h"
 
 
-int CunLZSS::getC() {
-	if (inBufPtr >= inBufSize)
-		return -1;
-	return inBuf [inBufPtr++];
+int CunLZSS::getC()
+{
+    if( inBufPtr >= inBufSize )
+        return -1;
+    return inBuf[inBufPtr++];
 }
 
-void CunLZSS::putC (unsigned char c) {
-	if (outBufPtr < MAX_UNPACK_SIZE) {
-	// this condition must always be true, but who known for sure
-		outBuf [outBufPtr++] = c;
-		unpackedLen++;
-	}
+void CunLZSS::putC( unsigned char c )
+{
+    if( outBufPtr < MAX_UNPACK_SIZE )
+    {
+        // this condition must always be true, but who known for sure
+        outBuf[outBufPtr++] = c;
+        unpackedLen++;
+    }
 }
 
-void CunLZSS::decode() {
-	long command,
-		current_position,
-		match_position,
-		match_length;
-	int c, i;
+void CunLZSS::decode()
+{
+    long command,
+         current_position,
+         match_position,
+         match_length;
+    int c, i;
 
-	command = 0;
-	current_position = WINSIZE - LOOK_SIZE;
+    command = 0;
+    current_position = WINSIZE - LOOK_SIZE;
 
-	while (1) {
-		command >>= 1;
-		if ((command & 0xFF00) == 0) {
-			if ( (c = getC()) == -1)
-				break;
-			command = 0xFF00 + c;
-		}
-		if ( (c = getC()) == -1)
-			break;
-		if (command & 1) {
-			window [current_position] = c;
-			current_position = MOD_WINDOW (current_position + 1);
-			putC (c);
-		} else {
-			match_position = c;
-			if ( (c = getC()) == -1)
-				break;
-			match_position += ((c & 0xF0) << 4);
-			match_length = (c & 0xF) + BREAK_EVEN;
-			for (i=0; i<=match_length; i++) {
-				c = window [MOD_WINDOW (match_position + i)];
-				window [current_position] = c;
-				putC (c);
-				current_position = MOD_WINDOW (current_position + 1);
-			}
-		}
+    while( 1 )
+    {
+        command >>= 1;
+        if( (command & 0xFF00) == 0 )
+        {
+            if( (c = getC() ) == -1 )
+                break;
+            command = 0xFF00 + c;
+        }
+        if( (c = getC() ) == -1 )
+            break;
+        if( command & 1 )
+        {
+            window[current_position] = c;
+            current_position = MOD_WINDOW( current_position + 1 );
+            putC( c );
+        }
+        else
+        {
+            match_position = c;
+            if( (c = getC() ) == -1 )
+                break;
+            match_position += ( (c & 0xF0) << 4 );
+            match_length = (c & 0xF) + BREAK_EVEN;
+            for( i = 0; i <= match_length; i++ )
+            {
+                c = window[MOD_WINDOW( match_position + i )];
+                window[current_position] = c;
+                putC( c );
+                current_position = MOD_WINDOW( current_position + 1 );
+            }
+        }
 
-	}
+    }
 }
 
-void CunLZSS::takeNewData (unsigned char* in, long availIn, int doUnpack) {
-	if (!window) window = new unsigned char [WINSIZE + LOOK_SIZE - 1];
-	if (!outBuf) outBuf = new unsigned char [MAX_UNPACK_SIZE];
+void CunLZSS::takeNewData( unsigned char* in, long availIn, int doUnpack )
+{
+    if( !window )
+        window = new unsigned char[WINSIZE + LOOK_SIZE - 1];
+    if( !outBuf )
+        outBuf = new unsigned char[MAX_UNPACK_SIZE];
 
-	if (doUnpack) {
-		inBuf = in;
-		inBufSize = availIn;
-		inBufPtr = outBufPtr = 0;
-		memset (window, 0x20, WINSIZE + LOOK_SIZE - 1);
-		unpackedLen = 0;
-		decode ();
-	} else {
-		memcpy (outBuf, in, availIn);
-		unpackedLen = availIn;
-	}
-	outBufPtr = 0;
+    if( doUnpack )
+    {
+        inBuf = in;
+        inBufSize = availIn;
+        inBufPtr = outBufPtr = 0;
+        memset( window, 0x20, WINSIZE + LOOK_SIZE - 1 );
+        unpackedLen = 0;
+        decode();
+    }
+    else
+    {
+        memcpy( outBuf, in, availIn );
+        unpackedLen = availIn;
+    }
+    outBufPtr = 0;
 }
 
-long CunLZSS::getUnpacked (unsigned char* to, long count) {
-	long res = (count>unpackedLen)? unpackedLen: count;
-	if (res) {
-		memcpy (to, outBuf+outBufPtr, res);
-		outBufPtr += res;
-		unpackedLen -= res;
-	}
-	return res;
+long CunLZSS::getUnpacked( unsigned char* to, long count )
+{
+    long res = (count > unpackedLen) ? unpackedLen : count;
+    if( res )
+    {
+        memcpy( to, outBuf + outBufPtr, res );
+        outBufPtr += res;
+        unpackedLen -= res;
+    }
+    return res;
 }

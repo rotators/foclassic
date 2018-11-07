@@ -29,7 +29,6 @@ DetectCI()
 PrepareFiles()
 
 if( CI )
-	set( CI_ZIP_SUFFIX "-${CI_GENERATOR_SHORT}" )
 	CreateBuildDirectory( "SDK" "${CI_GENERATOR}" "${CI_EXTRAS}" "${CI_FILE}" )
 elseif( WIN32 )
 	CreateBuildDirectory( "SDK.VS2010"      "Visual Studio 10 2010" ""     "${SOLUTION_FILE}" )

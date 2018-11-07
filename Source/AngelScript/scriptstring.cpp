@@ -11,7 +11,7 @@ bool ScriptString::indexByteToUTF8( int& index, uint* length, uint offset )
 {
     if( index < 0 )
     {
-        index = (int) lengthUTF8() + index;
+        index = (int)lengthUTF8() + index;
         if( index < 0 )
         {
             index = 0;
@@ -39,13 +39,13 @@ bool ScriptString::indexByteToUTF8( int& index, uint* length, uint offset )
         }
         else
         {
-            index = (uint) ( str - str_begin );
+            index = (uint)(str - str_begin);
             if( length )
                 *length = ch_length;
             return true;
         }
     }
-    index = (uint) ( str - str_begin );
+    index = (uint)(str - str_begin);
     if( length )
         *length = 0;
     return false;
@@ -59,82 +59,82 @@ ScriptString::ScriptString()
 {
     // Count the first reference
     refCount = 1;
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof( ScriptString ) + (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof(ScriptString) + (uint)buffer.capacity() );
 }
 
 ScriptString::ScriptString( const char* s, uint len )
 {
     refCount = 1;
     buffer.assign( s, len );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof( ScriptString ) + (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof(ScriptString) + (uint)buffer.capacity() );
 }
 
 ScriptString::ScriptString( const char* s )
 {
     refCount = 1;
     buffer.assign( s, strlen( s ) );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof( ScriptString ) + (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof(ScriptString) + (uint)buffer.capacity() );
 }
 
 ScriptString::ScriptString( const string& s )
 {
     refCount = 1;
     buffer = s;
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof( ScriptString ) + (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof(ScriptString) + (uint)buffer.capacity() );
 }
 
 ScriptString::ScriptString( const ScriptString& s )
 {
     refCount = 1;
     buffer = s.buffer;
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof( ScriptString ) + (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, sizeof(ScriptString) + (uint)buffer.capacity() );
 }
 
 ScriptString::~ScriptString()
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) ( sizeof( ScriptString ) + (uint) buffer.capacity() ) );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)(sizeof(ScriptString) + (uint)buffer.capacity() ) );
 }
 
 void ScriptString::assign( const char* buf, uint count )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.assign( buf, count );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 void ScriptString::assign( const char* buf )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.assign( buf );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 void ScriptString::append( const char* buf, uint count )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.append( buf, count );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 void ScriptString::append( const char* buf )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.append( buf );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 void ScriptString::reserve( uint count )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.reserve( count );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 void ScriptString::rawResize( uint count )
 {
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     buffer.resize( count );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 uint ScriptString::lengthUTF8() const
@@ -199,7 +199,7 @@ ScriptString* operator+( const ScriptString& a, const ScriptString& b )
 
 static ScriptString& AssignUIntToString( uint i, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%u", i );
     dest = buf;
     return dest;
@@ -207,7 +207,7 @@ static ScriptString& AssignUIntToString( uint i, ScriptString& dest )
 
 static ScriptString& AssignIntToString( int i, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%d", i );
     dest = buf;
     return dest;
@@ -215,7 +215,7 @@ static ScriptString& AssignIntToString( int i, ScriptString& dest )
 
 static ScriptString& AssignFloatToString( float f, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%g", f );
     dest = buf;
     return dest;
@@ -223,7 +223,7 @@ static ScriptString& AssignFloatToString( float f, ScriptString& dest )
 
 static ScriptString& AssignDoubleToString( double f, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%g", f );
     dest = buf;
     return dest;
@@ -231,7 +231,7 @@ static ScriptString& AssignDoubleToString( double f, ScriptString& dest )
 
 static ScriptString& AssignBoolToString( bool b, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%s", b ? "true" : "false" );
     dest = buf;
     return dest;
@@ -243,7 +243,7 @@ static ScriptString& AssignBoolToString( bool b, ScriptString& dest )
 
 static ScriptString& AddAssignUIntToString( uint i, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%u", i );
     dest += buf;
     return dest;
@@ -251,7 +251,7 @@ static ScriptString& AddAssignUIntToString( uint i, ScriptString& dest )
 
 static ScriptString& AddAssignIntToString( int i, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%d", i );
     dest += buf;
     return dest;
@@ -259,7 +259,7 @@ static ScriptString& AddAssignIntToString( int i, ScriptString& dest )
 
 static ScriptString& AddAssignFloatToString( float f, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%g", f );
     dest += buf;
     return dest;
@@ -267,7 +267,7 @@ static ScriptString& AddAssignFloatToString( float f, ScriptString& dest )
 
 static ScriptString& AddAssignDoubleToString( double f, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%g", f );
     dest += buf;
     return dest;
@@ -275,7 +275,7 @@ static ScriptString& AddAssignDoubleToString( double f, ScriptString& dest )
 
 static ScriptString& AddAssignBoolToString( bool b, ScriptString& dest )
 {
-    char buf[ 100 ];
+    char buf[100];
     sprintf( buf, "%s", b ? "true" : "false" );
     dest += buf;
     return dest;
@@ -287,7 +287,7 @@ static ScriptString& AddAssignBoolToString( bool b, ScriptString& dest )
 
 static ScriptString* AddStringUInt( const ScriptString& str, uint i )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%u", i );
     ScriptString* str_ = new ScriptString( str );
     *str_ += buf;
@@ -296,7 +296,7 @@ static ScriptString* AddStringUInt( const ScriptString& str, uint i )
 
 static ScriptString* AddStringInt( const ScriptString& str, int i )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%d", i );
     ScriptString* str_ = new ScriptString( str );
     *str_ += buf;
@@ -305,7 +305,7 @@ static ScriptString* AddStringInt( const ScriptString& str, int i )
 
 static ScriptString* AddStringFloat( const ScriptString& str, float f )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%g", f );
     ScriptString* str_ = new ScriptString( str );
     *str_ += buf;
@@ -314,7 +314,7 @@ static ScriptString* AddStringFloat( const ScriptString& str, float f )
 
 static ScriptString* AddStringDouble( const ScriptString& str, double f )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%g", f );
     ScriptString* str_ = new ScriptString( str );
     *str_ += buf;
@@ -323,7 +323,7 @@ static ScriptString* AddStringDouble( const ScriptString& str, double f )
 
 static ScriptString* AddStringBool( const ScriptString& str, bool b )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%s", b ? "true" : "false" );
     ScriptString* str_ = new ScriptString( str );
     *str_ += buf;
@@ -336,7 +336,7 @@ static ScriptString* AddStringBool( const ScriptString& str, bool b )
 
 static ScriptString* AddIntString( int i, const ScriptString& str )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%d", i );
     ScriptString* str_ = new ScriptString( buf );
     *str_ += str;
@@ -345,7 +345,7 @@ static ScriptString* AddIntString( int i, const ScriptString& str )
 
 static ScriptString* AddUIntString( uint i, const ScriptString& str )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%u", i );
     ScriptString* str_ = new ScriptString( buf );
     *str_ += str;
@@ -354,7 +354,7 @@ static ScriptString* AddUIntString( uint i, const ScriptString& str )
 
 static ScriptString* AddFloatString( float f, const ScriptString& str )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%g", f );
     ScriptString* str_ = new ScriptString( buf );
     *str_ += str;
@@ -363,7 +363,7 @@ static ScriptString* AddFloatString( float f, const ScriptString& str )
 
 static ScriptString* AddDoubleString( double f, const ScriptString& str )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%g", f );
     ScriptString* str_ = new ScriptString( buf );
     *str_ += str;
@@ -372,7 +372,7 @@ static ScriptString* AddDoubleString( double f, const ScriptString& str )
 
 static ScriptString* AddBoolString( bool b, const ScriptString& str )
 {
-    char          buf[ 100 ];
+    char          buf[100];
     sprintf( buf, "%s", b ? "true" : "false" );
     ScriptString* str_ = new ScriptString( buf );
     *str_ += str;
@@ -410,13 +410,13 @@ static void SetStringAt( int i, ScriptString& value, ScriptString& str )
         return;
     }
 
-    string& buffer = *(string*) &str.c_std_str();
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int) buffer.capacity() );
+    string& buffer = *(string*)&str.c_std_str();
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, -(int)buffer.capacity() );
     if( length )
         buffer.erase( i, length );
     if( value.length() )
         buffer.insert( i, value.c_str() );
-    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint) buffer.capacity() );
+    MEMORY_PROCESS( MEMORY_SCRIPT_STRING, (uint)buffer.capacity() );
 }
 
 // -----------------------
@@ -462,9 +462,9 @@ void RegisterScriptString( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterObjectBehaviour( "string", asBEHAVE_RELEASE,    "void f()",                    asMETHOD( ScriptString, Release ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "string &opAssign(const string &in)", asMETHODPR( ScriptString, operator=, ( const ScriptString & ), ScriptString & ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "string", "string &opAssign(const string &in)", asMETHODPR( ScriptString, operator=, (const ScriptString &), ScriptString& ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "string &opAddAssign(const string &in)", asMETHODPR( ScriptString, operator+=, ( const ScriptString & ), ScriptString & ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "string", "string &opAddAssign(const string &in)", asMETHODPR( ScriptString, operator+=, (const ScriptString &), ScriptString& ), asCALL_THISCALL );
     assert( r >= 0 );
 
     // Register the factory to return a handle to a new string
@@ -477,7 +477,7 @@ void RegisterScriptString( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterObjectMethod( "string", "int opCmp(const string &in) const", asFUNCTION( StringCmp ), asCALL_CDECL_OBJFIRST );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "string@ opAdd(const string &in) const", asFUNCTIONPR( operator+, ( const ScriptString &, const ScriptString & ), ScriptString* ), asCALL_CDECL_OBJFIRST );
+    r = engine->RegisterObjectMethod( "string", "string@ opAdd(const string &in) const", asFUNCTIONPR( operator+, (const ScriptString&, const ScriptString &), ScriptString* ), asCALL_CDECL_OBJFIRST );
     assert( r >= 0 );
 
     // Register the index operator, both as a mutator and as an inspector
@@ -491,11 +491,11 @@ void RegisterScriptString( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterObjectMethod( "string", "uint rawLength() const", asMETHOD( ScriptString, length ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "void rawResize(uint)", asMETHODPR( ScriptString, rawResize, ( uint ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "string", "void rawResize(uint)", asMETHODPR( ScriptString, rawResize, (uint), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "uint8 rawGet(uint) const", asMETHODPR( ScriptString, rawGet, ( uint ), char ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "string", "uint8 rawGet(uint) const", asMETHODPR( ScriptString, rawGet, (uint), char ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "string", "void rawSet(uint, uint8)", asMETHODPR( ScriptString, rawSet, ( uint, char ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "string", "void rawSet(uint, uint8)", asMETHODPR( ScriptString, rawSet, (uint, char), void ), asCALL_THISCALL );
     assert( r >= 0 );
 
     // TODO: Add factory  string(const string &in str, int repeatCount)
@@ -559,7 +559,7 @@ ScriptString* StringSubString( ScriptString* str, int start, uint count )
 {
     if( !str->indexByteToUTF8( start ) )
         return new ScriptString( "" );
-    int count_ = (int) count;
+    int count_ = (int)count;
     str->indexByteToUTF8( count_, NULL, start );
     return new ScriptString( str->c_std_str().substr( start, count_ ) );
 }
@@ -571,7 +571,7 @@ int StringFindFirst( ScriptString* str, ScriptString* sub, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().find( sub->c_std_str(), start );
+    return (int)str->c_std_str().find( sub->c_std_str(), start );
 }
 
 // This function returns the index of the last position where the substring
@@ -581,7 +581,7 @@ int StringFindLast( ScriptString* str, ScriptString* sub, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().rfind( sub->c_std_str(), start );
+    return (int)str->c_std_str().rfind( sub->c_std_str(), start );
 }
 
 // This function returns the index of the first character that is in
@@ -591,7 +591,7 @@ int StringFindFirstOf( ScriptString* str, ScriptString* chars, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().find_first_of( chars->c_std_str(), start );
+    return (int)str->c_std_str().find_first_of( chars->c_std_str(), start );
 }
 
 // This function returns the index of the first character that is not in
@@ -601,7 +601,7 @@ int StringFindFirstNotOf( ScriptString* str, ScriptString* chars, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().find_first_not_of( chars->c_std_str(), start );
+    return (int)str->c_std_str().find_first_not_of( chars->c_std_str(), start );
 }
 
 // This function returns the index of the last character that is in
@@ -611,7 +611,7 @@ int StringFindLastOf( ScriptString* str, ScriptString* chars, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().find_last_of( chars->c_std_str(), start );
+    return (int)str->c_std_str().find_last_of( chars->c_std_str(), start );
 }
 
 // This function returns the index of the last character that is not in
@@ -621,7 +621,7 @@ int StringFindLastNotOf( ScriptString* str, ScriptString* chars, int start )
 {
     if( !str->indexByteToUTF8( start ) )
         return -1;
-    return (int) str->c_std_str().find_last_not_of( chars->c_std_str(), start );
+    return (int)str->c_std_str().find_last_not_of( chars->c_std_str(), start );
 }
 
 // This function takes an input string and splits it into parts by looking
@@ -648,24 +648,24 @@ ScriptArray* StringSplit( ScriptString* str, ScriptString* delim )
 
     // Find the existence of the delimiter in the input string
     int pos = 0, prev = 0, count = 0;
-    while( ( pos = (int) str->c_std_str().find( delim->c_std_str(), prev ) ) != (int) std::string::npos )
+    while( (pos = (int)str->c_std_str().find( delim->c_std_str(), prev ) ) != (int)std::string::npos )
     {
         // Add the part to the array
         ScriptString* part = new ScriptString();
-        part->assign( &str->c_str()[ prev ], pos - prev );
+        part->assign( &str->c_str()[prev], pos - prev );
         array->Resize( array->GetSize() + 1 );
-        *(ScriptString**) array->At( count ) = part;
+        *(ScriptString**)array->At( count ) = part;
 
         // Find the next part
         count++;
-        prev = pos + (int) delim->length();
+        prev = pos + (int)delim->length();
     }
 
     // Add the remaining part
     ScriptString* part = new ScriptString();
-    part->assign( &str->c_str()[ prev ] );
+    part->assign( &str->c_str()[prev] );
     array->Resize( array->GetSize() + 1 );
-    *(ScriptString**) array->At( count ) = part;
+    *(ScriptString**)array->At( count ) = part;
 
     // Return the array by handle
     return array;
@@ -696,36 +696,36 @@ ScriptArray* StringSplitEx( ScriptString* str, ScriptString* delim )
     // Find the existence of the delimiter in the input string
     const char* cstr = str->c_str();
     int         pos = 0, prev = 0, count = 0;
-    while( ( pos = (int) str->c_std_str().find( delim->c_std_str(), prev ) ) != (int) std::string::npos )
+    while( (pos = (int)str->c_std_str().find( delim->c_std_str(), prev ) ) != (int)std::string::npos )
     {
         // Manage part
         int pos_ = pos;
-        for( int i = prev; i < pos && ( cstr[ i ] == ' ' || cstr[ i ] == '\t' || cstr[ i ] == '\r' || cstr[ i ] == '\n' ); i++ )
+        for( int i = prev; i < pos && (cstr[i] == ' ' || cstr[i] == '\t' || cstr[i] == '\r' || cstr[i] == '\n'); i++ )
             prev++;
-        for( int i = pos - 1; i > prev && ( cstr[ i ] == ' ' || cstr[ i ] == '\t' || cstr[ i ] == '\r' || cstr[ i ] == '\n' ); i-- )
+        for( int i = pos - 1; i > prev && (cstr[i] == ' ' || cstr[i] == '\t' || cstr[i] == '\r' || cstr[i] == '\n'); i-- )
             pos--;
         if( prev == pos )
         {
-            prev = pos_ + (int) delim->length();
+            prev = pos_ + (int)delim->length();
             continue;
         }
 
         // Add the part to the array
         ScriptString* part = new ScriptString();
-        part->assign( &str->c_str()[ prev ], pos - prev );
+        part->assign( &str->c_str()[prev], pos - prev );
         array->Resize( array->GetSize() + 1 );
-        *(ScriptString**) array->At( count ) = part;
+        *(ScriptString**)array->At( count ) = part;
 
         // Find the next part
         count++;
-        prev = pos_ + (int) delim->length();
+        prev = pos_ + (int)delim->length();
     }
 
     // Add the remaining part
     ScriptString* part = new ScriptString();
-    part->assign( &str->c_str()[ prev ] );
+    part->assign( &str->c_str()[prev] );
     array->Resize( array->GetSize() + 1 );
-    *(ScriptString**) array->At( count ) = part;
+    *(ScriptString**)array->At( count ) = part;
 
     // Return the array by handle
     return array;
@@ -746,15 +746,15 @@ ScriptString* StringJoin( ScriptArray* array, ScriptString* delim )
     // Create the new string
     ScriptString* str = new ScriptString();
     int           n;
-    for( n = 0; n < (int) array->GetSize() - 1; n++ )
+    for( n = 0; n < (int)array->GetSize() - 1; n++ )
     {
-        ScriptString* part = *(ScriptString**) array->At( n );
+        ScriptString* part = *(ScriptString**)array->At( n );
         *str += *part;
         *str += *delim;
     }
 
     // Add the last part
-    ScriptString* part = *(ScriptString**) array->At( n );
+    ScriptString* part = *(ScriptString**)array->At( n );
     *str += *part;
 
     // Return the string
@@ -764,14 +764,14 @@ ScriptString* StringJoin( ScriptArray* array, ScriptString* delim )
 ScriptString* StringStrLwr( ScriptString* str )
 {
     std::string str_ = str->c_std_str();
-    Str::LowerUTF8( (char*) str_.c_str() );
+    Str::LowerUTF8( (char*)str_.c_str() );
     return new ScriptString( str_ );
 }
 
 ScriptString* StringStrUpr( ScriptString* str )
 {
     std::string str_ = str->c_std_str();
-    Str::UpperUTF8( (char*) str_.c_str() );
+    Str::UpperUTF8( (char*)str_.c_str() );
     return new ScriptString( str_ );
 }
 

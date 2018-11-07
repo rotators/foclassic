@@ -119,7 +119,7 @@ ScriptString* ScriptFile::ReadWord()
         return 0;
 
     // Read the string
-    char buf[ 1024 ];
+    char buf[1024];
     fscanf( file, "%s", buf );
     return new ScriptString( buf );
 }
@@ -140,7 +140,7 @@ unsigned char ScriptFile::ReadUint8()
     if( !file )
         return 0;
     unsigned char data;
-    if( !fread( &data, sizeof( data ), 1, file ) )
+    if( !fread( &data, sizeof(data), 1, file ) )
         return 0;
     return data;
 }
@@ -150,7 +150,7 @@ unsigned short ScriptFile::ReadUint16()
     if( !file )
         return 0;
     unsigned short data;
-    if( !fread( &data, sizeof( data ), 1, file ) )
+    if( !fread( &data, sizeof(data), 1, file ) )
         return 0;
     return data;
 }
@@ -160,7 +160,7 @@ unsigned int ScriptFile::ReadUint32()
     if( !file )
         return 0;
     unsigned int data;
-    if( !fread( &data, sizeof( data ), 1, file ) )
+    if( !fread( &data, sizeof(data), 1, file ) )
         return 0;
     return data;
 }
@@ -170,7 +170,7 @@ asQWORD ScriptFile::ReadUint64()
     if( !file )
         return 0;
     asQWORD data;
-    if( !fread( &data, sizeof( data ), 1, file ) )
+    if( !fread( &data, sizeof(data), 1, file ) )
         return 0;
     return data;
 }
@@ -192,7 +192,7 @@ unsigned int ScriptFile::ReadData( unsigned int count, ScriptArray& data )
 
     unsigned int size = data.GetSize();
     data.Resize( size + count );
-    unsigned int r = (unsigned int) fread( data.At( size ), 1, count, file );
+    unsigned int r = (unsigned int)fread( data.At( size ), 1, count, file );
     if( r < count )
         data.Resize( size + r );
     return r;
@@ -202,28 +202,28 @@ bool ScriptFile::WriteUint8( unsigned char data )
 {
     if( !file )
         return false;
-    return fwrite( &data, sizeof( data ), 1, file ) != 0;
+    return fwrite( &data, sizeof(data), 1, file ) != 0;
 }
 
 bool ScriptFile::WriteUint16( unsigned short data )
 {
     if( !file )
         return false;
-    return fwrite( &data, sizeof( data ), 1, file ) != 0;
+    return fwrite( &data, sizeof(data), 1, file ) != 0;
 }
 
 bool ScriptFile::WriteUint32( unsigned int data )
 {
     if( !file )
         return false;
-    return fwrite( &data, sizeof( data ), 1, file ) != 0;
+    return fwrite( &data, sizeof(data), 1, file ) != 0;
 }
 
 bool ScriptFile::WriteUint64( asQWORD data )
 {
     if( !file )
         return false;
-    return fwrite( &data, sizeof( data ), 1, file ) != 0;
+    return fwrite( &data, sizeof(data), 1, file ) != 0;
 }
 
 bool ScriptFile::WriteData( ScriptArray& data, unsigned int count )
@@ -295,22 +295,22 @@ int ScriptFile::Open( const ScriptString& filename, const ScriptString& mode )
 
     #ifdef _WIN32_WCE
     // no relative pathing on CE
-    char         buf[ MAX_PATH ];
-    static TCHAR apppath[ MAX_PATH ] = TEXT( "" );
-    if( !apppath[ 0 ] )
+    char         buf[MAX_PATH];
+    static TCHAR apppath[MAX_PATH] = TEXT( "" );
+    if( !apppath[0] )
     {
         GetModuleFileName( NULL, apppath, MAX_PATH );
 
         int appLen = _tcslen( apppath );
         while( appLen > 1 )
         {
-            if( apppath[ appLen - 1 ] == TEXT( '\\' ) )
+            if( apppath[appLen - 1] == TEXT( '\\' ) )
                 break;
             appLen--;
         }
 
         // Terminate the string after the trailing backslash
-        apppath[ appLen ] = TEXT( '\0' );
+        apppath[appLen] = TEXT( '\0' );
     }
     # ifdef _UNICODE
     wcstombs( buf, apppath, wcslen( apppath ) + 1 );
@@ -325,7 +325,7 @@ int ScriptFile::Open( const ScriptString& filename, const ScriptString& mode )
     m += "b";
 
     // Open the file
-    #if _MSC_VER >= 1400 && !defined ( __S3E__ )
+    #if _MSC_VER >= 1400 && !defined (__S3E__)
     // MSVC 8.0 / 2005 introduced new functions
     // Marmalade doesn't use these, even though it uses the MSVC compiler
     fopen_s( &file, myFilename.c_str(), m.c_str() );
@@ -399,7 +399,7 @@ int ScriptFile::ReadString( unsigned int length, ScriptString& str )
 
     // Read the string
     str.rawResize( length );
-    int size = (int) fread( (char*) str.c_str(), 1, length, file );
+    int size = (int)fread( (char*)str.c_str(), 1, length, file );
     str.rawResize( size );
 
     return size;
@@ -412,7 +412,7 @@ int ScriptFile::ReadLine( ScriptString& str )
 
     // Read until the first new-line character
     str = "";
-    char buf[ 256 ];
+    char buf[256];
 
     do
     {
@@ -420,7 +420,7 @@ int ScriptFile::ReadLine( ScriptString& str )
         int start = ftell( file );
 
         // Set the last byte to something different that 0, so that we can check if the buffer was filled up
-        buf[ 255 ] = 1;
+        buf[255] = 1;
 
         // Read the line (or first 255 characters, which ever comes first)
         char* r = fgets( buf, 256, file );
@@ -433,9 +433,9 @@ int ScriptFile::ReadLine( ScriptString& str )
         // Add the read characters to the output buffer
         str.append( buf, end - start );
     }
-    while( !feof( file ) && buf[ 255 ] == 0 && buf[ 254 ] != '\n' );
+    while( !feof( file ) && buf[255] == 0 && buf[254] != '\n' );
 
-    return int( str.length() );
+    return int(str.length() );
 }
 
 asINT64 ScriptFile::ReadInt( asUINT bytes )
@@ -448,7 +448,7 @@ asINT64 ScriptFile::ReadInt( asUINT bytes )
     if( bytes == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
+    unsigned char buf[8];
     size_t        r = fread( buf, bytes, 1, file );
     if( r == 0 )
         return 0;
@@ -458,19 +458,19 @@ asINT64 ScriptFile::ReadInt( asUINT bytes )
     {
         unsigned int n = 0;
         for( ; n < bytes; n++ )
-            val |= asQWORD( buf[ n ] ) << ( ( bytes - n - 1 ) * 8 );
-        if( buf[ 0 ] & 0x80 )
+            val |= asQWORD( buf[n] ) << ( (bytes - n - 1) * 8 );
+        if( buf[0] & 0x80 )
             for( ; n < 8; n++ )
-                val |= asQWORD( 0xFF ) << ( n * 8 );
+                val |= asQWORD( 0xFF ) << (n * 8);
     }
     else
     {
         unsigned int n = 0;
         for( ; n < bytes; n++ )
-            val |= asQWORD( buf[ n ] ) << ( n * 8 );
-        if( buf[ 0 ] & 0x80 )
+            val |= asQWORD( buf[n] ) << (n * 8);
+        if( buf[0] & 0x80 )
             for( ; n < 8; n++ )
-                val |= asQWORD( 0xFF ) << ( n * 8 );
+                val |= asQWORD( 0xFF ) << (n * 8);
     }
 
     return val;
@@ -486,7 +486,7 @@ asQWORD ScriptFile::ReadUInt( asUINT bytes )
     if( bytes == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
+    unsigned char buf[8];
     size_t        r = fread( buf, bytes, 1, file );
     if( r == 0 )
         return 0;
@@ -496,13 +496,13 @@ asQWORD ScriptFile::ReadUInt( asUINT bytes )
     {
         unsigned int n = 0;
         for( ; n < bytes; n++ )
-            val |= asQWORD( buf[ n ] ) << ( ( bytes - n - 1 ) * 8 );
+            val |= asQWORD( buf[n] ) << ( (bytes - n - 1) * 8 );
     }
     else
     {
         unsigned int n = 0;
         for( ; n < bytes; n++ )
-            val |= asQWORD( buf[ n ] ) << ( n * 8 );
+            val |= asQWORD( buf[n] ) << (n * 8);
     }
 
     return val;
@@ -513,7 +513,7 @@ float ScriptFile::ReadFloat()
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 4 ];
+    unsigned char buf[4];
     size_t        r = fread( buf, 4, 1, file );
     if( r == 0 )
         return 0;
@@ -523,16 +523,16 @@ float ScriptFile::ReadFloat()
     {
         unsigned int n = 0;
         for( ; n < 4; n++ )
-            val |= asUINT( buf[ n ] ) << ( ( 3 - n ) * 8 );
+            val |= asUINT( buf[n] ) << ( (3 - n) * 8 );
     }
     else
     {
         unsigned int n = 0;
         for( ; n < 4; n++ )
-            val |= asUINT( buf[ n ] ) << ( n * 8 );
+            val |= asUINT( buf[n] ) << (n * 8);
     }
 
-    return *reinterpret_cast< float* >( &val );
+    return *reinterpret_cast<float*>(&val);
 }
 
 double ScriptFile::ReadDouble()
@@ -540,7 +540,7 @@ double ScriptFile::ReadDouble()
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
+    unsigned char buf[8];
     size_t        r = fread( buf, 8, 1, file );
     if( r == 0 )
         return 0;
@@ -550,16 +550,16 @@ double ScriptFile::ReadDouble()
     {
         unsigned int n = 0;
         for( ; n < 8; n++ )
-            val |= asQWORD( buf[ n ] ) << ( ( 7 - n ) * 8 );
+            val |= asQWORD( buf[n] ) << ( (7 - n) * 8 );
     }
     else
     {
         unsigned int n = 0;
         for( ; n < 8; n++ )
-            val |= asQWORD( buf[ n ] ) << ( n * 8 );
+            val |= asQWORD( buf[n] ) << (n * 8);
     }
 
-    return *reinterpret_cast< double* >( &val );
+    return *reinterpret_cast<double*>(&val);
 }
 
 bool ScriptFile::IsEOF() const
@@ -587,16 +587,16 @@ int ScriptFile::WriteInt( asINT64 val, asUINT bytes )
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
+    unsigned char buf[8];
     if( mostSignificantByteFirst )
     {
         for( unsigned int n = 0; n < bytes; n++ )
-            buf[ n ] = ( val >> ( ( bytes - n - 1 ) * 8 ) ) & 0xFF;
+            buf[n] = (val >> ( (bytes - n - 1) * 8 ) ) & 0xFF;
     }
     else
     {
         for( unsigned int n = 0; n < bytes; n++ )
-            buf[ n ] = ( val >> ( n * 8 ) ) & 0xFF;
+            buf[n] = (val >> (n * 8) ) & 0xFF;
     }
 
     size_t r = fwrite( &buf, bytes, 1, file );
@@ -608,16 +608,16 @@ int ScriptFile::WriteUInt( asQWORD val, asUINT bytes )
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
+    unsigned char buf[8];
     if( mostSignificantByteFirst )
     {
         for( unsigned int n = 0; n < bytes; n++ )
-            buf[ n ] = ( val >> ( ( bytes - n - 1 ) * 8 ) ) & 0xFF;
+            buf[n] = (val >> ( (bytes - n - 1) * 8 ) ) & 0xFF;
     }
     else
     {
         for( unsigned int n = 0; n < bytes; n++ )
-            buf[ n ] = ( val >> ( n * 8 ) ) & 0xFF;
+            buf[n] = (val >> (n * 8) ) & 0xFF;
     }
 
     size_t r = fwrite( &buf, bytes, 1, file );
@@ -629,17 +629,17 @@ int ScriptFile::WriteFloat( float f )
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 4 ];
-    asUINT        val = *reinterpret_cast< asUINT* >( &f );
+    unsigned char buf[4];
+    asUINT        val = *reinterpret_cast<asUINT*>(&f);
     if( mostSignificantByteFirst )
     {
         for( unsigned int n = 0; n < 4; n++ )
-            buf[ n ] = ( val >> ( ( 3 - n ) * 4 ) ) & 0xFF;
+            buf[n] = (val >> ( (3 - n) * 4 ) ) & 0xFF;
     }
     else
     {
         for( unsigned int n = 0; n < 4; n++ )
-            buf[ n ] = ( val >> ( n * 8 ) ) & 0xFF;
+            buf[n] = (val >> (n * 8) ) & 0xFF;
     }
 
     size_t r = fwrite( &buf, 4, 1, file );
@@ -651,17 +651,17 @@ int ScriptFile::WriteDouble( double d )
     if( file == 0 )
         return 0;
 
-    unsigned char buf[ 8 ];
-    asQWORD       val = *reinterpret_cast< asQWORD* >( &d );
+    unsigned char buf[8];
+    asQWORD       val = *reinterpret_cast<asQWORD*>(&d);
     if( mostSignificantByteFirst )
     {
         for( unsigned int n = 0; n < 8; n++ )
-            buf[ n ] = ( val >> ( ( 7 - n ) * 8 ) ) & 0xFF;
+            buf[n] = (val >> ( (7 - n) * 8 ) ) & 0xFF;
     }
     else
     {
         for( unsigned int n = 0; n < 8; n++ )
-            buf[ n ] = ( val >> ( n * 8 ) ) & 0xFF;
+            buf[n] = (val >> (n * 8) ) & 0xFF;
     }
 
     size_t r = fwrite( &buf, 8, 1, file );

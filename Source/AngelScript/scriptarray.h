@@ -12,7 +12,7 @@ public:
     static ScriptArray& Create( const char* type )
     {
         static int   typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
-        ScriptArray* scriptArray = (ScriptArray*) ASEngine->CreateScriptObject( typeId );
+        ScriptArray* scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( typeId );
         return *scriptArray;
     }
 protected:
@@ -83,7 +83,7 @@ protected:
     {
         asDWORD maxElements;
         asDWORD numElements;
-        asBYTE  data[ 1 ];
+        asBYTE  data[1];
     };
 
     mutable int    refCount;

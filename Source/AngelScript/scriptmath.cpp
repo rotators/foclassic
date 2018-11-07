@@ -40,15 +40,15 @@ inline float floorf( float arg ) { return std::floor( arg ); }
 inline float modff( float x, float* y )
 {
     double d;
-    float  f = (float) modf( (double) x, &d );
-    *y = (float) d;
+    float  f = (float)modf( (double)x, &d );
+    *y = (float)d;
     return f;
 }
 #endif
 
 // Determine whether the float version should be registered, or the double version
 #ifndef AS_USE_FLOAT
-# if !defined ( _WIN32_WCE ) // WinCE doesn't have the float versions of the math functions
+# if !defined (_WIN32_WCE)   // WinCE doesn't have the float versions of the math functions
 #  define AS_USE_FLOAT    1
 # endif
 #endif
@@ -88,7 +88,7 @@ void RegisterScriptMath_Native( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "float atan(float)", asFUNCTIONPR( atanf, (float), float ), asCALL_CDECL );
     assert( r >= 0 );
-    r = engine->RegisterGlobalFunction( "float atan2(float,float)", asFUNCTIONPR( atan2f, ( float, float ), float ), asCALL_CDECL );
+    r = engine->RegisterGlobalFunction( "float atan2(float,float)", asFUNCTIONPR( atan2f, (float, float), float ), asCALL_CDECL );
     assert( r >= 0 );
 
     // Hyberbolic functions
@@ -106,7 +106,7 @@ void RegisterScriptMath_Native( asIScriptEngine* engine )
     assert( r >= 0 );
 
     // Power functions
-    r = engine->RegisterGlobalFunction( "float pow(float, float)", asFUNCTIONPR( powf, ( float, float ), float ), asCALL_CDECL );
+    r = engine->RegisterGlobalFunction( "float pow(float, float)", asFUNCTIONPR( powf, (float, float), float ), asCALL_CDECL );
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "float sqrt(float)", asFUNCTIONPR( sqrtf, (float), float ), asCALL_CDECL );
     assert( r >= 0 );
@@ -136,7 +136,7 @@ void RegisterScriptMath_Native( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "double atan(double)", asFUNCTIONPR( atan, (double), double ), asCALL_CDECL );
     assert( r >= 0 );
-    r = engine->RegisterGlobalFunction( "double atan2(double,double)", asFUNCTIONPR( atan2, ( double, double ), double ), asCALL_CDECL );
+    r = engine->RegisterGlobalFunction( "double atan2(double,double)", asFUNCTIONPR( atan2, (double, double), double ), asCALL_CDECL );
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "double cosh(double)", asFUNCTIONPR( cosh, (double), double ), asCALL_CDECL );
     assert( r >= 0 );
@@ -148,7 +148,7 @@ void RegisterScriptMath_Native( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "double log10(double)", asFUNCTIONPR( log10, (double), double ), asCALL_CDECL );
     assert( r >= 0 );
-    r = engine->RegisterGlobalFunction( "double pow(double, double)", asFUNCTIONPR( pow, ( double, double ), double ), asCALL_CDECL );
+    r = engine->RegisterGlobalFunction( "double pow(double, double)", asFUNCTIONPR( pow, (double, double), double ), asCALL_CDECL );
     assert( r >= 0 );
     r = engine->RegisterGlobalFunction( "double sqrt(double)", asFUNCTIONPR( sqrt, (double), double ), asCALL_CDECL );
     assert( r >= 0 );
@@ -165,11 +165,11 @@ void RegisterScriptMath_Native( asIScriptEngine* engine )
 
 #if AS_USE_FLOAT
 // This macro creates simple generic wrappers for functions of type 'float func(float)'
-# define GENERICff( x )                                       \
-    void x ## _generic( asIScriptGeneric * gen )              \
-    {                                                         \
-        float f = *(float*) gen->GetAddressOfArg( 0 );        \
-        *(float*) gen->GetAddressOfReturnLocation() = x( f ); \
+# define GENERICff( x )                                      \
+    void x ## _generic( asIScriptGeneric * gen )             \
+    {                                                        \
+        float f = *(float*)gen->GetAddressOfArg( 0 );        \
+        *(float*)gen->GetAddressOfReturnLocation() = x( f ); \
     }
 
 GENERICff( cosf )
@@ -191,24 +191,24 @@ GENERICff( fractionf )
 
 void powf_generic( asIScriptGeneric* gen )
 {
-    float f1 = *(float*) gen->GetAddressOfArg( 0 );
-    float f2 = *(float*) gen->GetAddressOfArg( 1 );
-    *(float*) gen->GetAddressOfReturnLocation() = powf( f1, f2 );
+    float f1 = *(float*)gen->GetAddressOfArg( 0 );
+    float f2 = *(float*)gen->GetAddressOfArg( 1 );
+    *(float*)gen->GetAddressOfReturnLocation() = powf( f1, f2 );
 }
 void atan2f_generic( asIScriptGeneric* gen )
 {
-    float f1 = *(float*) gen->GetAddressOfArg( 0 );
-    float f2 = *(float*) gen->GetAddressOfArg( 1 );
-    *(float*) gen->GetAddressOfReturnLocation() = atan2f( f1, f2 );
+    float f1 = *(float*)gen->GetAddressOfArg( 0 );
+    float f2 = *(float*)gen->GetAddressOfArg( 1 );
+    *(float*)gen->GetAddressOfReturnLocation() = atan2f( f1, f2 );
 }
 
 #else
 // This macro creates simple generic wrappers for functions of type 'double func(double)'
-# define GENERICdd( x )                                        \
-    void x ## _generic( asIScriptGeneric * gen )               \
-    {                                                          \
-        double f = *(double*) gen->GetAddressOfArg( 0 );       \
-        *(double*) gen->GetAddressOfReturnLocation() = x( f ); \
+# define GENERICdd( x )                                       \
+    void x ## _generic( asIScriptGeneric * gen )              \
+    {                                                         \
+        double f = *(double*)gen->GetAddressOfArg( 0 );       \
+        *(double*)gen->GetAddressOfReturnLocation() = x( f ); \
     }
 
 GENERICdd( cos )
@@ -230,15 +230,15 @@ GENERICdd( fraction )
 
 void pow_generic( asIScriptGeneric* gen )
 {
-    double f1 = *(double*) gen->GetAddressOfArg( 0 );
-    double f2 = *(double*) gen->GetAddressOfArg( 1 );
-    *(double*) gen->GetAddressOfReturnLocation() = pow( f1, f2 );
+    double f1 = *(double*)gen->GetAddressOfArg( 0 );
+    double f2 = *(double*)gen->GetAddressOfArg( 1 );
+    *(double*)gen->GetAddressOfReturnLocation() = pow( f1, f2 );
 }
 void atan2_generic( asIScriptGeneric* gen )
 {
-    double f1 = *(double*) gen->GetAddressOfArg( 0 );
-    double f2 = *(double*) gen->GetAddressOfArg( 1 );
-    *(double*) gen->GetAddressOfReturnLocation() = atan2( f1, f2 );
+    double f1 = *(double*)gen->GetAddressOfArg( 0 );
+    double f2 = *(double*)gen->GetAddressOfArg( 1 );
+    *(double*)gen->GetAddressOfReturnLocation() = atan2( f1, f2 );
 }
 #endif
 void RegisterScriptMath_Generic( asIScriptEngine* engine )

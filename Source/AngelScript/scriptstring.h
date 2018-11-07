@@ -13,7 +13,7 @@ public:
     static ScriptString& Create( const char* str = NULL )
     {
         static int    typeId = ASEngine->GetTypeIdByDecl( "string" );
-        ScriptString* scriptStr = (ScriptString*) ASEngine->CreateScriptObject( typeId );
+        ScriptString* scriptStr = (ScriptString*)ASEngine->CreateScriptObject( typeId );
         if( str )
             scriptStr->assign( str );
         return *scriptStr;
@@ -81,12 +81,12 @@ public:
 
     char rawGet( uint index )
     {
-        return index < buffer.length() ? buffer[ index ] : 0;
+        return index < buffer.length() ? buffer[index] : 0;
     }
     void rawSet( uint index, char value )
     {
         if( index < buffer.length() )
-            buffer[ index ] = value;
+            buffer[index] = value;
     }
 
 protected:

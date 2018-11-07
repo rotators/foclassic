@@ -8,16 +8,16 @@ static void ScriptAnyFactory_Generic( asIScriptGeneric* gen )
 {
     asIScriptEngine* engine = gen->GetEngine();
 
-    *(ScriptAny**) gen->GetAddressOfReturnLocation() = new ScriptAny( engine );
+    *(ScriptAny**)gen->GetAddressOfReturnLocation() = new ScriptAny( engine );
 }
 
 static void ScriptAnyFactory2_Generic( asIScriptGeneric* gen )
 {
     asIScriptEngine* engine = gen->GetEngine();
-    void*            ref = (void*) gen->GetArgAddress( 0 );
+    void*            ref = (void*)gen->GetArgAddress( 0 );
     int              refType = gen->GetArgTypeId( 0 );
 
-    *(ScriptAny**) gen->GetAddressOfReturnLocation() = new ScriptAny( ref, refType, engine );
+    *(ScriptAny**)gen->GetAddressOfReturnLocation() = new ScriptAny( ref, refType, engine );
 }
 
 static ScriptAny& ScriptAnyAssignment( ScriptAny* other, ScriptAny* self )
@@ -27,8 +27,8 @@ static ScriptAny& ScriptAnyAssignment( ScriptAny* other, ScriptAny* self )
 
 static void ScriptAnyAssignment_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* other = (ScriptAny*) gen->GetArgObject( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* other = (ScriptAny*)gen->GetArgObject( 0 );
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
     *self = *other;
 
@@ -37,95 +37,95 @@ static void ScriptAnyAssignment_Generic( asIScriptGeneric* gen )
 
 static void ScriptAny_Store_Generic( asIScriptGeneric* gen )
 {
-    void*      ref = (void*) gen->GetArgAddress( 0 );
+    void*      ref = (void*)gen->GetArgAddress( 0 );
     int        refTypeId = gen->GetArgTypeId( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
     self->Store( ref, refTypeId );
 }
 
 static void ScriptAny_StoreInt_Generic( asIScriptGeneric* gen )
 {
-    asINT64*   ref = (asINT64*) gen->GetArgAddress( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    asINT64*   ref = (asINT64*)gen->GetArgAddress( 0 );
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
     self->Store( *ref );
 }
 
 static void ScriptAny_StoreFlt_Generic( asIScriptGeneric* gen )
 {
-    double*    ref = (double*) gen->GetArgAddress( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    double*    ref = (double*)gen->GetArgAddress( 0 );
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
     self->Store( *ref );
 }
 
 static void ScriptAny_Retrieve_Generic( asIScriptGeneric* gen )
 {
-    void*      ref = (void*) gen->GetArgAddress( 0 );
+    void*      ref = (void*)gen->GetArgAddress( 0 );
     int        refTypeId = gen->GetArgTypeId( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
-    *(bool*) gen->GetAddressOfReturnLocation() = self->Retrieve( ref, refTypeId );
+    *(bool*)gen->GetAddressOfReturnLocation() = self->Retrieve( ref, refTypeId );
 }
 
 static void ScriptAny_RetrieveInt_Generic( asIScriptGeneric* gen )
 {
-    asINT64*   ref = (asINT64*) gen->GetArgAddress( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    asINT64*   ref = (asINT64*)gen->GetArgAddress( 0 );
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
-    *(bool*) gen->GetAddressOfReturnLocation() = self->Retrieve( *ref );
+    *(bool*)gen->GetAddressOfReturnLocation() = self->Retrieve( *ref );
 }
 
 static void ScriptAny_RetrieveFlt_Generic( asIScriptGeneric* gen )
 {
-    double*    ref = (double*) gen->GetArgAddress( 0 );
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    double*    ref = (double*)gen->GetArgAddress( 0 );
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
 
-    *(bool*) gen->GetAddressOfReturnLocation() = self->Retrieve( *ref );
+    *(bool*)gen->GetAddressOfReturnLocation() = self->Retrieve( *ref );
 }
 
 static void ScriptAny_AddRef_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
     self->AddRef();
 }
 
 static void ScriptAny_Release_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
     self->Release();
 }
 
 static void ScriptAny_GetRefCount_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
-    *(int*) gen->GetAddressOfReturnLocation() = self->GetRefCount();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
+    *(int*)gen->GetAddressOfReturnLocation() = self->GetRefCount();
 }
 
 static void ScriptAny_SetFlag_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
     self->SetFlag();
 }
 
 static void ScriptAny_GetFlag_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny* self = (ScriptAny*) gen->GetObject();
-    *(bool*) gen->GetAddressOfReturnLocation() = self->GetFlag();
+    ScriptAny* self = (ScriptAny*)gen->GetObject();
+    *(bool*)gen->GetAddressOfReturnLocation() = self->GetFlag();
 }
 
 static void ScriptAny_EnumReferences_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny*       self = (ScriptAny*) gen->GetObject();
-    asIScriptEngine* engine = *(asIScriptEngine**) gen->GetAddressOfArg( 0 );
+    ScriptAny*       self = (ScriptAny*)gen->GetObject();
+    asIScriptEngine* engine = *(asIScriptEngine**)gen->GetAddressOfArg( 0 );
     self->EnumReferences( engine );
 }
 
 static void ScriptAny_ReleaseAllHandles_Generic( asIScriptGeneric* gen )
 {
-    ScriptAny*       self = (ScriptAny*) gen->GetObject();
-    asIScriptEngine* engine = *(asIScriptEngine**) gen->GetAddressOfArg( 0 );
+    ScriptAny*       self = (ScriptAny*)gen->GetObject();
+    asIScriptEngine* engine = *(asIScriptEngine**)gen->GetAddressOfArg( 0 );
     self->ReleaseAllHandles( engine );
 }
 
@@ -142,7 +142,7 @@ void RegisterScriptAny( asIScriptEngine* engine )
 void RegisterScriptAny_Native( asIScriptEngine* engine )
 {
     int r;
-    r = engine->RegisterObjectType( "any", sizeof( ScriptAny ), asOBJ_REF | asOBJ_GC );
+    r = engine->RegisterObjectType( "any", sizeof(ScriptAny), asOBJ_REF | asOBJ_GC );
     assert( r >= 0 );
 
     // We'll use the generic interface for the constructor as we need the engine pointer
@@ -157,17 +157,17 @@ void RegisterScriptAny_Native( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterObjectMethod( "any", "any &opAssign(any&in)", asFUNCTION( ScriptAnyAssignment ), asCALL_CDECL_OBJLAST );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "void store(?&in)", asMETHODPR( ScriptAny, Store, ( void*, int ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "void store(?&in)", asMETHODPR( ScriptAny, Store, (void*, int), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "void store(int64&in)", asMETHODPR( ScriptAny, Store, ( asINT64 & ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "void store(int64&in)", asMETHODPR( ScriptAny, Store, (asINT64 &), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "void store(double&in)", asMETHODPR( ScriptAny, Store, ( double& ), void ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "void store(double&in)", asMETHODPR( ScriptAny, Store, (double&), void ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "bool retrieve(?&out)", asMETHODPR( ScriptAny, Retrieve, ( void*, int ) const, bool ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "bool retrieve(?&out)", asMETHODPR( ScriptAny, Retrieve, (void*, int) const, bool ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "bool retrieve(int64&out)", asMETHODPR( ScriptAny, Retrieve, ( asINT64 & ) const, bool ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "bool retrieve(int64&out)", asMETHODPR( ScriptAny, Retrieve, (asINT64&)const, bool ), asCALL_THISCALL );
     assert( r >= 0 );
-    r = engine->RegisterObjectMethod( "any", "bool retrieve(double&out)", asMETHODPR( ScriptAny, Retrieve, ( double& ) const, bool ), asCALL_THISCALL );
+    r = engine->RegisterObjectMethod( "any", "bool retrieve(double&out)", asMETHODPR( ScriptAny, Retrieve, (double&)const, bool ), asCALL_THISCALL );
     assert( r >= 0 );
 
     // Register GC behaviours
@@ -186,7 +186,7 @@ void RegisterScriptAny_Native( asIScriptEngine* engine )
 void RegisterScriptAny_Generic( asIScriptEngine* engine )
 {
     int r;
-    r = engine->RegisterObjectType( "any", sizeof( ScriptAny ), asOBJ_REF | asOBJ_GC );
+    r = engine->RegisterObjectType( "any", sizeof(ScriptAny), asOBJ_REF | asOBJ_GC );
     assert( r >= 0 );
 
     // We'll use the generic interface for the constructor as we need the engine pointer
@@ -230,7 +230,7 @@ void RegisterScriptAny_Generic( asIScriptEngine* engine )
 void ScriptAny::Assign( const ScriptAny& other )
 {
     // Hold on to the object type reference so it isn't destroyed too early
-    if( other.value.valueObj && ( other.value.typeId & asTYPEID_MASK_OBJECT ) )
+    if( other.value.valueObj && (other.value.typeId & asTYPEID_MASK_OBJECT) )
     {
         asIObjectType* ot = engine->GetObjectTypeById( other.value.typeId );
         if( ot )
@@ -263,7 +263,7 @@ int ScriptAny::CopyFrom( const ScriptAny* other )
     if( other == 0 )
         return asINVALID_ARG;
 
-    *this = *(ScriptAny*) other;
+    *this = *(ScriptAny*)other;
 
     return 0;
 }
@@ -302,7 +302,7 @@ ScriptAny::~ScriptAny()
 void ScriptAny::Store( void* ref, int refTypeId )
 {
     // Hold on to the object type reference so it isn't destroyed too early
-    if( *(void**) ref && ( refTypeId & asTYPEID_MASK_OBJECT ) )
+    if( *(void**)ref && (refTypeId & asTYPEID_MASK_OBJECT) )
     {
         asIObjectType* ot = engine->GetObjectTypeById( refTypeId );
         if( ot )
@@ -315,7 +315,7 @@ void ScriptAny::Store( void* ref, int refTypeId )
     if( value.typeId & asTYPEID_OBJHANDLE )
     {
         // We're receiving a reference to the handle, so we need to dereference it
-        value.valueObj = *(void**) ref;
+        value.valueObj = *(void**)ref;
         engine->AddRefScriptObject( value.valueObj, value.typeId );
     }
     else if( value.typeId & asTYPEID_MASK_OBJECT )
@@ -354,11 +354,11 @@ bool ScriptAny::Retrieve( void* ref, int refTypeId ) const
 
         // A handle can be retrieved if the stored type is a handle of same or compatible type
         // or if the stored type is an object that implements the interface that the handle refer to.
-        if( ( value.typeId & asTYPEID_MASK_OBJECT ) &&
+        if( (value.typeId & asTYPEID_MASK_OBJECT) &&
             engine->IsHandleCompatibleWithObject( value.valueObj, value.typeId, refTypeId ) )
         {
             engine->AddRefScriptObject( value.valueObj, value.typeId );
-            *(void**) ref = value.valueObj;
+            *(void**)ref = value.valueObj;
 
             return true;
         }
@@ -389,12 +389,12 @@ bool ScriptAny::Retrieve( void* ref, int refTypeId ) const
         // We know all numbers are stored as either int64 or double, since we register overloaded functions for those
         if( value.typeId == asTYPEID_INT64 && refTypeId == asTYPEID_DOUBLE )
         {
-            *(double*) ref = double(value.valueInt);
+            *(double*)ref = double(value.valueInt);
             return true;
         }
         else if( value.typeId == asTYPEID_DOUBLE && refTypeId == asTYPEID_INT64 )
         {
-            *(asINT64*) ref = asINT64( value.valueFlt );
+            *(asINT64*)ref = asINT64( value.valueFlt );
             return true;
         }
     }
@@ -441,7 +441,7 @@ void ScriptAny::FreeObject()
 void ScriptAny::EnumReferences( asIScriptEngine* engine )
 {
     // If we're holding a reference, we'll notify the garbage collector of it
-    if( value.valueObj && ( value.typeId & asTYPEID_MASK_OBJECT ) )
+    if( value.valueObj && (value.typeId & asTYPEID_MASK_OBJECT) )
     {
         engine->GCEnumCallback( value.valueObj );
 
@@ -460,13 +460,13 @@ void ScriptAny::ReleaseAllHandles( asIScriptEngine* /*engine*/ )
 void ScriptAny::AddRef() const
 {
     // Increase counter and clear flag set by GC
-    refCount = ( refCount & 0x7FFFFFFF ) + 1;
+    refCount = (refCount & 0x7FFFFFFF) + 1;
 }
 
 void ScriptAny::Release() const
 {
     // Now do the actual releasing (clearing the flag set by GC)
-    refCount = ( refCount & 0x7FFFFFFF ) - 1;
+    refCount = (refCount & 0x7FFFFFFF) - 1;
     if( refCount == 0 )
         delete this;
 }
@@ -483,5 +483,5 @@ void ScriptAny::SetFlag()
 
 bool ScriptAny::GetFlag()
 {
-    return ( refCount & 0x80000000 ) ? true : false;
+    return (refCount & 0x80000000) ? true : false;
 }

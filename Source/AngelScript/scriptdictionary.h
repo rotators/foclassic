@@ -18,7 +18,7 @@ public:
     static ScriptDictionary& Create()
     {
         static int        typeId = ASEngine->GetTypeIdByDecl( "dictionary" );
-        ScriptDictionary* scriptDictionary = (ScriptDictionary*) ASEngine->CreateScriptObject( typeId );
+        ScriptDictionary* scriptDictionary = (ScriptDictionary*)ASEngine->CreateScriptObject( typeId );
         return *scriptDictionary;
     }
 protected:
@@ -97,7 +97,7 @@ protected:
     mutable int      refCount;
 
     // TODO: optimize: Use C++11 std::unordered_map instead
-    std::map< std::string, valueStruct > dict;
+    std::map<std::string, valueStruct> dict;
 };
 
 #ifdef FOCLASSIC_ENGINE

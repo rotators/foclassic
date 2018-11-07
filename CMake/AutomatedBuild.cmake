@@ -36,10 +36,9 @@ function( DetectCI )
 			set( CI_FILE "${SOLUTION_FILE}" PARENT_SCOPE )
 
 			if( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2013" )
-				set( CI_GENERATOR_SHORT "vs2010" PARENT_SCOPE )
 				set( CI_GENERATOR "Visual Studio 10 2010" PARENT_SCOPE )
 			elseif( "$ENV{APPVEYOR_BUILD_WORKER_IMAGE}" STREQUAL "Visual Studio 2017" )
-				set( CI_GENERATOR_SHORT "vs2017" PARENT_SCOPE )
+				set( CI_ZIP_SUFFIX "-vs2017" PARENT_SCOPE )
 				set( CI_GENERATOR "Visual Studio 15 2017" PARENT_SCOPE )
 			else()
 				message( FATAL_ERROR "Unknown AppVeyor image ('$ENV{APPVEYOR_BUILD_WORKER_IMAGE}')" )
@@ -57,10 +56,14 @@ function( DetectCI )
 endfunction()
 
 # Prepare repository files
+# - format source
+# - restore last modification time (CI only)
 function( PrepareFiles )
 
 	set( uncrustemp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
 	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
+
+	file( REMOVE "${uncrustemp}" )
 
 	execute_process(
 		COMMAND git ls-files
@@ -69,7 +72,13 @@ function( PrepareFiles )
 	string( REGEX REPLACE "\n" ";" ls "${ls}" )
 
 	foreach( file IN LISTS ls )
+		file( TO_CMAKE_PATH "${file}" file )
+
 		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
+			continue()
+		endif()
+
+		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/script" )
 			continue()
 		endif()
 
@@ -98,7 +107,7 @@ function( PrepareFiles )
 
 		if( format )
 			execute_process(
-				COMMAND "${uncrustify}{CMAKE_EXECUTABLE_SUFFIX}" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${uncrustemp}" -q --if-changed
+				COMMAND "${uncrustify}${CMAKE_EXECUTABLE_SUFFIX}" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${uncrustemp}" -q --if-changed
 			)
 			if( EXISTS "${uncrustemp}" )
 				message( STATUS "           FormatSource prevails" )

@@ -123,6 +123,7 @@ configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.f
 ## process subdirectories
 ##
 
+add_subdirectory( Docs )
 add_subdirectory( Source )
 add_subdirectory( Extensions )
 
@@ -144,6 +145,7 @@ add_custom_target( Configuration
 		.appveyor.yml
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
+set_property( TARGET Configuration PROPERTY FOLDER Configuration )
 
 ##
 ## prettify IDE
@@ -151,4 +153,4 @@ source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Configuration/CMake" )
-set_property( TARGET Configuration PROPERTY FOLDER Configuration )
+

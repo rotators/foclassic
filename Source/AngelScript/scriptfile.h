@@ -21,7 +21,7 @@ public:
     static ScriptFile& Create()
     {
         static int  typeId = ASEngine->GetTypeIdByDecl( "file" );
-        ScriptFile* scriptFile = (ScriptFile*) ASEngine->CreateScriptObject( typeId );
+        ScriptFile* scriptFile = (ScriptFile*)ASEngine->CreateScriptObject( typeId );
         return *scriptFile;
     }
 protected:

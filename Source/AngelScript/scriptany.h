@@ -10,7 +10,7 @@ public:
     static ScriptAny& Create()
     {
         static int typeId = ASEngine->GetTypeIdByDecl( "any" );
-        ScriptAny* scriptAny = (ScriptAny*) ASEngine->CreateScriptObject( typeId );
+        ScriptAny* scriptAny = (ScriptAny*)ASEngine->CreateScriptObject( typeId );
         return *scriptAny;
     }
 protected:
