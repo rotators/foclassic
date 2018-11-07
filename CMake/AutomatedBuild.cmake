@@ -265,8 +265,8 @@ function( ZipAllBuilds )
 		if( CI )
 			# copy package and outer sum to main dir
 			# simplifies stripping build dir from CI artifacts
-			file( RENAME "${outer_sum}" "${CMAKE_CURRENT_LIST_DIR}/${root}{CI_ZIP_SUFFIX}.${sum}" )
-			file( RENAME "${zip_file}"  "${CMAKE_CURRENT_LIST_DIR}/${root}{CI_ZIP_SUFFIX}.zip" )
+			file( RENAME "${outer_sum}" "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.${sum}" )
+			file( RENAME "${zip_file}"  "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.zip" )
 		endif()
 	endforeach()
 
