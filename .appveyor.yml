@@ -30,4 +30,4 @@ build_script:
  - cmake -P Build.cmake
 
 artifacts:
- - path: SDK\FOClassic-v*
+ - path: FOClassic-v*
