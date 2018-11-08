@@ -1,12 +1,14 @@
 # CHANGELOG
 
 Complete list of changes in FOClassic since [FOnline SDK r412](https://github.com/cvet/fonline/commit/3e58c94f1234173d5af234eb1f80ad0af8f3c120).
+- [Latest release](https://github.com/rotators/foclassic/releases/latest/)
+- Nightly builds: [Windows](https://ci.appveyor.com/project/rotators/foclassic/)
 
-## [v2]() (WIP)
+## [v2](https://github.com/rotators/foclassic/releases/tag/v2/)
 
 [FOnline](https://github.com/cvet/fonline) and [FOClassic](https://github.com/rotators/foclassic/) are now fully open-source projects.
 
-- restored loading of worldsaves and characters created by FOnline r412, and possibly older versions
+- restored loading of worldsaves and characters created by FOnline r412, and possibly older revisions (depends which file format version is used)
     - support for loading legacy files will be kept **only** until first change of their format (eg. changing format of worldsave will disable loading legacy worldsave **and** characters)
     - wordsave/characters files format changes are **not** planned will during [migration stage](https://github.com/rotators/foclassic/milestone/2)
     - loading has been briefly tested against real server state (thanks Kilgore)
@@ -70,9 +72,10 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
       https://ci.appveyor.com/project/rotators/foclassic/
         - binaries can be found under `Image: Visual Studio 2013` -> `Artifacts`; despite of the image name, _Visual Studio 2010_ is used for compilation
         - `Image: Visual Studio 2017` is used for checking if engine is ready for migration to VS2017; it most likely will take some time, so it can be safely ignored currently
+		- binaries are available for six month since they have been created; see [artifacts retention policy](https://www.appveyor.com/docs/packaging-artifacts/#artifacts-retention-policy)
 
 
-#### Server.cfg fragment
+Server.cfg fragment
 ```ini
 # List of all supported languages separated by whitespace; if empty/unset, Language_0/1/... is used
 # First language on list is used as default
