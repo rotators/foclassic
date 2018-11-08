@@ -25,6 +25,7 @@ clone_folder: C:\FOClassic
 
 install:
  - git submodule update --init --recursive
+ - cmake -P CMake/SelfUpdate.cmake
 
 build_script:
  - cmake -P Build.cmake
