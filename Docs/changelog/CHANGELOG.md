@@ -70,9 +70,10 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
       https://ci.appveyor.com/project/rotators/foclassic/
         - binaries can be found under `Image: Visual Studio 2013` -> `Artifacts`; despite of the image name, _Visual Studio 2010_ is used for compilation
         - `Image: Visual Studio 2017` is used for checking if engine is ready for migration to VS2017; it most likely will take some time, so it can be safely ignored currently
+		- binaries are available for six month since they have been created; see [artifacts retention policy](https://www.appveyor.com/docs/packaging-artifacts/#artifacts-retention-policy)
 
 
-#### Server.cfg fragment
+Server.cfg fragment
 ```ini
 # List of all supported languages separated by whitespace; if empty/unset, Language_0/1/... is used
 # First language on list is used as default

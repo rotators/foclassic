@@ -3,9 +3,10 @@
 function( GetProjectVersion )
 
 	set( cmakelists "${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt" )
+	file( TO_NATIVE_PATH "${cmakelists}" cmakelists_native )
 
 	if( NOT EXISTS "${cmakelists}" )
-		message( FATAL_ERROR "${cmakelists} not found" )
+		message( FATAL_ERROR "${cmakelists_native} not found" )
 	endif()
 
 	file( READ "${cmakelists}" content )
@@ -14,7 +15,7 @@ function( GetProjectVersion )
 		set( FOCLASSIC_STAGE ${CMAKE_MATCH_1} PARENT_SCOPE )
 		set( FOCLASSIC_VERSION ${CMAKE_MATCH_2} PARENT_SCOPE )
 	else()
-		message( FATAL_ERROR "FOClassic version information not found in ${cmakelists}" )
+		message( FATAL_ERROR "FOClassic version information not found in ${cmakelists_native}" )
 	endif()
 
 endfunction()
@@ -264,7 +265,8 @@ function( ZipAllBuilds )
 
 		if( CI )
 			# copy package and outer sum to main dir
-			# simplifies stripping build dir from CI artifacts
+			# simplifies stripping build dir from artifacts path
+			message( STATUS "Moving (pre)release package to main directory (${CMAKE_CURRENT_LIST_DIR})" )
 			file( RENAME "${outer_sum}" "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.${sum}" )
 			file( RENAME "${zip_file}"  "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.zip" )
 		endif()
