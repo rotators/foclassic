@@ -266,7 +266,8 @@ function( ZipAllBuilds )
 		if( CI )
 			# copy package and outer sum to main dir
 			# simplifies stripping build dir from artifacts path
-			message( STATUS "Moving (pre)release package to main directory (${CMAKE_CURRENT_LIST_DIR})" )
+			file( TO_NATIVE_PATH "${CMAKE_CURRENT_LIST_DIR}" dir )
+			message( STATUS "Moving (pre)release package to main directory (${dir})" )
 			file( RENAME "${outer_sum}" "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.${sum}" )
 			file( RENAME "${zip_file}"  "${CMAKE_CURRENT_LIST_DIR}/${root}${CI_ZIP_SUFFIX}.zip" )
 		endif()

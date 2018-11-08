@@ -23,9 +23,12 @@ matrix:
 
 clone_folder: C:\FOClassic
 
+cache:
+ - C:\FOClassic\SDK.Cache -> CMakeLists.txt, Build.cmake, CMake\SelfUpdate.cmake
+
 install:
  - git submodule update --init --recursive
- - set PATH=SDK.Download\cmake\bin;%PATH%
+ - set PATH=SDK.Cache\cmake\bin;%PATH%
  - cmake -P CMake\SelfUpdate.cmake
 
 build_script:
