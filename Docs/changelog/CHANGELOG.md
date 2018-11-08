@@ -68,6 +68,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - additional info
     - project has been integrated with [AppVeyor](https://www.appveyor.com/) service, and configured to prepare (pre)release packages after succesful compilation; that allows anyone interested to use development version of each and all applications without waiting for official releases - which, from this version, will use binaries compiled by external services  
       https://ci.appveyor.com/project/rotators/foclassic/
+        - binaries can be found under `Image: Visual Studio 2013` -> `Artifacts`; despite of the image name, _Visual Studio 2010_ is used for compilation
+        - `Image: Visual Studio 2017` is used for checking if engine is ready for migration to VS2017; it most likely will take some time, so it can be safely ignored currently
 
 
 #### Server.cfg fragment
