@@ -66,7 +66,7 @@ target_include_directories( Shared
 		${AS_DIR}
 	PRIVATE
 		${DEFAULT_INCLUDE_DIR}
-		${CMAKE_SOURCE_DIR}/Source/Libs/fltk # Text.cpp -> FL/case.h
+		${CMAKE_SOURCE_DIR}/Source/Libs/fltk.bin # Text.cpp -> FL/case.h
 )
 target_link_libraries( Shared
 	PUBLIC
