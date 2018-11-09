@@ -4,7 +4,7 @@
 ##
 cmake_minimum_required( VERSION 3.0.0 )
 
-# required version will be stored in [dir]/cmake/
+# required version will be stored in [DOWNLOAD_DIR]/cmake/
 set( DOWNLOAD_DIR "SDK.Cache" )
 
 # extract version from cmake_minimum_required(), or assume "3.0.0" if not found
@@ -55,8 +55,11 @@ if( NOT "${CMAKE_VERSION}" VERSION_LESS "${VERSION_REQUIRED}" )
 	return()
 endif()
 
-# remove previously downloaded version
-file( REMOVE_RECURSE "${DOWNLOAD_DIR}/cmake" )
+# cleanup
+if( EXISTS "${DOWNLOAD_DIR}/cmake/" )
+	message( STATUS "Cleaning local CMake directory...")
+	file( REMOVE_RECURSE "${DOWNLOAD_DIR}/cmake/" )
+endif()
 
 # get system info
 message( STATUS "Checking system information..." )
@@ -121,16 +124,25 @@ file( MAKE_DIRECTORY "${DOWNLOAD_DIR}" )
 file( DOWNLOAD "${DOWNLOAD_URL}" "${DOWNLOAD_DIR}/${DOWNLOAD_FILE}" )
 
 # extract
-message( STATUS "Extracting ${DOWNLOAD_FILE}" )
+message( STATUS "Extracting ${DOWNLOAD_DIR}/${DOWNLOAD_FILE}" )
 execute_process(
 	COMMAND ${CMAKE_COMMAND} -E tar xzf ${DOWNLOAD_FILE}
 	WORKING_DIRECTORY ${DOWNLOAD_DIR}
 )
 
 # simplify directory name
-message( STATUS "Renaming ${DOWNLOAD_NAME} -> cmake")
+message( STATUS "Renaming ${DOWNLOAD_DIR}/${DOWNLOAD_NAME} -> ${DOWNLOAD_DIR}/cmake/")
 file( RENAME "${DOWNLOAD_DIR}/${DOWNLOAD_NAME}" "${DOWNLOAD_DIR}/cmake" )
 
 # cleanup
-message( STATUS "Removing ${DOWNLOAD_FILE}" )
+message( STATUS "Removing ${DOWNLOAD_DIR}/${DOWNLOAD_FILE}" )
 file( REMOVE "${DOWNLOAD_DIR}/${DOWNLOAD_FILE}" )
+
+# cleanup harder on CI
+if( DEFINED ENV{CI} )
+	message( STATUS "Removing ${DOWNLOAD_DIR}/cmake/doc/" )
+	file( REMOVE_RECURSE "${DOWNLOAD_DIR}/cmake/doc/" )
+
+	message( STATUS "Removing ${DOWNLOAD_DIR}/cmake/man/" )
+	file( REMOVE_RECURSE "${DOWNLOAD_DIR}/cmake/man/" )
+endif()

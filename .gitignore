@@ -11,6 +11,7 @@
 
 # Developer files
 /*.dev
+/*.bat
 /*.cmd
 /*.pl
 /*.sh
@@ -19,3 +20,6 @@
 # In-Source build leftovers
 /CMakeCache.txt
 /CMakeFiles
+
+# cmake --system-information leftovers
+/__cmake_systeminformation

@@ -143,6 +143,7 @@ add_custom_target( Configuration
 		${ROOT_CMAKE_FILES}
 		${ROOT_CMAKE_CMAKE_FILES}
 		.appveyor.yml
+		.gitignore
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
 set_property( TARGET Configuration PROPERTY FOLDER Configuration )

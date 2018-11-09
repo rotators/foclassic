@@ -12,14 +12,14 @@
   When working on Windows, use _Git for Windows Portable_ if possible - bundled tools might be used in future.  
   https://git-scm.com/download/
 
-* Visual Studio 2010 (required)  
+* cmake -- v3.12.2 (minimum required)  
+  https://cmake.org/download/
+
+  * Visual Studio 2010 (required)  
   https://visualstudio.microsoft.com/vs/older-downloads/
 
 * Visual Studio 2017 (optional)  
   https://visualstudio.microsoft.com/vs/
-
-* cmake -- v3.12.1 (minimum required)  
-  https://cmake.org/download/
 
 ## Preparations
 
@@ -30,6 +30,7 @@
         * _Visual Studio 2017_: `cmake -G "Visual Studio 15" -T v100 Path/To/Main/Directory/`  
           Note that -T option informs cmake to generate solution which uses VS2010 toolchain.  
           Builds using _Visual Studio 2017_ toolchain (without -T switch) will NOT work.
+
 
 ## Automated build
 
