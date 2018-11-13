@@ -27,7 +27,7 @@ function( HashToNumber hash var )
 	string( REPLACE "d" "4" hash_number "${hash_number}" )
 	string( REPLACE "e" "5" hash_number "${hash_number}" )
 	string( REPLACE "f" "6" hash_number "${hash_number}" )
-	message( STATUS "${hash_number}" )
+
 	string( SUBSTRING ${hash_number} 0 9 hash_number )
 	math( EXPR hash_number "${hash_number} + 0" )
 
