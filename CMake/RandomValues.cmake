@@ -21,17 +21,17 @@ endfunction()
 function( HashToNumber hash var )
 
 	string( MD5 hash_number "${hash}" )
-	string( REGEX REPLACE "a" "1" hash_number "${hash_number}" )
-	string( REGEX REPLACE "b" "2" hash_number "${hash_number}" )
-	string( REGEX REPLACE "c" "3" hash_number "${hash_number}" )
-	string( REGEX REPLACE "d" "4" hash_number "${hash_number}" )
-	string( REGEX REPLACE "e" "5" hash_number "${hash_number}" )
-	string( REGEX REPLACE "f" "6" hash_number "${hash_number}" )
-
+	string( REPLACE "a" "1" hash_number "${hash_number}" )
+	string( REPLACE "b" "2" hash_number "${hash_number}" )
+	string( REPLACE "c" "3" hash_number "${hash_number}" )
+	string( REPLACE "d" "4" hash_number "${hash_number}" )
+	string( REPLACE "e" "5" hash_number "${hash_number}" )
+	string( REPLACE "f" "6" hash_number "${hash_number}" )
+	message( STATUS "${hash_number}" )
 	string( SUBSTRING ${hash_number} 0 9 hash_number )
 	math( EXPR hash_number "${hash_number} + 0" )
 
-	RandomValue( SEED ${hash_number} LENGTH_MIN 5 LENGTH_MAX 9 ALPHABET "123456789" VAR hash_number SIGNED )
+	RandomValue( SEED ${hash_number} LENGTH_MIN 5 LENGTH_MAX 9 ALPHABET "123456789" VAR hash_number )
 
 	set( ${var} "${hash_number}" PARENT_SCOPE )
 
