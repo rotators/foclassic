@@ -1,15 +1,22 @@
-# Automated build directories
-/SDK*
+##
+## General
+##
+
+# per-directory ignores
+.gitignore
+!/.gitignore
 
 # External SVN repositories
 .svn
 
-# Visual Studio files
-.vs
-*.sdf
-*.suo
+##
+## Developer files
+##
 
-# Developer files
+# AutomatedBuild directories
+/SDK*
+
+# maintainers
 /*.dev
 /*.bat
 /*.cmd
@@ -17,9 +24,16 @@
 /*.sh
 *.user
 
-# In-Source build leftovers
+# customization
+/CMake/User*.cmake
+
+##
+## CMake leftovers
+##
+
+# In-Source build
 /CMakeCache.txt
 /CMakeFiles
 
-# cmake --system-information leftovers
+# cmake --system-information
 /__cmake_systeminformation

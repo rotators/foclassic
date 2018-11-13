@@ -386,6 +386,18 @@ BufferManager& BufferManager::operator>>( bool& i )
     return *this;
 }
 
+
+#if defined (FOCLASSIC_CLIENT)
+bool BufferManager::NeedProcessRaw()
+{
+    if( bufReadPos + sizeof(uint) > bufEndPos )
+        return false;
+    uint msg = *(uint*)(bufData + bufReadPos);
+
+    return msg == 0xFFFFFFFF;
+}
+#endif
+
 #if (defined (FOCLASSIC_SERVER) ) || (defined (FOCLASSIC_CLIENT) )
 bool BufferManager::NeedProcess()
 {

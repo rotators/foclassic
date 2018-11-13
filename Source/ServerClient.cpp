@@ -1487,7 +1487,12 @@ void FOServer::Process_CreateClient( Client* cl )
     if( engine_stage != FOCLASSIC_STAGE )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
+        BOUT_BEGIN( cl );
+        cl->Bin.SetEncryptKey( 0 );
+        cl->Bout.SetEncryptKey( 0 );
+        cl->Bout << (uint)0xFFFFFFFF;
+        cl->Bout << (uint)0xFF000000;
+        BOUT_END( cl );
         cl->Disconnect();
         return;
     }
@@ -1496,14 +1501,19 @@ void FOServer::Process_CreateClient( Client* cl )
     if( engine_version != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
+        BOUT_BEGIN( cl );
+        cl->Bin.SetEncryptKey( 0 );
+        cl->Bout.SetEncryptKey( 0 );
+        cl->Bout << (uint)0xFFFFFFFF;
+        cl->Bout << (uint)0xFF000000;
+        BOUT_END( cl );
         cl->Disconnect();
         return;
     }
 
     // Begin data encrypting
-    cl->Bin.SetEncryptKey( 1207892018 );
-    cl->Bout.SetEncryptKey( 1207892018 );
+    cl->Bin.SetEncryptKey( 892018 + NETSALT_REGISTER );
+    cl->Bout.SetEncryptKey( 892018 - NETSALT_REGISTER );
 
     // Name
     char name[UTF8_BUF_SIZE( MAX_NAME )];
@@ -1788,7 +1798,12 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     if( engine_stage != FOCLASSIC_STAGE )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
+        BOUT_BEGIN( cl );
+        cl->Bin.SetEncryptKey( 0 );
+        cl->Bout.SetEncryptKey( 0 );
+        cl->Bout << (uint)0xFFFFFFFF;
+        cl->Bout << (uint)0xFF000000;
+        BOUT_END( cl );
         cl->Disconnect();
         return;
     }
@@ -1797,7 +1812,12 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     if( engine_version != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        cl->Send_TextMsg( cl, STR_NET_WRONG_NETPROTO, SAY_NETMSG, TEXTMSG_GAME );
+        BOUT_BEGIN( cl );
+        cl->Bin.SetEncryptKey( 0 );
+        cl->Bout.SetEncryptKey( 0 );
+        cl->Bout << (uint)0xFFFFFFFF;
+        cl->Bout << (uint)0xFF000000;
+        BOUT_END( cl );
         cl->Disconnect();
         return;
     }
@@ -1808,8 +1828,8 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     cl->Bin >> uid[4];
 
     // Begin data encrypting
-    cl->Bin.SetEncryptKey( uid[4] + 12234 );
-    cl->Bout.SetEncryptKey( uid[4] + 12234 );
+    cl->Bin.SetEncryptKey( uid[4] + NETSALT_LOGIN );
+    cl->Bout.SetEncryptKey( uid[4] - NETSALT_LOGIN );
 
     // Login, password hash
     char name[UTF8_BUF_SIZE( MAX_NAME )];
@@ -2447,8 +2467,8 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     cl->Bout << bin_seed;
     cl->Bout << bout_seed;
     BOUT_END( cl );
-    cl->Bin.SetEncryptKey( bin_seed );
-    cl->Bout.SetEncryptKey( bout_seed );
+    cl->Bin.SetEncryptKey( bin_seed + NETSALT_BIN );
+    cl->Bout.SetEncryptKey( bout_seed + NETSALT_BOUT );
     cl->Send_LoadMap( NULL );
 }
 

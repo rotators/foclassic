@@ -57,18 +57,6 @@ set( MAPPER_GL_LIBS ${MAPPER_LIBS} ${GL_LIBS} )
 ## mixed sources
 ##
 
-set( CLIENT_SERVER_SOURCES
-	Access.cpp
-	Access.h
-	BufferManager.cpp
-	BufferManager.h
-	CraftManager.cpp
-	CraftManager.h
-	Network.cpp
-	Network.h
-	Scores.h
-)
-
 set( CLIENT_MAPPER_SOURCES
 	3dAnimation.h
 	3dStuff.cpp
@@ -80,6 +68,19 @@ set( CLIENT_MAPPER_SOURCES
 	SpriteManager.cpp
 	SpriteManager.h
 	SpriteManagerFont.cpp
+)
+
+set( CLIENT_SERVER_SOURCES
+	${ENGINE_NET_HEADER_FILE}
+	Access.cpp
+	Access.h
+	BufferManager.cpp
+	BufferManager.h
+	CraftManager.cpp
+	CraftManager.h
+	Network.cpp
+	Network.h
+	Scores.h
 )
 
 set( MAPPER_SERVER_SOURCES

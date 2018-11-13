@@ -62,12 +62,6 @@ endfunction()
 # - restore last modification time (CI only)
 function( PrepareFiles )
 
-	set( uncrustemp "${CMAKE_CURRENT_LIST_DIR}/FormatSource.tmp" )
-	set( uncrustify "${CMAKE_CURRENT_LIST_DIR}/Source/SourceTools/uncrustify" )
-
-	# in case of cancelled FormatSource runs
-	file( REMOVE "${uncrustemp}" )
-
 	# get list of repository files
 	execute_process(
 		COMMAND git ls-files
@@ -116,12 +110,9 @@ function( PrepareFiles )
 		endif()
 
 		if( format )
-			execute_process(
-				COMMAND "${uncrustify}${CMAKE_EXECUTABLE_SUFFIX}" -c "${uncrustify}.cfg" -l CPP -f "${file}" -o "${uncrustemp}" -q --if-changed
-			)
-			if( EXISTS "${uncrustemp}" )
+			FormatSource( "${file}" "${CMAKE_CURRENT_LIST_DIR}" file_changed )
+			if( file_changed )
 				message( STATUS "           FormatSource prevails" )
-				file( RENAME "${uncrustemp}" "${file}" )
 			endif()
 		endif()
 

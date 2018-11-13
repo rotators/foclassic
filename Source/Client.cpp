@@ -2989,6 +2989,42 @@ int FOClient::NetInput( bool unpack )
 
 void FOClient::NetProcess()
 {
+    if( Bin.NeedProcessRaw() )
+    {
+        Bin.SetEncryptKey( 0 );
+        Bout.SetEncryptKey( 0 );
+        Bin.MoveReadPos( 4 );
+
+        uint command = 0;
+        Bin >> command;
+
+        switch( command )
+        {
+            // version mismatch
+            case 0xFF000000:
+            {
+                WriteLog( "Invalid version.\n" );
+
+                const char* msg = NULL;
+                if( CurLang.Msg[TEXTMSG_GAME].Count( STR_NET_WRONG_NETPROTO ) )
+                    msg = CurLang.Msg[TEXTMSG_GAME].GetStr( STR_NET_WRONG_NETPROTO );
+
+                if( msg && Str::Length( msg ) && !Str::Compare( msg, "error" ) )
+                    AddMess( MSGBOX_GAME, msg );
+                else
+                    ShowMessage( "Please update the client.\nCurrently used version is no longer supported." );
+
+                IsConnected = false;
+                break;
+            }
+            default:
+                WriteLog( "Unknown raw command<0x%X>\n", command );
+                break;
+        }
+
+        return;
+    }
+
     while( Bin.NeedProcess() )
     {
         uint msg = 0;
@@ -3259,14 +3295,14 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
     uint uid1 = *UID1;
     Bout << NETMSG_LOGIN;
     Bout << (ushort)FOCLASSIC_STAGE;
-    Bout << (ushort)FOCLASSIC_VERSION;
+    Bout << (ushort)(FOCLASSIC_VERSION - (CommandLine->IsOption( "old-version" ) ? 1 : 0) );
     uint uid4 = *UID4;
     Bout << uid4;
     uid4 = uid1;                                                                                                                                                        // UID4
 
     // Begin data encrypting
-    Bout.SetEncryptKey( *UID4 + 12234 );
-    Bin.SetEncryptKey( *UID4 + 12234 );
+    Bout.SetEncryptKey( *UID4 + NETSALT_LOGIN );
+    Bin.SetEncryptKey( *UID4 - NETSALT_LOGIN );
 
     Bout.Push( name_, sizeof(name_) );
     Bout << uid1;
@@ -3329,8 +3365,8 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     Bout << (ushort)FOCLASSIC_VERSION;
 
     // Begin data encrypting
-    Bout.SetEncryptKey( 1207892018 );
-    Bin.SetEncryptKey( 1207892018 );
+    Bout.SetEncryptKey( 892018 + NETSALT_REGISTER );
+    Bin.SetEncryptKey( 892018 - NETSALT_REGISTER );
 
     Bout.Push( Str::FormatBuf( "%s", newcr->GetName() ), UTF8_BUF_SIZE( MAX_NAME ) );
     char pass_hash[PASS_HASH_SIZE];
@@ -3833,11 +3869,12 @@ void FOClient::Net_OnLoginSuccess()
     ResMngr.FreeResources( RES_ITEMS );
     ResMngr.FreeResources( RES_CRITTERS );
 
-    uint bin_seed, bout_seed;     // Server bin/bout == client bout/bin
+    // Server bin/bout == client bout/bin
+    uint bin_seed, bout_seed;
     Bin >> bin_seed;
     Bin >> bout_seed;
-    Bout.SetEncryptKey( bin_seed );
-    Bin.SetEncryptKey( bout_seed );
+    Bout.SetEncryptKey( bin_seed + NETSALT_BIN );
+    Bin.SetEncryptKey( bout_seed + NETSALT_BOUT );
 }
 
 void FOClient::Net_OnAddCritter( bool is_npc )

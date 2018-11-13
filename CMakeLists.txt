@@ -32,11 +32,13 @@ set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
 #set( CMAKE_VERBOSE_MAKEFILE TRUE )
 
+# standard includes
 include( FOClassicVersion )
 FOClassicVersion()
-
+include( AutomatedBuild ) # for DetectCI() only
 include( FormatSource )
 include( PdbSetup )
+include( RandomValues )
 include( SourceOptions )
 
 ##
@@ -67,12 +69,25 @@ set( DEFAULT_INCLUDE_DIR             "${FOCMAKE_DIR}/include" )
 
 # templates
 set( ENGINE_GLOBAL_HEADER_TEMPLATE   "${TEMPLATES_DIR}/CMake.h" )
+set( ENGINE_NET_HEADER_TEMPLATE      "${TEMPLATES_DIR}/CMake.Net.h" )
 set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/Defines.Public.h" )
 set( VERSION_TEMPLATE                "${TEMPLATES_DIR}/VERSION" )
 
 # special files
 set( CHANGELOG_FILE                  "${DOCS_DIR}/changelog/CHANGELOG.md" )
 set( ENGINE_GLOBAL_HEADER_FILE       "${DEFAULT_INCLUDE_DIR}/CMake.h" )
+set( ENGINE_NET_HEADER_FILE          "${DEFAULT_INCLUDE_DIR}/CMake.Net.h" )
+set( USER_FUNCTIONS_FILE             "${ROOT_CMAKE_DIR}/UserFunctions.cmake" )
+
+##
+## customization
+##
+
+if( EXISTS "${USER_FUNCTIONS_FILE}" )
+	include( UserFunctions )
+	HashFile( "${USER_FUNCTIONS_FILE}" HASH_USER )
+	list( APPEND HASH_LIST "${HASH_FILE}" )
+endif()
 
 # timestamps
 file( TIMESTAMP "${SCRIPTS_HEADER_TEMPLATE}" SCRIPTS_HEADER_TIMESTAMP "%d.%m.%Y" )
@@ -128,6 +143,19 @@ add_subdirectory( Source )
 add_subdirectory( Extensions )
 
 ##
+## process per-version tasks
+##
+
+message( STATUS "Generating net header..." )
+
+HashFile( "${ENGINE_GLOBAL_HEADER_FILE}" HASH_VERSION )
+list( APPEND HASH_LIST "${HASH_VERSION}" )
+
+GenerateNetHeader( "${ENGINE_NET_HEADER_TEMPLATE}" "${ENGINE_NET_HEADER_FILE}" "CMAKE_NET" "${FO_DIR}/NetProtocol.h" "${HASH_LIST}" )
+HashFile( "${ENGINE_NET_HEADER_FILE}" HASH_NET )
+list( APPEND HASH_LIST "${HASH_NET}" )
+
+##
 ## process source options
 ##
 SourceOptions()
@@ -154,4 +182,3 @@ set_property( TARGET Configuration PROPERTY FOLDER Configuration )
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Configuration/CMake" )
-

@@ -4,6 +4,13 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - [Latest release](https://github.com/rotators/foclassic/releases/latest/)
 - Nightly builds: [Windows](https://ci.appveyor.com/project/rotators/foclassic/)
 
+## [v3]() (WIP)
+
+- information about outdated Client version is always displayed to player
+    - [windows] if FOGAME.MSG/1024 cannot be found (eg. cache hasn't been downloaded yet), Client displays [native dialog box](https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-messagebox) with hardcoded message
+- breaking changes
+    - previous Client versions won't be able to communicate with Server properly
+
 ## [v2](https://github.com/rotators/foclassic/releases/tag/v2/)
 
 [FOnline](https://github.com/cvet/fonline) and [FOClassic](https://github.com/rotators/foclassic/) are now fully open-source projects.

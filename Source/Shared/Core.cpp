@@ -619,6 +619,8 @@ void RestoreMainDirectory()
 // Show dialog box with message
 void ShowMessage( const char* message )
 {
+    #pragma TODO("ShowMessage() should use FLTK/SDL functions")
+
     #ifdef FO_WINDOWS
     MessageBox( NULL, message, "FOClassic", MB_OK );
     #else

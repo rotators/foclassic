@@ -55,6 +55,9 @@ public:
     bool IsEmpty() const               { return bufReadPos >= bufEndPos; }
     bool IsHaveSize( uint size ) const { return bufReadPos + size <= bufEndPos; }
 
+    #if defined (FOCLASSIC_CLIENT)
+    bool NeedProcessRaw();
+    #endif
     #if (defined (FOCLASSIC_SERVER) ) || (defined (FOCLASSIC_CLIENT) )
     bool NeedProcess();
     void SkipMsg( uint msg );

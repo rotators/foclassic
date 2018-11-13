@@ -34,7 +34,8 @@ endfunction()
 GetRequiredVersion( "${CMAKE_CURRENT_LIST_DIR}/../CMakeLists.txt" VERSION_REQUIRED )
 GetRequiredVersion( "${CMAKE_CURRENT_LIST_DIR}/../Build.cmake" VERSION_AUTOBUILD )
 
-message( STATUS "CMake:           v${CMAKE_VERSION}" )
+file( TO_NATIVE_PATH "${CMAKE_COMMAND}" CURRENT_CMAKE )
+message( STATUS "CMake:           v${CMAKE_VERSION} (${CURRENT_CMAKE})" )
 message( STATUS "CMake required:  v${VERSION_REQUIRED} (CMakeLists.txt)" )
 message( STATUS "CMake required:  v${VERSION_AUTOBUILD} (Build.cmake)" )
 
