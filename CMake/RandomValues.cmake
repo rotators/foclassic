@@ -95,7 +95,8 @@ function( GenerateNetHeader template_in template_out guard protocol_header hash 
 			RandomValue( SEED ${id} LENGTH 3 ALPHABET "123456789" VAR fixer )
 
 			while( id LESS 10 OR id GREATER max OR id IN_LIST uid )
-				#list( APPEND info ${id} )
+				# debug only
+				# list( APPEND info ${id} )
 				if( id GREATER max )
 					math( EXPR id "${id} % ${fixer}")
 				else()
