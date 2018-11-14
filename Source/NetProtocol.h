@@ -8,25 +8,32 @@
 /* Base                                                                 */
 /************************************************************************/
 
+// Fixed headers (1-9)
+// NETMSG_LOGIN
+// NETMSG_REGISTER
+#define CONST_NETMSG_HEADER( number )         ( (uint)( (0xF0C1A51C + number - 1) ) )
+
+// Dynamic headers
 #define CALC_NETMSG_HEADER( number )          ( (uint)( (0xF0C1A51C ^ number) * (number ## ull << (number % 16) ) % 0xFFFFFFFF ) )
 #define MAKE_NETMSG_HEADER( number )          CALC_NETMSG_HEADER( number )
+
 #define PING_CLIENT_LIFE_TIME                 (15000)    // Time to ping client life
 
 // Special message
-// 0xFFFFFFFF - ping, answer
-// 4 - players in game
-// 12 - reserved
+// 0xFFFFFFFF
+//   Client  DDDD
+//           [uint D] data
+//   Server  CCCCUUUU00000000
+//           [uint C] connections [uint U] uptime // TODO: CCCCUUUU0000EVVL*
 
-// Fixed headers
-// NETMSG_LOGIN
-// NETMSG_CREATE_CLIENT
-// NETMSG_NET_SETTINGS
+#define NETRAW_HEADER                         (0xFFFFFFFF)
+#define NETRAW_INVALID_VERSION                (0xFF000000)
 
 // ************************************************************************
 // LOGIN MESSAGES
 // ************************************************************************
 
-#define NETMSG_LOGIN                          CALC_NETMSG_HEADER( 1 )
+#define NETMSG_LOGIN                          CONST_NETMSG_HEADER( 1 )
 #define NETMSG_LOGIN_SIZE                                                         \
     (sizeof(uint) + sizeof(ushort) + sizeof(ushort) + sizeof(uint) * 8 /*UIDs*/ + \
      UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(uint) + sizeof(uint) * 10 /*MSG*/ + sizeof(uint) * 14 /*Proto*/ + sizeof(uchar) + 100)
@@ -52,15 +59,7 @@
 // char[100] - reserved
 // ////////////////////////////////////////////////////////////////////////
 
-#define NETMSG_LOGIN_SUCCESS                  CALC_NETMSG_HEADER( 2 )
-#define NETMSG_LOGIN_SUCCESS_SIZE             (sizeof(uint) + sizeof(uint) * 2)
-// ////////////////////////////////////////////////////////////////////////
-// Login accepted
-// uint bin_seed
-// uint bout_seed
-// ////////////////////////////////////////////////////////////////////////
-
-#define NETMSG_CREATE_CLIENT                  CALC_NETMSG_HEADER( 3 )
+#define NETMSG_REGISTER                       CONST_NETMSG_HEADER( 2 )
 // ////////////////////////////////////////////////////////////////////////
 // Registration query
 // Params:
@@ -74,7 +73,15 @@
 //  int param_val
 // ////////////////////////////////////////////////////////////////////////
 
-#define NETMSG_REGISTER_SUCCESS               CALC_NETMSG_HEADER( 4 )
+#define NETMSG_LOGIN_SUCCESS                  MAKE_NETMSG_HEADER( NETUID_LOGIN_SUCCESS )
+#define NETMSG_LOGIN_SUCCESS_SIZE             (sizeof(uint) + sizeof(uint) * 2)
+// ////////////////////////////////////////////////////////////////////////
+// Login accepted
+// uint bin_seed
+// uint bout_seed
+// ////////////////////////////////////////////////////////////////////////
+
+#define NETMSG_REGISTER_SUCCESS               MAKE_NETMSG_HEADER( NETUID_REGISTER_SUCCESS )
 #define NETMSG_REGISTER_SUCCESS_SIZE          (sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 // Answer about successes registration

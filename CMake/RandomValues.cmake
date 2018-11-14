@@ -20,7 +20,7 @@ endfunction()
 
 function( HashToNumber hash var )
 
-	string( MD5 hash_number "${hash}" )
+	string( SHA512 hash_number "${hash}" )
 	string( REPLACE "a" "1" hash_number "${hash_number}" )
 	string( REPLACE "b" "2" hash_number "${hash_number}" )
 	string( REPLACE "c" "3" hash_number "${hash_number}" )
@@ -28,12 +28,12 @@ function( HashToNumber hash var )
 	string( REPLACE "e" "5" hash_number "${hash_number}" )
 	string( REPLACE "f" "6" hash_number "${hash_number}" )
 
-	string( SUBSTRING ${hash_number} 0 9 hash_number )
+	string( SUBSTRING "${hash_number}" 0 9 hash_number )
 	math( EXPR hash_number "${hash_number} + 0" )
 
-	RandomValue( SEED ${hash_number} LENGTH_MIN 5 LENGTH_MAX 9 ALPHABET "123456789" VAR hash_number )
+	RandomValue( SEED ${hash_number} LENGTH_MIN 5 LENGTH_MAX 9 ALPHABET "123456789" VAR result )
 
-	set( ${var} "${hash_number}" PARENT_SCOPE )
+	set( ${var} "${result}" PARENT_SCOPE )
 
 endfunction()
 
@@ -60,6 +60,7 @@ function( GenerateNetHeader template_in template_out guard protocol_header hash 
 	if( NOT EXISTS "${protocol_header}" )
 		message( FATAL_ERROR "File does not exists: '${protocol_header}'" )
 	endif()
+	list( APPEND CMAKE_CONFIGURE_DEPENDS "${protocol_header}" )
 
 	# limits
 	set( max 200000 ) # rounded down
@@ -78,36 +79,49 @@ function( GenerateNetHeader template_in template_out guard protocol_header hash 
 	foreach( msg IN LISTS list )
 		if( "${msg}" MATCHES "^[\t\ ]*#[\t\ ]*define[\t\ ]+NETMSG_([A-Z0-9_]+)[\t\ ]+MAKE_NETMSG_HEADER" )
 			set( msg "${CMAKE_MATCH_1}" )
+			unset( fixer )
+			unset( info )
+			unset( id )
 
 			RandomValue(
 				SEED_FROM "${hash} <3 ${msg}"
 				LENGTH_MIN 2
 				LENGTH_MAX ${len}
 				ALPHABET "0123456789"
-				VAR msg_id
+				VAR id
 				ADD_ZERO
 			)
 
-			while( msg_id LESS 10 OR msg_id GREATER ${max} OR msg_id IN_LIST uid )
-				if( msg_id GREATER ${max} )
-					math( EXPR msg_id "${msg_id} % 1207")
+			RandomValue( SEED ${id} LENGTH 3 ALPHABET "123456789" VAR fixer )
+
+			while( id LESS 10 OR id GREATER max OR id IN_LIST uid )
+				#list( APPEND info ${id} )
+				if( id GREATER max )
+					math( EXPR id "${id} % ${fixer}")
 				else()
-					math( EXPR msg_id "${msg_id} + 1207" )
+					math( EXPR id "${id} + ${fixer}" )
 				endif()
 			endwhile()
 
-			list( APPEND uid ${msg_id} )
+			list( APPEND uid ${id} )
 
-			set( NETUID_${msg} ${msg_id} )
-			string( APPEND content "#define NETUID_${msg} @NETUID_${msg}@\n" )
+			if( info )
+				list( REVERSE info )
+				string( REPLACE ";" " " info "${info}" )
+				string( PREPEND info " // " )
+				string( APPEND info " : ${fixer}")
+			endif()
+
+			set( NETUID_${msg} ${id} )
+			string( APPEND content "#define NETUID_${msg} @NETUID_${msg}@${info}\n" )
 		endif()
 	endforeach()
 	string( APPEND content "\n" )
 
 	# salt
 	SeedFile( "${protocol_header}" protocol )
-	RandomValue( SEED_FROM "${uid} + ${protocol}" LENGTH_MIN 2 LENGTH_MAX 5 ALPHABET "0123456789" VAR NETSALT_BIN  SIGNED ADD_ZERO )
-	RandomValue( SEED_FROM "${uid} - ${protocol}" LENGTH_MIN 2 LENGTH_MAX 5 ALPHABET "9876543210" VAR NETSALT_BOUT SIGNED ADD_ZERO )
+	RandomValue( SEED ${protocol} LENGTH_MIN 2 LENGTH_MAX 5 ALPHABET "0123456789" VAR NETSALT_BIN SIGNED ADD_ZERO )
+	RandomValue( SEED_FROM "${uid}" LENGTH_MIN 2 LENGTH_MAX 5 ALPHABET "9876543210" VAR NETSALT_BOUT SIGNED ADD_ZERO )
 	RandomValue( SEED_FROM "${NETSALT_BIN}<->${NETSALT_BOUT}" LENGTH_MIN 2 LENGTH_MAX 4 ALPHABET "01234543210" VAR NETSALT_LOGIN SIGNED ADD_ZERO )
 	RandomValue( SEED_FROM "${NETSALT_LOGIN}" LENGTH_MIN 2 LENGTH_MAX 4 ALPHABET "09876567890" VAR NETSALT_REGISTER SIGNED ADD_ZERO )
 	string( APPEND content "#define NETSALT_BIN      @NETSALT_BIN@\n" )

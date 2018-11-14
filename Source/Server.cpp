@@ -1485,11 +1485,11 @@ void FOServer::Process( ClientPtr& cl )
                     BIN_END( cl );
                     break;
                 case NETMSG_LOGIN:
-                    Process_LogIn( cl );
+                    Process_UserLogin( cl );
                     BIN_END( cl );
                     break;
-                case NETMSG_CREATE_CLIENT:
-                    Process_CreateClient( cl );
+                case NETMSG_REGISTER:
+                    Process_UserRegister( cl );
                     BIN_END( cl );
                     break;
                 case NETMSG_SINGLEPLAYER_SAVE_LOAD:

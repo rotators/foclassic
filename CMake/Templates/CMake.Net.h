@@ -4,6 +4,8 @@
 // This file (including template) is generated and updated automagically.
 // Any and all hand-made changes will be lost.
 
+#define NETUID_LOGIN_SUCCESS              @NETUID_LOGIN_SUCCESS@
+#define NETUID_REGISTER_SUCCESS           @NETUID_REGISTER_SUCCESS@
 #define NETUID_PING                       @NETUID_PING@
 #define NETUID_SINGLEPLAYER_SAVE_LOAD     @NETUID_SINGLEPLAYER_SAVE_LOAD@
 #define NETUID_CHECK_UID0                 @NETUID_CHECK_UID0@

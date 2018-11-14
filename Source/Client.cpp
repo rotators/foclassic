@@ -2995,13 +2995,12 @@ void FOClient::NetProcess()
         Bout.SetEncryptKey( 0 );
         Bin.MoveReadPos( 4 );
 
-        uint command = 0;
-        Bin >> command;
+        uint data = 0;
+        Bin >> data;
 
-        switch( command )
+        switch( data )
         {
-            // version mismatch
-            case 0xFF000000:
+            case NETRAW_INVALID_VERSION:
             {
                 WriteLog( "Invalid version.\n" );
 
@@ -3018,7 +3017,7 @@ void FOClient::NetProcess()
                 break;
             }
             default:
-                WriteLog( "Unknown raw command<0x%X>\n", command );
+                WriteLog( "Unknown raw data<0x%X>\n", data );
                 break;
         }
 
@@ -3032,6 +3031,7 @@ void FOClient::NetProcess()
 
         if( GameOpt.DebugNet )
         {
+            #pragma TODO("DebugNet")
             static uint count = 0;
             AddMess( MSGBOX_GAME, Str::FormatBuf( "%04u) Input net message<%u>.", count, (msg >> 8) & 0xFF ) );
             WriteLog( "%04u) Input net message<%u>.\n", count, (msg >> 8) & 0xFF );
@@ -3358,7 +3358,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
 
     uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(ushort) + UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(count) + (sizeof(ushort) + sizeof(int) ) * count;
 
-    Bout << NETMSG_CREATE_CLIENT;
+    Bout << NETMSG_REGISTER;
     Bout << msg_len;
 
     Bout << (ushort)FOCLASSIC_STAGE;

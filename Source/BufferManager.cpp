@@ -394,7 +394,7 @@ bool BufferManager::NeedProcessRaw()
         return false;
     uint msg = *(uint*)(bufData + bufReadPos);
 
-    return msg == 0xFFFFFFFF;
+    return msg == NETRAW_HEADER;
 }
 #endif
 
@@ -560,7 +560,7 @@ bool BufferManager::NeedProcess()
         case NETMSG_CHECK_UID2:
         case NETMSG_CHECK_UID3:
         case NETMSG_CHECK_UID4:
-        case NETMSG_CREATE_CLIENT:
+        case NETMSG_REGISTER:
         case NETMSG_SINGLEPLAYER_SAVE_LOAD:
         case NETMSG_ADD_PLAYER:
         case NETMSG_ADD_NPC:
@@ -824,7 +824,7 @@ void BufferManager::SkipMsg( uint msg )
         case NETMSG_CHECK_UID2:
         case NETMSG_CHECK_UID3:
         case NETMSG_CHECK_UID4:
-        case NETMSG_CREATE_CLIENT:
+        case NETMSG_REGISTER:
         case NETMSG_SINGLEPLAYER_SAVE_LOAD:
         case NETMSG_ADD_PLAYER:
         case NETMSG_ADD_NPC:
@@ -902,7 +902,7 @@ bool BufferManager::IsValidMsg( uint msg )
         case NETMSG_CHECK_UID4:
         case NETMSG_LOGIN:
         case NETMSG_LOGIN_SUCCESS:
-        case NETMSG_CREATE_CLIENT:
+        case NETMSG_REGISTER:
         case NETMSG_SINGLEPLAYER_SAVE_LOAD:
         case NETMSG_REGISTER_SUCCESS:
         case NETMSG_PING:

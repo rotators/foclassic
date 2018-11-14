@@ -35,7 +35,6 @@ set( CMAKE_SKIP_INSTALL_RULES TRUE )
 # standard includes
 include( FOClassicVersion )
 FOClassicVersion()
-include( AutomatedBuild ) # for DetectCI() only
 include( FormatSource )
 include( PdbSetup )
 include( RandomValues )
@@ -86,7 +85,7 @@ set( USER_FUNCTIONS_FILE             "${ROOT_CMAKE_DIR}/UserFunctions.cmake" )
 if( EXISTS "${USER_FUNCTIONS_FILE}" )
 	include( UserFunctions )
 	HashFile( "${USER_FUNCTIONS_FILE}" HASH_USER )
-	list( APPEND HASH_LIST "${HASH_FILE}" )
+	list( APPEND HASH_LIST "${HASH_USER}" )
 endif()
 
 # timestamps

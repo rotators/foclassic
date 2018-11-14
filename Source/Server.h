@@ -47,9 +47,9 @@ public:
     // Net proccess
     static void Process_ParseToGame( Client* cl );
     static void Process_Move( Client* cl );
-    static bool Process_Connect( Client* cl );
-    static void Process_CreateClient( Client* cl );
-    static void Process_LogIn( ClientPtr& cl );
+    static bool Process_UserConnect( Client* cl );
+    static void Process_UserRegister( Client* cl );
+    static void Process_UserLogin( ClientPtr& cl );
     static void Process_SingleplayerSaveLoad( Client* cl );
     static void Process_Dir( Client* cl );
     static void Process_ChangeItem( Client* cl );
@@ -79,6 +79,8 @@ public:
     static void Process_Combat( Client* cl );
     static void Process_RunServerScript( Client* cl );
     static void Process_KarmaVoting( Client* cl );
+
+    static void Send_Raw( Client* cl, uint data, bool fast = true );
 
     static void Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info );
     static void Send_MsgData( Client* cl, uint lang, ushort num_msg, FOMsg& data_msg );

@@ -77,23 +77,19 @@ function( PrepareFiles )
 			continue()
 		endif()
 
-		get_filename_component( ext "${file}" EXT )
-		string( REGEX REPLACE "\\." "" ext "${ext}" )
-		if( ext STREQUAL "" )
-			continue()
-		endif()
-
-		set( mtime FALSE )
 		set( format FALSE )
+		set( mtime FALSE )
 
 		# mark source files for formatting
-		# all files must processed
-		if( "${ext}" MATCHES "^[Hh]$" OR "${ext}" MATCHES "^[Cc][Pp][Pp]$" OR "${ext}" MATCHES "^[Ff][Oo][Ss]$" )
-			if( NOT NO_FORMAT )
-				set( format TRUE )
+		# all files must processed before restorating modification time
+		if( "${file}" MATCHES "\\.([A-Za-z]+)$" )
+			if( "${CMAKE_MATCH_1}" MATCHES "^([Hh]|[Cc][Pp][Pp]|[Ff][Oo][Ss])$" )
+				if( NOT NO_FORMAT )
+					set( format TRUE )
+				endif()
 			endif()
 		endif()
-		# unmark non-addon angelscript sources
+		# don't format non-addon angelscript sources
 		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/script" )
 			set( format FALSE)
 		endif()
@@ -104,7 +100,7 @@ function( PrepareFiles )
 			set( mtime TRUE )
 		endif()
 
-		if( mtime OR format )
+		if( format OR mtime )
 			file( TO_NATIVE_PATH "${file}" file_native )
 			message( STATUS "Processing ${file_native}" )
 		endif()

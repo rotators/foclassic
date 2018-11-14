@@ -1423,8 +1423,8 @@ bool FOServer::VerifyTrigger( Map* map, Critter* cr, ushort from_hx, ushort from
     return result;
 }
 
-// called by Process_CreateClient/Process_Login
-bool FOServer::Process_Connect( Client* cl )
+// called by Process_UserRegister/Process_UserLogin
+bool FOServer::Process_UserConnect( Client* cl )
 {
     bool allow = true;
 
@@ -1455,10 +1455,10 @@ bool FOServer::Process_Connect( Client* cl )
     return allow;
 }
 
-void FOServer::Process_CreateClient( Client* cl )
+void FOServer::Process_UserRegister( Client* cl )
 {
     // Check for ban by ip
-    if( !Process_Connect( cl ) )
+    if( !Process_UserConnect( cl ) )
         return;
 
     // TODO: deprecate
@@ -1487,12 +1487,7 @@ void FOServer::Process_CreateClient( Client* cl )
     if( engine_stage != FOCLASSIC_STAGE )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        BOUT_BEGIN( cl );
-        cl->Bin.SetEncryptKey( 0 );
-        cl->Bout.SetEncryptKey( 0 );
-        cl->Bout << (uint)0xFFFFFFFF;
-        cl->Bout << (uint)0xFF000000;
-        BOUT_END( cl );
+        Send_Raw( cl, NETRAW_INVALID_VERSION );
         cl->Disconnect();
         return;
     }
@@ -1501,12 +1496,7 @@ void FOServer::Process_CreateClient( Client* cl )
     if( engine_version != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        BOUT_BEGIN( cl );
-        cl->Bin.SetEncryptKey( 0 );
-        cl->Bout.SetEncryptKey( 0 );
-        cl->Bout << (uint)0xFFFFFFFF;
-        cl->Bout << (uint)0xFF000000;
-        BOUT_END( cl );
+        Send_Raw( cl, NETRAW_INVALID_VERSION );
         cl->Disconnect();
         return;
     }
@@ -1789,7 +1779,7 @@ void FOServer::Process_CreateClient( Client* cl )
     }
 }
 
-void FOServer::Process_LogIn( ClientPtr& cl )
+void FOServer::Process_UserLogin( ClientPtr& cl )
 {
     // Engine version
     ushort engine_stage = 0, engine_version = 0;
@@ -1798,12 +1788,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     if( engine_stage != FOCLASSIC_STAGE )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        BOUT_BEGIN( cl );
-        cl->Bin.SetEncryptKey( 0 );
-        cl->Bout.SetEncryptKey( 0 );
-        cl->Bout << (uint)0xFFFFFFFF;
-        cl->Bout << (uint)0xFF000000;
-        BOUT_END( cl );
+        Send_Raw( cl, NETRAW_INVALID_VERSION );
         cl->Disconnect();
         return;
     }
@@ -1812,12 +1797,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     if( engine_version != FOCLASSIC_VERSION )
     {
         // WriteLogF(_FUNC_," - Wrong Protocol Version from SockId<%u>.\n",cl->Sock);
-        BOUT_BEGIN( cl );
-        cl->Bin.SetEncryptKey( 0 );
-        cl->Bout.SetEncryptKey( 0 );
-        cl->Bout << (uint)0xFFFFFFFF;
-        cl->Bout << (uint)0xFF000000;
-        BOUT_END( cl );
+        Send_Raw( cl, NETRAW_INVALID_VERSION );
         cl->Disconnect();
         return;
     }
@@ -1912,7 +1892,7 @@ void FOServer::Process_LogIn( ClientPtr& cl )
     }
 
     // Check for ban by ip
-    if( !Process_Connect( cl ) )
+    if( !Process_UserConnect( cl ) )
         return;
 
     // TODO: deprecate
@@ -2729,6 +2709,24 @@ void FOServer::Process_GiveMap( Client* cl )
         if( cl->ViewMapId )
             map = MapMngr.GetMap( cl->ViewMapId );
         cl->Send_LoadMap( map );
+    }
+}
+
+void FOServer::Send_Raw( Client* cl, uint data, bool fast /* = true */ )
+{
+    if( fast )
+    {
+        BOUT_BEGIN( cl );
+    }
+
+    cl->Bin.SetEncryptKey( 0 );
+    cl->Bout.SetEncryptKey( 0 );
+    cl->Bout << (uint)NETRAW_HEADER;
+    cl->Bout << data;
+
+    if( fast )
+    {
+        BOUT_END( cl );
     }
 }
 
