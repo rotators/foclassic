@@ -87,6 +87,7 @@ set_property( TARGET angelscript PROPERTY FOLDER "Libs" )
 ## AngelScriptPreprocessor
 ##
 
+#[[
 add_library( angelscript-preprocessor STATIC "" )
 target_sources( angelscript-preprocessor
 	PUBLIC
@@ -101,8 +102,4 @@ set_property( TARGET angelscript-preprocessor PROPERTY FOLDER "Libs" )
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
-
-# create extensions files
-foreach( header IN ITEMS angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
-	configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
-endforeach()
+]]

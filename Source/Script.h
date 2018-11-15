@@ -4,7 +4,7 @@
 #include "AngelScript/angelscript.h"
 #include "AngelScript/scriptarray.h"
 #include "AngelScript/scriptstring.h"
-#include "AngelScript/preprocessor.h"
+#include <preprocessor.h>
 
 #include "ScriptFunctions.h"
 #include "Types.h"
@@ -18,14 +18,14 @@ typedef std::vector<asIScriptModule*> ScriptModuleVec;
 struct EngineData
 {
     ScriptModuleVec                  Modules;
-    Preprocessor::PragmaCallback*    PragmaCB;
+    Preprocessor::Pragma::Callback*  PragmaCB;
     string                           DllTarget;
     map<string, pair<string, void*>> LoadedDlls;
 };
 
 namespace Script
 {
-    bool Init( bool with_log, Preprocessor::PragmaCallback* pragma_callback, const char* dll_target );
+    bool Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target );
     void Finish();
     bool InitThread();
     void FinishThread();
@@ -58,7 +58,7 @@ namespace Script
 
     asIScriptEngine* GetEngine();
     void             SetEngine( asIScriptEngine* engine );
-    asIScriptEngine* CreateEngine( Preprocessor::PragmaCallback* pragma_callback, const char* dll_target );
+    asIScriptEngine* CreateEngine( Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target );
     void             FinishEngine( asIScriptEngine*& engine );
 
     asIScriptContext* CreateContext();

@@ -1,6 +1,7 @@
 message( STATUS "Configuring libraries..." )
 
 add_subdirectory( acm )
+add_subdirectory( angelscript-preprocessor )
 add_subdirectory( assimp )
 add_subdirectory( distorm.bin )
 add_subdirectory( dx9.bin )
@@ -16,6 +17,6 @@ add_subdirectory( sha2 )
 add_subdirectory( theora.bin )
 add_subdirectory( zlib )
 
-set_target_properties( acm glew sha2 zlib PROPERTIES FOLDER "Libs" )
+set_target_properties( acm angelscript-preprocessor glew sha2 zlib PROPERTIES FOLDER "Libs" )
 
 message( STATUS "Configuring libraries... OK" )

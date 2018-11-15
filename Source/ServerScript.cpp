@@ -23,6 +23,8 @@
 #include "Vars.h"
 #include "Version.h"
 
+extern Preprocessor* ScriptPreprocessor;
+
 void* ASDebugMalloc( size_t size )
 {
     size += sizeof(size_t);
@@ -353,7 +355,7 @@ bool FOServer::ReloadClientScripts()
             std::vector<asBYTE>& buf = binary.GetBuf();
 
             // Pragmas
-            const StrVec& pr = Preprocessor::GetParsedPragmas();
+            const StrVec& pr = ScriptPreprocessor->GetParsedPragmas();
             for( size_t i = 0, j = pr.size(); i < j; i += 2 )
             {
                 bool found = false;

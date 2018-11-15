@@ -18,6 +18,12 @@ configure_file( "${ROOT_CMAKE_DIR}/FOClassic.cmake" "${RELEASE_CMAKE_DIR}/FOClas
 file( TIMESTAMP "${EXTENSIONS_HEADER_FILE}" EXTENSIONS_CONTENT_TIMESTAMP "%d.%m.%Y" )
 configure_file( "${EXTENSIONS_HEADER_FILE}" "${RELEASE_HEADERS_DIR}/FOClassic.h" @ONLY NEWLINE_STYLE LF )
 
+# create angelscript headers
+# this must be done before any extension configuration
+foreach( header IN ITEMS angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
+	configure_file( "${AS_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
+endforeach()
+
 ##
 ## prepare extensions directories
 ##

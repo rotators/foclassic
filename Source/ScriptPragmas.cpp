@@ -539,7 +539,7 @@ ScriptPragmaCallback::ScriptPragmaCallback( int pragma_type )
     }
 }
 
-void ScriptPragmaCallback::CallPragma( const string& name, const Preprocessor::PragmaInstance& instance )
+void ScriptPragmaCallback::CallPragma( const string& name, const Preprocessor::Pragma::Instance& instance )
 {
     if( alreadyProcessed.count( name + instance.Text ) )
         return;

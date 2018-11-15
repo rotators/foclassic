@@ -1,7 +1,7 @@
 #ifndef __SCRIPT_PRAGMAS__
 #define __SCRIPT_PRAGMAS__
 
-#include "AngelScript/preprocessor.h"
+#include <preprocessor.h>
 
 #include "Types.h"
 
@@ -16,7 +16,7 @@ class CrDataPragma;
 class BindFuncPragma;
 class BindFieldPragma;
 
-class ScriptPragmaCallback: public Preprocessor::PragmaCallback
+class ScriptPragmaCallback: public Preprocessor::Pragma::Callback
 {
 private:
     int              pragmaType;
@@ -29,7 +29,7 @@ private:
 
 public:
     ScriptPragmaCallback( int pragma_type );
-    void CallPragma( const string& name, const Preprocessor::PragmaInstance& instance );
+    void CallPragma( const string& name, const Preprocessor::Pragma::Instance& instance );
 };
 
 #endif // __SCRIPT_PRAGMAS__

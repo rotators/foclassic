@@ -4,13 +4,13 @@
 #include <locale.h>
 
 #include "AngelScript/angelscript.h"
-#include "AngelScript/preprocessor.h"
 #include "AngelScript/scriptany.h"
 #include "AngelScript/scriptdictionary.h"
 #include "AngelScript/scriptfile.h"
 #include "AngelScript/scriptmath.h"
 #include "AngelScript/scriptstring.h"
 #include "AngelScript/scriptarray.h"
+#include <preprocessor.h>
 
 #include "ASCompiler.h"
 #include "Debugger.h"
@@ -44,6 +44,8 @@ const char*      ContextStatesStr[] =
     "Active",
     "Error",
 };
+
+Preprocessor* ScriptPreprocessor;
 
 void CompilerLog( ScriptString& str )
 {
@@ -153,7 +155,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
     {
         if( msg->row )
         {
-            printf( "%s(%u) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
+            printf( "%s(%u) : %s : %s.\n", ScriptPreprocessor->ResolveOriginalFile( msg->row ).c_str(), ScriptPreprocessor->ResolveOriginalLine( msg->row ), type, msg->message );
         }
         else
         {
@@ -162,7 +164,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
     }
     else
     {
-        printf( "%s(%u) : %s : %s.\n", Preprocessor::ResolveOriginalFile( msg->row ).c_str(), Preprocessor::ResolveOriginalLine( msg->row ), type, msg->message );
+        printf( "%s(%u) : %s : %s.\n", ScriptPreprocessor->ResolveOriginalFile( msg->row ).c_str(), ScriptPreprocessor->ResolveOriginalLine( msg->row ), type, msg->message );
     }
 }
 
@@ -265,7 +267,7 @@ int main( int argc, char* argv[] )
         else if( !_stricmp( argv[i], "-gc" ) )
             CollectGarbage = true;
     }
-    printf( "after options\n" );
+
     // Fix path
     FixPathSlashes( str_fname );
     if( str_prep )
@@ -332,25 +334,28 @@ int main( int argc, char* argv[] )
     else if( IsMapper )
         pragma_type = PRAGMA_MAPPER;
 
-    Preprocessor::SetPragmaCallback( new ScriptPragmaCallback( pragma_type ) );
+    ScriptPreprocessor = new Preprocessor();
+    ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( pragma_type ) );
 
-    Preprocessor::Define( "__ASCOMPILER" );
+    ScriptPreprocessor->Define( "__ASCOMPILER" );
     if( IsServer )
-        Preprocessor::Define( "__SERVER" );
+        ScriptPreprocessor->Define( "__SERVER" );
     else if( IsClient )
-        Preprocessor::Define( "__CLIENT" );
+        ScriptPreprocessor->Define( "__CLIENT" );
     else if( IsMapper )
-        Preprocessor::Define( "__MAPPER" );
+        ScriptPreprocessor->Define( "__MAPPER" );
     for( size_t i = 0; i < defines.size(); i++ )
-        Preprocessor::Define( string( defines[i] ) );
+        ScriptPreprocessor->Define( string( defines[i] ) );
     if( !run_func.empty() )
-        Preprocessor::Define( string( "Log __CompilerLog" ) );
+        ScriptPreprocessor->Define( string( "Log __CompilerLog" ) );
 
     Preprocessor::StringOutStream result, errors;
     int                           res;
-    res = Preprocessor::Preprocess( str_fname, result, &errors, NULL, false );
+    res = ScriptPreprocessor->Preprocess( str_fname, result, &errors, NULL, false );
 
     Buf = Str::Duplicate( errors.String.c_str() );
+
+    delete ScriptPreprocessor;
 
     if( res )
     {
