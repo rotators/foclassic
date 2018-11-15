@@ -3,7 +3,7 @@ function( FormatSource filename root var )
 	set( ${var} FALSE )
 	set( uncrustemp "${root}/FormatSource.tmp" )
 	set( uncrustify "${root}/Source/SourceTools/uncrustify${CMAKE_EXECUTABLE_SUFFIX}" )
-	set( uncrustcfg "${root}/Source/SourceTools/uncrustify.cfg}" )
+	set( uncrustcfg "${root}/Source/SourceTools/uncrustify.cfg" )
 
 	if( UNCRUSTIFY_EXECUTABLE )
 		set( uncrustify "${UNCRUSTIFY_EXECUTABLE}" )
