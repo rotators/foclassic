@@ -12,7 +12,7 @@
   When working on Windows, use _Git for Windows Portable_ if possible - bundled tools might be used in future.  
   https://git-scm.com/download/
 
-* cmake -- v3.12.2 (minimum required)  
+* cmake v3.12.2 (minimum required)  
   https://cmake.org/download/
 
   * Visual Studio 2010 (required)  
@@ -23,7 +23,11 @@
 
 ## Preparations
 
-* Create a build directory; recommended: SDK*
+* Update dependencies  
+  `git submodule update --init --recursive`
+
+* Create a build directory; recommended: SDK*  
+  This step can be skipped if using automated build
 
     * Windows
         * _Visual Studio 2010_: `cmake -G "Visual Studio 10" Path/To/Main/Directory/`
