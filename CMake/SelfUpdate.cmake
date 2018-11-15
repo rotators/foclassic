@@ -44,6 +44,33 @@ if( "${VERSION_AUTOBUILD}" VERSION_GREATER "${VERSION_REQUIRED}" )
 	set( VERSION_REQUIRED "${VERSION_AUTOBUILD}" )
 endif()
 
+# use git to find versions used by submodules
+if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/../.gitmodules" )
+	find_package( Git QUIET )
+	if( Git_FOUND )
+		execute_process(
+			COMMAND ${GIT_EXECUTABLE} submodule foreach --quiet "echo $name:::$path"
+			OUTPUT_VARIABLE SUBMODULES
+		)
+		string( REPLACE "\n" ";" SUBMODULES "${SUBMODULES}" )
+		foreach( SUBMODULE_INFO IN LISTS SUBMODULES )
+			if( "${SUBMODULE_INFO}" MATCHES "^(.+):::(.+)$" )
+				set( SUBMODULE_NAME "${CMAKE_MATCH_1}" )
+				set( SUBMODULE_PATH "${CMAKE_MATCH_2}" )
+
+				if( EXISTS "${SUBMODULE_PATH}/CMakeLists.txt" )
+					GetRequiredVersion( "${SUBMODULE_PATH}/CMakeLists.txt" SUBMODULE_VERSION )
+					message( STATUS "CMake required:  v${SUBMODULE_VERSION} (submodule: ${SUBMODULE_NAME})" )
+
+					if( "${SUBMODULE_VERSION}" VERSION_GREATER "${VERSION_REQUIRED}" )
+						set( VERSION_REQUIRED "${SUBMODULE_VERSION}" )
+					endif()
+				endif()
+			endif()
+		endforeach()
+	endif()
+endif()
+
 # validate and extract MAJOR.MINOR version
 if( "${VERSION_REQUIRED}" MATCHES "^([0-9]+)\\.([0-9]+)\\.([0-9]+)$" )
 	set( VERSION_REQ "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}" )
