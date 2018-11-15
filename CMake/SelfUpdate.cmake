@@ -1,6 +1,9 @@
 ##
 ## automagically update cmake to version required by build
-## DOWNLOAD_DIR/cmake/bin/ must be added to PATH before running this script
+##
+## NOTES:
+##  DOWNLOAD_DIR/cmake/bin/ must be added to PATH before running this script
+##  [bash] running "hash -r" after this script (but before starting build script) might be required
 ##
 
 cmake_minimum_required( VERSION 3.0.0 )

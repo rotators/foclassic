@@ -11,11 +11,11 @@
 
 int Procent( int full, int peace )
 {
-    if( !full )
-        return 0;
-    int procent = peace * 100 / full;
+if(!full)
+	return 0;
+int procent = peace * 100 / full;
 
-    return CLAMP( procent, 0, 100 );
+return CLAMP(procent,0,100);
 }
 
 uint NumericalNumber( uint num )
