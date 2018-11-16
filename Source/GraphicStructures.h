@@ -49,7 +49,7 @@ typedef vector<Matrix*>    MatrixPtrVec;
 
 #  define WGL( expr )             { if( !(expr) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
 # else
-#  include "glxew.h"
+#  include <GL/glxew.h>
 # endif
 
 # define COLOR_FIX( c )           COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )

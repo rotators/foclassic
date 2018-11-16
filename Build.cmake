@@ -31,7 +31,15 @@ DetectCI()
 # handles NO_FORMAT
 PrepareFiles()
 
- if( NOT NO_BUILD )
+if( NOT NO_BUILD )
+	if( NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/.git/modules" )
+		find_package( Git QUIET )
+		if( Git_FOUND )
+			message( STATUS "Initializing git submodules" )
+			execute_process( COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive )
+		endif()
+	endif()
+
 	if( CI )
 		CreateBuildDirectory( "SDK" "${CI_GENERATOR}" "${CI_EXTRAS}" "${CI_FILE}" )
 	elseif( UNIX )
