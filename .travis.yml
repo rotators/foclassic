@@ -1,27 +1,31 @@
 os: linux
 sudo: required
-language:cpp
+notifications:
+ email: false
 
 git:
  depth: false
 
+language: cpp
+env:
+ - GXX=5
+ - GXX=4.9
+ - GXX=4.8
+
 matrix:
- include:
-  - compiler: g++-4.9
-  - compiler: g++-4.8
  allow_failures:
-  - compiler: g++-4.9
-  - compiler: g++-4.8
+  - GXX=4.9
+  - GXX=4.8
 
 cache:
  directories:
   - SDK.Cache
 
 before_install:
+ - export CC=gcc-${GXX} CXX=g++-${GXX}
  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sudo apt-get update
- - set
- - sudo apt-get install -y build-essential linux-libc-dev:i386 ${TRAVIS_COMPILER}-multilib
+ - sudo apt-get install -qq ${CXX}-multilib
 
 install:
  - export PATH=SDK.Cache/cmake/bin:$PATH

@@ -30,9 +30,7 @@ set( FOCLASSIC_VERSION "${PROJECT_VERSION_MINOR}" )
 set( CMAKE_CONFIGURATION_TYPES "Release" )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_SKIP_INSTALL_RULES TRUE )
-if( UNIX )
-	set( CMAKE_VERBOSE_MAKEFILE TRUE )
-endif()
+#set( CMAKE_VERBOSE_MAKEFILE TRUE )
 
 # standard includes
 include( FOClassicVersion )
@@ -102,8 +100,6 @@ endfunction()
 SourceOption( LEGACY_SAVEFILE "Allow loading legacy savefiles" ON )
 
 # TODO move to subdirectories
-message( STATUS "OLD LX  :: ${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}" )
-message( STATUS "OLD WIN :: ${CMAKE_C_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_RELEASE}" )
 if( UNIX )
 	set( CMAKE_C_FLAGS "-m32" )
 	set( CMAKE_CXX_FLAGS "-m32" )
