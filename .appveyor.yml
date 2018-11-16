@@ -4,9 +4,6 @@
 ## https://ci.appveyor.com/project/rotators/foclassic/
 ##
 
-# https://www.appveyor.com/docs/appveyor-yml/
-# https://www.appveyor.com/docs/build-configuration/#build-pipeline
-
 version: "{build}"
 
 # VS 2013 image = VS 2010 build

@@ -4,6 +4,7 @@
 
 | Platform | Main branch | Development branch |
 |----------|:-----------:|:------------------:|
+| Linux    | [![Build Status](https://travis-ci.com/rotators/foclassic.svg?branch=master)](https://travis-ci.com/rotators/foclassic) | [![Build Status](https://travis-ci.com/rotators/foclassic.svg?branch=dev)](https://travis-ci.com/rotators/foclassic) |
 | Windows  | [![Build status](https://ci.appveyor.com/api/projects/status/wi1iio98h45iw3nj/branch/master?svg=true)](https://ci.appveyor.com/project/rotators/foclassic/branch/master) | [![Build status](https://ci.appveyor.com/api/projects/status/wi1iio98h45iw3nj/branch/dev?svg=true)](https://ci.appveyor.com/project/rotators/foclassic/branch/dev) |
 
 ## Requirements

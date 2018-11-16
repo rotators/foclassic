@@ -1,3 +1,9 @@
+##
+## Travis
+## https://travis-ci.com/
+## https://travis-ci.com/rotators/foclassic/
+##
+
 os: linux
 sudo: required
 notifications:
