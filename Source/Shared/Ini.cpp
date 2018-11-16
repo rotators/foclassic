@@ -32,8 +32,9 @@
 #include <errno.h>
 
 #include <algorithm>
-#include <cstring>
 #include <cctype>
+#include <climits>
+#include <cstring>
 #include <fstream>
 #include <functional>
 #include <istream>
