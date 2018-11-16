@@ -1,30 +1,26 @@
+os: linux
 sudo: required
 
-language: cpp
-
-matrix:
- include:
-  - os: linux
-    compiler: g++-4.8
-    addons:
-     apt:
-      update: true
-      sources:
-       - ubuntu-toolchain-r-test
-      packages:
-       - linux-libc-dev:i386
-       - g++-4.8-multilib
+compiler:
+- g++-4.9
+- g++-4.8
 
 git:
  depth: false
 
 matrix:
  allow_failures:
+  - compiler: g++-4.9
   - compiler: g++-4.8
 
 cache:
  directories:
   - SDK.Cache
+
+before_install:
+ - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+ - sudo apt-get update
+ - sudo apt-get install -y build-essential linux-libc-dev:i386 ${TRAVIS_COMPILER}-multilib
 
 install:
  - export PATH=SDK.Cache/cmake/bin:$PATH
