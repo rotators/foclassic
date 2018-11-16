@@ -1,3 +1,4 @@
 [submodule "angelscript-preprocessor"]
 	path = Source/Libs/angelscript-preprocessor
 	url = https://github.com/rotators/angelscript-preprocessor.git
+	branch = master
