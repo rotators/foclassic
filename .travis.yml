@@ -12,18 +12,15 @@ matrix:
        - g++-4.8
 
 git:
- clone:
-  - depth: false
+ depth: false
 
 cache:
  directories:
   - SDK.Cache
 
 install:
- - git submodule update --init --recursive
- - set
  - export PATH=SDK.Cache/cmake/bin:$PATH
- - cmake -P CMake/SelfUpdate.cmake
+ - cmake -P CMake/SelfUpdate.cmake && hash -r
 
 script:
  - cmake -P Build.cmake

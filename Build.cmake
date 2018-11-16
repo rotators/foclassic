@@ -21,6 +21,7 @@ include(AutomatedBuild)
 include(FOClassicVersion)
 include(FormatSource)
 
+set( MAKE_FILE     "Makefile" )
 set( SOLUTION_FILE "FOClassic.sln" )
 
 GetProjectVersion()
