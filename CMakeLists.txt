@@ -100,7 +100,12 @@ endfunction()
 SourceOption( LEGACY_SAVEFILE "Allow loading legacy savefiles" ON )
 
 # TODO move to subdirectories
-if( MSVC )
+message( STATUS "OLD LX  :: ${CMAKE_C_FLAGS} ${CMAKE_CXX_FLAGS}" )
+message( STATUS "OLD WIN :: ${CMAKE_C_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_RELEASE}" )
+if( UNIX )
+	set( CMAKE_C_FLAGS "-m32" )
+	set( CMAKE_CCX_FLAGS "-m32" )
+elseif( MSVC )
 	set( COMPILER_DEFINES "" )
 	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_WARNINGS" )
 #	set( COMPILER_DEFINES "${COMPILER_DEFINES} -D_CRT_SECURE_NO_DEPRECATE" )

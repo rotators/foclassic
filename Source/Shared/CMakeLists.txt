@@ -68,14 +68,17 @@ target_include_directories( Shared
 		${DEFAULT_INCLUDE_DIR}
 		${CMAKE_SOURCE_DIR}/Source/Libs/fltk.bin # Text.cpp -> FL/case.h
 )
+
 target_link_libraries( Shared
 	PUBLIC
-		pthread sha2 zlib
+		sha2 zlib
 	PRIVATE
 		winmm
 )
-
-PdbSetup( Shared )
+if( WIN32 )
+	target_link_libraries( Shared PUBLIC pthread )
+	PdbSetup( Shared )
+endif()
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )

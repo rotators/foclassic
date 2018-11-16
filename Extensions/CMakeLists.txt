@@ -102,7 +102,10 @@ foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
 		if( "${target}" STREQUAL "Server" )
 			add_dependencies( ${name} ${target} )
 		else()
-			add_dependencies( ${name} ${target}DX ${target}GL )
+			add_dependencies( ${name} ${target}GL )
+			if( WIN32 )
+				add_dependencies( ${name} ${target}DX )
+			endif()
 		endif()
 
 		##
