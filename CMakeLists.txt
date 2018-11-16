@@ -115,9 +115,6 @@ elseif( MSVC )
 	set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${COMPILER_DEFINES} /MT /MP" )
 endif()
 
-# find threads
-set( THREADS_PREFER_PTHREAD_FLAG ON )
-find_package( Threads REQUIRED )
 include( CheckStructHasMember )
 check_struct_has_member( "struct timespec" "tv_sec" "time.h" HAVE_STRUCT_TIMESPEC )
 # HAVE_STRUCT_TIMESPEC must be defined for windows pthreads on newer MSVC
