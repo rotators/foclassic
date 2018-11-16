@@ -1,4 +1,5 @@
 sudo: required
+
 language: cpp
 
 matrix:
@@ -7,6 +8,7 @@ matrix:
     compiler: g++-4.8
     addons:
      apt:
+      update: true
       sources:
        - ubuntu-toolchain-r-test
       packages:
