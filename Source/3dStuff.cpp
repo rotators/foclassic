@@ -1,7 +1,7 @@
 #include "Core.h"
 
-#include "glew.h"
-#include "GL/glu.h"
+#include <GL/glew.h>
+#include <GL/glu.h>
 
 #include "3dStuff.h"
 #include "3dAnimation.h"

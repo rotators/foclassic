@@ -42,10 +42,10 @@ typedef vector<Matrix*>    MatrixPtrVec;
 # define D3D_HR( expr )           { HRESULT hr__ = expr; if( hr__ != D3D_OK ) { WriteLogF( _FUNC_, " - " # expr ", error<%s - %s>.\n", DXGetErrorString( hr__ ), DXGetErrorDescription( hr__ ) ); return 0; } }
 # define MATRIX_TRANSPOSE( m )    m.Transpose()
 #else
-# include "glew.h"
+# include <GL/glew.h>
 # define GL( expr )               { expr; if( GameOpt.OpenGLDebug ) { GLenum err__ = glGetError(); if( err__ != GL_NO_ERROR ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X - %s>.\n", err__, gluErrorString( err__ ) ); ExitProcess( 0 ); } } }
 # ifdef FO_WINDOWS
-#  include "wglew.h"
+#  include <GL/wglew.h>
 
 #  define WGL( expr )             { if( !(expr) ) { if( GameOpt.OpenGLDebug ) { WriteLogF( _FUNC_, " - " # expr ", error<0x%08X>.\n", GetLastError() ); ExitProcess( 0 ); } } }
 # else

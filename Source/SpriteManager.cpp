@@ -3,7 +3,7 @@
 #include <time.h>
 
 #ifndef FO_D3D
-# include "glew.h"
+# include <GL/glew.h>
 # include "FL/gl.h"
 #endif
 #include "FL/x.H"
