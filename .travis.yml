@@ -1,14 +1,13 @@
 os: linux
 sudo: required
 
-compiler:
-- g++-4.9
-- g++-4.8
-
 git:
  depth: false
 
 matrix:
+ include:
+  - compiler: g++-4.9
+  - compiler: g++-4.8
  allow_failures:
   - compiler: g++-4.9
   - compiler: g++-4.8
