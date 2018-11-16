@@ -1,5 +1,7 @@
 #include "Core.h"
 
+#include <cmath>
+
 #include "FileSystem.h"
 #include "GameOptions.h"
 

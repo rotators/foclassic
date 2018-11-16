@@ -3,6 +3,7 @@
 #endif
 
 #include <algorithm>
+#include <climits>
 #include <sstream>
 #include <string>
 #include <iterator>
