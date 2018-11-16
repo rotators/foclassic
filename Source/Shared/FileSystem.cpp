@@ -180,8 +180,9 @@ bool ResolvePath( char* path )
 
 #else
 
-# include <dirent.h>
 # include <sys/stat.h>
+# include <dirent.h>
+# include <unistd.h>
 
 struct FileDesc
 {

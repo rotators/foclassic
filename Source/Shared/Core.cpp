@@ -1,5 +1,9 @@
 #include "Core.h"
 
+#if defined(FO_LINUX)
+ #include <unistd.h>
+#endif
+
 #include <cmath>
 
 #include "FileSystem.h"

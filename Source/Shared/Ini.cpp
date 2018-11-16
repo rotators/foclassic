@@ -267,7 +267,7 @@ bool Ini::GetBool( const string& section, const string& key, const bool& default
     if( !IsSectionKeyEmpty( section, key ) )
     {
         string str = Sections[section][key];
-        transform( str.begin(), str.end(), str.begin(), tolower );
+        transform( str.begin(), str.end(), str.begin(), ::tolower );
 
         result = (str == "1" || str == "yes" || str == "true" || str == "on" || str == "enable");
     }

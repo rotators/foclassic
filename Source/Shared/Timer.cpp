@@ -1,13 +1,14 @@
 #include "Core.h"
 
-#include "GameOptions.h"
-#include "Timer.h"
-
 #ifdef FO_WINDOWS
 # include <Mmsystem.h>
 #else
 # include <sys/time.h>
 #endif
+
+#include "GameOptions.h"
+#include "Timer.h"
+#include "Thread.h" // FO_LINUX
 
 uint LastGameTick = 0;
 uint SkipGameTick = 0;

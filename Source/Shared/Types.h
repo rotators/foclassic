@@ -2,6 +2,7 @@
 #define ___TYPES___
 
 #include <algorithm>
+#include <cstring>
 #include <deque>
 #include <list>
 #include <map>
