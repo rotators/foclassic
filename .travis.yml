@@ -1,5 +1,6 @@
 os: linux
 sudo: required
+language:cpp
 
 git:
  depth: false
@@ -19,6 +20,7 @@ cache:
 before_install:
  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sudo apt-get update
+ - set
  - sudo apt-get install -y build-essential linux-libc-dev:i386 ${TRAVIS_COMPILER}-multilib
 
 install:
