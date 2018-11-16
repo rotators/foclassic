@@ -3016,6 +3016,11 @@ void FOClient::NetProcess()
                 IsConnected = false;
                 break;
             }
+            case NETRAW_DISCONNECT:
+            {
+                IsConnected = false;
+                break;
+            }
             default:
                 WriteLog( "Unknown raw data<0x%X>\n", data );
                 break;

@@ -28,6 +28,7 @@
 
 #define NETRAW_HEADER                         (0xFFFFFFFF)
 #define NETRAW_INVALID_VERSION                (0xFF000000)
+#define NETRAW_DISCONNECT                     (0xFF000001)
 
 // ************************************************************************
 // LOGIN MESSAGES
