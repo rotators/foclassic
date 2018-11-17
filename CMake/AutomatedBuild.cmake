@@ -127,6 +127,32 @@ function( PrepareFiles )
 
 endfunction()
 
+# Prepare source directory
+function( CleanSourceDirectory )
+
+	set( clean_dirs  CMakeFiles )
+	set( clean_files CMakeCache.txt cmake_install.cmake )
+
+	foreach( dir IN LISTS clean_dirs )
+		set( dir "${CMAKE_CURRENT_LIST_DIR}/${dir}" )
+		if( EXISTS "${dir}" )
+			file( TO_NATIVE_PATH "${dir}" dir_native )
+			message( STATUS "Removing directory: ${dir_native}" )
+			file( REMOVE_RECURSE "${dir}" )
+		endif()
+	endforeach()
+
+	foreach( file IN LISTS clean_files )
+		set( file "${CMAKE_CURRENT_LIST_DIR}/${file}" )
+		if( EXISTS "${file}" )
+			file( TO_NATIVE_PATH "${file}" file_native )
+			message( STATUS "Removing file: ${file_native}" )
+			file( REMOVE "${file}" )
+		endif()
+	endforeach()
+
+endfunction()
+
 # Prepare build directory
 function( CreateBuildDirectory dir generator toolset file )
 

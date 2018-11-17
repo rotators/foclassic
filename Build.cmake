@@ -40,6 +40,8 @@ if( NOT NO_BUILD )
 		endif()
 	endif()
 
+	CleanSourceDirectory()
+
 	if( CI )
 		CreateBuildDirectory( "SDK" "${CI_GENERATOR}" "${CI_EXTRAS}" "${CI_FILE}" )
 	elseif( UNIX )
