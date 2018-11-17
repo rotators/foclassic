@@ -1571,7 +1571,7 @@ void FOServer::Process_Dialog( Client* cl, bool is_say )
         str[MAX_SAY_NPC_TEXT] = 0;
         if( !Str::Length( str ) )
         {
-            WriteLogF( _FUNC_, " - Say text length is zero, client<%s>.\n", cl->GetInfo() );
+            WriteLogF( _FUNC_, " - Say text length is zero, client<%s>\n", cl->GetInfo() );
             return;
         }
     }
@@ -1595,12 +1595,12 @@ void FOServer::Process_Dialog( Client* cl, bool is_say )
         {
             cl->Send_TextMsg( cl, STR_DIALOG_NPC_NOT_FOUND, SAY_NETMSG, TEXTMSG_GAME );
             cl->CloseTalk();
-            WriteLogF( _FUNC_, " - Npc not found, client<%s>.\n", cl->GetInfo() );
+            WriteLogF( _FUNC_, " - Npc<%u> not found, client<%s>\n", id_npc_talk, cl->GetInfo() );
             return;
         }
 
         // Close another talk
-        if( cl->Talk.TalkType != TALK_WITH_NPC || cl->Talk.TalkNpc != npc->GetId() )
+        if( cl->Talk.TalkType != TALK_WITH_NPC || cl->Talk.TalkNpc != npc->GetId() || cl->Talk.TalkNpc != id_npc_talk )
             cl->CloseTalk();
 
         // Begin dialog
@@ -1610,19 +1610,41 @@ void FOServer::Process_Dialog( Client* cl, bool is_say )
             return;
         }
 
+        if( cl->GetMap() != npc->GetMap() )
+        {
+            npc->SendAA_Msg( npc->VisCr, STR_DIALOG_NO_DIALOGS, SAY_NORM, TEXTMSG_GAME );
+            cl->CloseTalk();
+            WriteLogF( _FUNC_, " - Map mismatch, npc<%s> map<%u>, client<%s> map<%u>\n", npc->GetInfo(), npc->GetMap(), cl->GetInfo(), cl->GetMap() );
+            return;
+        }
+
         // Set dialogs
         dialog_pack = DlgMngr.GetDialogPack( cl->Talk.DialogPackId );
         dialogs = dialog_pack ? &dialog_pack->Dialogs : NULL;
         if( !dialogs || !dialogs->size() )
         {
-            cl->CloseTalk();
             npc->SendAA_Msg( npc->VisCr, STR_DIALOG_NO_DIALOGS, SAY_NORM, TEXTMSG_GAME );
-            WriteLogF( _FUNC_, " - No dialogs, npc<%s>, client<%s>.\n", npc->GetInfo(), cl->GetInfo() );
+            cl->CloseTalk();
+            WriteLogF( _FUNC_, " - No dialogs, npc<%s>, client<%s>\n", npc->GetInfo(), cl->GetInfo() );
             return;
         }
     }
     else
     {
+        if( cl->Talk.TalkType != TALK_WITH_HEX || cl->Talk.DialogPackId != id_npc_talk )
+        {
+            cl->CloseTalk();
+            WriteLogF( _FUNC_, " - Talk type mismatch, dialog<%u>, client<%s>\n", id_npc_talk, cl->GetInfo() );
+            return;
+        }
+
+        if( cl->Talk.TalkHexMap != cl->GetMap() )
+        {
+            cl->CloseTalk();
+            WriteLogF( _FUNC_, " - Map mismatch, dialog<%u>, client<%s> map<%u> talk_map<%u>\n", id_npc_talk, cl->GetInfo(), cl->GetMap(), cl->Talk.TalkHexMap );
+            return;
+        }
+
         // Set dialogs
         dialog_pack = DlgMngr.GetDialogPack( id_npc_talk );
         dialogs = dialog_pack ? &dialog_pack->Dialogs : NULL;
