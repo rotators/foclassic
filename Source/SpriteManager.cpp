@@ -2165,7 +2165,7 @@ label_LoadOneSpr:
     float frame_time = 1.0f / (float)(GameOpt.Animation3dFPS ? GameOpt.Animation3dFPS : 10);    // 1 second / fps
     float period_from = period * (float)proc_from / 100.0f;
     float period_to = period * (float)proc_to / 100.0f;
-    float period_len = abs( period_to - period_from );
+    float period_len = fabs( period_to - period_from );
     float proc_step = (float)(proc_to - proc_from) / (period_len / frame_time);
     int   frames_count = (int)ceil( period_len / frame_time );
 
