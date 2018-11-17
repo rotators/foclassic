@@ -7,7 +7,7 @@
 // Aliases
 
 #ifndef FO_WINDOWS
-#define ExitProcess(code) exit(code)
+# define ExitProcess( code )                  exit( code )
 #endif
 
 // Flags
