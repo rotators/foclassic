@@ -8,17 +8,20 @@ function( DisableInSourceBuild )
 
 	if( ${srcdir} STREQUAL ${bindir} )
 		file( REMOVE ${srcdir}/cmake_install.cmake ) # removing other files won't work
-		message( STATUS "In-Source builds are not allowed,
-	   cmake must be ran from dedicated build directory.
+		file( TO_NATIVE_PATH "${srcdir}/SDK*/" recommended )
+		file( TO_NATIVE_PATH "${srcdir}/CMakeFiles/" cmakefiles )
+		file( TO_NATIVE_PATH "${srcdir}/CMakeCache.txt" cmakecache )
+		message( STATUS "In-Source builds are not allowed;
+   CMake must be ran from dedicated build directory.
 
-	   Recommended
-		${srcdir}/SDK*/
+   Recommended
+     ${recommended}
 
-	   Following directories and files MUST be deleted manually
-	   before running cmake again, from any location.
-		${srcdir}/CMakeFiles/
-		${srcdir}/CMakeCache.txt
-	" )
+   Following directories and files MUST be deleted manually
+   before running CMake again, from any location.
+     ${cmakefiles}
+     ${cmakecache}
+" )
 		message( FATAL_ERROR "In-Source build" )
 	endif()
 
