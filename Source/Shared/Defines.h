@@ -4,6 +4,12 @@
 #include "PlatformSpecific.h"
 #include "Defines.Public.h"
 
+// Aliases
+
+#ifndef FO_WINDOWS
+#define ExitProcess(code) exit(code)
+#endif
+
 // Flags
 #define FLAGS( x, y )                         ( ( (x) & (y) ) == y )
 

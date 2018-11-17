@@ -1,6 +1,6 @@
 #include "Core.h"
 
-#include "FL/Fl.h"
+#include "FL/Fl.H"
 
 #include "CommandLine.h"
 #include "ConfigFile.h"
@@ -56,18 +56,7 @@ bool FOMapper::Init()
     WriteLog( "Mapper initialization...\n" );
 
     // Check the sizes of base types
-    STATIC_ASSERT( sizeof(char) == 1 );
-    STATIC_ASSERT( sizeof(short) == 2 );
-    STATIC_ASSERT( sizeof(int) == 4 );
-    STATIC_ASSERT( sizeof(int64) == 8 );
-    STATIC_ASSERT( sizeof(uchar) == 1 );
-    STATIC_ASSERT( sizeof(ushort) == 2 );
-    STATIC_ASSERT( sizeof(uint) == 4 );
-    STATIC_ASSERT( sizeof(uint64) == 8 );
-    STATIC_ASSERT( sizeof(bool) == 1 );
-    STATIC_ASSERT( sizeof(size_t) == 4 );
-    STATIC_ASSERT( sizeof(void*) == 4 );
-    STATIC_ASSERT( sizeof(string) == 28 );
+    #include "StaticAssert.h"
 
     // Register dll script data
     struct CritterChangeParameter_
@@ -215,7 +204,7 @@ bool FOMapper::Init()
     else
         lang_name = ConfigFile->GetStr( SECTION_SERVER, "Language_0", DEFAULT_LANGUAGE );
 
-    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
+    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), ::tolower );
 
     if( lang_name.size() != 4 )
         lang_name = DEFAULT_LANGUAGE;

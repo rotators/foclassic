@@ -1,10 +1,6 @@
 #ifndef __CRITTER__
 #define __CRITTER__
 
-#if defined (FO_WINDOWS) && !defined (USE_LIBEVENT)
-# include <WinSock2.h>
-#endif
-
 #include "zlib.h"
 
 #include "AI.h"
@@ -14,6 +10,7 @@
 #include "Defines.h"
 #include "Dialogs.h"
 #include "GameOptions.h"
+#include "Network.h"
 #include "ThreadSync.h"
 #include "Types.h"
 

@@ -20,6 +20,7 @@ target_sources( Shared
 		${CMAKE_CURRENT_SOURCE_DIR}/Mutex.h
 		${CMAKE_CURRENT_SOURCE_DIR}/PlatformSpecific.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Random.h
+		${CMAKE_CURRENT_SOURCE_DIR}/StaticAssert.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Text.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Thread.h
 		${CMAKE_CURRENT_SOURCE_DIR}/Timer.h
@@ -69,14 +70,14 @@ target_include_directories( Shared
 		${CMAKE_SOURCE_DIR}/Source/Libs/fltk.bin # Text.cpp -> FL/case.h
 )
 
-target_link_libraries( Shared
-	PUBLIC
-		sha2 zlib
-	PRIVATE
-		winmm
-)
+target_link_libraries( Shared PUBLIC sha2 zlib )
 if( WIN32 )
-	target_link_libraries( Shared PUBLIC pthread )
+	target_link_libraries( Shared
+		PUBLIC
+			pthread
+		PRIVATE
+			winmm
+	)
 	PdbSetup( Shared )
 endif()
 

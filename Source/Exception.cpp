@@ -4,6 +4,7 @@
 #include "FileManager.h"
 #include "Text.h"
 #include "Thread.h"
+# include "Timer.h"
 
 char DumpMess[] =
 {
@@ -25,8 +26,6 @@ char ManualDumpAppendix[128] = { 0 };
 # include <DbgHelp.h>
 # include <Psapi.h>
 # include <TlHelp32.h>
-
-# include "Timer.h"
 
 LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except );
 LONG WINAPI TopLevelFilterMiniDump( EXCEPTION_POINTERS* except );

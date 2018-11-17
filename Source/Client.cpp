@@ -128,18 +128,8 @@ bool FOClient::Init()
 {
     WriteLog( "Engine initialization...\n" );
 
-    STATIC_ASSERT( sizeof(char) == 1 );
-    STATIC_ASSERT( sizeof(short) == 2 );
-    STATIC_ASSERT( sizeof(int) == 4 );
-    STATIC_ASSERT( sizeof(int64) == 8 );
-    STATIC_ASSERT( sizeof(uchar) == 1 );
-    STATIC_ASSERT( sizeof(ushort) == 2 );
-    STATIC_ASSERT( sizeof(uint) == 4 );
-    STATIC_ASSERT( sizeof(uint64) == 8 );
-    STATIC_ASSERT( sizeof(bool) == 1 );
-    STATIC_ASSERT( sizeof(size_t) == 4 );
-    STATIC_ASSERT( sizeof(void*) == 4 );
-    STATIC_ASSERT( sizeof(string) == 28 );
+    // Check the sizes of base types
+    #include "StaticAssert.h"
 
     GET_UID0( UID0 );
     UID_PREPARE_UID4_0;
@@ -342,7 +332,7 @@ bool FOClient::Init()
 
     // Language Packs
     string lang_name = ConfigFile->GetStr( SECTION_CLIENT, "Language", DEFAULT_LANGUAGE );
-    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), tolower );
+    transform( lang_name.begin(), lang_name.end(), lang_name.begin(), ::tolower );
     if( lang_name.length() != 4 )
         lang_name = DEFAULT_LANGUAGE;
 
