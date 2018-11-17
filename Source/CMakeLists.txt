@@ -10,6 +10,8 @@ message( STATUS "Configuring engine..." )
 add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
+find_package( OpenGL )
+
 ##
 ## configure libraries
 ##
@@ -20,20 +22,16 @@ set( FOCLASSIC_LIBS angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if( WIN32 )
-	set( FOCLASSIC_LIBS ${FOCLASSIC_LIBS}
+	list( APPEND FOCLASSIC_LIBS
 		dbghelp # Debugger.cpp Exception.cpp
 		psapi # Exception.cpp
 		ws2_32 # pthreads?
 	)
 endif()
 
-# libraries used on windows platform
-if( WIN32 )
-	# DX needs glew/glu32 due to 3dStuff.cpp VecProject() VecUnproject()
-	set( DX_LIBS dx9 glew glu32 )
-endif()
-
-set( GL_LIBS fltkgl glew glu32 opengl32 )
+# DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
+set( DX_LIBS dx9 glew OpenGL::GLU )
+set( GL_LIBS fltkgl glew OpenGL::GL OpenGL::GLU )
 
 # predefine libs used by engine applications
 # NOTES
