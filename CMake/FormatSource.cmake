@@ -2,11 +2,16 @@ function( FormatSource filename root var )
 
 	set( ${var} FALSE )
 	set( uncrustemp "${root}/FormatSource.tmp" )
-	set( uncrustify "${root}/Source/SourceTools/uncrustify${CMAKE_EXECUTABLE_SUFFIX}" )
+	set( uncrustify "${root}/Source/SourceTools/uncrustify" )
 	set( uncrustcfg "${root}/Source/SourceTools/uncrustify.cfg" )
 
 	if( UNCRUSTIFY_EXECUTABLE )
 		set( uncrustify "${UNCRUSTIFY_EXECUTABLE}" )
+	endif()
+
+	# CMAKE_EXECUTABLE_SUFFIX is not reliable
+	if( WIN32 AND NOT "${uncrustify}" MATCHES "\.[Ee][Xx][Ee]" )
+		string( APPEND uncrustify ".exe" )
 	endif()
 
 	# in case of cancelled FormatSource runs

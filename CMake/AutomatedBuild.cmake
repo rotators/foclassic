@@ -71,7 +71,7 @@ function( PrepareFiles )
 		COMMAND git ls-files
 		OUTPUT_VARIABLE ls
 	)
-	string( REGEX REPLACE "\n" ";" ls "${ls}" )
+	string( REPLACE "\n" ";" ls "${ls}" )
 
 	foreach( file IN LISTS ls )
 		file( TO_CMAKE_PATH "${file}" file )
