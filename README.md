@@ -16,7 +16,7 @@
 * cmake v3.12.4 (minimum required)  
   https://cmake.org/download/
 
-  * Visual Studio 2010 (required)  
+* Visual Studio 2010 (required)  
   https://visualstudio.microsoft.com/vs/older-downloads/
 
 * Visual Studio 2017 (optional)  

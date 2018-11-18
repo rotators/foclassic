@@ -386,8 +386,15 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	# released sources/headers should be aware of engine compilation
 	target_compile_definitions( ${target} PRIVATE FOCLASSIC_ENGINE )
 
+	# linux-specific configuration
+	if( UNIX )
+		set_target_properties( ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-m32 " )
+		set_target_properties( ${target} APPEND_STRING PROPERTY LINK_FLAGS "-m32 " )
+		if( CMAKE_CXX_STANDARD LESS 17 )
+			set_target_properties( ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-invalid-offsetof " )
+		endif()
 	# windows-specific configuration
-	if( WIN32 )
+	elseif( WIN32 )
 		# n/c
 		target_compile_definitions( ${target} PRIVATE WINVER=0x0501 ) # Windows XP
 		target_compile_definitions( ${target} PRIVATE WIN32_LEAN_AND_MEAN )
