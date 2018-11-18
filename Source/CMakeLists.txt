@@ -388,10 +388,10 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 
 	# linux-specific configuration
 	if( UNIX )
-		set_target_properties( ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-m32 " )
-		set_target_properties( ${target} APPEND_STRING PROPERTY LINK_FLAGS "-m32 " )
+		set_property( TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-m32 " )
+		set_property( TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-m32 " )
 		if( CMAKE_CXX_STANDARD LESS 17 )
-			set_target_properties( ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-invalid-offsetof " )
+			set_property( TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-invalid-offsetof " )
 		endif()
 	# windows-specific configuration
 	elseif( WIN32 )
