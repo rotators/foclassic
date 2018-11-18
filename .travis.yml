@@ -33,6 +33,7 @@ before_install:
  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sudo apt-get update
  - sudo apt-get install -qq ${CXX}-multilib
+ - sudo apt-get install -qq libgl1-mesa-dev:i386
 
 install:
  - export PATH=SDK.Cache/cmake/bin:$PATH
