@@ -16,6 +16,11 @@ list( APPEND CMAKE_MODULE_PATH "${ROOT_CMAKE_DIR}" )
 include(DisableInSourceBuild)
 DisableInSourceBuild()
 
+if( UNIX AND ENV{CI} )
+	set( CMAKE_SYSTEM_NAME "Linux" )
+	set( CMAKE_SYSTEM_PROCESSOR "i386" )
+endif()
+
 # this file must contain unique line with version info
 # "FOClassic VERSION [number:STAGE].[number:VERSION]"
 project( FOClassic VERSION 2.3
@@ -32,7 +37,6 @@ set( CMAKE_CXX_STANDARD           11 )
 set( CMAKE_CXX_STANDARD_REQUIRED  YES )
 set( CMAKE_SKIP_INSTALL_RULES     TRUE )
 if( UNIX )
-	set( CMAKE_SYSTEM_PROCESSOR   "i386" )
 	set( CMAKE_VERBOSE_MAKEFILE   TRUE )
 endif()
 
