@@ -34,18 +34,24 @@
 #include <string>
 #include <vector>
 
-#include <scriptstring.h>
+#if defined (FOCLASSIC_ENGINE)
+# include <scriptstring.h>
+#endif
 
-typedef std::map<std::string, std::string> IniSection;
-typedef std::map<std::string, IniSection>  IniSections;
+typedef std::map<std::string, std::string>              IniSection;
+typedef std::map<std::string, IniSection>               IniSections;
+
+typedef std::map<std::string, std::vector<std::string>> IniSectionsRaw;
 
 class Ini
 {
 protected:
-    std::string LoadedFile;
-    IniSections Sections;
+    std::string    LoadedFile;
+    IniSections    Sections;
+    IniSectionsRaw SectionsRaw;
 
 public:
+    bool KeepSectionsRaw;
     bool Lock;
 
     Ini();
@@ -57,7 +63,9 @@ public:
 
     void Parse( std::basic_istream<char>& is );
     void ParseString( const std::string& str );
+    #if defined (FOCLASSIC_ENGINE)
     void ParseScriptString( const ScriptString& str );
+    #endif
 
     std::string  GetLoadedFile();
     bool         IsSection( const std::string& section );
@@ -69,6 +77,13 @@ public:
     bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
     bool RemoveSection( const std::string& section );
 
+    bool                     IsSectionRaw( const std::string& section );
+    std::vector<std::string> GetSectionRaw( const std::string& section );
+    std::string              GetSectionRawString( const std::string& section, const std::string& separator );
+protected:
+    void AddSectionRaw( const std::string& section, const std::string& line );
+
+public:
     bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );
     int                      GetInt( const std::string& section, const std::string& key, const int& default_value, const unsigned char& base = 10 );
     int                      GetHex( const std::string& section, const std::string& key, const int& default_value );

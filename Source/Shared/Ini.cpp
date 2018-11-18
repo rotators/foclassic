@@ -43,7 +43,9 @@
 #include <string>
 #include <vector>
 
-#include <scriptstring.h>
+#if defined (FOCLASSIC_ENGINE)
+# include <scriptstring.h>
+#endif
 
 #include "Ini.h"
 
@@ -73,7 +75,7 @@ inline void Cleanup( string& str )
 
 //
 
-Ini::Ini() : Lock( false )
+Ini::Ini() : KeepSectionsRaw( false ), Lock( false )
 {}
 
 Ini::~Ini()
@@ -156,7 +158,12 @@ void Ini::Parse( basic_istream<char>& stream )
 
             if( !IsSectionKey( section, key ) )
                 SetStr( section, key, value );
+
+            if( KeepSectionsRaw )
+                AddSectionRaw( section, line );
         }
+        else if( KeepSectionsRaw )
+            AddSectionRaw( section, line );
     }
 }
 
@@ -168,10 +175,12 @@ void Ini::ParseString( const string& str )
     Parse( buf );
 }
 
+#if defined (FOCLASSIC_ENGINE)
 void Ini::ParseScriptString( const ScriptString& str )
 {
     ParseString( str.c_std_str() );
 }
+#endif
 
 //
 
@@ -256,6 +265,56 @@ bool Ini::RemoveSection( const string& section )
 
     Sections.erase( section );
     return true;
+}
+
+//
+
+bool Ini::IsSectionRaw( const std::string& section )
+{
+    return SectionsRaw.find( section ) != SectionsRaw.end();
+}
+
+vector<string> Ini::GetSectionRaw( const string& section )
+{
+    vector<string> result;
+
+    if( IsSectionRaw( section ) )
+        result = SectionsRaw[section];
+
+    return result;
+}
+
+string Ini::GetSectionRawString( const string& section, const string& separator )
+{
+    string         result;
+
+    bool           first = true;
+    vector<string> raw = GetSectionRaw( section );
+    for( auto it = raw.begin(); it != raw.end(); ++it )
+    {
+        if( first )
+            first = false;
+        else
+            result += separator;
+
+        result += *it;
+    }
+
+    return result;
+}
+
+void Ini::AddSectionRaw( const string& section, const string& line )
+{
+    if( line.empty() )
+        return;
+
+    if( !IsSectionRaw( section ) )
+    {
+        vector<string>& raw = SectionsRaw[section];
+        raw.push_back( line );
+    }
+    else
+        SectionsRaw[section].push_back( line );
 }
 
 //
