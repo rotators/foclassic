@@ -11,6 +11,9 @@ add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
 find_package( OpenGL )
+foreach( var IN ITEMS OPENGL_FOUND OPENGL_XMESA_FOUND OPENGL_GLU_FOUND OpenGL_OpenGL_FOUND OpenGL_GLX_FOUND OpenGL_EGL_FOUND OPENGL_INCLUDE_DIR OPENGL_EGL_INCLUDE_DIRS OPENGL_LIBRARIES )
+	message( STATUS "${var} = '${${var}}'" )
+endforeach()
 
 ##
 ## configure libraries

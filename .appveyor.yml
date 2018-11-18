@@ -18,6 +18,10 @@ matrix:
  allow_failures:
   - image: Visual Studio 2017
 
+skip_commits:
+ files:
+  - .travis.yml
+
 clone_folder: C:\FOClassic
 
 cache:
