@@ -421,20 +421,6 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
 
-	# NOTES
-	# https://cmake.org/cmake/help/v3.12/command/add_custom_command.html#build-events
-	# PRE_BUILD
-    #   On Visual Studio Generators, run before any other rules are executed within the target.
-	#   On other generators, run just before PRE_LINK commands.
-	if( NOT MSVC )
-		message( AUTHOR_WARNING "PRE_BUILD custom commands are not working as intended with current generator" )
-	endif()
-
-	# delete executable before build
-	add_custom_command( TARGET ${target}
-		PRE_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove ${dir}/$<TARGET_FILE_NAME:${target}>
-	)
 	# prepare executable for release after build
 	add_custom_command( TARGET ${target}
 		POST_BUILD
