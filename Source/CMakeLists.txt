@@ -39,10 +39,16 @@ set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # predefine libs used by engine applications
+#[[
 set( CLIENT_LIBS     ${OS_LIBS} ${OS_CLIENT_LIBS}     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
 set( MAPPER_LIBS     ${OS_LIBS} ${OS_MAPPER_LIBS}     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${OS_LIBS} ${OS_SERVER_LIBS}     ${FOCLASSIC_LIBS} distorm fltk png )
 set( ASCOMPILER_LIBS ${OS_LIBS} ${OS_ASCOMPILER_LIBS} ${FOCLASSIC_LIBS} )
+]]
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio ${OS_LIBS} ${OS_CLIENT_LIBS})
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png ${OS_LIBS} ${OS_MAPPER_LIBS})
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png ${OS_LIBS} ${OS_SERVER_LIBS} )
+set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} ${OS_LIBS} ${OS_ASCOMPILER_LIBS} )
 
 # DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
 set( DX_LIBS dx9 OpenGL::GLU glew )
