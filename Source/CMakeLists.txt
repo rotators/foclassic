@@ -16,39 +16,34 @@ find_package( OpenGL )
 ## configure libraries
 ##
 
-# libraries used by all applications
-set( FOCLASSIC_LIBS angelscript angelscript-preprocessor DatFile Shared )
-
-set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
-
 if( UNIX )
-	list( APPEND FOCLASSIC_LIBS dl rt )
+	set( OS_LIBS dl rt )
 elseif( WIN32 )
-	list( APPEND FOCLASSIC_LIBS
+	set( OS_LIBS
 		dbghelp # Debugger.cpp Exception.cpp
 		psapi # Exception.cpp
 		ws2_32 # pthreads?
 	)
 endif()
 
-# DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
-set( DX_LIBS dx9 glew OpenGL::GLU )
-set( GL_LIBS fltkgl glew OpenGL::GL OpenGL::GLU )
+if( UNIX )
+	set( OS_CLIENT_LIBS X11 Xext Xrender Xft Xi Xinerama fontconfig )
+elseif( WIN32 )
+	set( OS_CLIENT_LIBS Iphlpapi )
+endif()
+
+set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
+set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # predefine libs used by engine applications
-# NOTES
-# - il requires jpeg, png
+set( CLIENT_LIBS     ${OS_LIBS} ${OS_CLIENT_LIBS}     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
+set( MAPPER_LIBS     ${OS_LIBS} ${OS_MAPPER_LIBS}     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
+set( SERVER_LIBS     ${OS_LIBS} ${OS_SERVER_LIBS}     ${FOCLASSIC_LIBS} distorm fltk png )
+set( ASCOMPILER_LIBS ${OS_LIBS} ${OS_ASCOMPILER_LIBS} ${FOCLASSIC_LIBS} )
 
-set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
-
-if( UNIX )
-	list( APPEND CLIENT_LIBS X11 Xext Xft Xi Xinerama Xrender fontconfig )
-elseif( WIN32 )
-	list( APPEND CLIENT_LIBS Iphlpapi )
-endif()
+# DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
+set( DX_LIBS dx9 OpenGL::GLU glew )
+set( GL_LIBS OpenGL::GL OpenGL::GLU fltkgl glew )
 
 set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
 set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} theora )
