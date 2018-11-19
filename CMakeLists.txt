@@ -7,7 +7,6 @@
 # https://cmake.org/cmake/help/v3.12/
 cmake_minimum_required( VERSION 3.12.4 FATAL_ERROR )
 
-# cmake includes
 # special directories
 set( ROOT_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" )
 list( APPEND CMAKE_MODULE_PATH "${ROOT_CMAKE_DIR}" )
@@ -15,11 +14,6 @@ list( APPEND CMAKE_MODULE_PATH "${ROOT_CMAKE_DIR}" )
 # disable in-source builds
 include(DisableInSourceBuild)
 DisableInSourceBuild()
-
-if( UNIX AND ENV{CI} )
-	set( CMAKE_SYSTEM_NAME "Linux" )
-	set( CMAKE_SYSTEM_PROCESSOR "i386" )
-endif()
 
 # this file must contain unique line with version info
 # "FOClassic VERSION [number:STAGE].[number:VERSION]"

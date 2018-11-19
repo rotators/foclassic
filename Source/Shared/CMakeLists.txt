@@ -2,6 +2,8 @@
 ## Shared
 ##
 
+find_package( Threads )
+
 add_library( Shared "" )
 target_sources( Shared
 	PUBLIC
@@ -70,7 +72,7 @@ target_include_directories( Shared
 		${CMAKE_SOURCE_DIR}/Source/Libs/fltk.bin # Text.cpp -> FL/case.h
 )
 
-target_link_libraries( Shared PUBLIC sha2 zlib )
+target_link_libraries( Shared PUBLIC sha2 zlib Threads::Threads )
 if( WIN32 )
 	target_link_libraries( Shared
 		PUBLIC

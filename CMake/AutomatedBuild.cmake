@@ -49,6 +49,7 @@ function( DetectCI )
 			set( CI "Travis" PARENT_SCOPE )
 			set( CI_FILE "${MAKE_FILE}" PARENT_SCOPE )
 			set( CI_GENERATOR "Unix Makefiles" PARENT_SCOPE )
+			set( CI_TOOL "Linux32" PARENT_SCOPE )
 		else()
 			message( FATAL_ERROR "Unknown CI" )
 		endif()
@@ -77,7 +78,7 @@ function( PrepareFiles )
 		file( TO_CMAKE_PATH "${file}" file )
 
 		# directories which shouldnt't be processed
-		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" )
+		if( "${file}" MATCHES "^[\"]?Legacy" OR "${file}" MATCHES "^Source/Libs" OR "${file}" STREQUAL "" ) #"
 			continue()
 		endif()
 
@@ -154,7 +155,7 @@ function( CleanSourceDirectory )
 endfunction()
 
 # Prepare build directory
-function( CreateBuildDirectory dir generator toolset file )
+function( CreateBuildDirectory dir generator tool file )
 
 	# use full path
 	file( TO_CMAKE_PATH "${CMAKE_CURRENT_LIST_DIR}/${dir}" dir )
@@ -167,13 +168,16 @@ function( CreateBuildDirectory dir generator toolset file )
 	endif()
 
 	if( NOT EXISTS "${dir}/${file}" )
-		if( toolset )
-			set( info ", toolset: ${toolset}" )
-			set( toolset -T ${toolset} )
+		if( UNIX AND tool )
+			set( info ", toolchain: ${tool}" )
+			set( toolchain -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_LIST_DIR}/CMake/Toolchain/${tool}.cmake )
+		elseif( WIN32 AND tool )
+			set( info ", toolset: ${tool}" )
+			set( toolset -T ${tool} )
 		endif()
 		message( STATUS "Starting generator (${generator}${info})" )
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} -G "${generator}" ${toolset} "${CMAKE_CURRENT_LIST_DIR}"
+			COMMAND ${CMAKE_COMMAND} ${toolchain} -G "${generator}" ${toolset} "${CMAKE_CURRENT_LIST_DIR}"
 			WORKING_DIRECTORY "${dir}"
 		)
 	endif()

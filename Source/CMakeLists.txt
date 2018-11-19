@@ -24,7 +24,9 @@ set( FOCLASSIC_LIBS angelscript angelscript-preprocessor DatFile Shared )
 
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
-if( WIN32 )
+if( UNIX )
+	list( APPEND FOCLASSIC_LIBS dl )
+elseif( WIN32 )
 	list( APPEND FOCLASSIC_LIBS
 		dbghelp # Debugger.cpp Exception.cpp
 		psapi # Exception.cpp
@@ -45,7 +47,10 @@ set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio
 set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 
-if( WIN32 )
+if( UNIX )
+	list( APPEND CLIENT_LIBS X11 )
+	list( APPEND MAPPER_LIBS X11 )
+elseif( WIN32 )
 	list( APPEND CLIENT_LIBS Iphlpapi )
 endif()
 
@@ -388,8 +393,6 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 
 	# linux-specific configuration
 	if( UNIX )
-		set_property( TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-m32 " )
-		set_property( TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-m32 " )
 		if( CMAKE_CXX_STANDARD LESS 17 )
 			set_property( TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-invalid-offsetof " )
 		endif()
