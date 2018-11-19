@@ -28,7 +28,7 @@ if( UNIX )
 	find_package( X11 REQUIRED )
 	set( PLATFORM_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
 	set( PLATFORM_MAPPER_LIBS ${PLATFORM_CLIENT_LIBS} )
-	set( PLATFORM_SERVER_LIBS ${X11_LIBRARIES} Xft Xinerama fontconfig png )
+	set( PLATFORM_SERVER_LIBS ${X11_LIBRARIES} Xft Xinerama fontconfig )
 elseif( WIN32 )
 
 	set( PLATFORM_CLIENT_LIBS Iphlpapi )
@@ -53,9 +53,15 @@ target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png-bin portaudio )
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png-bin )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk )
+if( UNIX )
+	set( PNG_CLIENT_MAPPER png12-bin )
+elseif( WIN32 )
+	set( PNG_CLIENT_MAPPER png15-bin )
+endif()
+
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ${PNG_CLIENT_MAPPER} ogg portaudio )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg ${PNG_CLIENT_MAPPER} )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png15-bin )
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
 
 find_package( OpenGL REQUIRED )
@@ -70,8 +76,6 @@ list( APPEND MAPPER_GL_LIBS  ${MAPPER_LIBS}        ${GL_LIBS} )
 
 if( UNIX )
 	list( APPEND SERVER_LIBS event2 )
-elseif( WIN32 )
-	list( APPPEND SERVER_LIBS png-bin )
 endif()
 
 ##
