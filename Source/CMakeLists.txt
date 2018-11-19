@@ -39,25 +39,24 @@ set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # predefine libs used by engine applications
-#[[
-set( CLIENT_LIBS     ${OS_LIBS} ${OS_CLIENT_LIBS}     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
-set( MAPPER_LIBS     ${OS_LIBS} ${OS_MAPPER_LIBS}     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
-set( SERVER_LIBS     ${OS_LIBS} ${OS_SERVER_LIBS}     ${FOCLASSIC_LIBS} distorm fltk png )
-set( ASCOMPILER_LIBS ${OS_LIBS} ${OS_ASCOMPILER_LIBS} ${FOCLASSIC_LIBS} )
-]]
-set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio ${OS_LIBS} ${OS_CLIENT_LIBS})
-set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png ${OS_LIBS} ${OS_MAPPER_LIBS})
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png ${OS_LIBS} ${OS_SERVER_LIBS} )
-set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} ${OS_LIBS} ${OS_ASCOMPILER_LIBS} )
+#set( CLIENT_LIBS     ${OS_LIBS} ${OS_CLIENT_LIBS}     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
+#set( MAPPER_LIBS     ${OS_LIBS} ${OS_MAPPER_LIBS}     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
+#set( SERVER_LIBS     ${OS_LIBS} ${OS_SERVER_LIBS}     ${FOCLASSIC_LIBS} distorm fltk png )
+#set( ASCOMPILER_LIBS ${OS_LIBS} ${OS_ASCOMPILER_LIBS} ${FOCLASSIC_LIBS} )
+
+set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
+set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
+set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
 
 # DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
-set( DX_LIBS dx9 OpenGL::GLU glew )
-set( GL_LIBS OpenGL::GL OpenGL::GLU fltkgl glew )
+set( DX_LIBS glew dx9 OpenGL::GLU )
+set( GL_LIBS fltkgl glew OpenGL::GL OpenGL::GLU )
 
-set( CLIENT_DX_LIBS ${CLIENT_LIBS} ${DX_LIBS} )
-set( CLIENT_GL_LIBS ${CLIENT_LIBS} ${GL_LIBS} theora )
-set( MAPPER_DX_LIBS ${MAPPER_LIBS} ${DX_LIBS} )
-set( MAPPER_GL_LIBS ${MAPPER_LIBS} ${GL_LIBS} )
+list( APPEND CLIENT_DX_LIBS  ${CLIENT_LIBS}        ${DX_LIBS} )
+list( APPEND CLIENT_GL_LIBS  ${CLIENT_LIBS} theora ${GL_LIBS} )
+list( APPEND MAPPER_DX_LIBS  ${MAPPER_LIBS}        ${DX_LIBS} )
+list( APPEND MAPPER_GL_LIBS  ${MAPPER_LIBS}        ${GL_LIBS} )
 
 ##
 ## mixed sources
@@ -343,8 +342,18 @@ target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 set_property( TARGET ASCompiler PROPERTY FOLDER "Tools" )
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
+add_library( Platform INTERFACE )
+target_link_libraries( Platform INTERFACE ${OS_LIBS} )
+
+add_library( PlatformClient INTERFACE )
+target_link_libraries( PlatformClient INTERFACE ${OS_CLIENT_LIBS} )
+
 get_property( FOCLASSIC_APPS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS )
 foreach( target IN LISTS FOCLASSIC_APPS )
+
+	if( "${target}" MATCHES "^Platform" )
+		continue()
+	endif()
 
 	##
 	## shared configuration
@@ -376,6 +385,11 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
 
+	if( "${target}" MATCHES "^Client(DX|GL)$" )
+		target_link_libraries( ${target} PlatformClient )
+	endif()
+	target_link_libraries( ${target} Platform )
+
 	##
 	## prepare for release
 	##
@@ -385,7 +399,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	if( subdir )
 		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
-
+if( MSVC )
 	# prepare executable for release after build
 	add_custom_command( TARGET ${target}
 		POST_BUILD
@@ -406,10 +420,15 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 				COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
 		)
 	endif()
-
+endif()
 	message( STATUS "Configured ${target}" )
 
 endforeach()
+
+##
+##
+##
+
 
 ##
 ## prettify IDE
