@@ -27,8 +27,11 @@ elseif( WIN32 )
 endif()
 
 if( UNIX )
-	set( OS_CLIENT_LIBS X11 Xext Xrender Xft Xi Xinerama fontconfig )
+	find_package( X11 REQUIRED )
+	message( STATUS "X11 LIBS  ${X11_LIBRARIES}" )
+	set( OS_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
 elseif( WIN32 )
+
 	set( OS_CLIENT_LIBS Iphlpapi )
 endif()
 
