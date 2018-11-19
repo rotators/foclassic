@@ -586,7 +586,7 @@ void TerminationHandler( int signum, siginfo_t* siginfo, void* context )
         // Generic info
         fprintf( f, "Application\n" );
         fprintf( f, "\tName        %s\n", AppName );
-        fprintf( f, "\tVersion     %s\n",  FOCLASSIC_VERSION );
+        fprintf( f, "\tVersion     %u\n",  FOCLASSIC_VERSION );
         struct utsname ver;
         uname( &ver );
         fprintf( f, "\tOS          %s / %s / %s\n", ver.sysname, ver.release, ver.version );

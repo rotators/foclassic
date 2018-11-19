@@ -11,9 +11,6 @@ add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
 find_package( OpenGL )
-foreach( var IN ITEMS OPENGL_FOUND OPENGL_XMESA_FOUND OPENGL_GLU_FOUND OpenGL_OpenGL_FOUND OpenGL_GLX_FOUND OpenGL_EGL_FOUND OPENGL_INCLUDE_DIR OPENGL_EGL_INCLUDE_DIRS OPENGL_LIBRARIES )
-	message( STATUS "${var} = '${${var}}'" )
-endforeach()
 
 ##
 ## configure libraries
@@ -68,11 +65,27 @@ set( CLIENT_MAPPER_SOURCES
 	3dStuff.h
 	CritterCl.cpp
 	CritterCl.h
+	GraphicLoader.cpp
+	GraphicLoader.h
+	GraphicStructures.cpp
+	GraphicStructures.h
+	HexManager.cpp
+	HexManager.h
+	Item.cpp
+	Item.h
+	ItemHex.cpp
+	ItemHex.h
+	ItemManager.cpp
+	ItemManager.h
 	Keyboard.cpp
 	Keyboard.h
+	ResourceManager.cpp
+	ResourceManager.h
 	SpriteManager.cpp
 	SpriteManager.h
 	SpriteManagerFont.cpp
+	Sprites.cpp
+	Sprites.h
 )
 
 set( CLIENT_SERVER_SOURCES
@@ -83,6 +96,7 @@ set( CLIENT_SERVER_SOURCES
 	BufferManager.h
 	CraftManager.cpp
 	CraftManager.h
+	NetProtocol.h
 	Network.cpp
 	Network.h
 	Scores.h
@@ -102,12 +116,21 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	ConstantsManager.h
 	CritterType.cpp
 	CritterType.h
+	Exception.cpp
+	Exception.h
+	FileManager.cpp
+	FileManager.h
 	IniParser.cpp
 	IniParser.h
+	LineTracer.h
 	Log.cpp
 	Log.h
+	MsgFiles.cpp
+	MsgFiles.h
+	MsgStr.h
 	Script.cpp
 	Script.h
+	ScriptBind.h
 	ScriptFunctions.cpp
 	ScriptFunctions.h
 	ScriptPragmas.cpp
@@ -132,38 +155,12 @@ set( CLIENT_SOURCES
 	DataFile.h
 	DataMask.h
 	Defence.h
-	Exception.cpp
-	Exception.h
-	FileManager.cpp
-	FileManager.h
-	GraphicLoader.cpp
-	GraphicLoader.h
-	GraphicStructures.cpp
-	GraphicStructures.h
-	HexManager.cpp
-	HexManager.h
-	Item.cpp
-	Item.h
-	ItemHex.cpp
-	ItemHex.h
-	ItemManager.cpp
-	ItemManager.h
-	LineTracer.h
 	MainClient.cpp
-	MsgFiles.cpp
-	MsgFiles.h
-	MsgStr.h
-	NetProtocol.h
 	QuestManager.cpp
 	QuestManager.h
 	ResourceClient.h
-	ResourceManager.cpp
-	ResourceManager.h
-	ScriptBind.h
 	SoundManager.cpp
 	SoundManager.h
-	Sprites.cpp
-	Sprites.h
 	Version.h
 )
 
@@ -211,37 +208,12 @@ set( MAPPER_SOURCES
 	CritterManager.h
 	DataFile.cpp
 	DataFile.h
-	Exception.cpp
-	Exception.h
 	F2Palette.h
-	FileManager.cpp
-	FileManager.h
 	FlexRect.h
-	GraphicStructures.cpp
-	GraphicStructures.h
-	GraphicLoader.cpp
-	GraphicLoader.h
-	HexManager.cpp
-	HexManager.h
-	Item.cpp
-	Item.h
-	ItemHex.cpp
-	ItemHex.h
-	ItemManager.cpp
-	ItemManager.h
-	LineTracer.h
 	MainMapper.cpp
 	Mapper.cpp
 	Mapper.h
-	MsgFiles.cpp
-	MsgFiles.h
-	MsgStr.h
-	ResourceManager.cpp
-	ResourceManager.h
 	ResourceMapper.h
-	ScriptBind.h
-	Sprites.cpp
-	Sprites.h
 	Version.h
 )
 
@@ -304,10 +276,6 @@ target_sources( Server
 		Dialogs.cpp
 		Dialogs.h
 		DummyData.h
-		Exception.cpp
-		Exception.h
-		FileManager.cpp
-		FileManager.h
 		FlexRect.h
 		Item.cpp
 		Item.h
@@ -315,7 +283,6 @@ target_sources( Server
 		ItemManager.h
 		Jobs.cpp
 		Jobs.h
-		LineTracer.h
 		LogFile.cpp
 		LogFile.h
 		MainServer.cpp
@@ -323,11 +290,6 @@ target_sources( Server
 		Map.h
 		MapManager.cpp
 		MapManager.h
-		MsgFiles.cpp
-		MsgFiles.h
-		MsgStr.h
-		NetProtocol.h
-		ScriptBind.h
 		Server.cpp
 		Server.h
 		ServerClient.cpp
