@@ -138,8 +138,9 @@ configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.f
 
 add_subdirectory( Docs )
 add_subdirectory( Source )
-add_subdirectory( Extensions )
-
+if( WIN32 )
+	add_subdirectory( Extensions )
+endif()
 ##
 ## process per-version tasks
 ##

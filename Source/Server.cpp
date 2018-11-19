@@ -3805,7 +3805,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         LanguagePack& lang = *it;
         string        name = string( lang.NameStr );
 
-        transform( name.begin(), name.end(), name.begin(), tolower );
+        transform( name.begin(), name.end(), name.begin(), ::tolower );
         names.push_back( name );
     }
 
@@ -3816,7 +3816,7 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
         for( auto it = langs.begin(); it != langs.end(); ++it, idx++ )
         {
             string& name = *it;
-            transform( name.begin(), name.end(), name.begin(), tolower );
+            transform( name.begin(), name.end(), name.begin(), ::tolower );
 
             if( name.length() != 4 )
             {

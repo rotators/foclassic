@@ -1,5 +1,5 @@
 
-#include "../PlatformSpecific.h"
+#include "PlatformSpecific.h"
 #if defined( FO_WINDOWS )
 # include "event-config-win.h"
 #else // FO_LINUX

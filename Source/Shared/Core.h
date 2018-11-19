@@ -7,7 +7,7 @@
 #include "Defines.h"
 #include "Types.h"
 
-// TODO: should be part of cmake setup
+/* TODO: should be part of cmake setup
 // Libevent workarounds
 // Was bugged for Windows, need retest
 #ifndef FO_WINDOWS
@@ -15,6 +15,7 @@
 // Linux don't want call write timeouts, need to know why and fix
 # define LIBEVENT_TIMEOUTS_WORKAROUND
 #endif
+*/
 
 /////
 //

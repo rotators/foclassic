@@ -27,6 +27,8 @@ endif()
 if( UNIX )
 	find_package( X11 REQUIRED )
 	set( PLATFORM_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
+	set( PLATFORM_MAPPER_LIBS ${PLATFORM_CLIENT_LIBS} )
+	set( PLATFORM_SERVER_LIBS ${X11_LIBRARIES} Xft Xinerama fontconfig png16 )
 elseif( WIN32 )
 
 	set( PLATFORM_CLIENT_LIBS Iphlpapi )
@@ -35,8 +37,14 @@ endif()
 add_library( Platform INTERFACE )
 target_link_libraries( Platform INTERFACE ${PLATFORM_LIBS} )
 
-add_library( PlatformClientMapper INTERFACE )
-target_link_libraries( PlatformClientMapper INTERFACE ${PLATFORM_CLIENT_LIBS} )
+add_library( PlatformClient INTERFACE )
+target_link_libraries( PlatformClient INTERFACE ${PLATFORM_CLIENT_LIBS} )
+
+add_library( PlatformMapper INTERFACE )
+target_link_libraries( PlatformMapper INTERFACE ${PLATFORM_MAPPER_LIBS} )
+
+add_library( PlatformServer INTERFACE )
+target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 
 ##
 ## configure applications libraries
@@ -59,6 +67,10 @@ list( APPEND CLIENT_DX_LIBS  ${CLIENT_LIBS}        ${DX_LIBS} )
 list( APPEND CLIENT_GL_LIBS  ${CLIENT_LIBS} theora ${GL_LIBS} )
 list( APPEND MAPPER_DX_LIBS  ${MAPPER_LIBS}        ${DX_LIBS} )
 list( APPEND MAPPER_GL_LIBS  ${MAPPER_LIBS}        ${GL_LIBS} )
+
+if( UNIX )
+	list( APPEND SERVER_LIBS event2 )
+endif()
 
 ##
 ## mixed sources
@@ -392,10 +404,18 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
 
-	if( "${target}" MATCHES "^(Client|Mapper)(DX|GL)$" )
-		target_link_libraries( ${target} PlatformClientMapper )
-	endif()
+	##
+	## add platform libraries
+	##
+
 	target_link_libraries( ${target} Platform )
+	if( "${target}" MATCHES "^Client(DX|GL)$" )
+		target_link_libraries( ${target} PlatformClient )
+	elseif( "${target}" MATCHES "^Mapper(DX|GL)$" )
+		target_link_libraries( ${target} PlatformMapper )
+	elseif( "${target}" STREQUAL "Server" )
+		target_link_libraries( ${target} PlatformServer )
+	endif()
 
 	##
 	## prepare for release

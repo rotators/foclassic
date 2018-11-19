@@ -1,6 +1,11 @@
 #ifndef __CRITTER__
 #define __CRITTER__
 
+#if defined(USE_LIBEVENT)
+# include "event2/buffer.h"
+# include "event2/bufferevent.h"
+#endif
+
 #include "zlib.h"
 
 #include "AI.h"
