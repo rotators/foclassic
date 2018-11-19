@@ -48,7 +48,7 @@ set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 
 if( UNIX )
-	list( APPEND CLIENT_LIBS X11 Xext Xft Xi Xinerama fontconfig )
+	list( APPEND CLIENT_LIBS X11 Xext Xft Xi Xinerama Xrender fontconfig )
 elseif( WIN32 )
 	list( APPEND CLIENT_LIBS Iphlpapi )
 endif()
