@@ -1,9 +1,14 @@
 add_library( png INTERFACE )
 target_include_directories( png INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
 
-if( WIN32 )
+if( UNIX )
 	target_link_libraries( png
 		INTERFACE
-			${CMAKE_CURRENT_SOURCE_DIR}/libpng15.lib
+			${CMAKE_CURRENT_SOURCE_DIR}/libpng12${CMAKE_STATIC_LIBRARY_SUFFIX}
+)
+elseif( WIN32 )
+	target_link_libraries( png
+		INTERFACE
+			${CMAKE_CURRENT_SOURCE_DIR}/libpng15${CMAKE_STATIC_LIBRARY_SUFFIX}
 	)
 endif()

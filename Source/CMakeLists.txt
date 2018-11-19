@@ -25,7 +25,7 @@ set( FOCLASSIC_LIBS angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if( UNIX )
-	list( APPEND FOCLASSIC_LIBS dl )
+	list( APPEND FOCLASSIC_LIBS dl rt )
 elseif( WIN32 )
 	list( APPEND FOCLASSIC_LIBS
 		dbghelp # Debugger.cpp Exception.cpp
@@ -48,8 +48,7 @@ set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 
 if( UNIX )
-	list( APPEND CLIENT_LIBS X11 )
-	list( APPEND MAPPER_LIBS X11 )
+	list( APPEND CLIENT_LIBS X11 Xext Xft Xi Xinerama fontconfig )
 elseif( WIN32 )
 	list( APPEND CLIENT_LIBS Iphlpapi )
 endif()
