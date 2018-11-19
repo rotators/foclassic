@@ -17,9 +17,9 @@ find_package( OpenGL )
 ##
 
 if( UNIX )
-	set( OS_LIBS dl rt )
+	set( PLATFORM_LIBS dl rt )
 elseif( WIN32 )
-	set( OS_LIBS
+	set( PLATFORM_LIBS
 		dbghelp # Debugger.cpp Exception.cpp
 		psapi # Exception.cpp
 		ws2_32 # pthreads?
@@ -29,20 +29,14 @@ endif()
 if( UNIX )
 	find_package( X11 REQUIRED )
 	message( STATUS "X11 LIBS  ${X11_LIBRARIES}" )
-	set( OS_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
+	set( PLATFORM_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
 elseif( WIN32 )
 
-	set( OS_CLIENT_LIBS Iphlpapi )
+	set( PLATFORM_CLIENT_LIBS Iphlpapi )
 endif()
 
 set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
-
-# predefine libs used by engine applications
-#set( CLIENT_LIBS     ${OS_LIBS} ${OS_CLIENT_LIBS}     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
-#set( MAPPER_LIBS     ${OS_LIBS} ${OS_MAPPER_LIBS}     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
-#set( SERVER_LIBS     ${OS_LIBS} ${OS_SERVER_LIBS}     ${FOCLASSIC_LIBS} distorm fltk png )
-#set( ASCOMPILER_LIBS ${OS_LIBS} ${OS_ASCOMPILER_LIBS} ${FOCLASSIC_LIBS} )
 
 set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ogg png portaudio )
 set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
@@ -343,10 +337,10 @@ set_property( TARGET ASCompiler PROPERTY FOLDER "Tools" )
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
 add_library( Platform INTERFACE )
-target_link_libraries( Platform INTERFACE ${OS_LIBS} )
+target_link_libraries( Platform INTERFACE ${PLATFORM_LIBS} )
 
 add_library( PlatformClient INTERFACE )
-target_link_libraries( PlatformClient INTERFACE ${OS_CLIENT_LIBS} )
+target_link_libraries( PlatformClient INTERFACE ${PLATFORM_CLIENT_LIBS} )
 
 get_property( FOCLASSIC_APPS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS )
 foreach( target IN LISTS FOCLASSIC_APPS )
