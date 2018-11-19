@@ -10,10 +10,8 @@ message( STATUS "Configuring engine..." )
 add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
-find_package( OpenGL )
-
 ##
-## configure libraries
+## configure pratform libraries
 ##
 
 if( UNIX )
@@ -28,12 +26,21 @@ endif()
 
 if( UNIX )
 	find_package( X11 REQUIRED )
-	message( STATUS "X11 LIBS  ${X11_LIBRARIES}" )
 	set( PLATFORM_CLIENT_LIBS ${X11_LIBRARIES} Xrender Xft Xi Xinerama fontconfig )
 elseif( WIN32 )
 
 	set( PLATFORM_CLIENT_LIBS Iphlpapi )
 endif()
+
+add_library( Platform INTERFACE )
+target_link_libraries( Platform INTERFACE ${PLATFORM_LIBS} )
+
+add_library( PlatformClientMapper INTERFACE )
+target_link_libraries( PlatformClientMapper INTERFACE ${PLATFORM_CLIENT_LIBS} )
+
+##
+## configure applications libraries
+##
 
 set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
 set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
@@ -43,6 +50,7 @@ set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg png )
 set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png )
 set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
 
+find_package( OpenGL REQUIRED )
 # DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
 set( DX_LIBS glew dx9 OpenGL::GLU )
 set( GL_LIBS fltkgl glew OpenGL::GL OpenGL::GLU )
@@ -306,6 +314,7 @@ if( MSVC )
 	# see https://docs.microsoft.com/en-us/cpp/build/reference/largeaddressaware-handle-large-addresses
 	set_property( TARGET Server APPEND_STRING PROPERTY LINK_FLAGS "/LARGEADDRESSAWARE " )
 endif()
+
 ##
 ## ASCompiler
 ##
@@ -336,11 +345,15 @@ target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 set_property( TARGET ASCompiler PROPERTY FOLDER "Tools" )
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
-add_library( Platform INTERFACE )
-target_link_libraries( Platform INTERFACE ${PLATFORM_LIBS} )
+##
+## finalize configuration
+##
 
-add_library( PlatformClient INTERFACE )
-target_link_libraries( PlatformClient INTERFACE ${PLATFORM_CLIENT_LIBS} )
+if( UNIX )
+	set( arrow "-\\>" )
+elseif( WIN32 )
+	set( arrow "->" )
+endif()
 
 get_property( FOCLASSIC_APPS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS )
 foreach( target IN LISTS FOCLASSIC_APPS )
@@ -379,8 +392,8 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
 	endif()
 
-	if( "${target}" MATCHES "^Client(DX|GL)$" )
-		target_link_libraries( ${target} PlatformClient )
+	if( "${target}" MATCHES "^(Client|Mapper)(DX|GL)$" )
+		target_link_libraries( ${target} PlatformClientMapper )
 	endif()
 	target_link_libraries( ${target} Platform )
 
@@ -393,28 +406,23 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	if( subdir )
 		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
-if( MSVC )
-	# prepare executable for release after build
+
+	# prepare executables for release after build
 	add_custom_command( TARGET ${target}
 		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo "${target} -> $<SHELL_PATH:${dir}/$<TARGET_FILE_NAME:${target}>>"
+		COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${dir}/$<TARGET_FILE_NAME:${target}>>"
 		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
 	)
 
 	if( MSVC )
-		# delete .pdb file before build
-		add_custom_command( TARGET ${target}
-			PRE_BUILD
-				COMMAND ${CMAKE_COMMAND} -E remove ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
-		)
 		# prepare .pdb files for release after build
 		add_custom_command( TARGET ${target}
 			POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E echo "${target} -> $<SHELL_PATH:${dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
+				COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
 				COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
 		)
 	endif()
-endif()
+
 	message( STATUS "Configured ${target}" )
 
 endforeach()
