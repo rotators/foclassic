@@ -1,6 +1,7 @@
 ##
 ## AppVeyor
 ## https://www.appveyor.com/
+##
 ## https://ci.appveyor.com/project/rotators/foclassic/
 ##
 
@@ -28,8 +29,10 @@ cache:
  - C:\FOClassic\SDK.Cache -> CMakeLists.txt, Build.cmake, CMake\SelfUpdate.cmake
 
 install:
- - set PATH=SDK.Cache\cmake\bin;%PATH%
- - cmake -P CMake\SelfUpdate.cmake
+ - sh: PATH=SDK.Cache/cmake/bin:$PATH
+ - cmd: set PATH=SDK.Cache\cmake\bin;%PATH%
+ - cmake -P CMake/SelfUpdate.cmake
+ - sh: hash -r
 
 build_script:
  - cmake -P Build.cmake

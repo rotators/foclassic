@@ -88,6 +88,10 @@ if( EXISTS "${USER_FUNCTIONS_FILE}" )
 	include( UserFunctions )
 	HashFile( "${USER_FUNCTIONS_FILE}" HASH_USER )
 	list( APPEND HASH_LIST "${HASH_USER}" )
+	list( APPEND CMAKE_CONFIGURE_DEPENDS "${USER_FUNCTIONS_FILE}" )
+else()
+	message( STATUS "Using default protocol hash" )
+	message( STATUS "" )
 endif()
 
 # timestamps
