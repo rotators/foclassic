@@ -21,11 +21,11 @@ env:
 
 matrix:
  allow_failures:
-  - GXX=4.9
-  - GXX=5
-  - GXX=6
-  - GXX=7
-  - GXX=8
+  - env: GXX=4.9
+  - env: GXX=5
+  - env: GXX=6
+  - env: GXX=7
+  - env: GXX=8
 
 git:
  depth: false
