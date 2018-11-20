@@ -21,7 +21,6 @@ env:
 
 matrix:
  allow_failures:
-  - env: GXX=4.9
   - env: GXX=5
   - env: GXX=6
   - env: GXX=7

@@ -7,6 +7,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 ## [v3]() (WIP)
 
 - dialogs security fix (thanks Skycast)
+- ~ban command fix (thanks Skycast)
 - information about outdated Client version is always displayed to player
     - [windows] if FOGAME.MSG/1024 cannot be found (eg. cache hasn't been downloaded yet), Client displays [native dialog box](https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-messagebox) with hardcoded message
 - breaking changes
