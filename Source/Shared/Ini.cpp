@@ -269,7 +269,7 @@ bool Ini::RemoveSection( const string& section )
 
 //
 
-bool Ini::IsSectionRaw( const std::string& section )
+bool Ini::IsSectionRaw( const string& section )
 {
     return SectionsRaw.find( section ) != SectionsRaw.end();
 }

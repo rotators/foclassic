@@ -5,7 +5,7 @@
 #include "Dialogs.h"
 #include "FileManager.h"
 #include "Log.h"
-#include "IniParser.h"
+#include "Ini.h"
 #include "Script.h"
 #include "Text.h"
 #include "Vars.h"
@@ -218,13 +218,6 @@ void DialogManager::Finish()
     WriteLogX( " complete.\n" );
 }
 
-string ParseLangKey( const char* str )
-{
-    while( *str == ' ' )
-        str++;
-    return string( str );
-}
-
 DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* data )
 {
     LastErrors.clear();
@@ -235,58 +228,60 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
         return NULL;
     }
 
-    IniParser fodlg;
-    if( !fodlg.LoadFilePtr( data, Str::Length( data ) ) )
+    Ini fodlg;
+    fodlg.KeepSectionsRaw = true;
+    if( !fodlg.LoadString( string( data ) ) )
     {
         AddError( "Internal error." );
         return NULL;
     }
 
-    #define LOAD_FAIL( err )    { AddError( err ); goto load_false; }
+    uint        dlg_id = 0;
     DialogPack* pack = new DialogPack( id, string( name ) );
-    char*       dlg_buf = fodlg.GetApp( "dialog" );
-    istrstream  input( dlg_buf, Str::Length( dlg_buf ) );
-    char*       lang_buf = NULL;
     pack->PackId = id;
     pack->PackName = name;
-    StrVec& lang = pack->TextsLang;
+    #define LOAD_FAIL( err )                                           \
+        {                                                              \
+            AddError( err );                                           \
+            AddError( "Bad node<%d>.", dlg_id );                       \
+            WriteLogF( _FUNC_, " - Errors:\n%s", LastErrors.c_str() ); \
+            delete pack;                                               \
+            return NULL;                                               \
+        }
 
     // Comment
-    char* comment = fodlg.GetApp( "comment" );
-    if( comment )
-        pack->Comment = comment;
-    SAFEDELA( comment );
+    #if !defined (FOCLASSIC_SERVER)
+    pack->Comment = fodlg.GetSectionRawString( "comment", "\n" );
+    #endif
 
     // Texts
-    char lang_key[256];
-    if( !fodlg.GetStr( "data", "lang", "russ", lang_key ) )
-        LOAD_FAIL( "Lang app not found." );
+    if( fodlg.IsSectionKeyEmpty( "data", "lang" ) )
+        LOAD_FAIL( "Section<lang> not found or empty." );
 
-    Str::ParseLine<StrVec, string (*)( const char* )>( lang_key, ' ', lang, ParseLangKey );
-    if( !lang.size() )
-        LOAD_FAIL( "Lang app is empty." );
-
-    for( uint i = 0, j = (uint)lang.size(); i < j; i++ )
+    StrVec lang = fodlg.GetStrVec( "data", "lang" );
+    pack->TextsLang = lang;
+    uint   idx = 0;
+    for( auto it = lang.begin(); it != lang.end(); ++it, idx++ )
     {
-        string& l = lang[i];
-        lang_buf = fodlg.GetApp( l.c_str() );
-        if( !lang_buf )
+        string lang_msg = fodlg.GetSectionRawString( *it, "\n" );
+        if( lang_msg.empty() )
             LOAD_FAIL( "One of the lang section not found." );
         pack->Texts.push_back( new FOMsg );
-        pack->Texts[i]->LoadMsgFileBuf( lang_buf, Str::Length( lang_buf ) );
-        SAFEDELA( lang_buf );
+        pack->Texts[idx]->LoadMsgFileBuf( (char*)lang_msg.c_str(), lang_msg.size() );
     }
 
     // Dialog
-    if( !dlg_buf )
-        LOAD_FAIL( "Dialog section not found." );
+    if( !fodlg.IsSectionRaw( "dialog" ) )
+        LOAD_FAIL( "Section<dialog> not found." );
 
-    char ch;
+    string     dialog_buf = fodlg.GetSectionRawString( "dialog", "\n" );
+    istrstream input( dialog_buf.c_str(), dialog_buf.size() );
+    char       ch;
+
     input >> ch;
     if( ch != '&' )
         return NULL;
 
-    uint dlg_id;
     uint text_id;
     uint link;
     char read_str[256];
@@ -303,7 +298,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     {
         input >> dlg_id;
         if( input.eof() )
-            goto load_done;
+            return pack;
         if( input.fail() )
             LOAD_FAIL( "Bad dialog id number." );
         input >> text_id;
@@ -424,24 +419,13 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
             if( ch == '&' )         // End of all
             {
                 pack->Dialogs.push_back( current_dialog );
-                goto load_done;
+                return pack;
             }
         }
         pack->Dialogs.push_back( current_dialog );
     }
 
-load_done:
-    SAFEDELA( dlg_buf );
-    SAFEDELA( lang_buf );
     return pack;
-
-load_false:
-    AddError( "Bad node<%d>.", dlg_id );
-    WriteLogF( _FUNC_, " - Errors:\n%s", LastErrors.c_str() );
-    delete pack;
-    SAFEDELA( dlg_buf );
-    SAFEDELA( lang_buf );
-    return NULL;
 }
 
 DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand )
@@ -633,17 +617,8 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             }
             else
             {
-                #ifdef USE_STLPORT
-                # if !defined (FONLINE_NPCEDITOR) && !defined (FONLINE_MRFIXIT)
-                char ch = *input.rdbuf()->_M_gptr();
-                # else
                 char ch = *input.str();
                 input.rdbuf()->freeze( false );
-                # endif
-                #else
-                char ch = *input.str();
-                input.rdbuf()->freeze( false );
-                #endif
                 if( ch == ' ' )
                 {
                     #ifdef FONLINE_NPCEDITOR
@@ -685,10 +660,15 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
             // Bind function
             # pragma TODO("rewrite BIND_D/R_FUNC macros")
             # define BIND_D_FUNC( params )               { id = Script::Bind( name, "bool %s(Critter&,Critter@" params, false ); }
-            # define BIND_R_FUNC( params )                                                                                    \
-                { if( (id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) { ret_value = true; \
-                  } else                                                                                                      \
-                      id = Script::Bind( name, "void %s(Critter&,Critter@" params, false ); }
+            # define BIND_R_FUNC( params )                                                                  \
+                {                                                                                           \
+                    if( (id = Script::Bind( name, "uint %s(Critter&,Critter@" params, false, true ) ) > 0 ) \
+                    {                                                                                       \
+                        ret_value = true;                                                                   \
+                    }                                                                                       \
+                    else                                                                                    \
+                        id = Script::Bind( name, "void %s(Critter&,Critter@" params, false );               \
+                }
             switch( values_count )
             {
                 case 1:

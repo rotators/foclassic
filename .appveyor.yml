@@ -23,10 +23,22 @@ skip_commits:
  files:
   - .travis.yml
 
-clone_folder: C:\FOClassic
+for:
+ - matrix:
+    only:
+     - image: Visual Studio 2013
+     - image: Visual Studio 2015
+     - image: Visual Studio 2017
+   clone_folder: C:\FOClassic
+ - matrix:
+    only:
+     - image: Ubuntu
+     - image: Ubuntu1604
+     - image: Ubuntu1804
+   clone_folder: /FOClassic
 
 cache:
- - C:\FOClassic\SDK.Cache -> CMakeLists.txt, Build.cmake, CMake\SelfUpdate.cmake
+ - SDK.Cache -> CMakeLists.txt, Build.cmake
 
 install:
  - git submodule update --init --recursive
