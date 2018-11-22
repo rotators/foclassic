@@ -1487,8 +1487,8 @@ void FOServer::Process( ClientPtr& cl )
                     cl->Disconnect();
                     BIN_END( cl );
                     break;
-				}
-				case NETMSG_PING:
+                }
+                case NETMSG_PING:
                     Process_Ping( cl );
                     BIN_END( cl );
                     break;
