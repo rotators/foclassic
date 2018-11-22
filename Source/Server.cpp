@@ -1471,16 +1471,24 @@ void FOServer::Process( ClientPtr& cl )
             {
                 case 0xFFFFFFFF:
                 {
-                    uint answer[4] = { Statistics.CurOnline, Statistics.Uptime, 0, 0 };
+                    // at least 16 bytes should be sent for backward compatibility,
+                    // even if answer data will change its meaning
                     BOUT_BEGIN( cl );
-                    cl->Bout.Push( (char*)answer, sizeof(answer) );
+
+                    cl->Bout << (uint)Statistics.CurOnline - 1;
+                    cl->Bout << (uint)Statistics.Uptime;
+                    cl->Bout << (uint)0;
+                    cl->Bout << (uchar)0;
+                    cl->Bout << (uchar)0xFC;
+                    cl->Bout << (ushort)FOCLASSIC_VERSION;
+
                     cl->DisableZlib = true;
                     BOUT_END( cl );
                     cl->Disconnect();
-                }
                     BIN_END( cl );
                     break;
-                case NETMSG_PING:
+				}
+				case NETMSG_PING:
                     Process_Ping( cl );
                     BIN_END( cl );
                     break;
