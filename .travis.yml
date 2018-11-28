@@ -43,7 +43,7 @@ before_install:
 
 install:
  - export PATH=SDK.Cache/cmake/bin:$PATH
- - cmake -P CMake/SelfUpdate.cmake && hash -r
+ - cmake -DO=Build.cmake -DOWNLOAD_DIR=SDK.Cache -P CMake/SelfUpdate/SelfUpdate.cmake && hash -r
 
 script:
  - cmake -P Build.cmake

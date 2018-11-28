@@ -44,7 +44,7 @@ install:
  - git submodule update --init --recursive
  - sh: PATH=SDK.Cache/cmake/bin:$PATH
  - cmd: set PATH=SDK.Cache\cmake\bin;%PATH%
- - cmake -P CMake/SelfUpdate.cmake
+ - cmake -DO=Build.cmake -DOWNLOAD_DIR=SDK.Cache -P CMake/SelfUpdate/SelfUpdate.cmake
  - sh: hash -r
 
 build_script:

@@ -1,4 +1,8 @@
+[submodule "SelfUpdate"]
+	url = https://gist.github.com/4ceef850f7635180508598ab51080055.git
+	branch = master
+	path = CMake/SelfUpdate
 [submodule "angelscript-preprocessor"]
-	path = Source/Libs/angelscript-preprocessor
 	url = https://github.com/rotators/angelscript-preprocessor.git
 	branch = master
+	path = Source/Libs/angelscript-preprocessor
