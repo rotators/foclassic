@@ -89,24 +89,9 @@ foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
 		##
 		## each extension should depend on its target(s)
 		##
-		target_compile_definitions( ${name} PRIVATE FOCLASSIC_EXTENSION_NOTES )
 
-		##
-		## each extension should depend on its target(s)
-		##
-
-		get_property( target TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_TARGET )
-		string( SUBSTRING ${target} 0 1 letter )
-		string( TOLOWER ${target} target )
-		string( REGEX REPLACE "^.(.+)" "${letter}\\1" target "${target}" )
-		if( "${target}" STREQUAL "Server" )
-			add_dependencies( ${name} ${target} )
-		else()
-			add_dependencies( ${name} ${target}GL )
-			if( WIN32 )
-				add_dependencies( ${name} ${target}DX )
-			endif()
-		endif()
+		get_property( dependencies TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_DEPENDS )
+		add_dependencies( ${name} ${dependencies} )
 
 		##
 		## prettify IDE

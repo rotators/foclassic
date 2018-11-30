@@ -27,6 +27,7 @@
 #  FOCLASSIC_EXTENSION              -  always TRUE
 #  FOCLASSIC_EXTENSION_TARGET       -  copy of 'target' argument (uppercase)
 #  FOCLASSIC_EXTENSION_HEADERS_DIR  -  copy of 'headers' argument (CMake path)
+#  FOCLASSIC_EXTENSION_DEPENDS      -  engine target(s) related to extension (CMake list)
 #
 function( FOClassicExtension name target headers )
 
@@ -75,9 +76,20 @@ function( FOClassicExtension name target headers )
 		set_property( TARGET ${name} APPEND_STRING PROPERTY COMPILE_OPTIONS "/MT" )
 	endif()
 
-	# add information for developer
-	# __TARGET -> target
+	# add informations for developer
 	string( REPLACE "__" "" target "${target}" )
+	string( SUBSTRING ${target} 0 1 letter )
+	string( TOLOWER "${target}" target )
+	string( REGEX REPLACE "^.(.+)" "${letter}\\1" target "${target}" )
+	if( "${target}" STREQUAL "Server" )
+		set_property( TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_DEPENDS ${target} )
+	else()
+		if( WIN32 )
+			set_property( TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_DEPENDS ${target}DX ${target}GL )
+		else()
+			set_property( TARGET ${name} PROPERTY FOCLASSIC_EXTENSION_DEPENDS ${target}GL )
+		endif()
+	endif()
 	string( TOLOWER "${target}" target )
 	message( STATUS "Configured ${target} extension '${name}'" )
 
