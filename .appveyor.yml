@@ -9,20 +9,20 @@ version: "{build}"
 
 # VS 2013 image = VS 2010 build
 image:
+ - Ubuntu
  - Visual Studio 2013
  - Visual Studio 2017
- - Ubuntu
 
 platform:
  - x32
 
 matrix:
  allow_failures:
-  - image: Visual Studio 2015
-  - image: Visual Studio 2017
   - image: Ubuntu
   - image: Ubuntu1604
   - image: Ubuntu1804
+  - image: Visual Studio 2015
+  - image: Visual Studio 2017
   - platform: x64
 
 skip_commits:
@@ -32,22 +32,24 @@ skip_commits:
 for:
  - matrix:
     only:
-     - image: Visual Studio 2013
-     - image: Visual Studio 2015
-     - image: Visual Studio 2017
-   clone_folder: C:\FOClassic
- - matrix:
-    only:
      - image: Ubuntu
      - image: Ubuntu1604
      - image: Ubuntu1804
    clone_folder: /FOClassic
+ - matrix:
+    only:
+     - image: Visual Studio 2013
+     - image: Visual Studio 2015
+     - image: Visual Studio 2017
+   clone_folder: C:\FOClassic
 
 cache:
  - SDK.Cache -> CMakeLists.txt, Build.cmake
 
-install:
+init:
  - sh: if [ "${PLATFORM}" == "x32" ]; then arch=i386; else arch=amd64; fi
+
+install:
  - git submodule update --init --recursive
  - sh: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sh: sudo apt-get update
