@@ -37,7 +37,7 @@ function( DetectCI )
 			set( CI "AppVeyor" PARENT_SCOPE )
 
 			if( UNIX AND "$ENV{PLATFORM}" STREQUAL "x32" )
-				set( CI_TOOL "Linux32" )
+				set( CI_TOOL "Linux32" PARENT_SCOPE )
 			elseif( UNIX AND "$ENV{PLATFORM}" STREQUAL "x64" )
 			elseif( WIN32 AND "$ENV{PLATFORM}" STREQUAL "x32" )
 			elseif( WIN32 AND "$ENV{PLATFORM}" STREQUAL "x64" )
