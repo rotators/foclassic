@@ -8,8 +8,8 @@
 cmake_minimum_required( VERSION 3.12.4 FATAL_ERROR )
 
 # special directories
-set( ROOT_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" )
-list( APPEND CMAKE_MODULE_PATH "${ROOT_CMAKE_DIR}" )
+set( FOCLASSIC_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" )
+list( APPEND CMAKE_MODULE_PATH "${FOCLASSIC_CMAKE_DIR}" )
 
 # disable in-source builds
 include(DisableInSourceBuild)
@@ -46,27 +46,30 @@ include( SourceOptions )
 ## set variables
 ##
 
-# sources directories
-set( FO_DIR                         "${CMAKE_SOURCE_DIR}/Source" )
-set( SHARED_DIR                     "${FO_DIR}/Shared" )
-set( LIBS_DIR                       "${FO_DIR}/Libs" )
+set( FOCLASSIC_ROOT_DIR             "${CMAKE_CURRENT_LIST_DIR}" )
+set( FOCLASSIC_BINARY_DIR           "${CMAKE_CURRENT_BINARY_DIR}" )
+
+# main directories
+set( SOURCE_DIR                     "${FOCLASSIC_ROOT_DIR}/Source" )
+set( EXTENSIONS_DIR                 "${FOCLASSIC_ROOT_DIR}/Extensions" )
+set( DOCS_DIR                       "${FOCLASSIC_ROOT_DIR}/Docs" )
 
 # libraries directories
-set( AS_DIR                         "${FO_DIR}/AngelScript" )
-set( DAT_DIR                        "${FO_DIR}/DatFile" )
-set( EXTENSIONS_DIR                 "${CMAKE_SOURCE_DIR}/Extensions" )
+set( SHARED_DIR                     "${SOURCE_DIR}/Shared" )
+set( LIBS_DIR                       "${SOURCE_DIR}/Libs" )
+set( AS_DIR                         "${SOURCE_DIR}/AngelScript" )
+set( DAT_DIR                        "${SOURCE_DIR}/DatFile" )
 
 # release directories
 set( RELEASE_DIR_NAME               "FOClassic-v${PROJECT_VERSION_MINOR}" )
-set( RELEASE_DIR                    "${CMAKE_BINARY_DIR}/${RELEASE_DIR_NAME}" )
+set( RELEASE_DIR                    "${FOCLASSIC_BINARY_DIR}/${RELEASE_DIR_NAME}" )
 set( RELEASE_CMAKE_DIR              "${RELEASE_DIR}/CMake" )
 set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
 
 # other directories
-set( DOCS_DIR                        "${CMAKE_SOURCE_DIR}/Docs" )
-set( TEMPLATES_DIR                   "${ROOT_CMAKE_DIR}/Templates" )
-set( FOCMAKE_DIR                     "${CMAKE_BINARY_DIR}/CMake" )
-set( DEFAULT_INCLUDE_DIR             "${FOCMAKE_DIR}/include" )
+set( TEMPLATES_DIR                   "${FOCLASSIC_CMAKE_DIR}/Templates" )
+set( FOCMAKE_DIR                     "${FOCLASSIC_BINARY_DIR}/CMake" )
+set( FOCLASSIC_INCLUDE_DIR           "${FOCMAKE_DIR}/include" )
 
 # templates
 set( ENGINE_GLOBAL_HEADER_TEMPLATE   "${TEMPLATES_DIR}/CMake.h" )
@@ -76,13 +79,36 @@ set( VERSION_TEMPLATE                "${TEMPLATES_DIR}/VERSION" )
 
 # special files
 set( CHANGELOG_FILE                  "${DOCS_DIR}/changelog/CHANGELOG.md" )
-set( ENGINE_GLOBAL_HEADER_FILE       "${DEFAULT_INCLUDE_DIR}/CMake.h" )
-set( ENGINE_NET_HEADER_FILE          "${DEFAULT_INCLUDE_DIR}/CMake.Net.h" )
-set( USER_FUNCTIONS_FILE             "${ROOT_CMAKE_DIR}/UserFunctions.cmake" )
+set( ENGINE_GLOBAL_HEADER_FILE       "${FOCLASSIC_INCLUDE_DIR}/CMake.h" )
+set( ENGINE_NET_HEADER_FILE          "${FOCLASSIC_INCLUDE_DIR}/CMake.Net.h" )
 
 ##
 ## customization
 ##
+
+set( USER_TOP_FOCLASSIC_FILE         "${CMAKE_SOURCE_DIR}/CMakeFOClassic.txt" )
+set( USER_FOCLASSIC_FILE             "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.txt" )
+set( USER_FUNCTIONS_FILE             "${FOCLASSIC_CMAKE_DIR}/UserFunctions.cmake" )
+
+message( STATUS "Customization setup..." )
+if( "${USER_FOCLASSIC_FILE}" STREQUAL "${USER_TOP_FOCLASSIC_FILE}" )
+	# standalone build
+	if( EXISTS "${USER_FOCLASSIC_FILE}" )
+		file( TO_NATIVE_PATH "${custom_file}" custom_file_native )
+		message( STATUS "  ${custom_file_native}" )
+		include( "${USER_FOCLASSIC_FILE}" OPTIONAL )
+	endif()
+else()
+	# add_subdirectory() build
+	set( FOCLASSIC_SUBPROJECT_BUILD TRUE )
+	foreach( custom_file IN ITEMS "${USER_TOP_FOCLASSIC_FILE}" "${USER_FOCLASSIC_FILE}" )
+		if( EXISTS "${custom_file}" )
+			file( TO_NATIVE_PATH "${custom_file}" custom_file_native )
+			message( STATUS "  ${custom_file_native}" )
+			include( "${custom_file}" )
+		endif()
+	endforeach()
+endif()
 
 if( EXISTS "${USER_FUNCTIONS_FILE}" )
 	include( UserFunctions )
@@ -154,7 +180,7 @@ message( STATUS "Generating net header..." )
 HashFile( "${ENGINE_GLOBAL_HEADER_FILE}" HASH_VERSION )
 list( APPEND HASH_LIST "${HASH_VERSION}" )
 
-GenerateNetHeader( "${ENGINE_NET_HEADER_TEMPLATE}" "${ENGINE_NET_HEADER_FILE}" "CMAKE_NET" "${FO_DIR}/NetProtocol.h" "${HASH_LIST}" )
+GenerateNetHeader( "${ENGINE_NET_HEADER_TEMPLATE}" "${ENGINE_NET_HEADER_FILE}" "CMAKE_NET" "${SOURCE_DIR}/NetProtocol.h" "${HASH_LIST}" )
 HashFile( "${ENGINE_NET_HEADER_FILE}" HASH_NET )
 list( APPEND HASH_LIST "${HASH_NET}" )
 
@@ -168,7 +194,7 @@ SourceOptions()
 ##
 
 file( GLOB ROOT_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "*.cmake" )
-file( GLOB_RECURSE ROOT_CMAKE_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${ROOT_CMAKE_DIR}/*" )
+file( GLOB_RECURSE ROOT_CMAKE_CMAKE_FILES LIST_DIRECTORIES false CONFIGURE_DEPENDS "${FOCLASSIC_CMAKE_DIR}/*" )
 add_custom_target( Configuration
 	SOURCES
 		${ROOT_CMAKE_FILES}
@@ -186,3 +212,16 @@ set_property( TARGET Configuration PROPERTY FOLDER Configuration )
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Configuration/CMake" )
+
+##
+## export selected variables to parent scope
+##
+
+if( FOCLASSIC_SUBPROJECT_BUILD )
+	get_property( targets DIRECTORY "${FOCLASSIC_ROOT_DIR}" PROPERTY FOCLASSIC_ALL_TARGETS )
+
+	set( FOCLASSIC_VERSION     "${FOCLASSIC_VERSION}"     PARENT_SCOPE )
+	set( FOCLASSIC_CMAKE_DIR   "${RELEASE_CMAKE_DIR}"     PARENT_SCOPE )
+	set( FOCLASSIC_HEADERS_DIR "${RELEASE_HEADERS_DIR}"   PARENT_SCOPE )
+	set( FOCLASSIC_ALL_TARGETS "${FOCLASSIC_ALL_TARGETS}" PARENT_SCOPE )
+endif()

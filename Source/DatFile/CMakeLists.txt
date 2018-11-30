@@ -17,10 +17,10 @@ if( WIN32 )
 endif()
 target_include_directories( DatFile
 	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}
-		${FO_DIR}
+		${CMAKE_CURRENT_LIST_DIR}
+		${SOURCE_DIR}
 	PRIVATE
-		${DEFAULT_INCLUDE_DIR}
+		${FOCLASSIC_INCLUDE_DIR}
 )
 
 target_link_libraries( DatFile Shared zlib )

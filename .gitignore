@@ -25,6 +25,7 @@
 *.user
 
 # customization
+/CMakeFOClassic.txt
 /CMake/User*.cmake
 
 ##

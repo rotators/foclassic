@@ -10,8 +10,8 @@ set( EXTENSIONS_HEADER_FILE "${CMAKE_CURRENT_LIST_DIR}/FOClassic.h" )
 
 # create cmake functions file
 # this must be done before any extension configuration
-file( TIMESTAMP "${ROOT_CMAKE_DIR}/FOClassic.cmake" EXTENSIONS_CONTENT_TIMESTAMP "%d.%m.%Y" )
-configure_file( "${ROOT_CMAKE_DIR}/FOClassic.cmake" "${RELEASE_CMAKE_DIR}/FOClassic.cmake" @ONLY NEWLINE_STYLE LF )
+file( TIMESTAMP "${FOCLASSIC_CMAKE_DIR}/FOClassic.cmake" EXTENSIONS_CONTENT_TIMESTAMP "%d.%m.%Y" )
+configure_file( "${FOCLASSIC_CMAKE_DIR}/FOClassic.cmake" "${RELEASE_CMAKE_DIR}/FOClassic.cmake" @ONLY NEWLINE_STYLE LF )
 
 # create extensions header
 # this must be done before any extension configuration
@@ -55,14 +55,14 @@ endforeach()
 add_custom_target( Extensions
 	SOURCES
 		${CMAKE_CURRENT_LIST_FILE}
-		${ROOT_CMAKE_DIR}/FOClassic.cmake
+		${FOCLASSIC_CMAKE_DIR}/FOClassic.cmake
 
 		${EXTENSIONS_FILES}
 		${EXTENSIONS_HEADER_FILE}
 )
 # prettify IDE
 set_property( TARGET Extensions PROPERTY FOLDER Configuration )
-source_group( "CMake" REGULAR_EXPRESSION "^${ROOT_CMAKE_DIR}/.+" )
+source_group( "CMake" REGULAR_EXPRESSION "^${FOCLASSIC_CMAKE_DIR}/.+" )
 
 ##
 ## process subdirectories

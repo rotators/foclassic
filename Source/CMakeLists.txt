@@ -51,7 +51,7 @@ target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 ##
 
 set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
-set( FOCLASSIC_INCLUDES ${DEFAULT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
+set( FOCLASSIC_INCLUDES ${FOCLASSIC_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR} )
 
 if( UNIX )
 	set( PNG_CLIENT_MAPPER png12-bin )
@@ -407,7 +407,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		endif()
 
 		# include version informations
-		target_sources( ${target} PRIVATE ${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc )
+		target_sources( ${target} PRIVATE ${FOCLASSIC_ROOT_DIR}/Resources/VersionInfo.rc )
 	endif()
 
 	##
@@ -425,6 +425,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 
 	##
 	## prepare for release
+	## copy binaries to custom directory (optional)
 	##
 
 	set( dir "${RELEASE_DIR}" )
@@ -433,21 +434,35 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		set( dir "${RELEASE_DIR}/${subdir}" )
 	endif()
 
-	# prepare executables for release after build
-	add_custom_command( TARGET ${target}
-		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${dir}/$<TARGET_FILE_NAME:${target}>>"
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${dir}/$<TARGET_FILE_NAME:${target}>
-	)
+	set( copy_to "${dir}" )
 
-	if( MSVC )
-		# prepare .pdb files for release after build
+	if( "${target}" MATCHES "^Client(DX|GL)$" )
+		list( APPEND copy_to ${FOCLASSIC_COPY_CLIENT_DIR} )
+	elseif( "${target}" MATCHES "^Mapper(DX|GL)$" )
+		list( APPEND copy_to ${FOCLASSIC_COPY_MAPPER_DIR} )
+	elseif( "${target}" MATCHES "^Server$" )
+		list( APPEND copy_to ${FOCLASSIC_COPY_SERVER_DIR} )
+	elseif( "${target}" MATCHES "^ASCompiler$" )
+		list( APPEND copy_to ${FOCLASSIC_COPY_ASCOMPILER_DIR} )
+	endif()
+
+	foreach( copy_dir IN LISTS copy_to )
+		# copy executables
 		add_custom_command( TARGET ${target}
 			POST_BUILD
-				COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
-				COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${dir}/$<TARGET_PDB_FILE_NAME:${target}>
+			COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${copy_dir}/$<TARGET_FILE_NAME:${target}>>"
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${copy_dir}/$<TARGET_FILE_NAME:${target}>
 		)
-	endif()
+
+		if( MSVC )
+			# copy .pdb files
+			add_custom_command( TARGET ${target}
+				POST_BUILD
+					COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${copy_dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
+					COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${copy_dir}/$<TARGET_PDB_FILE_NAME:${target}>
+			)
+		endif()
+	endforeach()
 
 	message( STATUS "Configured ${target}" )
 
@@ -463,12 +478,12 @@ endforeach()
 ##
 
 source_group( " "           REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
-source_group( "AngelScript" REGULAR_EXPRESSION "${FO_DIR}/AngelScript" )
+source_group( "AngelScript" REGULAR_EXPRESSION "${SOURCE_DIR}/AngelScript" )
 source_group( "CMake"       REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
-source_group( "Shared"      REGULAR_EXPRESSION "${FO_DIR}/Shared" )
+source_group( "Shared"      REGULAR_EXPRESSION "${SOURCE_DIR}/Shared" )
 source_group( "Misc"
 	FILES
-		"${CMAKE_SOURCE_DIR}/Resources/VersionInfo.rc"
+		"${FOCLASSIC_ROOT_DIR}/Resources/VersionInfo.rc"
 )
 
 message( STATUS "Configuring engine... OK" )
