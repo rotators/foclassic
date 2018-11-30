@@ -91,6 +91,7 @@ set( USER_FOCLASSIC_FILE             "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.txt" 
 set( USER_FUNCTIONS_FILE             "${FOCLASSIC_CMAKE_DIR}/UserFunctions.cmake" )
 
 message( STATUS "Customization setup..." )
+
 if( "${USER_FOCLASSIC_FILE}" STREQUAL "${USER_TOP_FOCLASSIC_FILE}" )
 	# standalone build
 	if( EXISTS "${USER_FOCLASSIC_FILE}" )
@@ -119,6 +120,8 @@ else()
 	message( STATUS "Using default protocol hash" )
 	message( STATUS "" )
 endif()
+
+message( STATUS "Customization setup... OK" )
 
 # timestamps
 file( TIMESTAMP "${SCRIPTS_HEADER_TEMPLATE}" SCRIPTS_HEADER_TIMESTAMP "%d.%m.%Y" )

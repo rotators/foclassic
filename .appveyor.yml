@@ -11,13 +11,19 @@ version: "{build}"
 image:
  - Visual Studio 2013
  - Visual Studio 2017
+ - Ubuntu
 
 platform:
- - Win32
+ - x32
 
 matrix:
  allow_failures:
+  - image: Visual Studio 2015
   - image: Visual Studio 2017
+  - image: Ubuntu
+  - image: Ubuntu1604
+  - image: Ubuntu1804
+  - platform: x64
 
 skip_commits:
  files:
@@ -41,7 +47,12 @@ cache:
  - SDK.Cache -> CMakeLists.txt, Build.cmake
 
 install:
+ - sh: if [ "${PLATFORM}" == "x32" ]; then arch=i386; else arch=amd64; fi
  - git submodule update --init --recursive
+ - sh: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+ - sh: sudo apt-get update
+ - sh: sudo apt-get install -qq gcc-multilib g++-multilib
+ - sh: sudo apt-get install -qq libx11-dev:${arch} libxft-dev:${arch} libxi-dev:${arch} libxinerama-dev:${arch} libgl1-mesa-dev:${arch} libglu1-mesa-dev:${arch} freeglut3-dev:${arch} libfreetype6-dev:${arch} libfontconfig-dev:${arch} libpng-dev:${arch}
  - sh: PATH=SDK.Cache/cmake/bin:$PATH
  - cmd: set PATH=SDK.Cache\cmake\bin;%PATH%
  - cmake -DO=Build.cmake -DOWNLOAD_DIR=SDK.Cache -P CMake/SelfUpdate/SelfUpdate.cmake
