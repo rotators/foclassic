@@ -24,4 +24,4 @@ target_include_directories( DatFile
 )
 
 target_link_libraries( DatFile Shared zlib )
-set_property( TARGET DatFile PROPERTY FOLDER "Libs" )
+set_property( TARGET DatFile PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )

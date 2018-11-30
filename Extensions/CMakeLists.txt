@@ -61,8 +61,8 @@ add_custom_target( Extensions
 		${EXTENSIONS_HEADER_FILE}
 )
 # prettify IDE
-set_property( TARGET Extensions PROPERTY FOLDER Configuration )
 source_group( "CMake" REGULAR_EXPRESSION "^${FOCLASSIC_CMAKE_DIR}/.+" )
+set_property( TARGET Extensions PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Configuration" )
 
 ##
 ## process subdirectories
@@ -112,7 +112,7 @@ foreach( dir IN LISTS EXTENSIONS_SUBDIRS )
 		## prettify IDE
 		##
 
-		set_property( TARGET ${name} PROPERTY FOLDER "Extensions" )
+		set_property( TARGET ${name} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Extensions" )
 
 	endforeach()
 endforeach()

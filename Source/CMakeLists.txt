@@ -360,7 +360,6 @@ target_sources( ASCompiler
 target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
-set_property( TARGET ASCompiler PROPERTY FOLDER "Tools" )
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
 ##
@@ -463,6 +462,18 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 			)
 		endif()
 	endforeach()
+
+	##
+	## prettify IDE
+	##
+
+	if( "${target}" STREQUAL "ASCompiler")
+		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Tools" )
+	else()
+		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )
+	endif()
+
+	##
 
 	message( STATUS "Configured ${target}" )
 

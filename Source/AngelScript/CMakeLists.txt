@@ -81,7 +81,7 @@ target_sources( angelscript
 target_compile_definitions( angelscript PUBLIC AS_NO_THREADS )
 target_include_directories( angelscript PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 target_link_libraries( angelscript )
-set_property( TARGET angelscript PROPERTY FOLDER "Libs" )
+set_property( TARGET angelscript PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )

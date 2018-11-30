@@ -85,3 +85,4 @@ endif()
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
+set_property( TARGET Shared PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )

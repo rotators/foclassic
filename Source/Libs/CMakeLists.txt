@@ -18,6 +18,6 @@ add_subdirectory( sha2 )
 add_subdirectory( theora.bin )
 add_subdirectory( zlib )
 
-set_target_properties( acm angelscript-preprocessor glew sha2 zlib PROPERTIES FOLDER "Libs" )
+set_property( TARGET acm angelscript-preprocessor glew sha2 zlib PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
 
 message( STATUS "Configuring libraries... OK" )

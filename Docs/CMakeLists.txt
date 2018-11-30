@@ -13,4 +13,4 @@ add_custom_target( Documentation
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${DOCS_FILES} )
 source_group( "CMake" FILES "${CMAKE_CURRENT_LIST_FILE}" )
 
-set_property( TARGET Documentation PROPERTY FOLDER Documentation )
+set_property( TARGET Documentation PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Documentation" )

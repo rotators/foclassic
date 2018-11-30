@@ -102,6 +102,11 @@ if( "${USER_FOCLASSIC_FILE}" STREQUAL "${USER_TOP_FOCLASSIC_FILE}" )
 else()
 	# add_subdirectory() build
 	set( FOCLASSIC_SUBPROJECT_BUILD TRUE )
+
+	if( NOT FOCLASSIC_FOLDER_PREFIX )
+		set( FOCLASSIC_FOLDER_PREFIX "FOClassic" )
+	endif()
+
 	foreach( custom_file IN ITEMS "${USER_TOP_FOCLASSIC_FILE}" "${USER_FOCLASSIC_FILE}" )
 		if( EXISTS "${custom_file}" )
 			file( TO_NATIVE_PATH "${custom_file}" custom_file_native )
@@ -207,14 +212,14 @@ add_custom_target( Configuration
 		.travis.yml
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
-set_property( TARGET Configuration PROPERTY FOLDER Configuration )
+set_property( TARGET Configuration PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Configuration" )
 
 ##
 ## prettify IDE
 ##
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Configuration/CMake" )
+set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Configuration/CMake" )
 
 ##
 ## export selected variables to parent scope
