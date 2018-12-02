@@ -77,6 +77,7 @@ namespace Script
 
     void SetScriptsPath( int path_type );
     void Define( const char* def );
+    void DefineVersion();
     void Undef( const char* def );
     void CallPragmas( const StrVec& pragmas );
     bool LoadScript( const char* module_name, const char* source, bool skip_binary, const char* file_prefix = NULL );

@@ -492,6 +492,7 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     Str::Append( dll_path, ".so" );
     #endif
 
+    #pragma TODO("Better paths handling")
     // Client path fixes
     #if defined (FOCLASSIC_CLIENT)
     Str::Insert( dll_path, FileManager::GetPath( PATH_SERVER_SCRIPTS ) );
@@ -656,6 +657,10 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     return errors == 0;
 }
 
+#if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+# define VERBOSE_BIND
+#endif
+
 bool Script::BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp /* = false */ )
 {
     WriteLog( "Bind reserved %s functions...\n", key );
@@ -669,7 +674,7 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
         int                     bind_id = 0;
         istrstream              config_( config );
 
-        #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+        #if defined (VERBOSE_BIND)
         WriteLog( "Bind %s function %s -> ", key, bf->FuncName );
         #endif
 
@@ -693,7 +698,7 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
             str >> value;
             if( !str.fail() )
             {
-                #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+                #if defined (VERBOSE_BIND)
                 WriteLogX( "%s -> ", value.c_str() );
                 #endif
                 bind_id = Bind( value.c_str(), bf->FuncName, bf->FuncDecl, use_temp );
@@ -703,14 +708,14 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
 
         if( bind_id > 0 )
         {
-            #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+            #if defined (VERBOSE_BIND)
             WriteLogX( "OK\n" );
             #endif
             *bf->BindId = bind_id;
         }
         else
         {
-            #if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
+            #if defined (VERBOSE_BIND)
             WriteLogX( "ERROR\n" );
             #endif
             WriteLog( "Bind reserved %s function fail, name<%s>.\n", key, bf->FuncName );
@@ -1411,6 +1416,17 @@ void Script::SetScriptsPath( int path_type )
 void Script::Define( const char* def )
 {
     ScriptPreprocessor->Define( def );
+}
+
+void Script::DefineVersion()
+{
+    Undef( "FOCLASSIC_STAGE" );
+    Undef( "FOCLASSIC_VERSION" );
+    Undef( "__VERSION" );
+
+    Script::Define( Str::FormatBuf( "FOCLASSIC_STAGE %u", FOCLASSIC_STAGE ) );
+    Script::Define( Str::FormatBuf( "FOCLASSIC_VERSION %u", FOCLASSIC_VERSION ) );
+    Script::Define( Str::FormatBuf( "__VERSION %u", FOCLASSIC_VERSION ) );
 }
 
 void Script::Undef( const char* def )

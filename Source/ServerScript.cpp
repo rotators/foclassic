@@ -145,10 +145,7 @@ bool FOServer::InitScriptSystem()
     }
 
     Script::Undef( NULL );     // undef all
-    Script::Define( Str::FormatBuf( "FOCLASSIC_STAGE %u", FOCLASSIC_STAGE ) );
-    Script::Define( Str::FormatBuf( "FOCLASSIC_VERSION %u", FOCLASSIC_VERSION ) );
-    Script::Define( Str::FormatBuf( "__VERSION %u", FOCLASSIC_VERSION ) );
-
+    Script::DefineVersion();
     Script::Define( "__SERVER" );
 
     // Load script modules

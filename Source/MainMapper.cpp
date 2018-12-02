@@ -57,8 +57,6 @@ int main( int argc, char** argv )
     LogToFile( "Mapper.log" );
     WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
 
-
-
     // Create window
     MainWindow = new FOWindow();
 

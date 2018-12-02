@@ -368,15 +368,11 @@ int FOMapper::InitIface()
     WriteLog( "Init interface.\n" );
 
     IniParser& ini = IfaceIni;
-    char       int_file[256];
 
-    IniParser  cfg;
-    cfg.LoadFile( GetConfigFileName(), PATH_MAPPER_ROOT );
-    cfg.GetStr( "MapperInterface", CFG_DEF_INT_FILE, int_file );
-
-    if( !ini.LoadFile( int_file, PATH_MAPPER_DATA ) )
+    string     intrface = ConfigFile->GetStr( SECTION_MAPPER, "MapperInterface", CFG_DEF_INT_FILE );
+    if( !ini.LoadFile( intrface.c_str(), PATH_MAPPER_DATA ) )
     {
-        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( int_file, PATH_MAPPER_DATA ) );
+        WriteLog( "File<%s> not found.\n", FileManager::GetFullPath( intrface.c_str(), PATH_MAPPER_DATA ) );
         return __LINE__;
     }
 
@@ -5288,7 +5284,7 @@ void FOMapper::InitScriptSystem()
     WriteLog( "Script system initialization...\n" );
 
     // Init
-    if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_MAPPER ), "MAPPER" ) )
+    if( !Script::Init( true, new ScriptPragmaCallback( PRAGMA_MAPPER ), "MAPPER" ) )
     {
         WriteLog( "Script system initialization fail.\n" );
         return;
@@ -5309,22 +5305,21 @@ void FOMapper::InitScriptSystem()
     FileManager scripts_cfg;
     scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
     if( !scripts_cfg.IsLoaded() )
-    {
         WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
-        return;
+    else
+    {
+        // Load script modules
+        Script::Undef( NULL );
+        Script::DefineVersion();
+        Script::Define( "__MAPPER" );
+        Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "mapper", false, "MAPPER_" );
+
+        // Bind game functions
+        Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "mapper", MapperReservedFunctions, sizeof(MapperScriptFunctions) / sizeof(int) );
+
+        WriteLog( "Script system initialization complete.\n" );
     }
-
-    // Load script modules
-    Script::Undef( NULL );
-    Script::Define( "__MAPPER" );
-    Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "mapper", false, "MAPPER_" );
     FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
-
-    // Bind game functions
-    Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "mapper", MapperReservedFunctions, sizeof(MapperScriptFunctions) / sizeof(int) );
-
-    WriteLog( "Script system initialization complete.\n" );
 }
 
 void FOMapper::FinishScriptSystem()
