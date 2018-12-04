@@ -38,7 +38,7 @@
 # define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
 #elif defined (FOCLASSIC_SCRIPT_COMPILER)
 // change the meaning of registration related macros
-// allows ASCompiler to compile without knowing
+// allows ASCompiler to compile without issues or preparing dummy structures
 # undef focFUNCTION
 # undef focMETHOD
 # undef focMETHODPR
@@ -53,7 +53,7 @@
 # define focFUNCTION( func )                       asFUNCTION( DummyFunction )
 # define focMETHOD( clas, method )                 asFUNCTION( DummyFunction )
 # define focMETHODPR( clas, method, decl, ret )    asFUNCTION( DummyFunction )
-# define focOFFSET( clas, method )                 asOFFSET( DummyClass, DummyMember )
+# define focOFFSET( clas, method )                 DummyOffset
 # define focSIZEOF( obj )                          sizeof(DummyClass)
 # define BIND_DUMMY
 # define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
@@ -65,6 +65,7 @@ struct DummyClass
 
 static void DummyFunction( asIScriptGeneric* ) {}
 
+static const int DummyOffset = asOFFSET(DummyClass, DummyMember);
 #endif
 
 #pragma TODO("Generate BindError automagically")
