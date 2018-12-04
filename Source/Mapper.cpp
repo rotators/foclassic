@@ -5290,12 +5290,9 @@ void FOMapper::InitScriptSystem()
         return;
     }
 
-    // Bind vars and functions, look bind.h
+    // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    #define BIND_MAPPER
-    #define BIND_CLASS                 FOMapper::SScriptFunc::
-    #define BIND_ASSERT( x )           if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); }
-    #include <ScriptBind.h>
+    Script::RegisterAll( engine );
 
     // Load scripts
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );

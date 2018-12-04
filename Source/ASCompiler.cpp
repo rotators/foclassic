@@ -27,9 +27,9 @@
 #endif
 
 asIScriptEngine* Engine = NULL;
-bool             IsServer = true;
 bool             IsClient = false;
 bool             IsMapper = false;
+bool             IsServer = true;
 char*            Buf = NULL;
 bool             CollectGarbage = false;
 
@@ -168,55 +168,35 @@ void CallBack( const asSMessageInfo* msg, void* param )
     }
 }
 
-// Server
-#define OFFSETOF( type, member )    ( (int)offsetof( type, member ) )
-#define BIND_SERVER
-#define BIND_CLASS                  BindClass::
-#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
-namespace ServerBind
+namespace Script
 {
-    #include <DummyData.h>
-    static int Bind( asIScriptEngine* engine )
-    {
-        int bind_errors = 0;
-        #include <ScriptBind.h>
-        return bind_errors;
-    }
+    bool RegisterAll( asIScriptEngine* engine );
 }
 
 // Client
-#undef BIND_SERVER
-#undef BIND_CLASS
-#undef BIND_ASSERT
-#define BIND_CLIENT
-#define BIND_CLASS                  BindClass::
-#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
 namespace ClientBind
 {
-    #include <DummyData.h>
     static int Bind( asIScriptEngine* engine )
     {
-        int bind_errors = 0;
-        #include <ScriptBind.h>
-        return bind_errors;
+        return Script::RegisterAll( engine ) ? 0 : 1;
     }
 }
 
 // Mapper
-#undef BIND_CLIENT
-#undef BIND_CLASS
-#undef BIND_ASSERT
-#define BIND_MAPPER
-#define BIND_CLASS                  BindClass::
-#define BIND_ASSERT( x )            if( (x) < 0 ) { printf( "Bind error, line<" # x ">.\n" ); bind_errors++; }
 namespace MapperBind
 {
-    #include <DummyData.h>
     static int Bind( asIScriptEngine* engine )
     {
-        int bind_errors = 0;
-        #include <ScriptBind.h>
-        return bind_errors;
+        return Script::RegisterAll( engine ) ? 0 : 1;
+    }
+}
+
+// Server
+namespace ServerBind
+{
+    static int Bind( asIScriptEngine* engine )
+    {
+        return Script::RegisterAll( engine ) ? 0 : 1;
     }
 }
 
@@ -249,7 +229,7 @@ int main( int argc, char* argv[] )
     vector<char*> run_func;
     for( int i = 2; i < argc; i++ )
     {
-        // Server / Client / Mapper
+        // Client / Mapper / Server
         if( !_stricmp( argv[i], "-client" ) )
             IsServer = false, IsClient = true, IsMapper = false;
         else if( !_stricmp( argv[i], "-mapper" ) )
@@ -312,12 +292,12 @@ int main( int argc, char* argv[] )
 
     // Bind
     int bind_errors = 0;
-    if( IsServer )
-        bind_errors = ServerBind::Bind( Engine );
-    else if( IsClient )
+    if( IsClient )
         bind_errors = ClientBind::Bind( Engine );
     else if( IsMapper )
         bind_errors = MapperBind::Bind( Engine );
+    else if( IsServer )
+        bind_errors = ServerBind::Bind( Engine );
     if( bind_errors )
         printf( "Warning, bind result: %d.\n", bind_errors );
 
@@ -327,23 +307,24 @@ int main( int argc, char* argv[] )
 
     // Preprocessor
     int pragma_type = PRAGMA_UNKNOWN;
-    if( IsServer )
-        pragma_type = PRAGMA_SERVER;
-    else if( IsClient )
+    if( IsClient )
         pragma_type = PRAGMA_CLIENT;
     else if( IsMapper )
         pragma_type = PRAGMA_MAPPER;
+    else if( IsServer )
+        pragma_type = PRAGMA_SERVER;
 
     ScriptPreprocessor = new Preprocessor();
     ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( pragma_type ) );
 
+    #pragma TODO("Script::DefineVersion()")
     ScriptPreprocessor->Define( "__ASCOMPILER" );
-    if( IsServer )
-        ScriptPreprocessor->Define( "__SERVER" );
-    else if( IsClient )
+    if( IsClient )
         ScriptPreprocessor->Define( "__CLIENT" );
     else if( IsMapper )
         ScriptPreprocessor->Define( "__MAPPER" );
+    else if( IsServer )
+        ScriptPreprocessor->Define( "__SERVER" );
     for( size_t i = 0; i < defines.size(); i++ )
         ScriptPreprocessor->Define( string( defines[i] ) );
     if( !run_func.empty() )

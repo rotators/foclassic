@@ -128,12 +128,9 @@ bool FOServer::InitScriptSystem()
     ServerWrongGlobalObjects.push_back( "CraftItem@[]" );
     Script::SetWrongGlobalObjects( ServerWrongGlobalObjects );
 
-    // Bind vars and functions, look bind.h
+    // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    #define BIND_SERVER
-    #define BIND_CLASS          FOServer::SScriptFunc::
-    #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
-    #include "ScriptBind.h"
+    Script::RegisterAll( engine );
 
     // Get config file
     FileManager scripts_cfg;
@@ -246,7 +243,7 @@ namespace ClientBind
     static int Bind( asIScriptEngine* engine )
     {
         int bind_errors = 0;
-        #include "ScriptBind.h"
+        // #include "ScriptBind.h"
         return bind_errors;
     }
 }

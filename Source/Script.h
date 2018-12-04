@@ -37,6 +37,11 @@ namespace Script
 
     void UnloadScripts();
     bool ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix = NULL );
+
+    bool RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name );
+    bool RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name );
+    bool RegisterAll( asIScriptEngine* engine );
+
     bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp = false );
 
     #ifdef FOCLASSIC_SERVER

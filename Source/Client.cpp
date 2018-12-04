@@ -9745,17 +9745,13 @@ bool FOClient::ReloadScripts()
         return false;
     }
 
-    // Bind stuff
-    #define BIND_CLIENT
-    #define BIND_CLASS          FOClient::SScriptFunc::
-    #define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+    // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    int              bind_errors = 0;
-    #include <ScriptBind.h>
+    bool             success = Script::RegisterAll( engine );
 
-    if( bind_errors )
+    if( !success )
     {
-        WriteLog( "Bind fail, errors<%d>.\n", bind_errors );
+        WriteLog( "Bind fail\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }

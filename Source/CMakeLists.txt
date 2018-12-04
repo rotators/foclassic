@@ -153,7 +153,7 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	MsgStr.h
 	Script.cpp
 	Script.h
-	ScriptBind.h
+	ScriptBind.cpp
 	ScriptFunctions.cpp
 	ScriptFunctions.h
 	ScriptPragmas.cpp
@@ -353,7 +353,7 @@ target_sources( ASCompiler
 		IniParser.h
 		Log.cpp
 		Log.h
-		ScriptBind.h
+		ScriptBind.cpp
 		ScriptPragmas.cpp
 		ScriptPragmas.h
 )
