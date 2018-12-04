@@ -255,302 +255,6 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     #endif
 
     //
-    // Global functions
-    //
-
-    #pragma TODO("Re-implement")
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", asFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetLastError()", asFUNCTION( BIND_CLASS Global_GetLastError ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "ProtoItem@+ GetProtoItem(uint16 protoId)", asFUNCTION( BIND_CLASS Global_GetProtoItem ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToInt(string@+ text, int& result)", asFUNCTION( BIND_CLASS Global_StrToInt ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToFloat(string@+ text, float& result)", asFUNCTION( BIND_CLASS Global_StrToFloat ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDistantion(uint16 hexX1, uint16 hexY1, uint16 hexX2, uint16 hexY2)", asFUNCTION( BIND_CLASS Global_GetDistantion ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetDirection(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY)", asFUNCTION( BIND_CLASS Global_GetDirection ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetOffsetDir(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY, float offset)", asFUNCTION( BIND_CLASS Global_GetOffsetDir ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTick()", asFUNCTION( BIND_CLASS Global_GetTick ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAngelScriptProperty(int property)", asFUNCTION( BIND_CLASS Global_GetAngelScriptProperty ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void SetAngelScriptProperty(int property, uint value)", asFUNCTION( BIND_CLASS Global_SetAngelScriptProperty ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetStrHash(string@+ str)", asFUNCTION( BIND_CLASS Global_GetStrHash ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadDataFile(string& dataFileName)", asFUNCTION( BIND_CLASS Global_LoadDataFile ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "int GetConstantValue(int constCollection, string@+ name)", asFUNCTION( BIND_CLASS Global_GetConstantValue ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetConstantName(int constCollection, int value)", asFUNCTION( BIND_CLASS Global_GetConstantName ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AddConstant(int constCollection, string@+ name, int value)", asFUNCTION( BIND_CLASS Global_AddConstant ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadConstants(int constCollection, string@+ fileName, int pathType)", asFUNCTION( BIND_CLASS Global_LoadConstants ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AllowSlot(uint8 index, string& slotName)", asFUNCTION( BIND_CLASS Global_AllowSlot ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint DecodeUTF8(const string& text, uint& length)", asFUNCTION( BIND_CLASS Global_DecodeUTF8 ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ EncodeUTF8(uint ucs)", asFUNCTION( BIND_CLASS Global_EncodeUTF8 ), asCALL_CDECL ) );
-
-    #if defined (BIND_CLIENT)
-    BIND_ASSERT( engine->RegisterGlobalFunction( "ItemCl@+ GetItem(uint itemId)", focFUNCTION( BIND_CLASS Global_GetItem ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersDistantion(CritterCl& cr1, CritterCl& cr2)", focFUNCTION( BIND_CLASS Global_GetCrittersDistantion ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "CritterCl@+ GetCritter(uint critterId)", focFUNCTION( BIND_CLASS Global_GetCritter ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersHex(uint16 hexX, uint16 hexY, uint radius, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCritters ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritters(uint16 pid, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCrittersByPids ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersPath(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, float angle, uint dist, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCrittersInPath ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersPath(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, float angle, uint dist, int findType, CritterCl@[]@+ critters, uint16& preBlockHx, uint16& preBlockHy, uint16& blockHx, uint16& blockHy)", focFUNCTION( BIND_CLASS Global_GetCrittersInPathBlock ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(CritterCl& cr, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthCr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void FlushScreen(uint fromColor, uint toColor, uint timeMs)", focFUNCTION( BIND_CLASS Global_FlushScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void QuakeScreen(uint noise, uint timeMs)", focFUNCTION( BIND_CLASS Global_QuakeScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlaySound(string& soundName)", focFUNCTION( BIND_CLASS Global_PlaySound ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlaySound(uint8 soundType, uint8 soundTypeExt, uint8 soundId, uint8 soundIdExt)", focFUNCTION( BIND_CLASS Global_PlaySoundType ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlayMusic(string& musicName, uint pos, uint repeat)", focFUNCTION( BIND_CLASS Global_PlayMusic ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void PlayVideo(string& videoName, bool canStop)", focFUNCTION( BIND_CLASS Global_PlayVideo ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsTurnBased()", focFUNCTION( BIND_CLASS Global_IsTurnBased ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTurnBasedTime()", focFUNCTION( BIND_CLASS Global_GetTurnBasedTime ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetCurrentMapPid()", focFUNCTION( BIND_CLASS Global_GetCurrentMapPid ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_GetMessageFilters ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_SetMessageFilters ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text, int type)", focFUNCTION( BIND_CLASS Global_MessageType ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum, int type)", focFUNCTION( BIND_CLASS Global_MessageMsgType ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMsgStrSkip ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumUpper(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumUpper ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumLower(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumLower ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrCount(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrCount ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_IsMsgStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, const string& str)", focFUNCTION( BIND_CLASS Global_ReplaceTextStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, int i)", focFUNCTION( BIND_CLASS Global_ReplaceTextInt ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ FormatTags(const string& text, const string@+ lexems)", focFUNCTION( BIND_CLASS Global_FormatTags ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSomeValue(int var)", focFUNCTION( BIND_CLASS Global_GetSomeValue ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveScreen(uint16 hexX, uint16 hexY, uint speed)", focFUNCTION( BIND_CLASS Global_MoveScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void LockScreenScroll(CritterCl@+ cr)", focFUNCTION( BIND_CLASS Global_LockScreenScroll ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetFog(uint16 zoneX, uint16 zoneY)", focFUNCTION( BIND_CLASS Global_GetFog ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RefreshItemsCollection(int collection)", focFUNCTION( BIND_CLASS Global_RefreshItemsCollection ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetScroll(int scrollElement)", focFUNCTION( BIND_CLASS Global_GetScroll ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetScroll(int scrollElement, int value)", focFUNCTION( BIND_CLASS Global_SetScroll ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDayTime(uint dayPart)", focFUNCTION( BIND_CLASS Global_GetDayTime ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetDayColor(uint dayPart, uint8& r, uint8& g, uint8& b)", focFUNCTION( BIND_CLASS Global_GetDayColor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RunServerScript(string& funcName, int p0, int p1, int p2, string@+ p3, int[]@+ p4)", focFUNCTION( BIND_CLASS Global_RunServerScript ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RunServerScriptUnsafe(string& funcName, int p0, int p1, int p2, string@+ p3, int[]@+ p4)", focFUNCTION( BIND_CLASS Global_RunServerScriptUnsafe ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(string& name, int pathIndex)", focFUNCTION( BIND_CLASS Global_LoadSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(uint nameHash, uint8 dir)", focFUNCTION( BIND_CLASS Global_LoadSpriteHash ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteWidth(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteWidth ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteHeight(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteHeight ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSpriteCount(uint sprId)", focFUNCTION( BIND_CLASS Global_GetSpriteCount ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTextInfo(string& text, int w, int h, int font, int flags, int& tw, int& th, int& lines)", focFUNCTION( BIND_CLASS Global_GetTextInfo ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color)", focFUNCTION( BIND_CLASS Global_DrawSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteOffs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpriteSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteSizeOffs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSpritePattern(uint sprId, int sprIndex, int x, int y, int w, int h, int sprWidth, int sprHeight, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpritePattern ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawText(string& text, int x, int y, int w, int h, uint color, int font, int flags)", focFUNCTION( BIND_CLASS Global_DrawText ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawPrimitive(int primitiveType, int[]& data)", focFUNCTION( BIND_CLASS Global_DrawPrimitive ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawMapSprite(uint16 hx, uint16 hy, uint16 effectPid, uint sprId, int sprIndex, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_DrawMapSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter2d(uint crType, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter2d ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter3d(uint instance, uint crType, uint anim1, uint anim2, int[]@+ layers, float[]@+ position, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter3d ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void ShowScreen(int screen, int p0, int p1, int p2)", focFUNCTION( BIND_CLASS Global_ShowScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void HideScreen(int screen, int p0, int p1, int p2)", focFUNCTION( BIND_CLASS Global_HideScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHardcodedScreenPos(int screen, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHardcodedScreenPos ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawHardcodedScreen(int screen)", focFUNCTION( BIND_CLASS Global_DrawHardcodedScreen ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetHexPos(uint16 hx, uint16 hy, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHexPos ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetMonitorHex(int x, int y, uint16& hx, uint16& hy, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorHex ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "ItemCl@+ GetMonitorItem(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorItem ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "CritterCl@+ GetMonitorCritter(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorCritter ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetMapWidth()", focFUNCTION( BIND_CLASS Global_GetMapWidth ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetMapHeight()", focFUNCTION( BIND_CLASS Global_GetMapHeight ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCurrentCursor()", focFUNCTION( BIND_CLASS Global_GetCurrentCursor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetLastCursor()", focFUNCTION( BIND_CLASS Global_GetLastCursor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void ChangeCursor(int cursor)", focFUNCTION( BIND_CLASS Global_ChangeCursor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveHexByDir(uint16& hexX, uint16& hexY, uint8 dir, uint steps)", focFUNCTION( BIND_CLASS Global_MoveHexByDir ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool AppendIfaceIni(string& iniName)", focFUNCTION( BIND_CLASS Global_AppendIfaceIni ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetIfaceIniStr(string& key)", focFUNCTION( BIND_CLASS Global_GetIfaceIniStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool Load3dFile(string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_Load3dFile ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void WaitPing()", focFUNCTION( BIND_CLASS Global_WaitPing ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadFont(int font, string& fontFileName)", focFUNCTION( BIND_CLASS Global_LoadFont ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultFont(int font, uint color)", focFUNCTION( BIND_CLASS Global_SetDefaultFont ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetEffect(int effectType, int effectSubtype, string@+ effectName, string@+ effectDefines = null)", focFUNCTION( BIND_CLASS Global_SetEffect ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RefreshMap(bool onlyTiles, bool onlyRoof, bool onlyLight)", focFUNCTION( BIND_CLASS Global_RefreshMap ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveScreenshot()", focFUNCTION( BIND_CLASS Global_SaveScreenshot ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveLogFile()", focFUNCTION( BIND_CLASS Global_SaveLogFile ), focCALL_CDECL ) );
-    #endif
-
-    #if defined (BIND_MAPPER)
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultCritterParam(uint index, int param)", focFUNCTION( BIND_CLASS Global_SetDefaultCritterParam ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperMap@+ LoadMap(string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_LoadMap ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void UnloadMap(MapperMap@+ map)", focFUNCTION( BIND_CLASS Global_UnloadMap ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveMap(MapperMap@+ map, string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_SaveMap ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool ShowMap(MapperMap@+ map)", focFUNCTION( BIND_CLASS Global_ShowMap ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetLoadedMaps(MapperMap@[]@+ maps)", focFUNCTION( BIND_CLASS Global_GetLoadedMaps ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMapFileNames(string@+ dir, string@[]@+ names)", focFUNCTION( BIND_CLASS Global_GetMapFileNames ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteObject(MapperObject@+ obj)", focFUNCTION( BIND_CLASS Global_DeleteObject ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteObjects(MapperObject@[]& objects)", focFUNCTION( BIND_CLASS Global_DeleteObjects ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SelectObject(MapperObject@+ obj, bool set)", focFUNCTION( BIND_CLASS Global_SelectObject ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SelectObjects(MapperObject@[]& objects, bool set)", focFUNCTION( BIND_CLASS Global_SelectObjects ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperObject@+ GetSelectedObject()", focFUNCTION( BIND_CLASS Global_GetSelectedObject ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSelectedObjects(MapperObject@[]@+ objects)", focFUNCTION( BIND_CLASS Global_GetSelectedObjects ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)", focFUNCTION( BIND_CLASS Global_TabGetTileDirs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)", focFUNCTION( BIND_CLASS Global_TabGetItemPids ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)", focFUNCTION( BIND_CLASS Global_TabGetCritterPids ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)", focFUNCTION( BIND_CLASS Global_TabSetTileDirs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)", focFUNCTION( BIND_CLASS Global_TabSetItemPids ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)", focFUNCTION( BIND_CLASS Global_TabSetCritterPids ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabDelete(int tab)", focFUNCTION( BIND_CLASS Global_TabDelete ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSelect(int tab, string@+ subTab, bool show = false)", focFUNCTION( BIND_CLASS Global_TabSelect ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetName(int tab, string@+ tabName)", focFUNCTION( BIND_CLASS Global_TabSetName ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanWalk(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanWalk ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRun(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRun ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRotate(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRotate ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanAim(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanAim ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanArmor(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanArmor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterAnim1(uint crType, uint anim1)", focFUNCTION( BIND_CLASS Global_IsCritterAnim1 ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCritterAnimType(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAnimType ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritterAlias(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAlias ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterTypeName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterTypeName ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterSoundName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterSoundName ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMsgStrSkip ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumUpper(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumUpper ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumLower(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumLower ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrCount(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrCount ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_IsMsgStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, const string& str)", focFUNCTION( BIND_CLASS Global_ReplaceTextStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, int i)", focFUNCTION( BIND_CLASS Global_ReplaceTextInt ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveScreen(uint16 hexX, uint16 hexY, uint speed)", focFUNCTION( BIND_CLASS Global_MoveScreen ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(string& name, int pathIndex)", focFUNCTION( BIND_CLASS Global_LoadSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(uint nameHash, uint8 dir)", focFUNCTION( BIND_CLASS Global_LoadSpriteHash ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteWidth(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteWidth ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteHeight(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteHeight ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSpriteCount(uint sprId)", focFUNCTION( BIND_CLASS Global_GetSpriteCount ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTextInfo(string& text, int w, int h, int font, int flags, int& tw, int& th, int& lines)", focFUNCTION( BIND_CLASS Global_GetTextInfo ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color)", focFUNCTION( BIND_CLASS Global_DrawSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteOffs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpriteSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteSizeOffs ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSpritePattern(uint sprId, int sprIndex, int x, int y, int w, int h, int sprWidth, int sprHeight, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpritePattern ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawText(string& text, int x, int y, int w, int h, uint color, int font, int flags)", focFUNCTION( BIND_CLASS Global_DrawText ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawPrimitive(int primitiveType, int[]& data)", focFUNCTION( BIND_CLASS Global_DrawPrimitive ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawMapSprite(uint16 hx, uint16 hy, uint16 effectPid, uint sprId, int sprIndex, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_DrawMapSprite ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter2d(uint crType, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter2d ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter3d(uint instance, uint crType, uint anim1, uint anim2, int[]@+ layers, float[]@+ position, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter3d ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetHexPos(uint16 hx, uint16 hy, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHexPos ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetMonitorHex(int x, int y, uint16& hx, uint16& hy, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorHex ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperObject@+ GetMonitorObject(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorObject ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveHexByDir(uint16& hexX, uint16& hexY, uint8 dir, uint steps)", focFUNCTION( BIND_CLASS Global_MoveHexByDir ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetIfaceIniStr(string& key)", focFUNCTION( BIND_CLASS Global_GetIfaceIniStr ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadFont(int font, string& fontFileName)", focFUNCTION( BIND_CLASS Global_LoadFont ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultFont(int font, uint color)", focFUNCTION( BIND_CLASS Global_SetDefaultFont ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), focCALL_CDECL ) );
-    #endif
-
-    #if defined (BIND_SERVER)
-    // AnyData
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int64[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int32[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int16[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int8[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint64[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint32[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint16[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint8[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int64[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int32[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int16[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int8[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint64[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint32[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint16[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint8[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int64[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int32[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int16[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int8[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint64[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint32[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint16[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint8[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsAnyData(string& name)", focFUNCTION( BIND_CLASS Global_IsAnyData ), focCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool AnyDataClass(?& storedClass, ?[]& array)", focFUNCTION( BIND_CLASS Global_AnyDataClass ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void EraseAnyData(string& name)", focFUNCTION( BIND_CLASS Global_EraseAnyData ), focCALL_CDECL ) );
-    // TimeEvent
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventEmpty ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, uint value, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValue ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, int value, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValue ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, uint[]& values, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValues ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, int[]& values, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValues ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool EraseTimeEvent(uint num)", focFUNCTION( BIND_CLASS Global_EraseTimeEvent ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetTimeEvent(uint num, uint& duration, uint[]@+ values)", focFUNCTION( BIND_CLASS Global_GetTimeEvent ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetTimeEvent(uint num, uint& duration, int[]@+ values)", focFUNCTION( BIND_CLASS Global_GetTimeEvent ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetTimeEvent(uint num, uint duration, uint[]@+ values)", focFUNCTION( BIND_CLASS Global_SetTimeEvent ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetTimeEvent(uint num, uint duration, int[]@+ values)", focFUNCTION( BIND_CLASS Global_SetTimeEvent ), focCALL_CDECL ) );
-
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessage(uint16 channel, string& text)", focFUNCTION( BIND_CLASS Global_RadioMessage ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_RadioMessageMsg ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum, string@+ lexems)", focFUNCTION( BIND_CLASS Global_RadioMessageMsgLex ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, Critter& npc, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogNpc ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, Critter& npc, uint dialogPack, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogNpcDlgPack ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, uint dialogPack, uint16 hexX, uint16 hexY, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogHex ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int64 WorldItemCount(uint16 protoId)", focFUNCTION( BIND_CLASS Global_WorldItemCount ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetBestScore(int score, Critter@+ player, string& name)", focFUNCTION( BIND_CLASS Global_SetBestScore ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool AddTextListener(int sayType, string& firstStr, uint16 parameter, string& scriptName)", focFUNCTION( BIND_CLASS Global_AddTextListener ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void EraseTextListener(int sayType, string& firstStr, uint16 parameter)", focFUNCTION( BIND_CLASS Global_EraseTextListener ), focCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 ReverseDir(uint8 dir)", focFUNCTION( BIND_CLASS Global_ReverseDir ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "NpcPlane@ CreatePlane()", focFUNCTION( BIND_CLASS Global_CreatePlane ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetBagItems(uint bagId, uint16[]@+ pids, uint[]@+ minCounts, uint[]@+ maxCounts, int[]@+ slots)", focFUNCTION( BIND_CLASS Global_GetBagItems ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetChosenSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetChosenSendParameter ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetSendParameter ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetSendParameter(int index, bool enabled, string@+ allowFunc)", focFUNCTION( BIND_CLASS Global_SetSendParameterFunc ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars)", focFUNCTION( BIND_CLASS Global_SwapCritters ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllItems(uint16 pid, Item@[]@+ items)", focFUNCTION( BIND_CLASS Global_GetAllItems ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllPlayers(Critter@[]@+ players)", focFUNCTION( BIND_CLASS Global_GetAllPlayers ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetRegisteredPlayers(uint[]& ids, string@[]& names)", focFUNCTION( BIND_CLASS Global_GetRegisteredPlayers ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllNpc(uint16 pid, Critter@[]@+ npc)", focFUNCTION( BIND_CLASS Global_GetAllNpc ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllMaps(uint16 pid, Map@[]@+ maps)", focFUNCTION( BIND_CLASS Global_GetAllMaps ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllLocations(uint16 pid, Location@[]@+ locations)", focFUNCTION( BIND_CLASS Global_GetAllLocations ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetScriptId(string& scriptName, string& funcDeclaration)", focFUNCTION( BIND_CLASS Global_GetScriptId ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetScriptName(uint scriptId)", focFUNCTION( BIND_CLASS Global_GetScriptName ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int8[]@ GetItemDataMask(int maskType)", focFUNCTION( BIND_CLASS Global_GetItemDataMask ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetItemDataMask(int maskType, int8[]& mask)", focFUNCTION( BIND_CLASS Global_SetItemDataMask ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadImage(uint index, string@+ imageName, uint imageDepth, int pathType)", focFUNCTION( BIND_CLASS Global_LoadImage ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetImageColor(uint index, uint x, uint y)", focFUNCTION( BIND_CLASS Global_GetImageColor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterDialogGetBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterDialogGetBehaviour ), focCALL_CDECL ) );
-    #endif
-
-    #if defined (BIND_CLIENT) || defined (BIND_SERVER)
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetFullSecond(uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second)", focFUNCTION( BIND_CLASS Global_GetFullSecond ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTime(uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds)", focFUNCTION( BIND_CLASS Global_GetTime ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetGameTime(uint fullSecond, uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second)", focFUNCTION( BIND_CLASS Global_GetGameTime ), focCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void GetVersion(uint& server, uint& client, uint& net)", focFUNCTION( BIND_CLASS Global_GetVersion ), focCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Sort(int[]& array, string& func)", focFUNCTION( BIND_CLASS Global_Sort ), focCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Sort(uint[]& array, string& func)", focFUNCTION( BIND_CLASS Global_Sort ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterGetBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterGetBehaviour ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterChangeBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterChangeBehaviour ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRegistrationParameter(uint index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetRegistrationParam ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanWalk(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanWalk ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRun(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRun ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRotate(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRotate ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanAim(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanAim ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanArmor(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanArmor ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterAnim1(uint crType, uint anim1)", focFUNCTION( BIND_CLASS Global_IsCritterAnim1 ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCritterAnimType(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAnimType ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritterAlias(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAlias ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterTypeName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterTypeName ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterSoundName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterSoundName ), focCALL_CDECL ) );
-    #endif
-
-    //
     // Global properties
     //
 
@@ -568,6 +272,7 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     BIND_ASSERT( engine->RegisterGlobalProperty( "string __MapDataPrefix", &GameOpt.MapDataPrefix ) );
 
     #if defined (BIND_CLIENT)
+	// sic!
     BIND_ASSERT( engine->RegisterGlobalProperty( "bool __ConsoleActive", &BIND_CLASS ConsoleActive ) );
     BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapActive", &BIND_CLASS GmapActive ) );
     BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapWait", &BIND_CLASS GmapWait ) );
@@ -816,6 +521,277 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     BIND_ASSERT( engine->RegisterGlobalProperty( "int __ReputationHated", &GameOpt.ReputationHated ) );
     #endif
 
+    //
+    // Global functions
+    //
+
+    #pragma TODO("Re-implement")
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", asFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetLastError()", asFUNCTION( BIND_CLASS Global_GetLastError ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "ProtoItem@+ GetProtoItem(uint16 protoId)", asFUNCTION( BIND_CLASS Global_GetProtoItem ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToInt(string@+ text, int& result)", asFUNCTION( BIND_CLASS Global_StrToInt ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToFloat(string@+ text, float& result)", asFUNCTION( BIND_CLASS Global_StrToFloat ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDistantion(uint16 hexX1, uint16 hexY1, uint16 hexX2, uint16 hexY2)", asFUNCTION( BIND_CLASS Global_GetDistantion ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetDirection(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY)", asFUNCTION( BIND_CLASS Global_GetDirection ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetOffsetDir(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY, float offset)", asFUNCTION( BIND_CLASS Global_GetOffsetDir ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTick()", asFUNCTION( BIND_CLASS Global_GetTick ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAngelScriptProperty(int property)", asFUNCTION( BIND_CLASS Global_GetAngelScriptProperty ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void SetAngelScriptProperty(int property, uint value)", asFUNCTION( BIND_CLASS Global_SetAngelScriptProperty ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetStrHash(string@+ str)", asFUNCTION( BIND_CLASS Global_GetStrHash ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadDataFile(string& dataFileName)", asFUNCTION( BIND_CLASS Global_LoadDataFile ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "int GetConstantValue(int constCollection, string@+ name)", asFUNCTION( BIND_CLASS Global_GetConstantValue ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetConstantName(int constCollection, int value)", asFUNCTION( BIND_CLASS Global_GetConstantName ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AddConstant(int constCollection, string@+ name, int value)", asFUNCTION( BIND_CLASS Global_AddConstant ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadConstants(int constCollection, string@+ fileName, int pathType)", asFUNCTION( BIND_CLASS Global_LoadConstants ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AllowSlot(uint8 index, string& slotName)", asFUNCTION( BIND_CLASS Global_AllowSlot ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint DecodeUTF8(const string& text, uint& length)", asFUNCTION( BIND_CLASS Global_DecodeUTF8 ), asCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ EncodeUTF8(uint ucs)", asFUNCTION( BIND_CLASS Global_EncodeUTF8 ), asCALL_CDECL ) );
+
+    #if defined (BIND_CLIENT)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(CritterCl& cr, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthCr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void FlushScreen(uint fromColor, uint toColor, uint timeMs)", focFUNCTION( BIND_CLASS Global_FlushScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void QuakeScreen(uint noise, uint timeMs)", focFUNCTION( BIND_CLASS Global_QuakeScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlaySound(string& soundName)", focFUNCTION( BIND_CLASS Global_PlaySound ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlaySound(uint8 soundType, uint8 soundTypeExt, uint8 soundId, uint8 soundIdExt)", focFUNCTION( BIND_CLASS Global_PlaySoundType ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool PlayMusic(string& musicName, uint pos, uint repeat)", focFUNCTION( BIND_CLASS Global_PlayMusic ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void PlayVideo(string& videoName, bool canStop)", focFUNCTION( BIND_CLASS Global_PlayVideo ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsTurnBased()", focFUNCTION( BIND_CLASS Global_IsTurnBased ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTurnBasedTime()", focFUNCTION( BIND_CLASS Global_GetTurnBasedTime ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetCurrentMapPid()", focFUNCTION( BIND_CLASS Global_GetCurrentMapPid ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_GetMessageFilters ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_SetMessageFilters ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text, int type)", focFUNCTION( BIND_CLASS Global_MessageType ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum, int type)", focFUNCTION( BIND_CLASS Global_MessageMsgType ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMsgStrSkip ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumUpper(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumUpper ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumLower(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumLower ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrCount(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrCount ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_IsMsgStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, const string& str)", focFUNCTION( BIND_CLASS Global_ReplaceTextStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, int i)", focFUNCTION( BIND_CLASS Global_ReplaceTextInt ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ FormatTags(const string& text, const string@+ lexems)", focFUNCTION( BIND_CLASS Global_FormatTags ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSomeValue(int var)", focFUNCTION( BIND_CLASS Global_GetSomeValue ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveScreen(uint16 hexX, uint16 hexY, uint speed)", focFUNCTION( BIND_CLASS Global_MoveScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void LockScreenScroll(CritterCl@+ cr)", focFUNCTION( BIND_CLASS Global_LockScreenScroll ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetFog(uint16 zoneX, uint16 zoneY)", focFUNCTION( BIND_CLASS Global_GetFog ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RefreshItemsCollection(int collection)", focFUNCTION( BIND_CLASS Global_RefreshItemsCollection ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetScroll(int scrollElement)", focFUNCTION( BIND_CLASS Global_GetScroll ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetScroll(int scrollElement, int value)", focFUNCTION( BIND_CLASS Global_SetScroll ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDayTime(uint dayPart)", focFUNCTION( BIND_CLASS Global_GetDayTime ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetDayColor(uint dayPart, uint8& r, uint8& g, uint8& b)", focFUNCTION( BIND_CLASS Global_GetDayColor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RunServerScript(string& funcName, int p0, int p1, int p2, string@+ p3, int[]@+ p4)", focFUNCTION( BIND_CLASS Global_RunServerScript ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RunServerScriptUnsafe(string& funcName, int p0, int p1, int p2, string@+ p3, int[]@+ p4)", focFUNCTION( BIND_CLASS Global_RunServerScriptUnsafe ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(string& name, int pathIndex)", focFUNCTION( BIND_CLASS Global_LoadSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(uint nameHash, uint8 dir)", focFUNCTION( BIND_CLASS Global_LoadSpriteHash ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteWidth(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteWidth ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteHeight(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteHeight ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSpriteCount(uint sprId)", focFUNCTION( BIND_CLASS Global_GetSpriteCount ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTextInfo(string& text, int w, int h, int font, int flags, int& tw, int& th, int& lines)", focFUNCTION( BIND_CLASS Global_GetTextInfo ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color)", focFUNCTION( BIND_CLASS Global_DrawSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteOffs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpriteSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteSizeOffs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSpritePattern(uint sprId, int sprIndex, int x, int y, int w, int h, int sprWidth, int sprHeight, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpritePattern ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawText(string& text, int x, int y, int w, int h, uint color, int font, int flags)", focFUNCTION( BIND_CLASS Global_DrawText ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawPrimitive(int primitiveType, int[]& data)", focFUNCTION( BIND_CLASS Global_DrawPrimitive ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawMapSprite(uint16 hx, uint16 hy, uint16 effectPid, uint sprId, int sprIndex, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_DrawMapSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter2d(uint crType, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter2d ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter3d(uint instance, uint crType, uint anim1, uint anim2, int[]@+ layers, float[]@+ position, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter3d ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void ShowScreen(int screen, int p0, int p1, int p2)", focFUNCTION( BIND_CLASS Global_ShowScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void HideScreen(int screen, int p0, int p1, int p2)", focFUNCTION( BIND_CLASS Global_HideScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHardcodedScreenPos(int screen, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHardcodedScreenPos ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawHardcodedScreen(int screen)", focFUNCTION( BIND_CLASS Global_DrawHardcodedScreen ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetHexPos(uint16 hx, uint16 hy, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHexPos ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetMonitorHex(int x, int y, uint16& hx, uint16& hy, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorHex ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetMapWidth()", focFUNCTION( BIND_CLASS Global_GetMapWidth ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint16 GetMapHeight()", focFUNCTION( BIND_CLASS Global_GetMapHeight ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCurrentCursor()", focFUNCTION( BIND_CLASS Global_GetCurrentCursor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetLastCursor()", focFUNCTION( BIND_CLASS Global_GetLastCursor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void ChangeCursor(int cursor)", focFUNCTION( BIND_CLASS Global_ChangeCursor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveHexByDir(uint16& hexX, uint16& hexY, uint8 dir, uint steps)", focFUNCTION( BIND_CLASS Global_MoveHexByDir ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool AppendIfaceIni(string& iniName)", focFUNCTION( BIND_CLASS Global_AppendIfaceIni ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetIfaceIniStr(string& key)", focFUNCTION( BIND_CLASS Global_GetIfaceIniStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool Load3dFile(string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_Load3dFile ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void WaitPing()", focFUNCTION( BIND_CLASS Global_WaitPing ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadFont(int font, string& fontFileName)", focFUNCTION( BIND_CLASS Global_LoadFont ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultFont(int font, uint color)", focFUNCTION( BIND_CLASS Global_SetDefaultFont ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetEffect(int effectType, int effectSubtype, string@+ effectName, string@+ effectDefines = null)", focFUNCTION( BIND_CLASS Global_SetEffect ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RefreshMap(bool onlyTiles, bool onlyRoof, bool onlyLight)", focFUNCTION( BIND_CLASS Global_RefreshMap ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveScreenshot()", focFUNCTION( BIND_CLASS Global_SaveScreenshot ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveLogFile()", focFUNCTION( BIND_CLASS Global_SaveLogFile ), focCALL_CDECL ) );
+    #endif
+
+    #if defined (BIND_MAPPER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultCritterParam(uint index, int param)", focFUNCTION( BIND_CLASS Global_SetDefaultCritterParam ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMapFileNames(string@+ dir, string@[]@+ names)", focFUNCTION( BIND_CLASS Global_GetMapFileNames ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)", focFUNCTION( BIND_CLASS Global_TabGetTileDirs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)", focFUNCTION( BIND_CLASS Global_TabGetItemPids ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint TabGetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)", focFUNCTION( BIND_CLASS Global_TabGetCritterPids ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetTileDirs(int tab, string@[]@+ dirNames, bool[]@+ includeSubdirs)", focFUNCTION( BIND_CLASS Global_TabSetTileDirs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetItemPids(int tab, string@+ subTab, uint16[]@+ itemPids)", focFUNCTION( BIND_CLASS Global_TabSetItemPids ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetCritterPids(int tab, string@+ subTab, uint16[]@+ critterPids)", focFUNCTION( BIND_CLASS Global_TabSetCritterPids ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabDelete(int tab)", focFUNCTION( BIND_CLASS Global_TabDelete ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSelect(int tab, string@+ subTab, bool show = false)", focFUNCTION( BIND_CLASS Global_TabSelect ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void TabSetName(int tab, string@+ tabName)", focFUNCTION( BIND_CLASS Global_TabSetName ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanWalk(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanWalk ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRun(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRun ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRotate(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRotate ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanAim(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanAim ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanArmor(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanArmor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterAnim1(uint crType, uint anim1)", focFUNCTION( BIND_CLASS Global_IsCritterAnim1 ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCritterAnimType(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAnimType ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritterAlias(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAlias ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterTypeName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterTypeName ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterSoundName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterSoundName ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMsgStrSkip ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumUpper(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumUpper ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrNumLower(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumLower ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetMsgStrCount(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrCount ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_IsMsgStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, const string& str)", focFUNCTION( BIND_CLASS Global_ReplaceTextStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ ReplaceText(const string& text, const string& replace, int i)", focFUNCTION( BIND_CLASS Global_ReplaceTextInt ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveScreen(uint16 hexX, uint16 hexY, uint speed)", focFUNCTION( BIND_CLASS Global_MoveScreen ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(string& name, int pathIndex)", focFUNCTION( BIND_CLASS Global_LoadSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint LoadSprite(uint nameHash, uint8 dir)", focFUNCTION( BIND_CLASS Global_LoadSpriteHash ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteWidth(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteWidth ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetSpriteHeight(uint sprId, int sprIndex)", focFUNCTION( BIND_CLASS Global_GetSpriteHeight ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSpriteCount(uint sprId)", focFUNCTION( BIND_CLASS Global_GetSpriteCount ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTextInfo(string& text, int w, int h, int font, int flags, int& tw, int& th, int& lines)", focFUNCTION( BIND_CLASS Global_GetTextInfo ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color)", focFUNCTION( BIND_CLASS Global_DrawSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteOffs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpriteSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSprite(uint sprId, int sprIndex, int x, int y, int w, int h, bool scratch, bool center, uint color, bool applyOffsets)", focFUNCTION( BIND_CLASS Global_DrawSpriteSizeOffs ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawSpritePattern(uint sprId, int sprIndex, int x, int y, int w, int h, int sprWidth, int sprHeight, uint color)", focFUNCTION( BIND_CLASS Global_DrawSpritePattern ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawText(string& text, int x, int y, int w, int h, uint color, int font, int flags)", focFUNCTION( BIND_CLASS Global_DrawText ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawPrimitive(int primitiveType, int[]& data)", focFUNCTION( BIND_CLASS Global_DrawPrimitive ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawMapSprite(uint16 hx, uint16 hy, uint16 effectPid, uint sprId, int sprIndex, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_DrawMapSprite ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter2d(uint crType, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter2d ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DrawCritter3d(uint instance, uint crType, uint anim1, uint anim2, int[]@+ layers, float[]@+ position, uint color)", focFUNCTION( BIND_CLASS Global_DrawCritter3d ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetHexPos(uint16 hx, uint16 hy, int& x, int& y)", focFUNCTION( BIND_CLASS Global_GetHexPos ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetMonitorHex(int x, int y, uint16& hx, uint16& hy, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorHex ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveHexByDir(uint16& hexX, uint16& hexY, uint8 dir, uint steps)", focFUNCTION( BIND_CLASS Global_MoveHexByDir ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetIfaceIniStr(string& key)", focFUNCTION( BIND_CLASS Global_GetIfaceIniStr ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadFont(int font, string& fontFileName)", focFUNCTION( BIND_CLASS Global_LoadFont ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetDefaultFont(int font, uint color)", focFUNCTION( BIND_CLASS Global_SetDefaultFont ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), focCALL_CDECL ) );
+    #endif
+
+    #if defined (BIND_SERVER)
+    // AnyData
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int64[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int32[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int16[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int8[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint64[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint32[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint16[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint8[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int64[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int32[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int16[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, int8[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint64[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint32[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint16[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetAnyData(string& name, uint8[]& data, uint dataSize)", focFUNCTION( BIND_CLASS Global_SetAnyDataSize ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int64[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int32[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int16[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, int8[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint64[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint32[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint16[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetAnyData(string& name, uint8[]& data)", focFUNCTION( BIND_CLASS Global_GetAnyData ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsAnyData(string& name)", focFUNCTION( BIND_CLASS Global_IsAnyData ), focCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool AnyDataClass(?& storedClass, ?[]& array)", focFUNCTION( BIND_CLASS Global_AnyDataClass ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void EraseAnyData(string& name)", focFUNCTION( BIND_CLASS Global_EraseAnyData ), focCALL_CDECL ) );
+    // TimeEvent
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventEmpty ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, uint value, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValue ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, int value, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValue ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, uint[]& values, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValues ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateTimeEvent(uint beginSecond, string& funcName, int[]& values, bool save)", focFUNCTION( BIND_CLASS Global_CreateTimeEventValues ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool EraseTimeEvent(uint num)", focFUNCTION( BIND_CLASS Global_EraseTimeEvent ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetTimeEvent(uint num, uint& duration, uint[]@+ values)", focFUNCTION( BIND_CLASS Global_GetTimeEvent ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool GetTimeEvent(uint num, uint& duration, int[]@+ values)", focFUNCTION( BIND_CLASS Global_GetTimeEvent ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetTimeEvent(uint num, uint duration, uint[]@+ values)", focFUNCTION( BIND_CLASS Global_SetTimeEvent ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetTimeEvent(uint num, uint duration, int[]@+ values)", focFUNCTION( BIND_CLASS Global_SetTimeEvent ), focCALL_CDECL ) );
+
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessage(uint16 channel, string& text)", focFUNCTION( BIND_CLASS Global_RadioMessage ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_RadioMessageMsg ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void RadioMessageMsg(uint16 channel, uint16 textMsg, uint strNum, string@+ lexems)", focFUNCTION( BIND_CLASS Global_RadioMessageMsgLex ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, Critter& npc, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogNpc ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, Critter& npc, uint dialogPack, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogNpcDlgPack ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool RunDialog(Critter& player, uint dialogPack, uint16 hexX, uint16 hexY, bool ignoreDistance)", focFUNCTION( BIND_CLASS Global_RunDialogHex ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int64 WorldItemCount(uint16 protoId)", focFUNCTION( BIND_CLASS Global_WorldItemCount ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetBestScore(int score, Critter@+ player, string& name)", focFUNCTION( BIND_CLASS Global_SetBestScore ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool AddTextListener(int sayType, string& firstStr, uint16 parameter, string& scriptName)", focFUNCTION( BIND_CLASS Global_AddTextListener ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void EraseTextListener(int sayType, string& firstStr, uint16 parameter)", focFUNCTION( BIND_CLASS Global_EraseTextListener ), focCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 ReverseDir(uint8 dir)", focFUNCTION( BIND_CLASS Global_ReverseDir ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetBagItems(uint bagId, uint16[]@+ pids, uint[]@+ minCounts, uint[]@+ maxCounts, int[]@+ slots)", focFUNCTION( BIND_CLASS Global_GetBagItems ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetChosenSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetChosenSendParameter ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetSendParameter ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetSendParameter(int index, bool enabled, string@+ allowFunc)", focFUNCTION( BIND_CLASS Global_SetSendParameterFunc ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars)", focFUNCTION( BIND_CLASS Global_SwapCritters ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllMaps(uint16 pid, Map@[]@+ maps)", focFUNCTION( BIND_CLASS Global_GetAllMaps ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllLocations(uint16 pid, Location@[]@+ locations)", focFUNCTION( BIND_CLASS Global_GetAllLocations ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetScriptId(string& scriptName, string& funcDeclaration)", focFUNCTION( BIND_CLASS Global_GetScriptId ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetScriptName(uint scriptId)", focFUNCTION( BIND_CLASS Global_GetScriptName ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int8[]@ GetItemDataMask(int maskType)", focFUNCTION( BIND_CLASS Global_GetItemDataMask ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetItemDataMask(int maskType, int8[]& mask)", focFUNCTION( BIND_CLASS Global_SetItemDataMask ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadImage(uint index, string@+ imageName, uint imageDepth, int pathType)", focFUNCTION( BIND_CLASS Global_LoadImage ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetImageColor(uint index, uint x, uint y)", focFUNCTION( BIND_CLASS Global_GetImageColor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterDialogGetBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterDialogGetBehaviour ), focCALL_CDECL ) );
+    #endif
+
+    #if defined (BIND_CLIENT) || defined (BIND_SERVER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetFullSecond(uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second)", focFUNCTION( BIND_CLASS Global_GetFullSecond ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetTime(uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds)", focFUNCTION( BIND_CLASS Global_GetTime ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetGameTime(uint fullSecond, uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second)", focFUNCTION( BIND_CLASS Global_GetGameTime ), focCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void GetVersion(uint& server, uint& client, uint& net)", focFUNCTION( BIND_CLASS Global_GetVersion ), focCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Sort(int[]& array, string& func)", focFUNCTION( BIND_CLASS Global_Sort ), focCALL_CDECL ) );
+    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Sort(uint[]& array, string& func)", focFUNCTION( BIND_CLASS Global_Sort ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterGetBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterGetBehaviour ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SetParameterChangeBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterChangeBehaviour ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetRegistrationParameter(uint index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetRegistrationParam ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanWalk(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanWalk ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRun(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRun ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanRotate(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanRotate ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanAim(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanAim ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterCanArmor(uint crType)", focFUNCTION( BIND_CLASS Global_IsCritterCanArmor ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool IsCritterAnim1(uint crType, uint anim1)", focFUNCTION( BIND_CLASS Global_IsCritterAnim1 ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetCritterAnimType(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAnimType ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritterAlias(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAlias ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterTypeName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterTypeName ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetCritterSoundName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterSoundName ), focCALL_CDECL ) );
+    #endif
+
+
     /*******************************************************************************************************************************/
 
     //
@@ -843,14 +819,20 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_SERVER)
+    // Critter (any)
     BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersDistantion(Critter& cr1, Critter& cr2)", focFUNCTION( BIND_CLASS Global_GetCrittersDistantion ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetGlobalMapCritters(uint16 worldX, uint16 worldY, uint radius, int findType, Critter@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetGlobalMapCritters ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetProtoCritter(uint16 protoId, int[]& data)", focFUNCTION( BIND_CLASS Global_GetProtoCritter ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "Critter@+ GetCritter(uint critterId)", focFUNCTION( BIND_CLASS Global_GetCritter ), focCALL_CDECL ) );
+    // Npc
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void GetProtoCritter(uint16 protoId, int[]& data)", focFUNCTION( BIND_CLASS Global_GetProtoCritter ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteNpc(Critter& npc)", focFUNCTION( BIND_CLASS Global_DeleteNpc ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllNpc(uint16 pid, Critter@[]@+ npc)", focFUNCTION( BIND_CLASS Global_GetAllNpc ), focCALL_CDECL ) );
+    // Player
     BIND_ASSERT( engine->RegisterGlobalFunction( "Critter@+ GetPlayer(string& name)", focFUNCTION( BIND_CLASS Global_GetPlayer ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetPlayerId(string& name)", focFUNCTION( BIND_CLASS Global_GetPlayerId ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetPlayerName(uint playerId)", focFUNCTION( BIND_CLASS Global_GetPlayerName ), focCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteNpc(Critter& npc)", focFUNCTION( BIND_CLASS Global_DeleteNpc ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllPlayers(Critter@[]@+ players)", focFUNCTION( BIND_CLASS Global_GetAllPlayers ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetRegisteredPlayers(uint[]& ids, string@[]& names)", focFUNCTION( BIND_CLASS Global_GetRegisteredPlayers ), focCALL_CDECL ) );
 
     BIND_ASSERT( engine->RegisterObjectMethod( "Critter", "bool IsPlayer() const", focFUNCTION( BIND_CLASS Crit_IsPlayer ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "Critter", "bool IsNpc() const", focFUNCTION( BIND_CLASS Crit_IsNpc ), focCALL_CDECL_OBJFIRST ) );
@@ -1072,6 +1054,13 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     BIND_ASSERT( engine->RegisterGlobalFunction( "CritterCl@+ GetChosen()", focFUNCTION( BIND_CLASS Global_GetChosen ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetChosenActions(uint[]@+ actions)", focFUNCTION( BIND_CLASS Global_GetChosenActions ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "void SetChosenActions(uint[]@+ actions)", focFUNCTION( BIND_CLASS Global_SetChosenActions ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "CritterCl@+ GetCritter(uint critterId)", focFUNCTION( BIND_CLASS Global_GetCritter ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersHex(uint16 hexX, uint16 hexY, uint radius, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCritters ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCritters(uint16 pid, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCrittersByPids ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersDistantion(CritterCl& cr1, CritterCl& cr2)", focFUNCTION( BIND_CLASS Global_GetCrittersDistantion ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersPath(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, float angle, uint dist, int findType, CritterCl@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetCrittersInPath ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetCrittersPath(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, float angle, uint dist, int findType, CritterCl@[]@+ critters, uint16& preBlockHx, uint16& preBlockHy, uint16& blockHx, uint16& blockHy)", focFUNCTION( BIND_CLASS Global_GetCrittersInPathBlock ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "CritterCl@+ GetMonitorCritter(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorCritter ), focCALL_CDECL ) );
 
     BIND_ASSERT( engine->RegisterObjectProperty( "CritterCl", "const uint Id", focOFFSET( CritterCl, Id ) ) );
     BIND_ASSERT( engine->RegisterObjectProperty( "CritterCl", "const uint16 Pid", focOFFSET( CritterCl, Pid ) ) );
@@ -1194,6 +1183,8 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_SERVER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAllItems(uint16 pid, Item@[]@+ items)", focFUNCTION( BIND_CLASS Global_GetAllItems ), focCALL_CDECL ) );
+
     BIND_ASSERT( engine->RegisterGlobalFunction( "Item@+ GetItem(uint itemId)", focFUNCTION( BIND_CLASS Global_GetItem ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveItem(Item& item, uint count, Critter& toCr)", focFUNCTION( BIND_CLASS Global_MoveItemCr ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "void MoveItem(Item& item, uint count, Item& toCont, uint stackId)", focFUNCTION( BIND_CLASS Global_MoveItemCont ), focCALL_CDECL ) );
@@ -1303,6 +1294,9 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_CLIENT)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "ItemCl@+ GetItem(uint itemId)", focFUNCTION( BIND_CLASS Global_GetItem ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "ItemCl@+ GetMonitorItem(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorItem ), focCALL_CDECL ) );
+
     BIND_ASSERT( engine->RegisterObjectMethod( "ItemCl", "bool IsStackable() const", focFUNCTION( BIND_CLASS Item_IsStackable ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "ItemCl", "bool IsDeteriorable() const", focFUNCTION( BIND_CLASS Item_IsDeteriorable ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "ItemCl", "uint GetScriptId() const", focFUNCTION( BIND_CLASS Item_GetScriptId ), focCALL_CDECL_OBJFIRST ) );
@@ -1375,13 +1369,13 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_SERVER)
-	BIND_ASSERT(engine->RegisterGlobalFunction("Location@+ GetLocation(uint locId)", focFUNCTION(BIND_CLASS Global_GetLocation), focCALL_CDECL));
-	BIND_ASSERT(engine->RegisterGlobalFunction("Location@+ GetLocationByPid(uint16 locPid, uint skipCount)", focFUNCTION(BIND_CLASS Global_GetLocationByPid), focCALL_CDECL));
-	BIND_ASSERT(engine->RegisterGlobalFunction("uint GetLocations(uint16 worldX, uint16 worldY, uint radius, Location@[]@+ locations)", focFUNCTION(BIND_CLASS Global_GetLocations), focCALL_CDECL));
-	BIND_ASSERT(engine->RegisterGlobalFunction("uint GetVisibleLocations(uint16 worldX, uint16 worldY, uint radius, Critter@+ visibleBy, Location@[]@+ locations)", focFUNCTION(BIND_CLASS Global_GetVisibleLocations), focCALL_CDECL));
-	BIND_ASSERT(engine->RegisterGlobalFunction("uint GetZoneLocationIds(uint16 zoneX, uint16 zoneY, uint zoneRadius, uint[]@+ locationIds)", focFUNCTION(BIND_CLASS Global_GetZoneLocationIds), focCALL_CDECL));
+    BIND_ASSERT( engine->RegisterGlobalFunction( "Location@+ GetLocation(uint locId)", focFUNCTION( BIND_CLASS Global_GetLocation ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "Location@+ GetLocationByPid(uint16 locPid, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetLocationByPid ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetLocations(uint16 worldX, uint16 worldY, uint radius, Location@[]@+ locations)", focFUNCTION( BIND_CLASS Global_GetLocations ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetVisibleLocations(uint16 worldX, uint16 worldY, uint radius, Critter@+ visibleBy, Location@[]@+ locations)", focFUNCTION( BIND_CLASS Global_GetVisibleLocations ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetZoneLocationIds(uint16 zoneX, uint16 zoneY, uint zoneRadius, uint[]@+ locationIds)", focFUNCTION( BIND_CLASS Global_GetZoneLocationIds ), focCALL_CDECL ) );
 
-	BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateLocation(uint16 locPid, uint16 worldX, uint16 worldY, Critter@[]@+ critters)", focFUNCTION( BIND_CLASS Global_CreateLocation ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint CreateLocation(uint16 locPid, uint16 worldX, uint16 worldY, Critter@[]@+ critters)", focFUNCTION( BIND_CLASS Global_CreateLocation ), focCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteLocation(uint locId)", focFUNCTION( BIND_CLASS Global_DeleteLocation ), focCALL_CDECL ) );
 
     BIND_ASSERT( engine->RegisterObjectMethod( "Location", "uint16 GetProtoId() const", focFUNCTION( BIND_CLASS Location_GetProtoId ), focCALL_CDECL_OBJFIRST ) );
@@ -1518,6 +1512,12 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_MAPPER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperMap@+ LoadMap(string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_LoadMap ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void UnloadMap(MapperMap@+ map)", focFUNCTION( BIND_CLASS Global_UnloadMap ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool SaveMap(MapperMap@+ map, string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_SaveMap ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool ShowMap(MapperMap@+ map)", focFUNCTION( BIND_CLASS Global_ShowMap ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetLoadedMaps(MapperMap@[]@+ maps)", focFUNCTION( BIND_CLASS Global_GetLoadedMaps ), focCALL_CDECL ) );
+
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperMap", "MapperObject@+ AddObject(uint16 hexX, uint16 hexY, int mapObjType, uint16 pid)", focFUNCTION( BIND_CLASS MapperMap_AddObject ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperMap", "MapperObject@+ GetObject(uint16 hexX, uint16 hexY, int mapObjType, uint16 pid, uint skip) const", focFUNCTION( BIND_CLASS MapperMap_GetObject ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperMap", "uint GetObjects(uint16 hexX, uint16 hexY, uint radius, int mapObjType, uint16 pid, MapperObject@[]@+ objects) const", focFUNCTION( BIND_CLASS MapperMap_GetObjects ), focCALL_CDECL_OBJFIRST ) );
@@ -1550,6 +1550,14 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_MAPPER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteObject(MapperObject@+ obj)", focFUNCTION( BIND_CLASS Global_DeleteObject ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void DeleteObjects(MapperObject@[]& objects)", focFUNCTION( BIND_CLASS Global_DeleteObjects ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SelectObject(MapperObject@+ obj, bool set)", focFUNCTION( BIND_CLASS Global_SelectObject ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SelectObjects(MapperObject@[]& objects, bool set)", focFUNCTION( BIND_CLASS Global_SelectObjects ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperObject@+ GetSelectedObject()", focFUNCTION( BIND_CLASS Global_GetSelectedObject ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetSelectedObjects(MapperObject@[]@+ objects)", focFUNCTION( BIND_CLASS Global_GetSelectedObjects ), focCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "MapperObject@+ GetMonitorObject(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorObject ), focCALL_CDECL ) );
+
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperObject", "void Update() const", focFUNCTION( BIND_CLASS MapperObject_Update ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperObject", "MapperObject@+ AddChild(uint16 pid)", focFUNCTION( BIND_CLASS MapperObject_AddChild ), focCALL_CDECL_OBJFIRST ) );
     BIND_ASSERT( engine->RegisterObjectMethod( "MapperObject", "uint GetChilds(MapperObject@[]@+ objects) const", focFUNCTION( BIND_CLASS MapperObject_GetChilds ), focCALL_CDECL_OBJFIRST ) );
@@ -1659,6 +1667,8 @@ bool Script::RegisterAll( asIScriptEngine* engine )
     //
 
     #if defined (BIND_SERVER)
+    BIND_ASSERT( engine->RegisterGlobalFunction( "NpcPlane@ CreatePlane()", focFUNCTION( BIND_CLASS Global_CreatePlane ), focCALL_CDECL ) );
+
     BIND_ASSERT( engine->RegisterObjectProperty( "NpcPlane", "int Type", focOFFSET( AIDataPlane, Type ) ) );
     BIND_ASSERT( engine->RegisterObjectProperty( "NpcPlane", "uint Priority", focOFFSET( AIDataPlane, Priority ) ) );
     // BIND_ASSERT( engine->RegisterObjectProperty( "NpcPlane", "NpcPlane@ Child", focOFFSET( AIDataPlane, Type ) ) );
