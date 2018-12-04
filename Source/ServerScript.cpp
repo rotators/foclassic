@@ -229,21 +229,12 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 /* Client script processing                                             */
 /************************************************************************/
 
-#undef BIND_SERVER
-#undef BIND_CLASS
-#undef BIND_ASSERT
-#define BIND_CLIENT
-#define BIND_CLASS          BindClass::
-#define BIND_ASSERT( x )    if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
-
 namespace ClientBind
 {
-    #include "DummyData.h"
-
     static int Bind( asIScriptEngine* engine )
     {
-        int bind_errors = 0;
-        // #include "ScriptBind.h"
+        int bind_errors = 1; // temporary force error
+        #pragma TODO("Use Script::RegisterAll()")
         return bind_errors;
     }
 }

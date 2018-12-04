@@ -298,7 +298,6 @@ target_sources( Server
 		Debugger.h
 		Dialogs.cpp
 		Dialogs.h
-		DummyData.h
 		FlexRect.h
 		Item.cpp
 		Item.h
@@ -346,7 +345,6 @@ target_sources( ASCompiler
 		DataFile.h
 		Exception.cpp
 		Exception.h
-		DummyData.h
 		FileManager.cpp
 		FileManager.h
 		IniParser.cpp
