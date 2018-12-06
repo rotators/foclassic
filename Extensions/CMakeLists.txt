@@ -24,6 +24,12 @@ foreach( header IN ITEMS angelscript scriptany scriptarray scriptdictionary scri
 	configure_file( "${AS_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
 endforeach()
 
+# additional extensions headers
+foreach( header IN ITEMS CommandLine.h Ini.h )
+	file( TIMESTAMP "${SHARED_DIR}/${header}" EXTENSIONS_CONTENT_TIMESTAMP "%d.%m.%Y" )
+	configure_file( "${SHARED_DIR}/${header}" "${RELEASE_HEADERS_DIR}/${header}" @ONLY NEWLINE_STYLE LF )
+endforeach()
+
 ##
 ## prepare extensions directories
 ##

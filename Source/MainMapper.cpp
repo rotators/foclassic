@@ -40,15 +40,16 @@ int main( int argc, char** argv )
 
     // Command line
     CommandLine = new CmdLine( argc, argv );
+    GAME_OPTION_EXT( CommandLine ) = CommandLine;
     if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
 
     // Options
     LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_MAPPER_ROOT ), SECTION_MAIN, SECTION_DETAIL, SECTION_UNUSED );
+    GAME_OPTION_EXT( ConfigFile ) = ConfigFile;
     GetMapperOptions();
     GetClientOptions();
     GetServerOptions();
-    ConfigFile->Lock = true;
     Script::SetRunTimeout( 0, 0 );
 
     // Timer

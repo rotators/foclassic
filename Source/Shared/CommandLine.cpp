@@ -15,19 +15,6 @@ using namespace std;
 
 CmdLine* CommandLine;
 
-CmdLine::CmdLine( int argc, char** argv ) : App( argv[0] )
-{
-    for( int arg = 1; arg < argc; arg++ )
-    {
-        Cache.push_back( string( argv[arg] ) );
-    }
-}
-
-CmdLine::~CmdLine()
-{
-    Cache.clear();
-}
-
 //
 
 bool CmdLine::IsOption( const string& option )

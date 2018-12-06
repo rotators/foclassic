@@ -43,13 +43,14 @@ int main( int argc, char** argv )
 
     // Command line
     CommandLine = new CmdLine( argc, argv );
+    GAME_OPTION_EXT( CommandLine ) = CommandLine;
     if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
 
     // Options
     LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_ROOT ), SECTION_MAIN, SECTION_DETAIL, SECTION_UNUSED );
+    GAME_OPTION_EXT( ConfigFile ) = ConfigFile;
     GetClientOptions();
-    ConfigFile->Lock = true;
 
     // Disable SIGPIPE signal
     #ifndef FO_WINDOWS

@@ -1,5 +1,6 @@
 #include "Core.h"
 
+#include "CommandLine.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "Random.h"
@@ -9,7 +10,8 @@
 typedef void ( * LogFuncPtr )( const char* str );
 extern void LogToFunc( LogFuncPtr func_ptr, bool enable );
 
-GameOptions GameOpt;
+GameOptions    GameOpt;
+GameOptionsExt GameOptExt;
 
 GameOptions::GameOptions()
 {
@@ -319,4 +321,10 @@ GameOptions::GameOptions()
     GetRainOffset = NULL;
 
     Initialize();
+}
+
+GameOptionsExt::GameOptionsExt()
+{
+    CommandLine = NULL;
+    ConfigFile = NULL;
 }
