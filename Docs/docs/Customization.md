@@ -1,8 +1,8 @@
 # Customization
 
 Build process can be customized in following places:
-- [FOClassic directory]/CMakeUser.txt
-- [top-level directory]/CMakeUser.txt
+- [FOClassic directory]/CMakeFOClassic.txt
+- [top-level directory]/CMakeFOClassic.txt
 - any CMakeLists.txt, before calling `add_subdirectory( [FOClassic directory] )`
 
 Last two entries are relevant only when _FOClassic_ is built as a [sub-project](https://cmake.org/cmake/help/latest/command/add_subdirectory.html).
