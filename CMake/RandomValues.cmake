@@ -87,9 +87,8 @@ function( GenerateNetHeader template_in template_out guard protocol_header hash 
 				SEED_FROM "${hash} <3 ${msg}"
 				LENGTH_MIN 2
 				LENGTH_MAX ${len}
-				ALPHABET "0123456789"
+				ALPHABET "123456789"
 				VAR id
-				ADD_ZERO
 			)
 
 			RandomValue( SEED ${id} LENGTH 3 ALPHABET "123456789" VAR fixer )
