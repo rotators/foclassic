@@ -69,6 +69,21 @@ FOClassicExtension( ExampleClientOld CLIENT "${FOCLASSIC_HEADERS_DIR}" )
 FOClassicExtension( ExampleMapperOld MAPPER "${FOCLASSIC_HEADERS_DIR}" )
 FOClassicExtension( ExampleServerOld SERVER "${FOCLASSIC_HEADERS_DIR}" )
 
+set( FOCLASSIC_HEADERS_FILES
+	# AngelScript headers
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/angelscript.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptany.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptarray.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptdictionary.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptfile.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptmath.h
+	${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptstring.h
+
+	# additional headers
+	${FOCLASSIC_HEADERS_DIR}/CommandLine.h
+	${FOCLASSIC_HEADERS_DIR}/Ini.h
+)
+
 # iterate over a list of all targets added in current diectory
 get_property( cmake_targets DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY BUILDSYSTEM_TARGETS )
 foreach( name IN LISTS cmake_targets )
@@ -94,14 +109,8 @@ foreach( name IN LISTS cmake_targets )
 			# CMakeLists.txt needs to be added for source_group("CMake") to work properly
 			${CMAKE_CURRENT_LIST_FILE}
 
-			# AngelScript headers
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/angelscript.h
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptany.h
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptarray.h
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptdictionary
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptfile.h
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptmath.h
-			${FOCLASSIC_HEADERS_DIR}/AngelScript/scriptstring.h
+			# Engine headers
+			${FOCLASSIC_HEADERS_FILES}
 
 			# while extensions must compile without _defines.fos, there's high chance
 			# they'll need game-specific values. it's included in this example
@@ -121,13 +130,15 @@ endforeach()
 #
 # TARGET
 # |- CMake          - all files with "CMake" in name
-# |- Engine         - FOClassic.h and FOClassic.fos
+# |- Engine         - all headers provided by FOClassic
 # |  `- AngelScript - AngelScript headers
 # |- Scripts        - all other *.fos files
 # `- source.ext     - *.c, *.cpp, *.h, *.hpp are extracted from default groups
+#
+# in real setup it can be safely ignored - source_group() commands does not affect build process at all
 
-source_group( " "                   REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh]|[Hh][Pp][Pp])$" )
-source_group( "Scripts"             REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )
-source_group( "Engine"              REGULAR_EXPRESSION "FOClassic\.(h|fos)$" )
-source_group( "Engine\\AngelScript" REGULAR_EXPRESSION "^${FOCLASSIC_HEADERS_DIR}/AngelScript/.+")
-source_group( "CMake"               REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" ) 
+source_group( " "                             REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh]|[Hh][Pp][Pp])$" )
+source_group( "Scripts"                       REGULAR_EXPRESSION "\.[Ff][Oo][Ss]$" )
+source_group( TREE "${FOCLASSIC_HEADERS_DIR}" PREFIX "Engine" FILES ${FOCLASSIC_HEADERS_FILES} )
+source_group( "Engine"                        REGULAR_EXPRESSION "FOClassic\.(h|fos)$" )
+source_group( "CMake"                         REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )

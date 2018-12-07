@@ -321,6 +321,17 @@ struct GameOptions
         #endif
     }
 }
+
 extern GameOpt;
+
+struct GameOptionsExt
+{
+    void* CommandLine;
+    void* ConfigFile;
+
+    GameOptionsExt();
+}
+
+extern GameOptExt;
 
 #endif // __GAME_OPTIONS__ //

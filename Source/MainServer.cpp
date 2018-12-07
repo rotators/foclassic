@@ -101,13 +101,14 @@ int main( int argc, char** argv )
 
     // Command line
     CommandLine = new CmdLine( argc, argv );
+    GAME_OPTION_EXT( CommandLine ) = CommandLine;
     if( !CommandLine->IsOption( "no-restore-directory" ) )
         RestoreMainDirectory();
 
     // Options
     LoadConfigFile( FileManager::GetFullPath( GetConfigFileName(), PATH_SERVER_ROOT ) );
+    GAME_OPTION_EXT( ConfigFile ) = ConfigFile;
     GetServerOptions();
-    ConfigFile->Lock = true;
 
     // Timer
     Timer::Init();

@@ -1,3 +1,10 @@
+/////
+//
+// FOClassic v@FOCLASSIC_VERSION@
+// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
+//
+/////
+
 /*
    MIT License
 
@@ -34,10 +41,6 @@
 #include <string>
 #include <vector>
 
-#if defined (FOCLASSIC_ENGINE)
-# include <scriptstring.h>
-#endif
-
 typedef std::map<std::string, std::string>              IniSection;
 typedef std::map<std::string, IniSection>               IniSections;
 
@@ -46,53 +49,50 @@ typedef std::map<std::string, std::vector<std::string>> IniSectionsRaw;
 class Ini
 {
 protected:
-    std::string    LoadedFile;
     IniSections    Sections;
     IniSectionsRaw SectionsRaw;
 
 public:
     bool KeepSectionsRaw;
-    bool Lock;
 
+    #if !defined (FOCLASSIC_EXTENSION)
     Ini();
     ~Ini();
-
-    bool LoadFile( const std::string& fname, bool unload = true );
-    bool LoadString( const std::string& str, bool unload = true );
-    void Unload();
-
-    void Parse( std::basic_istream<char>& is );
-    void ParseString( const std::string& str );
-    #if defined (FOCLASSIC_ENGINE)
-    void ParseScriptString( const ScriptString& str );
     #endif
 
-    std::string  GetLoadedFile();
-    bool         IsSection( const std::string& section );
-    bool         IsSectionKey( const std::string& section, const std::string& key );
-    bool         IsSectionKeyEmpty( const std::string& section, const std::string& key );
-    unsigned int GetSections( std::vector<std::string>& sections );
-    unsigned int GetSectionKeys( const std::string& section, std::vector<std::string>& keys );
+    virtual bool LoadFile( const std::string& fname, bool unload = true );
+    virtual bool LoadString( const std::string& str, bool unload = true );
+    virtual void Unload();
 
-    bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
-    bool RemoveSection( const std::string& section );
+    virtual void Parse( std::basic_istream<char>& is );
+    virtual void ParseString( const std::string& str );
 
-    bool                     IsSectionRaw( const std::string& section );
-    std::vector<std::string> GetSectionRaw( const std::string& section );
-    std::string              GetSectionRawString( const std::string& section, const std::string& separator );
+    virtual bool         IsSection( const std::string& section );
+    virtual bool         IsSectionKey( const std::string& section, const std::string& key );
+    virtual bool         IsSectionKeyEmpty( const std::string& section, const std::string& key );
+    virtual unsigned int GetSections( std::vector<std::string>& sections );
+    virtual unsigned int GetSectionKeys( const std::string& section, std::vector<std::string>& keys );
+
+    virtual bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
+    virtual bool RemoveSection( const std::string& section );
+
+    //
+    virtual bool                     IsSectionRaw( const std::string& section );
+    virtual std::vector<std::string> GetSectionRaw( const std::string& section );
+    virtual std::string              GetSectionRawString( const std::string& section, const std::string& separator );
 protected:
-    void AddSectionRaw( const std::string& section, const std::string& line );
+    virtual void AddSectionRaw( const std::string& section, const std::string& line );
 
 public:
-    bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );
-    int                      GetInt( const std::string& section, const std::string& key, const int& default_value, const unsigned char& base = 10 );
-    int                      GetHex( const std::string& section, const std::string& key, const int& default_value );
-    int                      GetOct( const std::string& section, const std::string& key, const int& default_value );
-    std::string              GetStr( const std::string& section, const std::string& key );
-    std::string              GetStr( const std::string& section, const std::string& key, const std::string& default_value );
-    std::vector<std::string> GetStrVec( const std::string& section, const std::string& key, char separator = ' ' );
+    virtual bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );
+    virtual int                      GetInt( const std::string& section, const std::string& key, const int& default_value, const unsigned char& base = 10 );
+    virtual int                      GetHex( const std::string& section, const std::string& key, const int& default_value );
+    virtual int                      GetOct( const std::string& section, const std::string& key, const int& default_value );
+    virtual std::string              GetStr( const std::string& section, const std::string& key );
+    virtual std::string              GetStr( const std::string& section, const std::string& key, const std::string& default_value );
+    virtual std::vector<std::string> GetStrVec( const std::string& section, const std::string& key, char separator = ' ' );
 
-    void SetStr( const std::string& section, const std::string& key, std::string value );
+    virtual void SetStr( const std::string& section, const std::string& key, std::string value );
 };
 
 #endif // __INI__ //

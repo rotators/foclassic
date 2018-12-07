@@ -43,10 +43,6 @@
 #include <string>
 #include <vector>
 
-#if defined (FOCLASSIC_ENGINE)
-# include <scriptstring.h>
-#endif
-
 #include "Ini.h"
 
 using namespace std;
@@ -75,7 +71,7 @@ inline void Cleanup( string& str )
 
 //
 
-Ini::Ini() : KeepSectionsRaw( false ), Lock( false )
+Ini::Ini() : KeepSectionsRaw( false )
 {}
 
 Ini::~Ini()
@@ -93,7 +89,6 @@ bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
     ifstream fstream( fname );
     if( fstream.is_open() )
     {
-        LoadedFile = fname;
         Parse( fstream );
 
         return true;
@@ -113,7 +108,6 @@ bool Ini::LoadString( const string& str, bool unload /* = true */ )
 
 void Ini::Unload()
 {
-    LoadedFile.clear();
     Sections.clear();
 }
 
@@ -175,19 +169,7 @@ void Ini::ParseString( const string& str )
     Parse( buf );
 }
 
-#if defined (FOCLASSIC_ENGINE)
-void Ini::ParseScriptString( const ScriptString& str )
-{
-    ParseString( str.c_std_str() );
-}
-#endif
-
 //
-
-string Ini::GetLoadedFile()
-{
-    return LoadedFile;
-}
 
 bool Ini::IsSection( const string& section )
 {
@@ -414,9 +396,6 @@ vector<string> Ini::GetStrVec( const string& section, const string& key, char se
 
 void Ini::SetStr( const string& section, const string& key, string value )
 {
-    if( Lock )
-        throw runtime_error( "Ini is locked" ); // temp
-
     if( IsSectionKey( section, key ) )
         Sections[section][key] = value;
     else

@@ -8,6 +8,7 @@
 #include "Text.h"
 
 #ifdef FOCLASSIC_SCRIPT_COMPILER
+# pragma TODO("Move to Script")
 # include "ASCompiler.h"
 # include "AngelScript/scriptstring.h"
 # include <stdio.h>
@@ -79,12 +80,15 @@ namespace Script
         }
 
         // Register variables
-        ptr = DLL_GetAddress( dll, "FOClassic" );
-        if( ptr )
-            *ptr = (size_t)NULL;
         ptr = DLL_GetAddress( dll, "ASEngine" );
         if( ptr )
             *ptr = (size_t)GetEngine();
+        ptr = DLL_GetAddress( dll, "FOClassic" );
+        if( ptr )
+            *ptr = (size_t)NULL;
+        ptr = DLL_GetAddress( dll, "FOClassicExt" );
+        if( ptr )
+            *ptr = (size_t)NULL;
 
         // Register functions
         ptr = DLL_GetAddress( dll, "Log" );
