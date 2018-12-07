@@ -5284,7 +5284,7 @@ void FOMapper::InitScriptSystem()
     WriteLog( "Script system initialization...\n" );
 
     // Init
-    if( !Script::Init( true, new ScriptPragmaCallback( PRAGMA_MAPPER ), "MAPPER" ) )
+    if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_MAPPER ), "MAPPER" ) )
     {
         WriteLog( "Script system initialization fail.\n" );
         return;

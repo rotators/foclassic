@@ -4,7 +4,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - [Latest release](https://github.com/rotators/foclassic/releases/latest/)
 - [Nightly builds](https://ci.appveyor.com/project/rotators/foclassic/) (Linux, Windows)
 
-## [v3]() (WIP)
+## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)
 
 - dialogs security fix (thanks Skycast)
 - ~ban command fix (thanks Skycast)
@@ -14,11 +14,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - if `FOCLASSIC_EXTENSION_STRIP_CONST` is defined, `const` is removed from selected entries; currently affects only geometry-related variables
 - extensions changes (requires Bleeding Edge mode)
     - introduced `GameOptionsExt* FOClassicExt` holding additions to `GameOptions* FOClassic`; this is a temporary change - once migration stage is finished (planned next month) both structures will be merged into one
-	- introduced `Ini* FOClassicExt::ConfigFile` containing copy of configuration for currently running application
+    - introduced `Ini* FOClassicExt::ConfigFile` containing copy of configuration for currently running application
         - all sections starting with `Client` / `Mapper` / `Server` / `Game Options` are reserved for internal use
-		- any additional sections are kept intact, and can be used by servers for game-specific configuration
+        - any additional sections are kept intact, and can be used by servers for game-specific configuration
     - introduced `CmdLine* FOClassicExt::CommandLine` containing copy of command line arguments
-	- unlike AngelScript headers, _CommandLine.h_ and _Ini.h_ (required to use `CommandLine`/`ConfigFile`) needs to be included "manually" in extension code
+    - unlike AngelScript headers, _CommandLine.h_ and _Ini.h_ (required to use `CommandLine`/`ConfigFile`) needs to be included "manually" in extension code
 - breaking changes
     - previous Client versions won't be able to communicate with Server properly
 
@@ -91,7 +91,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
       https://ci.appveyor.com/project/rotators/foclassic/
         - binaries can be found under `Image: Visual Studio 2013` -> `Artifacts`; despite of the image name, _Visual Studio 2010_ is used for compilation
         - `Image: Visual Studio 2017` is used for checking if engine is ready for migration to VS2017; it most likely will take some time, so it can be safely ignored currently
-		- binaries are available for six month since they have been created; see [artifacts retention policy](https://www.appveyor.com/docs/packaging-artifacts/#artifacts-retention-policy)
+        - binaries are available for six month since they have been created; see [artifacts retention policy](https://www.appveyor.com/docs/packaging-artifacts/#artifacts-retention-policy)
 
 
 Server.cfg fragment
