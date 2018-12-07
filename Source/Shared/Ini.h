@@ -55,8 +55,10 @@ protected:
 public:
     bool KeepSectionsRaw;
 
-    Ini() : KeepSectionsRaw( false ) {};
-    ~Ini() { Unload(); }
+    #if !defined (FOCLASSIC_EXTENSION)
+    Ini();
+    ~Ini();
+    #endif
 
     virtual bool LoadFile( const std::string& fname, bool unload = true );
     virtual bool LoadString( const std::string& str, bool unload = true );

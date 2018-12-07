@@ -71,6 +71,16 @@ inline void Cleanup( string& str )
 
 //
 
+Ini::Ini() : KeepSectionsRaw( false )
+{}
+
+Ini::~Ini()
+{
+    Unload();
+}
+
+//
+
 bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
 {
     if( unload )

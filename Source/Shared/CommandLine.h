@@ -21,18 +21,8 @@ public:
     const std::string App;
 
     #if !defined (FOCLASSIC_EXTENSION)
-    CmdLine( int argc, char** argv )
-    {
-        for( int arg = 1; arg < argc; arg++ )
-        {
-            Cache.push_back( string( argv[arg] ) );
-        }
-    }
-
-    ~CmdLine()
-    {
-        Cache.clear();
-    }
+    CmdLine( int argc, char** argv );
+    ~CmdLine();
     #endif
 
     virtual std::string Get();
