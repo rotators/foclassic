@@ -23,8 +23,12 @@
 
 #ifdef FO_LINUX
 # include <unistd.h>
-# define _stricmp    strcasecmp
+# define _stricmp             strcasecmp
 #endif
+
+#define SCRIPT_BIND_CLIENT    (1)
+#define SCRIPT_BIND_MAPPER    (2)
+#define SCRIPT_BIND_SERVER    (3)
 
 asIScriptEngine* Engine = NULL;
 bool             IsClient = false;
@@ -170,7 +174,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
 
 namespace Script
 {
-    bool RegisterAll( asIScriptEngine* engine );
+    bool RegisterAll( asIScriptEngine* engine, uchar bind );
 }
 
 // Client
@@ -178,7 +182,7 @@ namespace ClientBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine ) ? 0 : 1;
+        return Script::RegisterAll( engine, SCRIPT_BIND_CLIENT ) ? 0 : 1;
     }
 }
 
@@ -187,7 +191,7 @@ namespace MapperBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine ) ? 0 : 1;
+        return Script::RegisterAll( engine, SCRIPT_BIND_MAPPER ) ? 0 : 1;
     }
 }
 
@@ -196,7 +200,7 @@ namespace ServerBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine ) ? 0 : 1;
+        return Script::RegisterAll( engine, SCRIPT_BIND_SERVER ) ? 0 : 1;
     }
 }
 

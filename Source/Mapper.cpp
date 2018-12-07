@@ -5292,7 +5292,7 @@ void FOMapper::InitScriptSystem()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    Script::RegisterAll( engine );
+    Script::RegisterAll( engine, SCRIPT_BIND_MAPPER );
 
     // Load scripts
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );

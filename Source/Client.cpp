@@ -9747,7 +9747,7 @@ bool FOClient::ReloadScripts()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    bool             success = Script::RegisterAll( engine );
+    bool             success = Script::RegisterAll( engine, SCRIPT_BIND_CLIENT );
 
     if( !success )
     {

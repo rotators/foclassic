@@ -12,6 +12,10 @@
 #define GLOBAL_CONTEXT_STACK_SIZE    (10)
 #define CONTEXT_BUFFER_SIZE          (512)
 
+#define SCRIPT_BIND_CLIENT           (1)
+#define SCRIPT_BIND_MAPPER           (2)
+#define SCRIPT_BIND_SERVER           (3)
+
 typedef void ( * EndExecutionCallback )();
 typedef std::vector<asIScriptModule*> ScriptModuleVec;
 
@@ -40,7 +44,7 @@ namespace Script
 
     bool RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name );
     bool RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name );
-    bool RegisterAll( asIScriptEngine* engine );
+    bool RegisterAll( asIScriptEngine* engine, uchar bind );
 
     bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp = false );
 

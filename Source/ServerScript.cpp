@@ -130,7 +130,7 @@ bool FOServer::InitScriptSystem()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    Script::RegisterAll( engine );
+    Script::RegisterAll( engine, SCRIPT_BIND_SERVER );
 
     // Get config file
     FileManager scripts_cfg;
