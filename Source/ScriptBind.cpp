@@ -10,6 +10,7 @@
 
 // copy macros related to registration
 // used for dummy registration
+
 #define focFUNCTION( func )                        asFUNCTION( func )
 #define focMETHOD( clas, member )                  asMETHOD( clas, member )
 #define focMETHODPR( clas, member, decl, ret )     asMETHODPR( clas, member, decl, ret )
@@ -45,15 +46,9 @@
 # undef focMETHODPR
 # undef focOFFSET
 # undef focSIZEOF
-# undef focCALL_CDECL
-# undef focCALL_CDECL_OBJFIRST
-# undef focCALL_THISCALL
-# define focCALL_CDECL                             asCALL_GENERIC
-# define focCALL_CDECL_OBJFIRST                    asCALL_GENERIC
-# define focCALL_THISCALL                          asCALL_GENERIC
-# define focFUNCTION( func )                       asFUNCTION( DummyFunction )
-# define focMETHOD( clas, method )                 asFUNCTION( DummyFunction )
-# define focMETHODPR( clas, method, decl, ret )    asFUNCTION( DummyFunction )
+# define focFUNCTION( func )                       NULL
+# define focMETHOD( clas, method )                 NULL
+# define focMETHODPR( clas, method, decl, ret )    NULL
 # define focOFFSET( clas, method )                 DummyOffset
 # define focSIZEOF( obj )                          sizeof(DummyClass)
 # define BIND_DUMMY
@@ -64,12 +59,10 @@ struct DummyClass
     int DummyMember;
 };
 
-static void DummyFunction( asIScriptGeneric* ) {}
-
 static const int DummyOffset = asOFFSET( DummyClass, DummyMember );
 #endif
 
-#if !defined(BIND_DUMMY)
+#if !defined (BIND_DUMMY)
 namespace ScriptBind = Script;
 #else
 namespace ScriptBind = ScriptDummy;
@@ -583,28 +576,28 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
     // Global functions
     //
 
-    #pragma TODO("Re-implement")
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", asFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetLastError()", asFUNCTION( BIND_CLASS Global_GetLastError ), asCALL_CDECL ) );
-    BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "ProtoItem@+ GetProtoItem(uint16 protoId)", asFUNCTION( BIND_CLASS Global_GetProtoItem ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToInt(string@+ text, int& result)", asFUNCTION( BIND_CLASS Global_StrToInt ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToFloat(string@+ text, float& result)", asFUNCTION( BIND_CLASS Global_StrToFloat ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDistantion(uint16 hexX1, uint16 hexY1, uint16 hexX2, uint16 hexY2)", asFUNCTION( BIND_CLASS Global_GetDistantion ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetDirection(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY)", asFUNCTION( BIND_CLASS Global_GetDirection ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetOffsetDir(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY, float offset)", asFUNCTION( BIND_CLASS Global_GetOffsetDir ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTick()", asFUNCTION( BIND_CLASS Global_GetTick ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAngelScriptProperty(int property)", asFUNCTION( BIND_CLASS Global_GetAngelScriptProperty ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void SetAngelScriptProperty(int property, uint value)", asFUNCTION( BIND_CLASS Global_SetAngelScriptProperty ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetStrHash(string@+ str)", asFUNCTION( BIND_CLASS Global_GetStrHash ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadDataFile(string& dataFileName)", asFUNCTION( BIND_CLASS Global_LoadDataFile ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "int GetConstantValue(int constCollection, string@+ name)", asFUNCTION( BIND_CLASS Global_GetConstantValue ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetConstantName(int constCollection, int value)", asFUNCTION( BIND_CLASS Global_GetConstantName ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AddConstant(int constCollection, string@+ name, int value)", asFUNCTION( BIND_CLASS Global_AddConstant ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadConstants(int constCollection, string@+ fileName, int pathType)", asFUNCTION( BIND_CLASS Global_LoadConstants ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "void AllowSlot(uint8 index, string& slotName)", asFUNCTION( BIND_CLASS Global_AllowSlot ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "uint DecodeUTF8(const string& text, uint& length)", asFUNCTION( BIND_CLASS Global_DecodeUTF8 ), asCALL_CDECL ) );
-    // BIND_ASSERT( engine->RegisterGlobalFunction( "string@ EncodeUTF8(uint ucs)", asFUNCTION( BIND_CLASS Global_EncodeUTF8 ), asCALL_CDECL ) );
+	BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
+
+	BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", focFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetLastError()", focFUNCTION( BIND_CLASS Global_GetLastError ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "ProtoItem@+ GetProtoItem(uint16 protoId)", focFUNCTION( BIND_CLASS Global_GetProtoItem ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToInt(string@+ text, int& result)", focFUNCTION( BIND_CLASS Global_StrToInt ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToFloat(string@+ text, float& result)", focFUNCTION( BIND_CLASS Global_StrToFloat ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetDistantion(uint16 hexX1, uint16 hexY1, uint16 hexX2, uint16 hexY2)", focFUNCTION( BIND_CLASS Global_GetDistantion ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetDirection(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY)", focFUNCTION( BIND_CLASS Global_GetDirection ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint8 GetOffsetDir(uint16 fromHexX, uint16 fromHexY, uint16 toHexX, uint16 toHexY, float offset)", focFUNCTION( BIND_CLASS Global_GetOffsetDir ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetTick()", focFUNCTION( BIND_CLASS Global_GetTick ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetAngelScriptProperty(int property)", focFUNCTION( BIND_CLASS Global_GetAngelScriptProperty ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void SetAngelScriptProperty(int property, uint value)", focFUNCTION( BIND_CLASS Global_SetAngelScriptProperty ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint GetStrHash(string@+ str)", focFUNCTION( BIND_CLASS Global_GetStrHash ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadDataFile(string& dataFileName)", focFUNCTION( BIND_CLASS Global_LoadDataFile ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int GetConstantValue(int constCollection, string@+ name)", focFUNCTION( BIND_CLASS Global_GetConstantValue ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetConstantName(int constCollection, int value)", focFUNCTION( BIND_CLASS Global_GetConstantName ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void AddConstant(int constCollection, string@+ name, int value)", focFUNCTION( BIND_CLASS Global_AddConstant ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "bool LoadConstants(int constCollection, string@+ fileName, int pathType)", focFUNCTION( BIND_CLASS Global_LoadConstants ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void AllowSlot(uint8 index, string& slotName)", focFUNCTION( BIND_CLASS Global_AllowSlot ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "uint DecodeUTF8(const string& text, uint& length)", focFUNCTION( BIND_CLASS Global_DecodeUTF8 ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "string@ EncodeUTF8(uint ucs)", focFUNCTION( BIND_CLASS Global_EncodeUTF8 ), asCALL_CDECL ) );
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
     if( bind == SCRIPT_BIND_CLIENT )

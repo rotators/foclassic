@@ -233,9 +233,8 @@ namespace ClientBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        int bind_errors = 1; // temporary force error
-        #pragma TODO("Use Script::RegisterAll()")
-        return bind_errors;
+        bool success = ScriptDummy::RegisterAll( engine, SCRIPT_BIND_CLIENT );
+        return success ? 0 : 1; // temporary error count ignored
     }
 }
 

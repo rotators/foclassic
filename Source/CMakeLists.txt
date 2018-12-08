@@ -61,8 +61,8 @@ endif()
 
 set( CLIENT_LIBS     ${FOCLASSIC_LIBS} acm assimp fltk il jpeg ${PNG_CLIENT_MAPPER} ogg portaudio )
 set( MAPPER_LIBS     ${FOCLASSIC_LIBS} assimp fltk il jpeg ${PNG_CLIENT_MAPPER} )
-set( SERVER_LIBS     ${FOCLASSIC_LIBS} distorm fltk png15-bin )
-set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} )
+set( SERVER_LIBS     ${FOCLASSIC_LIBS} ScriptBindDummy distorm fltk png15-bin )
+set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} ScriptBindDummy )
 
 find_package( OpenGL REQUIRED )
 # DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
@@ -165,6 +165,15 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	Window.cpp
 	Window.h
 )
+
+##
+## ScriptBindDummy
+##
+
+add_library( ScriptBindDummy STATIC ScriptBind.cpp )
+target_compile_definitions( ScriptBindDummy PRIVATE FOCLASSIC_SCRIPT_COMPILER )
+target_include_directories( ScriptBindDummy PRIVATE ${FOCLASSIC_INCLUDES} )
+target_link_libraries( ScriptBindDummy angelscript-preprocessor Shared )
 
 ##
 ## Client
@@ -351,13 +360,13 @@ target_sources( ASCompiler
 		IniParser.h
 		Log.cpp
 		Log.h
-		ScriptBind.cpp
 		ScriptPragmas.cpp
 		ScriptPragmas.h
 )
 target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
+
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
 ##
@@ -432,6 +441,9 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	endif()
 
 	set( copy_to "${dir}" )
+	if( "${target}" STREQUAL "ScriptBindDummy" )
+		unset( copy_to )
+	endif()
 
 	if( "${target}" MATCHES "^Client(DX|GL)$" )
 		list( APPEND copy_to ${FOCLASSIC_COPY_CLIENT_DIR} )

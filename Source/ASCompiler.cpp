@@ -49,6 +49,15 @@ const char*      ContextStatesStr[] =
     "Error",
 };
 
+uchar  ScriptTarget = SCRIPT_BIND_SERVER; // TODO no default
+string ScriptTargetName[4] =
+{
+    "UNKNOWN",
+    "CLIENT",
+    "MAPPER",
+    "SERVER"
+};
+
 Preprocessor* ScriptPreprocessor;
 
 int Exit( int code )
@@ -146,13 +155,7 @@ void* GetScriptEngine()
 
 const char* GetDllTarget()
 {
-    if( IsServer )
-        return "SERVER";
-    if( IsClient )
-        return "CLIENT";
-    if( IsMapper )
-        return "MAPPER";
-    return "UNKNOWN";
+    return ScriptTargetName[ScriptTarget].c_str();
 }
 
 void CallBack( const asSMessageInfo* msg, void* param )
@@ -183,33 +186,6 @@ void CallBack( const asSMessageInfo* msg, void* param )
 namespace ScriptDummy
 {
     bool RegisterAll( asIScriptEngine* engine, uchar bind );
-}
-
-// Client
-namespace ClientBind
-{
-    static int Bind( asIScriptEngine* engine )
-    {
-        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_CLIENT ) ? 0 : 1;
-    }
-}
-
-// Mapper
-namespace MapperBind
-{
-    static int Bind( asIScriptEngine* engine )
-    {
-        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_MAPPER ) ? 0 : 1;
-    }
-}
-
-// Server
-namespace ServerBind
-{
-    static int Bind( asIScriptEngine* engine )
-    {
-        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_SERVER ) ? 0 : 1;
-    }
 }
 
 int main( int argc, char* argv[] )
@@ -243,9 +219,9 @@ int main( int argc, char* argv[] )
     {
         // Client / Mapper / Server
         if( !_stricmp( argv[i], "-client" ) )
-            IsServer = false, IsClient = true, IsMapper = false;
+            ScriptTarget = SCRIPT_BIND_CLIENT;
         else if( !_stricmp( argv[i], "-mapper" ) )
-            IsServer = false, IsClient = false, IsMapper = true;
+            ScriptTarget = SCRIPT_BIND_MAPPER;
         // Preprocessor output
         else if( !_stricmp( argv[i], "-p" ) && i + 1 < argc )
             str_prep = argv[++i];
@@ -304,12 +280,7 @@ int main( int argc, char* argv[] )
 
     // Bind
     int bind_errors = 0;
-    if( IsClient )
-        bind_errors = ClientBind::Bind( Engine );
-    else if( IsMapper )
-        bind_errors = MapperBind::Bind( Engine );
-    else if( IsServer )
-        bind_errors = ServerBind::Bind( Engine );
+    ScriptDummy::RegisterAll( Engine, ScriptTarget );
     if( bind_errors )
         printf( "Warning, bind result: %d.\n", bind_errors );
 
@@ -318,25 +289,13 @@ int main( int argc, char* argv[] )
     double tick = Timer::AccurateTick();
 
     // Preprocessor
-    int pragma_type = PRAGMA_UNKNOWN;
-    if( IsClient )
-        pragma_type = PRAGMA_CLIENT;
-    else if( IsMapper )
-        pragma_type = PRAGMA_MAPPER;
-    else if( IsServer )
-        pragma_type = PRAGMA_SERVER;
-
     ScriptPreprocessor = new Preprocessor();
-    ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( pragma_type ) );
+    ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( ScriptTarget ) );
 
     #pragma TODO("Script::DefineVersion()")
     ScriptPreprocessor->Define( "__ASCOMPILER" );
-    if( IsClient )
-        ScriptPreprocessor->Define( "__CLIENT" );
-    else if( IsMapper )
-        ScriptPreprocessor->Define( "__MAPPER" );
-    else if( IsServer )
-        ScriptPreprocessor->Define( "__SERVER" );
+    ScriptPreprocessor->Define( "__" + ScriptTargetName[ScriptTarget] );
+
     for( size_t i = 0; i < defines.size(); i++ )
         ScriptPreprocessor->Define( string( defines[i] ) );
     if( !run_func.empty() )
@@ -401,7 +360,7 @@ int main( int argc, char* argv[] )
     }
 
     // Check global not allowed types, only for server
-    if( IsServer )
+    if( ScriptTarget == SCRIPT_BIND_SERVER )
     {
         int bad_typeids[] =
         {

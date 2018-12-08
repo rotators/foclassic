@@ -6,9 +6,9 @@
 #include "Types.h"
 
 #define PRAGMA_UNKNOWN    (0)
-#define PRAGMA_SERVER     (1)
-#define PRAGMA_CLIENT     (2)
-#define PRAGMA_MAPPER     (3)
+#define PRAGMA_CLIENT     (1)
+#define PRAGMA_MAPPER     (2)
+#define PRAGMA_SERVER     (3)
 
 class IgnorePragma;
 class GlobalVarPragma;
