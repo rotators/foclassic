@@ -51,6 +51,14 @@ const char*      ContextStatesStr[] =
 
 Preprocessor* ScriptPreprocessor;
 
+int Exit( int code )
+{
+    if( ScriptPreprocessor )
+        delete ScriptPreprocessor;
+
+    return code;
+}
+
 void CompilerLog( ScriptString& str )
 {
     printf( "%s\n", str.c_str() );
@@ -275,7 +283,7 @@ int main( int argc, char* argv[] )
     if( !Engine )
     {
         printf( "Register failed.\n" );
-        return -1;
+        return Exit( -1 );
     }
     Engine->SetMessageCallback( asFUNCTION( CallBack ), NULL, asCALL_CDECL );
 
@@ -340,12 +348,10 @@ int main( int argc, char* argv[] )
 
     Buf = Str::Duplicate( errors.String.c_str() );
 
-    delete ScriptPreprocessor;
-
     if( res )
     {
         printf( "Unable to preprocess. Errors:\n%s\n", Buf );
-        return -1;
+        return Exit( -1 );
     }
     else
     {
@@ -379,19 +385,19 @@ int main( int argc, char* argv[] )
     if( !module )
     {
         printf( "Can't create module.\n" );
-        return -1;
+        return Exit( -1 );
     }
 
     if( module->AddScriptSection( NULL, result.String.c_str() ) < 0 )
     {
         printf( "Unable to add section.\n" );
-        return -1;
+        return Exit( -1 );
     }
 
     if( module->Build() < 0 )
     {
         printf( "Unable to build.\n" );
-        return -1;
+        return Exit( -1 );
     }
 
     // Check global not allowed types, only for server
@@ -483,7 +489,7 @@ int main( int argc, char* argv[] )
                 printf( "Erase global variable or class property listed above.\n" );
             printf( "Classes that cannot be stored in global scope: Critter, Item, ProtoItem, Map, Location, GlobalVar.\n" );
             printf( "Hint: store their Ids, instead of pointers.\n" );
-            return -1;
+            return Exit( -1 );
         }
     }
 
@@ -504,5 +510,5 @@ int main( int argc, char* argv[] )
         delete Buf;
     Buf = NULL;
 
-    return 0;
+    return Exit( 0 );
 }
