@@ -23,6 +23,7 @@
 # include "Client.h"
 # define BIND_CLIENT
 # define BIND_CLASS                                FOClient::SScriptFunc::
+# define BIND_CLASS_DERAIL( name )                 & FOClient::SScriptFunc::name
 # define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); return false; }
 #elif defined (FOCLASSIC_MAPPER)
 # include "Mapper.h"
@@ -41,19 +42,17 @@
 # undef focMETHODPR
 # undef focOFFSET
 # undef focSIZEOF
-# define focFUNCTION( func )                       asFUNCTION(0)
-# define focMETHOD( clas, method )                 asFUNCTION(0)
-# define focMETHODPR( clas, method, decl, ret )    asFUNCTION(0)
-# define focOFFSET( clas, method )                 DummyOffset
+# define focFUNCTION( func )                       asFUNCTION( 0 )
+# define focMETHOD( clas, method )                 asFUNCTION( 0 )
+# define focMETHODPR( clas, method, decl, ret )    asFUNCTION( 0 )
+# define focOFFSET( clas, method )                 ++ DummyObject.DummyMember
 # define focSIZEOF( obj )                          sizeof(DummyClass)
 # define BIND_DUMMY
-
+# define BIND_CLASS_DERAIL( name )                 & DummyObject.DummyMember
 struct DummyClass
 {
-    int DummyMember;
-};
-
-static const int DummyOffset = asOFFSET( DummyClass, DummyMember );
+    uint DummyMember;
+} DummyObject;
 #endif
 
 #if !defined (BIND_DUMMY)
@@ -153,6 +152,11 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
     BIND_ASSERT( engine->SetEngineProperty( asEP_USE_CHARACTER_LITERALS, 1 ) );
     BIND_ASSERT( engine->SetEngineProperty( asEP_AUTO_GARBAGE_COLLECT, false ) );
     BIND_ASSERT( engine->SetEngineProperty( asEP_ALWAYS_IMPL_DEFAULT_CONSTRUCT, true ) );
+
+    #if defined (BIND_DUMMY)
+	DummyObject.DummyMember = 0;
+    BIND_ASSERT( engine->SetEngineProperty( asEP_INIT_GLOBAL_VARS_AFTER_BUILD, false ) );
+    #endif
 
     //
     // Forward registration
@@ -309,19 +313,21 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
     BIND_ASSERT( engine->RegisterGlobalProperty( "bool __MapSmoothPath", &GameOpt.MapSmoothPath ) );
     BIND_ASSERT( engine->RegisterGlobalProperty( "string __MapDataPrefix", &GameOpt.MapDataPrefix ) );
 
-    #if defined (BIND_CLIENT)
-    // sic!
-    BIND_ASSERT( engine->RegisterGlobalProperty( "bool __ConsoleActive", &BIND_CLASS ConsoleActive ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapActive", &BIND_CLASS GmapActive ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapWait", &BIND_CLASS GmapWait ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "float __GmapZoom", &BIND_CLASS GmapZoom ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapOffsetX", &BIND_CLASS GmapOffsetX ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapOffsetY", &BIND_CLASS GmapOffsetY ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupCurX", &BIND_CLASS GmapGroupCurX ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupCurY", &BIND_CLASS GmapGroupCurY ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupToX", &BIND_CLASS GmapGroupToX ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupToY", &BIND_CLASS GmapGroupToY ) );
-    BIND_ASSERT( engine->RegisterGlobalProperty( "float __GmapGroupSpeed", &BIND_CLASS GmapGroupSpeed ) );
+    #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
+    if( bind == SCRIPT_BIND_CLIENT )
+    {
+        BIND_ASSERT( engine->RegisterGlobalProperty( "bool __ConsoleActive", BIND_CLASS_DERAIL( ConsoleActive ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapActive", BIND_CLASS_DERAIL( GmapActive ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "bool __GmapWait", BIND_CLASS_DERAIL( GmapWait ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "float __GmapZoom", BIND_CLASS_DERAIL( GmapZoom ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapOffsetX", BIND_CLASS_DERAIL( GmapOffsetX ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapOffsetY", BIND_CLASS_DERAIL( GmapOffsetY ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupCurX", BIND_CLASS_DERAIL( GmapGroupCurX ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupCurY", BIND_CLASS_DERAIL( GmapGroupCurY ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupToX", BIND_CLASS_DERAIL( GmapGroupToX ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "int __GmapGroupToY", BIND_CLASS_DERAIL( GmapGroupToY ) ) );
+        BIND_ASSERT( engine->RegisterGlobalProperty( "float __GmapGroupSpeed", BIND_CLASS_DERAIL( GmapGroupSpeed ) ) );
+    }
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
