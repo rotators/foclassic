@@ -26,18 +26,16 @@
 # include "Client.h"
 # define BIND_CLIENT
 # define BIND_CLASS                                FOClient::SScriptFunc::
-# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); bind_errors++; }
+# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLog( "Bind error, line<%d>.\n", __LINE__ ); return false; }
 #elif defined (FOCLASSIC_MAPPER)
 # include "Mapper.h"
 # define BIND_MAPPER
 # define BIND_CLASS                                FOMapper::SScriptFunc::
-# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); }
 #elif defined (FOCLASSIC_SERVER)
 # include "Map.h"
 # include "Server.h"
 # define BIND_SERVER
 # define BIND_CLASS                                FOServer::SScriptFunc::
-# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
 #elif defined (FOCLASSIC_SCRIPT_COMPILER)
 // change the meaning of registration related macros
 // allows ASCompiler to compile without issues or preparing dummy structures
@@ -46,13 +44,12 @@
 # undef focMETHODPR
 # undef focOFFSET
 # undef focSIZEOF
-# define focFUNCTION( func )                       NULL
-# define focMETHOD( clas, method )                 NULL
-# define focMETHODPR( clas, method, decl, ret )    NULL
+# define focFUNCTION( func )                       asFUNCTION(0)
+# define focMETHOD( clas, method )                 asFUNCTION(0)
+# define focMETHODPR( clas, method, decl, ret )    asFUNCTION(0)
 # define focOFFSET( clas, method )                 DummyOffset
 # define focSIZEOF( obj )                          sizeof(DummyClass)
 # define BIND_DUMMY
-# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
 
 struct DummyClass
 {
@@ -66,6 +63,10 @@ static const int DummyOffset = asOFFSET( DummyClass, DummyMember );
 namespace ScriptBind = Script;
 #else
 namespace ScriptBind = ScriptDummy;
+#endif
+
+#if !defined (BIND_ASSERT)
+# define BIND_ASSERT( x )                          if( (x) < 0 ) { WriteLogF( _FUNC_, " - Bind error, line<%d>.\n", __LINE__ ); return false; }
 #endif
 
 #pragma TODO("Generate BindError automagically")
@@ -145,8 +146,6 @@ bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, string object, s
 
 bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
 {
-    uint bind_errors = 0;
-
     //
     // Configuration
     //
@@ -576,9 +575,9 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
     // Global functions
     //
 
-	BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "int Random(int minimum, int maximum)", asFUNCTION( Random ), asCALL_CDECL ) );
 
-	BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", focFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
+    BIND_ASSERT( engine->RegisterGlobalFunction( "void Log(string& text)", focFUNCTION( BIND_CLASS Global_Log ), asCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "string@ GetLastError()", focFUNCTION( BIND_CLASS Global_GetLastError ), asCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "ProtoItem@+ GetProtoItem(uint16 protoId)", focFUNCTION( BIND_CLASS Global_GetProtoItem ), asCALL_CDECL ) );
     BIND_ASSERT( engine->RegisterGlobalFunction( "bool StrToInt(string@+ text, int& result)", focFUNCTION( BIND_CLASS Global_StrToInt ), asCALL_CDECL ) );

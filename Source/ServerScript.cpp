@@ -130,7 +130,11 @@ bool FOServer::InitScriptSystem()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    Script::RegisterAll( engine, SCRIPT_BIND_SERVER );
+    if( !Script::RegisterAll( engine, SCRIPT_BIND_SERVER ) )
+    {
+        WriteLog( "Script system initialization... failed\n" );
+        return false;
+    }
 
     // Get config file
     FileManager scripts_cfg;
@@ -229,15 +233,6 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 /* Client script processing                                             */
 /************************************************************************/
 
-namespace ClientBind
-{
-    static int Bind( asIScriptEngine* engine )
-    {
-        bool success = ScriptDummy::RegisterAll( engine, SCRIPT_BIND_CLIENT );
-        return success ? 0 : 1; // temporary error count ignored
-    }
-}
-
 bool FOServer::ReloadClientScripts()
 {
     WriteLog( "Reload client scripts...\n" );
@@ -262,17 +257,15 @@ bool FOServer::ReloadClientScripts()
         Script::SetEngine( client_engine );
 
     // Bind vars and functions
-    int bind_errors = 0;
-    if( client_engine )
-        bind_errors = ClientBind::Bind( client_engine );
+    int bind_success = ScriptDummy::RegisterAll( client_engine, SCRIPT_BIND_CLIENT );
 
     // Check errors
-    if( !client_engine || bind_errors )
+    if( !client_engine || !bind_success )
     {
         if( !client_engine )
             WriteLogF( _FUNC_, " - asCreateScriptEngine fail.\n" );
         else
-            WriteLog( "Bind fail, errors<%d>.\n", bind_errors );
+            WriteLog( "Bind fail\n" );
         Script::FinishEngine( client_engine );
 
         #ifdef MEMORY_DEBUG

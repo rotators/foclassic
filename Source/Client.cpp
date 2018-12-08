@@ -9747,9 +9747,7 @@ bool FOClient::ReloadScripts()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    bool             success = Script::RegisterAll( engine, SCRIPT_BIND_CLIENT );
-
-    if( !success )
+    if( !Script::RegisterAll( engine, SCRIPT_BIND_CLIENT ) )
     {
         WriteLog( "Bind fail\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
