@@ -180,7 +180,7 @@ void CallBack( const asSMessageInfo* msg, void* param )
     }
 }
 
-namespace Script
+namespace ScriptDummy
 {
     bool RegisterAll( asIScriptEngine* engine, uchar bind );
 }
@@ -190,7 +190,7 @@ namespace ClientBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine, SCRIPT_BIND_CLIENT ) ? 0 : 1;
+        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_CLIENT ) ? 0 : 1;
     }
 }
 
@@ -199,7 +199,7 @@ namespace MapperBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine, SCRIPT_BIND_MAPPER ) ? 0 : 1;
+        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_MAPPER ) ? 0 : 1;
     }
 }
 
@@ -208,7 +208,7 @@ namespace ServerBind
 {
     static int Bind( asIScriptEngine* engine )
     {
-        return Script::RegisterAll( engine, SCRIPT_BIND_SERVER ) ? 0 : 1;
+        return ScriptDummy::RegisterAll( engine, SCRIPT_BIND_SERVER ) ? 0 : 1;
     }
 }
 

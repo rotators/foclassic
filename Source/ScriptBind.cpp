@@ -69,6 +69,12 @@ static void DummyFunction( asIScriptGeneric* ) {}
 static const int DummyOffset = asOFFSET( DummyClass, DummyMember );
 #endif
 
+#if !defined(BIND_DUMMY)
+namespace ScriptBind = Script;
+#else
+namespace ScriptBind = ScriptDummy;
+#endif
+
 #pragma TODO("Generate BindError automagically")
 static const char* BindError[] =
 {
@@ -103,7 +109,7 @@ static const char* BindError[] =
 };
 
 /* focCALL_CDECL */
-bool Script::RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name )
+bool ScriptBind::RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name )
 {
     if( !engine )
     {
@@ -124,7 +130,7 @@ bool Script::RegisterGlobalFunction( asIScriptEngine* engine, string declaration
 }
 
 /* focCALL_CDECL_OBJFIRST */
-bool Script::RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name )
+bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name )
 {
     if( !engine )
     {
@@ -144,7 +150,7 @@ bool Script::RegisterObjectMethod( asIScriptEngine* engine, string object, strin
     return false;
 }
 
-bool Script::RegisterAll( asIScriptEngine* engine, uchar bind )
+bool ScriptBind::RegisterAll( asIScriptEngine* engine, uchar bind )
 {
     uint bind_errors = 0;
 

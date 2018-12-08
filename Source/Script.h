@@ -27,6 +27,15 @@ struct EngineData
     map<string, pair<string, void*>> LoadedDlls;
 };
 
+#if defined(FOCLASSIC_SCRIPT_COMPILER) || defined(FOCLASSIC_SERVER)
+namespace ScriptDummy
+{
+	bool RegisterGlobalFunction(asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name);
+	bool RegisterObjectMethod(asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name);
+	bool RegisterAll(asIScriptEngine* engine, uchar bind);
+}
+#endif
+
 namespace Script
 {
     bool Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target );
