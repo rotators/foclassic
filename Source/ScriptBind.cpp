@@ -6,7 +6,7 @@
 #include "GameOptions.h"
 #include "Log.h"
 #include "Random.h"
-#include "Script.h"
+#include "ScriptBind.hpp"
 
 // copy macros related to registration
 // redefined during dummy registration
@@ -34,7 +34,7 @@
 # define BIND_CLASS                                FOServer::SScriptFunc::
 #elif defined (FOCLASSIC_SCRIPT_COMPILER)
 // change the meaning of selected AS macros
-// allows ASCompiler to compile without issues or preparing dummy structures
+// allows dummy registration without preparing dummy structures
 # undef focFUNCTION
 # undef focMETHOD
 # undef focMETHODPR
@@ -54,7 +54,7 @@ struct DummyClass
 #endif
 
 // keep dummy registration in own namespace
-// allows real and dummy registration to co-exists within same function
+// allows real and dummy registration to co-exists within same application using same function
 
 #if !defined (BIND_DUMMY)
 namespace ScriptBind = Script;

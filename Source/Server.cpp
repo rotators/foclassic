@@ -19,6 +19,7 @@
 #include "Random.h"
 #include "Scores.h"
 #include "Script.h"
+#include "ScriptBind.hpp"
 #include "Server.h"
 #include "SinglePlayer.h"
 #include "Text.h"
@@ -571,7 +572,7 @@ void FOServer::MainLoop()
         if( RequestReloadClientScripts )
         {
             SynchronizeLogicThreads();
-            ReloadClientScripts();
+            ReloadClientMapperScripts( SCRIPT_BIND_CLIENT );
             RequestReloadClientScripts = false;
             ResynchronizeLogicThreads();
         }
@@ -2554,7 +2555,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
 
             SynchronizeLogicThreads();
 
-            if( ReloadClientScripts() )
+            if( ReloadClientMapperScripts( SCRIPT_BIND_CLIENT ) )
                 logcb( "Reload client scripts success." );
             else
                 logcb( "Reload client scripts fail." );
@@ -3484,11 +3485,13 @@ bool FOServer::InitReal()
     FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PATH_SERVER_BANS ) );
 
     ConstantsManager::Initialize( PATH_SERVER_DATA ); // Generate name of defines
-    if( !InitScriptSystem() )
-        return false;                                 // Script system
     if( !InitLangPacks( LangPacks ) )
         return false;                                 // Language packs
-    if( !ReloadClientScripts() )
+    if( !InitScriptSystem() )
+        return false;                                 // Script system
+    if( !ReloadClientMapperScripts( SCRIPT_BIND_MAPPER ) )
+    {}                                                // Mapper scripts
+    if( !ReloadClientMapperScripts( SCRIPT_BIND_CLIENT ) )
         return false;                                 // Client scripts, after language packs initialization
     if( !Singleplayer && !LoadClientsData() )
         return false;

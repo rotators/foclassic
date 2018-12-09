@@ -3,32 +3,29 @@
 #include <stdio.h>
 #include <locale.h>
 
-#include "AngelScript/angelscript.h"
-#include "AngelScript/scriptany.h"
-#include "AngelScript/scriptdictionary.h"
-#include "AngelScript/scriptfile.h"
-#include "AngelScript/scriptmath.h"
-#include "AngelScript/scriptstring.h"
-#include "AngelScript/scriptarray.h"
+#include <angelscript.h>
 #include <preprocessor.h>
+#include <scriptany.h>
+#include <scriptdictionary.h>
+#include <scriptfile.h>
+#include <scriptmath.h>
+#include <scriptstring.h>
+#include <scriptarray.h>
 
 #include "ASCompiler.h"
 #include "Debugger.h"
 #include "Exception.h"
 #include "FileManager.h"
 #include "FileSystem.h"
+#include "ScriptBind.hpp"
 #include "ScriptPragmas.h"
 #include "Text.h"
 #include "Timer.h"
 
 #ifdef FO_LINUX
 # include <unistd.h>
-# define _stricmp             strcasecmp
+# define _stricmp    strcasecmp
 #endif
-
-#define SCRIPT_BIND_CLIENT    (1)
-#define SCRIPT_BIND_MAPPER    (2)
-#define SCRIPT_BIND_SERVER    (3)
 
 asIScriptEngine* Engine = NULL;
 bool             IsClient = false;
@@ -62,8 +59,15 @@ Preprocessor* ScriptPreprocessor;
 
 int Exit( int code )
 {
+    // Clean up
     if( ScriptPreprocessor )
         delete ScriptPreprocessor;
+
+    if( Engine )
+        Engine->Release();
+
+    if( Buf )
+        delete Buf;
 
     return code;
 }
@@ -181,11 +185,6 @@ void CallBack( const asSMessageInfo* msg, void* param )
     {
         printf( "%s(%u) : %s : %s.\n", ScriptPreprocessor->ResolveOriginalFile( msg->row ).c_str(), ScriptPreprocessor->ResolveOriginalLine( msg->row ), type, msg->message );
     }
-}
-
-namespace ScriptDummy
-{
-    bool RegisterAll( asIScriptEngine* engine, uchar bind );
 }
 
 int main( int argc, char* argv[] )
@@ -462,12 +461,6 @@ int main( int argc, char* argv[] )
     // Collect garbage
     if( CollectGarbage )
         Engine->GarbageCollect( asGC_FULL_CYCLE );
-
-    // Clean up
-    Engine->Release();
-    if( Buf )
-        delete Buf;
-    Buf = NULL;
 
     return Exit( 0 );
 }

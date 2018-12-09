@@ -103,7 +103,7 @@ function( PrepareFiles )
 		# mark source files for formatting
 		# all files must processed before restorating modification time
 		if( "${file}" MATCHES "\\.([A-Za-z]+)$" )
-			if( "${CMAKE_MATCH_1}" MATCHES "^([Hh]|[Cc][Pp][Pp]|[Ff][Oo][Ss])$" )
+			if( "${CMAKE_MATCH_1}" MATCHES "^([Hh]|[Hh][Pp][Pp]|[Cc][Pp][Pp]|[Ff][Oo][Ss])$" )
 				if( NOT NO_FORMAT )
 					set( format TRUE )
 				endif()

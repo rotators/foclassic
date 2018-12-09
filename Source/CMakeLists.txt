@@ -154,6 +154,7 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	Script.cpp
 	Script.h
 	ScriptBind.cpp
+	ScriptBind.hpp
 	ScriptFunctions.cpp
 	ScriptFunctions.h
 	ScriptPragmas.cpp
@@ -170,7 +171,8 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 ## ScriptBindDummy
 ##
 
-add_library( ScriptBindDummy STATIC ScriptBind.cpp )
+add_library( ScriptBindDummy STATIC "" )
+target_sources( ScriptBindDummy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ScriptBind.hpp PRIVATE ScriptBind.cpp )
 target_compile_definitions( ScriptBindDummy PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ScriptBindDummy PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ScriptBindDummy angelscript-preprocessor Shared )
@@ -498,7 +500,7 @@ endforeach()
 ## prettify IDE
 ##
 
-source_group( " "           REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( " "           REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh][Pp][Pp]|[Hh])$" )
 source_group( "AngelScript" REGULAR_EXPRESSION "${SOURCE_DIR}/AngelScript" )
 source_group( "CMake"       REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 source_group( "Shared"      REGULAR_EXPRESSION "${SOURCE_DIR}/Shared" )

@@ -17,6 +17,7 @@
 #include "Random.h"
 #include "Server.h"
 #include "Script.h"
+#include "ScriptBind.hpp"
 #include "ScriptPragmas.h"
 #include "SinglePlayer.h"
 #include "Text.h"
@@ -229,13 +230,61 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
     return master->GetParam( index );
 }
 
-/************************************************************************/
-/* Client script processing                                             */
-/************************************************************************/
+//
+// Client/Mapper script processing
+//
 
-bool FOServer::ReloadClientScripts()
+void FOServer::PostReloadClientMapperScripts( void* server_engine, void* old_engine, const string& old_define )
 {
-    WriteLog( "Reload client scripts...\n" );
+    if( old_engine )
+    {
+        asIScriptEngine* engine = (asIScriptEngine*)old_engine;
+        Script::FinishEngine( engine );
+    }
+
+    if( !old_define.empty() )
+    {
+        Script::Undef( old_define.c_str() );
+        Script::Define( "__SERVER" );
+    }
+
+    Script::SetWrongGlobalObjects( FOServer::ServerWrongGlobalObjects );
+    Script::SetLoadLibraryCompiler( false );
+
+    #ifdef MEMORY_DEBUG
+    if( MemoryDebugLevel >= 2 )
+        asSetGlobalMemoryFunctions( ASDeepDebugMalloc, ASDeepDebugFree );
+    else if( MemoryDebugLevel >= 1 )
+        asSetGlobalMemoryFunctions( ASDebugMalloc, ASDebugFree );
+    else
+        asSetGlobalMemoryFunctions( malloc, free );
+    #endif
+
+    if( server_engine )
+        Script::SetEngine( (asIScriptEngine*)server_engine );
+}
+
+bool FOServer::ReloadClientMapperScripts( const uchar& bind )
+{
+    static const string targets[] =
+    {
+        "",
+        "CLIENT",
+        "MAPPER"
+    };
+
+    if( bind != SCRIPT_BIND_CLIENT && bind != SCRIPT_BIND_MAPPER )
+    {
+        WriteLog( "Invalid script target<%u>\n", bind );
+        return false;
+    }
+
+    string target_prefix = targets[bind] + "_";
+    string target_define = "__" + targets[bind];
+    string target_lower = targets[bind];
+    transform( target_lower.begin(), target_lower.end(), target_lower.begin(), ::tolower );
+
+    WriteLog( "Reload %s scripts...\n", target_lower.c_str() );
 
     // Get config file
     FileManager scripts_cfg;
@@ -251,42 +300,34 @@ bool FOServer::ReloadClientScripts()
     asSetGlobalMemoryFunctions( malloc, free );
     #endif
 
+    // Create engine
     asIScriptEngine* server_engine = Script::GetEngine();
-    asIScriptEngine* client_engine = Script::CreateEngine( new ScriptPragmaCallback( PRAGMA_CLIENT ), "CLIENT" );
-    if( client_engine )
-        Script::SetEngine( client_engine );
+    asIScriptEngine* target_engine = Script::CreateEngine( new ScriptPragmaCallback( bind ), targets[bind].c_str() );
+    if( !target_engine )
+    {
+        WriteLogF( _FUNC_, " - Script::CreateEngine fail\n" );
+        PostReloadClientMapperScripts( NULL, NULL, "" );
+
+        return false;
+    }
+
+    Script::SetEngine( target_engine );
 
     // Bind vars and functions
-    int bind_success = ScriptDummy::RegisterAll( client_engine, SCRIPT_BIND_CLIENT );
-
-    // Check errors
-    if( !client_engine || !bind_success )
+    if( !ScriptDummy::RegisterAll( target_engine, bind ) )
     {
-        if( !client_engine )
-            WriteLogF( _FUNC_, " - asCreateScriptEngine fail.\n" );
-        else
-            WriteLog( "Bind fail\n" );
-        Script::FinishEngine( client_engine );
-
-        #ifdef MEMORY_DEBUG
-        if( MemoryDebugLevel >= 2 )
-            asSetGlobalMemoryFunctions( ASDeepDebugMalloc, ASDeepDebugFree );
-        else if( MemoryDebugLevel >= 1 )
-            asSetGlobalMemoryFunctions( ASDebugMalloc, ASDebugFree );
-        else
-            asSetGlobalMemoryFunctions( malloc, free );
-        #endif
+        WriteLog( "Bind fail\n" );
+        PostReloadClientMapperScripts( server_engine, target_engine, "" );
 
         return false;
     }
 
     // Load script modules
     Script::Undef( "__SERVER" );
-    Script::Define( "__CLIENT" );
+    Script::Define( target_define.c_str() );
 
     StrVec empty;
     Script::SetWrongGlobalObjects( empty );
-
     Script::SetLoadLibraryCompiler( true );
 
     int    num = STR_INTERNAL_SCRIPT_MODULES;
@@ -300,7 +341,7 @@ bool FOServer::ReloadClientScripts()
             continue;
         istrstream str( &buf[1] );
         str >> value;
-        if( str.fail() || value != "client" )
+        if( str.fail() || value != target_lower )
             continue;
         str >> value;
         if( str.fail() || (value != "module" && value != "bind") )
@@ -312,20 +353,20 @@ bool FOServer::ReloadClientScripts()
             if( str.fail() )
                 continue;
 
-            WriteLog( "Load client module<%s>\n", value.c_str() );
+            WriteLog( "Load %s module<%s>\n", target_lower.c_str(), value.c_str() );
 
-            if( !Script::LoadScript( value.c_str(), NULL, false, "CLIENT_" ) )
+            if( !Script::LoadScript( value.c_str(), NULL, false, target_prefix.c_str() ) )
             {
-                WriteLogF( _FUNC_, " - Unable to load client script<%s>.\n", value.c_str() );
+                WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", target_lower.c_str(), value.c_str() );
                 errors++;
                 continue;
             }
 
-            asIScriptModule* module = client_engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
+            asIScriptModule* module = target_engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
             CBytecodeStream  binary;
             if( !module || module->SaveByteCode( &binary ) < 0 )
             {
-                WriteLogF( _FUNC_, " - Unable to save bytecode of client script<%s>.\n", value.c_str() );
+                WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", target_lower.c_str(), value.c_str() );
                 errors++;
                 continue;
             }
@@ -351,23 +392,26 @@ bool FOServer::ReloadClientScripts()
                 }
             }
 
-            // Add module name and bytecode
-            for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
+            if( bind == SCRIPT_BIND_CLIENT )
             {
-                LanguagePack& lang = *it;
-                FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
+                // Add module name and bytecode
+                for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
+                {
+                    LanguagePack& lang = *it;
+                    FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
 
-                for( int i = 0; i < 10; i++ )
-                    msg_script.EraseStr( num + i );
-                msg_script.AddStr( num, value.c_str() );
-                msg_script.AddBinary( num + 1, (uchar*)&buf[0], (uint)buf.size() );
+                    for( int i = 0; i < 10; i++ )
+                        msg_script.EraseStr( num + i );
+                    msg_script.AddStr( num, value.c_str() );
+                    msg_script.AddBinary( num + 1, (uchar*)&buf[0], (uint)buf.size() );
+                }
             }
             num += 2;
         }
         else
         {
             // Make bind line
-            string config_ = "@ client bind ";
+            string config_ = "@ " + target_lower + " bind ";
             str >> value;
             if( str.fail() )
                 continue;
@@ -383,116 +427,114 @@ bool FOServer::ReloadClientScripts()
     // Imported functions
     Script::BindImportedFunctions();
 
-    // Add native dlls to MSG
-    int         dll_num = STR_INTERNAL_SCRIPT_DLLS;
-    EngineData* ed = (EngineData*)client_engine->GetUserData();
-    for( auto it = ed->LoadedDlls.begin(), end = ed->LoadedDlls.end(); it != end; ++it )
+    if( bind == SCRIPT_BIND_CLIENT )
     {
-        const string& dll_name = (*it).first;
-        const string& dll_path = (*it).second.first;
-
-        // Load libraries for all platforms
-        // Windows, Linux
-        for( int d = 0; d < 2; d++ )
+        // Add native dlls to MSG
+        int         dll_num = STR_INTERNAL_SCRIPT_DLLS;
+        EngineData* ed = (EngineData*)target_engine->GetUserData();
+        for( auto it = ed->LoadedDlls.begin(), end = ed->LoadedDlls.end(); it != end; ++it )
         {
-            // Make file name
-            const char* extensions[] = { ".dll", ".so" };
-            char        fname[MAX_FOPATH];
-            Str::Copy( fname, dll_path.c_str() );
-            FileManager::EraseExtension( fname );
-            Str::Append( fname, extensions[d] );
+            const string& dll_name = (*it).first;
+            const string& dll_path = (*it).second.first;
 
-            // Erase first './'
-            if( Str::CompareCount( fname, DIR_SLASH_SD, Str::Length( DIR_SLASH_SD ) ) )
-                Str::EraseInterval( fname, Str::Length( DIR_SLASH_SD ) );
-
-            // Load dll
-            FileManager dll;
-            if( !dll.LoadFile( fname, -1 ) )
+            // Load libraries for all platforms
+            // Windows, Linux
+            for( int d = 0; d < 2; d++ )
             {
-                if( !d )
+                // Make file name
+                const char* extensions[] = { ".dll", ".so" };
+                char        fname[MAX_FOPATH];
+                Str::Copy( fname, dll_path.c_str() );
+                FileManager::EraseExtension( fname );
+                Str::Append( fname, extensions[d] );
+
+                // Erase first './'
+                if( Str::CompareCount( fname, DIR_SLASH_SD, Str::Length( DIR_SLASH_SD ) ) )
+                    Str::EraseInterval( fname, Str::Length( DIR_SLASH_SD ) );
+
+                // Load dll
+                FileManager dll;
+                if( !dll.LoadFile( fname, -1 ) )
                 {
-                    WriteLogF( _FUNC_, " - Can't load dll<%s>.\n", dll_name.c_str() );
-                    errors++;
+                    if( !d )
+                    {
+                        WriteLogF( _FUNC_, " - Can't load dll<%s>.\n", dll_name.c_str() );
+                        errors++;
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            // Add dll name and binary
-            for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
-            {
-                LanguagePack& lang = *it;
-                FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
+                // Add dll name and binary
+                for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
+                {
+                    LanguagePack& lang = *it;
+                    FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
 
-                for( int i = 0; i < 10; i++ )
-                    msg_script.EraseStr( dll_num + i );
-                msg_script.AddStr( dll_num, fname );
-                msg_script.AddBinary( dll_num + 1, dll.GetBuf(), dll.GetFsize() );
+                    for( int i = 0; i < 10; i++ )
+                        msg_script.EraseStr( dll_num + i );
+                    msg_script.AddStr( dll_num, fname );
+                    msg_script.AddBinary( dll_num + 1, dll.GetBuf(), dll.GetFsize() );
+                }
+                dll_num += 2;
             }
-            dll_num += 2;
         }
     }
 
-    if( !Script::BindReservedFunctions( config.c_str(), "client", ClientReservedFunctions, sizeof(ClientScriptFunctions) / sizeof(int), true ) )
+    ReservedScriptFunction* functions = (bind == SCRIPT_BIND_CLIENT ? ClientReservedFunctions : MapperReservedFunctions);
+    int                     count = (bind == SCRIPT_BIND_CLIENT ? sizeof(ClientScriptFunctions) : sizeof(MapperScriptFunctions) );
+    count /= sizeof(int);
+
+    bool success = Script::BindReservedFunctions( config.c_str(), target_lower.c_str(), functions, count, true );
+
+    // Finish
+    PostReloadClientMapperScripts( server_engine, target_engine, target_define );
+
+    if( !success )
     {
-        WriteLog( "Bind game functions fail.\n" );
+        WriteLog( "Bind %s functions fail.\n", target_lower.c_str() );
+
         return false;
     }
 
-    // Finish
-    Script::FinishEngine( client_engine );
-    Script::Undef( "__CLIENT" );
-    Script::Define( "__SERVER" );
-
-    Script::SetWrongGlobalObjects( ServerWrongGlobalObjects );
-
-    Script::SetLoadLibraryCompiler( false );
-
-    #ifdef MEMORY_DEBUG
-    if( MemoryDebugLevel >= 2 )
-        asSetGlobalMemoryFunctions( ASDeepDebugMalloc, ASDeepDebugFree );
-    else if( MemoryDebugLevel >= 1 )
-        asSetGlobalMemoryFunctions( ASDebugMalloc, ASDebugFree );
-    else
-        asSetGlobalMemoryFunctions( malloc, free );
-    #endif
-    Script::SetEngine( server_engine );
-
-    // Add config text and pragmas, calculate hash
-    for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
+    if( success && bind == SCRIPT_BIND_CLIENT )
     {
-        LanguagePack& lang = *it;
-        FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
-
-        msg_script.EraseStr( STR_INTERNAL_SCRIPT_CONFIG );
-        msg_script.AddStr( STR_INTERNAL_SCRIPT_CONFIG, config.c_str() );
-        msg_script.EraseStr( STR_INTERNAL_SCRIPT_VERSION );
-        msg_script.AddStr( STR_INTERNAL_SCRIPT_VERSION, Str::FormatBuf( "%d", CLIENT_SCRIPT_BINARY_VERSION ) );
-
-        for( uint i = 0, j = (uint)pragmas.size(); i < j; i++ )
+        // Add config text and pragmas, calculate hash
+        for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
         {
-            msg_script.EraseStr( STR_INTERNAL_SCRIPT_PRAGMAS + i );
-            msg_script.AddStr( STR_INTERNAL_SCRIPT_PRAGMAS + i, pragmas[i].c_str() );
+            LanguagePack& lang = *it;
+            FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
+
+            msg_script.EraseStr( STR_INTERNAL_SCRIPT_CONFIG );
+            msg_script.AddStr( STR_INTERNAL_SCRIPT_CONFIG, config.c_str() );
+            msg_script.EraseStr( STR_INTERNAL_SCRIPT_VERSION );
+            msg_script.AddStr( STR_INTERNAL_SCRIPT_VERSION, Str::FormatBuf( "%d", CLIENT_SCRIPT_BINARY_VERSION ) );
+
+            for( uint i = 0, j = (uint)pragmas.size(); i < j; i++ )
+            {
+                msg_script.EraseStr( STR_INTERNAL_SCRIPT_PRAGMAS + i );
+                msg_script.AddStr( STR_INTERNAL_SCRIPT_PRAGMAS + i, pragmas[i].c_str() );
+            }
+            for( uint i = 0, j = 10; i < j; i++ )
+                msg_script.EraseStr( STR_INTERNAL_SCRIPT_PRAGMAS + (uint)pragmas.size() + i );
+
+            msg_script.CalculateHash();
         }
-        for( uint i = 0, j = 10; i < j; i++ )
-            msg_script.EraseStr( STR_INTERNAL_SCRIPT_PRAGMAS + (uint)pragmas.size() + i );
 
-        msg_script.CalculateHash();
+        // Send to all connected clients
+        ConnectedClientsLocker.Lock();
+        for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
+        {
+            Client* cl = *it;
+            auto    it_l = std::find( LangPacks.begin(), LangPacks.end(), cl->LanguageMsg );
+            if( it_l != LangPacks.end() )
+                Send_MsgData( cl, cl->LanguageMsg, TEXTMSG_INTERNAL, (*it_l).Msg[TEXTMSG_INTERNAL] );
+            cl->Send_LoadMap( NULL );
+        }
+        ConnectedClientsLocker.Unlock();
     }
 
-    // Send to all connected clients
-    ConnectedClientsLocker.Lock();
-    for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
-    {
-        Client* cl = *it;
-        auto    it_l = std::find( LangPacks.begin(), LangPacks.end(), cl->LanguageMsg );
-        if( it_l != LangPacks.end() )
-            Send_MsgData( cl, cl->LanguageMsg, TEXTMSG_INTERNAL, (*it_l).Msg[TEXTMSG_INTERNAL] );
-        cl->Send_LoadMap( NULL );
-    }
-    ConnectedClientsLocker.Unlock();
+    WriteLog( "Reload %s scripts complete.\n", target_lower.c_str() );
 
-    WriteLog( "Reload client scripts complete.\n" );
     return true;
 }
 

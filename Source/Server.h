@@ -191,7 +191,8 @@ public:
 
     // Client script
     static bool RequestReloadClientScripts;
-    static bool ReloadClientScripts();
+    static bool ReloadClientMapperScripts( const uchar& bind );
+    static void PostReloadClientMapperScripts( void* server_engine, void* target_engine, const string& old_define );
 
     // Pragma callbacks
     static bool PragmaCallbackCrData( const char* text );
