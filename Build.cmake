@@ -51,6 +51,10 @@ if( NOT NO_BUILD )
 		CreateBuildDirectory( "SDK.VS2017"      "Visual Studio 15 2017" ""           "${SOLUTION_FILE}" )
 	endif()
 
+	if( BUILD_FAIL )
+		message( FATAL_ERROR "Build error" )
+	endif()
+
 	RunAllBuilds()
 endif()
 
@@ -59,6 +63,5 @@ if( NOT NO_ZIP )
 endif()
 
 if( CI AND BUILD_FAIL )
-	message( STATUS )
 	message( FATAL_ERROR "Build error" )
 endif()
