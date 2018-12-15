@@ -7,7 +7,6 @@ add_subdirectory( Libs )
 
 message( STATUS "Configuring engine..." )
 
-add_subdirectory( DatFile )
 add_subdirectory( Shared )
 
 ##
@@ -50,7 +49,7 @@ target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 ## configure applications libraries
 ##
 
-set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor DatFile Shared )
+set( FOCLASSIC_LIBS     angelscript angelscript-preprocessor Shared )
 set( FOCLASSIC_INCLUDES ${FOCLASSIC_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR} )
 
 if( UNIX )
@@ -185,8 +184,6 @@ set( CLIENT_SOURCES
 	Client.cpp
 	Client.h
 	ClientInterface.cpp
-	DataFile.cpp
-	DataFile.h
 	DataMask.h
 	Defence.h
 	MainClient.cpp
@@ -240,8 +237,6 @@ set( MAPPER_SOURCES
 	CritterData.h
 	CritterManager.cpp
 	CritterManager.h
-	DataFile.cpp
-	DataFile.h
 	F2Palette.h
 	FlexRect.h
 	MainMapper.cpp
@@ -302,8 +297,6 @@ target_sources( Server
 		CritterData.h
 		CritterManager.cpp
 		CritterManager.h
-		DataFile.cpp
-		DataFile.h
 		DataMask.h
 		Debugger.cpp
 		Debugger.h
@@ -352,8 +345,6 @@ target_sources( ASCompiler
 	PRIVATE
 		ASCompiler.cpp
 		ASCompiler.h
-		DataFile.cpp
-		DataFile.h
 		Exception.cpp
 		Exception.h
 		FileManager.cpp

@@ -5,11 +5,9 @@
 
 #include "AutoPointers.h"
 #include "Crypt.h"
+#include "Log.Shared.h"
 #include "Random.h"
 #include "Text.h"
-
-extern void WriteLog( const char* frmt, ... );
-extern void WriteLogF( const char* func, const char* frmt, ... );
 
 CryptManager Crypt;
 

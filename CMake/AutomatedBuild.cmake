@@ -1,3 +1,27 @@
+#####
+#
+# exported variables
+#
+# GetProjectVersion()
+#  FOCLASSIC_STAGE
+#  FOCLASSIC_VERSION
+#
+# DetectCI()
+#  CI
+#  CI_FILE
+#  CI_GENERATOR
+#  CI_TOOL
+#  CI_ZIP_SUFFIX
+#
+# CreateBuildDirectory()
+#  BUILD_DIRS
+#  BUILD_FAIL (only on errors)
+#
+# RunAllBuilds()
+#  BUILD_FAIL (only on errors)
+#
+#####
+
 # extract version from CMakeLists
 # requires specific usage of project() command
 function( GetProjectVersion )
@@ -194,12 +218,21 @@ function( CreateBuildDirectory dir generator tool file )
 		execute_process(
 			COMMAND ${CMAKE_COMMAND} ${toolchain} -G "${generator}" ${toolset} "${CMAKE_CURRENT_LIST_DIR}"
 			WORKING_DIRECTORY "${dir}"
+			RESULT_VARIABLE result
 		)
+		if( NOT result EQUAL 0 )
+			list( APPEND BUILD_FAIL "${dir}" )
+			set( BUILD_FAIL "${BUILD_FAIL}" PARENT_SCOPE )
+			return()
+		endif()
 	endif()
 
 	if( EXISTS "${dir}/${file}" )
 		list( APPEND BUILD_DIRS "${dir}" )
 		set( BUILD_DIRS "${BUILD_DIRS}" PARENT_SCOPE )
+	else()
+		list( APPEND BUILD_FAIL "${dir}" )
+		set( BUILD_FAIL "${BUILD_FAIL}" PARENT_SCOPE )
 	endif()
 
 endfunction()

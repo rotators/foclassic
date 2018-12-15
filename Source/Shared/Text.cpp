@@ -1,13 +1,10 @@
 #include "Core.h"
 
-#include <stdarg.h>
-
-#include "FL/case.h"
+#include <FL/case.h>
 
 #include "Crypt.h"
+#include "Log.Shared.h"
 #include "Text.h"
-
-extern void WriteLogF( const char* func, const char* frmt, ... );
 
 void Str::Copy( char* to, uint size, const char* from )
 {
