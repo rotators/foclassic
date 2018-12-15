@@ -13,6 +13,7 @@ target_sources( Shared
 		${CMAKE_CURRENT_LIST_DIR}/CommandLine.h
 		${CMAKE_CURRENT_LIST_DIR}/Core.h
 		${CMAKE_CURRENT_LIST_DIR}/Crypt.h
+		${CMAKE_CURRENT_LIST_DIR}/DataFile.h
 		${CMAKE_CURRENT_LIST_DIR}/Defines.h
 		${CMAKE_CURRENT_LIST_DIR}/Defines.Public.h
 		${CMAKE_CURRENT_LIST_DIR}/DynamicLibrary.h
@@ -37,6 +38,7 @@ target_sources( Shared
 		CommandLine.cpp
 		Core.cpp
 		Crypt.cpp
+		DataFile.cpp
 		FileSystem.cpp
 		GameOptions.cpp
 		Ini.cpp
@@ -46,6 +48,11 @@ target_sources( Shared
 		Timer.cpp
 		Text.cpp
 
+		DataFile/Dat.cpp
+		DataFile/Dat.h
+		DataFile/Zip.cpp
+		DataFile/Zip.h
+
 		${AS_DIR}/scriptany.cpp
 		${AS_DIR}/scriptarray.cpp
 		${AS_DIR}/scriptdictionary.cpp
@@ -53,6 +60,9 @@ target_sources( Shared
 		${AS_DIR}/scriptfile.cpp
 		${AS_DIR}/scriptmath.cpp
 		${AS_DIR}/scriptstring.cpp
+
+		# sic!
+		Log.Shared.h
 )
 target_compile_definitions( Shared
 	PUBLIC
@@ -83,6 +93,7 @@ if( WIN32 )
 	PdbSetup( Shared )
 endif()
 
-source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
-source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
+source_group( " "        REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "DataFile" REGULAR_EXPRESSION "^${CMAKE_CURRENT_LIST_DIR}/DataFile/" )
+source_group( "CMake"    REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 set_property( TARGET Shared PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )

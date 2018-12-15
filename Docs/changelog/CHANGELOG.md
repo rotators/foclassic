@@ -6,6 +6,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v4]() (WIP)
 
+- fixed Client crash when loading .dat files in some scenarios
 - fixed ASCompiler crash when receiving warnings/errors from script engine
 
 

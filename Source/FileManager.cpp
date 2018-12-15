@@ -194,7 +194,7 @@ bool FileManager::LoadDataFile( const char* path )
     }
 
     // Add new
-    DataFile* pfile = OpenDataFile( path_ );
+    DataFile* pfile = DataFile::Open( path_ );
     if( !pfile )
     {
         WriteLogF( _FUNC_, " - Load packed file<%s> fail.\n", path_ );
