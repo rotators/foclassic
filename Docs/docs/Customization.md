@@ -8,10 +8,10 @@ Build process can be customized in following places:
 Last two entries are relevant only when _FOClassic_ is built as a [sub-project](https://cmake.org/cmake/help/latest/command/add_subdirectory.html).
 
 ## FOCLASSIC_COPY_CLIENT_DIR
-List of directories where Client executable should be copied after compilation.
+List of directories where Client executables should be copied after compilation.
 
 ## FOCLASSIC_COPY_MAPPER_DIR
-List of directories where Mapper executable should be copied after compilation.
+List of directories where Mapper executables should be copied after compilation.
 
 ## FOCLASSIC_COPY_SERVER_DIR
 List of directories where Server executable should be copied after compilation.
