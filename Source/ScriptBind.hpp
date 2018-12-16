@@ -9,22 +9,38 @@
 #define SCRIPT_BIND_MAPPER    (2)
 #define SCRIPT_BIND_SERVER    (3)
 
-#if !defined (FOCLASSIC_SCRIPT_COMPILER)
 namespace Script
 {
-    bool RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name );
-    bool RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name );
-    bool RegisterAll( asIScriptEngine* engine, uchar bind );
-}
-#endif
+    #if !defined (FOCLASSIC_SCRIPT_COMPILER)
+    bool SetEngineProperty( asIScriptEngine* engine, asEEngineProp property, asPWORD value );
 
-#if defined (FOCLASSIC_SCRIPT_COMPILER) || defined (FOCLASSIC_SERVER)
-namespace ScriptDummy
-{
-    bool RegisterGlobalFunction( asIScriptEngine* engine, string declaration, const asSFuncPtr& function, asDWORD callConv, string name );
-    bool RegisterObjectMethod( asIScriptEngine* engine, string object, string method, const asSFuncPtr& function, asDWORD callConv, string name );
-    bool RegisterAll( asIScriptEngine* engine, uchar bind );
+    bool RegisterGlobalProperty( asIScriptEngine* engine, const string& declaration, void* pointer );
+    bool RegisterGlobalFunction( asIScriptEngine* engine, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* auxiliary = 0 );
+
+    bool RegisterObjectType( asIScriptEngine* engine, const string& object, int byteSize, asDWORD flags );
+    bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+    bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
+    bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+
+    bool RegisterAll( asIScriptEngine* engine, const uchar& bind );
+    #endif
+
+    #if defined (FOCLASSIC_SCRIPT_COMPILER) || defined (FOCLASSIC_SERVER)
+    namespace BindDummy
+    {
+        bool SetEngineProperty( asIScriptEngine* engine, asEEngineProp property, asPWORD value );
+
+        bool RegisterGlobalProperty( asIScriptEngine* engine, const string& declaration, void* pointer );
+        bool RegisterGlobalFunction( asIScriptEngine* engine, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* auxiliary = 0 );
+
+        bool RegisterObjectType( asIScriptEngine* engine, const string& object, int byteSize, asDWORD flags );
+        bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+        bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
+        bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+
+        bool RegisterAll( asIScriptEngine* engine, const uchar& bind );
+    }
+    #endif
 }
-#endif
 
 #endif // __SCRIPT_BIND__ //

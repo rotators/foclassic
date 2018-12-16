@@ -278,10 +278,11 @@ int main( int argc, char* argv[] )
     }
 
     // Bind
-    int bind_errors = 0;
-    ScriptDummy::RegisterAll( Engine, ScriptTarget );
-    if( bind_errors )
-        printf( "Warning, bind result: %d.\n", bind_errors );
+    if( !Script::BindDummy::RegisterAll( Engine, ScriptTarget ) )
+    {
+        printf( "Bind error.\n" );
+        Exit( -1 );
+    }
 
     // Start compilation
     printf( "Compiling %s ...\n", str_fname );

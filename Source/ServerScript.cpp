@@ -314,7 +314,7 @@ bool FOServer::ReloadClientMapperScripts( const uchar& bind )
     Script::SetEngine( target_engine );
 
     // Bind vars and functions
-    if( !ScriptDummy::RegisterAll( target_engine, bind ) )
+    if( !Script::BindDummy::RegisterAll( target_engine, bind ) )
     {
         WriteLog( "Bind fail\n" );
         PostReloadClientMapperScripts( server_engine, target_engine, "" );

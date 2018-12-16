@@ -472,6 +472,8 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 
 	if( "${target}" STREQUAL "ASCompiler")
 		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Tools" )
+	elseif( "${target}" STREQUAL "ScriptBindDummy")
+		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
 	else()
 		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )
 	endif()
