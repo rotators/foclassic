@@ -8,6 +8,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 - fixed Client crash when loading .dat files in some scenarios
 - fixed ASCompiler crash when receiving warnings/errors from script engine
+- Mapper scripts are compiled by Server during initialization
+    - errors in Mapper scripts are not considered critical by Server; compilation will be stopped if errors are detected, and initialization will move on to next step
+- language packs are loaded by Server before initializing script system
+- extensions changes
+    - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
 
 
 ## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)

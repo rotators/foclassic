@@ -72,9 +72,9 @@
 
 // Detect options
 #if !defined (FOCLASSIC_EXTENSION_STRIP_CONST)
-# define foc_const                       const
+# define foconst                         const
 #else
-# define foc_const
+# define foconst
 #endif
 
 // Platform specific options
@@ -285,304 +285,304 @@ EXPORT_UNINITIALIZED void ( * Log )( const char* frmt, ... );
 
 struct GameOptions
 {
-    const uint16           YearStart;
-    const uint             YearStartFTLo;
-    const uint             YearStartFTHi;
-    const uint16           Year;
-    const uint16           Month;
-    const uint16           Day;
-    const uint16           Hour;
-    const uint16           Minute;
-    const uint16           Second;
-    const uint             FullSecondStart;
-    const uint             FullSecond;
-    const uint16           TimeMultiplier;
-    const uint             GameTimeTick;
+    const uint16         YearStart;
+    const uint           YearStartFTLo;
+    const uint           YearStartFTHi;
+    const uint16         Year;
+    const uint16         Month;
+    const uint16         Day;
+    const uint16         Hour;
+    const uint16         Minute;
+    const uint16         Second;
+    const uint           FullSecondStart;
+    const uint           FullSecond;
+    const uint16         TimeMultiplier;
+    const uint           GameTimeTick;
 
-    const bool             DisableTcpNagle;
-    const bool             DisableZlibCompression;
-    const uint             FloodSize;
-    const bool             NoAnswerShuffle;
-    const bool             DialogDemandRecheck;
-    const uint             FixBoyDefaultExperience;
-    const uint             SneakDivider;
-    const uint             LevelCap;
-    const bool             LevelCapAddExperience;
-    const uint             LookNormal;
-    const uint             LookMinimum;
-    const uint             GlobalMapMaxGroupCount;
-    const uint             CritterIdleTick;
-    const uint             TurnBasedTick;
-    const int              DeadHitPoints;
-    const uint             Breaktime;
-    const uint             TimeoutTransfer;
-    const uint             TimeoutBattle;
-    const uint             ApRegeneration;
-    const uint             RtApCostCritterWalk;
-    const uint             RtApCostCritterRun;
-    const uint             RtApCostMoveItemContainer;
-    const uint             RtApCostMoveItemInventory;
-    const uint             RtApCostPickItem;
-    const uint             RtApCostDropItem;
-    const uint             RtApCostReloadWeapon;
-    const uint             RtApCostPickCritter;
-    const uint             RtApCostUseItem;
-    const uint             RtApCostUseSkill;
-    const bool             RtAlwaysRun;
-    const uint             TbApCostCritterMove;
-    const uint             TbApCostMoveItemContainer;
-    const uint             TbApCostMoveItemInventory;
-    const uint             TbApCostPickItem;
-    const uint             TbApCostDropItem;
-    const uint             TbApCostReloadWeapon;
-    const uint             TbApCostPickCritter;
-    const uint             TbApCostUseItem;
-    const uint             TbApCostUseSkill;
-    const bool             TbAlwaysRun;
-    const uint             ApCostAimEyes;
-    const uint             ApCostAimHead;
-    const uint             ApCostAimGroin;
-    const uint             ApCostAimTorso;
-    const uint             ApCostAimArms;
-    const uint             ApCostAimLegs;
-    const bool             RunOnCombat;
-    const bool             RunOnTransfer;
-    const uint             GlobalMapWidth;
-    const uint             GlobalMapHeight;
-    const uint             GlobalMapZoneLength;
-    const uint             GlobalMapMoveTime;
-    const uint             BagRefreshTime;
-    const uint             AttackAnimationsMinDist;
-    const uint             WhisperDist;
-    const uint             ShoutDist;
-    const int              LookChecks;
-    const uint             LookDir[5];
-    const uint             LookSneakDir[5];
-    const uint             LookWeight;
-    const bool             CustomItemCost;
-    const uint             RegistrationTimeout;
-    const uint             AccountPlayTime;
-    const bool             LoggingVars;
-    const uint             ScriptRunSuspendTimeout;
-    const uint             ScriptRunMessageTimeout;
-    const uint             TalkDistance;
-    const uint             NpcMaxTalkers;
-    const uint             MinNameLength;
-    const uint             MaxNameLength;
-    const uint             DlgTalkMinTime;
-    const uint             DlgBarterMinTime;
-    const uint             MinimumOfflineTime;
+    const bool           DisableTcpNagle;
+    const bool           DisableZlibCompression;
+    const uint           FloodSize;
+    const bool           NoAnswerShuffle;
+    const bool           DialogDemandRecheck;
+    const uint           FixBoyDefaultExperience;
+    const uint           SneakDivider;
+    const uint           LevelCap;
+    const bool           LevelCapAddExperience;
+    const uint           LookNormal;
+    const uint           LookMinimum;
+    const uint           GlobalMapMaxGroupCount;
+    const uint           CritterIdleTick;
+    const uint           TurnBasedTick;
+    const int            DeadHitPoints;
+    const uint           Breaktime;
+    const uint           TimeoutTransfer;
+    const uint           TimeoutBattle;
+    const uint           ApRegeneration;
+    const uint           RtApCostCritterWalk;
+    const uint           RtApCostCritterRun;
+    const uint           RtApCostMoveItemContainer;
+    const uint           RtApCostMoveItemInventory;
+    const uint           RtApCostPickItem;
+    const uint           RtApCostDropItem;
+    const uint           RtApCostReloadWeapon;
+    const uint           RtApCostPickCritter;
+    const uint           RtApCostUseItem;
+    const uint           RtApCostUseSkill;
+    const bool           RtAlwaysRun;
+    const uint           TbApCostCritterMove;
+    const uint           TbApCostMoveItemContainer;
+    const uint           TbApCostMoveItemInventory;
+    const uint           TbApCostPickItem;
+    const uint           TbApCostDropItem;
+    const uint           TbApCostReloadWeapon;
+    const uint           TbApCostPickCritter;
+    const uint           TbApCostUseItem;
+    const uint           TbApCostUseSkill;
+    const bool           TbAlwaysRun;
+    const uint           ApCostAimEyes;
+    const uint           ApCostAimHead;
+    const uint           ApCostAimGroin;
+    const uint           ApCostAimTorso;
+    const uint           ApCostAimArms;
+    const uint           ApCostAimLegs;
+    const bool           RunOnCombat;
+    const bool           RunOnTransfer;
+    const uint           GlobalMapWidth;
+    const uint           GlobalMapHeight;
+    const uint           GlobalMapZoneLength;
+    const uint           GlobalMapMoveTime;
+    const uint           BagRefreshTime;
+    const uint           AttackAnimationsMinDist;
+    const uint           WhisperDist;
+    const uint           ShoutDist;
+    const int            LookChecks;
+    const uint           LookDir[5];
+    const uint           LookSneakDir[5];
+    const uint           LookWeight;
+    const bool           CustomItemCost;
+    const uint           RegistrationTimeout;
+    const uint           AccountPlayTime;
+    const bool           LoggingVars;
+    const uint           ScriptRunSuspendTimeout;
+    const uint           ScriptRunMessageTimeout;
+    const uint           TalkDistance;
+    const uint           NpcMaxTalkers;
+    const uint           MinNameLength;
+    const uint           MaxNameLength;
+    const uint           DlgTalkMinTime;
+    const uint           DlgBarterMinTime;
+    const uint           MinimumOfflineTime;
 
-    const int              StartSpecialPoints;
-    const int              StartTagSkillPoints;
-    const int              SkillMaxValue;
-    const int              SkillModAdd2;
-    const int              SkillModAdd3;
-    const int              SkillModAdd4;
-    const int              SkillModAdd5;
-    const int              SkillModAdd6;
+    const int            StartSpecialPoints;
+    const int            StartTagSkillPoints;
+    const int            SkillMaxValue;
+    const int            SkillModAdd2;
+    const int            SkillModAdd3;
+    const int            SkillModAdd4;
+    const int            SkillModAdd5;
+    const int            SkillModAdd6;
 
-    const bool             AbsoluteOffsets;
-    const uint             SkillBegin;
-    const uint             SkillEnd;
-    const uint             TimeoutBegin;
-    const uint             TimeoutEnd;
-    const uint             KillBegin;
-    const uint             KillEnd;
-    const uint             PerkBegin;
-    const uint             PerkEnd;
-    const uint             AddictionBegin;
-    const uint             AddictionEnd;
-    const uint             KarmaBegin;
-    const uint             KarmaEnd;
-    const uint             DamageBegin;
-    const uint             DamageEnd;
-    const uint             TraitBegin;
-    const uint             TraitEnd;
-    const uint             ReputationBegin;
-    const uint             ReputationEnd;
+    const bool           AbsoluteOffsets;
+    const uint           SkillBegin;
+    const uint           SkillEnd;
+    const uint           TimeoutBegin;
+    const uint           TimeoutEnd;
+    const uint           KillBegin;
+    const uint           KillEnd;
+    const uint           PerkBegin;
+    const uint           PerkEnd;
+    const uint           AddictionBegin;
+    const uint           AddictionEnd;
+    const uint           KarmaBegin;
+    const uint           KarmaEnd;
+    const uint           DamageBegin;
+    const uint           DamageEnd;
+    const uint           TraitBegin;
+    const uint           TraitEnd;
+    const uint           ReputationBegin;
+    const uint           ReputationEnd;
 
-    const int              ReputationLoved;
-    const int              ReputationLiked;
-    const int              ReputationAccepted;
-    const int              ReputationNeutral;
-    const int              ReputationAntipathy;
-    const int              ReputationHated;
+    const int            ReputationLoved;
+    const int            ReputationLiked;
+    const int            ReputationAccepted;
+    const int            ReputationNeutral;
+    const int            ReputationAntipathy;
+    const int            ReputationHated;
 
-    foc_const bool         MapHexagonal;
-    foc_const int          MapHexWidth;
-    foc_const int          MapHexHeight;
-    foc_const int          MapHexLineHeight;
-    foc_const int          MapTileOffsX;
-    foc_const int          MapTileOffsY;
-    foc_const int          MapRoofOffsX;
-    foc_const int          MapRoofOffsY;
-    foc_const int          MapRoofSkipSize;
-    foc_const float        MapCameraAngle;
-    foc_const bool         MapSmoothPath;
-    foc_const ScriptString MapDataPrefix;
+    foconst bool         MapHexagonal;
+    foconst int          MapHexWidth;
+    foconst int          MapHexHeight;
+    foconst int          MapHexLineHeight;
+    foconst int          MapTileOffsX;
+    foconst int          MapTileOffsY;
+    foconst int          MapRoofOffsX;
+    foconst int          MapRoofOffsY;
+    foconst int          MapRoofSkipSize;
+    foconst float        MapCameraAngle;
+    foconst bool         MapSmoothPath;
+    foconst ScriptString MapDataPrefix;
 
     // Client and Mapper
-    const bool             Quit;
-    const bool             OpenGLRendering;
-    const bool             OpenGLDebug;
-    const bool             AssimpLogging;
-    const int              MouseX;
-    const int              MouseY;
-    const int              ScrOx;
-    const int              ScrOy;
-    const bool             ShowTile;
-    const bool             ShowRoof;
-    const bool             ShowItem;
-    const bool             ShowScen;
-    const bool             ShowWall;
-    const bool             ShowCrit;
-    const bool             ShowFast;
-    const bool             ShowPlayerNames;
-    const bool             ShowNpcNames;
-    const bool             ShowCritId;
-    const bool             ScrollKeybLeft;
-    const bool             ScrollKeybRight;
-    const bool             ScrollKeybUp;
-    const bool             ScrollKeybDown;
-    const bool             ScrollMouseLeft;
-    const bool             ScrollMouseRight;
-    const bool             ScrollMouseUp;
-    const bool             ScrollMouseDown;
-    const bool             ShowGroups;
-    const bool             HelpInfo;
-    const bool             DebugInfo;
-    const bool             DebugNet;
-    const bool             DebugSprites;
-    const bool             FullScreen;
-    const bool             VSync;
-    const int              FlushVal;
-    const int              BaseTexture;
-    const int              Light;
-    const ScriptString     Host;
-    const uint             Port;
-    const uint             ProxyType;
-    const ScriptString     ProxyHost;
-    const uint             ProxyPort;
-    const ScriptString     ProxyUser;
-    const ScriptString     ProxyPass;
-    const ScriptString     Name;
-    const int              ScrollDelay;
-    const uint             ScrollStep;
-    const bool             ScrollCheck;
-    const ScriptString     FoDataPath;
-    const int              FixedFPS;
-    const uint             FPS;
-    const uint             PingPeriod;
-    const uint             Ping;
-    const bool             MsgboxInvert;
-    const uint8            DefaultCombatMode;
-    const bool             MessNotify;
-    const bool             SoundNotify;
-    const bool             AlwaysOnTop;
-    const uint             TextDelay;
-    const uint             DamageHitDelay;
-    const int              ScreenWidth;
-    const int              ScreenHeight;
-    const int              MultiSampling;
-    const bool             MouseScroll;
-    const int              IndicatorType;
-    const uint             DoubleClickTime;
-    const uint8            RoofAlpha;
-    const bool             HideCursor;
-    const bool             DisableLMenu;
-    const bool             DisableMouseEvents;
-    const bool             DisableKeyboardEvents;
-    const bool             HidePassword;
-    const ScriptString     PlayerOffAppendix;
-    const int              CombatMessagesType;
-    const uint             Animation3dSmoothTime;
-    const uint             Animation3dFPS;
-    const int              RunModMul;
-    const int              RunModDiv;
-    const int              RunModAdd;
-    const bool             MapZooming;
-    const float            SpritesZoom;
-    const float            SpritesZoomMax;
-    const float            SpritesZoomMin;
-    const float            EffectValues[EFFECT_SCRIPT_VALUES];
-    const bool             AlwaysRun;
-    const int              AlwaysRunMoveDist;
-    const int              AlwaysRunUseDist;
-    const ScriptString     KeyboardRemap;
-    const uint             CritterFidgetTime;
-    const uint             Anim2CombatBegin;
-    const uint             Anim2CombatIdle;
-    const uint             Anim2CombatEnd;
-    const uint             RainTick;
-    const int16            RainSpeedX;
-    const int16            RainSpeedY;
+    const bool           Quit;
+    const bool           OpenGLRendering;
+    const bool           OpenGLDebug;
+    const bool           AssimpLogging;
+    const int            MouseX;
+    const int            MouseY;
+    const int            ScrOx;
+    const int            ScrOy;
+    const bool           ShowTile;
+    const bool           ShowRoof;
+    const bool           ShowItem;
+    const bool           ShowScen;
+    const bool           ShowWall;
+    const bool           ShowCrit;
+    const bool           ShowFast;
+    const bool           ShowPlayerNames;
+    const bool           ShowNpcNames;
+    const bool           ShowCritId;
+    const bool           ScrollKeybLeft;
+    const bool           ScrollKeybRight;
+    const bool           ScrollKeybUp;
+    const bool           ScrollKeybDown;
+    const bool           ScrollMouseLeft;
+    const bool           ScrollMouseRight;
+    const bool           ScrollMouseUp;
+    const bool           ScrollMouseDown;
+    const bool           ShowGroups;
+    const bool           HelpInfo;
+    const bool           DebugInfo;
+    const bool           DebugNet;
+    const bool           DebugSprites;
+    const bool           FullScreen;
+    const bool           VSync;
+    const int            FlushVal;
+    const int            BaseTexture;
+    const int            Light;
+    const ScriptString   Host;
+    const uint           Port;
+    const uint           ProxyType;
+    const ScriptString   ProxyHost;
+    const uint           ProxyPort;
+    const ScriptString   ProxyUser;
+    const ScriptString   ProxyPass;
+    const ScriptString   Name;
+    const int            ScrollDelay;
+    const uint           ScrollStep;
+    const bool           ScrollCheck;
+    const ScriptString   FoDataPath;
+    const int            FixedFPS;
+    const uint           FPS;
+    const uint           PingPeriod;
+    const uint           Ping;
+    const bool           MsgboxInvert;
+    const uint8          DefaultCombatMode;
+    const bool           MessNotify;
+    const bool           SoundNotify;
+    const bool           AlwaysOnTop;
+    const uint           TextDelay;
+    const uint           DamageHitDelay;
+    const int            ScreenWidth;
+    const int            ScreenHeight;
+    const int            MultiSampling;
+    const bool           MouseScroll;
+    const int            IndicatorType;
+    const uint           DoubleClickTime;
+    const uint8          RoofAlpha;
+    const bool           HideCursor;
+    const bool           DisableLMenu;
+    const bool           DisableMouseEvents;
+    const bool           DisableKeyboardEvents;
+    const bool           HidePassword;
+    const ScriptString   PlayerOffAppendix;
+    const int            CombatMessagesType;
+    const uint           Animation3dSmoothTime;
+    const uint           Animation3dFPS;
+    const int            RunModMul;
+    const int            RunModDiv;
+    const int            RunModAdd;
+    const bool           MapZooming;
+    const float          SpritesZoom;
+    const float          SpritesZoomMax;
+    const float          SpritesZoomMin;
+    const float          EffectValues[EFFECT_SCRIPT_VALUES];
+    const bool           AlwaysRun;
+    const int            AlwaysRunMoveDist;
+    const int            AlwaysRunUseDist;
+    const ScriptString   KeyboardRemap;
+    const uint           CritterFidgetTime;
+    const uint           Anim2CombatBegin;
+    const uint           Anim2CombatIdle;
+    const uint           Anim2CombatEnd;
+    const uint           RainTick;
+    const int16          RainSpeedX;
+    const int16          RainSpeedY;
 
     // Mapper
-    const ScriptString     ClientPath;
-    const ScriptString     ServerPath;
-    const bool             ShowCorners;
-    const bool             ShowCuttedSprites;
-    const bool             ShowDrawOrder;
-    const bool             SplitTilesCollection;
+    const ScriptString   ClientPath;
+    const ScriptString   ServerPath;
+    const bool           ShowCorners;
+    const bool           ShowCuttedSprites;
+    const bool           ShowDrawOrder;
+    const bool           SplitTilesCollection;
 
     // Engine data
-    void                   ( * CritterChangeParameter )( Critter& cr, uint index );                        // Call for correct changing critter parameter
-    CritterType*           CritterTypes;                                                                   // Array of critter types, maximum is MAX_CRIT_TYPES
+    void                 ( * CritterChangeParameter )( Critter& cr, uint index );                          // Call for correct changing critter parameter
+    CritterType*         CritterTypes;                                                                     // Array of critter types, maximum is MAX_CRIT_TYPES
 
-    Field*                 ClientMap;                                                                      // Array of client map hexes, accessing - ClientMap[hexY * ClientMapWidth + hexX]
-    uint8*                 ClientMapLight;                                                                 // Hex light, accessing - ClientMapLight[hexY * ClientMapWidth * 3 + hexX * 3 {+ 0(R), 1(G), 2(B)}]
-    uint                   ClientMapWidth;                                                                 // Map width
-    uint                   ClientMapHeight;                                                                // Map height
+    Field*               ClientMap;                                                                        // Array of client map hexes, accessing - ClientMap[hexY * ClientMapWidth + hexX]
+    uint8*               ClientMapLight;                                                                   // Hex light, accessing - ClientMapLight[hexY * ClientMapWidth * 3 + hexX * 3 {+ 0(R), 1(G), 2(B)}]
+    uint                 ClientMapWidth;                                                                   // Map width
+    uint                 ClientMapHeight;                                                                  // Map height
 
-    Sprite**               ( * GetDrawingSprites )( uint& count );                                         // Array of currently drawing sprites, tree is sorted
-    SpriteInfo*            ( * GetSpriteInfo )( uint sprId );                                              // Sprite information
-    uint                   ( * GetSpriteColor )( uint sprId, int x, int y, bool affectZoom );              // Color of pixel on sprite
-    bool                   ( * IsSpriteHit )( Sprite* sprite, int x, int y, bool checkEgg );               // Is position hitting sprite
+    Sprite**             ( * GetDrawingSprites )( uint& count );                                           // Array of currently drawing sprites, tree is sorted
+    SpriteInfo*          ( * GetSpriteInfo )( uint sprId );                                                // Sprite information
+    uint                 ( * GetSpriteColor )( uint sprId, int x, int y, bool affectZoom );                // Color of pixel on sprite
+    bool                 ( * IsSpriteHit )( Sprite* sprite, int x, int y, bool checkEgg );                 // Is position hitting sprite
 
-    const char*            ( * GetNameByHash )( uint hash );                                               // Get name of file by hash
-    uint                   ( * GetHashByName )( const char* name );                                        // Get hash of file name
+    const char*          ( * GetNameByHash )( uint hash );                                                 // Get name of file by hash
+    uint                 ( * GetHashByName )( const char* name );                                          // Get hash of file name
 
     // TODO move to GameScript
-    bool                   (* ScriptLoadModule )( const char* moduleName );
-    uint                   (* ScriptBind )( const char* moduleName, const char* funcDecl, bool temporaryId ); // Returning bindId
-    bool                   (* ScriptPrepare )( uint bindId );
-    void                   (* ScriptSetArgInt8 )( int8 value );
-    void                   (* ScriptSetArgInt16 )( int16 value );
-    void                   (* ScriptSetArgInt )( int value );
-    void                   (* ScriptSetArgInt64 )( int64 value );
-    void                   (* ScriptSetArgUInt8 )( uint8 value );
-    void                   (* ScriptSetArgUInt16 )( uint16 value );
-    void                   (* ScriptSetArgUInt )( uint value );
-    void                   (* ScriptSetArgUInt64 )( uint64 value );
-    void                   (* ScriptSetArgBool )( bool value );
-    void                   (* ScriptSetArgFloat )( float value );
-    void                   (* ScriptSetArgDouble )( double value );
-    void                   (* ScriptSetArgObject )( void* value );
-    void                   (* ScriptSetArgAddress )( void* value );
-    bool                   (* ScriptRunPrepared )();
-    int8                   (* ScriptGetReturnedInt8 )();
-    int16                  (* ScriptGetReturnedInt16 )();
-    int                    (* ScriptGetReturnedInt )();
-    int64                  (* ScriptGetReturnedInt64 )();
-    uint8                  (* ScriptGetReturnedUInt8 )();
-    uint16                 (* ScriptGetReturnedUInt16 )();
-    uint                   (* ScriptGetReturnedUInt )();
-    uint64                 (* ScriptGetReturnedUInt64 )();
-    bool                   (* ScriptGetReturnedBool )();
-    float                  (* ScriptGetReturnedFloat )();
-    double                 (* ScriptGetReturnedDouble )();
-    void*                  (* ScriptGetReturnedObject )();
-    void*                  (* ScriptGetReturnedAddress )();
+    bool                 (* ScriptLoadModule )( const char* moduleName );
+    uint                 (* ScriptBind )( const char* moduleName, const char* funcDecl, bool temporaryId );   // Returning bindId
+    bool                 (* ScriptPrepare )( uint bindId );
+    void                 (* ScriptSetArgInt8 )( int8 value );
+    void                 (* ScriptSetArgInt16 )( int16 value );
+    void                 (* ScriptSetArgInt )( int value );
+    void                 (* ScriptSetArgInt64 )( int64 value );
+    void                 (* ScriptSetArgUInt8 )( uint8 value );
+    void                 (* ScriptSetArgUInt16 )( uint16 value );
+    void                 (* ScriptSetArgUInt )( uint value );
+    void                 (* ScriptSetArgUInt64 )( uint64 value );
+    void                 (* ScriptSetArgBool )( bool value );
+    void                 (* ScriptSetArgFloat )( float value );
+    void                 (* ScriptSetArgDouble )( double value );
+    void                 (* ScriptSetArgObject )( void* value );
+    void                 (* ScriptSetArgAddress )( void* value );
+    bool                 (* ScriptRunPrepared )();
+    int8                 (* ScriptGetReturnedInt8 )();
+    int16                (* ScriptGetReturnedInt16 )();
+    int                  (* ScriptGetReturnedInt )();
+    int64                (* ScriptGetReturnedInt64 )();
+    uint8                (* ScriptGetReturnedUInt8 )();
+    uint16               (* ScriptGetReturnedUInt16 )();
+    uint                 (* ScriptGetReturnedUInt )();
+    uint64               (* ScriptGetReturnedUInt64 )();
+    bool                 (* ScriptGetReturnedBool )();
+    float                (* ScriptGetReturnedFloat )();
+    double               (* ScriptGetReturnedDouble )();
+    void*                (* ScriptGetReturnedObject )();
+    void*                (* ScriptGetReturnedAddress )();
 
-    int                    (* Random )( int minimum, int maximumInclusive );
-    uint                   (* GetTick )();
-    void                   (* SetLogCallback )( void (*function)( const char* ), bool enable );
+    int                  (* Random )( int minimum, int maximumInclusive );
+    uint                 (* GetTick )();
+    void                 (* SetLogCallback )( void (*function)( const char* ), bool enable );
 
     // Callbacks
-    uint                   (* GetUseApCost)( CritterMutual& cr, Item& item, uint8 mode );
-    uint                   (* GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
-    void                   (* GetRainOffset )( int16* ox, int16* oy );
+    uint                 (* GetUseApCost)( CritterMutual& cr, Item& item, uint8 mode );
+    uint                 (* GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
+    void                 (* GetRainOffset )( int16* ox, int16* oy );
 };
 
 EXPORT_UNINITIALIZED GameOptions* FOClassic;
@@ -951,44 +951,44 @@ struct Item
 
     struct _Data
     {
-        const uint16 SortValue;
-        const uint8  Info;
-        const uint8  Indicator;
-        const uint   PicMapHash;
-        const uint   PicInvHash;
-        const uint16 AnimWaitBase;
-        const uint8  AnimStay[2];
-        const uint8  AnimShow[2];
-        const uint8  AnimHide[2];
-        const uint   Flags;
-        const uint8  Rate;
-        const int8   LightIntensity;
-        const uint8  LightDistance;
-        const uint8  LightFlags;
-        const uint   LightColor;
-        const uint16 ScriptId;
-        const int16  TrapValue;
-        const uint   Count;
-        const uint   Cost;
-        const int    ScriptValues[ITEM_MAX_SCRIPT_VALUES];
-        const uint8  BrokenFlags;
-        const uint8  BrokenCount;
-        const uint16 Deterioration;
-        const uint16 AmmoPid;
-        const uint16 AmmoCount;
-        const uint   LockerId;
-        const uint16 LockerCondition;
-        const uint16 LockerComplexity;
-        const uint   HolodiskNumber;
-        const uint16 RadioChannel;
-        const uint16 RadioFlags;
-        const uint8  RadioBroadcastSend;
-        const uint8  RadioBroadcastRecv;
-        const uint16 Charge;
-        const int16  OffsetX;
-        const int16  OffsetY;
-        const int16  Dir;
-        const char   Reserved[2];
+        const uint16  SortValue;
+        const uint8   Info;
+        const uint8   Indicator;
+        const uint    PicMapHash;
+        const uint    PicInvHash;
+        const uint16  AnimWaitBase;
+        const uint8   AnimStay[2];
+        const uint8   AnimShow[2];
+        const uint8   AnimHide[2];
+        const uint    Flags;
+        foconst uint8 Rate;
+        const int8    LightIntensity;
+        const uint8   LightDistance;
+        const uint8   LightFlags;
+        const uint    LightColor;
+        const uint16  ScriptId;
+        const int16   TrapValue;
+        const uint    Count;
+        const uint    Cost;
+        const int     ScriptValues[ITEM_MAX_SCRIPT_VALUES];
+        const uint8   BrokenFlags;
+        const uint8   BrokenCount;
+        const uint16  Deterioration;
+        const uint16  AmmoPid;
+        const uint16  AmmoCount;
+        const uint    LockerId;
+        const uint16  LockerCondition;
+        const uint16  LockerComplexity;
+        const uint    HolodiskNumber;
+        const uint16  RadioChannel;
+        const uint16  RadioFlags;
+        const uint8   RadioBroadcastSend;
+        const uint8   RadioBroadcastRecv;
+        const uint16  Charge;
+        const int16   OffsetX;
+        const int16   OffsetY;
+        const int16   Dir;
+        const char    Reserved[2];
     } Data;
 
     const int16        RefCounter;
@@ -1947,6 +1947,6 @@ inline void static_asserts()
 }
 
 // Cleanup
-#undef foc_const
+#undef foconst
 
 #endif // __FOCLASSIC_H__ //
