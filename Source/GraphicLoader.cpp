@@ -970,7 +970,7 @@ void GraphicLoader::FreeTexture( Texture* texture )
 /* Effects                                                              */
 /************************************************************************/
 #ifdef FO_D3D
-class IncludeParser: public ID3DXInclude
+class IncludeParser : public ID3DXInclude
 {
 public:
     char* RootPath;

@@ -185,7 +185,7 @@ namespace Script
     }
 }
 
-class CBytecodeStream: public asIBinaryStream
+class CBytecodeStream : public asIBinaryStream
 {
 private:
     int                 readPos;

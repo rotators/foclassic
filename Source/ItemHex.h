@@ -11,7 +11,7 @@
 
 struct AnyFrames;
 
-class ItemHex: public Item
+class ItemHex : public Item
 {
 public:
     ItemHex( uint id, ProtoItem* proto, Item::ItemData* data, int hx, int hy, int dir, short scr_x, short scr_y, int* hex_scr_x, int* hex_scr_y, int cut );

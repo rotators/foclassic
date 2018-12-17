@@ -494,7 +494,7 @@ public:
     void Delete();
 };
 
-class Client: public Critter
+class Client : public Critter
 {
 public:
     char          Name[UTF8_BUF_SIZE( MAX_NAME )];   // Saved
@@ -710,7 +710,7 @@ public:
     ~Client();
 };
 
-class Npc: public Critter
+class Npc : public Critter
 {
     // Bag
 public:

@@ -1328,7 +1328,7 @@ struct Critter
     }
 };
 
-struct Client: Critter
+struct Client : Critter
 {
     const char Name[UTF8_BUF_SIZE( MAX_NAME )];
     const char PassHash[PASS_HASH_SIZE];
@@ -1337,7 +1337,7 @@ struct Client: Critter
     const uint UID[5];
 };
 
-struct Npc: Critter
+struct Npc : Critter
 {
     const uint        NextRefreshBagTick;
     const NpcPlaneVec AiPlanes;

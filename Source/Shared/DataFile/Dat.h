@@ -4,7 +4,7 @@
 #include "DataFile.h"
 #include "Types.h"
 
-class DataFileDat: public DataFile
+class DataFileDat : public DataFile
 {
 private:
     typedef map<string, uchar*> IndexMap;

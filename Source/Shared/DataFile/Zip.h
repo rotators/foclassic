@@ -6,7 +6,7 @@
 #include "DataFile.h"
 #include "Types.h"
 
-class DataFileZip: public DataFile
+class DataFileZip : public DataFile
 {
 private:
     struct ZipFileInfo

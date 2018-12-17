@@ -11,7 +11,7 @@
 #  define fl_window     ( (uint)fl_xid( MainWindow ) )
 # endif
 
-class FOWindow: public Fl_Window
+class FOWindow : public Fl_Window
 {
 public:
     FOWindow();

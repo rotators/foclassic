@@ -16,7 +16,7 @@ class CrDataPragma;
 class BindFuncPragma;
 class BindFieldPragma;
 
-class ScriptPragmaCallback: public Preprocessor::Pragma::Callback
+class ScriptPragmaCallback : public Preprocessor::Pragma::Callback
 {
 private:
     int              pragmaType;

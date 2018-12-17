@@ -1596,7 +1596,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         file_bin.UnloadFile();
     }
 
-    class MemoryFileLoader: public Preprocessor::FileLoader
+    class MemoryFileLoader : public Preprocessor::FileLoader
     {
 protected:
         const char* source;
