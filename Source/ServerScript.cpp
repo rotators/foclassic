@@ -234,37 +234,7 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 // Client/Mapper script processing
 //
 
-void FOServer::PostReloadClientMapperScripts( void* server_engine, void* old_engine, const string& old_define )
-{
-    if( old_engine )
-    {
-        asIScriptEngine* engine = (asIScriptEngine*)old_engine;
-        Script::FinishEngine( engine );
-    }
-
-    if( !old_define.empty() )
-    {
-        Script::Undef( old_define.c_str() );
-        Script::Define( "__SERVER" );
-    }
-
-    Script::SetWrongGlobalObjects( FOServer::ServerWrongGlobalObjects );
-    Script::SetLoadLibraryCompiler( false );
-
-    #ifdef MEMORY_DEBUG
-    if( MemoryDebugLevel >= 2 )
-        asSetGlobalMemoryFunctions( ASDeepDebugMalloc, ASDeepDebugFree );
-    else if( MemoryDebugLevel >= 1 )
-        asSetGlobalMemoryFunctions( ASDebugMalloc, ASDebugFree );
-    else
-        asSetGlobalMemoryFunctions( malloc, free );
-    #endif
-
-    if( server_engine )
-        Script::SetEngine( (asIScriptEngine*)server_engine );
-}
-
-bool FOServer::ReloadClientMapperScripts( const uchar& bind )
+bool FOServer::ReloadExternalScripts( const uchar& bind )
 {
     static const string targets[] =
     {
@@ -306,7 +276,7 @@ bool FOServer::ReloadClientMapperScripts( const uchar& bind )
     if( !target_engine )
     {
         WriteLogF( _FUNC_, " - Script::CreateEngine fail\n" );
-        PostReloadClientMapperScripts( NULL, NULL, "" );
+        ReloadExternalScriptsCleanup( NULL, NULL, "" );
 
         return false;
     }
@@ -317,7 +287,7 @@ bool FOServer::ReloadClientMapperScripts( const uchar& bind )
     if( !Script::BindDummy::RegisterAll( target_engine, bind ) )
     {
         WriteLog( "Bind fail\n" );
-        PostReloadClientMapperScripts( server_engine, target_engine, "" );
+        ReloadExternalScriptsCleanup( server_engine, target_engine, "" );
 
         return false;
     }
@@ -487,7 +457,7 @@ bool FOServer::ReloadClientMapperScripts( const uchar& bind )
     bool success = Script::BindReservedFunctions( config.c_str(), target_lower.c_str(), functions, count, true );
 
     // Finish
-    PostReloadClientMapperScripts( server_engine, target_engine, target_define );
+    ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
 
     if( !success )
     {
@@ -536,6 +506,36 @@ bool FOServer::ReloadClientMapperScripts( const uchar& bind )
     WriteLog( "Reload %s scripts complete.\n", target_lower.c_str() );
 
     return true;
+}
+
+void FOServer::ReloadExternalScriptsCleanup( void* server_engine, void* old_engine, const string& old_define )
+{
+    if( old_engine )
+    {
+        asIScriptEngine* engine = (asIScriptEngine*)old_engine;
+        Script::FinishEngine( engine );
+    }
+
+    if( !old_define.empty() )
+    {
+        Script::Undef( old_define.c_str() );
+        Script::Define( "__SERVER" );
+    }
+
+    Script::SetWrongGlobalObjects( FOServer::ServerWrongGlobalObjects );
+    Script::SetLoadLibraryCompiler( false );
+
+    #ifdef MEMORY_DEBUG
+    if( MemoryDebugLevel >= 2 )
+        asSetGlobalMemoryFunctions( ASDeepDebugMalloc, ASDeepDebugFree );
+    else if( MemoryDebugLevel >= 1 )
+        asSetGlobalMemoryFunctions( ASDebugMalloc, ASDebugFree );
+    else
+        asSetGlobalMemoryFunctions( malloc, free );
+    #endif
+
+    if( server_engine )
+        Script::SetEngine( (asIScriptEngine*)server_engine );
 }
 
 /************************************************************************/

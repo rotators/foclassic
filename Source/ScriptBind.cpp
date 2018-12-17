@@ -1050,14 +1050,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "uint GetGlobalMapCritters(uint16 worldX, uint16 worldY, uint radius, int findType, Critter@[]@+ critters)", focFUNCTION( BIND_CLASS Global_GetGlobalMapCritters ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "Critter@+ GetCritter(uint critterId)", focFUNCTION( BIND_CLASS Global_GetCritter ), asCALL_CDECL );
 
-        RegisterObjectMethod( engine, "Critter", "bool IsPlayer() const", focFUNCTION( BIND_CLASS Crit_IsPlayer ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsNpc() const", focFUNCTION( BIND_CLASS Crit_IsNpc ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsCanWalk() const", focFUNCTION( BIND_CLASS Crit_IsCanWalk ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsCanRun() const", focFUNCTION( BIND_CLASS Crit_IsCanRun ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsCanRotate() const", focFUNCTION( BIND_CLASS Crit_IsCanRotate ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsCanAim() const", focFUNCTION( BIND_CLASS Crit_IsCanAim ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "Critter", "bool IsAnim1(uint index) const", focFUNCTION( BIND_CLASS Crit_IsAnim1 ), asCALL_CDECL_OBJFIRST );
-
         // Npc
         RegisterGlobalFunction( engine, "void GetProtoCritter(uint16 protoId, int[]& data)", focFUNCTION( BIND_CLASS Global_GetProtoCritter ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void DeleteNpc(Critter& npc)", focFUNCTION( BIND_CLASS Global_DeleteNpc ), asCALL_CDECL );
@@ -1068,6 +1060,41 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "string@ GetPlayerName(uint playerId)", focFUNCTION( BIND_CLASS Global_GetPlayerName ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetAllPlayers(Critter@[]@+ players)", focFUNCTION( BIND_CLASS Global_GetAllPlayers ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetRegisteredPlayers(uint[]& ids, string@[]& names)", focFUNCTION( BIND_CLASS Global_GetRegisteredPlayers ), asCALL_CDECL );
+
+        // Parameters
+        RegisterObjectProperty( engine, "Critter", "const uint Id", focOFFSET( Critter, Data ) + focOFFSET( CritData, Id ) );
+        RegisterObjectProperty( engine, "Critter", "const uint CrType", focOFFSET( Critter, Data ) + focOFFSET( CritData, BaseType ) );
+        RegisterObjectProperty( engine, "Critter", "const uint16 HexX", focOFFSET( Critter, Data ) + focOFFSET( CritData, HexX ) );
+        RegisterObjectProperty( engine, "Critter", "const uint16 HexY", focOFFSET( Critter, Data ) + focOFFSET( CritData, HexY ) );
+        RegisterObjectProperty( engine, "Critter", "const uint16 WorldX", focOFFSET( Critter, Data ) + focOFFSET( CritData, WorldX ) );
+        RegisterObjectProperty( engine, "Critter", "const uint16 WorldY", focOFFSET( Critter, Data ) + focOFFSET( CritData, WorldY ) );
+        RegisterObjectProperty( engine, "Critter", "const uint8 Dir", focOFFSET( Critter, Data ) + focOFFSET( CritData, Dir ) );
+        RegisterObjectProperty( engine, "Critter", "const uint8 Cond", focOFFSET( Critter, Data ) + focOFFSET( CritData, Cond ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim1Life", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Life ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim1Knockout", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Knockout ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim1Dead", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Dead ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim2Life", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Life ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim2Knockout", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Knockout ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Anim2Dead", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Dead ) );
+        RegisterObjectProperty( engine, "Critter", "const uint Flags", focOFFSET( Critter, Flags ) );
+        RegisterObjectProperty( engine, "Critter", "const string Name", focOFFSET( Critter, NameStr ) );
+        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist1", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist1 ) );
+        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist2", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist2 ) );
+        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist3", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist3 ) );
+        RegisterObjectProperty( engine, "Critter", "bool IsRuning", focOFFSET( Critter, IsRuning ) );
+        RegisterObjectProperty( engine, "Critter", "const bool IsNotValid", focOFFSET( Critter, IsNotValid ) );
+        RegisterObjectProperty( engine, "Critter", "const int Ref", focOFFSET( Critter, RefCounter ) );
+        RegisterObjectProperty( engine, "Critter", "DataVal Param", focOFFSET( Critter, ThisPtr[0] ) );
+        RegisterObjectProperty( engine, "Critter", "DataRef ParamBase", focOFFSET( Critter, ThisPtr[0] ) );
+
+        RegisterObjectMethod( engine, "Critter", "bool IsPlayer() const", focFUNCTION( BIND_CLASS Crit_IsPlayer ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsNpc() const", focFUNCTION( BIND_CLASS Crit_IsNpc ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsCanWalk() const", focFUNCTION( BIND_CLASS Crit_IsCanWalk ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsCanRun() const", focFUNCTION( BIND_CLASS Crit_IsCanRun ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsCanRotate() const", focFUNCTION( BIND_CLASS Crit_IsCanRotate ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsCanAim() const", focFUNCTION( BIND_CLASS Crit_IsCanAim ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "bool IsAnim1(uint index) const", focFUNCTION( BIND_CLASS Crit_IsAnim1 ), asCALL_CDECL_OBJFIRST );
+
         RegisterObjectMethod( engine, "Critter", "uint8 GetAccess() const", focFUNCTION( BIND_CLASS Cl_GetAccess ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void SetAccess(uint8 access) const", focFUNCTION( BIND_CLASS Cl_SetAccess ), asCALL_CDECL_OBJFIRST );
 
@@ -1245,32 +1272,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectMethod( engine, "Critter", "bool EventGlobalInvite(Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir)", focFUNCTION( BIND_CLASS Crit_EventGlobalInvite ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventTurnBasedProcess(Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventSmthTurnBasedProcess(Critter& fromCr, Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventSmthTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
-
-        // Parameters
-        RegisterObjectProperty( engine, "Critter", "const uint Id", focOFFSET( Critter, Data ) + focOFFSET( CritData, Id ) );
-        RegisterObjectProperty( engine, "Critter", "const uint CrType", focOFFSET( Critter, Data ) + focOFFSET( CritData, BaseType ) );
-        RegisterObjectProperty( engine, "Critter", "const uint16 HexX", focOFFSET( Critter, Data ) + focOFFSET( CritData, HexX ) );
-        RegisterObjectProperty( engine, "Critter", "const uint16 HexY", focOFFSET( Critter, Data ) + focOFFSET( CritData, HexY ) );
-        RegisterObjectProperty( engine, "Critter", "const uint16 WorldX", focOFFSET( Critter, Data ) + focOFFSET( CritData, WorldX ) );
-        RegisterObjectProperty( engine, "Critter", "const uint16 WorldY", focOFFSET( Critter, Data ) + focOFFSET( CritData, WorldY ) );
-        RegisterObjectProperty( engine, "Critter", "const uint8 Dir", focOFFSET( Critter, Data ) + focOFFSET( CritData, Dir ) );
-        RegisterObjectProperty( engine, "Critter", "const uint8 Cond", focOFFSET( Critter, Data ) + focOFFSET( CritData, Cond ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim1Life", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Life ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim1Knockout", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Knockout ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim1Dead", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim1Dead ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim2Life", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Life ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim2Knockout", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Knockout ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Anim2Dead", focOFFSET( Critter, Data ) + focOFFSET( CritData, Anim2Dead ) );
-        RegisterObjectProperty( engine, "Critter", "const uint Flags", focOFFSET( Critter, Flags ) );
-        RegisterObjectProperty( engine, "Critter", "const string Name", focOFFSET( Critter, NameStr ) );
-        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist1", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist1 ) );
-        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist2", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist2 ) );
-        RegisterObjectProperty( engine, "Critter", "uint ShowCritterDist3", focOFFSET( Critter, Data ) + focOFFSET( CritData, ShowCritterDist3 ) );
-        RegisterObjectProperty( engine, "Critter", "bool IsRuning", focOFFSET( Critter, IsRuning ) );
-        RegisterObjectProperty( engine, "Critter", "const bool IsNotValid", focOFFSET( Critter, IsNotValid ) );
-        RegisterObjectProperty( engine, "Critter", "const int Ref", focOFFSET( Critter, RefCounter ) );
-        RegisterObjectProperty( engine, "Critter", "DataVal Param", focOFFSET( Critter, ThisPtr[0] ) );
-        RegisterObjectProperty( engine, "Critter", "DataRef ParamBase", focOFFSET( Critter, ThisPtr[0] ) );
     }
     #endif
 
@@ -1822,19 +1823,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "uint GetSelectedObjects(MapperObject@[]@+ objects)", focFUNCTION( BIND_CLASS Global_GetSelectedObjects ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "MapperObject@+ GetMonitorObject(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorObject ), asCALL_CDECL );
 
-        RegisterObjectMethod( engine, "MapperObject", "void Update() const", focFUNCTION( BIND_CLASS MapperObject_Update ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "MapperObject@+ AddChild(uint16 pid)", focFUNCTION( BIND_CLASS MapperObject_AddChild ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "uint GetChilds(MapperObject@[]@+ objects) const", focFUNCTION( BIND_CLASS MapperObject_GetChilds ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "string@ get_ScriptName() const", focFUNCTION( BIND_CLASS MapperObject_get_ScriptName ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void set_ScriptName(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_ScriptName ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "string@ get_FuncName() const", focFUNCTION( BIND_CLASS MapperObject_get_FuncName ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void set_FuncName(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_FuncName ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "uint8 get_Critter_Cond() const", focFUNCTION( BIND_CLASS MapperObject_get_Critter_Cond ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void set_Critter_Cond(uint8 value)", focFUNCTION( BIND_CLASS MapperObject_set_Critter_Cond ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void MoveToHex(uint16 hexX, uint16 hexY)", focFUNCTION( BIND_CLASS MapperObject_MoveToHex ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void MoveToHexOffset(int x, int y)", focFUNCTION( BIND_CLASS MapperObject_MoveToHexOffset ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectMethod( engine, "MapperObject", "void MoveToDir(uint8 dir)", focFUNCTION( BIND_CLASS MapperObject_MoveToDir ), asCALL_CDECL_OBJFIRST );
-
         // Generic
         RegisterObjectProperty( engine, "MapperObject", "const uint8 MapObjType", focOFFSET( MapObject, MapObjType ) );
         RegisterObjectProperty( engine, "MapperObject", "const uint16 ProtoId", focOFFSET( MapObject, ProtoId ) );
@@ -1924,6 +1912,21 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectProperty( engine, "MapperObject", "uint Scenery_ToEntire", focOFFSET( MapObject, MScenery.ToEntire ) );
         RegisterObjectProperty( engine, "MapperObject", "uint8 Scenery_ToDir", focOFFSET( MapObject, MScenery.ToDir ) );
         RegisterObjectProperty( engine, "MapperObject", "uint8 Scenery_SpriteCut", focOFFSET( MapObject, MScenery.SpriteCut ) );
+
+        //
+
+        RegisterObjectMethod( engine, "MapperObject", "void Update() const", focFUNCTION( BIND_CLASS MapperObject_Update ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "MapperObject@+ AddChild(uint16 pid)", focFUNCTION( BIND_CLASS MapperObject_AddChild ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "uint GetChilds(MapperObject@[]@+ objects) const", focFUNCTION( BIND_CLASS MapperObject_GetChilds ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "string@ get_ScriptName() const", focFUNCTION( BIND_CLASS MapperObject_get_ScriptName ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void set_ScriptName(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_ScriptName ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "string@ get_FuncName() const", focFUNCTION( BIND_CLASS MapperObject_get_FuncName ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void set_FuncName(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_FuncName ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "uint8 get_Critter_Cond() const", focFUNCTION( BIND_CLASS MapperObject_get_Critter_Cond ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void set_Critter_Cond(uint8 value)", focFUNCTION( BIND_CLASS MapperObject_set_Critter_Cond ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void MoveToHex(uint16 hexX, uint16 hexY)", focFUNCTION( BIND_CLASS MapperObject_MoveToHex ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void MoveToHexOffset(int x, int y)", focFUNCTION( BIND_CLASS MapperObject_MoveToHexOffset ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "MapperObject", "void MoveToDir(uint8 dir)", focFUNCTION( BIND_CLASS MapperObject_MoveToDir ), asCALL_CDECL_OBJFIRST );
     }
     #endif
 

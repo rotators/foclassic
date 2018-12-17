@@ -189,10 +189,10 @@ public:
     static uint DialogScriptResult( DemandResult& result, Critter* master, Critter* slave );
     static int  DialogGetParam( Critter* master, Critter* slave, uint index );
 
-    // Client script
+    // Client/Mapper script
     static bool RequestReloadClientScripts;
-    static bool ReloadClientMapperScripts( const uchar& bind );
-    static void PostReloadClientMapperScripts( void* server_engine, void* target_engine, const string& old_define );
+    static bool ReloadExternalScripts( const uchar& bind );
+    static void ReloadExternalScriptsCleanup( void* server_engine, void* target_engine, const string& old_define );
 
     // Pragma callbacks
     static bool PragmaCallbackCrData( const char* text );
