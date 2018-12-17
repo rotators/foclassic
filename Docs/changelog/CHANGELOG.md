@@ -12,7 +12,12 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - errors in Mapper scripts are not considered critical by Server; compilation will be stopped if errors are detected, and initialization will move on to next step
 - language packs are loaded by Server before initializing script system
 - extensions changes
+    - added `Client::UID[]`
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
+- scripts changes
+    - added `uint Critter::GetUID(uint8 index)`; works only for players
+    - added `uint Critter::GetIp()`; works for players only
+    - added `string@ Critter::GetIpString()`; works for players only
 
 
 ## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)

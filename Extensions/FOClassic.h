@@ -1334,6 +1334,7 @@ struct Client: Critter
     const char PassHash[PASS_HASH_SIZE];
     uint8      Access;
     const uint LanguageMsg;
+    const uint UID[5];
 };
 
 struct Npc: Critter

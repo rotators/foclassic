@@ -1402,6 +1402,39 @@ void FOServer::SScriptFunc::Cl_SetAccess( Critter* cl, uchar access )
     ( (Client*)cl )->Access = access;
 }
 
+uint FOServer::SScriptFunc::Cl_GetUID( Critter* cl, uchar index )
+{
+    if( cl->IsNotValid )
+        SCRIPT_ERROR_R0( "This nullptr." );
+    if( !cl->IsPlayer() )
+        SCRIPT_ERROR_R0( "Critter is not player." );
+
+    if( index >= 5 ) // magic number
+        SCRIPT_ERROR_R0( "Invalid index arg." );
+
+    return ( (Client*)cl )->UID[index];
+}
+
+uint FOServer::SScriptFunc::Cl_GetIp( Critter* cl )
+{
+    if( cl->IsNotValid )
+        SCRIPT_ERROR_R0( "This nullptr." );
+    if( !cl->IsPlayer() )
+        SCRIPT_ERROR_R0( "Critter is not player." );
+
+    return ( (Client*)cl )->GetIp();
+}
+
+ScriptString* FOServer::SScriptFunc::Cl_GetIpString( Critter* cl )
+{
+    if( cl->IsNotValid )
+        SCRIPT_ERROR_R0( "This nullptr." );
+    if( !cl->IsPlayer() )
+        SCRIPT_ERROR_R0( "Critter is not player." );
+
+    return new ScriptString( ( (Client*)cl )->GetIpStr() );
+}
+
 bool FOServer::SScriptFunc::Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name )
 {
     if( cr->IsNotValid )

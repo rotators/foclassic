@@ -1097,6 +1097,9 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
 
         RegisterObjectMethod( engine, "Critter", "uint8 GetAccess() const", focFUNCTION( BIND_CLASS Cl_GetAccess ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void SetAccess(uint8 access) const", focFUNCTION( BIND_CLASS Cl_SetAccess ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "uint GetUID(uint8 index)", focFUNCTION( BIND_CLASS Cl_GetUID ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "uint GetIp()", focFUNCTION( BIND_CLASS Cl_GetIp ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "Critter", "string@ GetIpString()", focFUNCTION( BIND_CLASS Cl_GetIpString ), asCALL_CDECL_OBJFIRST );
 
         RegisterObjectMethod( engine, "Critter", "bool SetEvent(int eventType, string@+ funcName)", focFUNCTION( BIND_CLASS Crit_SetEvent ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void SetLexems(string@+ lexems)", focFUNCTION( BIND_CLASS Crit_SetLexems ), asCALL_CDECL_OBJFIRST );
