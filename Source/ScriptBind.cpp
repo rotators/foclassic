@@ -297,9 +297,9 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     # pragma TODO("asEP_COMPILER_WARNINGS")
     #endif
 
-	#if ANGELSCRIPT_VERSION >= 22900
-	#pragma TODO("asCALL_THISCALL_OBJFIRST")
-	#endif
+    #if ANGELSCRIPT_VERSION >= 22900
+    # pragma TODO("asCALL_THISCALL_OBJFIRST")
+    #endif
 
     #if ANGELSCRIPT_VERSION >= 23000
     # pragma TODO("asEP_DISALLOW_EMPTY_LIST_ELEMENTS")
