@@ -15,9 +15,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - added `Client::UID[]`
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
 - scripts changes
-    - added `uint Critter::GetUID(uint8 index)`; works only for players
-    - added `uint Critter::GetIp()`; works for players only
-    - added `string@ Critter::GetIpString()`; works for players only
+    - preprocessor now understands `#undef` directive
+    - added `uint Critter::GetUID(uint8 index)`; returns player's UID0 - UID4
+    - added `uint Critter::GetIp()`; returns player's IP
+    - added `string@ Critter::GetIpString()`; returns player's IP in human-readable format
+    - added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`; returns monitor position of name / dialog floater / chat message above critter head
 
 
 ## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)

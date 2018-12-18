@@ -310,6 +310,7 @@ public:
 public:
     Rect GetTextRect();
     void SetText( const char* str, uint color, uint text_delay );
+    void GetNameTextInfo( bool& nameVisible, int& x, int& y, int& w, int& h, int& lines );
     void DrawTextOnHead();
 
 private:

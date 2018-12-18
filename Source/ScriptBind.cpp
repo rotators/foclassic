@@ -123,7 +123,7 @@ bool ScriptBind::SetEngineProperty( asIScriptEngine* engine, asEEngineProp prope
     int result = engine->SetEngineProperty( property, value );
     if( result == asSUCCESS )
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -142,7 +142,7 @@ bool ScriptBind::RegisterGlobalProperty( asIScriptEngine* engine, const string& 
     int result = engine->RegisterGlobalProperty( declaration.c_str(), pointer );
     if( result == asSUCCESS )
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -162,7 +162,7 @@ bool ScriptBind::RegisterGlobalFunction( asIScriptEngine* engine, const string& 
     int result = engine->RegisterGlobalFunction( declaration.c_str(), function, callConv, auxiliary );
     if( result ) // function id
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -181,7 +181,7 @@ bool ScriptBind::RegisterObjectType( asIScriptEngine* engine, const string& obje
     int result = engine->RegisterObjectType( object.c_str(), byteSize, flags );
     if( result ) // type id
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -200,7 +200,7 @@ bool ScriptBind::RegisterObjectBehaviour( asIScriptEngine* engine, const string&
     int result = engine->RegisterObjectBehaviour( object.c_str(), behaviour, declaration.c_str(), function, callConv );
     if( result ) // function id
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -219,7 +219,7 @@ bool ScriptBind::RegisterObjectProperty( asIScriptEngine* engine, const string& 
     int result = engine->RegisterObjectProperty( object.c_str(), declaration.c_str(), byteOffset );
     if( result == asSUCCESS )
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -239,7 +239,7 @@ bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, const string& ob
     int result = engine->RegisterObjectMethod( object.c_str(), declaration.c_str(), function, callConv );
     if( result ) // function id
     {
-        // TODO
+        // TODO ScriptBind postprocess
     }
     else
     {
@@ -296,6 +296,10 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     #if ANGELSCRIPT_VERSION >= 22602
     # pragma TODO("asEP_COMPILER_WARNINGS")
     #endif
+
+	#if ANGELSCRIPT_VERSION >= 22900
+	#pragma TODO("asCALL_THISCALL_OBJFIRST")
+	#endif
 
     #if ANGELSCRIPT_VERSION >= 23000
     # pragma TODO("asEP_DISALLOW_EMPTY_LIST_ELEMENTS")
@@ -1014,6 +1018,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
 
     /*******************************************************************************************************************************/
 
+
     //
     //   CraftItem
     //
@@ -1351,6 +1356,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectMethod( engine, "CritterCl", "uint get_ContourColor() const", focFUNCTION( BIND_CLASS Crit_get_ContourColor ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "CritterCl", "uint GetMultihex() const", focFUNCTION( BIND_CLASS Crit_GetMultihex ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "CritterCl", "bool IsTurnBasedTurn() const", focFUNCTION( BIND_CLASS Crit_IsTurnBasedTurn ), asCALL_CDECL_OBJFIRST );
+        RegisterObjectMethod( engine, "CritterCl", "void GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines) const", focFUNCTION( BIND_CLASS Crit_GetNameTextInfo ), asCALL_CDECL_OBJFIRST );
     }
     #endif
 
@@ -1872,11 +1878,11 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectProperty( engine, "MapperObject", "uint8 AnimStayBegin", focOFFSET( MapObject, MItem.AnimStayBegin ) );
         RegisterObjectProperty( engine, "MapperObject", "uint8 AnimStayEnd", focOFFSET( MapObject, MItem.AnimStayEnd ) );
         RegisterObjectProperty( engine, "MapperObject", "uint16 AnimWait", focOFFSET( MapObject, MItem.AnimWait ) );
+        RegisterObjectProperty( engine, "MapperObject", "uint8 InfoOffset", focOFFSET( MapObject, MItem.InfoOffset ) );
         RegisterObjectMethod( engine, "MapperObject", "string@ get_PicMap() const", focFUNCTION( BIND_CLASS MapperObject_get_PicMap ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "MapperObject", "void set_PicMap(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_PicMap ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "MapperObject", "string@ get_PicInv() const", focFUNCTION( BIND_CLASS MapperObject_get_PicInv ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "MapperObject", "void set_PicInv(const string& name)", focFUNCTION( BIND_CLASS MapperObject_set_PicInv ), asCALL_CDECL_OBJFIRST );
-        RegisterObjectProperty( engine, "MapperObject", "uint8 InfoOffset", focOFFSET( MapObject, MItem.InfoOffset ) );
 
         // Item
         RegisterObjectProperty( engine, "MapperObject", "uint Item_Count", focOFFSET( MapObject, MItem.Count ) );

@@ -166,7 +166,7 @@ EXPORT_UNINITIALIZED asIScriptEngine* ASEngine;
 #define MAP_MAX_DATA                     (100)
 
 // FOClassic types
-struct Client;
+struct Client; // TODO rename to Player
 struct Critter;
 struct CritterCl;
 struct CritterTimeEvent;
@@ -591,7 +591,8 @@ EXPORT_UNINITIALIZED GameOptions* FOnline;
 #if defined (FOCLASSIC_BLEEDING_EDGE)
 struct GameOptionsExt
 {
-    # if 0// TODO
+    # if 0
+    // TODO implement GameScript
     GameScript* Script;
     # endif
 
@@ -770,7 +771,8 @@ struct ProtoItem
     const uint   Car_MovementType;
 
     bool IsItem()      const { return Type != ITEM_TYPE_GENERIC && Type != ITEM_TYPE_WALL; }
-    bool IsScen()      const { return Type == ITEM_TYPE_GENERIC; }
+    bool IsGeneric()   const { return Type == ITEM_TYPE_GENERIC; }
+    bool IsScen()      const { return Type == ITEM_TYPE_GENERIC; }     // TODO remove duplicate IsScen() <-> IsGeneric()
     bool IsWall()      const { return Type == ITEM_TYPE_WALL; }
     bool IsArmor()     const { return Type == ITEM_TYPE_ARMOR; }
     bool IsDrug()      const { return Type == ITEM_TYPE_DRUG; }
@@ -781,9 +783,8 @@ struct ProtoItem
     bool IsContainer() const { return Type == ITEM_TYPE_CONTAINER; }
     bool IsDoor()      const { return Type == ITEM_TYPE_DOOR; }
     bool IsGrid()      const { return Type == ITEM_TYPE_GRID; }
-    bool IsGeneric()   const { return Type == ITEM_TYPE_GENERIC; }
     bool IsCar()       const { return Type == ITEM_TYPE_CAR; }
-    bool LockerIsChangeble() const
+    bool LockerIsChangeble() const // TODO IsLockerChangeable
     {
         if( IsDoor() ) { return true; }
         if( IsContainer() ) { return Container_Changeble; }
