@@ -1,7 +1,19 @@
 message( STATUS "Configuring libraries..." )
 
+# make sure submodule has been initialized
+function( add_submodule dir )
+	set( file "${CMAKE_CURRENT_LIST_DIR}/${dir}/CMakeLists.txt" )
+	if( EXISTS "${file}" )
+		add_subdirectory( ${dir} )
+	else()
+		file( TO_NATIVE_PATH "${file}" file_native )
+		list( APPEND MISSING_FILES "${file_native}" )
+		set( MISSING_FILES "${MISSING_FILES}" PARENT_SCOPE )
+	endif()
+endfunction()
+
 add_subdirectory( acm )
-add_subdirectory( angelscript-preprocessor )
+add_submodule( angelscript-preprocessor )
 add_subdirectory( assimp )
 add_subdirectory( distorm.bin )
 add_subdirectory( dx9.bin )
@@ -17,6 +29,15 @@ add_subdirectory( pthread.bin )
 add_subdirectory( sha2 )
 add_subdirectory( theora.bin )
 add_subdirectory( zlib )
+
+if( MISSING_FILES )
+	message( STATUS "Following files are missing:" )
+	foreach( file IN LISTS MISSING_FILES )
+		message( STATUS "  ${file}" )
+	endforeach()
+	message( STATUS "Make sure all git submodules has been initialized before running CMake again." )
+	message( FATAL_ERROR "Configuring libraries... ERROR: missing submodules" )
+endif()
 
 set_property( TARGET acm angelscript-preprocessor glew sha2 zlib PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
 

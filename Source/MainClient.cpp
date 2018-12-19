@@ -15,6 +15,8 @@
 #include "Ini.h"
 #include "Keyboard.h"
 #include "Log.h"
+#include "Script.h"
+#include "ScriptFunctions.h"
 #include "SinglePlayer.h"
 #include "Timer.h"
 #include "Thread.h"
@@ -160,6 +162,9 @@ int main( int argc, char** argv )
             Thread::Sleep( 100 );
     }
     GameOpt.Quit = true;
+
+    if( Script::PrepareContext( ClientFunctions.Finish, _FUNC_, "Game" ) )
+        Script::RunPrepared();
 
     // Destroy engine
     FOEngine->Finish();

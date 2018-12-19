@@ -6,6 +6,7 @@ ClientScriptFunctions  ClientFunctions;
 ReservedScriptFunction ClientReservedFunctions[] =
 {
     { &ClientFunctions.Start, "start", "bool %s()" },
+    { &ClientFunctions.Finish, "finish", "void %s()" },
     { &ClientFunctions.Loop, "loop", "uint %s()" },
     { &ClientFunctions.GetActiveScreens, "get_active_screens", "void %s( int[]& screens )" },
     { &ClientFunctions.ScreenChange, "screen_change", "void %s( bool show, int screen, int p0, int p1, int p2 )" },
@@ -58,6 +59,7 @@ MapperScriptFunctions  MapperFunctions;
 ReservedScriptFunction MapperReservedFunctions[] =
 {
     { &MapperFunctions.Start, "start", "void %s()" },
+    { &MapperFunctions.Finish, "finish", "void %s()" },
     { &MapperFunctions.Loop, "loop", "uint %s()" },
     { &MapperFunctions.ConsoleMessage, "console_message", "bool %s( string& message )" },
     { &MapperFunctions.RenderIface, "render_iface", "void %s( uint layer )" },

@@ -13,6 +13,7 @@ struct ReservedScriptFunction
 struct ClientScriptFunctions
 {
     int Start;
+    int Finish;
     int Loop;
     int GetActiveScreens;
     int ScreenChange;
@@ -67,6 +68,7 @@ extern ReservedScriptFunction ClientReservedFunctions[];
 struct MapperScriptFunctions
 {
     int Start;
+    int Finish;
     int Loop;
     int ConsoleMessage;
     int RenderIface;

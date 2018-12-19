@@ -75,6 +75,9 @@ int main( int argc, char** argv )
         Mapper->MainLoop();
     GameOpt.Quit = true;
 
+    if( Script::PrepareContext( MapperFunctions.Finish, _FUNC_, "Game" ) )
+        Script::RunPrepared();
+
     // Destroy engine
     Mapper->Finish();
     SAFEDEL( Mapper );

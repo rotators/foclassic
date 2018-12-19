@@ -11,6 +11,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - Mapper scripts are compiled by Server during initialization
     - errors in Mapper scripts are not considered critical by Server; compilation will be stopped if errors are detected, and initialization will move on to next step
 - language packs are loaded by Server before initializing script system
+- reserved functions
+    - [Client, Mapper] added `void finish()`, executed before closing application
 - extensions changes
     - added `Client::UID[]`
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
