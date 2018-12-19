@@ -318,12 +318,12 @@ GameOptions::GameOptions()
     GetUseApCost = NULL;
     GetAttackDistantion = NULL;
     GetRainOffset = NULL;
-
-    Initialize();
 }
 
 GameOptionsExt::GameOptionsExt()
 {
+    WallAlpha = 0xFF;
+
     CommandLine = NULL;
     ConfigFile = NULL;
 }

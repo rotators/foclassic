@@ -970,16 +970,26 @@ void HexManager::RebuildMap( int rx, int ry )
                         continue;
                     if( item->IsItem() && !GameOpt.ShowItem )
                         continue;
-                    if( item->IsWall() && !GameOpt.ShowWall )
-                        continue;
+                    if( item->IsWall() )
+                    {
+                        if( !GameOpt.ShowWall )
+                            continue;
+                        else
+                            item->SetMaxAlpha( GameOptExt.WallAlpha );
+                    }
                     #else
                     bool is_fast = fastPids.count( item->GetProtoId() ) != 0;
                     if( item->IsScenOrGrid() && !GameOpt.ShowScen && !is_fast )
                         continue;
                     if( item->IsItem() && !GameOpt.ShowItem && !is_fast )
                         continue;
-                    if( item->IsWall() && !GameOpt.ShowWall && !is_fast )
-                        continue;
+                    if( item->IsWall() )
+                    {
+                        if( !GameOpt.ShowWall && !is_fast )
+                            continue;
+                        else
+                            item->SetMaxAlpha( GameOptExt.WallAlpha );
+                    }
                     if( !GameOpt.ShowFast && is_fast )
                         continue;
                     if( ignorePids.count( item->GetProtoId() ) )

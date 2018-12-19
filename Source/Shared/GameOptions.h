@@ -311,27 +311,20 @@ struct GameOptions
     void         ( * GetRainOffset )( short*, short* );
 
     GameOptions();
+};
 
-    void         Initialize()
-    {
-        #ifdef FO_D3D
-        OpenGLRendering = false;
-        #else
-        OpenGLRendering = true;
-        #endif
-    }
-}
-
-extern GameOpt;
+extern struct GameOptions GameOpt;
 
 struct GameOptionsExt
 {
+    uchar WallAlpha;
+
     void* CommandLine;
     void* ConfigFile;
 
     GameOptionsExt();
-}
+};
 
-extern GameOptExt;
+extern struct GameOptionsExt GameOptExt;
 
 #endif // __GAME_OPTIONS__ //

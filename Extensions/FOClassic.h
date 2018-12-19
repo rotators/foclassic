@@ -591,6 +591,8 @@ EXPORT_UNINITIALIZED GameOptions* FOnline;
 #if defined (FOCLASSIC_BLEEDING_EDGE)
 struct GameOptionsExt
 {
+    uint8       WallAlpha;
+
     # if 0
     // TODO implement GameScript
     GameScript* Script;

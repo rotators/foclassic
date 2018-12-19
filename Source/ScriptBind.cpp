@@ -14,8 +14,8 @@
 #define focFUNCTION( func )                        asFUNCTION( func )
 #define focMETHOD( clas, member )                  asMETHOD( clas, member )
 #define focMETHODPR( clas, member, decl, ret )     asMETHODPR( clas, member, decl, ret )
-#define focOFFSET( clas, member )                  asOFFSET( clas, member )
 #define focSIZEOF( obj )                           sizeof(obj)
+#define focOFFSET( clas, member )                  asOFFSET( clas, member )
 
 #if defined (FOCLASSIC_CLIENT)
 # include "Client.h"
@@ -32,24 +32,30 @@
 # define BIND_SERVER
 # define BIND_CLASS                                FOServer::SScriptFunc::
 #elif defined (FOCLASSIC_SCRIPT_COMPILER)
+# define BIND_DUMMY
+
 // change the meaning of selected AS macros
 // allows dummy registration without preparing dummy structures
+
+static const asSFuncPtr DummyFunction = asFUNCTION( 0 );
 # undef focFUNCTION
 # undef focMETHOD
 # undef focMETHODPR
-# undef focOFFSET
-# undef focSIZEOF
-# define focFUNCTION( func )                       asFUNCTION( 0 )
-# define focMETHOD( clas, method )                 asFUNCTION( 0 )
-# define focMETHODPR( clas, method, decl, ret )    asFUNCTION( 0 )
-# define focOFFSET( clas, method )                 ++ DummyObject.DummyMember
-# define focSIZEOF( obj )                          sizeof(DummyClass)
-# define BIND_DUMMY
-# define BIND_CLASS_DERAIL( name )                 & DummyObject.DummyMember
+# define focFUNCTION( func )                       DummyFunction
+# define focMETHOD( clas, method )                 DummyFunction
+# define focMETHODPR( clas, method, decl, ret )    DummyFunction
+
 struct DummyClass
 {
     uint DummyMember;
-} DummyObject;
+};
+static const size_t DummyClassSize = sizeof(DummyClass);
+static DummyClass   DummyObject;
+# undef focSIZEOF
+# undef focOFFSET
+# define focSIZEOF( obj )                          DummyClassSize
+# define focOFFSET( clas, method )                 ++ DummyObject.DummyMember
+# define BIND_CLASS_DERAIL( name )                 & DummyObject.DummyMember
 #endif
 
 // keep dummy registration in own namespace
@@ -69,7 +75,7 @@ BIND_NAMESPACE_BEGIN
 {
     bool BindSuccess = true;
 
-    inline bool BindChecks( asIScriptEngine* engine )
+    bool BindChecks( asIScriptEngine* engine )
     {
         if( BindSuccess && !engine )
         {
@@ -510,6 +516,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalProperty( engine, "int __MouseX", &GameOpt.MouseX );
         RegisterGlobalProperty( engine, "int __MouseY", &GameOpt.MouseY );
         RegisterGlobalProperty( engine, "uint8 __RoofAlpha", &GameOpt.RoofAlpha );
+        RegisterGlobalProperty( engine, "uint8 __WallAlpha", &GameOptExt.WallAlpha );
         RegisterGlobalProperty( engine, "bool __HideCursor", &GameOpt.HideCursor );
         RegisterGlobalProperty( engine, "const int __ScreenWidth", &GameOpt.ScreenWidth );
         RegisterGlobalProperty( engine, "const int __ScreenHeight", &GameOpt.ScreenHeight );

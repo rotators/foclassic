@@ -15,9 +15,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - [Client, Mapper] added `void finish()`, executed before closing application
 - extensions changes
     - added `Client::UID[]`
+	- added `GameOptionsExt::WallAlpha`
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
 - scripts changes
     - preprocessor now understands `#undef` directive
+	- added global variable `uint8 __WallAlpha`
     - added `uint Critter::GetUID(uint8 index)`; returns player's UID0 - UID4
     - added `uint Critter::GetIp()`; returns player's IP
     - added `string@ Critter::GetIpString()`; returns player's IP in human-readable format

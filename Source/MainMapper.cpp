@@ -33,8 +33,10 @@ int main( int argc, char** argv )
 
     // Exceptions
     #if defined (FO_D3D)
+    GameOpt.OpenGLRendering = false;
     CatchExceptions( "MapperDX" );
     #else
+    GameOpt.OpenGLRendering = true;
     CatchExceptions( "MapperGL" );
     #endif
 

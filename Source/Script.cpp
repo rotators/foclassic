@@ -712,7 +712,7 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
         if( bind_id > 0 )
         {
             #if defined (VERBOSE_BIND)
-            WriteLogX( "OK\n" );
+            WriteLogX( "OK [%d]\n", bind_id );
             #endif
             *bf->BindId = bind_id;
         }

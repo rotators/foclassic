@@ -257,6 +257,22 @@ void ItemHex::RefreshAnim()
     }
 }
 
+void ItemHex::SetMaxAlpha( uchar alpha )
+{
+    maxAlpha = alpha;
+    RestoreAlpha();
+}
+
+void ItemHex::RestoreAlpha()
+{
+    Alpha = maxAlpha;
+}
+
+void ItemHex::RefreshAlpha()
+{
+    maxAlpha = (IsColorize() ? GetAlpha() : 0xFF);
+}
+
 void ItemHex::SetSprite( Sprite* spr )
 {
     if( spr )

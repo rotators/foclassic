@@ -38,8 +38,10 @@ int main( int argc, char** argv )
 
     // Exceptions
     #if defined (FO_D3D)
+    GameOpt.OpenGLRendering = false;
     CatchExceptions( "ClientDX" );
     #else
+    GameOpt.OpenGLRendering = true;
     CatchExceptions( "ClientGL" );
     #endif
 

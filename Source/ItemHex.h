@@ -57,8 +57,9 @@ public:
     bool   IsTransparent()      { return maxAlpha < 0xFF; }
     bool   IsFullyTransparent() { return maxAlpha == 0; }
     void   RefreshAnim();
-    void   RestoreAlpha() { Alpha = maxAlpha; }
-    void   RefreshAlpha() { maxAlpha = (IsColorize() ? GetAlpha() : 0xFF); }
+    void   SetMaxAlpha( uchar alpha );
+    void   RestoreAlpha();
+    void   RefreshAlpha();
     void   SetSprite( Sprite* spr );
     int    GetEggType();
 
