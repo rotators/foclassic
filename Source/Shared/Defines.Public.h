@@ -423,7 +423,7 @@
 #endif    // FOCLASSIC_EXTENSION
 
 #ifdef FOCLASSIC_SCRIPT
-# define COLOR_ARGB                                  # (a, r, g, b)( (uint)( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
+# define COLOR_ARGB                                  # (a, r, g, b)(uint( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
 # define COLOR_XRGB                                  # (r, g, b)COLOR_ARGB( 0xff, r, g, b )
 # define COLOR_CHANGE_ALPHA                          # (v, a)( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | (uint( a ) & 0xFF) << 24 )
 #endif    // FOCLASSIC_SCRIPT
@@ -874,6 +874,9 @@
 #define FONT_TYPE_THIN                               (6)
 #define FONT_TYPE_FAT                                (7)
 #define FONT_TYPE_BIG                                (8)
+
+// Additional fonts
+#define FONT_TYPE_DIALOG                             (9) // used on dialog/barter screen only
 
 #ifdef FOCLASSIC_ENGINE
 # if FOCLASSIC_STAGE >= 3

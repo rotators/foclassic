@@ -3492,9 +3492,9 @@ void FOClient::DlgDraw( bool is_dialog )
     const char scr_up[] = { (char)TEXT_SYMBOL_UP, 0 };
     const char scr_down[] = { (char)TEXT_SYMBOL_DOWN, 0 };
     if( DlgMainTextCur )
-        SprMngr.DrawStr( Rect( DlgBScrUp, DlgX, DlgY ), scr_up, 0, IfaceHold == IFACE_DLG_SCR_UP ? COLOR_TEXT_DGREEN : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( DlgBScrUp, DlgX, DlgY ), scr_up, 0, IfaceHold == IFACE_DLG_SCR_UP ? COLOR_TEXT_DGREEN : COLOR_TEXT, FONT_TYPE_DIALOG );
     if( DlgMainTextCur < DlgMainTextLinesReal - DlgMainTextLinesRect )
-        SprMngr.DrawStr( Rect( DlgBScrDn, DlgX, DlgY ), scr_down, 0, IfaceHold == IFACE_DLG_SCR_DN ? COLOR_TEXT_DGREEN : COLOR_TEXT );
+        SprMngr.DrawStr( Rect( DlgBScrDn, DlgX, DlgY ), scr_down, 0, IfaceHold == IFACE_DLG_SCR_DN ? COLOR_TEXT_DGREEN : COLOR_TEXT, FONT_TYPE_DIALOG );
 
     // Dialog
     if( is_dialog )
@@ -3516,21 +3516,21 @@ void FOClient::DlgDraw( bool is_dialog )
         SprMngr.DrawStr( Rect( DlgBSayText, DlgX, DlgY ), MsgGame->GetStr( STR_DIALOG_SAY ), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
 
         // Npc text
-        SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), DlgMainText.c_str(), FONT_FLAG_SKIPLINES( DlgMainTextCur ), COLOR_TEXT );
+        SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), DlgMainText.c_str(), FONT_FLAG_SKIPLINES( DlgMainTextCur ), COLOR_TEXT, FONT_TYPE_DIALOG );
 
         // Answers
         for( uint i = 0; i < DlgAnswers.size(); i++ )
         {
             Answer& a = DlgAnswers[i];
             if( i == (uint)DlgCurAnsw )
-                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT) );
+                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, IfaceHold == IFACE_DLG_ANSWER && DlgCurAnsw == DlgHoldAnsw ? COLOR_TEXT_DDGREEN : (IfaceHold != IFACE_DLG_ANSWER ? COLOR_TEXT_DGREEN : COLOR_TEXT), FONT_TYPE_DIALOG );
             else
-                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT );
+                SprMngr.DrawStr( Rect( a.Position, DlgX, DlgY ), DlgAnswers[i].Text.c_str(), a.AnswerNum < 0 ? FONT_FLAG_CENTERX : 0, COLOR_TEXT, FONT_TYPE_DIALOG );
         }
 
         // Chosen money
         if( Chosen )
-            SprMngr.DrawStr( Rect( DlgWMoney, DlgX, DlgY ), Chosen->GetMoneyStr(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE );
+            SprMngr.DrawStr( Rect( DlgWMoney, DlgX, DlgY ), Chosen->GetMoneyStr(), FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG );
     }
     // Barter
     else
@@ -3592,12 +3592,12 @@ void FOClient::DlgDraw( bool is_dialog )
         if( BarterIsPlayers )
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_END ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER, FONT_TYPE_DIALOG );
         }
         else
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_TALK ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0 );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0, FONT_TYPE_DIALOG );
         }
 
         // Cost
@@ -3606,24 +3606,24 @@ void FOClient::DlgDraw( bool is_dialog )
         ContainerCalcInfo( BarterCont2o, c2, w2, v2, Chosen->IsRawParam( PE_MASTER_TRADER ) ? 0 : BarterK, false );
         if( !BarterIsPlayers && BarterK )
         {
-            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "$%u", c1 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
-            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "$%u", c2 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "$%u", c1 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "$%u", c2 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
         }
         else
         {
-            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "%u", w1 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
-            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "%u", w2 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost1, DlgX, DlgY ), Str::FormatBuf( "%u", w1 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
+            SprMngr.DrawStr( Rect( BarterWCost2, DlgX, DlgY ), Str::FormatBuf( "%u", w2 / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_WHITE, FONT_TYPE_DIALOG ); // BarterCost1<BarterCost2?COLOR_TEXT_RED:COLOR_TEXT_WHITE);
         }
         // Overweight, oversize indicate
         if( Chosen->GetFreeWeight() + (int)w1 < (int)w2 )
-            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERWEIGHT_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN );
+            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERWEIGHT_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, FONT_TYPE_DIALOG );
         else if( Chosen->GetFreeVolume() + (int)v1 < (int)v2 )
-            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERVOLUME_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN );
+            SprMngr.DrawStr( Rect( DlgWText.L, DlgWText.B - 5, DlgWText.R, DlgWText.B + 10, DlgX, DlgY ), MsgGame->GetStr( STR_OVERVOLUME_TITLE ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX, COLOR_TEXT_DDGREEN, FONT_TYPE_DIALOG );
     }
 
     // Timer
     if( !BarterIsPlayers && DlgEndTick && DlgEndTick > Timer::GameTick() )
-        SprMngr.DrawStr( Rect( DlgWTimer, DlgX, DlgY ), Str::FormatBuf( "%u", (DlgEndTick - Timer::GameTick() ) / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_DGREEN );
+        SprMngr.DrawStr( Rect( DlgWTimer, DlgX, DlgY ), Str::FormatBuf( "%u", (DlgEndTick - Timer::GameTick() ) / 1000 ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_DGREEN, FONT_TYPE_DIALOG );
 }
 
 void FOClient::DlgLMouseDown( bool is_dialog )

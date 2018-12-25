@@ -6,24 +6,32 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v4]() (WIP)
 
-- fixed Client crash when loading .dat files in some scenarios
+- fixed Client crash when loading _.dat_ files in some scenarios
 - fixed ASCompiler crash when receiving warnings/errors from script engine
+- language packs are loaded by Server before initializing script system
 - Mapper scripts are compiled by Server during initialization
     - errors in Mapper scripts are not considered critical by Server; compilation will be stopped if errors are detected, and initialization will move on to next step
-- language packs are loaded by Server before initializing script system
+- added `FONT_TYPE_DIALOG`, uses _Dialog.fofnt_
+    - font file(s) are not required by default; if _Dialog.fofnt_ cannot be found, _Default.fofnt_ is loaded instead
+    - used on dialog/barter screens only, replacing `FONT_TYPE_DEFAULT` usage
 - reserved functions
     - [Client, Mapper] added `void finish()`, executed before closing application
 - extensions changes
     - added `Client::UID[]`
-	- added `GameOptionsExt::WallAlpha`
+    - added `GameOptionsExt::WallAlpha`
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
 - scripts changes
     - preprocessor now understands `#undef` directive
-	- added global variable `uint8 __WallAlpha`
-    - added `uint Critter::GetUID(uint8 index)`; returns player's UID0 - UID4
-    - added `uint Critter::GetIp()`; returns player's IP
-    - added `string@ Critter::GetIpString()`; returns player's IP in human-readable format
-    - added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`; returns monitor position of name / dialog floater / chat message above critter head
+    - [Client] added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`  
+      returns size and position of name / dialog floater / chat message above critter head
+    - [Server] added `uint Critter::GetUID(uint8 index)`  
+      returns player's UID0 - UID4
+    - [Server] added `uint Critter::GetIp()`  
+      returns player's IP
+    - [Server] added `string@ Critter::GetIpString()`  
+      returns player's IP in human-readable format
+    - [Client, Mapper] added global variable `uint8 __WallAlpha`  
+      allows to change walls transparency, similiar to `__RoofAlpha`
 
 
 ## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)

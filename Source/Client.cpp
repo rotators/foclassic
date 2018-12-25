@@ -320,6 +320,13 @@ bool FOClient::Init()
         return false;
     SprMngr.SetDefaultFont( FONT_TYPE_DEFAULT, COLOR_TEXT );
 
+    // Additional fonts
+    if( !SprMngr.LoadFontFO( FONT_TYPE_DIALOG, "Dialog" ) )
+    {
+        if( !SprMngr.LoadFontFO( FONT_TYPE_DIALOG, "Default" ) )
+            return false;
+    }
+
     // BMF to FOFNT convertation
     if( false )
         SprMngr.LoadFontBMF( 11111, "DefaultExt" );
