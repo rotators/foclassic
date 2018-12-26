@@ -2878,7 +2878,9 @@ void FOClient::IntDraw()
     if( Chosen->GetParam( ST_CURRENT_HP ) < 0 )
         bin_str[0] = '9' + 3;
 
-    if( (Chosen->GetParam( ST_CURRENT_HP ) * 100) / Chosen->GetParam( ST_MAX_LIFE ) <= 20 )
+	if( !Chosen->GetParam( ST_MAX_LIFE ) )
+		Str::ChangeValue( bin_str, 0x20 );
+    else if( (Chosen->GetParam( ST_CURRENT_HP ) * 100) / Chosen->GetParam( ST_MAX_LIFE ) <= 20 )
         Str::ChangeValue( bin_str, 0x20 );                                                         // Red
     else if( (Chosen->GetParam( ST_CURRENT_HP ) * 100) / Chosen->GetParam( ST_MAX_LIFE ) <= 40 )   // TODO:
         Str::ChangeValue( bin_str, 0x10 );                                                         // Yellow
