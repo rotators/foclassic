@@ -293,6 +293,11 @@ int main( int argc, char* argv[] )
     ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( ScriptTarget ) );
 
     #pragma TODO("Script::DefineVersion()")
+    ScriptPreprocessor->Define( "__VERSION " + FOCLASSIC_VERSION );
+    ScriptPreprocessor->Define( "FOCLASSIC_STAGE " + FOCLASSIC_STAGE );
+    ScriptPreprocessor->Define( "FOCLASSIC_VERSION " + FOCLASSIC_VERSION );
+    ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION " + ANGELSCRIPT_VERSION );
+
     ScriptPreprocessor->Define( "__ASCOMPILER" );
     ScriptPreprocessor->Define( "__" + ScriptTargetName[ScriptTarget] );
 

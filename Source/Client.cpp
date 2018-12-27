@@ -11275,6 +11275,37 @@ void FOClient::SScriptFunc::Global_SetRainAnimation( ScriptString* fall_anim_nam
     Self->HexMngr.SetRainAnimation( fall_anim_name ? fall_anim_name->c_str() : NULL, drop_anim_name ? drop_anim_name->c_str() : NULL );
 }
 
+void FOClient::SScriptFunc::Global_SetZoom( float zoom )
+{
+    if( zoom == GameOpt.SpritesZoom )
+        return;
+
+    if( zoom == 1.0f )
+    {
+        Self->HexMngr.ChangeZoom( 0 );
+    }
+    else if( zoom > GameOpt.SpritesZoom )
+    {
+        while( zoom > GameOpt.SpritesZoom )
+        {
+            float old_zoom = GameOpt.SpritesZoom;
+            Self->HexMngr.ChangeZoom( 1 );
+            if( GameOpt.SpritesZoom == old_zoom )
+                break;
+        }
+    }
+    else if( zoom < GameOpt.SpritesZoom )
+    {
+        while( zoom < GameOpt.SpritesZoom )
+        {
+            float old_zoom = GameOpt.SpritesZoom;
+            Self->HexMngr.ChangeZoom( -1 );
+            if( GameOpt.SpritesZoom == old_zoom )
+                break;
+        }
+    }
+}
+
 uint FOClient::SScriptFunc::Global_GetTick()
 {
     return Timer::FastTick();

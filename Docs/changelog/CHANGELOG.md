@@ -23,16 +23,24 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - `Item::_Data::Rate` added to `FOCLASSIC_EXTENSION_STRIP_CONST` list
 - scripts changes
     - preprocessor now understands `#undef` directive
-    - [Client] added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`  
-      returns size and position of name / dialog floater / chat message above critter head
-    - [Server] added `uint Critter::GetUID(uint8 index)`  
-      returns player's UID0 - UID4
-    - [Server] added `uint Critter::GetIp()`  
-      returns player's IP
-    - [Server] added `string@ Critter::GetIpString()`  
-      returns player's IP in human-readable format
-    - [Client, Mapper] added global variable `uint8 __WallAlpha`  
-      allows to change walls transparency, similiar to `__RoofAlpha`
+    - added global define `ANGELSCRIPT_VERSION`
+      exposes value with same name defined in _angelscript.h_
+    - Client:
+        - added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`  
+          returns size and position of name / dialog floater / chat message above critter head
+		- added `uint8 CritterCl::Alpha`, `const bool CritterCl::FadingEnable`
+    - Server:
+        - added `uint Critter::GetUID(uint8 index)`  
+          returns player's UID0 - UID4
+        - added `uint Critter::GetIp()`  
+          returns player's IP
+        - added `string@ Critter::GetIpString()`  
+          returns player's IP in human-readable format
+    - Client/Mapper:
+        - added global variable `uint8 __WallAlpha`  
+          allows to change walls transparency, similiar to `__RoofAlpha`
+        - added `void ChangeZoom(float zoom)`  
+          allows to change zoom level easily from scripts
 
 
 ## [v3](https://github.com/rotators/foclassic/releases/tag/v3/)

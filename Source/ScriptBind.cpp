@@ -769,8 +769,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
     if( bind == SCRIPT_BIND_CLIENT )
     {
-        RegisterGlobalFunction( engine, "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetPathLength(CritterCl& cr, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthCr ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void FlushScreen(uint fromColor, uint toColor, uint timeMs)", focFUNCTION( BIND_CLASS Global_FlushScreen ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void QuakeScreen(uint noise, uint timeMs)", focFUNCTION( BIND_CLASS Global_QuakeScreen ), asCALL_CDECL );
@@ -783,11 +781,8 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "uint16 GetCurrentMapPid()", focFUNCTION( BIND_CLASS Global_GetCurrentMapPid ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_GetMessageFilters ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void SetMessageFilters(int[]@+ filters)", focFUNCTION( BIND_CLASS Global_SetMessageFilters ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void Message(string& text, int type)", focFUNCTION( BIND_CLASS Global_MessageType ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void Message(int textMsg, uint strNum, int type)", focFUNCTION( BIND_CLASS Global_MessageMsgType ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "string@ GetMsgStr(int textMsg, uint strNum, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMsgStrSkip ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetMsgStrNumUpper(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStrNumUpper ), asCALL_CDECL );
@@ -846,7 +841,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "void RefreshMap(bool onlyTiles, bool onlyRoof, bool onlyLight)", focFUNCTION( BIND_CLASS Global_RefreshMap ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "bool SaveScreenshot()", focFUNCTION( BIND_CLASS Global_SaveScreenshot ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "bool SaveLogFile()", focFUNCTION( BIND_CLASS Global_SaveLogFile ), asCALL_CDECL );
     }
@@ -878,13 +872,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "uint GetCritterAlias(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterAlias ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "string@ GetCritterTypeName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterTypeName ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "string@ GetCritterSoundName(uint crType)", focFUNCTION( BIND_CLASS Global_GetCritterSoundName ), asCALL_CDECL );
-
-        RegisterGlobalFunction( engine, "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), asCALL_CDECL );
-
-        RegisterGlobalFunction( engine, "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), asCALL_CDECL );
 
         RegisterGlobalFunction( engine, "bool IsMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_IsMsgStr ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "string@ GetMsgStr(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_GetMsgStr ), asCALL_CDECL );
@@ -922,7 +909,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "void SetDefaultFont(int font, uint color)", focFUNCTION( BIND_CLASS Global_SetDefaultFont ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void MouseClick(int x, int y, int button, int cursor)", focFUNCTION( BIND_CLASS Global_MouseClick ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void KeyboardPress(uint8 key1, uint8 key2, string@+ key1Text = null, string@+ key2Text = null)", focFUNCTION( BIND_CLASS Global_KeyboardPress ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), asCALL_CDECL );
     }
     #endif
 
@@ -994,6 +980,21 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "bool LoadImage(uint index, string@+ imageName, uint imageDepth, int pathType)", focFUNCTION( BIND_CLASS Global_LoadImage ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetImageColor(uint index, uint x, uint y)", focFUNCTION( BIND_CLASS Global_GetImageColor ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "bool SetParameterDialogGetBehaviour(uint index, string& funcName)", focFUNCTION( BIND_CLASS Global_SetParameterDialogGetBehaviour ), asCALL_CDECL );
+    }
+    #endif
+
+    #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_MAPPER)
+    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_MAPPER )
+    {
+        RegisterGlobalFunction( engine, "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "void MapMessage(string& text, uint16 hx, uint16 hy, uint timeMs, uint color, bool fade, int offsX, int offsY)", focFUNCTION( BIND_CLASS Global_MapMessage ), asCALL_CDECL );
+
+        RegisterGlobalFunction( engine, "void GetHexCoord(uint16 fromHx, uint16 fromHy, uint16& toHx, uint16& toHy, float angle, uint dist)", focFUNCTION( BIND_CLASS Global_GetHexInPath ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "uint GetPathLength(uint16 fromHx, uint16 fromHy, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthHex ), asCALL_CDECL );
+
+        RegisterGlobalFunction( engine, "void SetRainAnimation(string@+ fallAnimName, string@+ dropAnimName)", focFUNCTION( BIND_CLASS Global_SetRainAnimation ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "void SetZoom(float zoom)", focFUNCTION( BIND_CLASS Global_SetZoom ), asCALL_CDECL );
     }
     #endif
 
@@ -1331,6 +1332,9 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectProperty( engine, "CritterCl", "DataVal Param", focOFFSET( CritterCl, ThisPtr[0] ) );
         RegisterObjectProperty( engine, "CritterCl", "DataRef ParamBase", focOFFSET( CritterCl, ThisPtr[0] ) );
         RegisterObjectProperty( engine, "CritterCl", "int[]@ Anim3dLayer", focOFFSET( CritterCl, Layers3d ) );
+        //
+        RegisterObjectProperty( engine, "CritterCl", "uint8 Alpha", focOFFSET( CritterCl, Alpha ) );
+        RegisterObjectProperty( engine, "CritterCl", "const bool FadingEnable", focOFFSET( CritterCl, fadingEnable ) );
 
         RegisterObjectMethod( engine, "CritterCl", "bool IsChosen() const", focFUNCTION( BIND_CLASS Crit_IsChosen ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "CritterCl", "bool IsPlayer() const", focFUNCTION( BIND_CLASS Crit_IsPlayer ), asCALL_CDECL_OBJFIRST );

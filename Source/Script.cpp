@@ -1423,13 +1423,15 @@ void Script::Define( const char* def )
 
 void Script::DefineVersion()
 {
+    Undef( "__VERSION" );
     Undef( "FOCLASSIC_STAGE" );
     Undef( "FOCLASSIC_VERSION" );
-    Undef( "__VERSION" );
+    Undef( "ANGELSCRIPT_VERSION" );
 
+    Script::Define( Str::FormatBuf( "__VERSION %u", FOCLASSIC_VERSION ) );
     Script::Define( Str::FormatBuf( "FOCLASSIC_STAGE %u", FOCLASSIC_STAGE ) );
     Script::Define( Str::FormatBuf( "FOCLASSIC_VERSION %u", FOCLASSIC_VERSION ) );
-    Script::Define( Str::FormatBuf( "__VERSION %u", FOCLASSIC_VERSION ) );
+    Script::Define( Str::FormatBuf( "ANGELSCRIPT_VERSION %u", ANGELSCRIPT_VERSION ) );
 }
 
 void Script::Undef( const char* def )

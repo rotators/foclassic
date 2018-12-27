@@ -296,8 +296,10 @@ public:
     bool IsFinish();
 
     // Fade
-private:
+// private:
+public:
     bool fadingEnable;
+private:
     bool fadeUp;
 
     void  SetFade( bool fade_up );
