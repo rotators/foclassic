@@ -23,8 +23,8 @@
 // 0xFFFFFFFF
 //   Client  DDDD
 //           [uint D] data
-//   Server  CCCCUUUU00000000
-//           [uint C] connections [uint U] uptime // TODO: CCCCUUUU0000EVVL*
+//   Server  CCCCUUUU00000EVV
+//           [uint C] connections [uint U] uptime [uint8 E] engine = 0xFC [uint16 V] version = FOCLASSIC_VERSION
 
 #define NETRAW_HEADER                         (0xFFFFFFFF)
 #define NETRAW_INVALID_VERSION                (0xFF000000)

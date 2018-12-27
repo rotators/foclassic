@@ -14,6 +14,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - added `FONT_TYPE_DIALOG`, uses _Dialog.fofnt_
     - font file(s) are not required by default; if _Dialog.fofnt_ cannot be found, _Default.fofnt_ is loaded instead
     - used on dialog/barter screens only, replacing `FONT_TYPE_DEFAULT` usage
+    - it's recommended to use `FONT_TYPE_DIALOG` whenever drawing strings over dialog/barter screens (even if game uses default font only) to fully support player-made interfaces
 - reserved functions
     - [Client, Mapper] added `void finish()`, executed before closing application
 - extensions changes
