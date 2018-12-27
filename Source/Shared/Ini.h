@@ -53,6 +53,7 @@ protected:
     IniSectionsRaw SectionsRaw;
 
 public:
+    bool KeepComments;
     bool KeepSectionsRaw;
 
     #if !defined (FOCLASSIC_EXTENSION)

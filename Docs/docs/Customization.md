@@ -17,7 +17,7 @@ List of directories where Mapper executables should be copied after compilation.
 List of directories where Server executable should be copied after compilation.
 
 ## FOCLASSIC_COPY_ASCOMPILER_DIR
-List of directories where Server ASCompiler executable should be copied after compilation.
+List of directories where ASCompiler executable should be copied after compilation.
 
 ## FOCLASSIC_FOLDER_PREFIX
 Allows to group all _FOClassic_ projects when using IDE.  

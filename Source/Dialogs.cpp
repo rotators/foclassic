@@ -229,7 +229,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
     }
 
     Ini fodlg;
-    fodlg.KeepSectionsRaw = true;
+    fodlg.KeepComments = fodlg.KeepSectionsRaw = true;
     if( !fodlg.LoadString( string( data ) ) )
     {
         AddError( "Internal error." );

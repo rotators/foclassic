@@ -47,10 +47,11 @@
 
 using namespace std;
 
-#define SECTION_START      '['
-#define SECTION_END        ']'
-#define KEY_ASSIGN         '='
-#define IS_COMMENT( c )    (c == ';' || c == '#')
+#define SECTION_START    '['
+#define SECTION_END      ']'
+#define KEY_ASSIGN       '='
+
+static vector<char> CommentChars;
 
 inline void TrimLeft( string& str )
 {
@@ -66,13 +67,19 @@ inline void Cleanup( string& str )
 {
     str.erase( remove( str.begin(), str.end(), '\r' ), str.end() );
     str.erase( remove( str.begin(), str.end(), '\n' ), str.end() );
-    // TODO '\t' -> ' '
+    replace( str.begin(), str.end(), '\t', ' ' );
 }
 
 //
 
-Ini::Ini() : KeepSectionsRaw( false )
-{}
+Ini::Ini() : KeepComments( false ), KeepSectionsRaw( false )
+{
+    if( CommentChars.empty() )
+    {
+        CommentChars.push_back( '#' );
+        CommentChars.push_back( ';' );
+    }
+}
 
 Ini::~Ini()
 {
@@ -124,6 +131,14 @@ void Ini::Parse( basic_istream<char>& stream )
 
         Cleanup( line );
 
+        if( !KeepComments )
+        {
+            for( auto it = CommentChars.begin(), end = CommentChars.end(); it != end; ++it )
+            {
+                line = line.substr( 0, line.find( *it ) );
+            }
+        }
+
         TrimLeft( line );
         TrimRight( line );
 
@@ -135,9 +150,7 @@ void Ini::Parse( basic_istream<char>& stream )
         const size_t pos = line.find_first_of( KEY_ASSIGN );
         const char&  front = line.front();
 
-        if( IS_COMMENT( front ) )
-            continue;
-        else if( front == SECTION_START )
+        if( front == SECTION_START )
         {
             if( line.back() == SECTION_END )
                 section = line.substr( 1, length - 2 );
