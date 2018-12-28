@@ -1769,18 +1769,25 @@ public:
             file_bin.SetData( &data[0], (uint)data.size() );
 
             if( !file_bin.SaveOutBufToFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath ) )
-                WriteLogF( _FUNC_, " - Can't save bytecode, script<%s>.\n", module_name );
+            {
+                WriteLogF( _FUNC_, " - Can't save bytecode file<%sb>, script<%s>.\n", fname_script, module_name );
+                return false;
+            }
         }
         else
         {
             WriteLogF( _FUNC_, " - Can't write bytecode, script<%s>.\n", module_name );
+            return false;
         }
 
         FileManager file_prep;
         FormatPreprocessorOutput( result.String );
         file_prep.SetData( (void*)result.String.c_str(), result.String.length() );
         if( !file_prep.SaveOutBufToFile( Str::FormatBuf( "%sp", fname_script ), ScriptsPath ) )
-            WriteLogF( _FUNC_, " - Can't write preprocessed file, script<%s>.\n", module_name );
+        {
+            WriteLogF( _FUNC_, " - Can't write preprocessed file<%sp>, script<%s>.\n", fname_script, module_name );
+            return false;
+        }
     }
     return true;
 }
