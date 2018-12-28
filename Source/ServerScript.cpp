@@ -301,7 +301,7 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
     Script::SetLoadLibraryCompiler( true );
 
     int    num = STR_INTERNAL_SCRIPT_MODULES;
-    int    errors = 0;
+    bool   success = true;
     char   buf[MAX_FOTEXT];
     string value, config;
     StrVec pragmas;
@@ -328,8 +328,8 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
             if( !Script::LoadScript( value.c_str(), NULL, false, target_prefix.c_str() ) )
             {
                 WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", target_lower.c_str(), value.c_str() );
-                errors++;
-                continue;
+                success = false;
+                break;
             }
 
             asIScriptModule* module = target_engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
@@ -337,8 +337,8 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
             if( !module || module->SaveByteCode( &binary ) < 0 )
             {
                 WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", target_lower.c_str(), value.c_str() );
-                errors++;
-                continue;
+                success = false;
+                break;
             }
             std::vector<asBYTE>& buf = binary.GetBuf();
 
@@ -395,7 +395,15 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
     }
 
     // Imported functions
-    Script::BindImportedFunctions();
+    if( success )
+        success = Script::BindImportedFunctions() == 0;         // returns number of errors
+
+    if( !success )
+    {
+        WriteLog( "Load %s modules fail\n", target_lower.c_str() );
+        ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+        return false;
+    }
 
     if( bind == SCRIPT_BIND_CLIENT )
     {
@@ -429,7 +437,8 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
                     if( !d )
                     {
                         WriteLogF( _FUNC_, " - Can't load dll<%s>.\n", dll_name.c_str() );
-                        errors++;
+                        success = false;
+                        // break?
                     }
                     continue;
                 }
@@ -448,13 +457,20 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
                 dll_num += 2;
             }
         }
+
+        if( !success )
+        {
+            WriteLog( "Load %s extensions fail\n", target_lower.c_str() );
+            ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+            return false;
+        }
     }
 
     ReservedScriptFunction* functions = (bind == SCRIPT_BIND_CLIENT ? ClientReservedFunctions : MapperReservedFunctions);
     int                     count = (bind == SCRIPT_BIND_CLIENT ? sizeof(ClientScriptFunctions) : sizeof(MapperScriptFunctions) );
     count /= sizeof(int);
 
-    bool success = Script::BindReservedFunctions( config.c_str(), target_lower.c_str(), functions, count, true );
+    success = Script::BindReservedFunctions( config.c_str(), target_lower.c_str(), functions, count, true );
 
     // Finish
     ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
@@ -466,7 +482,7 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
         return false;
     }
 
-    if( success && bind == SCRIPT_BIND_CLIENT )
+    if( bind == SCRIPT_BIND_CLIENT )
     {
         // Add config text and pragmas, calculate hash
         for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
