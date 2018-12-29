@@ -3692,6 +3692,16 @@ void FOServer::SScriptFunc::Crit_EventSmthTurnBasedProcess( Critter* cr, Critter
     cr->EventSmthTurnBasedProcess( from_cr, map, begin_turn );
 }
 
+bool FOServer::SScriptFunc::Crit_get_IsDisconnected(Critter* cr)
+{
+	if (cr->IsNotValid)
+		SCRIPT_ERROR_R0("This nullptr.");
+	if (!cr->IsPlayer())
+		SCRIPT_ERROR_R0("Critter is not player.");
+
+	return ((Client*)cr)->IsDisconnected;
+}
+
 GameVar* FOServer::SScriptFunc::Global_GetGlobalVar( ushort tvar_id )
 {
     GameVar* gvar = VarMngr.GetVar( tvar_id, 0, 0, true );

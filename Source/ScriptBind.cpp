@@ -1288,6 +1288,8 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectMethod( engine, "Critter", "bool EventGlobalInvite(Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir)", focFUNCTION( BIND_CLASS Crit_EventGlobalInvite ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventTurnBasedProcess(Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventSmthTurnBasedProcess(Critter& fromCr, Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventSmthTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
+
+		RegisterObjectMethod(engine, "Critter", "bool get_IsDisconnected() const", focFUNCTION(BIND_CLASS Crit_get_IsDisconnected), asCALL_CDECL_OBJFIRST);
     }
     #endif
 

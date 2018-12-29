@@ -728,6 +728,8 @@ public:
         static void Crit_EventTurnBasedProcess( Critter* cr, Map* map, bool begin_turn );
         static void Crit_EventSmthTurnBasedProcess( Critter* cr, Critter* from_cr, Map* map, bool begin_turn );
 
+		static bool Crit_get_IsDisconnected(Critter* cr);
+
         static GameVar* Global_GetGlobalVar( ushort tvar_id );
         static GameVar* Global_GetLocalVar( ushort tvar_id, uint master_id );
         static GameVar* Global_GetUnicumVar( ushort tvar_id, uint master_id, uint slave_id );
