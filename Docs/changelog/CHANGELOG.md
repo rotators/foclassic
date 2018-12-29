@@ -32,6 +32,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
           returns size and position of name / dialog floater / chat message above critter head
         - added `uint8 CritterCl::Alpha`, `const bool CritterCl::FadingEnable`
     - Server:
+        - added `const bool Critter::IsDisconnected` (thanks mojuk)  
+          returns true for offline player characters
         - added `uint Critter::GetUID(uint8 index)`  
           returns player's UID0 - UID4
         - added `uint Critter::GetIp()`  
