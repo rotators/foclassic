@@ -560,7 +560,7 @@ public:
         static uint          Cl_GetUID( Critter* cl, uchar index );
         static uint          Cl_GetIp( Critter* cl );
         static ScriptString* Cl_GetIpString( Critter* cl );
-		static bool			 Cl_get_IsDisconnected(Critter* cr);
+        static bool          Cl_get_IsDisconnected( Critter* cr );
         static bool          Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name );
         static void          Crit_SetLexems( Critter* cr, ScriptString* lexems );
         static Map*          Crit_GetMap( Critter* cr );
