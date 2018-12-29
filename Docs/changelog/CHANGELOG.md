@@ -25,10 +25,12 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - preprocessor now understands `#undef` directive
     - added global define `ANGELSCRIPT_VERSION`
       exposes value with same name defined in _angelscript.h_
+    - scripts for all targets can be placed in subdirectories
+        - path to script (`@ TARGET module` in _scripts.cfg_) can be set using Unix and Windows format, but internally Unix format is used
     - Client:
         - added `void CritterCl::GetNameTextInfo(bool& nameVisible, int& x, int& y, int& w, int& h, int& lines)`  
           returns size and position of name / dialog floater / chat message above critter head
-		- added `uint8 CritterCl::Alpha`, `const bool CritterCl::FadingEnable`
+        - added `uint8 CritterCl::Alpha`, `const bool CritterCl::FadingEnable`
     - Server:
         - added `uint Critter::GetUID(uint8 index)`  
           returns player's UID0 - UID4
@@ -39,7 +41,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - Client/Mapper:
         - added global variable `uint8 __WallAlpha`  
           allows to change walls transparency, similiar to `__RoofAlpha`
-        - added `void ChangeZoom(float zoom)`  
+        - added `void SetZoom(float zoom)`  
           allows to change zoom level easily from scripts
 
 

@@ -1459,36 +1459,40 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
     EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
 
-    // Get script names
-    char fname_real[MAX_FOPATH];
+    char             fname_real[MAX_FOPATH];
     Str::Copy( fname_real, module_name );
-    Str::Replacement( fname_real, '.', DIR_SLASH_C );
     Str::Append( fname_real, ".fos" );
     FileManager::FormatPath( fname_real );
 
-    char fname_script[MAX_FOPATH];
-    if( file_prefix )
+    char fname_script[MAX_FOPATH] = { 0 };
+    FileManager::ExtractPath( fname_real, fname_script );
+    if( Str::Length( fname_script ) )
     {
-        string temp = module_name;
-        size_t pos = temp.find_last_of( DIR_SLASH_C );
-        if( pos != string::npos )
-        {
-            temp.insert( pos + 1, file_prefix );
-            Str::Copy( fname_script, temp.c_str() );
-        }
-        else
-        {
-            Str::Copy( fname_script, file_prefix );
-            Str::Append( fname_script, module_name );
-        }
+        if( file_prefix )
+            Str::Append( fname_script, file_prefix );
+
+        char fname_file[MAX_FOPATH];
+        FileManager::ExtractFileName( fname_real, fname_file );
+        Str::Append( fname_script, fname_file );
     }
     else
     {
         Str::Copy( fname_script, module_name );
+        Str::Append( fname_script, ".fos" );
+
+        if( file_prefix )
+            Str::Insert( fname_script, file_prefix );
     }
-    Str::Replacement( fname_script, '.', DIR_SLASH_C );
-    Str::Append( fname_script, ".fos" );
     FileManager::FormatPath( fname_script );
+
+    char module_real[MAX_FOPATH];
+    Str::Copy( module_real, module_name );
+    FileManager::FormatPath( module_real );
+    #ifdef FO_WINDOWS
+    Str::Replacement( module_real, DIR_SLASH_C, '/' );
+    #endif
+
+    WriteLog( "\nfname_real = %s\nfname_script = %s\nmodule_real = %s", fname_real, fname_script, module_real );
 
     // Set current pragmas
     ScriptPreprocessor->SetPragmaCallback( edata->PragmaCB );
@@ -1557,16 +1561,16 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                 for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
                 {
                     asIScriptModule* module = *it;
-                    if( Str::Compare( module->GetName(), module_name ) )
+                    if( Str::Compare( module->GetName(), module_real ) )
                     {
-                        WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_name );
-                        Engine->DiscardModule( module_name );
+                        WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_real );
+                        Engine->DiscardModule( module_real );
                         modules.erase( it );
                         break;
                     }
                 }
 
-                asIScriptModule* module = Engine->GetModule( module_name, asGM_ALWAYS_CREATE );
+                asIScriptModule* module = Engine->GetModule( module_real, asGM_ALWAYS_CREATE );
                 if( module )
                 {
                     for( uint i = 0, j = (uint)pragmas.size() / 2; i < j; i++ )
@@ -1582,10 +1586,10 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                         return true;
                     }
                     else
-                        WriteLogF( _FUNC_, " - Can't load binary, script<%s>.\n", module_name );
+                        WriteLogF( _FUNC_, " - Can't load binary, script<%s>.\n", module_real );
                 }
                 else
-                    WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_name );
+                    WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
             }
         }
 
@@ -1643,33 +1647,33 @@ public:
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
     {
         asIScriptModule* module = *it;
-        if( Str::Compare( module->GetName(), module_name ) )
+        if( Str::Compare( module->GetName(), module_real ) )
         {
-            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_name );
-            Engine->DiscardModule( module_name );
+            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_real );
+            Engine->DiscardModule( module_real );
             modules.erase( it );
             break;
         }
     }
 
-    asIScriptModule* module = Engine->GetModule( module_name, asGM_ALWAYS_CREATE );
+    asIScriptModule* module = Engine->GetModule( module_real, asGM_ALWAYS_CREATE );
     if( !module )
     {
-        WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_name );
+        WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
         return false;
     }
 
-    int as_result = module->AddScriptSection( module_name, result.String.c_str() );
+    int as_result = module->AddScriptSection( module_real, result.String.c_str() );
     if( as_result < 0 )
     {
-        WriteLogF( _FUNC_, " - Unable to AddScriptSection module<%s>, result<%d>.\n", module_name, as_result );
+        WriteLogF( _FUNC_, " - Unable to AddScriptSection module<%s>, result<%d>.\n", module_real, as_result );
         return false;
     }
 
     as_result = module->Build();
     if( as_result < 0 )
     {
-        WriteLogF( _FUNC_, " - Unable to Build module<%s>, result<%d>.\n", module_name, as_result );
+        WriteLogF( _FUNC_, " - Unable to Build module<%s>, result<%d>.\n", module_real, as_result );
         return false;
     }
 
@@ -1741,7 +1745,7 @@ public:
 
         if( global_fail )
         {
-            WriteLogF( _FUNC_, " - Wrong global variables in module<%s>.\n", module_name );
+            WriteLogF( _FUNC_, " - Wrong global variables in module<%s>.\n", module_real );
             return false;
         }
     }
@@ -1770,13 +1774,13 @@ public:
 
             if( !file_bin.SaveOutBufToFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath ) )
             {
-                WriteLogF( _FUNC_, " - Can't save bytecode file<%sb>, script<%s>.\n", fname_script, module_name );
+                WriteLogF( _FUNC_, " - Can't save bytecode file<%sb>, script<%s>.\n", fname_script, module_real );
                 return false;
             }
         }
         else
         {
-            WriteLogF( _FUNC_, " - Can't write bytecode, script<%s>.\n", module_name );
+            WriteLogF( _FUNC_, " - Can't write bytecode, script<%s>.\n", module_real );
             return false;
         }
 
@@ -1785,7 +1789,7 @@ public:
         file_prep.SetData( (void*)result.String.c_str(), result.String.length() );
         if( !file_prep.SaveOutBufToFile( Str::FormatBuf( "%sp", fname_script ), ScriptsPath ) )
         {
-            WriteLogF( _FUNC_, " - Can't write preprocessed file<%sp>, script<%s>.\n", fname_script, module_name );
+            WriteLogF( _FUNC_, " - Can't write preprocessed file<%sp>, script<%s>.\n", fname_script, module_real );
             return false;
         }
     }
