@@ -3594,12 +3594,12 @@ void FOClient::DlgDraw( bool is_dialog )
         if( BarterIsPlayers )
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_END ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), FONT_FLAG_UPPER, 0, FONT_TYPE_DIALOG );
         }
         else
         {
             SprMngr.DrawStr( Rect( BarterBTalkText, DlgX, DlgY ), MsgGame->GetStr( STR_BARTER_TALK ), FONT_FLAG_NOBREAK | FONT_FLAG_CENTERX | FONT_FLAG_CENTERY, COLOR_TEXT_SAND, FONT_TYPE_FAT );
-            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0, FONT_TYPE_DIALOG );
+            SprMngr.DrawStr( Rect( DlgWText, DlgX, DlgY ), BarterText.c_str(), 0, 0, FONT_TYPE_DIALOG );
         }
 
         // Cost
