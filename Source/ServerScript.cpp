@@ -1451,6 +1451,16 @@ ScriptString* FOServer::SScriptFunc::Cl_GetIpString( Critter* cl )
     return new ScriptString( ( (Client*)cl )->GetIpStr() );
 }
 
+bool FOServer::SScriptFunc::Cl_get_IsDisconnected(Critter* cr)
+{
+	if (cr->IsNotValid)
+		SCRIPT_ERROR_R0("This nullptr.");
+	if (!cr->IsPlayer())
+		SCRIPT_ERROR_R0("Critter is not player.");
+
+	return ((Client*)cr)->IsDisconnected;
+}
+
 bool FOServer::SScriptFunc::Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name )
 {
     if( cr->IsNotValid )
