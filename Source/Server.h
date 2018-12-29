@@ -560,6 +560,7 @@ public:
         static uint          Cl_GetUID( Critter* cl, uchar index );
         static uint          Cl_GetIp( Critter* cl );
         static ScriptString* Cl_GetIpString( Critter* cl );
+		static bool			 Cl_get_IsDisconnected(Critter* cr);
         static bool          Crit_SetEvent( Critter* cr, int event_type, ScriptString* func_name );
         static void          Crit_SetLexems( Critter* cr, ScriptString* lexems );
         static Map*          Crit_GetMap( Critter* cr );
@@ -727,8 +728,6 @@ public:
         static bool Crit_EventGlobalInvite( Critter* cr, Item* car, uint encounter_descriptor, int combat_mode, uint& map_id, ushort& hx, ushort& hy, uchar& dir );
         static void Crit_EventTurnBasedProcess( Critter* cr, Map* map, bool begin_turn );
         static void Crit_EventSmthTurnBasedProcess( Critter* cr, Critter* from_cr, Map* map, bool begin_turn );
-
-		static bool Crit_get_IsDisconnected(Critter* cr);
 
         static GameVar* Global_GetGlobalVar( ushort tvar_id );
         static GameVar* Global_GetLocalVar( ushort tvar_id, uint master_id );

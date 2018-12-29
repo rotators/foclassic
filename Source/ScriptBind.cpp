@@ -1113,6 +1113,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectMethod( engine, "Critter", "uint GetUID(uint8 index)", focFUNCTION( BIND_CLASS Cl_GetUID ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "uint GetIp()", focFUNCTION( BIND_CLASS Cl_GetIp ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "string@ GetIpString()", focFUNCTION( BIND_CLASS Cl_GetIpString ), asCALL_CDECL_OBJFIRST );
+		RegisterObjectMethod( engine, "Critter", "bool get_IsDisconnected() const", focFUNCTION(BIND_CLASS Cl_get_IsDisconnected), asCALL_CDECL_OBJFIRST );
 
         RegisterObjectMethod( engine, "Critter", "bool SetEvent(int eventType, string@+ funcName)", focFUNCTION( BIND_CLASS Crit_SetEvent ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void SetLexems(string@+ lexems)", focFUNCTION( BIND_CLASS Crit_SetLexems ), asCALL_CDECL_OBJFIRST );
@@ -1288,8 +1289,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterObjectMethod( engine, "Critter", "bool EventGlobalInvite(Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir)", focFUNCTION( BIND_CLASS Crit_EventGlobalInvite ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventTurnBasedProcess(Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
         RegisterObjectMethod( engine, "Critter", "void EventSmthTurnBasedProcess(Critter& fromCr, Map& map, bool beginTurn)", focFUNCTION( BIND_CLASS Crit_EventSmthTurnBasedProcess ), asCALL_CDECL_OBJFIRST );
-
-		RegisterObjectMethod(engine, "Critter", "bool get_IsDisconnected() const", focFUNCTION(BIND_CLASS Crit_get_IsDisconnected), asCALL_CDECL_OBJFIRST);
     }
     #endif
 
