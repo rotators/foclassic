@@ -15,6 +15,9 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - font file(s) are not required by default; if _Dialog.fofnt_ cannot be found, _Default.fofnt_ is loaded instead
     - used on dialog/barter screens only, replacing `FONT_TYPE_DEFAULT` usage
     - it's recommended to use `FONT_TYPE_DIALOG` whenever drawing strings over dialog/barter screens (even if game uses default font only) to fully support player-made interfaces
+- when reading `WindowName` setting, strings `FOCLASSIC_STAGE` and `FOCLASSIC_VERSION` are converted to real values; affects all core applications which uses this setting
+- Mapper window no longer adds engine version to `WindowName` setting
+    - to restore previous behaviour use `WindowName = My Game Mapper (vFOCLASSIC_VERSION)`
 - reserved functions
     - [Client, Mapper] added `void finish()`, executed before closing application
 - extensions changes

@@ -1492,8 +1492,6 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
     Str::Replacement( module_real, DIR_SLASH_C, '/' );
     #endif
 
-    WriteLog( "\nfname_real = %s\nfname_script = %s\nmodule_real = %s", fname_real, fname_script, module_real );
-
     // Set current pragmas
     ScriptPreprocessor->SetPragmaCallback( edata->PragmaCB );
 

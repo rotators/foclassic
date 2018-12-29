@@ -10,6 +10,16 @@
 #include "Text.h"
 #include "Window.h"
 
+void ReplaceString( string& str, const string& from,     const string& to )
+{
+    size_t pos = 0;
+    while( (pos = str.find( from, pos ) ) != string::npos )
+    {
+        str.replace( pos, from.length(), to );
+        pos += to.length();
+    }
+}
+
 const char* GetWindowName()
 {
     // Default config names
@@ -39,18 +49,15 @@ const char* GetWindowName()
         if( str.empty() )
             return window_name;
 
+        ReplaceString( str, "FOCLASSIC_STAGE", FOCLASSIC_STAGE_STRING );
+        ReplaceString( str, "FOCLASSIC_VERSION", FOCLASSIC_VERSION_STRING );
+
         Str::Copy( window_name, str.c_str() );
 
         // Singleplayer appendix
         if( Singleplayer )
             Str::Append( window_name, " Singleplayer" );
 
-        // Mapper appendix
-        #if defined (FOCLASSIC_MAPPER)
-        Str::Append( window_name, " (v" );
-        Str::Append( window_name, Str::ItoA( FOCLASSIC_VERSION ) );
-        Str::Append( window_name, ")" );
-        #endif
     }
 
     return window_name;
