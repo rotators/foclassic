@@ -240,7 +240,7 @@ int main( int argc, char* argv[] )
     if( str_prep )
         FixPathSlashes( str_prep );
 
-	// Engine
+    // Engine
     Engine = asCreateScriptEngine( ANGELSCRIPT_VERSION );
     if( !Engine )
     {
