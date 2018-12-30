@@ -1108,14 +1108,14 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
 
     switch( action )
     {
-        case ACTION_KNOCKOUT:
+        case CRITTER_ACTION_KNOCKOUT:
             Cond = CRITTER_CONDITION_KNOCKOUT;
             Anim2Knockout = action_ext;
             break;
-        case ACTION_STANDUP:
+        case CRITTER_ACTION_STANDUP:
             Cond = CRITTER_CONDITION_LIFE;
             break;
-        case ACTION_DEAD:
+        case CRITTER_ACTION_DEAD:
         {
             Cond = CRITTER_CONDITION_DEAD;
             Anim2Dead = action_ext;
@@ -1124,13 +1124,13 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
             reSetTick = Timer::GameTick() + (anim && anim->Anim ? anim->Anim->Ticks : 1000);
             break;
         }
-        case ACTION_CONNECT:
+        case CRITTER_ACTION_CONNECT:
             UNSETFLAG( Flags, CRITTER_FLAG_DISCONNECT );
             break;
-        case ACTION_DISCONNECT:
+        case CRITTER_ACTION_DISCONNECT:
             SETFLAG( Flags, CRITTER_FLAG_DISCONNECT );
             break;
-        case ACTION_RESPAWN:
+        case CRITTER_ACTION_RESPAWN:
             Cond = CRITTER_CONDITION_LIFE;
             Alpha = 0;
             SetFade( true );
@@ -1138,7 +1138,7 @@ void CritterCl::Action( int action, int action_ext, Item* item, bool local_call 
             needReSet = true;
             reSetTick = Timer::GameTick();   // Fast
             break;
-        case ACTION_REFRESH:
+        case CRITTER_ACTION_REFRESH:
             if( !IsAnim() )
                 AnimateStay();
             break;
@@ -1592,7 +1592,7 @@ void CritterCl::Process()
     if( Timer::GameTick() >= tickFidget )
     {
         if( !animSequence.size() && Cond == CRITTER_CONDITION_LIFE && IsFree() && !MoveSteps.size() && !IsCombatMode() )
-            Action( ACTION_FIDGET, 0, NULL );
+            Action( CRITTER_ACTION_FIDGET, 0, NULL );
         tickFidget = Timer::GameTick() + Random( GameOpt.CritterFidgetTime, GameOpt.CritterFidgetTime * 2 );
     }
 }

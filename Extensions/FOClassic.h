@@ -278,7 +278,6 @@ EXPORT_UNINITIALIZED void ( * Log )( const char* frmt, ... );
     const char* (ScriptGetLibraryOptions)();       \
     const char* (ScriptGetLibraryVersion)();       \
     GameOptions* FOClassic;                        \
-    GameOptions* FOnline;                          \
     void (*Log)(const char* frmt, ...);            \
     FOCLASSIC_EXTENSION_ENTRY_BLEEDING_EDGE        \
     EXPORT void DllMainEx( bool isCompiler )

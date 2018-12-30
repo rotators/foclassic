@@ -317,44 +317,29 @@
 #define BINARY_TYPE_PROFILERSAVE                     'P'
 #define BINARY_TYPE_SCRIPTSAVE                       'S'
 #define BINARY_TYPE_WORLDSAVE                        'W'
-#define BINARY_TYPE_CACHE                            'c'    // reserved
+#define BINARY_TYPE_CACHE                            'c'  // reserved
 
 // Chosen actions
-#define CHOSEN_NONE                                  (0)    //
-#define CHOSEN_MOVE                                  (1)    // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_MOVE_TO_CRITTER                       (2)    // Critter id, None, Is run, Cut path, Wait double click, Double click tick
-#define CHOSEN_DIR                                   (3)    // 0 (CW) or 1 (CCW)
-#define CHOSEN_SHOW_ITEM                             (4)    // Item id
-#define CHOSEN_HIDE_ITEM                             (5)    // Item id
-#define CHOSEN_USE_ITEM                              (6)    // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
-#define CHOSEN_MOVE_ITEM                             (7)    // Item id, Item count, To slot, Is barter container, Is second try
-#define CHOSEN_MOVE_ITEM_CONTAINER                   (8)    // From container, Item id, Count
-#define CHOSEN_TAKE_ALL                              (9)    //
-#define CHOSEN_USE_SKILL_ON_CRITTER                  (10)   // Skill, Critter id
-#define CHOSEN_USE_SKILL_ON_ITEM                     (11)   // Is inventory, Skill index, Item id
-#define CHOSEN_USE_SKILL_ON_SCENERY                  (12)   // Skill, Pid, HexX, HexY
-#define CHOSEN_TALK_NPC                              (13)   // Critter id
-#define CHOSEN_PICK_ITEM                             (14)   // Pid, HexX, HexY
-#define CHOSEN_PICK_CRITTER                          (15)   // Critter id, (loot - 0, push - 1)
-#define CHOSEN_WRITE_HOLODISK                        (16)   // Holodisk id
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3, "shortened CHOSEN_action")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define CHOSEN_MOVE_TO_CRIT                         (CHOSEN_MOVE_TO_CRITTER)
-# define CHOSEN_MOVE_ITEM_CONT                       (CHOSEN_MOVE_ITEM_CONTAINER)
-# define CHOSEN_USE_SKL_ON_CRITTER                   (CHOSEN_USE_SKILL_ON_CRITTER)
-# define CHOSEN_USE_SKL_ON_ITEM                      (CHOSEN_USE_SKILL_ON_ITEM)
-# define CHOSEN_USE_SKL_ON_SCEN                      (CHOSEN_USE_SKILL_ON_SCENERY)
-# define CHOSEN_PICK_CRIT                            (CHOSEN_PICK_CRITTER)
-# define CHOSEN_WRITE_HOLO                           (CHOSEN_WRITE_HOLODISK)
-#endif                                                   // !FOCLASSIC_BLEEDING_EDGE
+#define CHOSEN_NONE                                  (0)  //
+#define CHOSEN_MOVE                                  (1)  // HexX, HexY, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_MOVE_TO_CRITTER                       (2)  // Critter id, None, Is run, Cut path, Wait double click, Double click tick
+#define CHOSEN_DIR                                   (3)  // 0 (CW) or 1 (CCW)
+#define CHOSEN_SHOW_ITEM                             (4)  // Item id
+#define CHOSEN_HIDE_ITEM                             (5)  // Item id
+#define CHOSEN_USE_ITEM                              (6)  // Item id, Item pid, Target type, Target id, Item mode, Some param (timer)
+#define CHOSEN_MOVE_ITEM                             (7)  // Item id, Item count, To slot, Is barter container, Is second try
+#define CHOSEN_MOVE_ITEM_CONTAINER                   (8)  // From container, Item id, Count
+#define CHOSEN_TAKE_ALL                              (9)  //
+#define CHOSEN_USE_SKILL_ON_CRITTER                  (10) // Skill, Critter id
+#define CHOSEN_USE_SKILL_ON_ITEM                     (11) // Is inventory, Skill index, Item id
+#define CHOSEN_USE_SKILL_ON_SCENERY                  (12) // Skill, Pid, HexX, HexY
+#define CHOSEN_TALK_NPC                              (13) // Critter id
+#define CHOSEN_PICK_ITEM                             (14) // Pid, HexX, HexY
+#define CHOSEN_PICK_CRITTER                          (15) // Critter id, (loot - 0, push - 1)
+#define CHOSEN_WRITE_HOLODISK                        (16) // Holodisk id
 
 // Hardcoded screens
-#define CLIENT_SCREEN_NONE                           (0) // Used in primary, secondary and additional screen types
+#define CLIENT_SCREEN_NONE                           (0)  // Used in primary, secondary and additional screen types
 // Hardcoded screens, primary
 #define CLIENT_MAIN_SCREEN_LOGIN                     (1)
 #define CLIENT_MAIN_SCREEN_REGISTRATION              (2)
@@ -390,27 +375,7 @@
 #define CLIENT_SCREEN_PERK                           (32)
 #define CLIENT_SCREEN_WM_TOWNVIEW                    (33)
 #define CLIENT_SCREEN_LOADSAVE                       (34)
-
 #define CLIENT_SCREEN_LAST                           (CLIENT_SCREEN_LOADSAVE)   // extensions/scripts
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRCATE(3,"CLIENT_MAIN_SCREEN_GLOBAL_MAP")
-#  pragma STAGE_DEPRCATE(3,"CLIENT_SCREEN_oldnames")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define CLIENT_MAIN_SCREEN_GLOBAL_MAP               (CLIENT_MAIN_SCREEN_WORLDMAP)
-# define CLIENT_SCREEN_PIP_BOY                       (CLIENT_SCREEN_PIPBOY)
-# define CLIENT_SCREEN_FIX_BOY                       (CLIENT_SCREEN_FIXBOY)
-# define CLIENT_SCREEN_CHA_NAME                      (CLIENT_SCREEN_CHAR_NAME)
-# define CLIENT_SCREEN_CHA_AGE                       (CLIENT_SCREEN_CHAR_AGE)
-# define CLIENT_SCREEN_CHA_SEX                       (CLIENT_SCREEN_CHAR_SEX)
-# define CLIENT_SCREEN_GM_TOWN                       (CLIENT_SCREEN_WM_TOWN)
-# define CLIENT_SCREEN_INPUT_BOX                     (CLIENT_SCREEN_INPUTBOX)
-# define CLIENT_SCREEN_TOWN_VIEW                     (CLIENT_SCREEN_WM_TOWNVIEW)
-# define CLIENT_SCREEN_SAVE_LOAD                     (CLIENT_SCREEN_LOADSAVE)
-#endif
 
 // Colors
 // not included (see SpriteManager.h):
@@ -451,90 +416,42 @@
 #define COLOR_TEXT_SAND                              COLOR_XRGB( 0x8F, 0x6F, 0 )
 
 // Commands
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE(3,"renumber COMMAND")
-# endif
-#endif   // FOCLASSIC_ENGINE
 #define COMMAND_EXIT                                 (1)
-#define COMMAND_MYINFO                               (2)
-#define COMMAND_GAMEINFO                             (3)
-#define COMMAND_CRITID                               (4)
-#define COMMAND_MOVECRIT                             (5)
-#define COMMAND_KILLCRIT                             (6)
-#define COMMAND_DISCONCRIT                           (7)
-#define COMMAND_TOGLOBAL                             (8)
-#define COMMAND_RESPAWN                              (9)
-#define COMMAND_PARAM                                (10)
-#define COMMAND_GETACCESS                            (11)
-#define COMMAND_ADDITEM                              (12)
-#define COMMAND_ADDITEM_SELF                         (14)
-#define COMMAND_ADDNPC                               (15)
-#define COMMAND_ADDLOCATION                          (16)
-#define COMMAND_RELOADSCRIPTS                        (17)   // investigate
-#define COMMAND_LOADSCRIPT                           (18)
-#define COMMAND_RELOAD_CLIENT_SCRIPTS                (19)
-#define COMMAND_RUNSCRIPT                            (20)
-#define COMMAND_RELOADLOCATIONS                      (21)   // investigate
-#define COMMAND_LOADLOCATION                         (22)
-#define COMMAND_RELOADMAPS                           (23)   // investigate
-#define COMMAND_LOADMAP                              (24)
-#define COMMAND_REGENMAP                             (25)
-#define COMMAND_RELOADDIALOGS                        (26)   // investigate
-#define COMMAND_LOADDIALOG                           (27)
-#define COMMAND_RELOADTEXTS                          (28)   // investigate
-#define COMMAND_RELOADAI                             (29)   // investigate
-#define COMMAND_CHECKVAR                             (30)
-#define COMMAND_SETVAR                               (31)
-#define COMMAND_SETTIME                              (32)
-#define COMMAND_BAN                                  (33)
-#define COMMAND_DELETE_ACCOUNT                       (34)
-#define COMMAND_CHANGE_PASSWORD                      (35)
-#define COMMAND_DROP_UID                             (36)
-#define COMMAND_LOG                                  (37)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"CMD")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define CMD_EXIT                                    (COMMAND_EXIT)
-# define CMD_MYINFO                                  (COMMAND_MYINFO)
-# define CMD_GAMEINFO                                (COMMAND_GAMEINFO)
-# define CMD_CRITID                                  (COMMAND_CRITID)
-# define CMD_MOVECRIT                                (COMMAND_MOVECRIT)
-# define CMD_KILLCRIT                                (COMMAND_KILLCRIT)
-# define CMD_DISCONCRIT                              (COMMAND_DISCONCRIT)
-# define CMD_TOGLOBAL                                (COMMAND_TOGLOBAL)
-# define CMD_RESPAWN                                 (COMMAND_RESPAWN)
-# define CMD_PARAM                                   (COMMAND_PARAM)
-# define CMD_GETACCESS                               (COMMAND_GETACCESS)
-# define CMD_ADDITEM                                 (COMMAND_ADDITEM)
-# define CMD_ADDITEM_SELF                            (COMMAND_ADDITEM_SELF)
-# define CMD_ADDNPC                                  (COMMAND_ADDNPC)
-# define CMD_ADDLOCATION                             (COMMAND_ADDLOCATION)
-# define CMD_RELOADSCRIPTS                           (COMMAND_RELOADSCRIPTS)
-# define CMD_LOADSCRIPT                              (COMMAND_LOADSCRIPT)
-# define CMD_RELOAD_CLIENT_SCRIPTS                   (COMMAND_RELOAD_CLIENT_SCRIPTS)
-# define CMD_RUNSCRIPT                               (COMMAND_RUNSCRIPT)
-# define CMD_RELOADLOCATIONS                         (COMMAND_RELOADLOCATIONS)
-# define CMD_LOADLOCATION                            (COMMAND_LOADLOCATION)
-# define CMD_RELOADMAPS                              (COMMAND_RELOADMAPS)
-# define CMD_LOADMAP                                 (COMMAND_LOADMAP)
-# define CMD_REGENMAP                                (COMMAND_REGENMAP)
-# define CMD_RELOADDIALOGS                           (COMMAND_RELOADDIALOGS)
-# define CMD_LOADDIALOG                              (COMMAND_LOADDIALOG)
-# define CMD_RELOADTEXTS                             (COMMAND_RELOADTEXTS)
-# define CMD_RELOADAI                                (COMMAND_RELOADAI)
-# define CMD_CHECKVAR                                (COMMAND_CHECKVAR)
-# define CMD_SETVAR                                  (COMMAND_SETVAR)
-# define CMD_SETTIME                                 (COMMAND_SETTIME)
-# define CMD_BAN                                     (COMMAND_BAN)
-# define CMD_DELETE_ACCOUNT                          (COMMAND_DELETE_ACCOUNT)
-# define CMD_CHANGE_PASSWORD                         (COMMAND_CHANGE_PASSWORD)
-# define CMD_DROP_UID                                (COMMAND_DROP_UID)
-# define CMD_LOG                                     (COMMAND_LOG)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
+#define COMMAND_CHANGE_PASSWORD                      (2)
+#define COMMAND_DELETE_ACCOUNT                       (3)
+#define COMMAND_MYINFO                               (4)
+#define COMMAND_GETACCESS                            (5)
+#define COMMAND_PARAM                                (6)
+#define COMMAND_GAMEINFO                             (7)
+#define COMMAND_DROP_UID                             (8)
+#define COMMAND_CRITID                               (9)
+#define COMMAND_MOVECRIT                             (10)
+#define COMMAND_KILLCRIT                             (11)
+#define COMMAND_DISCONCRIT                           (12)
+#define COMMAND_TOGLOBAL                             (13)
+#define COMMAND_RESPAWN                              (14)
+#define COMMAND_LOG                                  (15)
+#define COMMAND_BAN                                  (16)
+#define COMMAND_ADDITEM                              (17)
+#define COMMAND_ADDITEM_SELF                         (18)
+#define COMMAND_ADDNPC                               (19)
+#define COMMAND_ADDLOCATION                          (20)
+#define COMMAND_LOADSCRIPT                           (21)
+#define COMMAND_RELOADSCRIPTS                        (22)   // investigate
+#define COMMAND_RELOAD_CLIENT_SCRIPTS                (23)
+#define COMMAND_RUNSCRIPT                            (24)
+#define COMMAND_LOADLOCATION                         (25)
+#define COMMAND_RELOADLOCATIONS                      (26)   // investigate
+#define COMMAND_LOADMAP                              (27)
+#define COMMAND_RELOADMAPS                           (28)   // investigate
+#define COMMAND_REGENMAP                             (29)
+#define COMMAND_LOADDIALOG                           (30)
+#define COMMAND_RELOADDIALOGS                        (31)   // investigate
+#define COMMAND_RELOADTEXTS                          (32)   // investigate
+#define COMMAND_RELOADAI                             (33)   // investigate
+#define COMMAND_CHECKVAR                             (34)
+#define COMMAND_SETVAR                               (35)
+#define COMMAND_SETTIME                              (36)
 
 // Combat modes
 #define COMBAT_MODE_ANY                              (0)
@@ -553,17 +470,6 @@
 #define CONTAINER_PUT                                (2)
 #define CONTAINER_GETALL                             (3)
 #define CONTAINER_PUTALL                             (4)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"CONT")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define CONT_GET                                    (CONTAINER_GET)
-# define CONT_PUT                                    (CONTAINER_PUT)
-# define CONT_GETALL                                 (CONTAINER_GETALL)
-# define CONT_PUTALL                                 (CONTAINER_PUTALL)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Contour types
 #define CONTOUR_RED                                  (1)
@@ -579,55 +485,43 @@
 #define CORNER_EAST_WEST                             (5)
 
 // Critter actions
+//
+// investigate: CRITTER_ACTION_RUN, CRITTER_ACTION_DODGE, CRITTER_ACTION_DAMAGE, CRITTER_ACTION_DAMAGE
+//
 // Flags for chosen:
 // l - hardcoded local call
 // s - hardcoded server call
 // for all others critters actions call only server
-//                                                           flags    actionExt                                                      item
-#define ACTION_MOVE                                  (0)    // l
-#define ACTION_RUN                                   (1)    // l
-#define ACTION_MOVE_ITEM                             (2)    // l s      from slot                                                      +
-#define ACTION_MOVE_ITEM_SWAP                        (3)    // l s      from slot                                                      +
-#define ACTION_USE_ITEM                              (4)    // l s                                                                     +
-#define ACTION_DROP_ITEM                             (5)    // l s      from slot                                                      +
-#define ACTION_USE_WEAPON                            (6)    // l        fail attack 8 bit, use index (0-2) 4-7 bits, aim 0-3 bits      +
-#define ACTION_RELOAD_WEAPON                         (7)    // l s                                                                     +
-#define ACTION_USE_SKILL                             (8)    // l s      skill index (see SK_*)
-#define ACTION_PICK_ITEM                             (9)    // l s                                                                     +
-#define ACTION_PICK_CRITTER                          (10)   // l        0 - loot, 1 - steal, 2 - push
-#define ACTION_OPERATE_CONTAINER                     (11)   // l s      transfer type * 10 + [0 - get, 1 - get all, 2 - put]           + (exclude get all)
-#define ACTION_BARTER                                (12)   //   s      0 - item taken, 1 - item given                                 +
-#define ACTION_DODGE                                 (13)   //          0 - front, 1 - back
-#define ACTION_DAMAGE                                (14)   //          0 - front, 1 - back
-#define ACTION_DAMAGE_FORCE                          (15)   //          0 - front, 1 - back
-#define ACTION_KNOCKOUT                              (16)   //   s      0 - knockout anim2begin
-#define ACTION_STANDUP                               (17)   //   s      0 - knockout anim2end
-#define ACTION_FIDGET                                (18)   // l
-#define ACTION_DEAD                                  (19)   //   s      dead type anim2 (see Anim2 in _animation.fos)
-#define ACTION_CONNECT                               (20)   //
-#define ACTION_DISCONNECT                            (21)   //
-#define ACTION_RESPAWN                               (22)   //   s
-#define ACTION_REFRESH                               (23)   //   s
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma FOCLASSIC_STAGE(3,"ACTION -> CRITTER_ACTION")
-# endif
-#endif   // FOCLASSIC_ENGINE
+//
+#define CRITTER_ACTION_MOVE                          (0)            // l
+#define CRITTER_ACTION_RUN                           (1)            // l
+#define CRITTER_ACTION_MOVE_ITEM                     (2)            // l s      from slot                                                      +
+#define CRITTER_ACTION_MOVE_ITEM_SWAP                (3)            // l s      from slot                                                      +
+#define CRITTER_ACTION_USE_ITEM                      (4)            // l s                                                                     +
+#define CRITTER_ACTION_DROP_ITEM                     (5)            // l s      from slot                                                      +
+#define CRITTER_ACTION_USE_WEAPON                    (6)            // l        fail attack 8 bit, use index (0-2) 4-7 bits, aim 0-3 bits      +
+#define CRITTER_ACTION_RELOAD_WEAPON                 (7)            // l s                                                                     +
+#define CRITTER_ACTION_USE_SKILL                     (8)            // l s      skill index (see SK_*)
+#define CRITTER_ACTION_PICK_ITEM                     (9)            // l s                                                                     +
+#define CRITTER_ACTION_PICK_CRITTER                  (10)           // l        0 - loot, 1 - steal, 2 - push
+#define CRITTER_ACTION_OPERATE_CONTAINER             (11)           // l s      transfer type * 10 + [0 - get, 1 - get all, 2 - put]           + (exclude get all)
+#define CRITTER_ACTION_BARTER                        (12)           //   s      0 - item taken, 1 - item given                                 +
+#define CRITTER_ACTION_DODGE                         (13)           //          0 - front, 1 - back
+#define CRITTER_ACTION_DAMAGE                        (14)           //          0 - front, 1 - back
+#define CRITTER_ACTION_DAMAGE_FORCE                  (15)           //          0 - front, 1 - back
+#define CRITTER_ACTION_KNOCKOUT                      (16)           //   s      0 - knockout anim2begin
+#define CRITTER_ACTION_STANDUP                       (17)           //   s      0 - knockout anim2end
+#define CRITTER_ACTION_FIDGET                        (18)           // l
+#define CRITTER_ACTION_DEAD                          (19)           //   s      dead type anim2 (see Anim2 in _animation.fos)
+#define CRITTER_ACTION_CONNECT                       (20)           //
+#define CRITTER_ACTION_DISCONNECT                    (21)           //
+#define CRITTER_ACTION_RESPAWN                       (22)           //   s
+#define CRITTER_ACTION_REFRESH                       (23)           //   s
 
 // Critter conditions
 #define CRITTER_CONDITION_LIFE                       (1)
 #define CRITTER_CONDITION_KNOCKOUT                   (2)
 #define CRITTER_CONDITION_DEAD                       (3)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"COND")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define COND_LIFE                                   (CRITTER_CONDITION_LIFE)
-# define COND_KNOCKOUT                               (CRITTER_CONDITION_KNOCKOUT)
-# define COND_DEAD                                   (CRITTER_CONDITION_DEAD)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Critter events
 #define CRITTER_EVENT_IDLE                           (0)
@@ -682,32 +576,10 @@
 #define CRITTER_FLAG_DISCONNECT                      (0x00080000)   // In offline
 #define CRITTER_FLAG_CHOSEN                          (0x00100000)   // Chosen
 #define CRITTER_FLAG_RULEGROUP                       (0x00200000)   // Group rule
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"FCRIT")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define FCRIT_PLAYER                                (CRITTER_FLAG_PLAYER)
-# define FCRIT_NPC                                   (CRITTER_FLAG_NPC)
-# define FCRIT_DISCONNECT                            (CRITTER_FLAG_DISCONNECT)
-# define FCRIT_CHOSEN                                (CRITTER_FLAG_CHOSEN)
-# define FCRIT_RULEGROUP                             (CRITTER_FLAG_RULEGROUP)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Critters ID
 #define CRITTER_ID_START_PLAYER                      (1)
 #define CRITTER_ID_START_NPC                         (5000001)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"NPC_START_ID")
-#  pragma STAGE_DEPRECATE(3,"USER_START_ID")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define NPC_START_ID                                (CRITTER_ID_START_NPC)
-# define USER_START_ID                               (CRITTER_ID_START_PLAYER)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 #ifdef FOCLASSIC_EXTENSION
 # define CRITTER_ID_IS_NPC( id )                     ( (id) >= CRITTER_ID_START_NPC )
@@ -723,15 +595,6 @@
 #define CRITTER_LOOK_NAME                            (0)
 #define CRITTER_LOOK_SHORT                           (1)
 #define CRITTER_LOOK_FULL                            (2)
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"CRITTER_ONLY_NAME")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define CRITTER_ONLY_NAME                           (CRITTER_LOOK_NAME)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Cur modes
 #define CURSOR_DEFAULT                               (0)
@@ -878,53 +741,6 @@
 // Additional fonts
 #define FONT_TYPE_DIALOG                             (9) // used on dialog/barter screen only
 
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"FONT_type")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define FONT_FO                                     (FONT_TYPE_FO)
-# define FONT_NUM                                    (FONT_TYPE_NUM)
-# define FONT_BIG_NUM                                (FONT_TYPE_BIG_NUM)
-# define FONT_SAND_NUM                               (FONT_TYPE_SAND_NUM)
-# define FONT_SPECIAL                                (FONT_TYPE_SPECIAL)
-# define FONT_DEFAULT                                (FONT_TYPE_DEFAULT)
-# define FONT_THIN                                   (FONT_TYPE_THIN)
-# define FONT_FAT                                    (FONT_TYPE_FAT)
-# define FONT_BIG                                    (FONT_TYPE_BIG)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"FT")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-// Font flags
-# define FT_NOBREAK                                  (FONT_FLAG_NOBREAK)
-# define FT_NOBREAK_LINE                             (FONT_FLAG_NOBREAK_LINE)
-# define FT_CENTERX                                  (FONT_FLAG_CENTERX)
-# define FT_CENTERY                                  (FONT_FLAG_CENTERY)
-# define FT_CENTERR                                  (FONT_FLAG_CENTERR)
-# define FT_BOTTOM                                   (FONT_FLAG_BOTTOM)
-# define FT_UPPER                                    (FONT_FLAG_UPPER)
-# define FT_NO_COLORIZE                              (FONT_FLAG_NO_COLORIZE)
-# define FT_ALIGN                                    (FONT_FLAG_ALIGN)
-# define FT_BORDERED                                 (FONT_FLAG_BORDERED)
-
-# ifdef FOCLASSIC_EXTENSION
-#  define FT_SKIPLINES( l )                          (0x0400 | ( (l) << 16 ) )
-#  define FT_SKIPLINES_END( l )                      (0x0800 | ( (l) << 16 ) )
-# endif    // FOCLASSIC_EXTENSION
-
-# ifdef FOCLASSIC_SCRIPT
-#  define FT_SKIPLINES                               # (l)(0x0400 | ( (l) << 16 ) )
-#  define FT_SKIPLINES_END                           # (l)(0x0800 | ( (l) << 16 ) )
-# endif    // FOCLASSIC_EXTENSION
-
-#endif     // !FOCLASSIC_BLEEDING_EDGE
-
 #define GENDER_MALE                                  (0)
 #define GENDER_FEMALE                                (1)
 
@@ -953,32 +769,6 @@
 
 #define HEX_FLAG_NOWAY                               BIN16( 00010001, 00000001 )
 #define HEX_FLAG_NOSHOOT                             BIN16( 00100000, 00000010 )
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"FH")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define FH_BLOCK                                    (HEX_FLAG_BLOCK)
-# define FH_NOTRAKE                                  (HEX_FLAG_NOTRAKE)
-# define FH_WALL                                     (HEX_FLAG_WALL)
-# define FH_SCEN                                     (HEX_FLAG_SCEN)
-# define FH_SCEN_GRID                                (HEX_FLAG_SCEN_GRID)
-# define FH_TRIGGER                                  (HEX_FLAG_TRIGGER)
-# define FH_CRITTER                                  (HEX_FLAG_CRITTER)
-# define FH_DEAD_CRITTER                             (HEX_FLAG_DEAD_CRITTER)
-# define FH_ITEM                                     (HEX_FLAG_ITEM)
-# define FH_DOOR                                     (HEX_FLAG_DOOR)
-# define FH_BLOCK_ITEM                               (HEX_FLAG_BLOCK_ITEM)
-# define FH_NRAKE_ITEM                               (HEX_FLAG_NRAKE_ITEM)
-# define FH_WALK_ITEM                                (HEX_FLAG_WALK_ITEM)
-# define FH_GAG_ITEM                                 (HEX_FLAG_GAG_ITEM)
-# define FH_NOWAY                                    (HEX_FLAG_NOWAY)
-# define FH_NOSHOOT                                  (HEX_FLAG_NOSHOOT)
-
-#endif    // !FOCLASSIC_BLEEDING_EDGE
-
 
 // Hit locations
 #define HIT_LOCATION_NONE                            (0)
@@ -1013,22 +803,6 @@
 #define ITEM_COLLECTION_BARTER_OPPONENT_OFFER        (5)
 #define ITEM_COLLECTION_PICKUP                       (6)
 #define ITEM_COLLECTION_PICKUP_FROM                  (7)
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"ITEMS")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define ITEMS_INVENTORY                             (ITEM_COLLECTION_INVENTORY)
-# define ITEMS_USE                                   (ITEM_COLLECTION_USE)
-# define ITEMS_BARTER                                (ITEM_COLLECTION_BARTER)
-# define ITEMS_BARTER_OFFER                          (ITEM_COLLECTION_BARTER_OFFER)
-# define ITEMS_BARTER_OPPONENT                       (ITEM_COLLECTION_BARTER_OPPONENT)
-# define ITEMS_BARTER_OPPONENT_OFFER                 (ITEM_COLLECTION_BARTER_OPPONENT_OFFER)
-# define ITEMS_PICKUP                                (ITEM_COLLECTION_PICKUP)
-# define ITEMS_PICKUP_FROM                           (ITEM_COLLECTION_PICKUP_FROM)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Item data masks
 #define ITEM_DATA_MASK_CHOSEN                        (0)
@@ -1082,46 +856,6 @@
 #define ITEM_FLAG_HOLODISK                           (0x20000000)
 #define ITEM_FLAG_RADIO                              (0x40000000)
 #define ITEM_FLAG_CACHED                             (0x80000000)    // unused
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"ITEM_flag")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define ITEM_HIDDEN                                 (ITEM_FLAG_HIDDEN)
-# define ITEM_FLAT                                   (ITEM_FLAG_FLAT)
-# define ITEM_NO_BLOCK                               (ITEM_FLAG_NO_BLOCK)
-# define ITEM_SHOOT_THRU                             (ITEM_FLAG_SHOOT_THRU)
-# define ITEM_LIGHT_THRU                             (ITEM_FLAG_LIGHT_THRU)
-# define ITEM_MULTI_HEX                              (ITEM_FLAG_MULTI_HEX)
-# define ITEM_WALL_TRANS_END                         (ITEM_FLAG_WALL_TRANS_END)
-# define ITEM_TWO_HANDS                              (ITEM_FLAG_TWO_HANDS)
-# define ITEM_BIG_GUN                                (ITEM_FLAG_BIG_GUN)
-# define ITEM_ALWAYS_VIEW                            (ITEM_FLAG_ALWAYS_VIEW)
-# define ITEM_HAS_TIMER                              (ITEM_FLAG_HAS_TIMER)
-# define ITEM_BAD_ITEM                               (ITEM_FLAG_BAD_ITEM)
-# define ITEM_NO_HIGHLIGHT                           (ITEM_FLAG_NO_HIGHLIGHT)
-# define ITEM_SHOW_ANIM                              (ITEM_FLAG_SHOW_ANIM)
-# define ITEM_SHOW_ANIM_EXT                          (ITEM_FLAG_SHOW_ANIM_EXT)
-# define ITEM_LIGHT                                  (ITEM_FLAG_LIGHT)
-# define ITEM_GECK                                   (ITEM_FLAG_GECK)
-# define ITEM_TRAP                                   (ITEM_FLAG_TRAP)
-# define ITEM_NO_LIGHT_INFLUENCE                     (ITEM_FLAG_NO_LIGHT_INFLUENCE)
-# define ITEM_NO_LOOT                                (ITEM_FLAG_NO_LOOT)
-# define ITEM_NO_STEAL                               (ITEM_FLAG_NO_STEAL)
-# define ITEM_GAG                                    (ITEM_FLAG_GAG)
-# define ITEM_COLORIZE                               (ITEM_FLAG_COLORIZE)
-# define ITEM_COLORIZE_INV                           (ITEM_FLAG_COLORIZE_INV)
-# define ITEM_CAN_USE_ON_SMTH                        (ITEM_FLAG_CAN_USE_ON_SMTH)
-# define ITEM_CAN_LOOK                               (ITEM_FLAG_CAN_LOOK)
-# define ITEM_CAN_TALK                               (ITEM_FLAG_CAN_TALK)
-# define ITEM_CAN_PICKUP                             (ITEM_FLAG_CAN_PICKUP)
-# define ITEM_CAN_USE                                (ITEM_FLAG_CAN_USE)
-# define ITEM_HOLODISK                               (ITEM_FLAG_HOLODISK)
-# define ITEM_RADIO                                  (ITEM_FLAG_RADIO)
-# define ITEM_CACHED                                 (ITEM_FLAG_CACHED)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 #define ITEM_LOOK_DEFAULT                            (0)
 #define ITEM_LOOK_ONLY_NAME                          (1)
@@ -1213,17 +947,6 @@
 #define MSGBOX_TALK                                  (1)
 #define MSGBOX_COMBAT_RESULT                         (2)
 #define MSGBOX_VIEW                                  (3)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"FOMB")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define FOMB_GAME                                   (MSGBOX_GAME)
-# define FOMB_TALK                                   (MSGBOX_TALK)
-# define FOMB_COMBAT_RESULT                          (MSGBOX_COMBAT_RESULT)
-# define FOMB_VIEW                                   (MSGBOX_VIEW)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Client and mapper paths
 #define PATH_ROOT                                    (0)
@@ -1269,53 +992,6 @@
 // Mapper paths
 #define PATH_MAPPER_ROOT                             (45)
 #define PATH_MAPPER_DATA                             (46)
-
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"PT" )
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define PT_ROOT                                     (PATH_ROOT)
-# define PT_DATA                                     (PATH_DATA)
-# define PT_ART                                      (PATH_ART)
-# define PT_ART_CRITTERS                             (PATH_ART_CRITTERS)
-# define PT_ART_INTRFACE                             (PATH_ART_INTRFACE)
-# define PT_ART_INVEN                                (PATH_ART_INVEN)
-# define PT_ART_ITEMS                                (PATH_ART_ITEMS)
-# define PT_ART_MISC                                 (PATH_ART_MISC)
-# define PT_ART_SCENERY                              (PATH_ART_SCENERY)
-# define PT_ART_SKILLDEX                             (PATH_ART_SKILLDEX)
-# define PT_ART_SPLASH                               (PATH_ART_SPLASH)
-# define PT_ART_TILES                                (PATH_ART_TILES)
-# define PT_ART_WALLS                                (PATH_ART_WALLS)
-# define PT_TEXTURES                                 (PATH_TEXTURES)
-# define PT_EFFECTS                                  (PATH_EFFECTS)
-# define PT_SND_MUSIC                                (PATH_SND_MUSIC)
-# define PT_SND_SFX                                  (PATH_SND_SFX)
-# define PT_SCRIPTS                                  (PATH_SCRIPTS)
-# define PT_VIDEO                                    (PATH_VIDEO)
-# define PT_TEXTS                                    (PATH_TEXTS)
-# define PT_SAVE                                     (PATH_SAVE)
-# define PT_FONTS                                    (PATH_FONTS)
-# define PT_CACHE                                    (PATH_CACHE)
-# define PT_SERVER_ROOT                              (PATH_SERVER_ROOT)
-# define PT_SERVER_DATA                              (PATH_SERVER_DATA)
-# define PT_SERVER_TEXTS                             (PATH_SERVER_TEXTS)
-# define PT_SERVER_DIALOGS                           (PATH_SERVER_DIALOGS)
-# define PT_SERVER_MAPS                              (PATH_SERVER_MAPS)
-# define PT_SERVER_PRO_ITEMS                         (PATH_SERVER_PRO_ITEMS)
-# define PT_SERVER_PRO_CRITTERS                      (PATH_SERVER_PRO_CRITTERS)
-# define PT_SERVER_SCRIPTS                           (PATH_SERVER_SCRIPTS)
-# define PT_SERVER_SAVE                              (PATH_SERVER_SAVE)
-# define PT_SERVER_CLIENTS                           (PATH_SERVER_CLIENTS)
-# define PT_SERVER_BANS                              (PATH_SERVER_BANS)
-# define PT_SERVER_LOGS                              (PATH_SERVER_LOGS)
-# define PT_SERVER_DUMPS                             (PATH_SERVER_DUMPS)
-# define PT_SERVER_PROFILER                          (PATH_SERVER_PROFILER)
-# define PT_MAPPER_ROOT                              (PATH_MAPPER_ROOT)
-# define PT_MAPPER_DATA                              (PATH_MAPPER_DATA)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Radio flags - Item::RadioFlags, ItemCl::RadioFlags
 #define RADIO_DISABLE_SEND                           (0x01)
@@ -1430,14 +1106,9 @@
 #define SCROLL_PIPBOY_ARCHIVES_INFO                  (25)
 
 // SendMessage()
-#define MESSAGE_TO_VISIBLE_ME                        (0)
-#define MESSAGE_TO_IAM_VISIBLE                       (1)
-#define MESSAGE_TO_ALL_ON_MAP                        (2)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE(3,"MESSAGE -> SENDMESSAGE")
-# endif
-#endif   // FOCLASSIC_ENGINE
+#define SENDMESSAGE_TO_VISIBLE_ME                    (0)
+#define SENDMESSAGE_TO_IAM_VISIBLE                   (1)
+#define SENDMESSAGE_TO_ALL_ON_MAP                    (2)
 
 // Slots
 #define SLOT_INV                                     (0)
@@ -1462,25 +1133,6 @@
 #define SHOW_SCREEN_FIXBOY                           (9)    // Fix-boy.
 #define SHOW_SCREEN_PIPBOY                           (10)   // Pip-boy.
 #define SHOW_SCREEN_MINIMAP                          (11)   // Mini-map.
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"SCREEN_showscreen")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define SCREEN_CLOSE                                (SHOW_SCREEN_CLOSE)
-# define SCREEN_TIMER                                (SHOW_SCREEN_TIMER)
-# define SCREEN_DIALOGBOX                            (SHOW_SCREEN_DIALOGBOX)
-# define SCREEN_SKILLBOX                             (SHOW_SCREEN_SKILLBOX)
-# define SCREEN_BAG                                  (SHOW_SCREEN_BAG)
-# define SCREEN_SAY                                  (SHOW_SCREEN_SAY)
-# define SCREEN_ELEVATOR                             (SHOW_SCREEN_ELEVATOR)
-# define SCREEN_INVENTORY                            (SHOW_SCREEN_INVENTORY)
-# define SCREEN_CHARACTER                            (SHOW_SCREEN_CHARACTER)
-# define SCREEN_FIXBOY                               (SHOW_SCREEN_FIXBOY)
-# define SCREEN_PIPBOY                               (SHOW_SCREEN_PIPBOY)
-# define SCREEN_MINIMAP                              (SHOW_SCREEN_MINIMAP)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Special skill values
 #define SKILL_PICK_ON_GROUND                         (-1)
@@ -1546,14 +1198,6 @@
 #define USE_USE                                      (4)
 #define USE_NONE                                     (15)
 #define USE_MAX                                      (3)   // array size
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"MAX_USES")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define MAX_USES                                    (USE_MAX)
-#endif
 
 #ifdef FOCLASSIC_EXTENSION
 # define MAKE_ITEM_MODE( use, aim )                  ( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
@@ -1583,19 +1227,6 @@
 #define VAR_TYPE_LOCAL_LOCATION                      (3)
 #define VAR_TYPE_LOCAL_MAP                           (4)
 #define VAR_TYPE_LOCAL_ITEM                          (5)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"VAR_GLOBAL VAR_LOCAL VAR_UNICUM")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define VAR_GLOBAL                                  (VAR_TYPE_GLOBAL)
-# define VAR_LOCAL                                   (VAR_TYPE_LOCAL)
-# define VAR_UNICUM                                  (VAR_TYPE_UNICUM)
-# define VAR_LOCAL_LOCATION                          (VAR_TYPE_LOCAL_LOCATION)
-# define VAR_LOCAL_MAP                               (VAR_TYPE_LOCAL_MAP)
-# define VAR_LOCAL_ITEM                              (VAR_TYPE_LOCAL_ITEM)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Var flags
 #define VAR_FLAG_QUEST                               (0x01)
@@ -1607,17 +1238,6 @@
 #define WORLDMAP_FOG_HALF                            (1)
 #define WORLDMAP_FOG_HALF_EX                         (2)
 #define WORLDMAP_FOG_NONE                            (3)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"GM_FOG")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define GM_FOG_FULL                                 (WORLDMAP_FOG_FULL)
-# define GM_FOG_HALF                                 (WORLDMAP_FOG_HALF)
-# define GM_FOG_HALF_EX                              (WORLDMAP_FOG_HALF_EX)
-# define GM_FOG_NONE                                 (WORLDMAP_FOG_NONE)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Worldmap events
 #define WORLDMAP_PROCESS_MOVE                        (0)
@@ -1628,36 +1248,11 @@
 #define WORLDMAP_PROCESS_STOPPED                     (5)
 #define WORLDMAP_PROCESS_NPC_IDLE                    (6)
 #define WORLDMAP_PROCESS_KICK                        (7)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"GLOBAL_PROCESS")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define GLOBAL_PROCESS_MOVE                         (WORLDMAP_PROCESS_MOVE)
-# define GLOBAL_PROCESS_ENTER                        (WORLDMAP_PROCESS_ENTER)
-# define GLOBAL_PROCESS_START_FAST                   (WORLDMAP_PROCESS_START_FAST)
-# define GLOBAL_PROCESS_START                        (WORLDMAP_PROCESS_START)
-# define GLOBAL_PROCESS_SET_MOVE                     (WORLDMAP_PROCESS_SET_MOVE)
-# define GLOBAL_PROCESS_STOPPED                      (WORLDMAP_PROCESS_STOPPED)
-# define GLOBAL_PROCESS_NPC_IDLE                     (WORLDMAP_PROCESS_NPC_IDLE)
-# define GLOBAL_PROCESS_KICK                         (WORLDMAP_PROCESS_KICK)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 // Worldmap walk types
 #define WORLDMAP_WALK_GROUND                         (0)
 #define WORLDMAP_WALK_FLY                            (1)
 #define WORLDMAP_WALK_WATER                          (2)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE_DEPRECATE(3,"GM")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_BLEEDING_EDGE
-# define GM_WALK_GROUND                              (WORLDMAP_WALK_GROUND)
-# define GM_WALK_FLY                                 (WORLDMAP_WALK_FLY)
-# define GM_WALK_WATER                               (WORLDMAP_WALK_WATER)
-#endif   // !FOCLASSIC_BLEEDING_EDGE
 
 /////
 //

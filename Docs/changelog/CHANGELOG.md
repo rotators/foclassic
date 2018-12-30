@@ -1,8 +1,64 @@
 # CHANGELOG
 
+
 Complete list of changes in FOClassic since [FOnline SDK r412](https://github.com/cvet/fonline/commit/3e58c94f1234173d5af234eb1f80ad0af8f3c120).
 - [Latest release](https://github.com/rotators/foclassic/releases/latest/)
 - [Nightly builds](https://ci.appveyor.com/project/rotators/foclassic/) (Linux, Windows)
+
+
+## [v5]() (WIP)
+
+- extensions changes
+    - `GameOptions* FOnline` removed, use `FOClassic` instead
+- scritps/extensions changes (_FOClassic.fos_)
+    - multiple defines has been renamed; see tables below for a complete list
+	- changed values of `COMMAND` defines
+
+| Old prefix       | New prefix          |
+|------------------|---------------------|
+| `ACTION`         | `CRITTER_ACTION     |
+| `CMD`            | `COMMAND`           |
+| `CONT`           | `CONTAINER`         |
+| `COND`           | `CRITTER_CONDITION` |
+| `FCRIT`          | `CRITTER_FLAG`      |
+| `FH`             | `HEX_FLAG`          |
+| `FOMB`           | `MSGBOX`            |
+| `FONT`           | `FONT_TYPE`         |
+| `FT`             | `FONT_FLAG`         |
+| `GLOBAL_PROCESS` | `WORLDMAP_PROCESS`  |
+| `GM_FOG`         | `WORLDMAP_FOG`      |
+| `GM_WALK`        | `WORLDMAP_WALK`     |
+| `ITEM`           | `ITEM_FLAG`         |
+| `ITEMS`          | `ITEM_COLLECTION`   |
+| `MESSAGE`        | `SENDMESSAGE`       |
+| `PT`             | `PATH`              |
+| `SCREEN`         | `SHOW_SCREEN`       |
+| `VAR`            | `VAR_TYPE`          |
+
+| Old name                        | New name                      |
+|---------------------------------|-------------------------------|
+| `CHOSEN_MOVE_TO_CRIT`           | `CHOSEN_MOVE_TO_CRITTER`      |
+| `CHOSEN_MOVE_ITEM_CONT`         | `CHOSEN_MOVE_ITEM_CONTAINER`  |
+| `CHOSEN_USE_SKL_ON_CRITTER`     | `CHOSEN_USE_SKILL_ON_CRITTER` |
+| `CHOSEN_USE_SKL_ON_ITEM`        | `CHOSEN_USE_SKILL_ON_ITEM`    |
+| `CHOSEN_USE_SKL_ON_SCEN`        | `CHOSEN_USE_SKILL_ON_SCENERY` |
+| `CHOSEN_PICK_CRIT`              | `CHOSEN_PICK_CRITTER`         |
+| `CHOSEN_WRITE_HOLO`             | `CHOSEN_WRITE_HOLODISK`       |
+| `CLIENT_MAIN_SCREEN_GLOBAL_MAP` | `CLIENT_MAIN_SCREEN_WORLDMAP` |
+| `CLIENT_SCREEN_PIP_BOY`         | `CLIENT_SCREEN_PIPBOY`        |
+| `CLIENT_SCREEN_FIX_BOY`         | `CLIENT_SCREEN_FIXBOY`        |
+| `CLIENT_SCREEN_CHA_NAME`        | `CLIENT_SCREEN_CHAR_NAME`     |
+| `CLIENT_SCREEN_CHA_AGE`         | `CLIENT_SCREEN_CHAR_AGE`      |
+| `CLIENT_SCREEN_CHA_SEX`         | `CLIENT_SCREEN_CHAR_SEX`      |
+| `CLIENT_SCREEN_GM_TOWN`         | `CLIENT_SCREEN_WM_TOWN`       |
+| `CLIENT_SCREEN_INPUT_BOX`       | `CLIENT_SCREEN_INPUTBOX`      |
+| `CLIENT_SCREEN_TOWN_VIEW`       | `CLIENT_SCREEN_WM_TOWNVIEW`   |
+| `CLIENT_SCREEN_SAVE_LOAD`       | `CLIENT_SCREEN_LOADSAVE`      |
+| `CRITTER_ONLY_NAME`             | `CRITTER_LOOK_NAME`           |
+| `MAX_USES`                      | `USE_MAX`                     |
+| `NPC_START_ID`                  | `CRITTER_ID_START_NPC`        |
+| `USER_START_ID`                 | `CRITTER_ID_START_PLAYER`     |
+
 
 ## [v4](https://github.com/rotators/foclassic/releases/tag/v4/)
 

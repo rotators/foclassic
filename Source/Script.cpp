@@ -520,14 +520,6 @@ void* Script::LoadDynamicLibrary( const char* dll_name )
     }
 
     // Register variables
-    #if FOCLASSIC_STAGE <= 2
-    ptr = DLL_GetAddress( dll, "FOnline" );
-    if( ptr )
-        *ptr = (size_t)&GameOpt;
-    #else
-    # pragma STAGE(3,"'FOnline' pointer is no longer assigned")
-    #endif
-
     ptr = DLL_GetAddress( dll, "ASEngine" );
     if( ptr )
         *ptr = (size_t)Engine;

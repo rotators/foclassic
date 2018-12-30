@@ -318,7 +318,7 @@ void FOServer::DisconnectClient( Client* cl )
         SETFLAG( cl->Flags, CRITTER_FLAG_DISCONNECT );
         if( cl->GetMap() )
         {
-            cl->SendA_Action( ACTION_DISCONNECT, 0, NULL );
+            cl->SendA_Action( CRITTER_ACTION_DISCONNECT, 0, NULL );
         }
         else if( cl->GroupMove )
         {

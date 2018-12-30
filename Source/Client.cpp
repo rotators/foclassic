@@ -4548,7 +4548,7 @@ void FOClient::Net_OnCritterMove()
     }
     else
     {
-        if( IsAction( ACTION_MOVE ) )
+        if( IsAction( CRITTER_ACTION_MOVE ) )
             EraseFrontAction();
         MoveDirs.clear();
         HexMngr.TransitCritter( cr, new_hx, new_hy, true, true );
@@ -4613,7 +4613,7 @@ void FOClient::Net_OnCritterKnockout()
     if( !cr )
         return;
 
-    cr->Action( ACTION_KNOCKOUT, anim2begin, NULL, false );
+    cr->Action( CRITTER_ACTION_KNOCKOUT, anim2begin, NULL, false );
     cr->Anim2Knockout = anim2idle;
 
     if( cr->GetHexX() != knock_hx || cr->GetHexY() != knock_hy )
@@ -4847,7 +4847,7 @@ void FOClient::Net_OnCritterParam()
     if( index >= ST_ANIM3D_LAYER_BEGIN && index <= ST_ANIM3D_LAYER_END )
     {
         if( !cr->IsAnim() )
-            cr->Action( ACTION_REFRESH, 0, NULL, false );
+            cr->Action( CRITTER_ACTION_REFRESH, 0, NULL, false );
     }
     else if( index == OTHER_FLAGS )
     {
@@ -4863,7 +4863,7 @@ void FOClient::Net_OnCritterParam()
 
         cr->SetBaseType( value );
         if( !cr->IsAnim() )
-            cr->Action( ACTION_REFRESH, 0, NULL, false );
+            cr->Action( CRITTER_ACTION_REFRESH, 0, NULL, false );
     }
     else if( index == OTHER_MULTIHEX )
     {
@@ -5004,7 +5004,7 @@ void FOClient::Net_OnChosenParam()
     if( index >= ST_ANIM3D_LAYER_BEGIN && index <= ST_ANIM3D_LAYER_END )
     {
         if( !Chosen->IsAnim() )
-            Chosen->Action( ACTION_REFRESH, 0, NULL, false );
+            Chosen->Action( CRITTER_ACTION_REFRESH, 0, NULL, false );
         return;
     }
 
@@ -5056,7 +5056,7 @@ void FOClient::Net_OnChosenParam()
 
             Chosen->SetBaseType( value );
             if( !Chosen->IsAnim() )
-                Chosen->Action( ACTION_REFRESH, 0, NULL, false );
+                Chosen->Action( CRITTER_ACTION_REFRESH, 0, NULL, false );
             break;
         }
         case OTHER_MULTIHEX:
@@ -7994,11 +7994,11 @@ label_EndMove:
 
             int usei = use;                                                                             // Avoid 'warning: comparison is always true due to limited range of data type' for GCC
             if( usei >= USE_PRIMARY && use <= USE_THIRD )
-                Chosen->Action( ACTION_USE_WEAPON, rate, item );
+                Chosen->Action( CRITTER_ACTION_USE_WEAPON, rate, item );
             else if( use == USE_RELOAD )
-                Chosen->Action( ACTION_RELOAD_WEAPON, 0, item );
+                Chosen->Action( CRITTER_ACTION_RELOAD_WEAPON, 0, item );
             else
-                Chosen->Action( ACTION_USE_ITEM, 0, item );
+                Chosen->Action( CRITTER_ACTION_USE_ITEM, 0, item );
 
             Chosen->SubAp( ap_cost );
 
@@ -8089,7 +8089,7 @@ label_EndMove:
             // Move
             if( to_slot == SLOT_GROUND )
             {
-                Chosen->Action( ACTION_DROP_ITEM, from_slot, item );
+                Chosen->Action( CRITTER_ACTION_DROP_ITEM, from_slot, item );
                 if( item_count < item->GetCount() )
                     item->Count_Sub( item_count );
                 else
@@ -8124,9 +8124,9 @@ label_EndMove:
                 if( item_swap )
                     item_swap->AccCritter.Slot = from_slot;
 
-                Chosen->Action( ACTION_MOVE_ITEM, from_slot, item );
+                Chosen->Action( CRITTER_ACTION_MOVE_ITEM, from_slot, item );
                 if( item_swap )
-                    Chosen->Action( ACTION_MOVE_ITEM_SWAP, to_slot, item_swap );
+                    Chosen->Action( CRITTER_ACTION_MOVE_ITEM_SWAP, to_slot, item_swap );
             }
 
             // Affect barter screen
@@ -8185,7 +8185,7 @@ label_EndMove:
                 }
             }
 
-            Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + (cont == IFACE_PUP_CONT2 ? 0 : 2), item );
+            Chosen->Action( CRITTER_ACTION_OPERATE_CONTAINER, PupTransferType * 10 + (cont == IFACE_PUP_CONT2 ? 0 : 2), item );
             PupTransfer( item_id, cont, count );
             Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
             break;
@@ -8208,7 +8208,7 @@ label_EndMove:
                 PupCont2Init.clear();
                 PupCount = 0;
                 Net_SendItemCont( PupTransferType, PupContId, PupHoldId, 0, CONTAINER_GETALL );
-                Chosen->Action( ACTION_OPERATE_CONTAINER, PupTransferType * 10 + 1, NULL );
+                Chosen->Action( CRITTER_ACTION_OPERATE_CONTAINER, PupTransferType * 10 + 1, NULL );
                 Chosen->SubAp( Chosen->GetApCostMoveItemContainer() );
                 CollectContItems();
             }
@@ -8270,7 +8270,7 @@ label_EndMove:
             }
 
             CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), NULL );
+            Chosen->Action( CRITTER_ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), NULL );
             Net_SendUseSkill( skill, cr );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
@@ -8343,7 +8343,7 @@ label_EndMove:
                 Net_SendUseSkill( skill, item );
             }
 
-            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item_action );
+            Chosen->Action( CRITTER_ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item_action );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             WaitPing();
             break;
@@ -8384,7 +8384,7 @@ label_EndMove:
                 Net_SendDir();
             }
 
-            Chosen->Action( ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item );
+            Chosen->Action( CRITTER_ACTION_USE_SKILL, skill - (GameOpt.AbsoluteOffsets ? 0 : SKILL_BEGIN), item );
             Net_SendUseSkill( skill, item );
             Chosen->SubAp( Chosen->GetApCostUseSkill() );
             // WaitPing();
@@ -8479,7 +8479,7 @@ label_EndMove:
             }
 
             Net_SendPickItem( hx, hy, pid );
-            Chosen->Action( ACTION_PICK_ITEM, 0, item );
+            Chosen->Action( CRITTER_ACTION_PICK_ITEM, 0, item );
             Chosen->SubAp( Chosen->GetApCostPickItem() );
             // WaitPing();
             break;
@@ -8528,12 +8528,12 @@ label_EndMove:
             if( is_loot )
             {
                 Net_SendPickCritter( cr->GetId(), PICK_CRIT_LOOT );
-                Chosen->Action( ACTION_PICK_CRITTER, 0, NULL );
+                Chosen->Action( CRITTER_ACTION_PICK_CRITTER, 0, NULL );
             }
             else if( cr->IsLife() )
             {
                 Net_SendPickCritter( cr->GetId(), PICK_CRIT_PUSH );
-                Chosen->Action( ACTION_PICK_CRITTER, 2, NULL );
+                Chosen->Action( CRITTER_ACTION_PICK_CRITTER, 2, NULL );
             }
             Chosen->SubAp( Chosen->GetApCostPickCritter() );
             WaitPing();
@@ -8552,7 +8552,7 @@ label_EndMove:
             if( holo && IboxTitle.length() && IboxText.length() && (IboxTitle != old_title || IboxText != old_text) )
             {
                 Net_SendSetUserHoloStr( holo, IboxTitle.c_str(), IboxText.c_str() );
-                Chosen->Action( ACTION_USE_ITEM, 0, holo );
+                Chosen->Action( CRITTER_ACTION_USE_ITEM, 0, holo );
             }
             break;
         }

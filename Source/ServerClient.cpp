@@ -674,7 +674,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         event_result = cr->EventAttack( t_cr );
     if( event_result )
     {
-        // cr->SendAA_Action(ACTION_USE_WEAPON,rate_weap,weap);
+        // cr->SendAA_Action(CRITTER_ACTION_USE_WEAPON,rate_weap,weap);
         cr->SubAp( ap_cost );
         if( map->IsTurnBasedOn && !cr->GetAllAp() )
             map->EndCritterTurn();
@@ -765,7 +765,7 @@ bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
     if( !Script::RunPrepared() )
         return false;
 
-    cr->SendAA_Action( ACTION_RELOAD_WEAPON, 0, weap );
+    cr->SendAA_Action( CRITTER_ACTION_RELOAD_WEAPON, 0, weap );
     Map* map = MapMngr.GetMap( cr->GetMap() );
     if( map && map->IsTurnBasedOn && !cr->GetAllAp() )
         map->EndCritterTurn();
@@ -960,21 +960,21 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
     {
         if( item )
         {
-            cr->SendAA_Action( ACTION_USE_ITEM, 0, item );
+            cr->SendAA_Action( CRITTER_ACTION_USE_ITEM, 0, item );
         }
         else
         {
             int skill_index = SKILL_OFFSET( skill );
             if( target_item )
-                cr->SendAA_Action( ACTION_USE_SKILL, skill_index, target_item );
+                cr->SendAA_Action( CRITTER_ACTION_USE_SKILL, skill_index, target_item );
             else if( target_cr )
-                cr->SendAA_Action( ACTION_USE_SKILL, skill_index, NULL );
+                cr->SendAA_Action( CRITTER_ACTION_USE_SKILL, skill_index, NULL );
             else if( target_scen )
             {
                 Item item_scenery;
                 item_scenery.Id = uint( -1 );
                 item_scenery.Init( ItemMngr.GetProtoItem( target_scen->ProtoId ) );
-                cr->SendAA_Action( ACTION_USE_SKILL, skill_index, &item_scenery );
+                cr->SendAA_Action( CRITTER_ACTION_USE_SKILL, skill_index, &item_scenery );
             }
         }
     }
@@ -1108,7 +1108,7 @@ bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
         if( !pick_item )
             return false;
 
-        cr->SendAA_Action( ACTION_PICK_ITEM, 0, pick_item );
+        cr->SendAA_Action( CRITTER_ACTION_PICK_ITEM, 0, pick_item );
 
         if( pick_item->EventSkill( cr, SKILL_PICK_ON_GROUND ) )
             return true;
@@ -1139,7 +1139,7 @@ bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
         Item pick_item;
         pick_item.Id = uint( -1 );
         pick_item.Init( proto );
-        cr->SendAA_Action( ACTION_PICK_ITEM, 0, &pick_item );
+        cr->SendAA_Action( CRITTER_ACTION_PICK_ITEM, 0, &pick_item );
 
         if( proto->IsGeneric() && pick_scenery->RunTime.BindScriptId > 0 )
         {
@@ -1182,7 +1182,7 @@ bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
                 Item pick_item;
                 pick_item.Id = uint( -1 );
                 pick_item.Init( proto );
-                cr->SendAA_Action( ACTION_PICK_ITEM, 0, &pick_item );
+                cr->SendAA_Action( CRITTER_ACTION_PICK_ITEM, 0, &pick_item );
 
                 MapMngr.TryTransitCrGrid( cr, map, hx, hy, false );
                 break;
@@ -1265,8 +1265,8 @@ void FOServer::RespawnCritter( Critter* cr )
         cr->ChangeParam( ST_CURRENT_HP );
         cr->Data.Params[ST_CURRENT_HP] = 1;
     }
-    cr->Send_Action( cr, ACTION_RESPAWN, 0, NULL );
-    cr->SendAA_Action( ACTION_RESPAWN, 0, NULL );
+    cr->Send_Action( cr, CRITTER_ACTION_RESPAWN, 0, NULL );
+    cr->SendAA_Action( CRITTER_ACTION_RESPAWN, 0, NULL );
     cr->EventRespawn();
     if( Script::PrepareContext( ServerFunctions.CritterRespawn, _FUNC_, cr->GetInfo() ) )
     {
@@ -2233,7 +2233,7 @@ void FOServer::Process_UserLogin( ClientPtr& cl )
         // Erase from save
         EraseSaveClient( cl->GetId() );
 
-        cl->SendA_Action( ACTION_CONNECT, 0, NULL );
+        cl->SendA_Action( CRITTER_ACTION_CONNECT, 0, NULL );
     }
     // Avatar not in game
     else
@@ -3272,7 +3272,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
 
                 // Check count
                 if( !item_count || item->GetCount() < item_count )
@@ -3320,7 +3320,7 @@ void FOServer::Process_ContainerItem( Client* cl )
             case CONTAINER_GETALL:
             {
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
 
                 // Get items
                 ItemPtrVec items;
@@ -3392,7 +3392,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
 
                 // Check count
                 if( !item_count || item->GetCount() < item_count )
@@ -3544,7 +3544,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 0, item );
 
                 // Check count
                 if( !item_count || item->GetCount() < item_count )
@@ -3610,7 +3610,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 1, NULL );
 
                 // Get items
                 ItemPtrVec items;
@@ -3677,7 +3677,7 @@ void FOServer::Process_ContainerItem( Client* cl )
                 }
 
                 // Send
-                cl->SendAA_Action( ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
+                cl->SendAA_Action( CRITTER_ACTION_OPERATE_CONTAINER, transfer_type * 10 + 2, item );
 
                 // Check count
                 if( !item_count || item->GetCount() < item_count )
@@ -3832,7 +3832,7 @@ void FOServer::Process_SetUserHoloStr( Client* cl )
         return;
     }
 
-    cl->SendAA_Action( ACTION_USE_ITEM, 0, holodisk );
+    cl->SendAA_Action( CRITTER_ACTION_USE_ITEM, 0, holodisk );
 
     #pragma MESSAGE("Check valid of received text.")
 //	int invalid_chars=CheckStr(text);
@@ -4166,10 +4166,10 @@ label_EndOffer:
                 opponent->BarterRefresh( cl );
                 if( cl->GetMap() )
                 {
-                    cl->Send_Action( cl, ACTION_BARTER, 0, NULL );
-                    cl->SendAA_Action( ACTION_BARTER, 0, NULL );
-                    opponent->Send_Action( opponent, ACTION_BARTER, 0, NULL );
-                    opponent->SendAA_Action( ACTION_BARTER, 0, NULL );
+                    cl->Send_Action( cl, CRITTER_ACTION_BARTER, 0, NULL );
+                    cl->SendAA_Action( CRITTER_ACTION_BARTER, 0, NULL );
+                    opponent->Send_Action( opponent, CRITTER_ACTION_BARTER, 0, NULL );
+                    opponent->SendAA_Action( CRITTER_ACTION_BARTER, 0, NULL );
                 }
             }
             else

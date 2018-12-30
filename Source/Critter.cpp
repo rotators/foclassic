@@ -1194,7 +1194,7 @@ void Critter::AddItem( Item*& item, bool send )
     {
         Send_AddItem( item );
         if( item->AccCritter.Slot != SLOT_INV )
-            SendAA_MoveItem( item, ACTION_REFRESH, 0 );
+            SendAA_MoveItem( item, CRITTER_ACTION_REFRESH, 0 );
     }
 
     // Change item
@@ -1283,7 +1283,7 @@ void Critter::EraseItem( Item* item, bool send )
     if( send )
         Send_EraseItem( item );
     if( item->AccCritter.Slot != SLOT_INV )
-        SendAA_MoveItem( item, ACTION_REFRESH, 0 );
+        SendAA_MoveItem( item, CRITTER_ACTION_REFRESH, 0 );
 
     uchar from_slot = item->AccCritter.Slot;
     item->AccCritter.Slot = SLOT_GROUND;
@@ -1636,7 +1636,7 @@ bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count
             return true;
         }
 
-        SendAA_Action( ACTION_DROP_ITEM, from_slot, item );
+        SendAA_Action( CRITTER_ACTION_DROP_ITEM, from_slot, item );
         item->ViewByCritter = this;
         map->AddItem( item, GetHexX(), GetHexY() );
         item->ViewByCritter = NULL;
@@ -1667,12 +1667,12 @@ bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count
     if( item_swap )
         item_swap->AccCritter.Slot = from_slot;
 
-    SendAA_MoveItem( item, ACTION_MOVE_ITEM, from_slot );
+    SendAA_MoveItem( item, CRITTER_ACTION_MOVE_ITEM, from_slot );
     item->EventMove( this, from_slot );
     EventMoveItem( item, from_slot );
     if( item_swap )
     {
-        SendAA_MoveItem( item, ACTION_MOVE_ITEM_SWAP, to_slot );
+        SendAA_MoveItem( item, CRITTER_ACTION_MOVE_ITEM_SWAP, to_slot );
         item->EventMove( this, to_slot );
         EventMoveItem( item, to_slot );
     }
@@ -1752,7 +1752,7 @@ void Critter::TryUpOnKnockout()
 
     // Stand up
     Data.Cond = CRITTER_CONDITION_LIFE;
-    SendAA_Action( ACTION_STANDUP, Data.Anim2KnockoutEnd, NULL );
+    SendAA_Action( CRITTER_ACTION_STANDUP, Data.Anim2KnockoutEnd, NULL );
     SetBreakTime( GameOpt.Breaktime );
 }
 
@@ -1775,7 +1775,7 @@ void Critter::ToDead( uint anim2, bool send_all )
 
     if( send_all )
     {
-        SendAA_Action( ACTION_DEAD, anim2, NULL );
+        SendAA_Action( CRITTER_ACTION_DEAD, anim2, NULL );
         if( IsPlayer() )
             Send_AllParams();
     }
@@ -3129,7 +3129,7 @@ void Critter::SendMessage( int num, int val, int to )
 {
     switch( to )
     {
-        case MESSAGE_TO_VISIBLE_ME:
+        case SENDMESSAGE_TO_VISIBLE_ME:
         {
             CrVec critters = VisCr;
             for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
@@ -3140,7 +3140,7 @@ void Critter::SendMessage( int num, int val, int to )
             }
             break;
         }
-        case MESSAGE_TO_IAM_VISIBLE:
+        case SENDMESSAGE_TO_IAM_VISIBLE:
         {
             CrVec critters = VisCrSelf;
             for( auto it = critters.begin(), end = critters.end(); it != end; ++it )
@@ -3151,7 +3151,7 @@ void Critter::SendMessage( int num, int val, int to )
             }
             break;
         }
-        case MESSAGE_TO_ALL_ON_MAP:
+        case SENDMESSAGE_TO_ALL_ON_MAP:
         {
             Map* map = MapMngr.GetMap( GetMap() );
             if( !map )
@@ -3804,7 +3804,7 @@ void Client::Send_AddCritter( Critter* cr )
     BOUT_END( this );
 
     if( cr != this )
-        Send_MoveItem( cr, NULL, ACTION_REFRESH, 0 );
+        Send_MoveItem( cr, NULL, CRITTER_ACTION_REFRESH, 0 );
     if( cr->IsLexems() )
         Send_CritterLexems( cr );
 }

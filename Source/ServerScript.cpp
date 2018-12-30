@@ -881,7 +881,7 @@ bool FOServer::SScriptFunc::Item_ChangeProto( Item* item, ushort pid )
         cr->Send_EraseItem( item );
         item->Proto = proto_item;
         cr->Send_AddItem( item );
-        cr->SendAA_MoveItem( item, ACTION_REFRESH, 0 );
+        cr->SendAA_MoveItem( item, CRITTER_ACTION_REFRESH, 0 );
     }
     else if( item->Accessory == ITEM_ACCESSORY_HEX )
     {
@@ -1201,7 +1201,7 @@ void FOServer::SScriptFunc::Item_set_Flags( Item* item, uint value )
                     cr->Send_EraseItem( item );
                 else
                     cr->Send_AddItem( item );
-                cr->SendAA_MoveItem( item, ACTION_REFRESH, 0 );
+                cr->SendAA_MoveItem( item, CRITTER_ACTION_REFRESH, 0 );
             }
         }
     }
