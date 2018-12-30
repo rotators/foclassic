@@ -240,20 +240,7 @@ int main( int argc, char* argv[] )
     if( str_prep )
         FixPathSlashes( str_prep );
 
-    // Set current directory
-    char path[2048];
-    Str::Copy( path, str_fname );
-    FileManager::ExtractPath( path, path );
-    if( ResolvePath( path ) )
-    {
-        #ifdef FO_WINDOWS
-        SetCurrentDirectory( path );
-        #else
-        chdir( path );
-        #endif
-    }
-
-    // Engine
+	// Engine
     Engine = asCreateScriptEngine( ANGELSCRIPT_VERSION );
     if( !Engine )
     {
