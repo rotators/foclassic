@@ -74,6 +74,9 @@ inline void Cleanup( string& str )
 
 Ini::Ini() : KeepComments( false ), KeepSectionsRaw( false )
 {
+	#if defined(FO_WINDOWS) && defined(FO_MSVC) && _MSC_VER >= 1910 && !defined(__INTELLISENSE__)
+	#pragma TODO("Use initializer list for CommentChars")
+	#endif
     if( CommentChars.empty() )
     {
         CommentChars.push_back( '#' );
