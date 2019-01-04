@@ -699,9 +699,9 @@ void FOClient::LookBordersDraw()
         RebuildLookBorders = false;
     }
     if( DrawLookBorders )
-        SprMngr.DrawPoints( LookBorders, PRIMITIVE_LINESTRIP, &GameOpt.SpritesZoom );
+        SprMngr.DrawPoints( LookBorders, DRAW_PRIMITIVE_LINESTRIP, &GameOpt.SpritesZoom );
     if( DrawShootBorders )
-        SprMngr.DrawPoints( ShootBorders, PRIMITIVE_LINESTRIP, &GameOpt.SpritesZoom );
+        SprMngr.DrawPoints( ShootBorders, DRAW_PRIMITIVE_LINESTRIP, &GameOpt.SpritesZoom );
 }
 
 int FOClient::MainLoop()
@@ -993,7 +993,7 @@ void FOClient::ProcessScreenEffectFading()
             for( int i = 0; i < 6; i++ )
                 six_points[i].PointColor = color;
 
-            SprMngr.DrawPoints( six_points, PRIMITIVE_TRIANGLELIST );
+            SprMngr.DrawPoints( six_points, DRAW_PRIMITIVE_TRIANGLELIST );
         }
         it++;
     }
@@ -1097,7 +1097,7 @@ void FOClient::ProcessScreenEffectMirror()
                         vb->Unlock();
                         SprMngr.GetDevice()->SetStreamSource(0,vb,sizeof(MYVERTEX));
                         SprMngr.GetDevice()->SetVertexShader(D3DFVF_MYVERTEX);
-                        SprMngr.GetDevice()->DrawPrimitive(PRIMITIVE_TRIANGLELIST,0,2);
+                        SprMngr.GetDevice()->DrawPrimitive(DRAW_PRIMITIVE_TRIANGLELIST,0,2);
                         SAFEREL(vb);
                         SprMngr.GetDevice()->SetStreamSource(0,SprMngr.GetVB(),sizeof(MYVERTEX));
                         SprMngr.GetDevice()->SetVertexShader(D3DFVF_MYVERTEX);
@@ -11676,30 +11676,8 @@ void FOClient::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     if( !SpritesCanDraw )
         return;
 
-    int prim;
-    switch( primitive_type )
-    {
-        case 0:
-            prim = PRIMITIVE_POINTLIST;
-            break;
-        case 1:
-            prim = PRIMITIVE_LINELIST;
-            break;
-        case 2:
-            prim = PRIMITIVE_LINESTRIP;
-            break;
-        case 3:
-            prim = PRIMITIVE_TRIANGLELIST;
-            break;
-        case 4:
-            prim = PRIMITIVE_TRIANGLESTRIP;
-            break;
-        case 5:
-            prim = PRIMITIVE_TRIANGLEFAN;
-            break;
-        default:
-            return;
-    }
+    if( primitive_type < DRAW_PRIMITIVE_POINTLIST || primitive_type > DRAW_PRIMITIVE_TRIANGLEFAN )
+        return;
 
     static PointVec points;
     int             size = data.GetSize() / 3;
@@ -11715,7 +11693,7 @@ void FOClient::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
         pp.PointOffsY = NULL;
     }
 
-    SprMngr.DrawPoints( points, prim );
+    SprMngr.DrawPoints( points, primitive_type );
 }
 
 void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy )

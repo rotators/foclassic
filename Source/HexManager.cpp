@@ -2013,8 +2013,8 @@ void HexManager::DrawMap()
 
     // Light
     for( uint i = 0; i < lightPointsCount; i++ )
-        SprMngr.DrawPoints( lightPoints[i], PRIMITIVE_TRIANGLEFAN, &GameOpt.SpritesZoom );
-    SprMngr.DrawPoints( lightSoftPoints, PRIMITIVE_TRIANGLELIST, &GameOpt.SpritesZoom );
+        SprMngr.DrawPoints( lightPoints[i], DRAW_PRIMITIVE_TRIANGLEFAN, &GameOpt.SpritesZoom );
+    SprMngr.DrawPoints( lightSoftPoints, DRAW_PRIMITIVE_TRIANGLELIST, &GameOpt.SpritesZoom );
 
     // Cursor flat
     DrawCursor( cursorPrePic->GetCurSprId() );

@@ -8,11 +8,13 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v5]() (WIP)
 
+- Server setting `Language_N` removed, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2)
 - extensions changes
     - `GameOptions* FOnline` removed, use `FOClassic` instead
 - scritps/extensions changes (_FOClassic.fos_)
     - multiple defines has been renamed; see tables below for a complete list
-	- changed values of `COMMAND` defines
+    - changed values of `COMMAND` defines
+    - changed values of `DRAW_PRIMITIVE` defines
 
 | Old prefix       | New prefix          |
 |------------------|---------------------|

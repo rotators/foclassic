@@ -1394,7 +1394,7 @@ void FOClient::DrawIndicator( Rect& rect, PointVec& points, uint color, int proc
         tick = Timer::GameTick() + INDICATOR_CHANGE_TICK;
     }
     if( points.size() > 0 )
-        SprMngr.DrawPoints( points, PRIMITIVE_POINTLIST );
+        SprMngr.DrawPoints( points, DRAW_PRIMITIVE_POINTLIST );
 }
 
 uint FOClient::GetCurContainerItemId( const Rect& pos, int height, int scroll, ItemVec& cont )
@@ -5795,7 +5795,7 @@ void FOClient::LmapDraw()
         LmapPrepareMap();
 
     SprMngr.DrawSprite( LmapPMain, LmapMain[0] + LmapX, LmapMain[1] + LmapY );
-    SprMngr.DrawPoints( LmapPrepPix, PRIMITIVE_LINELIST );
+    SprMngr.DrawPoints( LmapPrepPix, DRAW_PRIMITIVE_LINELIST );
     SprMngr.DrawStr( Rect( LmapWMap[0] + LmapX, LmapWMap[1] + LmapY, LmapWMap[0] + LmapX + 100, LmapWMap[1] + LmapY + 15 ), Str::FormatBuf( "Zoom: %d", LmapZoom - 1 ), 0 );
     if( IfaceHold == IFACE_LMAP_OK )
         SprMngr.DrawSprite( LmapPBOkDw, LmapBOk[0] + LmapX, LmapBOk[1] + LmapY );
@@ -6091,7 +6091,7 @@ void FOClient::GmapDraw()
             SprMngr.PrepareSquare( GmapFogPix, RectF( l, t, r, b ), color );
         }
     }
-    SprMngr.DrawPoints( GmapFogPix, PRIMITIVE_TRIANGLELIST );
+    SprMngr.DrawPoints( GmapFogPix, DRAW_PRIMITIVE_TRIANGLELIST );
 
     // Locations on map
     for( auto it = GmapLoc.begin(); it != GmapLoc.end(); ++it )
@@ -6151,13 +6151,13 @@ void FOClient::GmapDraw()
     gt.clear();
     for( auto it = GmapTrace.begin(), end = GmapTrace.end(); it != end; ++it )
         gt.push_back( PrepPoint( (int)( (*it).first / GmapZoom ) + GmapOffsetX, (int)( (*it).second / GmapZoom ) + GmapOffsetY, 0xFFFF0000 ) );
-    SprMngr.DrawPoints( gt, PRIMITIVE_POINTLIST );
+    SprMngr.DrawPoints( gt, DRAW_PRIMITIVE_POINTLIST );
 
     // Script draw
     DrawIfaceLayer( 101 );
 
     // Cut off map
-    SprMngr.DrawPoints( GmapMapCutOff, PRIMITIVE_TRIANGLELIST );
+    SprMngr.DrawPoints( GmapMapCutOff, DRAW_PRIMITIVE_TRIANGLELIST );
 
     // Tabs pics
     int cur_tabx = GmapWTabs[0] - GmapTabsScrX;
@@ -8639,7 +8639,7 @@ void FOClient::PipDraw()
             {
                 RectF stencil( (float)(PipWMonitor.L + PipX), (float)(PipWMonitor.T + PipY), (float)(PipWMonitor.R + PipX), (float)(PipWMonitor.B + PipY) );
                 PointF offset( AutomapScrX, AutomapScrY );
-                SprMngr.DrawPoints( AutomapPoints, PRIMITIVE_LINELIST, &AutomapZoom, &stencil, &offset );
+                SprMngr.DrawPoints( AutomapPoints, DRAW_PRIMITIVE_LINELIST, &AutomapZoom, &stencil, &offset );
                 break;
             }
 

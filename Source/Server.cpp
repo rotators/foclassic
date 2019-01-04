@@ -3821,97 +3821,50 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
     }
 
     StrVec langs = ConfigFile->GetStrVec( SECTION_SERVER, "Languages" );
-    if( !langs.empty() )
+    if( langs.empty() )
     {
-        uint idx = 0;
-        for( auto it = langs.begin(); it != langs.end(); ++it, idx++ )
-        {
-            string& name = *it;
-            transform( name.begin(), name.end(), name.begin(), ::tolower );
-
-            if( name.length() != 4 )
-            {
-                WriteLog( "Language<%s> invalid - name must have exactly four letters.\n", name.c_str() );
-                return false;
-            }
-            else if( std::find( names.begin(), names.end(), name ) != names.end() )
-            {
-                WriteLog( "Language<%s> already loaded.\n", name.c_str() );
-                return false;
-            }
-
-            WriteLog( "Load language<%s>\n", name.c_str() );
-
-            LanguagePack language;
-            if( !language.Init( name.c_str(), PATH_SERVER_TEXTS ) )
-            {
-                WriteLog( "Language<%s> cannot be initialized.\n", name.c_str() );
-                return false;
-            }
-
-            lang_packs.push_back( language );
-            names.push_back( name );
-        }
-
-        WriteLog( "Load language packs... " );
-        if( idx > 0 )
-            WriteLogX( "loaded<%u>", idx );
-        else
-            WriteLogX( "failed" );
-        WriteLogX( "\n" );
-
-        return idx > 0;
+        WriteLog( "Language settings not found.\n" );
+        return false;
     }
 
-    #if FOCLASSIC_STAGE >= 3
-    # pragma STAGE_DEPRECATE(3,"ConfigFile Language_N");
-    #endif
-
-    uint cur_lang = 0;
-
-    while( true )
+    uint idx = 0;
+    for( auto it = langs.begin(); it != langs.end(); ++it, idx++ )
     {
-        char cur_str_lang[MAX_FOTEXT];
-        Str::Format( cur_str_lang, "Language_%u", cur_lang );
+        string& name = *it;
+        transform( name.begin(), name.end(), name.begin(), ::tolower );
 
-        string lang = ConfigFile->GetStr( SECTION_SERVER, cur_str_lang );
-        if( lang.empty() )
+        if( name.length() != 4 )
         {
-            if( cur_lang == 0 )
-                WriteLog( "Language settings not found.\n" );
-            break;
+            WriteLog( "Language<%s> invalid - name must have exactly four letters.\n", name.c_str() );
+            return false;
         }
-        else if( lang.length() != 4 )
+        else if( std::find( names.begin(), names.end(), name ) != names.end() )
         {
-            WriteLog( "Language pack<%u> name not equal to four letters.\n", cur_lang );
+            WriteLog( "Language<%s> already loaded.\n", name.c_str() );
             return false;
         }
 
-        char lang_name[MAX_FOTEXT];
-        Str::Copy( lang_name, lang.c_str() );
-
-        uint pack_id = *(uint*)&lang_name;
-        if( std::find( lang_packs.begin(), lang_packs.end(), pack_id ) != lang_packs.end() )
-        {
-            WriteLog( "Language pack<%u:%s> is already initialized.\n", cur_lang, lang_name );
-            return false;
-        }
-
-        WriteLog( "Load language pack<%u:%s>\n", cur_lang, lang_name );
+        WriteLog( "Load language<%s>\n", name.c_str() );
 
         LanguagePack language;
-        if( !language.Init( lang_name, PATH_SERVER_TEXTS ) )
+        if( !language.Init( name.c_str(), PATH_SERVER_TEXTS ) )
         {
-            WriteLog( "Language pack<%u:%s> cannot be initialized.\n", cur_lang, lang_name );
+            WriteLog( "Language<%s> cannot be initialized.\n", name.c_str() );
             return false;
         }
 
         lang_packs.push_back( language );
-        cur_lang++;
+        names.push_back( name );
     }
 
-    WriteLog( "Load language packs... %s\n", cur_lang > 0 ? "complete" : "failed" );
-    return cur_lang > 0;
+    WriteLog( "Load language packs... " );
+    if( idx > 0 )
+        WriteLogX( "loaded<%u>", idx );
+    else
+        WriteLogX( "failed" );
+    WriteLogX( "\n" );
+
+    return idx > 0;
 }
 
 bool FOServer::InitLangPacksDialogs( LangPackVec& lang_packs )

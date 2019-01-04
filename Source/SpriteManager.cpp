@@ -3909,7 +3909,7 @@ bool SpriteManager::Flush()
                     GraphicLoader::EffectProcessVariables( effect, pass );
 
                 D3D_HR( dxeffect->BeginPass( pass ) );
-                D3D_HR( d3dDevice->DrawIndexedPrimitive( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 0, 0, mulpos, rpos, 2 * dip.SpritesCount ) );
+                D3D_HR( d3dDevice->DrawIndexedPrimitive( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 0, 0, mulpos, rpos, 2 * dip.SpritesCount ) );
                 D3D_HR( dxeffect->EndPass() );
             }
             D3D_HR( dxeffect->End() );
@@ -3918,7 +3918,7 @@ bool SpriteManager::Flush()
         {
             D3D_HR( d3dDevice->SetVertexShader( NULL ) );
             D3D_HR( d3dDevice->SetPixelShader( NULL ) );
-            D3D_HR( d3dDevice->DrawIndexedPrimitive( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 0, 0, mulpos, rpos, 2 * dip.SpritesCount ) );
+            D3D_HR( d3dDevice->DrawIndexedPrimitive( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 0, 0, mulpos, rpos, 2 * dip.SpritesCount ) );
         }
         #else
         GL( glUseProgram( effect->Program ) );
@@ -4756,7 +4756,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
     }
 
     if( GameOpt.DebugInfo )
-        DrawPoints( borders, PRIMITIVE_TRIANGLELIST );
+        DrawPoints( borders, DRAW_PRIMITIVE_TRIANGLELIST );
     return true;
 }
 
@@ -4942,7 +4942,7 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
         D3D_HR( d3dDevice->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE ) );
 
         D3D_HR( d3dDevice->Clear( 0, NULL, D3DCLEAR_STENCIL, 0, 1.0f, 0 ) );
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetRenderState( D3DRS_STENCILFUNC, D3DCMP_NOTEQUAL ) );
         D3D_HR( d3dDevice->SetRenderState( D3DRS_STENCILREF, 0 ) );
@@ -4990,21 +4990,21 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     // Calculate primitive count
     switch( prim )
     {
-        case PRIMITIVE_POINTLIST:
+        case DRAW_PRIMITIVE_POINTLIST:
             break;
-        case PRIMITIVE_LINELIST:
+        case DRAW_PRIMITIVE_LINELIST:
             count /= 2;
             break;
-        case PRIMITIVE_LINESTRIP:
+        case DRAW_PRIMITIVE_LINESTRIP:
             count -= 1;
             break;
-        case PRIMITIVE_TRIANGLELIST:
+        case DRAW_PRIMITIVE_TRIANGLELIST:
             count /= 3;
             break;
-        case PRIMITIVE_TRIANGLESTRIP:
+        case DRAW_PRIMITIVE_TRIANGLESTRIP:
             count -= 2;
             break;
-        case PRIMITIVE_TRIANGLEFAN:
+        case DRAW_PRIMITIVE_TRIANGLEFAN:
             count -= 2;
             break;
         default:
@@ -5060,26 +5060,26 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
     GLenum prim_type;
     switch( prim )
     {
-        case PRIMITIVE_POINTLIST:
+        case DRAW_PRIMITIVE_POINTLIST:
             prim_type = GL_POINTS;
             break;
-        case PRIMITIVE_LINELIST:
+        case DRAW_PRIMITIVE_LINELIST:
             prim_type = GL_LINES;
             prim_count /= 2;
             break;
-        case PRIMITIVE_LINESTRIP:
+        case DRAW_PRIMITIVE_LINESTRIP:
             prim_type = GL_LINE_STRIP;
             prim_count -= 1;
             break;
-        case PRIMITIVE_TRIANGLELIST:
+        case DRAW_PRIMITIVE_TRIANGLELIST:
             prim_type = GL_TRIANGLES;
             prim_count /= 3;
             break;
-        case PRIMITIVE_TRIANGLESTRIP:
+        case DRAW_PRIMITIVE_TRIANGLESTRIP:
             prim_type = GL_TRIANGLE_STRIP;
             prim_count -= 2;
             break;
-        case PRIMITIVE_TRIANGLEFAN:
+        case DRAW_PRIMITIVE_TRIANGLEFAN:
             prim_type = GL_TRIANGLE_FAN;
             prim_count -= 2;
             break;
@@ -5319,7 +5319,7 @@ bool SpriteManager::DrawContours()
         D3D_HR( d3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_SELECTARG1 ) );
         D3D_HR( d3dDevice->SetTexture( 0, contoursTexture->Instance ) );
 
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE2X ) );
         contoursAdded = false;
@@ -5438,7 +5438,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
             D3DRECT clear_r = { borders.L - 1, borders.T - 1, borders.R + 1, borders.B + 1 };
             D3D_HR( d3dDevice->Clear( 1, &clear_r, D3DCLEAR_TARGET, 0, 1.0f, 0 ) );
-            D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
+            D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
             D3D_HR( d3dDevice->SetRenderTarget( 0, old_rt ) );
             D3D_HR( d3dDevice->SetDepthStencilSurface( old_ds ) );
@@ -5522,7 +5522,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
         D3DRECT clear_r = { borders.L - 2, borders.T - 2, borders.R + 2, borders.B + 2 };
         D3D_HR( d3dDevice->Clear( 1, &clear_r, D3DCLEAR_TARGET, 0, 1.0f, 0 ) );
-        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
+        D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
         D3D_HR( d3dDevice->SetRenderState( D3DRS_ZENABLE, FALSE ) );
         D3D_HR( d3dDevice->SetRenderState( D3DRS_ZFUNC, D3DCMP_LESS ) );
@@ -5618,7 +5618,7 @@ bool SpriteManager::CollectContour( int x, int y, SpriteInfo* si, Sprite* spr )
 
     if( !contoursAdded )
         D3D_HR( d3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET, 0, 0.9f, 0 ) );
-    D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
+    D3D_HR( d3dDevice->DrawPrimitiveUP( (D3DPRIMITIVETYPE)DRAW_PRIMITIVE_TRIANGLELIST, 2, (void*)vb, sizeof(VertexUP) ) );
 
     // Restore 2d stream
     D3D_HR( d3dDevice->SetDepthStencilSurface( ds ) );

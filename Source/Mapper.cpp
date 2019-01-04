@@ -6872,22 +6872,22 @@ void FOMapper::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     switch( primitive_type )
     {
         case 0:
-            prim = PRIMITIVE_POINTLIST;
+            prim = DRAW_PRIMITIVE_POINTLIST;
             break;
         case 1:
-            prim = PRIMITIVE_LINELIST;
+            prim = DRAW_PRIMITIVE_LINELIST;
             break;
         case 2:
-            prim = PRIMITIVE_LINESTRIP;
+            prim = DRAW_PRIMITIVE_LINESTRIP;
             break;
         case 3:
-            prim = PRIMITIVE_TRIANGLELIST;
+            prim = DRAW_PRIMITIVE_TRIANGLELIST;
             break;
         case 4:
-            prim = PRIMITIVE_TRIANGLESTRIP;
+            prim = DRAW_PRIMITIVE_TRIANGLESTRIP;
             break;
         case 5:
-            prim = PRIMITIVE_TRIANGLEFAN;
+            prim = DRAW_PRIMITIVE_TRIANGLEFAN;
             break;
         default:
             return;

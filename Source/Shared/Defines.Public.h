@@ -643,28 +643,12 @@
 #endif   // FOCLASSIC_ENGINE
 
 // Primitives
-// Engine uses values shifted by 1, _probably_ leftover from first GL implementation (or laziness ;>)
-// simple to change, but let's delay it until V13 end, giving servers time to verify they're using defines and not raw values
-// see FOClient::SScriptFunc::Global_DrawPrimitive() for extra fun
-#define PRIMITIVE_POINTLIST                          (1)
-#define PRIMITIVE_LINELIST                           (2)
-#define PRIMITIVE_LINESTRIP                          (3)
-#define PRIMITIVE_TRIANGLELIST                       (4)
-#define PRIMITIVE_TRIANGLESTRIP                      (5)
-#define PRIMITIVE_TRIANGLEFAN                        (6)
-#ifdef FOCLASSIC_ENGINE
-# if FOCLASSIC_STAGE >= 3
-#  pragma STAGE(3,"synchronize PRIMITIVE and DRAW_PRIMIVE (favor engine values)")
-# endif
-#endif   // FOCLASSIC_ENGINE
-#ifndef FOCLASSIC_ENGINE
-# define DRAW_PRIMITIVE_POINTLIST                    (PRIMITIVE_POINTLIST - 1)
-# define DRAW_PRIMITIVE_LINELIST                     (PRIMITIVE_LINELIST - 1)
-# define DRAW_PRIMITIVE_LINESTRIP                    (PRIMITIVE_LINESTRIP - 1)
-# define DRAW_PRIMITIVE_TRIANGLELIST                 (PRIMITIVE_TRIANGLELIST - 1)
-# define DRAW_PRIMITIVE_TRIANGLESTRIP                (PRIMITIVE_TRIANGLESTRIP - 1)
-# define DRAW_PRIMITIVE_TRIANGLEFAN                  (PRIMITIVE_TRIANGLEFAN - 1)
-#endif
+#define DRAW_PRIMITIVE_POINTLIST                     (1)
+#define DRAW_PRIMITIVE_LINELIST                      (2)
+#define DRAW_PRIMITIVE_LINESTRIP                     (3)
+#define DRAW_PRIMITIVE_TRIANGLELIST                  (4)
+#define DRAW_PRIMITIVE_TRIANGLESTRIP                 (5)
+#define DRAW_PRIMITIVE_TRIANGLEFAN                   (6)
 
 // Entires
 #define ENTIRE_DEFAULT                               (0)
