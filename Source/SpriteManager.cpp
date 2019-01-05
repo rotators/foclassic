@@ -4688,7 +4688,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
                     break;
             }
 
-            DrawPoints( corner, PRIMITIVE_TRIANGLELIST );
+            DrawPoints( corner, DRAW_PRIMITIVE_TRIANGLELIST );
         }
 
         // Cuts
@@ -4711,7 +4711,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
             PrepareSquare( cut, PointF( x1, y1 - 80.0f / z + oy ), PointF( x2, y2 - 80.0f / z - oy ), PointF( x1, y1 + oy ), PointF( x2, y2 - oy ), 0x4FFFFF00 );
             PrepareSquare( cut, RectF( xf, yf, xf + 1.0f, yf + hf ), 0x4F000000 );
             PrepareSquare( cut, RectF( xf + wf, yf, xf + wf + 1.0f, yf + hf ), 0x4F000000 );
-            DrawPoints( cut, PRIMITIVE_TRIANGLELIST );
+            DrawPoints( cut, DRAW_PRIMITIVE_TRIANGLELIST );
         }
 
         // Draw order

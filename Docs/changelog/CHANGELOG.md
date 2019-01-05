@@ -8,7 +8,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v5]() (WIP)
 
-- Server setting `Language_N` removed, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2)
+- Server setting `Language_N` removed, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
 - extensions changes
     - `GameOptions* FOnline` removed, use `FOClassic` instead
 - scritps/extensions changes (_FOClassic.fos_)
