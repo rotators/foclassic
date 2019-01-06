@@ -809,7 +809,7 @@ int FOClient::MainLoop()
     if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
     {
         CrittersProcess();
-        GmapProcess();
+        WorldmapProcess();
         LMenuTryCreate();
     }
     else if( IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && HexMngr.IsMapLoaded() )
@@ -2275,25 +2275,25 @@ void FOClient::ProcessMouseWheel( int data )
         else if( IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
         {
             GmapChangeZoom( (float)-data / 20.0f );
-            if( IsCurInRect( GmapWTabs ) )
+            if( IsCurInRect( WorldmapWTabs ) )
             {
                 if( data > 0 )
                 {
-                    if( GmapTabNextX )
-                        GmapTabsScrX -= 26;
-                    if( GmapTabNextY )
-                        GmapTabsScrY -= 26;
-                    if( GmapTabsScrX < 0 )
-                        GmapTabsScrX = 0;
-                    if( GmapTabsScrY < 0 )
-                        GmapTabsScrY = 0;
+                    if( WorldmapTabNextX )
+                        WorldmapTabsScrX -= 26;
+                    if( WorldmapTabNextY )
+                        WorldmapTabsScrY -= 26;
+                    if( WorldmapTabsScrX < 0 )
+                        WorldmapTabsScrX = 0;
+                    if( WorldmapTabsScrY < 0 )
+                        WorldmapTabsScrY = 0;
                 }
                 else
                 {
-                    if( GmapTabNextX )
-                        GmapTabsScrX += 26;
-                    if( GmapTabNextY )
-                        GmapTabsScrY += 26;
+                    if( WorldmapTabNextX )
+                        WorldmapTabsScrX += 26;
+                    if( WorldmapTabNextY )
+                        WorldmapTabsScrY += 26;
 
                     int tabs_count = 0;
                     for( uint i = 0, j = (uint)GmapLoc.size(); i < j; i++ )
@@ -2302,10 +2302,10 @@ void FOClient::ProcessMouseWheel( int data )
                         if( MsgGM->Count( STR_GM_LABELPIC_( loc.LocPid ) ) && ResMngr.GetIfaceAnim( Str::GetHash( MsgGM->GetStr( STR_GM_LABELPIC_( loc.LocPid ) ) ) ) )
                             tabs_count++;
                     }
-                    if( GmapTabNextX && GmapTabsScrX > GmapWTab.W() * tabs_count )
-                        GmapTabsScrX = GmapWTab.W() * tabs_count;
-                    if( GmapTabNextY && GmapTabsScrY > GmapWTab.H() * tabs_count )
-                        GmapTabsScrY = GmapWTab.H() * tabs_count;
+                    if( WorldmapTabNextX && WorldmapTabsScrX > WorldmapWTab.W() * tabs_count )
+                        WorldmapTabsScrX = WorldmapWTab.W() * tabs_count;
+                    if( WorldmapTabNextY && WorldmapTabsScrY > WorldmapWTab.H() * tabs_count )
+                        WorldmapTabsScrY = WorldmapWTab.H() * tabs_count;
                 }
             }
         }
@@ -5716,7 +5716,7 @@ void FOClient::Net_OnLoadMap()
     Bin >> hash_scen;
 
     GameOpt.SpritesZoom = 1.0f;
-    GmapZoom = 1.0f;
+    WorldmapZoom = 1.0f;
 
     GameMapTexts.clear();
     HexMngr.UnloadMap();
@@ -5742,7 +5742,7 @@ void FOClient::Net_OnLoadMap()
     // Global
     if( !map_pid )
     {
-        GmapNullParams();
+        WorldmapNullParams();
         ShowMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP );
         Net_SendLoadMapOk();
         #ifndef FO_D3D
@@ -6055,37 +6055,37 @@ void FOClient::Net_OnGlobalInfo()
         Bin >> to_x;
         Bin >> to_y;
         Bin >> speed;
-        Bin >> GmapWait;
+        Bin >> WorldmapWait;
 
-        GmapGroupRealOldX = GmapGroupCurX;
-        GmapGroupRealOldY = GmapGroupCurY;
+        GmapGroupRealOldX = WorldmapGroupCurX;
+        GmapGroupRealOldY = WorldmapGroupCurY;
         GmapGroupRealCurX = cur_x;
         GmapGroupRealCurY = cur_y;
-        GmapGroupToX = to_x;
-        GmapGroupToY = to_y;
-        GmapGroupSpeed = (float)speed / 1000000.0f;
+        WorldmapGroupToX = to_x;
+        WorldmapGroupToY = to_y;
+        WorldmapGroupSpeed = (float)speed / 1000000.0f;
         GmapMoveTick = Timer::GameTick();
 
-        if( !GmapActive )
+        if( !WorldmapActive )
         {
             GmapGroupRealOldX = GmapGroupRealCurX;
             GmapGroupRealOldY = GmapGroupRealCurY;
-            GmapGroupCurX = GmapGroupRealCurX;
-            GmapGroupCurY = GmapGroupRealCurY;
-            GmapOffsetX = (GmapWMap[2] - GmapWMap[0]) / 2 + GmapWMap[0] - GmapGroupCurX;
-            GmapOffsetY = (GmapWMap[3] - GmapWMap[1]) / 2 + GmapWMap[1] - GmapGroupCurY;
+            WorldmapGroupCurX = GmapGroupRealCurX;
+            WorldmapGroupCurY = GmapGroupRealCurY;
+            WorldmapOffsetX = (WorldmapWMap[2] - WorldmapWMap[0]) / 2 + WorldmapWMap[0] - WorldmapGroupCurX;
+            WorldmapOffsetY = (WorldmapWMap[3] - WorldmapWMap[1]) / 2 + WorldmapWMap[1] - WorldmapGroupCurY;
             GmapTrace.clear();
 
             int w = GM_MAXX;
             int h = GM_MAXY;
-            if( GmapOffsetX > GmapWMap[0] )
-                GmapOffsetX = GmapWMap[0];
-            if( GmapOffsetY > GmapWMap[1] )
-                GmapOffsetY = GmapWMap[1];
-            if( GmapOffsetX < GmapWMap[2] - w )
-                GmapOffsetX = GmapWMap[2] - w;
-            if( GmapOffsetY < GmapWMap[3] - h )
-                GmapOffsetY = GmapWMap[3] - h;
+            if( WorldmapOffsetX > WorldmapWMap[0] )
+                WorldmapOffsetX = WorldmapWMap[0];
+            if( WorldmapOffsetY > WorldmapWMap[1] )
+                WorldmapOffsetY = WorldmapWMap[1];
+            if( WorldmapOffsetX < WorldmapWMap[2] - w )
+                WorldmapOffsetX = WorldmapWMap[2] - w;
+            if( WorldmapOffsetY < WorldmapWMap[3] - h )
+                WorldmapOffsetY = WorldmapWMap[3] - h;
 
             SetCurMode( CURSOR_DEFAULT );
         }
@@ -6095,12 +6095,12 @@ void FOClient::Net_OnGlobalInfo()
 
         SAFEREL( GmapCar.Car );
 
-        GmapActive = true;
+        WorldmapActive = true;
     }
 
     if( FLAG( info_flags, GM_INFO_ZONES_FOG ) )
     {
-        Bin.Pop( (char*)GmapFog.GetData(), GM_ZONES_FOG_SIZE );
+        Bin.Pop( (char*)WorldmapFog.GetData(), GM_ZONES_FOG_SIZE );
     }
 
     if( FLAG( info_flags, GM_INFO_FOG ) )
@@ -6110,7 +6110,7 @@ void FOClient::Net_OnGlobalInfo()
         Bin >> zx;
         Bin >> zy;
         Bin >> fog;
-        GmapFog.Set2Bit( zx, zy, fog );
+        WorldmapFog.Set2Bit( zx, zy, fog );
     }
 
     if( FLAG( info_flags, GM_INFO_CRITTERS ) )
@@ -6142,8 +6142,8 @@ void FOClient::Net_OnGlobalEntrances()
 
     CHECK_IN_BUFF_ERROR;
 
-    GmapShowEntrancesLocId = loc_id;
-    memcpy( GmapShowEntrances, entrances, sizeof(entrances) );
+    WorldmapShowEntrancesLocId = loc_id;
+    memcpy( WorldmapShowEntrances, entrances, sizeof(entrances) );
 }
 
 void FOClient::Net_OnContainerInfo()
@@ -6716,8 +6716,8 @@ void FOClient::Net_OnDropTimers()
 {
     ScoresNextUploadTick = 0;
     FixNextShowCraftTick = 0;
-    GmapNextShowEntrancesTick = 0;
-    GmapShowEntrancesLocId = 0;
+    WorldmapNextShowEntrancesTick = 0;
+    WorldmapShowEntrancesLocId = 0;
 }
 
 void FOClient::Net_OnCritterLexems()
@@ -10304,6 +10304,61 @@ Item* FOClient::SScriptFunc::Item_GetChild( Item* item, uint childIndex )
     return NULL;
 }
 
+static bool Global_get___ConsoleActive()
+{
+    return FOClient::ConsoleActive;
+}
+
+static bool Global_get___WorldmapActive()
+{
+    return FOClient::WorldmapActive;
+}
+
+static bool Global_get___WorldmapWait()
+{
+    return FOClient::WorldmapWait;
+}
+
+static float Global_get___WorldmapZoom()
+{
+    return FOClient::WorldmapZoom;
+}
+
+static int Global_get___WorldmapOffsetX()
+{
+    return FOClient::WorldmapOffsetX;
+}
+
+static int Global_get___WorldmapOffsetY()
+{
+    return FOClient::WorldmapOffsetY;
+}
+
+static int Global_get___WorldmapGroupCurX()
+{
+    return FOClient::WorldmapGroupCurX;
+}
+
+static int Global_get___WorldmapGroupCurY()
+{
+    return FOClient::WorldmapGroupCurY;
+}
+
+static int Global_get___WorldmapGroupToX()
+{
+    return FOClient::WorldmapGroupToX;
+}
+
+static int Global_get___WorldmapGroupToY()
+{
+    return FOClient::WorldmapGroupToY;
+}
+
+static float Global_get___WorldmapGroupSpeed()
+{
+    return FOClient::WorldmapGroupSpeed;
+}
+
 CritterCl* FOClient::SScriptFunc::Global_GetChosen()
 {
     if( Self->Chosen && Self->Chosen->IsNotValid )
@@ -10737,7 +10792,7 @@ int FOClient::SScriptFunc::Global_GetFog( ushort zone_x, ushort zone_y )
         SCRIPT_ERROR_R0( "Chosen data not valid." );
     if( zone_x >= GameOpt.GlobalMapWidth || zone_y >= GameOpt.GlobalMapHeight )
         SCRIPT_ERROR_R0( "Invalid world map pos arg." );
-    return Self->GmapFog.Get2Bit( zone_x, zone_y );
+    return Self->WorldmapFog.Get2Bit( zone_x, zone_y );
 }
 
 void FOClient::SScriptFunc::Global_RefreshItemsCollection( int collection )
@@ -10799,9 +10854,9 @@ int FOClient::SScriptFunc::Global_GetScroll( int scroll_element )
         case SCROLL_BARTER_OPPONENT_OFFER:
             return Self->BarterScroll2o;
         case SCROLL_GLOBAL_MAP_CITIES_X:
-            return Self->GmapTabsScrX;
+            return Self->WorldmapTabsScrX;
         case SCROLL_GLOBAL_MAP_CITIES_Y:
-            return Self->GmapTabsScrY;
+            return Self->WorldmapTabsScrY;
         case SCROLL_SPLIT_VALUE:
             return Self->SplitValue;
         case SCROLL_TIMER_VALUE:
@@ -10892,10 +10947,10 @@ void FOClient::SScriptFunc::Global_SetScroll( int scroll_element, int value )
             max_value = ContainerMaxScroll( (int)Self->BarterCont2o.size(), Self->BarterWCont2o.H(), Self->BarterCont2oHeightItem );
             break;
         case SCROLL_GLOBAL_MAP_CITIES_X:
-            scroll = &Self->GmapTabsScrX;
+            scroll = &Self->WorldmapTabsScrX;
             break;
         case SCROLL_GLOBAL_MAP_CITIES_Y:
-            scroll = &Self->GmapTabsScrY;
+            scroll = &Self->WorldmapTabsScrY;
             break;
         case SCROLL_SPLIT_VALUE:
             scroll = &Self->SplitValue;
@@ -11868,8 +11923,8 @@ void FOClient::SScriptFunc::Global_GetHardcodedScreenPos( int screen, int& x, in
             y = Self->IntY;
             break;
         case CLIENT_MAIN_SCREEN_WORLDMAP:
-            x = Self->GmapX;
-            y = Self->GmapY;
+            x = Self->WorldmapX;
+            y = Self->WorldmapY;
             break;
         case CLIENT_MAIN_SCREEN_WAIT:
             x = 0;
@@ -12169,15 +12224,3 @@ bool FOClient::SScriptFunc::Global_SaveLogFile()
 {
     return Self->SaveLogFile();
 }
-
-bool&  FOClient::SScriptFunc::ConsoleActive = FOClient::ConsoleActive;
-bool&  FOClient::SScriptFunc::GmapActive = FOClient::GmapActive;
-bool&  FOClient::SScriptFunc::GmapWait = FOClient::GmapWait;
-float& FOClient::SScriptFunc::GmapZoom = FOClient::GmapZoom;
-int&   FOClient::SScriptFunc::GmapOffsetX = FOClient::GmapOffsetX;
-int&   FOClient::SScriptFunc::GmapOffsetY = FOClient::GmapOffsetY;
-int&   FOClient::SScriptFunc::GmapGroupCurX = FOClient::GmapGroupCurX;
-int&   FOClient::SScriptFunc::GmapGroupCurY = FOClient::GmapGroupCurY;
-int&   FOClient::SScriptFunc::GmapGroupToX = FOClient::GmapGroupToX;
-int&   FOClient::SScriptFunc::GmapGroupToY = FOClient::GmapGroupToY;
-float& FOClient::SScriptFunc::GmapGroupSpeed = FOClient::GmapGroupSpeed;

@@ -11,10 +11,14 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - Server setting `Language_N` removed, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
 - extensions changes
     - `GameOptions* FOnline` removed, use `FOClassic` instead
+- scripts changes
+    - `__Gmap*` global variables renamed to `__Worldmap*`
 - scritps/extensions changes (_FOClassic.fos_)
     - multiple defines has been renamed; see tables below for a complete list
     - changed values of `COMMAND` defines
     - changed values of `DRAW_PRIMITIVE` defines
+- interface changes
+    - `Gmap*` entries renamed to `Worldmap*`
 
 | Old prefix       | New prefix          |
 |------------------|---------------------|

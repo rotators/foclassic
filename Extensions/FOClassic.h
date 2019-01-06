@@ -585,7 +585,6 @@ struct GameOptions
 };
 
 EXPORT_UNINITIALIZED GameOptions* FOClassic;
-EXPORT_UNINITIALIZED GameOptions* FOnline;
 
 #if defined (FOCLASSIC_BLEEDING_EDGE)
 struct GameOptionsExt

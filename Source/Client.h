@@ -492,6 +492,18 @@ public:
         static void   Item_Animate( Item* item, uchar from_frame, uchar to_frame );
         static Item*  Item_GetChild( Item* item, uint childIndex );
 
+        static bool  Global_get___ConsoleActive();
+        static bool  Global_get___WorldmapActive();
+        static bool  Global_get___WorldmapWait();
+        static float Global_get___WorldmapZoom();
+        static int   Global_get___WorldmapOffsetX();
+        static int   Global_get___WorldmapOffsetY();
+        static int   Global_get___WorldmapGroupCurX();
+        static int   Global_get___WorldmapGroupCurY();
+        static int   Global_get___WorldmapGroupToX();
+        static int   Global_get___WorldmapGroupToY();
+        static float Global_get___WorldmapGroupSpeed();
+
         static CritterCl*    Global_GetChosen();
         static uint          Global_GetChosenActions( ScriptArray* actions );
         static void          Global_SetChosenActions( ScriptArray* actions );
@@ -624,13 +636,6 @@ public:
         static void          Global_SetZoom( float zoom );
         static bool          Global_SaveScreenshot();
         static bool          Global_SaveLogFile();
-
-        static bool&         ConsoleActive;
-        static bool&         GmapActive, & GmapWait;
-        static float&        GmapZoom;
-        static int&          GmapOffsetX, & GmapOffsetY;
-        static int&          GmapGroupCurX, & GmapGroupCurY, & GmapGroupToX, & GmapGroupToY;
-        static float&        GmapGroupSpeed;
     } ScriptFunc;
 
     static bool SpritesCanDraw;
@@ -943,28 +948,28 @@ public:
 /************************************************************************/
 /* Global map                                                           */
 /************************************************************************/
-    uint         GmapTilesX, GmapTilesY;
-    AnimVec      GmapPic;
-    char         GmapTilesPic[MAX_FOPATH];
+    uint         WorldmapTilesX, WorldmapTilesY;
+    AnimVec      WorldmapPic;
+    char         WorldmapTilesPic[MAX_FOPATH];
 
-    uint         GmapWDayTimeAnim;
-    AnyFrames*   GmapPBTownDw, * GmapWMainPic, * GmapPGr, * GmapPTarg, * GmapPStay, * GmapPStayDn, * GmapPStayMask, * GmapLocPic;
-    AnyFrames*   GmapPTownInPic, * GmapPTownInPicDn, * GmapPTownInPicMask, * GmapPTownViewPic, * GmapPTownViewPicDn, * GmapPTownViewPicMask;
-    int          GmapPTownInOffsX, GmapPTownInOffsY, GmapPTownViewOffsX, GmapPTownViewOffsY;
-    AnyFrames*   GmapPFollowCrit, * GmapPFollowCritSelf;
-    AnyFrames*   GmapPWTab, * GmapPWBlankTab, * GmapPBTabLoc, * GmapPTabScrUpDw, * GmapPTabScrDwDw;
-    AnyFrames*   GmapBInvPicDown, * GmapBMenuPicDown, * GmapBChaPicDown, * GmapBPipPicDown, * GmapBFixPicDown;
-    AnyFrames*   GmapPLightPic0, * GmapPLightPic1;
-    int          GmapX, GmapY, GmapVectX, GmapVectY, GmapWNameStepX, GmapWNameStepY;
-    Rect         GmapWMain, GmapWMap, GmapBTown, GmapWName, GmapWChat, GmapWPanel, GmapWCar, GmapWLock, GmapWTime, GmapWDayTime;
-    Rect         GmapBInv, GmapBMenu, GmapBCha, GmapBPip, GmapBFix;
-    PointVec     GmapMapCutOff;
-    static bool  GmapActive;
-    static float GmapZoom;
-    static int   GmapOffsetX, GmapOffsetY;
+    uint         WorldmapWDayTimeAnim;
+    AnyFrames*   WorldmapPBTownDw, * WorldmapWMainPic, * WorldmapPGr, * WorldmapPTarg, * WorldmapPStay, * WorldmapPStayDn, * WorldmapPStayMask, * WorldmapLocPic;
+    AnyFrames*   WorldmapPTownInPic, * WorldmapPTownInPicDn, * WorldmapPTownInPicMask, * WorldmapPTownViewPic, * WorldmapPTownViewPicDn, * WorldmapPTownViewPicMask;
+    int          WorldmapPTownInOffsX, WorldmapPTownInOffsY, WorldmapPTownViewOffsX, WorldmapPTownViewOffsY;
+    AnyFrames*   WorldmapPFollowCrit, * WorldmapPFollowCritSelf;
+    AnyFrames*   WorldmapPWTab, * WorldmapPWBlankTab, * WorldmapPBTabLoc, * WorldmapPTabScrUpDw, * WorldmapPTabScrDwDw;
+    AnyFrames*   WorldmapBInvPicDown, * WorldmapBMenuPicDown, * WorldmapBChaPicDown, * WorldmapBPipPicDown, * WorldmapBFixPicDown;
+    AnyFrames*   WorldmapPLightPic0, * WorldmapPLightPic1;
+    int          WorldmapX, WorldmapY, WorldmapVectX, WorldmapVectY, WorldmapWNameStepX, WorldmapWNameStepY;
+    Rect         WorldmapWMain, WorldmapWMap, WorldmapBTown, WorldmapWName, WorldmapWChat, WorldmapWPanel, WorldmapWCar, WorldmapWLock, WorldmapWTime, WorldmapWDayTime;
+    Rect         WorldmapBInv, WorldmapBMenu, WorldmapBCha, WorldmapBPip, WorldmapBFix;
+    PointVec     WorldmapMapCutOff;
+    static bool  WorldmapActive;
+    static float WorldmapZoom;
+    static int   WorldmapOffsetX, WorldmapOffsetY;
 
-    void GmapNullParams();
-    void GmapProcess();
+    void WorldmapNullParams();
+    void WorldmapProcess();
 
     // Town
     AnyFrames* GmapTownPic;
@@ -973,13 +978,13 @@ public:
     IntRectVec GmapTownTextPos;
     StrVec     GmapTownText;
     int        GmapTownCurButton;
-    uint       GmapNextShowEntrancesTick;
-    uint       GmapShowEntrancesLocId;
-    bool       GmapShowEntrances[0x100];
+    uint       WorldmapNextShowEntrancesTick;
+    uint       WorldmapShowEntrancesLocId;
+    bool       WorldmapShowEntrances[0x100];
 
     // Mask
-    C2BitMask GmapFog;
-    PointVec  GmapFogPix;
+    C2BitMask WorldmapFog;
+    PointVec  WorldmapFogPix;
 
     // Locations
     struct GmapLocation
@@ -1002,9 +1007,9 @@ public:
     // Params
     uint         GmapMoveTick;
     int          GmapGroupRealOldX, GmapGroupRealOldY, GmapGroupRealCurX, GmapGroupRealCurY;
-    static int   GmapGroupCurX, GmapGroupCurY, GmapGroupToX, GmapGroupToY;
-    static bool  GmapWait;
-    static float GmapGroupSpeed;
+    static int   WorldmapGroupCurX, WorldmapGroupCurY, WorldmapGroupToX, WorldmapGroupToY;
+    static bool  WorldmapWait;
+    static float WorldmapGroupSpeed;
 
     // Cars
     struct
@@ -1014,8 +1019,8 @@ public:
     } GmapCar;
 
     // Tabs
-    Rect GmapWTabs, GmapWTab, GmapWTabLoc, GmapBTabLoc, GmapBTabsScrUp, GmapBTabsScrDn;
-    int  GmapTabNextX, GmapTabNextY, GmapTabsScrX, GmapTabsScrY;
+    Rect WorldmapWTabs, WorldmapWTab, WorldmapWTabLoc, WorldmapBTabLoc, WorldmapBTabsScrUp, WorldmapBTabsScrDn;
+    int  WorldmapTabNextX, WorldmapTabNextY, WorldmapTabsScrX, WorldmapTabsScrY;
     uint GmapCurHoldBLocId;
     uint GmapTabsLastScr;
     int  GmapHoldX, GmapHoldY;
@@ -1033,16 +1038,16 @@ public:
     uint  GmapGetMouseTabLocId();
     void  GmapFreeResources();
 
-    #define GMAP_CHECK_MAPSCR                                           \
-        do {                                                            \
-            if( GmapOffsetX > GmapWMap[0] )                             \
-                GmapOffsetX = GmapWMap[0];                              \
-            if( GmapOffsetY > GmapWMap[1] )                             \
-                GmapOffsetY = GmapWMap[1];                              \
-            if( GmapOffsetX < GmapWMap[2] - (int)(GM_MAXX / GmapZoom) ) \
-                GmapOffsetX = GmapWMap[2] - (int)(GM_MAXX / GmapZoom);  \
-            if( GmapOffsetY < GmapWMap[3] - (int)(GM_MAXY / GmapZoom) ) \
-                GmapOffsetY = GmapWMap[3] - (int)(GM_MAXY / GmapZoom);  \
+    #define GMAP_CHECK_MAPSCR                                                       \
+        do {                                                                        \
+            if( WorldmapOffsetX > WorldmapWMap[0] )                                 \
+                WorldmapOffsetX = WorldmapWMap[0];                                  \
+            if( WorldmapOffsetY > WorldmapWMap[1] )                                 \
+                WorldmapOffsetY = WorldmapWMap[1];                                  \
+            if( WorldmapOffsetX < WorldmapWMap[2] - (int)(GM_MAXX / WorldmapZoom) ) \
+                WorldmapOffsetX = WorldmapWMap[2] - (int)(GM_MAXX / WorldmapZoom);  \
+            if( WorldmapOffsetY < WorldmapWMap[3] - (int)(GM_MAXY / WorldmapZoom) ) \
+                WorldmapOffsetY = WorldmapWMap[3] - (int)(GM_MAXY / WorldmapZoom);  \
         } while( 0 )
 
 /************************************************************************/

@@ -21,7 +21,8 @@
 # include "Client.h"
 # define BIND_CLIENT
 # define BIND_CLASS                                FOClient::SScriptFunc::
-# define BIND_CLASS_DERAIL( name )                 & FOClient::SScriptFunc::name
+# define BIND_CLASS_DERAIL( name )                 & FOClient::name
+# pragma TODO("better solution for BIND_CLASS_DERAIL")
 #elif defined (FOCLASSIC_MAPPER)
 # include "Mapper.h"
 # define BIND_MAPPER
@@ -55,7 +56,7 @@ static DummyClass   DummyObject;
 # undef focOFFSET
 # define focSIZEOF( obj )                          DummyClassSize
 # define focOFFSET( clas, method )                 ++ DummyObject.DummyMember
-# define BIND_CLASS_DERAIL( name )                 & DummyObject.DummyMember
+# define BIND_CLASS_DERAIL( name )                 (void*)(++DummyObject.DummyMember)
 #endif
 
 // keep dummy registration in own namespace
@@ -480,17 +481,17 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
     if( bind == SCRIPT_BIND_CLIENT )
     {
-        RegisterGlobalProperty( engine, "bool __ConsoleActive", BIND_CLASS_DERAIL( ConsoleActive ) );
-        RegisterGlobalProperty( engine, "bool __GmapActive", BIND_CLASS_DERAIL( GmapActive ) );
-        RegisterGlobalProperty( engine, "bool __GmapWait", BIND_CLASS_DERAIL( GmapWait ) );
-        RegisterGlobalProperty( engine, "float __GmapZoom", BIND_CLASS_DERAIL( GmapZoom ) );
-        RegisterGlobalProperty( engine, "int __GmapOffsetX", BIND_CLASS_DERAIL( GmapOffsetX ) );
-        RegisterGlobalProperty( engine, "int __GmapOffsetY", BIND_CLASS_DERAIL( GmapOffsetY ) );
-        RegisterGlobalProperty( engine, "int __GmapGroupCurX", BIND_CLASS_DERAIL( GmapGroupCurX ) );
-        RegisterGlobalProperty( engine, "int __GmapGroupCurY", BIND_CLASS_DERAIL( GmapGroupCurY ) );
-        RegisterGlobalProperty( engine, "int __GmapGroupToX", BIND_CLASS_DERAIL( GmapGroupToX ) );
-        RegisterGlobalProperty( engine, "int __GmapGroupToY", BIND_CLASS_DERAIL( GmapGroupToY ) );
-        RegisterGlobalProperty( engine, "float __GmapGroupSpeed", BIND_CLASS_DERAIL( GmapGroupSpeed ) );
+        RegisterGlobalFunction( engine, "bool get___ConsoleActive()", focFUNCTION( BIND_CLASS Global_get___ConsoleActive ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "bool __WorldmapActive", focFUNCTION( BIND_CLASS Global_get___WorldmapActive ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "bool __WorldmapWait", focFUNCTION( BIND_CLASS Global_get___WorldmapWait ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "float __WorldmapZoom", focFUNCTION( BIND_CLASS Global_get___WorldmapZoom ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapOffsetX", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapOffsetY", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapGroupCurX", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapGroupCurY", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapGroupToX", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int __WorldmapGroupToY", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "float __WorldmapGroupSpeed", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupSpeed ), asCALL_CDECL );
     }
     #endif
 
