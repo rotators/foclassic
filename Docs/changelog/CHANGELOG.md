@@ -19,7 +19,9 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - changed values of `DRAW_PRIMITIVE` defines
 - interface changes
     - `Gmap*` entries renamed to `Worldmap*`
-    - `LMenuGmap` entries renamed to `LMenuWorldmap*`
+    - `LMenuGmap*` entries renamed to `LMenuWorldmap*`
+- additional notes
+    - as mentioned in [announcement](https://fodev.net/forum/index.php/topic,30043.0.html), this release end migration stage and starts regular development where bigger and/or more demanding changes can and will be introduced; to avoid "r413+ situation" some of bigger reworks might be introduced across multiple releases, making progress somewhat slower but (hopefully) easier to grasp
 
 
 | Old prefix       | New prefix          |
