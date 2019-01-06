@@ -479,16 +479,16 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     if( bind == SCRIPT_BIND_CLIENT )
     {
         RegisterGlobalFunction( engine, "bool get___ConsoleActive()", focFUNCTION( BIND_CLASS Global_get___ConsoleActive ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "bool __WorldmapActive", focFUNCTION( BIND_CLASS Global_get___WorldmapActive ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "bool __WorldmapWait", focFUNCTION( BIND_CLASS Global_get___WorldmapWait ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "float __WorldmapZoom", focFUNCTION( BIND_CLASS Global_get___WorldmapZoom ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapOffsetX", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetX ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapOffsetY", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetY ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapGroupCurX", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurX ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapGroupCurY", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurY ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapGroupToX", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToX ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "int __WorldmapGroupToY", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToY ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "float __WorldmapGroupSpeed", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupSpeed ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "bool get___WorldmapActive()", focFUNCTION( BIND_CLASS Global_get___WorldmapActive ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "bool get___WorldmapWait()", focFUNCTION( BIND_CLASS Global_get___WorldmapWait ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "float get___WorldmapZoom()", focFUNCTION( BIND_CLASS Global_get___WorldmapZoom ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapOffsetX()", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapOffsetY()", focFUNCTION( BIND_CLASS Global_get___WorldmapOffsetY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapGroupCurX()", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapGroupCurY()", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupCurY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapGroupToX()", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToX ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "int get___WorldmapGroupToY()", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupToY ), asCALL_CDECL );
+        RegisterGlobalFunction( engine, "float get___WorldmapGroupSpeed()", focFUNCTION( BIND_CLASS Global_get___WorldmapGroupSpeed ), asCALL_CDECL );
     }
     #endif
 
