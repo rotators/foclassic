@@ -42,7 +42,7 @@ BEGIN
             VALUE "ProductName",        "FOClassic"
             VALUE "FileDescription",    "FOClassic " APPLICATION_NAME
             VALUE "CompanyName",        "Rotators"
-            VALUE "LegalCopyright",     "Copyright (C) 2010-2018 Cvet, Rotators"
+            VALUE "LegalCopyright",     "Copyright (C) 2010-2019 Cvet, Rotators"
 
             VALUE "InternalName",       APPLICATION_NAME APPLICATION_NAME_SUFFIX
             VALUE "OriginalFilename",   APPLICATION_NAME APPLICATION_NAME_SUFFIX ".exe"
