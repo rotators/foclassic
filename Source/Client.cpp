@@ -10304,57 +10304,57 @@ Item* FOClient::SScriptFunc::Item_GetChild( Item* item, uint childIndex )
     return NULL;
 }
 
-static bool Global_get___ConsoleActive()
+bool FOClient::SScriptFunc::Global_get___ConsoleActive()
 {
     return FOClient::ConsoleActive;
 }
 
-static bool Global_get___WorldmapActive()
+bool FOClient::SScriptFunc::Global_get___WorldmapActive()
 {
     return FOClient::WorldmapActive;
 }
 
-static bool Global_get___WorldmapWait()
+bool FOClient::SScriptFunc::Global_get___WorldmapWait()
 {
     return FOClient::WorldmapWait;
 }
 
-static float Global_get___WorldmapZoom()
+float FOClient::SScriptFunc::Global_get___WorldmapZoom()
 {
     return FOClient::WorldmapZoom;
 }
 
-static int Global_get___WorldmapOffsetX()
+int FOClient::SScriptFunc::Global_get___WorldmapOffsetX()
 {
     return FOClient::WorldmapOffsetX;
 }
 
-static int Global_get___WorldmapOffsetY()
+int FOClient::SScriptFunc::Global_get___WorldmapOffsetY()
 {
     return FOClient::WorldmapOffsetY;
 }
 
-static int Global_get___WorldmapGroupCurX()
+int FOClient::SScriptFunc::Global_get___WorldmapGroupCurX()
 {
     return FOClient::WorldmapGroupCurX;
 }
 
-static int Global_get___WorldmapGroupCurY()
+int FOClient::SScriptFunc::Global_get___WorldmapGroupCurY()
 {
     return FOClient::WorldmapGroupCurY;
 }
 
-static int Global_get___WorldmapGroupToX()
+int FOClient::SScriptFunc::Global_get___WorldmapGroupToX()
 {
     return FOClient::WorldmapGroupToX;
 }
 
-static int Global_get___WorldmapGroupToY()
+int FOClient::SScriptFunc::Global_get___WorldmapGroupToY()
 {
     return FOClient::WorldmapGroupToY;
 }
 
-static float Global_get___WorldmapGroupSpeed()
+float FOClient::SScriptFunc::Global_get___WorldmapGroupSpeed()
 {
     return FOClient::WorldmapGroupSpeed;
 }

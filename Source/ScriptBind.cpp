@@ -21,8 +21,6 @@
 # include "Client.h"
 # define BIND_CLIENT
 # define BIND_CLASS                                FOClient::SScriptFunc::
-# define BIND_CLASS_DERAIL( name )                 & FOClient::name
-# pragma TODO("better solution for BIND_CLASS_DERAIL")
 #elif defined (FOCLASSIC_MAPPER)
 # include "Mapper.h"
 # define BIND_MAPPER
@@ -56,7 +54,6 @@ static DummyClass   DummyObject;
 # undef focOFFSET
 # define focSIZEOF( obj )                          DummyClassSize
 # define focOFFSET( clas, method )                 ++ DummyObject.DummyMember
-# define BIND_CLASS_DERAIL( name )                 (void*)(++DummyObject.DummyMember)
 #endif
 
 // keep dummy registration in own namespace
