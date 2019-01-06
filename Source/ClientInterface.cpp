@@ -1143,10 +1143,10 @@ int FOClient::InitIface()
     IfaceLoadSpr( LmenuPBarterOpenOn, "LMenuBarterOpenPicDn" );
     IfaceLoadSpr( LmenuPBarterHideOff, "LMenuBarterHidePic" );
     IfaceLoadSpr( LmenuPBarterHideOn, "LMenuBarterHidePicDn" );
-    IfaceLoadSpr( LmenuPGmapKickOff, "LMenuGmapKickPic" );
-    IfaceLoadSpr( LmenuPGmapKickOn, "LMenuGmapKickPicDn" );
-    IfaceLoadSpr( LmenuPGmapRuleOff, "LMenuGmapRulePic" );
-    IfaceLoadSpr( LmenuPGmapRuleOn, "LMenuGmapRulePicDn" );
+    IfaceLoadSpr( LmenuPWorldmapKickOff, "LMenuWorldmapKickPic" );
+    IfaceLoadSpr( LmenuPWorldmapKickOn, "LMenuWorldmapKickPicDn" );
+    IfaceLoadSpr( LmenuPWorldmapRuleOff, "LMenuWorldmapRulePic" );
+    IfaceLoadSpr( LmenuPWorldmapRuleOn, "LMenuWorldmapRulePicDn" );
     IfaceLoadSpr( LmenuPVoteUpOff, "LMenuVoteUpPic" );
     IfaceLoadSpr( LmenuPVoteUpOn, "LMenuVoteUpPicDn" );
     IfaceLoadSpr( LmenuPVoteDownOff, "LMenuVoteDownPic" );
@@ -4953,8 +4953,8 @@ void FOClient::LMenuDraw()
             LMENU_DRAW_CASE( LMENU_NODE_SKILL, LmenuPSkillOff, LmenuPSkillOn );
             LMENU_DRAW_CASE( LMENU_NODE_BARTER_OPEN, LmenuPBarterOpenOff, LmenuPBarterOpenOn );
             LMENU_DRAW_CASE( LMENU_NODE_BARTER_HIDE, LmenuPBarterHideOff, LmenuPBarterHideOn );
-            LMENU_DRAW_CASE( LMENU_NODE_GMAP_KICK, LmenuPGmapKickOff, LmenuPGmapKickOn );
-            LMENU_DRAW_CASE( LMENU_NODE_GMAP_RULE, LmenuPGmapRuleOff, LmenuPGmapRuleOn );
+            LMENU_DRAW_CASE( LMENU_NODE_GMAP_KICK, LmenuPWorldmapKickOff, LmenuPWorldmapKickOn );
+            LMENU_DRAW_CASE( LMENU_NODE_GMAP_RULE, LmenuPWorldmapRuleOff, LmenuPWorldmapRuleOn );
             LMENU_DRAW_CASE( LMENU_NODE_VOTE_UP, LmenuPVoteUpOff, LmenuPVoteUpOn );
             LMENU_DRAW_CASE( LMENU_NODE_VOTE_DOWN, LmenuPVoteDownOff, LmenuPVoteDownOn );
             default:

@@ -823,7 +823,7 @@ public:
              * LmenuPPickItemOn, * LmenuPPickItemOff, * LmenuPPushOn, * LmenuPPushOff,
              * LmenuPBagOn, * LmenuPBagOff, * LmenuPSkillOn, * LmenuPSkillOff,
              * LmenuPBarterOpenOn, * LmenuPBarterOpenOff, * LmenuPBarterHideOn, * LmenuPBarterHideOff,
-             * LmenuPGmapKickOff, * LmenuPGmapKickOn, * LmenuPGmapRuleOff, * LmenuPGmapRuleOn,
+             * LmenuPWorldmapKickOff, * LmenuPWorldmapKickOn, * LmenuPWorldmapRuleOff, * LmenuPWorldmapRuleOn,
              * LmenuPVoteUpOff, * LmenuPVoteUpOn, * LmenuPVoteDownOff, * LmenuPVoteDownOn;
 
     bool      LMenuActive;
