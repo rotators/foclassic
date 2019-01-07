@@ -309,7 +309,7 @@ struct GameOptions
     const bool           LevelCapAddExperience;
     const uint           LookNormal;
     const uint           LookMinimum;
-    const uint           GlobalMapMaxGroupCount;
+    const uint           WorldmapMaxGroupCount;
     const uint           CritterIdleTick;
     const uint           TurnBasedTick;
     const int            DeadHitPoints;

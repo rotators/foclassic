@@ -1,8 +1,10 @@
 #include "Core.h"
 
+#include "ConfigFile.h"
 #include "CritterManager.h"
 #include "FileSystem.h"
 #include "FlexRect.h"
+#include "Ini.h"
 #include "LineTracer.h"
 #include "Log.h"
 #include "ItemManager.h"
@@ -215,7 +217,10 @@ bool MapManager::LoadLocationsProtos()
 
         ProtoLocation& ploc = ProtoLoc[i];
         city_txt.GetStr( app, "name", "UNKNOWN", res );
-        WriteLog( "Load location proto<%d:%s>\n", i, res );
+
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load location proto<%d:%s>\n", i, res );
+
         if( !LoadLocationProto( city_txt, ploc, i ) )
         {
             errors++;
@@ -225,15 +230,14 @@ bool MapManager::LoadLocationsProtos()
         loaded++;
     }
 
-    // Check for errors
+    WriteLog( "Load location and map prototypes... " );
     if( errors )
-    {
-        WriteLog( "Load location and map prototypes... failed, errors<%d>.\n", errors );
-        return false;
-    }
+        WriteLogX( "failed, errors<%d>\n", errors );
+    else
+        WriteLogX( "loaded<%u>", loaded );
+    WriteLogX( "\n" );
 
-    WriteLog( "Load location and map prototypes... complete, count<%u>\n", loaded );
-    return true;
+    return errors == 0;
 }
 
 bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid )
@@ -291,7 +295,9 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
             return false;
         }
 
-        WriteLog( "Load map proto<%u:%s>\n", map_pid, map_name );
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load map proto<%u:%s>\n", map_pid, map_name );
+
         if( !pmap.IsInit() && !pmap.Init( map_pid, map_name, PATH_SERVER_MAPS ) )
         {
             WriteLogF( _FUNC_, " - Init proto map<%s> for location<%s> fail.\n", map_name, ploc.Name.c_str() );

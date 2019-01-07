@@ -8,13 +8,18 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v5]() (WIP)
 
-- Server setting `Language_N` removed, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
+- added Server setting `VerboseInit` (boolean), disabled by default
+    - if enabled, Server prints more details about some tasks (dialogs/maps/prototypes/scripts loading)
+- removed Server setting `Language_N`, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
 - extensions changes
     - `GameOptions* FOnline` removed, use `FOClassic` instead
 - scripts changes
-    - `__Gmap*` global variables renamed to `__Worldmap*`
-- scritps/extensions changes (_FOClassic.fos_)
+    - [Client] global variables `__Gmap*` renamed to `__Worldmap*`
+    - [Server] global function `bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars)` removed
+    - [Client, Server] global variable `__GlobalMapMaxGroupCount` renamed to `__WorldmapMaxGroupCount`
+- extensions/scripts changes (_FOClassic.fos_)
     - multiple defines has been renamed; see tables below for a complete list
+    - added `DIK` defines
     - changed values of `COMMAND` defines
     - changed values of `DRAW_PRIMITIVE` defines
 - interface changes

@@ -15,6 +15,7 @@
 #include "FileManager.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
+#include "Ini.h"
 #include "Log.h"
 #include "Script.h"
 #include "Text.h"
@@ -603,7 +604,7 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
 
     Script::UnloadScripts();
 
-    int        errors = 0;
+    int        loaded = 0, errors = 0;
     char       buf[1024];
     string     value;
 
@@ -627,7 +628,8 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
         if( !fail )
         {
             #ifdef FOCLASSIC_SERVER
-            WriteLog( "Load %s module<%s>\n", key, value.c_str() );
+            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                WriteLog( "Load %s module<%s>\n", key, value.c_str() );
             #endif
             fail = !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix );
         }
@@ -635,10 +637,12 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
         {
             WriteLog( "Load %s module fail, name<%s>.\n", key, value.c_str() );
             errors++;
+            continue;
         }
         #ifdef FOCLASSIC_SERVER
         Script::Profiler::AddModule( value.c_str() );
         #endif
+        loaded++;
     }
     #ifdef FOCLASSIC_SERVER
     Script::Profiler::EndModules();
@@ -648,7 +652,13 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     errors += BindImportedFunctions();
     errors += RebindFunctions();
 
-    WriteLog( "Reload %s scripts... %s\n", key, errors == 0 ? "complete" : "failed" );
+    WriteLog( "Reload %s scripts... ", key );
+    if( errors )
+        WriteLogX( "failed" );
+    else
+        WriteLogX( "loaded<%d>", loaded );
+    WriteLogX( "\n" );
+
     return errors == 0;
 }
 
@@ -669,8 +679,9 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
         int                     bind_id = 0;
         istrstream              config_( config );
 
-        #if defined (VERBOSE_BIND)
-        WriteLog( "Bind %s function %s -> ", key, bf->FuncName );
+        #if defined (FOCLASSIC_SERVER)
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Bind %s function %s -> ", key, bf->FuncName );
         #endif
 
         while( !config_.eof() )
@@ -693,8 +704,9 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
             str >> value;
             if( !str.fail() )
             {
-                #if defined (VERBOSE_BIND)
-                WriteLogX( "%s -> ", value.c_str() );
+                #if defined (FOCLASSIC_SERVER)
+                if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                    WriteLogX( "%s -> ", value.c_str() );
                 #endif
                 bind_id = Bind( value.c_str(), bf->FuncName, bf->FuncDecl, use_temp );
             }
@@ -703,15 +715,17 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
 
         if( bind_id > 0 )
         {
-            #if defined (VERBOSE_BIND)
-            WriteLogX( "OK [%d]\n", bind_id );
+            #if defined (FOCLASSIC_SERVER)
+            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                WriteLogX( "OK [%d]\n", bind_id );
             #endif
             *bf->BindId = bind_id;
         }
         else
         {
-            #if defined (VERBOSE_BIND)
-            WriteLogX( "ERROR\n" );
+            #if defined (FOCLASSIC_SERVER)
+            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                WriteLogX( "ERROR\n" );
             #endif
             WriteLog( "Bind reserved %s function fail, name<%s>.\n", key, bf->FuncName );
             errors++;

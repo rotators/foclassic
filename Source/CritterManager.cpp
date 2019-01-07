@@ -15,7 +15,8 @@
 #include "Utils.h"
 
 #ifdef FOCLASSIC_SERVER
-# include "ConfigFile.h" // LogicMT
+# include "ConfigFile.h"
+# include "Ini.h"
 # include "Jobs.h"
 # include "MapManager.h"
 #endif
@@ -118,7 +119,11 @@ bool CritterManager::LoadProtos()
         FileManager::EraseExtension( collection_name );
         #endif
 
+        #if defined (FOCLASSIC_SERVER)
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+        #endif
         WriteLog( "Load critters proto<%s>\n", fnames[i].c_str() );
+
         if( protos_txt.LoadFile( fname, PATH_SERVER_PRO_CRITTERS ) )
         {
             while( protos_txt.GotoNextApp( CRPROTO_APP ) )

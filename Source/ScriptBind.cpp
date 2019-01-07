@@ -628,7 +628,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalProperty( engine, "bool __LevelCapAddExperience", &GameOpt.LevelCapAddExperience );
         RegisterGlobalProperty( engine, "uint __LookNormal", &GameOpt.LookNormal );
         RegisterGlobalProperty( engine, "uint __LookMinimum", &GameOpt.LookMinimum );
-        RegisterGlobalProperty( engine, "uint __GlobalMapMaxGroupCount", &GameOpt.GlobalMapMaxGroupCount );
+        RegisterGlobalProperty( engine, "uint __WorldmapMaxGroupCount", &GameOpt.WorldmapMaxGroupCount );
         RegisterGlobalProperty( engine, "uint __CritterIdleTick", &GameOpt.CritterIdleTick );
         RegisterGlobalProperty( engine, "uint __TurnBasedTick", &GameOpt.TurnBasedTick );
         RegisterGlobalProperty( engine, "int __DeadHitPoints", &GameOpt.DeadHitPoints );
@@ -968,7 +968,6 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalFunction( engine, "void SetChosenSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetChosenSendParameter ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void SetSendParameter(int index, bool enabled)", focFUNCTION( BIND_CLASS Global_SetSendParameter ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void SetSendParameter(int index, bool enabled, string@+ allowFunc)", focFUNCTION( BIND_CLASS Global_SetSendParameterFunc ), asCALL_CDECL );
-        RegisterGlobalFunction( engine, "bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars)", focFUNCTION( BIND_CLASS Global_SwapCritters ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetAllMaps(uint16 pid, Map@[]@+ maps)", focFUNCTION( BIND_CLASS Global_GetAllMaps ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetAllLocations(uint16 pid, Location@[]@+ locations)", focFUNCTION( BIND_CLASS Global_GetAllLocations ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetScriptId(string& scriptName, string& funcDeclaration)", focFUNCTION( BIND_CLASS Global_GetScriptId ), asCALL_CDECL );

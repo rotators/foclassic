@@ -3844,7 +3844,8 @@ bool FOServer::InitLangPacks( LangPackVec& lang_packs )
             return false;
         }
 
-        WriteLog( "Load language<%s>\n", name.c_str() );
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load language<%s>\n", name.c_str() );
 
         LanguagePack language;
         if( !language.Init( name.c_str(), PATH_SERVER_TEXTS ) )

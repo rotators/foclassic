@@ -11,9 +11,11 @@
 #include "Text.h"
 
 #ifdef FOCLASSIC_SERVER
+# include "ConfigFile.h"
 # include "Critter.h"
 # include "CritterManager.h"
 # include "FileSystem.h"
+# include "Ini.h"
 # include "Jobs.h"
 # include "Map.h"
 # include "MapManager.h"
@@ -140,7 +142,11 @@ bool ItemManager::LoadProtos()
         Str::Format( collection_name, "%03d - %s", i + 1, fnames[i].c_str() );
         FileManager::EraseExtension( collection_name );
 
+        # if defined (FOCLASSIC_SERVER)
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+        # endif
         WriteLog( "Load items proto<%s>\n", fnames[i].c_str() );
+
         if( LoadProtos( item_protos, fname ) )
         {
             ParseProtos( item_protos, collection_name );

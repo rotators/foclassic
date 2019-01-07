@@ -102,7 +102,7 @@
 #define GM__MAXZONEX                          (100)
 #define GM__MAXZONEY                          (100)
 #define GM_ZONES_FOG_SIZE                     ( ( (GM__MAXZONEX / 4) + ( (GM__MAXZONEX % 4) ? 1 : 0 ) ) * GM__MAXZONEY )
-#define GM_MAX_GROUP_COUNT                    (GameOpt.GlobalMapMaxGroupCount)
+#define GM_MAX_GROUP_COUNT                    (GameOpt.WorldmapMaxGroupCount)
 #define GM_ANSWER_WAIT_TIME                   (20000)
 #define GM_LIGHT_TIME                         (5000)
 #define GM_ZONE( x )                          ( (x) / GM_ZONE_LEN )

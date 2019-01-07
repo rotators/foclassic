@@ -1,5 +1,6 @@
 #include "Core.h"
 
+#include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "Debugger.h"
 #include "Dialogs.h"
@@ -53,7 +54,7 @@ DialogAnswer::~DialogAnswer()
 
 bool DialogManager::LoadDialogs( const char* list_name )
 {
-    WriteLog( "Load dialogs" );
+    WriteLog( "Load dialogs..." );
 
     if( !list_name )
     {
@@ -61,14 +62,14 @@ bool DialogManager::LoadDialogs( const char* list_name )
         return false;
     }
 
-    WriteLogX( " from list<%s>...\n", list_name );
-
     FileManager lst;
     if( !lst.LoadFile( list_name, PATH_SERVER_DIALOGS ) )
     {
-        WriteLog( "File not found.\n" );
+        WriteLogX( "file<%s> not found\n", list_name );
         return false;
     }
+
+    WriteLogX( "\n" );
 
     istrstream str( (char*)lst.GetBuf() );
     int        dlg_count = 0;
@@ -115,7 +116,8 @@ bool DialogManager::LoadDialogs( const char* list_name )
             continue;
         }
 
-        WriteLog( "Load dialog<%u:%s>\n", dlg_id, dlg_name );
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load dialog<%u:%s>\n", dlg_id, dlg_name );
 
         DialogPack* pack = ParseDialog( dlg_name, dlg_id, (char*)fdlg.GetBuf() );
         if( !pack )

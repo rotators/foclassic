@@ -1,14 +1,16 @@
 #include "Core.h"
 
-#include "png.h" // Global_LoadImage
+#include <png.h> // Global_LoadImage
 
-#include "preprocessor.h"
+#include <preprocessor.h>
 
+#include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "Critter.h"
 #include "CritterType.h"
 #include "Debugger.h"
 #include "FileSystem.h"
+#include "Ini.h"
 #include "ItemManager.h"
 #include "Log.h"
 #include "Map.h"
@@ -169,6 +171,7 @@ bool FOServer::InitScriptSystem()
     // Verify critical variables
     if( GameOpt.ApRegeneration == 0 )
     {
+        Script::Finish();
         WriteLog( "Script system initialization... failed\n" );
         WriteLog( "Game option 'ApRegeneration' cannot be 0\n" );       // division by zero
 
@@ -323,7 +326,8 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
             if( str.fail() )
                 continue;
 
-            WriteLog( "Load %s module<%s>\n", target_lower.c_str(), value.c_str() );
+            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                WriteLog( "Load %s module<%s>\n", target_lower.c_str(), value.c_str() );
 
             if( !Script::LoadScript( value.c_str(), NULL, false, target_prefix.c_str() ) )
             {
@@ -5718,202 +5722,6 @@ void FOServer::SScriptFunc::Global_SetSendParameterFunc( int index, bool enabled
 
     count = (uint)vec.size();
     Critter::ParamsSendEnabled[index] = enabled;
-}
-
-#pragma TODO( "REMOVE SwapCritters")
-template<typename Ty>
-void SwapArray( Ty& arr1, Ty& arr2 )
-{
-    Ty tmp;
-    memcpy( tmp, arr1, sizeof(tmp) );
-    memcpy( arr1, arr2, sizeof(tmp) );
-    memcpy( arr2, tmp, sizeof(tmp) );
-}
-
-void SwapCrittersRefreshNpc( Npc* npc )
-{
-    UNSETFLAG( npc->Flags, CRITTER_FLAG_PLAYER );
-    SETFLAG( npc->Flags, CRITTER_FLAG_NPC );
-    AIDataPlaneVec& planes = npc->GetPlanes();
-    for( auto it = planes.begin(), end = planes.end(); it != end; ++it )
-        delete *it;
-    planes.clear();
-    npc->NextRefreshBagTick = Timer::GameTick() + (npc->Data.BagRefreshTime ? npc->Data.BagRefreshTime : GameOpt.BagRefreshTime) * 60 * 1000;
-}
-
-void SwapCrittersRefreshClient( Client* cl, Map* map, Map* prev_map )
-{
-    UNSETFLAG( cl->Flags, CRITTER_FLAG_NPC );
-    SETFLAG( cl->Flags, CRITTER_FLAG_PLAYER );
-
-    if( cl->Talk.TalkType != TALK_NONE )
-        cl->CloseTalk();
-
-    if( map != prev_map )
-    {
-        cl->Send_LoadMap( NULL );
-    }
-    else
-    {
-        cl->Send_AllParams();
-        cl->Send_AddAllItems();
-        cl->Send_AllQuests();
-        cl->Send_HoloInfo( true, 0, cl->Data.HoloInfoCount );
-        cl->Send_AllAutomapsInfo();
-
-        if( map->IsTurnBasedOn )
-        {
-            if( map->IsCritterTurn( cl ) )
-                cl->Send_ParamOther( OTHER_YOU_TURN, map->GetCritterTurnTime() );
-            else
-            {
-                Critter* cr = cl->GetCritSelf( map->GetCritterTurnId(), false );
-                if( cr )
-                    cl->Send_CritterParam( cr, OTHER_YOU_TURN, map->GetCritterTurnTime() );
-            }
-        }
-        else if( TB_BATTLE_TIMEOUT_CHECK( cl->GetParam( TO_BATTLE ) ) )
-            cl->SetTimeout( TO_BATTLE, 0 );
-    }
-}
-
-bool FOServer::SScriptFunc::Global_SwapCritters( Critter* cr1, Critter* cr2, bool with_inventory, bool with_vars )
-{
-    return false;
-    #if 0
-    // Check
-    if( cr1->IsNotValid )
-        SCRIPT_ERROR_R0( "Critter1 nullptr." );
-    if( cr2->IsNotValid )
-        SCRIPT_ERROR_R0( "Critter2 nullptr." );
-    if( cr1 == cr2 )
-        SCRIPT_ERROR_R0( "Critter1 is equal to Critter2." );
-    if( !cr1->GetMap() )
-        SCRIPT_ERROR_R0( "Critter1 is on global map." );
-    if( !cr2->GetMap() )
-        SCRIPT_ERROR_R0( "Critter2 is on global map." );
-
-    // Swap positions
-    Map* map1 = MapMngr.GetMap( cr1->GetMap(), true );
-    if( !map1 )
-        SCRIPT_ERROR_R0( "Map of Critter1 not found." );
-    Map* map2 = MapMngr.GetMap( cr2->GetMap(), true );
-    if( !map2 )
-        SCRIPT_ERROR_R0( "Map of Critter2 not found." );
-
-    map1->Lock();
-    map2->Lock();
-
-    CrVec& cr_map1 = map1->GetCrittersNoLock();
-    ClVec& cl_map1 = map1->GetPlayersNoLock();
-    PcVec& npc_map1 = map1->GetNpcsNoLock();
-    auto   it_cr = std::find( cr_map1.begin(), cr_map1.end(), cr1 );
-    if( it_cr != cr_map1.end() )
-        cr_map1.erase( it_cr );
-    auto it_cl = std::find( cl_map1.begin(), cl_map1.end(), (Client*)cr1 );
-    if( it_cl != cl_map1.end() )
-        cl_map1.erase( it_cl );
-    auto it_pc = std::find( npc_map1.begin(), npc_map1.end(), (Npc*)cr1 );
-    if( it_pc != npc_map1.end() )
-        npc_map1.erase( it_pc );
-
-    CrVec& cr_map2 = map2->GetCrittersNoLock();
-    ClVec& cl_map2 = map2->GetPlayersNoLock();
-    PcVec& npc_map2 = map2->GetNpcsNoLock();
-    it_cr = std::find( cr_map2.begin(), cr_map2.end(), cr1 );
-    if( it_cr != cr_map2.end() )
-        cr_map2.erase( it_cr );
-    it_cl = std::find( cl_map2.begin(), cl_map2.end(), (Client*)cr1 );
-    if( it_cl != cl_map2.end() )
-        cl_map2.erase( it_cl );
-    it_pc = std::find( npc_map2.begin(), npc_map2.end(), (Npc*)cr1 );
-    if( it_pc != npc_map2.end() )
-        npc_map2.erase( it_pc );
-
-    cr_map2.push_back( cr1 );
-    if( cr1->IsNpc() )
-        npc_map2.push_back( (Npc*)cr1 );
-    else
-        cl_map2.push_back( (Client*)cr1 );
-    cr_map1.push_back( cr2 );
-    if( cr2->IsNpc() )
-        npc_map1.push_back( (Npc*)cr2 );
-    else
-        cl_map1.push_back( (Client*)cr2 );
-
-    cr1->SetMaps( map2->GetId(), map2->GetPid() );
-    cr2->SetMaps( map1->GetId(), map1->GetPid() );
-
-    map2->Unlock();
-    map1->Unlock();
-
-    // Swap data
-    if( cr1->DataExt || cr2->DataExt )
-    {
-        CritDataExt* data_ext1 = cr1->GetDataExt();
-        CritDataExt* data_ext2 = cr2->GetDataExt();
-        if( data_ext1 && data_ext2 )
-            std::swap( *data_ext1, *data_ext2 );
-    }
-    std::swap( cr1->Data, cr2->Data );
-    std::swap( cr1->KnockoutAp, cr2->KnockoutAp );
-    std::swap( cr1->Flags, cr2->Flags );
-    SwapArray( cr1->FuncId, cr2->FuncId );
-    cr1->SetBreakTime( 0 );
-    cr2->SetBreakTime( 0 );
-    std::swap( cr1->AccessContainerId, cr2->AccessContainerId );
-    std::swap( cr1->ItemTransferCount, cr2->ItemTransferCount );
-    std::swap( cr1->ApRegenerationTick, cr2->ApRegenerationTick );
-    std::swap( cr1->CrTimeEvents, cr2->CrTimeEvents );
-
-    // Swap inventory
-    if( with_inventory )
-    {
-        ItemPtrVec items1 = cr1->GetInventory();
-        ItemPtrVec items2 = cr2->GetInventory();
-        for( auto it = items1.begin(), end = items1.end(); it != end; ++it )
-            cr1->EraseItem( *it, false );
-        for( auto it = items2.begin(), end = items2.end(); it != end; ++it )
-            cr2->EraseItem( *it, false );
-        for( auto it = items1.begin(), end = items1.end(); it != end; ++it )
-            cr2->AddItem( *it, false );
-        for( auto it = items2.begin(), end = items2.end(); it != end; ++it )
-            cr1->AddItem( *it, false );
-    }
-
-    // Swap vars
-    if( with_vars )
-        VarMngr.SwapVars( cr1->GetId(), cr2->GetId() );
-
-    // Refresh
-    cr1->ClearVisible();
-    cr2->ClearVisible();
-
-    if( cr1->IsNpc() )
-        SwapCrittersRefreshNpc( (Npc*)cr1 );
-    else
-        SwapCrittersRefreshClient( (Client*)cr1, map2, map1 );
-    if( cr2->IsNpc() )
-        SwapCrittersRefreshNpc( (Npc*)cr2 );
-    else
-        SwapCrittersRefreshClient( (Client*)cr2, map1, map2 );
-    if( map1 == map2 )
-    {
-        cr1->Send_ParamOther( OTHER_CLEAR_MAP, 0 );
-        cr2->Send_ParamOther( OTHER_CLEAR_MAP, 0 );
-        cr1->Send_Dir( cr1 );
-        cr2->Send_Dir( cr2 );
-        cr1->Send_ParamOther( OTHER_TELEPORT, (cr1->GetHexX() << 16) | (cr1->GetHexY() ) );    // cr1->Send_XY(cr1);
-        cr2->Send_ParamOther( OTHER_TELEPORT, (cr2->GetHexX() << 16) | (cr2->GetHexY() ) );    // cr2->Send_XY(cr2);
-        cr1->Send_ParamOther( OTHER_BASE_TYPE, cr1->Data.BaseType );
-        cr2->Send_ParamOther( OTHER_BASE_TYPE, cr2->Data.BaseType );
-        cr1->ProcessVisibleCritters();
-        cr2->ProcessVisibleCritters();
-        cr1->ProcessVisibleItems();
-        cr2->ProcessVisibleItems();
-    }
-    return true;
-    #endif
 }
 
 uint FOServer::SScriptFunc::Global_GetAllItems( ushort pid, ScriptArray* items )

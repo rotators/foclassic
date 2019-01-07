@@ -37,7 +37,7 @@ GameOptions::GameOptions()
     LevelCapAddExperience = false;
     LookNormal = 20;
     LookMinimum = 6;
-    GlobalMapMaxGroupCount = 10;
+    WorldmapMaxGroupCount = 10;
     CritterIdleTick = 10000;
     TurnBasedTick = 30000;
     DeadHitPoints = -6;
