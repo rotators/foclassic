@@ -770,7 +770,7 @@ struct ProtoItem
     const uint   Car_Entrance;
     const uint   Car_MovementType;
 
-    bool IsItem()      const { return Type != ITEM_TYPE_GENERIC && Type != ITEM_TYPE_WALL; }
+    bool IsItem()      const { return Type != ITEM_TYPE_GENERIC && Type != ITEM_TYPE_WALL && Type != ITEM_TYPE_GRID; }
     bool IsGeneric()   const { return Type == ITEM_TYPE_GENERIC; }
     bool IsScen()      const { return Type == ITEM_TYPE_GENERIC; }     // TODO remove duplicate IsScen() <-> IsGeneric()
     bool IsWall()      const { return Type == ITEM_TYPE_WALL; }

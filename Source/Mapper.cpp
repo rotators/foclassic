@@ -6868,30 +6868,8 @@ void FOMapper::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     if( !SpritesCanDraw )
         return;
 
-    int prim;
-    switch( primitive_type )
-    {
-        case 0:
-            prim = DRAW_PRIMITIVE_POINTLIST;
-            break;
-        case 1:
-            prim = DRAW_PRIMITIVE_LINELIST;
-            break;
-        case 2:
-            prim = DRAW_PRIMITIVE_LINESTRIP;
-            break;
-        case 3:
-            prim = DRAW_PRIMITIVE_TRIANGLELIST;
-            break;
-        case 4:
-            prim = DRAW_PRIMITIVE_TRIANGLESTRIP;
-            break;
-        case 5:
-            prim = DRAW_PRIMITIVE_TRIANGLEFAN;
-            break;
-        default:
-            return;
-    }
+    if( primitive_type < DRAW_PRIMITIVE_POINTLIST || primitive_type > DRAW_PRIMITIVE_TRIANGLEFAN )
+        return;
 
     static PointVec points;
     int             size = data.GetSize() / 3;
@@ -6907,7 +6885,7 @@ void FOMapper::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
         pp.PointOffsY = NULL;
     }
 
-    SprMngr.DrawPoints( points, prim );
+    SprMngr.DrawPoints( points, primitive_type );
 }
 
 void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy )
