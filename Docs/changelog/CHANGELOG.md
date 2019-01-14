@@ -11,12 +11,15 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - added Server setting `VerboseInit` (boolean), false by default
     - if enabled, Server prints more details about some tasks (dialogs/maps/prototypes/scripts loading)
 - removed Server setting `Language_N`, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
+- Client log filename changed to `Client.log`
 - extensions changes
     - `GameOptions* FOnline` removed, use `FOClassic` instead
+    - `GameOptions::FoDataPath` renamed to `GameOptions::DataPath`
     - `ProtoItem::IsItem()` consistent with engine-side check
 - scripts changes
     - [Client] global variables `__Gmap*` renamed to `__Worldmap*`
     - [Server] global function `bool SwapCritters(Critter& cr1, Critter& cr2, bool withInventory, bool withVars)` removed
+    - [Client, Mapper] global variable `__FoDataPath` renamed to `__DataPath`
     - [Client, Server] global variable `__GlobalMapMaxGroupCount` renamed to `__WorldmapMaxGroupCount`
 - extensions/scripts changes (_FOClassic.fos_)
     - multiple defines has been renamed; see tables below for a complete list

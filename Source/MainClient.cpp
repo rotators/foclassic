@@ -45,6 +45,11 @@ int main( int argc, char** argv )
     CatchExceptions( "ClientGL" );
     #endif
 
+    // Logging
+    Timer::Init();
+    LogToFile( "Client.log" );
+    WriteLog( "Starting FOClassic (version %u)...\n", FOCLASSIC_VERSION );
+
     // Command line
     CommandLine = new CmdLine( argc, argv );
     GAME_OPTION_EXT( CommandLine ) = CommandLine;
@@ -60,12 +65,6 @@ int main( int argc, char** argv )
     #ifndef FO_WINDOWS
     signal( SIGPIPE, SIG_IGN );
     #endif
-
-    // Stuff
-    Timer::Init();
-    // Start message
-    LogToFile( "FOClassic.log" );
-    WriteLog( "Starting FOClassic (version %u)...\n", FOCLASSIC_VERSION );
 
     // Singleplayer mode initialization
     #ifdef FO_WINDOWS

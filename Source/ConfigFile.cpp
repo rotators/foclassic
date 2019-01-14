@@ -69,6 +69,9 @@ const char* GetConfigFileName()
 
 bool LoadConfigFile( const char* fname, const char* main /* = NULL */, const char* detail /* = NULL */, const char* unused /* = NULL */ )
 {
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "ConfigFile => %s\n", fname );
+
     if( !ConfigFile )
         ConfigFile = new Ini();
 
@@ -108,6 +111,9 @@ bool GetBool( const string& section, const string& key )
     if( !result && key.size() && CommandLine->IsOption( key ) )
         result = true;
 
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "[%s]->%s => %s\n", section.c_str(), key.c_str(), result ? "true" : "false" );
+
     return result;
 }
 
@@ -124,6 +130,9 @@ int GetInt( const string& section, const string& key, const int& min, const int&
     if( result < min || result > max )
         result = default_value;
 
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "[%s]->%s => %d\n", section.c_str(), key.c_str(), result );
+
     return result;
 }
 
@@ -137,6 +146,9 @@ string GetStr( const string& section, const string& key, const string& default_v
     if( key.size() )
         result = CommandLine->GetStr( key, result );
 
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "[%s]->%s => %s\n", section.c_str(), key.c_str(), result.c_str() );
+
     return result;
 }
 
@@ -148,6 +160,9 @@ string GetStrPath( const string& section, const string& key, const string& defau
     FileManager::FormatPath( buf );
     result = string( buf );
 
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "[%s]->%s => %s\n", section.c_str(), key.c_str(), result.c_str() );
+
     return result;
 }
 
@@ -158,6 +173,9 @@ void GetClientOptions()
     FileManager::SetDataPath( GameOpt.ClientPath.c_str() );
 
     string cfg = GetStr( SECTION_MAPPER, "ClientName", "FOnline" ) + ".cfg";
+    if( CommandLine->IsOption( "dump-config" ) )
+        WriteLog( "ConfigFile Client => %s\n", FileManager::GetFullPath( cfg.c_str(), PATH_ROOT ) );
+
     ConfigFile->LoadFile( FileManager::GetFullPath( cfg.c_str(), PATH_ROOT ), false );
     #  ifdef FO_D3D
     ConfigFile->MergeSections( SECTION_CLIENT, SECTION_CLIENT_DX, true );
@@ -209,7 +227,7 @@ void GetClientOptions()
     GameOpt.DebugSprites = CommandLine->IsOption( "DebugSprites" );
 
     // Str
-    GameOpt.FoDataPath = GetStrPath( SECTION_CLIENT, "DataPath", DIR_SLASH_SD "data" );
+    GameOpt.DataPath = GetStrPath( SECTION_CLIENT, "DataPath", DIR_SLASH_SD "data" );
     GameOpt.Host = GetStr( SECTION_CLIENT, "RemoteHost", "localhost" );
     GameOpt.ProxyHost = GetStr( SECTION_CLIENT, "ProxyHost", "localhost" );
     GameOpt.ProxyUser = GetStr( SECTION_CLIENT, "ProxyUser", "" );

@@ -555,7 +555,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
         RegisterGlobalProperty( engine, "int __ScrollStep", &GameOpt.ScrollStep );
         RegisterGlobalProperty( engine, "bool __MouseScroll", &GameOpt.MouseScroll );
         RegisterGlobalProperty( engine, "bool __ScrollCheck", &GameOpt.ScrollCheck );
-        RegisterGlobalProperty( engine, "string __FoDataPath", &GameOpt.FoDataPath );
+        RegisterGlobalProperty( engine, "string __DataPath", &GameOpt.DataPath );
         RegisterGlobalProperty( engine, "string __Host", &GameOpt.Host );
         RegisterGlobalProperty( engine, "uint __Port", &GameOpt.Port );
         RegisterGlobalProperty( engine, "uint __ProxyType", &GameOpt.ProxyType );

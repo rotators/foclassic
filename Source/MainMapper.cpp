@@ -40,6 +40,10 @@ int main( int argc, char** argv )
     CatchExceptions( "MapperGL" );
     #endif
 
+    // Logging
+    LogToFile( "Mapper.log" );
+    WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
+
     // Command line
     CommandLine = new CmdLine( argc, argv );
     GAME_OPTION_EXT( CommandLine ) = CommandLine;
@@ -56,9 +60,6 @@ int main( int argc, char** argv )
 
     // Timer
     Timer::Init();
-
-    LogToFile( "Mapper.log" );
-    WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
 
     // Create window
     MainWindow = new FOWindow();

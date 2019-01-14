@@ -469,7 +469,7 @@ struct GameOptions
     const int            ScrollDelay;
     const uint           ScrollStep;
     const bool           ScrollCheck;
-    const ScriptString   FoDataPath;
+    const ScriptString   DataPath;
     const int            FixedFPS;
     const uint           FPS;
     const uint           PingPeriod;

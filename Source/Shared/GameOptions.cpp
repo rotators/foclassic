@@ -206,7 +206,7 @@ GameOptions::GameOptions()
     ScrollDelay = 10;
     ScrollStep = 1;
     ScrollCheck = true;
-    FoDataPath = "";
+    DataPath = "";
     FixedFPS = 100;
     FPS = 0;
     PingPeriod = 2000;

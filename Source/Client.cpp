@@ -221,7 +221,7 @@ bool FOClient::Init()
     Keyb::InitKeyb();
 
     // Paths
-    FileManager::SetDataPath( GameOpt.FoDataPath.c_str() );
+    FileManager::SetDataPath( GameOpt.DataPath.c_str() );
     if( Singleplayer )
         FileManager::CreateDirectoryTree( FileManager::GetFullPath( "", PATH_SAVE ) );
 

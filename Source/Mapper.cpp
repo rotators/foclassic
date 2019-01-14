@@ -134,7 +134,7 @@ bool FOMapper::Init()
     GameOpt.ScrollCheck = false;
 
     // File manager
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
     FileManager::InitDataFiles( GameOpt.ClientPath.c_str() );
     FileManager::InitDataFiles( ".\\" );
 
@@ -177,7 +177,7 @@ bool FOMapper::Init()
     ConstantsManager::Initialize( PATH_DATA );
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
     ConstantsManager::Initialize( PATH_SERVER_DATA );
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 
     // Resource manager
     ResMngr.Refresh();
@@ -294,7 +294,7 @@ bool FOMapper::Init()
     TabsName[INT_MODE_LIST] = "Maps";
 
     // Restore to client path
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 
     // Hex manager
     if( !HexMngr.Init() )
@@ -313,7 +313,7 @@ bool FOMapper::Init()
         ProtoMap* pmap = new ProtoMap();
         bool      initialized = pmap->Init( 0xFFFF, map_name.c_str(), PATH_SERVER_MAPS );
 
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 
         if( initialized && HexMngr.SetProtoMap( *pmap ) )
         {
@@ -4814,10 +4814,10 @@ void FOMapper::ParseCommand( const char* cmd )
         if( !pmap->Init( 0xFFFF, map_name, PATH_SERVER_MAPS ) )
         {
             AddMess( "File not found or truncated." );
-            FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+            FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
             return;
         }
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 
         SelectClear();
         if( !HexMngr.SetProtoMap( *pmap ) )
@@ -4858,7 +4858,7 @@ void FOMapper::ParseCommand( const char* cmd )
             AddMess( "Save map success." );
         else
             AddMess( "Save map fail, see log." );
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
     }
     // Run script
     else if( *cmd == '#' )
@@ -5317,7 +5317,7 @@ void FOMapper::InitScriptSystem()
 
         WriteLog( "Script system initialization complete.\n" );
     }
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 }
 
 void FOMapper::FinishScriptSystem()
@@ -5910,10 +5910,10 @@ ProtoMap* FOMapper::SScriptFunc::Global_LoadMap( ScriptString& file_name, int pa
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
     if( !pmap->Init( 0xFFFF, file_name.c_str(), path_type ) )
     {
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
         return NULL;
     }
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
     Self->LoadedProtoMaps.push_back( pmap );
     return pmap;
 }
@@ -5941,7 +5941,7 @@ bool FOMapper::SScriptFunc::Global_SaveMap( ProtoMap* pmap, ScriptString& file_n
         SCRIPT_ERROR_R0( "Proto map arg nullptr." );
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
     bool result = pmap->Save( file_name.c_str(), path_type );
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
     return result;
 }
 
@@ -5986,7 +5986,7 @@ uint FOMapper::SScriptFunc::Global_GetMapFileNames( ScriptString* dir, ScriptArr
     void*     h = FileFindFirst( dir_.c_str(), NULL, fd );
     if( !h )
     {
-        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+        FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
         return 0;
     }
 
@@ -6015,7 +6015,7 @@ uint FOMapper::SScriptFunc::Global_GetMapFileNames( ScriptString* dir, ScriptArr
     }
     FileFindClose( h );
 
-    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.FoDataPath.c_std_str() ).c_str() );
+    FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
     return n;
 }
 
