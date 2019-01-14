@@ -8,6 +8,12 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v5]() (WIP)
 
+- all applications will search for config file in following order:
+    - executable name
+    - original name, including suffix (ClientDX.cfg, MapperGL.cfg, etc.)
+    - original name, excluding suffix (Client.cfg, Mapper.cfg, Server.cfg)
+    - FOClassic.cfg
+    - FOnline.cfg (temporary, file will not be checked in future)
 - added Server setting `VerboseInit` (boolean), false by default
     - if enabled, Server prints more details about some tasks (dialogs/maps/prototypes/scripts loading)
 - removed Server setting `Language_N`, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info

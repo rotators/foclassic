@@ -14,63 +14,71 @@ Ini* ConfigFile = NULL;
 
 const char* GetConfigFileName()
 {
-    // Default config names
-    static char config_name[MAX_FOPATH] =
+    static char name_config[MAX_FOPATH] = { 0 };
+
+    static char name_full[15] =
     {
-        #if defined (FOCLASSIC_SERVER)
-        "FOnlineServer.cfg\0--default-server-config--"
+        #if defined (FOCLASSIC_CLIENT)
+        # if defined (FO_D3D)
+        "ClientDX.cfg\0"
+        # else
+        "ClientGL.cfg\0"
+        # endif
         #elif defined (FOCLASSIC_MAPPER)
-        "Mapper.cfg\0--default-mapper-config--"
-        #else                 // FOCLASSIC_CLIENT and others
-        "FOnline.cfg\0--default-client-config--"
+        # if defined (FO_D3D)
+        "MapperDX.cfg\0"
+        # else
+        "MapperGL.cfg\0"
+        # endif
+        #elif defined (FOCLASSIC_SERVER)
+        "Server.cfg\0"
         #endif
     };
 
-    // Extract config name from current exe
-    static bool processed = false;
-    if( !processed )
+    static char name_short[15] =
     {
-        // Call once
-        processed = true;
-
-        // Get full path
-        char module_name[MAX_FOPATH];
-        #ifdef FO_WINDOWS
-        if( !GetModuleFileName( NULL, module_name, sizeof(module_name) ) )
-            return config_name;
-        #else
-        // Todo: Linux CommandLineArgValues[0] ?
+        #if defined (FOCLASSIC_CLIENT)
+        "Client.cfg\0"
+        #elif defined (FOCLASSIC_MAPPER)
+        "Mapper.cfg\0"
+        #elif defined (FOCLASSIC_SERVER)
+        "Server.cfg\0"
         #endif
+    };
 
-// Change extension
-        char* ext = (char*)FileManager::GetExtension( module_name );
-        if( !ext )
-            return config_name;
-        Str::Copy( ext, 4, "cfg" );
+    static char name_fallback1[15] = { "FOClassic.cfg\0" };
+    static char name_fallback2[15] = { "FOnline.cfg\0" };
 
-        // Check availability
-        if( !FileExist( module_name ) )
-            return config_name;
+    if( !name_config[0] )
+    {
+        string executable = GetExecutableName( false, false );
 
-        // Get file name
-        const char* name = NULL;
-        for( size_t i = 0, j = Str::Length( module_name ); i < j; i++ )
-            if( module_name[i] == DIR_SLASH_C )
-                name = &module_name[i + 1];
-        if( !name )
-            return config_name;
-
-        // Set as main
-        Str::Copy( config_name, name );
+        if( !executable.empty() )
+        {
+            executable += ".cfg";
+            Str::Copy( name_config, executable.c_str() );
+        }
     }
 
-    return config_name;
+    if( FileExist( name_config ) )
+        return name_config;
+    else if( FileExist( name_full ) )
+        return name_full;
+    else if( FileExist( name_short ) )
+        return name_short;
+    else if( FileExist( name_fallback1 ) )
+        return name_fallback1;
+
+    #if FOCLASSIC_STAGE >= 4
+    # pragma STAGE_DEPRECATE(4,"FOnline.cfg")
+    #endif
+    return name_fallback2;
 }
 
 bool LoadConfigFile( const char* fname, const char* main /* = NULL */, const char* detail /* = NULL */, const char* unused /* = NULL */ )
 {
     if( CommandLine->IsOption( "dump-config" ) )
-        WriteLog( "ConfigFile => %s\n", fname );
+        WriteLog( "ConfigFile => %s\n", fname ? fname : "<NULL>" );
 
     if( !ConfigFile )
         ConfigFile = new Ini();
@@ -269,16 +277,18 @@ bool LogicMT = false;
 #if defined (FOCLASSIC_SERVER) || defined (FOCLASSIC_MAPPER)
 void GetServerOptions()
 {
-    # ifdef FOCLASSIC_SERVER
-    ServerGameSleep = ConfigFile->GetInt( SECTION_SERVER, "GameSleep", 10 );
-    Script::SetConcurrentExecution( ConfigFile->GetBool( SECTION_SERVER, "ScriptConcurrentExecution", false ) );
-    WorldSaveManager = ConfigFile->GetInt( SECTION_SERVER, "WorldSaveManager", 1 ) == 1;
-    # else
+    # if defined (FOCLASSIC_MAPPER)
     // Load server config
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
 
     string cfg = GetStr( SECTION_MAIN, "ServerName", "Server" ) + ".cfg";
     ConfigFile->LoadFile( FileManager::GetFullPath( cfg.c_str(), PATH_SERVER_ROOT ), false );
+    # endif
+
+    # if defined (FOCLASSIC_SERVER)
+    ServerGameSleep = ConfigFile->GetInt( SECTION_SERVER, "GameSleep", 10 );
+    Script::SetConcurrentExecution( ConfigFile->GetBool( SECTION_SERVER, "ScriptConcurrentExecution", false ) );
+    WorldSaveManager = ConfigFile->GetInt( SECTION_SERVER, "WorldSaveManager", 1 ) == 1;
     # endif
 }
 #endif

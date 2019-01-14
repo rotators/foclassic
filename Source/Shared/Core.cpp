@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+#include "CommandLine.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
 
@@ -588,6 +589,32 @@ void FormatPreprocessorOutput( string& str )
 // Misc
 //
 /////
+
+string GetExecutableName( bool path /* = true */, bool extension /* = true */ )
+{
+    static string empty;
+    string        executable = CommandLine->App;
+
+	if( executable.empty() )
+        return empty;
+
+    if( !path )
+    {
+        replace( executable.begin(), executable.end(), '\\', '/' );
+        size_t pos = executable.find_last_of( '/' );
+        if( pos != string::npos )
+            executable = executable.substr( pos + 1 );
+    }
+
+    if( !extension )
+    {
+        size_t pos = executable.find_last_of( '.' );
+        if( pos != string::npos )
+            executable = executable.substr( 0, pos );
+    }
+
+    return executable;
+}
 
 void RestoreMainDirectory()
 {

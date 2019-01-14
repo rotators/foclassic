@@ -51,7 +51,8 @@ extern void FormatPreprocessorOutput( string& str );
 
 // misc
 
-extern void RestoreMainDirectory();
-extern void ShowMessage( const char* message );
+extern std::string GetExecutableName( bool path = true, bool extension = true );
+extern void        RestoreMainDirectory();
+extern void        ShowMessage( const char* message );
 
 #endif  // __CORE__ //
