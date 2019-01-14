@@ -1539,23 +1539,28 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                 // Check for outdated
                 uint64 last_write, last_write_bin;
                 file_bin.GetTime( NULL, NULL, &last_write_bin );
+
                 // Main file
                 file.GetTime( NULL, NULL, &last_write );
-                bool no_all_files = !file.IsLoaded();
-                bool outdated = (file.IsLoaded() && last_write > last_write_bin);
-                // Include files
-                for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
+                bool have_source = file.IsLoaded();
+                bool outdated = (have_source && last_write > last_write_bin);
+
+                if( have_source )
                 {
-                    FileManager file_dep;
-                    file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
-                    file_dep.GetTime( NULL, NULL, &last_write );
-                    if( !no_all_files )
-                        no_all_files = !file_dep.IsLoaded();
-                    if( !outdated )
-                        outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
+                    // Include files
+                    for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
+                    {
+                        FileManager file_dep;
+                        file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
+                        file_dep.GetTime( NULL, NULL, &last_write );
+                        if( !outdated )
+                            outdated = !file_dep.IsLoaded();
+                        if( !outdated )
+                            outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
+                    }
                 }
 
-                if( no_all_files || outdated )
+                if( outdated )
                     load = false;
             }
 

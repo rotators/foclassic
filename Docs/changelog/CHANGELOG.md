@@ -8,6 +8,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v5]() (WIP)
 
+- fixed loading of .fosb files when script source cannot be found
+    - dependencies are not checked if main .fos file does not exists
 - all applications will search for config file in following order:
     - executable name
     - original name, including suffix (ClientDX.cfg, MapperGL.cfg, etc.)

@@ -595,7 +595,7 @@ string GetExecutableName( bool path /* = true */, bool extension /* = true */ )
     static string empty;
     string        executable = CommandLine->App;
 
-	if( executable.empty() )
+    if( executable.empty() )
         return empty;
 
     if( !path )
