@@ -88,7 +88,6 @@ set( ENGINE_NET_HEADER_FILE          "${FOCLASSIC_INCLUDE_DIR}/CMake.Net.h" )
 
 set( USER_TOP_FOCLASSIC_FILE         "${CMAKE_SOURCE_DIR}/CMakeFOClassic.txt" )
 set( USER_FOCLASSIC_FILE             "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.txt" )
-set( USER_FUNCTIONS_FILE             "${FOCLASSIC_CMAKE_DIR}/UserFunctions.cmake" )
 
 message( STATUS "Customization setup..." )
 
@@ -116,13 +115,26 @@ else()
 	endforeach()
 endif()
 
-if( EXISTS "${USER_FUNCTIONS_FILE}" )
-	include( UserFunctions )
-	HashFile( "${USER_FUNCTIONS_FILE}" HASH_USER )
-	list( APPEND HASH_LIST "${HASH_USER}" )
-	list( APPEND CMAKE_CONFIGURE_DEPENDS "${USER_FUNCTIONS_FILE}" )
-else()
-	message( STATUS "Using default protocol hash" )
+if( FOCLASSIC_HASH_STRING )
+	HashText( "${FOCLASSIC_HASH_STRING}" HASH_USER_STRING )
+	list( APPEND HASH_LIST "${HASH_USER_STRING}" )
+endif()
+
+if( FOCLASSIC_HASH_FILES )
+	foreach( user_file IN LISTS FOCLASSIC_HASH_FILES )
+		unset( HASH_USER_FILE )
+		file( TO_CMAKE_PATH "${user_file}" user_file_path )
+		file( TO_NATIVE_PATH "${user_file}" user_file_native )
+		if( EXISTS "${user_file_path}" )
+			HashFile( "${user_file_path}" HASH_USER_FILE )
+			list( APPEND HASH_LIST "${HASH_USER_FILE}" )
+			list( APPEND CMAKE_DEPENDS "${user_file_native}" )
+		endif()
+	endforeach()
+endif()
+
+if( NOT HASH_LIST )
+	message( STATUS "Using default global seed" )
 endif()
 
 message( STATUS "Customization setup... OK" )
@@ -158,6 +170,9 @@ if( HAVE_STRUCT_TIMESPEC )
 endif( HAVE_STRUCT_TIMESPEC )
 
 # create engine header
+if( NOT FOCLASSIC_VERSION_CUSTOM )
+	set( FOCLASSIC_VERSION_CUSTOM 0 )
+endif()
 configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
 # release changelog
@@ -179,6 +194,7 @@ add_subdirectory( Source )
 if( WIN32 )
 	add_subdirectory( Extensions )
 endif()
+
 ##
 ## process per-version tasks
 ##
@@ -188,7 +204,9 @@ message( STATUS "Generating net header..." )
 HashFile( "${ENGINE_GLOBAL_HEADER_FILE}" HASH_VERSION )
 list( APPEND HASH_LIST "${HASH_VERSION}" )
 
-GenerateNetHeader( "${ENGINE_NET_HEADER_TEMPLATE}" "${ENGINE_NET_HEADER_FILE}" "CMAKE_NET" "${SOURCE_DIR}/NetProtocol.h" "${HASH_LIST}" )
+HashText( "${HASH_LIST}" HASH_SEED )
+
+GenerateNetHeader( "${ENGINE_NET_HEADER_TEMPLATE}" "${ENGINE_NET_HEADER_FILE}" "CMAKE_NET" "${SOURCE_DIR}/NetProtocol.h" "${HASH_SEED}" )
 HashFile( "${ENGINE_NET_HEADER_FILE}" HASH_NET )
 list( APPEND HASH_LIST "${HASH_NET}" )
 

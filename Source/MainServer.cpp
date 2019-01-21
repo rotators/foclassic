@@ -185,7 +185,7 @@ int main( int argc, char** argv )
         LogToBuffer( true );
     }
 
-    WriteLog( "FOClassic server, version %u.\n", FOCLASSIC_VERSION );
+    WriteLog( "FOClassic server (%s)\n", FOCLASSIC_VERSION_LOGSTRING );
 
     # if 0
     WriteLog( "STATIC_ASSERT\n" );

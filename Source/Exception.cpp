@@ -87,7 +87,10 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
         // Generic info
         fprintf( f, "Application\n" );
         fprintf( f, "\tName        %s\n", AppName );
-        fprintf( f, "\tVersion     %u\n",  FOCLASSIC_VERSION );
+        fprintf( f, "\tVersion     %u",  FOCLASSIC_VERSION );
+        if( FOCLASSIC_VERSION_CUSTOM > 0 )
+            fprintf( f, " (%u.%u)", FOCLASSIC_VERSION, FOCLASSIC_VERSION_CUSTOM );
+        fprintf( f, "\n" );
         OSVERSIONINFOA ver;
         memset( &ver, 0, sizeof(OSVERSIONINFOA) );
         ver.dwOSVersionInfoSize = sizeof(ver);

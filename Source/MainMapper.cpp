@@ -42,7 +42,7 @@ int main( int argc, char** argv )
 
     // Logging
     LogToFile( "Mapper.log" );
-    WriteLog( "Starting Mapper (version %u)...\n", FOCLASSIC_VERSION );
+    WriteLog( "Starting Mapper (%s)...\n", FOCLASSIC_VERSION_LOGSTRING );
 
     // Command line
     CommandLine = new CmdLine( argc, argv );

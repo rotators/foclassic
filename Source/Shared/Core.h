@@ -7,6 +7,12 @@
 #include "Defines.h"
 #include "Types.h"
 
+#if FOCLASSIC_VERSION_CUSTOM == 0
+# define FOCLASSIC_VERSION_LOGSTRING    "version " FOCLASSIC_VERSION_STRING
+#else
+# define FOCLASSIC_VERSION_LOGSTRING    "version" FOCLASSIC_VERSION_STRING "." FOCLASSIC_VERSION_CUSTOM_STRING
+#endif
+
 /* TODO: should be part of cmake setup
    // Libevent workarounds
    // Was bugged for Windows, need retest

@@ -26,7 +26,6 @@
 
 # customization
 /CMakeFOClassic.txt
-/CMake/User*.cmake
 
 ##
 ## CMake leftovers
