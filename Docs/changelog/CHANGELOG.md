@@ -6,7 +6,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - [Nightly builds](https://ci.appveyor.com/project/rotators/foclassic/) (Linux, Windows)
 
 
-## [v5]() (WIP)
+## [v5](https://github.com/rotators/foclassic/releases/tag/v5/)
 
 - fixed loading of .fosb files when script source cannot be found
     - dependencies are not checked if main .fos file does not exists
@@ -15,7 +15,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - original name, including suffix (ClientDX.cfg, MapperGL.cfg, etc.)
     - original name, excluding suffix (Client.cfg, Mapper.cfg, Server.cfg)
     - FOClassic.cfg
-    - FOnline.cfg (temporary, file will not be checked in future)
+    - FOnline.cfg (temporary, file will be ignored in future)
 - added Server setting `VerboseInit` (boolean), false by default
     - if enabled, Server prints more details about some tasks (dialogs/maps/prototypes/scripts loading)
 - removed Server setting `Language_N`, use `Languages` instead; see [v2 changelog](https://rotators.fodev.net/foclassic/changelog/CHANGELOG.md#v2) for detailed info
