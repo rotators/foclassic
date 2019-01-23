@@ -2,7 +2,7 @@
 #include "scriptarray.h"
 
 
-#include "../Debugger.h"
+#include "../../Debugger.h"
 #include "Text.h"
 
 #define assert( x )

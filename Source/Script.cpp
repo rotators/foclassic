@@ -1,12 +1,12 @@
 #include "Core.h"
 
-#include "AngelScript/angelscript.h"
-#include "AngelScript/scriptany.h"
-#include "AngelScript/scriptarray.h"
-#include "AngelScript/scriptdictionary.h"
-#include "AngelScript/scriptfile.h"
-#include "AngelScript/scriptmath.h"
-#include "AngelScript/scriptstring.h"
+#include <angelscript.h>
+#include <scriptany.h>
+#include <scriptarray.h>
+#include <scriptdictionary.h>
+#include <scriptfile.h>
+#include <scriptmath.h>
+#include <scriptstring.h>
 #include <preprocessor.h>
 
 #include "ConfigFile.h" // LogicMT

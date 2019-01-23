@@ -1,8 +1,8 @@
 #ifndef __SERVER__
 #define __SERVER__
 
-#include "AngelScript/scriptarray.h"
-#include "AngelScript/scriptstring.h"
+#include <scriptarray.h>
+#include <scriptstring.h>
 
 #include "BufferManager.h"
 #include "CraftManager.h"

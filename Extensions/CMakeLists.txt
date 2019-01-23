@@ -20,8 +20,11 @@ configure_file( "${EXTENSIONS_HEADER_FILE}" "${RELEASE_HEADERS_DIR}/FOClassic.h"
 
 # create angelscript headers
 # this must be done before any extension configuration
-foreach( header IN ITEMS angelscript scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
+foreach( header IN ITEMS angelscript )
 	configure_file( "${AS_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
+endforeach()
+foreach( header IN ITEMS scriptany scriptarray scriptdictionary scriptfile scriptmath scriptstring )
+	configure_file( "${AS_ADDONS_DIR}/${header}.h" "${RELEASE_DIR}/Headers/AngelScript/${header}.h" @ONLY NEWLINE_STYLE LF )
 endforeach()
 
 # additional extensions headers

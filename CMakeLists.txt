@@ -58,6 +58,7 @@ set( DOCS_DIR                       "${FOCLASSIC_ROOT_DIR}/Docs" )
 set( SHARED_DIR                     "${SOURCE_DIR}/Shared" )
 set( LIBS_DIR                       "${SOURCE_DIR}/Libs" )
 set( AS_DIR                         "${SOURCE_DIR}/AngelScript" )
+set( AS_ADDONS_DIR                  "${AS_DIR}/Addons" )
 set( DAT_DIR                        "${SOURCE_DIR}/DatFile" )
 
 # release directories

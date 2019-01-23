@@ -9,9 +9,9 @@
 
 #ifdef FOCLASSIC_SCRIPT_COMPILER
 # pragma TODO("Move to Script")
-# include "ASCompiler.h"
-# include "AngelScript/scriptstring.h"
 # include <stdio.h>
+# include <scriptstring.h>
+# include "ASCompiler.h"
 
 namespace Script
 {

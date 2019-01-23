@@ -29,11 +29,11 @@ target_sources( Shared
 		${CMAKE_CURRENT_LIST_DIR}/Timer.h
 		${CMAKE_CURRENT_LIST_DIR}/Types.h
 
-		${AS_DIR}/scriptany.h
-		${AS_DIR}/scriptarray.h
-		${AS_DIR}/scriptfile.h
-		${AS_DIR}/scriptmath.h
-		${AS_DIR}/scriptstring.h
+		${AS_ADDONS_DIR}/scriptany.h
+		${AS_ADDONS_DIR}/scriptarray.h
+		${AS_ADDONS_DIR}/scriptfile.h
+		${AS_ADDONS_DIR}/scriptmath.h
+		${AS_ADDONS_DIR}/scriptstring.h
 	PRIVATE
 		CommandLine.cpp
 		Core.cpp
@@ -53,13 +53,13 @@ target_sources( Shared
 		DataFile/Zip.cpp
 		DataFile/Zip.h
 
-		${AS_DIR}/scriptany.cpp
-		${AS_DIR}/scriptarray.cpp
-		${AS_DIR}/scriptdictionary.cpp
-		${AS_DIR}/scriptdictionary.h
-		${AS_DIR}/scriptfile.cpp
-		${AS_DIR}/scriptmath.cpp
-		${AS_DIR}/scriptstring.cpp
+		${AS_ADDONS_DIR}/scriptany.cpp
+		${AS_ADDONS_DIR}/scriptarray.cpp
+		${AS_ADDONS_DIR}/scriptdictionary.cpp
+		${AS_ADDONS_DIR}/scriptdictionary.h
+		${AS_ADDONS_DIR}/scriptfile.cpp
+		${AS_ADDONS_DIR}/scriptmath.cpp
+		${AS_ADDONS_DIR}/scriptstring.cpp
 
 		# sic!
 		Log.Shared.h
@@ -77,6 +77,7 @@ target_include_directories( Shared
 	PUBLIC
 		${CMAKE_CURRENT_LIST_DIR}
 		${AS_DIR}
+		${AS_ADDONS_DIR}
 	PRIVATE
 		${FOCLASSIC_INCLUDE_DIR}
 		${LIBS_DIR}/fltk.bin # Text.cpp -> FL/case.h
