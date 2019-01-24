@@ -134,7 +134,7 @@ function( PrepareFiles )
 			endif()
 		endif()
 		# don't format non-addon angelscript sources
-		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/script" )
+		if( "${file}" MATCHES "^Source/AngelScript" AND NOT "${file}" MATCHES "^Source/AngelScript/Addons" )
 			set( format FALSE)
 		endif()
 

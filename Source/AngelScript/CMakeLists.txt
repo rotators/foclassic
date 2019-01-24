@@ -19,7 +19,6 @@ target_sources( angelscript
 		as_callfunc.cpp
 		as_callfunc.h
 		as_callfunc_x64_gcc.cpp
-		as_callfunc_x64_msvc.asm
 		as_callfunc_x64_msvc.cpp
 		as_callfunc_x86.cpp
 		as_compiler.cpp
@@ -78,6 +77,17 @@ target_sources( angelscript
 		as_variablescope.cpp
 		as_variablescope.h
 )
+
+# from AngelScript setup
+if( MSVC AND CMAKE_CL_64 )
+	enable_language( ASM_MASM )
+	if( CMAKE_ASM_MASM_COMPILER_WORKS )
+		target_sources( angelscript PRIVATE as_callfunc_x64_msvc_asm.asm )
+	else()
+		message( FATAL_ERROR "MSVC x86_64 target requires a working assembler" )
+	endif()
+endif()
+
 target_compile_definitions( angelscript PUBLIC AS_NO_THREADS )
 target_include_directories( angelscript PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 target_link_libraries( angelscript )
