@@ -1512,9 +1512,16 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(uint) )
         {
             // Load signature
-            uchar  signature[sizeof(ScriptSaveSignature)];
-            bool   bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
-            bool   load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
+            uchar signature[sizeof(ScriptSaveSignature)];
+            bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
+            bool  load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
+
+            // Load AngelScript version
+            if( load )
+            {
+                uint as_version = file_bin.GetBEUInt();
+                load = (ANGELSCRIPT_VERSION == as_version);
+            }
 
             StrVec pragmas;
             if( load )
@@ -1773,6 +1780,7 @@ public:
             const StrVec&        pragmas = ScriptPreprocessor->GetParsedPragmas();
 
             file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
+            file_bin.SetBEUInt( (uint)ANGELSCRIPT_VERSION );
             file_bin.SetBEUInt( (uint)dependencies.size() );
             for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
                 file_bin.SetData( (uchar*)dependencies[i].c_str(), (uint)dependencies[i].length() + 1 );
