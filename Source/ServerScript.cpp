@@ -522,10 +522,13 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
         for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
         {
             Client* cl = *it;
-            auto    it_l = std::find( LangPacks.begin(), LangPacks.end(), cl->LanguageMsg );
-            if( it_l != LangPacks.end() )
-                Send_MsgData( cl, cl->LanguageMsg, TEXTMSG_INTERNAL, (*it_l).Msg[TEXTMSG_INTERNAL] );
-            cl->Send_LoadMap( NULL );
+            cl->Disconnect();
+            /*
+               auto    it_l = std::find( LangPacks.begin(), LangPacks.end(), cl->LanguageMsg );
+               if( it_l != LangPacks.end() )
+               Send_MsgData( cl, cl->LanguageMsg, TEXTMSG_INTERNAL, (*it_l).Msg[TEXTMSG_INTERNAL] );
+               cl->Send_LoadMap( NULL );
+             */
         }
         ConnectedClientsLocker.Unlock();
     }
