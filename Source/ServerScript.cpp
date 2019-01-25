@@ -496,8 +496,15 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
 
             msg_script.EraseStr( STR_INTERNAL_SCRIPT_CONFIG );
             msg_script.AddStr( STR_INTERNAL_SCRIPT_CONFIG, config.c_str() );
-            msg_script.EraseStr( STR_INTERNAL_SCRIPT_VERSION );
-            msg_script.AddStr( STR_INTERNAL_SCRIPT_VERSION, Str::FormatBuf( "%d", CLIENT_SCRIPT_BINARY_VERSION ) );
+
+            msg_script.EraseStr( STR_INTERNAL_GAME_ENGINE_STAGE );
+            msg_script.AddStr( STR_INTERNAL_GAME_ENGINE_STAGE, Str::FormatBuf( "%d", FOCLASSIC_STAGE ) );
+            msg_script.EraseStr( STR_INTERNAL_GAME_ENGINE_VERSION );
+            msg_script.AddStr( STR_INTERNAL_GAME_ENGINE_VERSION, Str::FormatBuf( "%d", FOCLASSIC_VERSION ) );
+            msg_script.EraseStr( STR_INTERNAL_GAME_ENGINE_VERSION_CUSTOM );
+            msg_script.AddStr( STR_INTERNAL_GAME_ENGINE_VERSION_CUSTOM, Str::FormatBuf( "%d", FOCLASSIC_VERSION_CUSTOM ) );
+            msg_script.EraseStr( STR_INTERNAL_SCRIPT_ENGINE_VERSION );
+            msg_script.AddStr( STR_INTERNAL_SCRIPT_ENGINE_VERSION, Str::FormatBuf( "%d", ANGELSCRIPT_VERSION ) );
 
             for( uint i = 0, j = (uint)pragmas.size(); i < j; i++ )
             {

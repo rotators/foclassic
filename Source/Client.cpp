@@ -9728,7 +9728,10 @@ bool FOClient::ReloadScripts()
 
     FOMsg& msg_script = CurLang.Msg[TEXTMSG_INTERNAL];
     if( !msg_script.Count( STR_INTERNAL_SCRIPT_CONFIG ) ||
-        !msg_script.Count( STR_INTERNAL_SCRIPT_VERSION ) ||
+        !msg_script.Count( STR_INTERNAL_GAME_ENGINE_STAGE ) ||
+        !msg_script.Count( STR_INTERNAL_GAME_ENGINE_VERSION ) ||
+        !msg_script.Count( STR_INTERNAL_GAME_ENGINE_VERSION_CUSTOM ) ||
+        !msg_script.Count( STR_INTERNAL_SCRIPT_ENGINE_VERSION ) ||
         !msg_script.Count( STR_INTERNAL_SCRIPT_MODULES ) ||
         !msg_script.Count( STR_INTERNAL_SCRIPT_MODULES + 1 ) )
     {
@@ -9737,7 +9740,17 @@ bool FOClient::ReloadScripts()
         return false;
     }
 
-    if( msg_script.GetInt( STR_INTERNAL_SCRIPT_VERSION ) != CLIENT_SCRIPT_BINARY_VERSION )
+    bool old = false;
+    if( !old )
+        old = msg_script.GetInt( STR_INTERNAL_GAME_ENGINE_STAGE ) != FOCLASSIC_STAGE;
+    if( !old )
+        old = msg_script.GetInt( STR_INTERNAL_GAME_ENGINE_VERSION ) != FOCLASSIC_VERSION;
+    if( !old )
+        old = msg_script.GetInt( STR_INTERNAL_GAME_ENGINE_VERSION_CUSTOM ) != FOCLASSIC_VERSION_CUSTOM;
+    if( !old )
+        old = msg_script.GetInt( STR_INTERNAL_SCRIPT_ENGINE_VERSION ) != ANGELSCRIPT_VERSION;
+
+    if( old )
     {
         WriteLog( "Old version of scripts.\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
