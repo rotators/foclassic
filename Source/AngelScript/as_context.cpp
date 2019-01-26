@@ -1402,7 +1402,7 @@ int asCContext::GetLineNumber(asUINT stackLevel, int *column, const char **secti
 	if( column ) *column = (line >> 20);
 	if( sectionName )
 	{
-		asASSERT( sectionIdx < m_engine->scriptSectionNames.GetLength() );
+		asASSERT( sectionIdx < int(m_engine->scriptSectionNames.GetLength()) );
 		if( sectionIdx >= 0 && asUINT(sectionIdx) < m_engine->scriptSectionNames.GetLength() )
 			*sectionName = m_engine->scriptSectionNames[sectionIdx]->AddressOf();
 		else
@@ -2348,7 +2348,7 @@ void asCContext::ExecuteNext()
 			m_regs.stackPointer      = l_sp;
 			m_regs.stackFramePointer = l_fp;
 
-			int funcId = m_engine->importedFunctions[i&0xFFFF]->boundFunctionId;
+			int funcId = m_engine->importedFunctions[i & ~FUNC_IMPORTED]->boundFunctionId;
 			if( funcId == -1 )
 			{
 				// Tell the exception handler to clean up the arguments to this function
@@ -2935,6 +2935,22 @@ void asCContext::ExecuteNext()
 				SetInternalException(TXT_DIVIDE_BY_ZERO);
 				return;
 			}
+			else if( divider == -1 )
+			{
+				// Need to check if the value that is divided is 0x80000000
+				// as dividing it with -1 will cause an overflow exception
+				if( *(int*)(l_fp - asBC_SWORDARG1(l_bc)) == int(0x80000000) )
+				{
+					// Need to move the values back to the context
+					m_regs.programPointer    = l_bc;
+					m_regs.stackPointer      = l_sp;
+					m_regs.stackFramePointer = l_fp;
+
+					// Raise exception
+					SetInternalException(TXT_DIVIDE_OVERFLOW);
+					return;
+				}
+			}
 			*(int*)(l_fp - asBC_SWORDARG0(l_bc)) = *(int*)(l_fp - asBC_SWORDARG1(l_bc)) / divider;
 		}
 		l_bc += 2;
@@ -2953,6 +2969,22 @@ void asCContext::ExecuteNext()
 				// Raise exception
 				SetInternalException(TXT_DIVIDE_BY_ZERO);
 				return;
+			}
+			else if( divider == -1 )
+			{
+				// Need to check if the value that is divided is 0x80000000
+				// as dividing it with -1 will cause an overflow exception
+				if( *(int*)(l_fp - asBC_SWORDARG1(l_bc)) == int(0x80000000) )
+				{
+					// Need to move the values back to the context
+					m_regs.programPointer    = l_bc;
+					m_regs.stackPointer      = l_sp;
+					m_regs.stackFramePointer = l_fp;
+
+					// Raise exception
+					SetInternalException(TXT_DIVIDE_OVERFLOW);
+					return;
+				}
 			}
 			*(int*)(l_fp - asBC_SWORDARG0(l_bc)) = *(int*)(l_fp - asBC_SWORDARG1(l_bc)) % divider;
 		}
@@ -3378,6 +3410,23 @@ void asCContext::ExecuteNext()
 				SetInternalException(TXT_DIVIDE_BY_ZERO);
 				return;
 			}
+			else if( divider == -1 )
+            {
+				// Need to check if the value that is divided is 1<<63
+				// as dividing it with -1 will cause an overflow exception
+				if( *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) == (asINT64(1)<<63) )
+				{
+					// Need to move the values back to the context
+					m_regs.programPointer    = l_bc;
+					m_regs.stackPointer      = l_sp;
+					m_regs.stackFramePointer = l_fp;
+
+					// Raise exception
+					SetInternalException(TXT_DIVIDE_OVERFLOW);
+					return;
+				}
+            }
+
 			*(asINT64*)(l_fp - asBC_SWORDARG0(l_bc)) = *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) / divider;
 		}
 		l_bc += 2;
@@ -3397,6 +3446,22 @@ void asCContext::ExecuteNext()
 				SetInternalException(TXT_DIVIDE_BY_ZERO);
 				return;
 			}
+			else if( divider == -1 )
+            {
+				// Need to check if the value that is divided is 1<<63
+				// as dividing it with -1 will cause an overflow exception
+				if( *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) == (asINT64(1)<<63) )
+				{
+					// Need to move the values back to the context
+					m_regs.programPointer    = l_bc;
+					m_regs.stackPointer      = l_sp;
+					m_regs.stackFramePointer = l_fp;
+
+					// Raise exception
+					SetInternalException(TXT_DIVIDE_OVERFLOW);
+					return;
+				}
+            }
 			*(asINT64*)(l_fp - asBC_SWORDARG0(l_bc)) = *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) % divider;
 		}
 		l_bc += 2;
@@ -4162,7 +4227,7 @@ void asCContext::CleanArgsOnStack()
 	else if( bc == asBC_CALLBND )
 	{
 		int funcId = asBC_INTARG(prevInstr);
-		func = m_engine->importedFunctions[funcId&0xFFFF]->importedFunctionSignature;
+		func = m_engine->importedFunctions[funcId & ~FUNC_IMPORTED]->importedFunctionSignature;
 	}
 	else if( bc == asBC_CallPtr )
 	{
@@ -4248,10 +4313,10 @@ void asCContext::CleanStackFrame()
 	// is not set, then there is nothing to clean up on the stack frame
 	if( !m_isStackMemoryNotAllocated && m_regs.programPointer )
 	{
-		// If the exception occurred while calling a function it is necessary 
+		// If the exception occurred while calling a function it is necessary
 		// to clean up the arguments that were put on the stack.
 		CleanArgsOnStack();
-		
+
 		// Restore the stack pointer
 		m_regs.stackPointer += m_currentFunction->variableSpace;
 

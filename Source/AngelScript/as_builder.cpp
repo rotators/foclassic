@@ -238,6 +238,9 @@ int asCBuilder::Build()
 	//       The builder needs to check for each of the global variable, what functions
 	//       that are accessed, and what global variables are access by these functions.
 
+	if( numWarnings > 0 && engine->ep.compilerWarnings == 2 )
+		WriteError(TXT_WARNINGS_TREATED_AS_ERROR, 0, 0);
+
 	if( numErrors > 0 )
 		return asERROR;
 
@@ -280,6 +283,9 @@ int asCBuilder::CompileGlobalVar(const char *sectionName, const char *code, int 
 	RegisterGlobalVar(node, script, module->defaultNamespace);
 
 	CompileGlobalVariables();
+
+	if( numWarnings > 0 && engine->ep.compilerWarnings == 2 )
+		WriteError(TXT_WARNINGS_TREATED_AS_ERROR, 0, 0);
 
 	if( numErrors > 0 )
 	{
@@ -402,14 +408,15 @@ int asCBuilder::CompileFunction(const char *sectionName, const char *code, int l
 	funcDesc->name              = func->name;
 	funcDesc->funcId            = func->id;
 	funcDesc->paramNames        = parameterNames;
+	funcDesc->isExistingShared  = false;
 
 	asCCompiler compiler(engine);
-	if( compiler.CompileFunction(this, functions[0]->script, parameterNames, functions[0]->node, func, 0) >= 0 )
-	{
-		// Return the function
-		*outFunc = func;
-	}
-	else
+	compiler.CompileFunction(this, functions[0]->script, parameterNames, functions[0]->node, func, 0);
+
+	if( numWarnings > 0 && engine->ep.compilerWarnings == 2 )
+		WriteError(TXT_WARNINGS_TREATED_AS_ERROR, 0, 0);
+
+	if( numErrors > 0 )
 	{
 		// If the function was added to the module then remove it again
 		if( compileFlags & asCOMP_ADD_TO_MODULE )
@@ -424,6 +431,9 @@ int asCBuilder::CompileFunction(const char *sectionName, const char *code, int l
 
 		return asERROR;
 	}
+
+	// Return the function
+	*outFunc = func;
 
 	return asSUCCESS;
 }
@@ -675,6 +685,9 @@ void asCBuilder::CompileFunctions()
 	{
 		sFunctionDescription *current = functions[n];
 		if( current == 0 ) continue;
+
+		// Don't compile the function again if it was an existing shared function
+		if( current->isExistingShared ) continue;
 
 		asCCompiler compiler(engine);
 		asCScriptFunction *func = engine->scriptFunctions[current->funcId];
@@ -3139,6 +3152,7 @@ void asCBuilder::AddDefaultConstructor(asCObjectType *objType, asCScriptCode *fi
 	func->name              = objType->name;
 	func->objType           = objType;
 	func->funcId            = funcId;
+	func->isExistingShared  = false;
 
 	// Add a default factory as well
 	funcId = engine->GetNextScriptFunctionId();
@@ -3687,6 +3701,7 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 					f->isShared &&
 					f->name == name &&
 					f->nameSpace == ns &&
+					f->objectType == objType &&
 					f->IsSignatureExceptNameEqual(returnType, parameterTypes, inOutFlags, 0, false) )
 				{
 					funcId = func->funcId = f->id;
@@ -3755,6 +3770,8 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 	{
 		asCScriptFunction *f = engine->scriptFunctions[funcId];
 		module->AddScriptFunction(f);
+
+		// TODO: clean up: This should be done by AddScriptFunction() itself
 		module->globalFunctions.Put(f);
 		f->AddRef();
 	}
@@ -3766,6 +3783,8 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 
 	if( objType )
 	{
+		asASSERT( !isExistingShared );
+
 		engine->scriptFunctions[funcId]->AddRef();
 		if( isConstructor )
 		{
@@ -4053,10 +4072,10 @@ asCScriptFunction *asCBuilder::GetFunctionDescription(int id)
 {
 	// TODO: import: This should be improved when the imported functions are removed
 	// Get the description from the engine
-	if( (id & 0xFFFF0000) == 0 )
+	if( (id & FUNC_IMPORTED) == 0 )
 		return engine->scriptFunctions[id];
 	else
-		return engine->importedFunctions[id & 0xFFFF]->importedFunctionSignature;
+		return engine->importedFunctions[id & ~FUNC_IMPORTED]->importedFunctionSignature;
 }
 
 void asCBuilder::GetFunctionDescriptions(const char *name, asCArray<int> &funcs, asSNameSpace *ns)
@@ -4181,10 +4200,10 @@ void asCBuilder::WriteInfo(const asCString &message, asCScriptCode *file, asCScr
 void asCBuilder::WriteError(const asCString &message, asCScriptCode *file, asCScriptNode *node)
 {
 	int r = 0, c = 0;
-	if( node )
+	if( node && file )
 		file->ConvertPosToRowCol(node->tokenPos, &r, &c);
 
-	WriteError(file->name, message, r, c);
+	WriteError(file ? file->name : "", message, r, c);
 }
 
 void asCBuilder::WriteError(const asCString &scriptname, const asCString &message, int r, int c)
@@ -4200,13 +4219,16 @@ void asCBuilder::WriteError(const asCString &scriptname, const asCString &messag
 
 void asCBuilder::WriteWarning(const asCString &scriptname, const asCString &message, int r, int c)
 {
-	numWarnings++;
+	if( engine->ep.compilerWarnings )
+	{
+		numWarnings++;
 
-	// Need to pass the preMessage first
-	if( preMessage.isSet )
-		WriteInfo(preMessage.scriptname, preMessage.message, preMessage.r, preMessage.c, false);
+		// Need to pass the preMessage first
+		if( preMessage.isSet )
+			WriteInfo(preMessage.scriptname, preMessage.message, preMessage.r, preMessage.c, false);
 
-	engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_WARNING, message.AddressOf());
+		engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_WARNING, message.AddressOf());
+	}
 }
 
 asCString asCBuilder::GetScopeFromNode(asCScriptNode *node, asCScriptCode *script, asCScriptNode **next)
