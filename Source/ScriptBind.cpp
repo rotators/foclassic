@@ -296,10 +296,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
     SetEngineProperty( engine, asEP_USE_CHARACTER_LITERALS, 1 );
     SetEngineProperty( engine, asEP_AUTO_GARBAGE_COLLECT, false );
     SetEngineProperty( engine, asEP_ALWAYS_IMPL_DEFAULT_CONSTRUCT, true  );
-
-    #if ANGELSCRIPT_VERSION >= 22602
-    # pragma TODO("asEP_COMPILER_WARNINGS")
-    #endif
+    SetEngineProperty( engine, asEP_COMPILER_WARNINGS, 2 );     // treat warnings as errors
 
     #if ANGELSCRIPT_VERSION >= 22900
     # pragma TODO("asCALL_THISCALL_OBJFIRST")

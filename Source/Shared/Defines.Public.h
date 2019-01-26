@@ -301,6 +301,7 @@
 #define ANGELSCRIPT_AUTO_GARBAGE_COLLECT             (16)   // engine default: false
 #define ANGELSCRIPT_DISALLOW_GLOBAL_VARS             (17)
 #define ANGELSCRIPT_ALWAYS_IMPL_DEFAULT_CONSTRUCT    (18)   // engine default: true
+#define ANGELSCRIPT_COMPILER_WARNINGS                (19)   // engine default: 2
 
 // Item deterioration info
 #define BI_BROKEN                                    (0x0F)
