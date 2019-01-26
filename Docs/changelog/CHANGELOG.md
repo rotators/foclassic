@@ -15,6 +15,11 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - new cache is requested if cached version info does not match Client
 
 
+| Version                                                  | Revision                                                             | Tag                                                                                       | Binaries                                                           |
+|:--------------------------------------------------------:|:--------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:------------------------------------------------------------------:|
+| [2.26.1](https://www.gamedev.net/forums/topic/639686--/) | [r1582](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1582) | [v6-angelscript-2.26.1](https://github.com/rotators/foclassic/tree/v6-angelscript-2.26.1) | https://ci.appveyor.com/project/rotators/foclassic/builds/21911136 |
+
+
 ## [v5](https://github.com/rotators/foclassic/releases/tag/v5/)
 
 - fixed loading of .fosb files when script source cannot be found
