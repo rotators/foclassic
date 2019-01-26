@@ -28,6 +28,7 @@ vector<ConstCollection> ConstCollections;
 
 void ConstantsManager::Initialize( int path_type, const char* path /* = NULL */ )
 {
+    ConstCollections.resize( CONSTANTS_HASH + 1 );
     for( int i = 0; i <= CONSTANTS_HASH; i++ )
     {
         if( path )

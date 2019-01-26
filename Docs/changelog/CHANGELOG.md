@@ -6,6 +6,15 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - [Nightly builds](https://ci.appveyor.com/project/rotators/foclassic/) (Linux, Windows)
 
 
+## [v6]() (WIP)
+
+- precompiled scripts (Client cache/.fosb files) are saved with version of AngelScript used to compile them; in case of version mismatch:
+    - [Client] new cache is requested
+    - [Server] script is compiled from source
+- Client cache contains more detailed informations about engine version used to compile scripts
+    - new cache is requested if cached version info does not match Client
+
+
 ## [v5](https://github.com/rotators/foclassic/releases/tag/v5/)
 
 - fixed loading of .fosb files when script source cannot be found
