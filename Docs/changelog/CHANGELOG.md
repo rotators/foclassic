@@ -24,7 +24,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 | Version                                                  | Revision                                                             | Tag                                                                                       | Binaries                                                           |
 |:--------------------------------------------------------:|:--------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:------------------------------------------------------------------:|
 | [2.26.1](https://www.gamedev.net/forums/topic/639686--/) | [r1582](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1582) | [v6-angelscript-2.26.1](https://github.com/rotators/foclassic/tree/v6-angelscript-2.26.1) | https://ci.appveyor.com/project/rotators/foclassic/builds/21911136 |
-| [2.26.2](https://www.gamedev.net/forums/topic/641123--/) | [r1602](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1602) | -                                                                                         | -                                                                  |
+| [2.26.2](https://www.gamedev.net/forums/topic/641123--/) | [r1602](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1602) | [v6-angelscript-2.26.2](https://github.com/rotators/foclassic/tree/v6-angelscript-2.26.2) | https://ci.appveyor.com/project/rotators/foclassic/builds/21912852 |
 
 
 ## [v5](https://github.com/rotators/foclassic/releases/tag/v5/)
