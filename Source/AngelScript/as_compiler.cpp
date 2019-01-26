@@ -1144,14 +1144,82 @@ int asCCompiler::CompileGlobalVariable(asCBuilder *builder, asCScriptCode *scrip
 	return 0;
 }
 
+void asCCompiler::DetermineSingleFunc(asSExprContext *ctx, asCScriptNode *node)
+{
+	// Don't do anything if this is not a deferred global function
+	if( ctx->methodName == "" || ctx->type.dataType.GetObjectType() != 0 )
+		return;
+
+	// Determine the namespace
+	asSNameSpace *ns = 0;
+	asCString name = "";
+	int pos = ctx->methodName.FindLast("::");
+	if( pos >= 0 )
+	{
+		asCString nsName = ctx->methodName.SubString(0, pos+2);
+		ns = DetermineNameSpace(nsName);
+		name = ctx->methodName.SubString(pos+2);
+	}
+	else
+	{
+		DetermineNameSpace("");
+		name = ctx->methodName;
+	}
+
+	asCArray<int> funcs;
+	if( ns )
+		builder->GetFunctionDescriptions(name.AddressOf(), funcs, ns);
+
+	// CompileVariableAccess should guarantee that at least one function is exists
+	asASSERT( funcs.GetLength() > 0 );
+
+	if( funcs.GetLength() > 1 )
+	{
+		asCString str;
+		str.Format(TXT_MULTIPLE_MATCHING_SIGNATURES_TO_s, ctx->methodName.AddressOf());
+		Error(str, node);
+
+		// Fall through so the compiler can continue as if only one function was matching
+	}
+
+	// A shared object may not access global functions unless they too are shared (e.g. registered functions)
+	if( !builder->GetFunctionDescription(funcs[0])->IsShared() &&
+		outFunc->IsShared() )
+	{
+		asCString msg;
+		msg.Format(TXT_SHARED_CANNOT_CALL_NON_SHARED_FUNC_s, builder->GetFunctionDescription(funcs[0])->GetDeclaration());
+		Error(msg, node);
+		
+		// Fall through so the compiler can continue anyway
+	}
+
+	// Push the function pointer on the stack
+	ctx->bc.InstrPTR(asBC_FuncPtr, builder->GetFunctionDescription(funcs[0]));
+	ctx->type.Set(asCDataType::CreateFuncDef(builder->GetFunctionDescription(funcs[0])));
+	ctx->type.dataType.MakeHandle(true);
+	ctx->type.isExplicitHandle = true;
+	ctx->methodName = "";
+}
+
 void asCCompiler::PrepareArgument(asCDataType *paramType, asSExprContext *ctx, asCScriptNode *node, bool isFunction, int refType, bool isMakingCopy)
 {
 	asCDataType param = *paramType;
 	if( paramType->GetTokenType() == ttQuestion )
 	{
+		// The function is expecting a var type. If the argument is a function name, we must now decide which function it is
+		DetermineSingleFunc(ctx, node);
+
 		// Since the function is expecting a var type ?, then we don't want to convert the argument to anything else
 		param = ctx->type.dataType;
 		param.MakeHandle(ctx->type.isExplicitHandle);
+
+		// Reference types will always be passed as handles to ? parameters
+		if( builder->engine->ep.disallowValueAssignForRefType && 
+			ctx->type.dataType.GetObjectType() && (ctx->type.dataType.GetObjectType()->flags & asOBJ_REF) && !(ctx->type.dataType.GetObjectType()->flags & asOBJ_SCOPED) )
+		{
+			param.MakeHandle(true);
+		}
+
 		param.MakeReference(paramType->IsReference());
 		param.MakeReadOnly(paramType->IsReadOnly());
 	}
@@ -1700,13 +1768,21 @@ int asCCompiler::CompileDefaultArgs(asCScriptNode *node, asCArray<asSExprContext
 		asSExprContext expr(engine);
 		r = CompileExpression(arg, &expr);
 
+		// Don't allow address of class method
+		if( expr.methodName != "" )
+		{
+			// TODO: Improve error message
+			Error(TXT_DEF_ARG_TYPE_DOESNT_MATCH, arg);
+			r = -1;
+		}
+
 		// Make sure the expression can be implicitly converted to the parameter type
 		if( r >= 0 )
 		{
 			asCArray<int> funcs;
 			funcs.PushLast(func->id);
 			asCArray<asSOverloadCandidate> matches;
-			if( MatchArgument(funcs, matches, &expr.type, n) == 0 )
+			if( MatchArgument(funcs, matches, &expr, n) == 0 )
 			{
 				Error(TXT_DEF_ARG_TYPE_DOESNT_MATCH, arg);
 				r = -1;
@@ -1823,7 +1899,7 @@ asUINT asCCompiler::MatchFunctions(asCArray<int> &funcs, asCArray<asSExprContext
 		for( n = 0; n < args.GetLength(); ++n )
 		{
 			asCArray<asSOverloadCandidate> tempFuncs;
-			MatchArgument(funcs, tempFuncs, &args[n]->type, n, allowObjectConstruct);
+			MatchArgument(funcs, tempFuncs, args[n], n, allowObjectConstruct);
 
 			// Intersect the found functions with the list of matching functions
 			for( asUINT f = 0; f < matchingFuncs.GetLength(); f++ )
@@ -1889,9 +1965,20 @@ asUINT asCCompiler::MatchFunctions(asCArray<int> &funcs, asCArray<asSExprContext
 		str += name;
 		str += "(";
 		if( args.GetLength() )
-			str += args[0]->type.dataType.Format();
+		{
+			if( args[0]->methodName != "" )
+				str += args[0]->methodName;
+			else
+				str += args[0]->type.dataType.Format();
+		}
 		for( n = 1; n < args.GetLength(); n++ )
-			str += ", " + args[n]->type.dataType.Format();
+		{
+			str += ", ";
+			if( args[n]->methodName != "" )
+				str += args[n]->methodName;
+			else
+				str += args[n]->type.dataType.Format();
+		}
 		str += ")";
 
 		if( isConstMethod )
@@ -2200,9 +2287,9 @@ bool asCCompiler::CompileInitialization(asCScriptNode *node, asCByteCode *bc, as
 					lctx.type.Set(type);
 					lctx.type.dataType.MakeReference(true);
 
-					// If it is an enum value that is being compiled then we skip this
-					// as the bytecode won't be used anyway, only the constant value
-					if( asUINT(offset) < engine->globalProperties.GetLength() )
+					// If it is an enum value, i.e. offset is negative, that is being compiled then
+					// we skip this as the bytecode won't be used anyway, only the constant value
+					if( offset >= 0 )
 						lctx.bc.InstrPTR(asBC_LDG, engine->globalProperties[offset]->GetAddressOfValue());
 				}
 				else
@@ -2274,7 +2361,8 @@ bool asCCompiler::CompileInitialization(asCScriptNode *node, asCByteCode *bc, as
 					if( assigned )
 					{
 						// Pop the resulting value
-						ctx.bc.Instr(asBC_PopPtr);
+						if( !ctx.type.dataType.IsPrimitive() )
+							ctx.bc.Instr(asBC_PopPtr);
 
 						// Release the argument
 						ProcessDeferredParams(&ctx);
@@ -4937,7 +5025,7 @@ asUINT asCCompiler::ImplicitConvObjectToPrimitive(asSExprContext *ctx, const asC
 asUINT asCCompiler::ImplicitConvObjectRef(asSExprContext *ctx, const asCDataType &to, asCScriptNode *node, EImplicitConv convType, bool generateCode)
 {
 	// Convert null to any object type handle, but not to a non-handle type
-	if( ctx->type.IsNullConstant() )
+	if( ctx->type.IsNullConstant() && ctx->methodName == "" )
 	{
 		if( to.IsObjectHandle() )
 		{
@@ -4947,10 +5035,10 @@ asUINT asCCompiler::ImplicitConvObjectRef(asSExprContext *ctx, const asCDataType
 		return asCC_NO_CONV;
 	}
 
-	asASSERT(ctx->type.dataType.GetObjectType());
+	asASSERT(ctx->type.dataType.GetObjectType() || ctx->methodName != "");
 
 	// First attempt to convert the base type without instanciating another instance
-	if( to.GetObjectType() != ctx->type.dataType.GetObjectType() )
+	if( to.GetObjectType() != ctx->type.dataType.GetObjectType() && ctx->methodName == "" )
 	{
 		// If the to type is an interface and the from type implements it, then we can convert it immediately
 		if( ctx->type.dataType.GetObjectType()->Implements(to.GetObjectType()) )
@@ -4985,15 +5073,67 @@ asUINT asCCompiler::ImplicitConvObjectRef(asSExprContext *ctx, const asCDataType
 	}
 
 	// Convert matching function types
-	if( to.GetFuncDef() && ctx->type.dataType.GetFuncDef() &&
-		to.GetFuncDef() != ctx->type.dataType.GetFuncDef() )
+	if( to.GetFuncDef() )
 	{
-		asCScriptFunction *toFunc = to.GetFuncDef();
-		asCScriptFunction *fromFunc = ctx->type.dataType.GetFuncDef();
-		if( toFunc->IsSignatureExceptNameEqual(fromFunc) )
+		// If the input expression is already a funcdef, check if it can be converted
+		if( ctx->type.dataType.GetFuncDef() &&
+			to.GetFuncDef() != ctx->type.dataType.GetFuncDef() )
 		{
-			ctx->type.dataType.SetFuncDef(toFunc);
-			return asCC_REF_CONV;
+			asCScriptFunction *toFunc = to.GetFuncDef();
+			asCScriptFunction *fromFunc = ctx->type.dataType.GetFuncDef();
+			if( toFunc->IsSignatureExceptNameEqual(fromFunc) )
+			{
+				ctx->type.dataType.SetFuncDef(toFunc);
+				return asCC_REF_CONV;
+			}
+		}
+
+		// If the input expression is a deferred function ref, check if there is a matching func
+		if( ctx->methodName != "" )
+		{
+			// Determine the namespace
+			asSNameSpace *ns = 0;
+			asCString name = "";
+			int pos = ctx->methodName.FindLast("::");
+			if( pos >= 0 )
+			{
+				asCString nsName = ctx->methodName.SubString(0, pos+2);
+				ns = DetermineNameSpace(nsName);
+				name = ctx->methodName.SubString(pos+2);
+			}
+			else
+			{
+				DetermineNameSpace("");
+				name = ctx->methodName;
+			}
+
+			asCArray<int> funcs;
+			if( ns )
+				builder->GetFunctionDescriptions(name.AddressOf(), funcs, ns);
+
+			// Check if any of the functions have perfect match
+			for( asUINT n = 0; n < funcs.GetLength(); n++ )
+			{
+				asCScriptFunction *func = builder->GetFunctionDescription(funcs[n]);
+				if( to.GetFuncDef()->IsSignatureExceptNameEqual(func) )
+				{
+					if( generateCode )
+					{
+						ctx->bc.InstrPTR(asBC_FuncPtr, func);
+
+						// Make sure the identified function is shared if we're compiling a shared function
+						if( !func->IsShared() && outFunc->IsShared() )
+						{
+							asCString msg;
+							msg.Format(TXT_SHARED_CANNOT_CALL_NON_SHARED_FUNC_s, func->GetDeclaration());
+							Error(msg, node);
+						}
+					}
+
+					ctx->type.dataType = asCDataType::CreateFuncDef(to.GetFuncDef());
+					return asCC_REF_CONV;
+				}
+			}
 		}
 	}
 
@@ -6102,6 +6242,14 @@ void asCCompiler::ImplicitConversionConstant(asSExprContext *from, const asCData
 
 int asCCompiler::DoAssignment(asSExprContext *ctx, asSExprContext *lctx, asSExprContext *rctx, asCScriptNode *lexpr, asCScriptNode *rexpr, int op, asCScriptNode *opNode)
 {
+	// Don't allow any operators on expressions that take address of class method
+	// If methodName is set but the type is not an object, then it is a global function
+	if( lctx->methodName != "" || (rctx->type.dataType.GetObjectType() && rctx->methodName != "") )
+	{
+		Error(TXT_INVALID_OP_ON_METHOD, opNode);
+		return -1;
+	}
+
 	// Implicit handle types should always be treated as handles in assignments
 	if (lctx->type.dataType.GetObjectType() && (lctx->type.dataType.GetObjectType()->flags & asOBJ_IMPLICIT_HANDLE) )
 	{
@@ -6231,17 +6379,21 @@ int asCCompiler::DoAssignment(asSExprContext *ctx, asSExprContext *lctx, asSExpr
 			if( !rctx->type.isExplicitHandle &&
 				!(rctx->type.dataType.GetObjectType() && (rctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE)) )
 			{
-				asCDataType dt = rctx->type.dataType;
-				dt.MakeHandle(true);
-				dt.MakeReference(false);
-
-				PrepareArgument(&dt, rctx, rexpr, true, asTM_INREF);
-				if( !dt.IsEqualExceptRefAndConst(rctx->type.dataType) )
+				// Function names can be considered handles already
+				if( rctx->methodName == "" )
 				{
-					asCString str;
-					str.Format(TXT_CANT_IMPLICITLY_CONVERT_s_TO_s, rctx->type.dataType.Format().AddressOf(), lctx->type.dataType.Format().AddressOf());
-					Error(str, rexpr);
-					return -1;
+					asCDataType dt = rctx->type.dataType;
+					dt.MakeHandle(true);
+					dt.MakeReference(false);
+
+					PrepareArgument(&dt, rctx, rexpr, true, asTM_INREF);
+					if( !dt.IsEqualExceptRefAndConst(rctx->type.dataType) )
+					{
+						asCString str;
+						str.Format(TXT_CANT_IMPLICITLY_CONVERT_s_TO_s, rctx->type.dataType.Format().AddressOf(), lctx->type.dataType.Format().AddressOf());
+						Error(str, rexpr);
+						return -1;
+					}
 				}
 			}
 
@@ -6451,6 +6603,13 @@ int asCCompiler::CompileCondition(asCScriptNode *expr, asSExprContext *ctx)
 
 		if( lr >= 0 && rr >= 0 )
 		{
+			// Don't allow any operators on expressions that take address of class method
+			if( le.methodName != "" || re.methodName != "" )
+			{
+				Error(TXT_INVALID_OP_ON_METHOD, expr);
+				return -1;
+			}
+
 			ProcessPropertyGetAccessor(&le, cexpr->next);
 			ProcessPropertyGetAccessor(&re, cexpr->next->next);
 
@@ -6896,14 +7055,54 @@ int asCCompiler::CompileVariableAccess(const asCString &name, const asCString &s
 
 				found = true;
 			}
+			else if( outFunc->objectType )
+			{
+				// If it is not a property, it may still be the name of a method which can be used to create delegates
+				asCObjectType *ot = outFunc->objectType;
+				asCScriptFunction *func = 0;
+				for( asUINT n = 0; n < ot->methods.GetLength(); n++ )
+				{
+					if( engine->scriptFunctions[ot->methods[n]]->name == name )
+					{
+						func = engine->scriptFunctions[ot->methods[n]];
+						break;
+					}
+				}
+
+				if( func )
+				{
+					// An object method was found. Keep the name of the method in the expression, but
+					// don't actually modify the bytecode at this point since it is not yet known what 
+					// the method will be used for, or even what overloaded method should be used.
+					ctx->methodName = name;
+
+					// Place the object pointer on the stack, as if the expression was this.func
+					if( !objType )
+					{
+						// The object pointer is located at stack position 0
+						// This is only done when accessing through the implicit this pointer
+						ctx->bc.InstrSHORT(asBC_PSF, 0);
+						ctx->type.SetVariable(asCDataType::CreateObject(outFunc->objectType, false), 0, false);
+						ctx->type.dataType.MakeReference(true);
+						Dereference(ctx, true);
+					}
+
+					found = true;
+				}
+			}
 		}
 	}
 
-	// Is it a global property?
-	if( !found && !objType && !noGlobal )
+	// Recursively search parent namespaces for global entities
+	asCString currScope = scope;
+	if( scope == "" )
+		currScope = outFunc->nameSpace->name;
+	while( !found && !noGlobal && !objType )
 	{
-		asSNameSpace *ns = DetermineNameSpace(scope);
-		if( ns )
+		asSNameSpace *ns = DetermineNameSpace(currScope);
+
+		// Is it a global property?
+		if( !found && ns )
 		{
 			// See if there are any matching global property accessors
 			asSExprContext access(engine);
@@ -7024,103 +7223,107 @@ int asCCompiler::CompileVariableAccess(const asCString &name, const asCString &s
 				}
 			}
 		}
-	}
 
-	// Is it the name of a global function?
-	if( !noFunction && !found && !objType && !noGlobal )
-	{
-		asCArray<int> funcs;
+		// Is it the name of a global function?
+		if( !noFunction && !found && ns )
+		{
+			asCArray<int> funcs;
 
-		asSNameSpace *ns = DetermineNameSpace(scope);
-		if( ns )
 			builder->GetFunctionDescriptions(name.AddressOf(), funcs, ns);
 
-		if( funcs.GetLength() > 1 )
-		{
-			// TODO: funcdef: If multiple functions are found, then the compiler should defer the decision
-			//                to which one it should use until the value is actually used.
-			//
-			//                - assigning the function pointer to a variable
-			//                - performing an explicit cast
-			//                - passing the function pointer to a function as parameter
-			asCString str;
-			str.Format(TXT_MULTIPLE_MATCHING_SIGNATURES_TO_s, name.AddressOf());
-			Error(str, errNode);
-			return -1;
-		}
-		else if( funcs.GetLength() == 1 )
-		{
-			found = true;
-
-			// A shared object may not access global functions unless they too are shared (e.g. registered functions)
-			if( !builder->GetFunctionDescription(funcs[0])->IsShared() &&
-				outFunc->IsShared() )
-			{
-				asCString msg;
-				msg.Format(TXT_SHARED_CANNOT_CALL_NON_SHARED_FUNC_s, builder->GetFunctionDescription(funcs[0])->GetDeclaration());
-				Error(msg, errNode);
-				return -1;
-			}
-
-			// Push the function pointer on the stack
-			ctx->bc.InstrPTR(asBC_FuncPtr, builder->GetFunctionDescription(funcs[0]));
-			ctx->type.Set(asCDataType::CreateFuncDef(builder->GetFunctionDescription(funcs[0])));
-		}
-	}
-
-	// Is it an enum value?
-	if( !found && !objType && !noGlobal )
-	{
-		// The enum type may be declared in a namespace too
-		asCObjectType *scopeType = 0;
-		if( scope != "" && scope != "::" )
-		{
-			// Use the last scope name as the enum type
-			asCString enumType = scope;
-			asCString nsScope;
-			int p = scope.FindLast("::");
-			if( p != -1 )
-			{
-				enumType = scope.SubString(p+2);
-				nsScope = scope.SubString(0, p);
-			}
-
-			asSNameSpace *ns = engine->FindNameSpace(nsScope.AddressOf());
-			if( ns )
-				scopeType = builder->GetObjectType(enumType.AddressOf(), ns);
-		}
-
-		asDWORD value = 0;
-		asCDataType dt;
-		if( scopeType && builder->GetEnumValueFromObjectType(scopeType, name.AddressOf(), dt, value) )
-		{
-			// scoped enum value found
-			found = true;
-		}
-		else if( !engine->ep.requireEnumScope )
-		{
-			// Look for the enum value without explicitly informing the enum type
-			asSNameSpace *ns = DetermineNameSpace(scope);
-			int e = 0;
-			if( ns )
-				e = builder->GetEnumValue(name.AddressOf(), dt, value, ns);
-			if( e )
+			if( funcs.GetLength() > 0 )
 			{
 				found = true;
-				if( e == 2 )
+
+				// Defer the evaluation of which function until it is actually used
+				// Store the namespace and name of the function for later
+				ctx->type.SetNullConstant();
+				// Clear the explicit handle so that the script writer is allowed to explicitly set it
+				ctx->type.isExplicitHandle = false;
+				ctx->methodName = ns ? ns->name + "::" + name : name;
+			}
+		}
+
+		// Is it an enum value?
+		if( !found )
+		{
+			// The enum type may be declared in a namespace too
+			asCObjectType *scopeType = 0;
+			if( currScope != "" && currScope != "::" )
+			{
+				// Use the last scope name as the enum type
+				asCString enumType = currScope;
+				asCString nsScope;
+				int p = currScope.FindLast("::");
+				if( p != -1 )
 				{
-					Error(TXT_FOUND_MULTIPLE_ENUM_VALUES, errNode);
+					enumType = currScope.SubString(p+2);
+					nsScope = currScope.SubString(0, p);
+				}
+
+				asSNameSpace *ns = engine->FindNameSpace(nsScope.AddressOf());
+				if( ns )
+					scopeType = builder->GetObjectType(enumType.AddressOf(), ns);
+			}
+
+			asDWORD value = 0;
+			asCDataType dt;
+			if( scopeType && builder->GetEnumValueFromObjectType(scopeType, name.AddressOf(), dt, value) )
+			{
+				// scoped enum value found
+				found = true;
+			}
+			else if( !engine->ep.requireEnumScope )
+			{
+				// Look for the enum value without explicitly informing the enum type
+				asSNameSpace *ns = DetermineNameSpace(currScope);
+				int e = 0;
+				if( ns )
+					e = builder->GetEnumValue(name.AddressOf(), dt, value, ns);
+				if( e )
+				{
+					found = true;
+					if( e == 2 )
+					{
+						Error(TXT_FOUND_MULTIPLE_ENUM_VALUES, errNode);
+					}
+				}
+			}
+
+			if( found )
+			{
+				// Even if the enum type is not shared, and we're compiling a shared object,
+				// the use of the values are still allowed, since they are treated as constants.
+
+				// an enum value was resolved
+				ctx->type.SetConstantDW(dt, value);
+			}
+			else
+			{
+				// If nothing was found because the scope doesn't match a namespace or an enum 
+				// then this should be reported as an error and the search interrupted
+				if( !ns && !scopeType )
+				{
+					ctx->type.SetDummy();
+					asCString str;
+					str.Format(TXT_UNKNOWN_SCOPE_s, currScope.AddressOf());
+					Error(str, errNode);
+					return -1;
 				}
 			}
 		}
 
-		if( found )
+		if( !found )
 		{
-			// Even if the enum type is not shared, and we're compiling a shared object,
-			// the use of the values are still allowed, since they are treated as constants.
+			if( currScope == "" || currScope == "::" )
+				break;
 
-			// an enum value was resolved
-			ctx->type.SetConstantDW(dt, value);
+			// Move up to parent namespace
+			int pos = currScope.FindLast("::");
+			if( pos >= 0 )
+				currScope = currScope.SubString(0, pos);
+			else
+				currScope = "::";
 		}
 	}
 
@@ -7700,6 +7903,13 @@ void asCCompiler::CompileConversion(asCScriptNode *node, asSExprContext *ctx)
 
 	ProcessPropertyGetAccessor(&expr, node);
 
+	// Don't allow any operators on expressions that take address of class method
+	if( expr.methodName != "" )
+	{
+		Error(TXT_INVALID_OP_ON_METHOD, node);
+		return;
+	}
+
 	// We don't want a reference
 	if( expr.type.dataType.IsReference() )
 	{
@@ -8020,6 +8230,82 @@ void asCCompiler::CompileConstructCall(asCScriptNode *node, asSExprContext *ctx)
 			}
 		}
 
+		// Special case: If this is a construction of a delegate and the expression names an object method
+		if( dt.GetFuncDef() && args.GetLength() == 1 && args[0]->methodName != "" )
+		{
+			// TODO: delegate: It is possible that the argument returns a function pointer already, in which
+			//                 case no object delegate will be created, but instead a delegate for a function pointer
+			//                 In theory a simple cast would be good in this case, but this is a construct call so it 
+			//                 is expected that a new object is created.
+
+			dt.MakeHandle(true);
+			ctx->type.Set(dt);
+
+			// The delegate must be able to hold on to a reference to the object
+			if( !args[0]->type.dataType.SupportHandles() )
+				Error(TXT_CANNOT_CREATE_DELEGATE_FOR_NOREF_TYPES, node);
+			else
+			{
+				// Filter the available object methods to find the one that matches the func def
+				asCObjectType *type = args[0]->type.dataType.GetObjectType();
+				asCScriptFunction *bestMethod = 0;
+				for( asUINT n = 0; n < type->methods.GetLength(); n++ )
+				{
+					asCScriptFunction *func = engine->scriptFunctions[type->methods[n]];
+					
+					if( func->name != args[0]->methodName )
+						continue;
+
+					// If the expression is for a const object, then only const methods should be accepted
+					if( args[0]->type.dataType.IsReadOnly() && !func->IsReadOnly() )
+						continue;
+
+					if( func->IsSignatureExceptNameAndObjectTypeEqual(dt.GetFuncDef()) )
+					{
+						bestMethod = func;
+
+						// If the expression is non-const the non-const overloaded method has priority
+						if( args[0]->type.dataType.IsReadOnly() == func->IsReadOnly() )
+							break;
+					}
+				}
+
+				if( bestMethod )
+				{
+					// The object pointer is already on the stack
+					MergeExprBytecode(ctx, args[0]);
+
+					// Push the function pointer as an additional argument
+					ctx->bc.InstrPTR(asBC_FuncPtr, bestMethod);
+
+					// Call the factory function for the delegate
+					asCArray<int> funcs;
+					builder->GetFunctionDescriptions(DELEGATE_FACTORY, funcs, engine->nameSpaces[0]);
+					asASSERT( funcs.GetLength() == 1 );
+					ctx->bc.Call(asBC_CALLSYS , funcs[0], 2*AS_PTR_SIZE);
+
+					// Store the returned delegate in a temporary variable
+					int returnOffset = AllocateVariable(dt, true, false);
+					dt.MakeReference(true);
+					ctx->type.SetVariable(dt, returnOffset, true);
+					ctx->bc.InstrSHORT(asBC_STOREOBJ, (short)returnOffset);
+
+					// Push a reference to the temporary variable on the stack
+					ctx->bc.InstrSHORT(asBC_PSF, (short)returnOffset);
+				}
+				else
+				{
+					asCString msg;
+					msg.Format(TXT_NO_MATCHING_SIGNATURES_TO_s, dt.GetFuncDef()->GetDeclaration());
+					Error(msg.AddressOf(), node);
+				}
+			}
+
+			// Clean-up arg
+			asDELETE(args[0],asSExprContext);
+			return;
+		}
+
 		MatchFunctions(funcs, args, node, name.AddressOf(), NULL, false);
 
 		if( funcs.GetLength() != 1 )
@@ -8117,7 +8403,7 @@ int asCCompiler::CompileFunctionCall(asCScriptNode *node, asSExprContext *ctx, a
 	if( objectType == 0 )
 	{
 		localVar = CompileVariableAccess(name, scope, &funcPtr, node, true, true, true);
-		if( localVar >= 0 && !funcPtr.type.dataType.GetFuncDef() )
+		if( localVar >= 0 && !funcPtr.type.dataType.GetFuncDef() && funcPtr.methodName == "" )
 		{
 			// The variable is not a function
 			asCString msg;
@@ -8125,6 +8411,10 @@ int asCCompiler::CompileFunctionCall(asCScriptNode *node, asSExprContext *ctx, a
 			Error(msg, node);
 			return -1;
 		}
+
+		// If the name matches a method name, then reset the indicator that nothing was found
+		if( funcPtr.methodName != "" )
+			localVar = -1;
 	}
 
 	if( localVar < 0 )
@@ -8173,7 +8463,7 @@ int asCCompiler::CompileFunctionCall(asCScriptNode *node, asSExprContext *ctx, a
 			if( funcs.GetLength() == 0 )
 			{
 				int r = CompileVariableAccess(name, scope, &funcPtr, node, true, true, true, objectType);
-				if( r >= 0 && !funcPtr.type.dataType.GetFuncDef() )
+				if( r >= 0 && !funcPtr.type.dataType.GetFuncDef() && funcPtr.methodName == "" )
 				{
 					// The variable is not a function
 					asCString msg;
@@ -8209,18 +8499,24 @@ int asCCompiler::CompileFunctionCall(asCScriptNode *node, asSExprContext *ctx, a
 			asSNameSpace *ns = DetermineNameSpace(scope);
 			if( ns )
 			{
-				builder->GetFunctionDescriptions(name.AddressOf(), funcs, ns);
-				if( funcs.GetLength() == 0 )
+				// Search recursively in parent namespaces
+				while( ns && funcs.GetLength() == 0 && funcPtr.type.dataType.GetFuncDef() == 0 )
 				{
-					int r = CompileVariableAccess(name, scope, &funcPtr, node, true, true);
-					if( r >= 0 && !funcPtr.type.dataType.GetFuncDef() )
+					builder->GetFunctionDescriptions(name.AddressOf(), funcs, ns);
+					if( funcs.GetLength() == 0 )
 					{
-						// The variable is not a function
-						asCString msg;
-						msg.Format(TXT_NOT_A_FUNC_s_IS_VAR, name.AddressOf());
-						Error(msg, node);
-						return -1;
+						int r = CompileVariableAccess(name, scope, &funcPtr, node, true, true);
+						if( r >= 0 && !funcPtr.type.dataType.GetFuncDef() )
+						{
+							// The variable is not a function
+							asCString msg;
+							msg.Format(TXT_NOT_A_FUNC_s_IS_VAR, name.AddressOf());
+							Error(msg, node);
+							return -1;
+						}
 					}
+
+					ns = builder->GetParentNameSpace(ns);
 				}
 			}
 			else
@@ -8377,45 +8673,64 @@ int asCCompiler::CompileExpressionPreOp(asCScriptNode *node, asSExprContext *ctx
 {
 	int op = node->tokenType;
 
+	// Don't allow any prefix operators except handle on expressions that take address of class method
+	if( ctx->methodName != "" && op != ttHandle )
+	{
+		Error(TXT_INVALID_OP_ON_METHOD, node);
+		return -1;
+	}
+
 	IsVariableInitialized(&ctx->type, node);
 
 	if( op == ttHandle )
 	{
-		// Verify that the type allow its handle to be taken
-		if( ctx->type.isExplicitHandle ||
-			!ctx->type.dataType.IsObject() ||
-			!(((ctx->type.dataType.GetObjectType()->beh.addref && ctx->type.dataType.GetObjectType()->beh.release) || (ctx->type.dataType.GetObjectType()->flags & asOBJ_NOCOUNT)) ||
-			  (ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE)) )
+		if( ctx->methodName != "" )
 		{
-			Error(TXT_OBJECT_HANDLE_NOT_SUPPORTED, node);
-			return -1;
+			// Don't allow taking the handle of a handle
+			if( ctx->type.isExplicitHandle )
+			{
+				Error(TXT_OBJECT_HANDLE_NOT_SUPPORTED, node);
+				return -1;
+			}
 		}
-
-		// Objects that are not local variables are not references
-		// Objects allocated on the stack are also not marked as references
-		if( !ctx->type.dataType.IsReference() &&
-			!(ctx->type.dataType.IsObject() && !ctx->type.isVariable) &&
-			!(ctx->type.isVariable && !IsVariableOnHeap(ctx->type.stackOffset)) )
+		else
 		{
-			Error(TXT_NOT_VALID_REFERENCE, node);
-			return -1;
-		}
+			// Verify that the type allow its handle to be taken
+			if( ctx->type.isExplicitHandle ||
+				!ctx->type.dataType.IsObject() ||
+				!(((ctx->type.dataType.GetObjectType()->beh.addref && ctx->type.dataType.GetObjectType()->beh.release) || (ctx->type.dataType.GetObjectType()->flags & asOBJ_NOCOUNT)) ||
+				  (ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE)) )
+			{
+				Error(TXT_OBJECT_HANDLE_NOT_SUPPORTED, node);
+				return -1;
+			}
 
-		// Convert the expression to a handle
-		if( !ctx->type.dataType.IsObjectHandle() && !(ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE) )
-		{
-			asCDataType to = ctx->type.dataType;
-			to.MakeHandle(true);
-			to.MakeReference(true);
-			to.MakeHandleToConst(ctx->type.dataType.IsReadOnly());
-			ImplicitConversion(ctx, to, node, asIC_IMPLICIT_CONV, true, false);
+			// Objects that are not local variables are not references
+			// Objects allocated on the stack are also not marked as references
+			if( !ctx->type.dataType.IsReference() &&
+				!(ctx->type.dataType.IsObject() && !ctx->type.isVariable) &&
+				!(ctx->type.isVariable && !IsVariableOnHeap(ctx->type.stackOffset)) )
+			{
+				Error(TXT_NOT_VALID_REFERENCE, node);
+				return -1;
+			}
 
-			asASSERT( ctx->type.dataType.IsObjectHandle() );
-		}
-		else if( ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE )
-		{
-			// For the ASHANDLE type we'll simply set the expression as a handle
-			ctx->type.dataType.MakeHandle(true);
+			// Convert the expression to a handle
+			if( !ctx->type.dataType.IsObjectHandle() && !(ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE) )
+			{
+				asCDataType to = ctx->type.dataType;
+				to.MakeHandle(true);
+				to.MakeReference(true);
+				to.MakeHandleToConst(ctx->type.dataType.IsReadOnly());
+				ImplicitConversion(ctx, to, node, asIC_IMPLICIT_CONV, true, false);
+
+				asASSERT( ctx->type.dataType.IsObjectHandle() );
+			}
+			else if( ctx->type.dataType.GetObjectType()->flags & asOBJ_ASHANDLE )
+			{
+				// For the ASHANDLE type we'll simply set the expression as a handle
+				ctx->type.dataType.MakeHandle(true);
+			}
 		}
 
 		// Mark the expression as an explicit handle to avoid implicit conversions to non-handle expressions
@@ -9203,11 +9518,17 @@ void asCCompiler::ProcessPropertyGetAccessor(asSExprContext *ctx, asCScriptNode 
 
 int asCCompiler::CompileExpressionPostOp(asCScriptNode *node, asSExprContext *ctx)
 {
-	int op = node->tokenType;
+	// Don't allow any postfix operators on expressions that take address of class method
+	if( ctx->methodName != "" )
+	{
+		Error(TXT_INVALID_OP_ON_METHOD, node);
+		return -1;
+	}
 
 	// Check if the variable is initialized (if it indeed is a variable)
 	IsVariableInitialized(&ctx->type, node);
 
+	int op = node->tokenType;
 	if( (op == ttInc || op == ttDec) && ctx->type.dataType.IsObject() )
 	{
 		const char *opName = 0;
@@ -9447,10 +9768,33 @@ int asCCompiler::CompileExpressionPostOp(asCScriptNode *node, asSExprContext *ct
 				}
 				else
 				{
-					asCString str;
-					str.Format(TXT_s_NOT_MEMBER_OF_s, name.AddressOf(), ctx->type.dataType.Format().AddressOf());
-					Error(str, node);
-					return -1;
+					// If the name is not a property, the compiler must check if the name matches
+					// a method, which can be used for constructing delegates
+					asIScriptFunction *func = 0;
+					asCObjectType *ot = ctx->type.dataType.GetObjectType();
+					for( asUINT n = 0; n < ot->methods.GetLength(); n++ )
+					{
+						if( engine->scriptFunctions[ot->methods[n]]->name == name )
+						{
+							func = engine->scriptFunctions[ot->methods[n]];
+							break;
+						}
+					}
+
+					if( func )
+					{
+						// An object method was found. Keep the name of the method in the expression, but
+						// don't actually modify the bytecode at this point since it is not yet known what 
+						// the method will be used for, or even what overloaded method should be used.
+						ctx->methodName = name;
+					}
+					else
+					{
+						asCString str;
+						str.Format(TXT_s_NOT_MEMBER_OF_s, name.AddressOf(), ctx->type.dataType.Format().AddressOf());
+						Error(str, node);
+						return -1;
+					}
 				}
 			}
 			else
@@ -9720,7 +10064,7 @@ int asCCompiler::GetPrecedence(asCScriptNode *op)
 	return 0;
 }
 
-asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCandidate> &matches, const asCTypeInfo *argType, int paramNum, bool allowObjectConstruct)
+asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCandidate> &matches, const asSExprContext *argExpr, int paramNum, bool allowObjectConstruct)
 {
 	matches.SetLength(0);
 
@@ -9734,8 +10078,9 @@ asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCand
 
 		// Can we make the match by implicit conversion?
 		asSExprContext ti(engine);
-		ti.type = *argType;
-		if( argType->dataType.IsPrimitive() ) ti.type.dataType.MakeReference(false);
+		ti.type = argExpr->type;
+		ti.methodName = argExpr->methodName;
+		if( argExpr->type.dataType.IsPrimitive() ) ti.type.dataType.MakeReference(false);
 		asUINT cost = ImplicitConversion(&ti, desc->parameterTypes[paramNum], 0, asIC_IMPLICIT_CONV, false, allowObjectConstruct);
 
 		// If the function parameter is an inout-reference then it must not be possible to call the
@@ -9750,7 +10095,7 @@ asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCand
 
 			// Don't allow a primitive to be converted to a reference of another primitive type
 			if( desc->parameterTypes[paramNum].IsPrimitive() &&
-				desc->parameterTypes[paramNum].GetTokenType() != argType->dataType.GetTokenType() )
+				desc->parameterTypes[paramNum].GetTokenType() != argExpr->type.dataType.GetTokenType() )
 			{
 				asASSERT( engine->ep.allowUnsafeReferences );
 				continue;
@@ -9758,7 +10103,7 @@ asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCand
 
 			// Don't allow an enum to be converted to a reference of another enum type
 			if( desc->parameterTypes[paramNum].IsEnumType() &&
-				desc->parameterTypes[paramNum].GetObjectType() != argType->dataType.GetObjectType() )
+				desc->parameterTypes[paramNum].GetObjectType() != argExpr->type.dataType.GetObjectType() )
 			{
 				asASSERT( engine->ep.allowUnsafeReferences );
 				continue;
@@ -9766,7 +10111,7 @@ asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCand
 
 			// Don't allow a non-handle expression to be converted to a reference to a handle
 			if( desc->parameterTypes[paramNum].IsObjectHandle() &&
-				!argType->dataType.IsObjectHandle() )
+				!argExpr->type.dataType.IsObjectHandle() )
 			{
 				asASSERT( engine->ep.allowUnsafeReferences );
 				continue;
@@ -9774,7 +10119,7 @@ asUINT asCCompiler::MatchArgument(asCArray<int> &funcs, asCArray<asSOverloadCand
 
 			// Don't allow a value type to be converted
 			if( (desc->parameterTypes[paramNum].GetObjectType() && (desc->parameterTypes[paramNum].GetObjectType()->GetFlags() & asOBJ_VALUE)) &&
-				(desc->parameterTypes[paramNum].GetObjectType() != argType->dataType.GetObjectType()) )
+				(desc->parameterTypes[paramNum].GetObjectType() != argExpr->type.dataType.GetObjectType()) )
 			{
 				asASSERT( engine->ep.allowUnsafeReferences );
 				continue;
@@ -9813,6 +10158,9 @@ void asCCompiler::PrepareArgument2(asSExprContext *ctx, asSExprContext *arg, asC
 
 bool asCCompiler::CompileOverloadedDualOperator(asCScriptNode *node, asSExprContext *lctx, asSExprContext *rctx, asSExprContext *ctx)
 {
+	DetermineSingleFunc(lctx, node);
+	DetermineSingleFunc(rctx, node);
+
 	ctx->exprNode = node;
 
 	// What type of operator is it?
@@ -9982,6 +10330,19 @@ bool asCCompiler::CompileOverloadedDualOperator(asCScriptNode *node, asSExprCont
 
 	if( op )
 	{
+		if( builder->engine->ep.disallowValueAssignForRefType && 
+			lctx->type.dataType.GetObjectType() && (lctx->type.dataType.GetObjectType()->flags & asOBJ_REF) && !(lctx->type.dataType.GetObjectType()->flags & asOBJ_SCOPED) )
+		{
+			if( token == ttAssignment )
+				Error(TXT_DISALLOW_ASSIGN_ON_REF_TYPE, node);
+			else
+				Error(TXT_DISALLOW_COMPOUND_ASSIGN_ON_REF_TYPE, node);
+
+			// Set a dummy output
+			ctx->type.Set(lctx->type.dataType);
+			return true;
+		}
+
 		// TODO: Shouldn't accept const lvalue with the assignment operators
 
 		// Find the matching operator method
@@ -10042,7 +10403,7 @@ int asCCompiler::CompileOverloadedDualOperator2(asCScriptNode *node, const char 
 
 		// Which is the best matching function?
 		asCArray<asSOverloadCandidate> tempFuncs;
-		MatchArgument(funcs, tempFuncs, &rctx->type, 0);
+		MatchArgument(funcs, tempFuncs, rctx, 0);
 
 		// Find the lowest cost operator(s)
 		asCArray<int> ops;
@@ -10184,6 +10545,13 @@ void asCCompiler::MakeFunctionCall(asSExprContext *ctx, int funcId, asCObjectTyp
 
 int asCCompiler::CompileOperator(asCScriptNode *node, asSExprContext *lctx, asSExprContext *rctx, asSExprContext *ctx)
 {
+	// Don't allow any operators on expressions that take address of class method, but allow it on global functions
+	if( (lctx->methodName != "" && lctx->type.dataType.GetObjectType()) || (rctx->methodName != "" && rctx->type.dataType.GetObjectType()) )
+	{
+		Error(TXT_INVALID_OP_ON_METHOD, node);
+		return -1;
+	}
+
 	IsVariableInitialized(&lctx->type, node);
 	IsVariableInitialized(&rctx->type, node);
 
@@ -11506,6 +11874,9 @@ void asCCompiler::CompileOperatorOnHandles(asCScriptNode *node, asSExprContext *
 	ProcessPropertyGetAccessor(lctx, node);
 	ProcessPropertyGetAccessor(rctx, node);
 
+	DetermineSingleFunc(lctx, node);
+	DetermineSingleFunc(rctx, node);
+
 	// Make sure lctx doesn't end up with a variable used in rctx
 	if( lctx->type.isTemporary && rctx->bc.IsVarUsed(lctx->type.stackOffset) )
 	{
@@ -11916,6 +12287,7 @@ void asCCompiler::MergeExprBytecodeAndType(asSExprContext *before, asSExprContex
 	before->property_ref    = after->property_ref;
 	before->property_arg    = after->property_arg;
 	before->exprNode        = after->exprNode;
+	before->methodName      = after->methodName;
 
 	after->property_arg = 0;
 
