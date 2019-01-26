@@ -386,7 +386,7 @@ bool FOClient::Init()
         return false;
 
     // Scripts
-    if( !ReloadScripts() )
+    if( !ReloadScripts( true ) )
         refresh_cache = true;
 
     // Load interface
@@ -9722,7 +9722,7 @@ void FOClient::AnimFree( int res_type )
 
 #include "ScriptPragmas.h"
 
-bool FOClient::ReloadScripts()
+bool FOClient::ReloadScripts( bool from_init /* = false */ )
 {
     WriteLog( "Load scripts...\n" );
 
@@ -9736,7 +9736,8 @@ bool FOClient::ReloadScripts()
         !msg_script.Count( STR_INTERNAL_SCRIPT_MODULES + 1 ) )
     {
         WriteLog( "Main script section not found in MSG.\n" );
-        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        if( !from_init )
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 
@@ -9753,7 +9754,8 @@ bool FOClient::ReloadScripts()
     if( old )
     {
         WriteLog( "Old version of scripts.\n" );
-        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        if( !from_init )
+            AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
         return false;
     }
 

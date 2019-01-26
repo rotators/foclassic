@@ -438,7 +438,7 @@ public:
 /************************************************************************/
 /* Scripting                                                            */
 /************************************************************************/
-    bool        ReloadScripts();
+    bool        ReloadScripts( bool from_init = false );
     int         ScriptGetHitProc( CritterCl* cr, int hit_location );
     void        DrawIfaceLayer( uint layer );
     static bool PragmaCallbackCrData( const char* text );
