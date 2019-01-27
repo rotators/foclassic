@@ -95,6 +95,7 @@ if( WIN32 )
 endif()
 
 source_group( " "        REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
+source_group( "Addons"   REGULAR_EXPRESSION "^${AS_ADDONS_DIR}/" )
 source_group( "DataFile" REGULAR_EXPRESSION "^${CMAKE_CURRENT_LIST_DIR}/DataFile/" )
 source_group( "CMake"    REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 set_property( TARGET Shared PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )
