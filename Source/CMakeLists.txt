@@ -155,7 +155,7 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	Script.cpp
 	Script.h
 	ScriptBind.cpp
-	ScriptBind.hpp
+	ScriptBind.h
 	ScriptFunctions.cpp
 	ScriptFunctions.h
 	ScriptPragmas.cpp
@@ -173,7 +173,7 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 ##
 
 add_library( ScriptBindDummy STATIC "" )
-target_sources( ScriptBindDummy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ScriptBind.hpp PRIVATE ScriptBind.cpp )
+target_sources( ScriptBindDummy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ScriptBind.h PRIVATE ScriptBind.cpp )
 target_compile_definitions( ScriptBindDummy PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ScriptBindDummy PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ScriptBindDummy angelscript-preprocessor Shared )

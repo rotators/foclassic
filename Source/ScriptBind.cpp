@@ -6,7 +6,7 @@
 #include "GameOptions.h"
 #include "Log.h"
 #include "Random.h"
-#include "ScriptBind.hpp"
+#include "ScriptBind.h"
 
 // copy macros related to registration
 // redefined during dummy registration
@@ -196,12 +196,12 @@ bool ScriptBind::RegisterObjectType( asIScriptEngine* engine, const string& obje
     return BindSuccess;
 }
 
-bool ScriptBind::RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv  )
+bool ScriptBind::RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* objForThisCall /* = 0 */  )
 {
     if( !BindChecks( engine ) )
         return false;
 
-    int result = engine->RegisterObjectBehaviour( object.c_str(), behaviour, declaration.c_str(), function, callConv );
+    int result = engine->RegisterObjectBehaviour( object.c_str(), behaviour, declaration.c_str(), function, callConv, objForThisCall );
     if( result ) // function id
     {
         // TODO ScriptBind postprocess

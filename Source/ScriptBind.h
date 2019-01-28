@@ -18,7 +18,7 @@ namespace Script
     bool RegisterGlobalFunction( asIScriptEngine* engine, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* auxiliary = 0 );
 
     bool RegisterObjectType( asIScriptEngine* engine, const string& object, int byteSize, asDWORD flags );
-    bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+    bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* objForThisCall = 0 );
     bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
     bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 
@@ -34,7 +34,7 @@ namespace Script
         bool RegisterGlobalFunction( asIScriptEngine* engine, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* auxiliary = 0 );
 
         bool RegisterObjectType( asIScriptEngine* engine, const string& object, int byteSize, asDWORD flags );
-        bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
+        bool RegisterObjectBehaviour( asIScriptEngine* engine, const string& object, asEBehaviours behaviour, const string& declaration, const asSFuncPtr& function, asDWORD callConv, void* objForThisCall = 0 );
         bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
         bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 

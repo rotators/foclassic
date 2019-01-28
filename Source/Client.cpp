@@ -25,7 +25,7 @@
 #include "Network.h"
 #include "ResourceManager.h"
 #include "Script.h"
-#include "ScriptBind.hpp"
+#include "ScriptBind.h"
 #include "SinglePlayer.h"
 #include "SoundManager.h"
 #include "Thread.h"

@@ -17,7 +17,7 @@
 #include "Exception.h"
 #include "FileManager.h"
 #include "FileSystem.h"
-#include "ScriptBind.hpp"
+#include "ScriptBind.h"
 #include "ScriptPragmas.h"
 #include "Text.h"
 #include "Timer.h"
