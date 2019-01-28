@@ -280,10 +280,10 @@ int main( int argc, char* argv[] )
     ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( ScriptTarget ) );
 
     #pragma TODO("Script::DefineVersion()")
-    ScriptPreprocessor->Define( "__VERSION " + FOCLASSIC_VERSION );
-    ScriptPreprocessor->Define( "FOCLASSIC_STAGE " + FOCLASSIC_STAGE );
-    ScriptPreprocessor->Define( "FOCLASSIC_VERSION " + FOCLASSIC_VERSION );
-    ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION " + ANGELSCRIPT_VERSION );
+    ScriptPreprocessor->Define( "__VERSION", FOCLASSIC_VERSION_STRING );
+    ScriptPreprocessor->Define( "FOCLASSIC_STAGE", FOCLASSIC_STAGE_STRING );
+    ScriptPreprocessor->Define( "FOCLASSIC_VERSION", FOCLASSIC_VERSION_STRING );
+    ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION", std::to_string( (long long)(ANGELSCRIPT_VERSION) )); // make VS2010 happy
 
     ScriptPreprocessor->Define( "__ASCOMPILER" );
     ScriptPreprocessor->Define( "__" + ScriptTargetName[ScriptTarget] );
@@ -291,7 +291,7 @@ int main( int argc, char* argv[] )
     for( size_t i = 0; i < defines.size(); i++ )
         ScriptPreprocessor->Define( string( defines[i] ) );
     if( !run_func.empty() )
-        ScriptPreprocessor->Define( string( "Log __CompilerLog" ) );
+        ScriptPreprocessor->Define( "Log", "__CompilerLog" );
 
     Preprocessor::StringOutStream result, errors;
     int                           res;
