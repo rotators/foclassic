@@ -11,8 +11,7 @@ public:
     #ifdef FOCLASSIC_EXTENSION
     static ScriptArray& Create( const char* type )
     {
-        static int   typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
-        ScriptArray* scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( typeId );
+        ScriptArray* scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( std::string( type ).append( "[]" ).c_str() ) );
         return *scriptArray;
     }
 protected:
@@ -93,7 +92,7 @@ protected:
     int            elementSize;
     int            subTypeId;
 
-    virtual bool  Less( const void* a, const void* b, bool asc, asIScriptContext* ctx );
+    virtual bool  Less( const void* a, const void* b, bool asc, asIScriptContext* ctx, SArrayCache* cache );
     virtual void* GetArrayItemPointer( int index );
     virtual void* GetDataPointer( void* buffer );
     virtual void  Copy( void* dst, void* src );

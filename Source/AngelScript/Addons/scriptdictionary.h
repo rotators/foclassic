@@ -17,8 +17,7 @@ public:
     #ifdef FOCLASSIC_EXTENSION
     static ScriptDictionary& Create()
     {
-        static int        typeId = ASEngine->GetTypeIdByDecl( "dictionary" );
-        ScriptDictionary* scriptDictionary = (ScriptDictionary*)ASEngine->CreateScriptObject( typeId );
+        ScriptDictionary* scriptDictionary = (ScriptDictionary*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "dictionary" ) );
         return *scriptDictionary;
     }
 protected:

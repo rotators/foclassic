@@ -910,7 +910,7 @@ asCGlobalProperty *asCBuilder::GetGlobalProperty(const char *prop, asSNameSpace 
 #ifndef AS_NO_COMPILER
 	// Check properties being compiled now
 	sGlobalVariableDescription* desc = globVariables.GetFirst(ns, prop);
-	if( desc )
+	if( desc && !desc->isEnumValue )
 	{
 		if( isCompiled )     *isCompiled     = desc->isCompiled;
 		if( isPureConstant ) *isPureConstant = desc->isPureConstant;
@@ -1595,6 +1595,8 @@ int asCBuilder::RegisterClass(asCScriptNode *node, asCScriptCode *file, asSNameS
 	engine->scriptFunctions[st->beh.copy]->AddRef();
 	engine->scriptFunctions[st->beh.factory]->AddRef();
 	engine->scriptFunctions[st->beh.construct]->AddRef();
+	// TODO: weak: Should not do this if the class has been declared with noweak
+	engine->scriptFunctions[st->beh.getWeakRefFlag]->AddRef();
 	for( asUINT i = 1; i < st->beh.operators.GetLength(); i += 2 )
 		engine->scriptFunctions[st->beh.operators[i]]->AddRef();
 
@@ -2456,8 +2458,16 @@ void asCBuilder::CompileClasses()
 				for( asUINT d = 0; d < decl->objType->methods.GetLength(); d++ )
 				{
 					derivedFunc = GetFunctionDescription(decl->objType->methods[d]);
-					if( derivedFunc->IsSignatureEqual(baseFunc) )
+					if( derivedFunc->name == baseFunc->name &&
+						derivedFunc->IsSignatureExceptNameAndReturnTypeEqual(baseFunc) )
 					{
+						if( baseFunc->returnType != derivedFunc->returnType )
+						{
+							asCString msg;
+							msg.Format(TXT_DERIVED_METHOD_MUST_HAVE_SAME_RETTYPE_s, baseFunc->GetDeclaration());
+							WriteError(msg, decl->script, decl->node);
+						}
+
 						if( baseFunc->IsFinal() )
 						{
 							asCString msg;
@@ -4015,6 +4025,9 @@ int asCBuilder::RegisterVirtualProperty(asCScriptNode *node, asCScriptCode *file
 				RegisterScriptFunction(funcNode, file, objType, isInterface, isGlobalFunction, ns, false, false, name, returnType, paramNames, paramTypes, paramModifiers, defaultArgs, isConst, false, false, isPrivate, isOverride, isFinal, false);
 			else
 			{
+				// Free the funcNode as it won't be used
+				if( funcNode ) funcNode->Destroy(engine);
+
 				// Should validate that the function really exists in the class/interface
 				bool found = false;
 				for( asUINT n = 0; n < objType->methods.GetLength(); n++ )
@@ -4406,6 +4419,16 @@ asCDataType asCBuilder::CreateDataTypeFromNode(asCScriptNode *node, asCScriptCod
 
 								asCDataType subType = CreateDataTypeFromNode(n, file, engine->nameSpaces[0], false, module ? 0 : ot);
 								subTypes.PushLast(subType);
+
+								if( subType.IsReadOnly() )
+								{
+									asCString msg;
+									msg.Format(TXT_TMPL_SUBTYPE_MUST_NOT_BE_READ_ONLY);
+									WriteError(msg, file, n);
+
+									// Return a dummy
+									return asCDataType::CreatePrimitive(ttInt, false);
+								}
 							}
 
 							if( subTypes.GetLength() != ot->templateSubTypes.GetLength() )

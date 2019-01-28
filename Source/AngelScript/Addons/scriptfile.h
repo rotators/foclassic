@@ -20,8 +20,7 @@ public:
     #ifdef FOCLASSIC_EXTENSION
     static ScriptFile& Create()
     {
-        static int  typeId = ASEngine->GetTypeIdByDecl( "file" );
-        ScriptFile* scriptFile = (ScriptFile*)ASEngine->CreateScriptObject( typeId );
+        ScriptFile* scriptFile = (ScriptFile*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "file" ) );
         return *scriptFile;
     }
 protected:

@@ -4265,7 +4265,17 @@ int asCCompiler::PerformAssignment(asCTypeInfo *lvalue, asCTypeInfo *rvalue, asC
 		if( beh->copy )
 		{
 			// Call the copy operator
-			bc->Call(asBC_CALLSYS, (asDWORD)beh->copy, 2*AS_PTR_SIZE);
+			asCScriptFunction *descr = builder->GetFunctionDescription(beh->copy);
+			if( descr->funcType == asFUNC_VIRTUAL )
+				bc->Call(asBC_CALLINTF, beh->copy, 2*AS_PTR_SIZE);
+			else if( descr->funcType == asFUNC_SCRIPT )
+				bc->Call(asBC_CALL, beh->copy, 2*AS_PTR_SIZE);
+			else
+			{
+				asASSERT( descr->funcType == asFUNC_SYSTEM );
+				bc->Call(asBC_CALLSYS, beh->copy, 2*AS_PTR_SIZE);
+			}
+			asASSERT( descr->returnType.IsReference() );
 			bc->Instr(asBC_PshRPtr);
 		}
 		else
@@ -5098,6 +5108,9 @@ asUINT asCCompiler::ImplicitConvObjectRef(asSExprContext *ctx, const asCDataType
 			if( pos >= 0 )
 			{
 				asCString nsName = ctx->methodName.SubString(0, pos+2);
+				// Trim off the last ::
+				if( nsName.GetLength() > 2 ) 
+					nsName.SetLength(nsName.GetLength()-2);
 				ns = DetermineNameSpace(nsName);
 				name = ctx->methodName.SubString(pos+2);
 			}
@@ -5670,7 +5683,7 @@ asUINT asCCompiler::ImplicitConvPrimitiveToObject(asSExprContext *ctx, const asC
 		return cost;
 	}
 
-	// TODO: clean up: This part is similar to CompileCosntructCall(). It should be put in a common function
+	// TODO: clean up: This part is similar to CompileConstructCall(). It should be put in a common function
 
 	bool onHeap = true;
 
@@ -10871,13 +10884,17 @@ void asCCompiler::CompileMathOperator(asCScriptNode *node, asSExprContext *lctx,
 			// Merge the operands in the different order so that they are evaluated correctly
 			MergeExprBytecode(ctx, rctx);
 			MergeExprBytecode(ctx, lctx);
+
+			// We must not process the deferred parameters yet, as
+			// it may overwrite the lvalue kept in the register
 		}
 		else
 		{
 			MergeExprBytecode(ctx, lctx);
 			MergeExprBytecode(ctx, rctx);
+
+			ProcessDeferredParams(ctx);
 		}
-		ProcessDeferredParams(ctx);
 
 		asEBCInstr instruction = asBC_ADDi;
 		if( lctx->type.dataType.IsIntegerType() ||
