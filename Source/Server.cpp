@@ -19,7 +19,7 @@
 #include "Random.h"
 #include "Scores.h"
 #include "Script.h"
-#include "ScriptBind.hpp"
+#include "ScriptBind.h"
 #include "Server.h"
 #include "SinglePlayer.h"
 #include "Text.h"
