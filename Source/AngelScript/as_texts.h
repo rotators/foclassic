@@ -97,7 +97,7 @@
 #define TXT_FAILED_TO_COMPILE_DEF_ARG_d_IN_FUNC_s "Failed while compiling default arg for parameter %d in function '%s'"
 #define TXT_FAILED_TO_CREATE_TEMP_OBJ     "Previous error occurred while attempting to create a temporary copy of object"
 #define TXT_FOUND_MULTIPLE_ENUM_VALUES    "Found multiple matching enum values"
-#define TXT_FUNCTION_ALREADY_EXIST        "A function with the same name and parameters already exist"
+#define TXT_FUNCTION_ALREADY_EXIST        "A function with the same name and parameters already exists"
 #define TXT_FUNCTION_s_NOT_FOUND          "Function '%s' not found"
 
 #define TXT_GET_SET_ACCESSOR_TYPE_MISMATCH_FOR_s "The property '%s' has mismatching types for the get and set accessors"
@@ -230,6 +230,7 @@
 #define TXT_UNUSED_SCRIPT_NODE            "Unused script node"
 
 #define TXT_VALUE_TOO_LARGE_FOR_TYPE      "Value is too large for data type"
+#define TXT_VOID_CANT_BE_OPERAND          "Void cannot be an operand in expressions"
 
 #define TXT_WARNINGS_TREATED_AS_ERROR     "Warnings are treated as errors by the application"
 #define TXT_WHILE_PARSING_ARG_LIST        "While parsing argument list"
@@ -247,6 +248,8 @@
 // Engine message
 
 #define TXT_AUTOHANDLE_CANNOT_BE_USED_FOR_NOCOUNT     "Autohandles cannot be used with types that have been registered with NOCOUNT"
+#define TXT_AUTOHANDLE_IS_NOT_SUPPORTED_FOR_TEMPLATE_FACTORY "Autohandles are not supported for template factory"
+#define TXT_FIRST_PARAM_MUST_BE_REF_FOR_TEMPLATE_FACTORY "First parameter to template factory must be a reference. This will be used to pass the object type of the template"
 #define TXT_INVALID_CONFIGURATION                     "Invalid configuration. Verify the registered application interface."
 #define TXT_VALUE_TYPE_MUST_HAVE_SIZE                 "A value type must be registered with a non-zero size"
 #define TXT_TYPE_s_IS_MISSING_BEHAVIOURS              "Type '%s' is missing behaviours"

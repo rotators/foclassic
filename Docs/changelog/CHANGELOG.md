@@ -17,7 +17,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - temporary changes
     - warnings during scripts compilation are treated as errors
 - additional notes
-    - as this release is quite big (many, many changes in script engine), it has been split into smaller parts (marked with git tags) which should be easier to handle for everyone
+    - as this release is quite big (many, many changes in script engine), it has been splitted into smaller parts (marked with git tags) which should be easier to handle for everyone
     - table below contains links to official AngelScript announcements (_Version_) as well as script engine repository (_Revision_); other than that, it's recommended to read [more detailed changelog](http://angelcode.com/angelscript/changes.php?ver=2) - especially sections _script language_ and _library interface_ (in case of extensions workin with _angelscript.h_)
     - for long-running servers, it's recommended to update engine tag-by-tag; links to compiled binaries are provided (note that AppVeyor keeps artifacts for about 6 months)
 

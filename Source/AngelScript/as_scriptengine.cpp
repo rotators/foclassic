@@ -1935,13 +1935,30 @@ int asCScriptEngine::RegisterBehaviourToObjectType(asCObjectType *objectType, as
 
 		// TODO: Verify that the same factory function hasn't been registered already
 
+		// Template factories don't support autohandles as the real type is not known when calling the system function
+		if( objectType->flags & asOBJ_TEMPLATE )
+		{
+			bool hasAutoHandles = false;
+			if( internal.returnAutoHandle )
+				hasAutoHandles = true;
+
+			for( asUINT n = 0; !hasAutoHandles && n < internal.paramAutoHandles.GetLength(); n++ )
+				if( internal.paramAutoHandles[n] )
+					hasAutoHandles = true;
+
+			if( hasAutoHandles )
+			{
+				WriteMessage("", 0, 0, asMSGTYPE_ERROR, TXT_AUTOHANDLE_IS_NOT_SUPPORTED_FOR_TEMPLATE_FACTORY);
+				return ConfigError(asNOT_SUPPORTED, "RegisterObjectBehaviour", objectType->name.AddressOf(), decl);
+			}
+		}
+
 		// The templates take a hidden parameter with the object type
 		if( (objectType->flags & asOBJ_TEMPLATE) &&
 			(func.parameterTypes.GetLength() == 0 ||
 			 !func.parameterTypes[0].IsReference()) )
 		{
-			// TODO: Give proper error message that explain that the first parameter is expected to be a reference
-			//       The library should try to avoid having to read the manual as much as possible.
+			WriteMessage("", 0, 0, asMSGTYPE_ERROR, TXT_FIRST_PARAM_MUST_BE_REF_FOR_TEMPLATE_FACTORY);
 			return ConfigError(asINVALID_DECLARATION, "RegisterObjectBehaviour", objectType->name.AddressOf(), decl);
 		}
 
@@ -3402,6 +3419,7 @@ asCScriptFunction *asCScriptEngine::GenerateTemplateFactoryStub(asCObjectType *t
 	}
 
 	func->funcType         = asFUNC_SCRIPT;
+	func->AllocateScriptFunctionData();
 	func->name             = "factstub";
 	func->id               = GetNextScriptFunctionId();
 	func->returnType       = asCDataType::CreateObjectHandle(ot, false);
@@ -3415,7 +3433,7 @@ asCScriptFunction *asCScriptEngine::GenerateTemplateFactoryStub(asCObjectType *t
 		func->parameterTypes[p-1] = DetermineTypeForTemplate(factory->parameterTypes[p], templateType, ot);
 		func->inOutFlags[p-1] = factory->inOutFlags[p];
 	}
-	func->objVariablesOnHeap = 0;
+	func->scriptData->objVariablesOnHeap = 0;
 
 	SetScriptFunction(func);
 
@@ -3427,8 +3445,8 @@ asCScriptFunction *asCScriptEngine::GenerateTemplateFactoryStub(asCObjectType *t
 	if( ep.includeJitInstructions )
 		bcLength += asBCTypeSize[asBCInfo[asBC_JitEntry].type];
 
-	func->byteCode.SetLength(bcLength);
-	asDWORD *bc = func->byteCode.AddressOf();
+	func->scriptData->byteCode.SetLength(bcLength);
+	asDWORD *bc = func->scriptData->byteCode.AddressOf();
 
 	if( ep.includeJitInstructions )
 	{
@@ -3447,7 +3465,7 @@ asCScriptFunction *asCScriptEngine::GenerateTemplateFactoryStub(asCObjectType *t
 	*(((asWORD*)bc)+1) = (asWORD)func->GetSpaceNeededForArguments();
 
 	func->AddReferences();
-	func->stackNeeded = AS_PTR_SIZE;
+	func->scriptData->stackNeeded = AS_PTR_SIZE;
 
 	// Tell the virtual machine not to clean up the object on exception
 	func->dontCleanUpOnException = true;
@@ -3503,7 +3521,6 @@ bool asCScriptEngine::GenerateNewTemplateFunction(asCObjectType *templateType, a
 	func2->inOutFlags = func->inOutFlags;
 	func2->isReadOnly = func->isReadOnly;
 	func2->objectType = ot;
-	func2->stackNeeded = func->stackNeeded;
 	func2->sysFuncIntf = asNEW(asSSystemFunctionInterface)(*func->sysFuncIntf);
 
 	SetScriptFunction(func2);
