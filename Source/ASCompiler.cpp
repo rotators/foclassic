@@ -283,7 +283,7 @@ int main( int argc, char* argv[] )
     ScriptPreprocessor->Define( "__VERSION", FOCLASSIC_VERSION_STRING );
     ScriptPreprocessor->Define( "FOCLASSIC_STAGE", FOCLASSIC_STAGE_STRING );
     ScriptPreprocessor->Define( "FOCLASSIC_VERSION", FOCLASSIC_VERSION_STRING );
-    ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION", std::to_string( (long long)(ANGELSCRIPT_VERSION) )); // make VS2010 happy
+    ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION", std::to_string( (long long)(ANGELSCRIPT_VERSION) ) ); // make VS2010 happy
 
     ScriptPreprocessor->Define( "__ASCOMPILER" );
     ScriptPreprocessor->Define( "__" + ScriptTargetName[ScriptTarget] );
