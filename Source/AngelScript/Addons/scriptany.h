@@ -7,9 +7,10 @@ class ScriptAny
 {
 public:
     #ifdef FOCLASSIC_EXTENSION
-    static ScriptAny& Create()
+    static ScriptAny& Create() // TODO asIScriptEngine* engine
     {
-        ScriptAny* scriptAny = (ScriptAny*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "any" ) );
+        static int typeId = ASEngine->GetTypeIdByDecl( "any" );
+        ScriptAny* scriptAny = (ScriptAny*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         return *scriptAny;
     }
 protected:

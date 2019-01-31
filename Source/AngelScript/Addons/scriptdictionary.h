@@ -15,9 +15,10 @@ class ScriptDictionary
 {
 public:
     #ifdef FOCLASSIC_EXTENSION
-    static ScriptDictionary& Create()
+    static ScriptDictionary& Create() // TODO asIScriptEngine* engine
     {
-        ScriptDictionary* scriptDictionary = (ScriptDictionary*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "dictionary" ) );
+        static int        typeId = ASEngine->GetTypeIdByDecl( "dictionary" );
+        ScriptDictionary* scriptDictionary = (ScriptDictionary*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         return *scriptDictionary;
     }
 protected:

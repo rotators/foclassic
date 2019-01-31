@@ -18,9 +18,10 @@ class ScriptFile
 {
 public:
     #ifdef FOCLASSIC_EXTENSION
-    static ScriptFile& Create()
+    static ScriptFile& Create() // TODO asIScriptEngine* engine
     {
-        ScriptFile* scriptFile = (ScriptFile*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "file" ) );
+        static int  typeId = ASEngine->GetTypeIdByDecl( "file" );
+        ScriptFile* scriptFile = (ScriptFile*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         return *scriptFile;
     }
 protected:

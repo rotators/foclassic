@@ -10,12 +10,13 @@ class ScriptString
 {
 public:
     #ifdef FOCLASSIC_EXTENSION
-    static ScriptString& Create( const char* str = NULL )
+    static ScriptString& Create( const char* str = NULL ) // TODO asIScriptEngine* engine
     {
-        ScriptString* scriptStr = (ScriptString*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeByName( "string" ) );
+        static int    typeId = ASEngine->GetTypeIdByDecl( "string" );
+        ScriptString* scriptString = (ScriptString*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         if( str )
-            scriptStr->assign( str );
-        return *scriptStr;
+            scriptString->assign( str );
+        return *scriptString;
     }
 protected:
     #endif

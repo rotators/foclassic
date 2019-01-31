@@ -9,10 +9,10 @@ class ScriptArray
 {
 public:
     #ifdef FOCLASSIC_EXTENSION
-    static ScriptArray& Create( const char* type )
+    static ScriptArray& Create( const char* type ) // TODO asIScriptEngine* engine
     {
-        asIObjectType* ot = ASEngine->GetObjectTypeByName( std::string( type ).append( "[]" ).c_str() );
-        ScriptArray*   scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( ot );
+        static int   typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
+        ScriptArray* scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         return *scriptArray;
     }
 protected:
