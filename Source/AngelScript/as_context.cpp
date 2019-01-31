@@ -207,6 +207,9 @@ bool asCContext::IsNested(asUINT *nestCount) const
 		}
 	}
 
+	if( nestCount && *nestCount > 0 )
+		return true;
+
 	return false;
 }
 
@@ -2531,6 +2534,8 @@ void asCContext::ExecuteNext()
 				{
 					if( beh->destruct )
 						m_engine->CallObjectMethod((void*)(asPWORD)*a, beh->destruct);
+					else if( objType->flags & asOBJ_LIST_PATTERN )
+						m_engine->DestroyList((asBYTE*)(asPWORD)*a, objType);
 
 					m_engine->CallFree((void*)(asPWORD)*a);
 				}
@@ -3421,7 +3426,7 @@ void asCContext::ExecuteNext()
 				return;
 			}
 			else if( divider == -1 )
-            {
+			{
 				// Need to check if the value that is divided is 1<<63
 				// as dividing it with -1 will cause an overflow exception
 				if( *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) == (asINT64(1)<<63) )
@@ -3435,7 +3440,7 @@ void asCContext::ExecuteNext()
 					SetInternalException(TXT_DIVIDE_OVERFLOW);
 					return;
 				}
-            }
+			}
 
 			*(asINT64*)(l_fp - asBC_SWORDARG0(l_bc)) = *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) / divider;
 		}
@@ -3457,7 +3462,7 @@ void asCContext::ExecuteNext()
 				return;
 			}
 			else if( divider == -1 )
-            {
+			{
 				// Need to check if the value that is divided is 1<<63
 				// as dividing it with -1 will cause an overflow exception
 				if( *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) == (asINT64(1)<<63) )
@@ -3471,7 +3476,7 @@ void asCContext::ExecuteNext()
 					SetInternalException(TXT_DIVIDE_OVERFLOW);
 					return;
 				}
-            }
+			}
 			*(asINT64*)(l_fp - asBC_SWORDARG0(l_bc)) = *(asINT64*)(l_fp - asBC_SWORDARG1(l_bc)) % divider;
 		}
 		l_bc += 2;
@@ -3881,12 +3886,67 @@ void asCContext::ExecuteNext()
 			l_bc += 2;
 		break;
 
+	case asBC_AllocMem:
+		// Allocate a buffer and store the pointer in the local variable
+		{
+			// TODO: runtime optimize: As the list buffers are going to be short lived, it may be interesting
+			//                         to use a memory pool to avoid reallocating the memory all the time
+
+			asUINT size = asBC_DWORDARG(l_bc);
+			asBYTE **var = (asBYTE**)(l_fp - asBC_SWORDARG0(l_bc));
+			*var = asNEWARRAY(asBYTE, size);
+
+			// Clear the buffer for the pointers that will be placed in it
+			memset(*var, 0, size);
+		}
+		l_bc += 2;
+		break;
+
+	case asBC_SetListSize:
+		{
+			// Set the size element in the buffer 
+			asBYTE *var = *(asBYTE**)(l_fp - asBC_SWORDARG0(l_bc));
+			asUINT off  = asBC_DWORDARG(l_bc);
+			asUINT size = asBC_DWORDARG(l_bc+1);
+
+			asASSERT( var );
+
+			*(asUINT*)(var+off) = size;
+		}
+		l_bc += 3;
+		break;
+
+	case asBC_PshListElmnt:
+		{
+			// Push the pointer to the list element on the stack
+			// In essence it does the same as PSF, RDSPtr, ADDSi
+			asBYTE *var = *(asBYTE**)(l_fp - asBC_SWORDARG0(l_bc));
+			asUINT off = asBC_DWORDARG(l_bc);
+
+			asASSERT( var );
+			
+			l_sp -= AS_PTR_SIZE;
+			*(asPWORD*)l_sp = asPWORD(var+off);
+		}
+		l_bc += 2;
+		break;
+
+	case asBC_SetListType:
+		{
+			// Set the type id in the buffer 
+			asBYTE *var = *(asBYTE**)(l_fp - asBC_SWORDARG0(l_bc));
+			asUINT off  = asBC_DWORDARG(l_bc);
+			asUINT type = asBC_DWORDARG(l_bc+1);
+
+			asASSERT( var );
+
+			*(asUINT*)(var+off) = type;
+		}
+		l_bc += 3;
+		break;
+
 	// Don't let the optimizer optimize for size,
 	// since it requires extra conditions and jumps
-	case 189: l_bc = (asDWORD*)189; break;
-	case 190: l_bc = (asDWORD*)190; break;
-	case 191: l_bc = (asDWORD*)191; break;
-	case 192: l_bc = (asDWORD*)192; break;
 	case 193: l_bc = (asDWORD*)193; break;
 	case 194: l_bc = (asDWORD*)194; break;
 	case 195: l_bc = (asDWORD*)195; break;
@@ -4401,6 +4461,8 @@ void asCContext::CleanStackFrame()
 					{
 						if( beh->destruct )
 							m_engine->CallObjectMethod((void*)*(asPWORD*)&m_regs.stackFramePointer[-pos], beh->destruct);
+						else if( m_currentFunction->scriptData->objVariableTypes[n]->flags & asOBJ_LIST_PATTERN )
+							m_engine->DestroyList((asBYTE*)*(asPWORD*)&m_regs.stackFramePointer[-pos], m_currentFunction->scriptData->objVariableTypes[n]);
 
 						// Free the memory
 						m_engine->CallFree((void*)*(asPWORD*)&m_regs.stackFramePointer[-pos]);
@@ -4720,12 +4782,12 @@ const char *asCContext::GetVarName(asUINT varIndex, asUINT stackLevel)
 }
 
 // interface
-const char *asCContext::GetVarDeclaration(asUINT varIndex, asUINT stackLevel)
+const char *asCContext::GetVarDeclaration(asUINT varIndex, asUINT stackLevel, bool includeNamespace)
 {
 	asIScriptFunction *func = GetFunction(stackLevel);
 	if( func == 0 ) return 0;
 
-	return func->GetVarDecl(varIndex);
+	return func->GetVarDecl(varIndex, includeNamespace);
 }
 
 // interface

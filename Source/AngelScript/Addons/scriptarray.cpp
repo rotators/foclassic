@@ -48,6 +48,22 @@ static ScriptArray* ScriptArrayFactory2( asIObjectType* ot, asUINT length )
     return a;
 }
 
+static ScriptArray* ScriptArrayListFactory( asIObjectType* ot, void* initList )
+{
+    ScriptArray* a = new ScriptArray( ot, initList );
+
+    // It's possible the constructor raised a script exception, in which case we
+    // need to free the memory and return null instead, else we get a memory leak.
+    asIScriptContext* ctx = asGetActiveContext();
+    if( ctx && ctx->GetState() == asEXECUTION_EXCEPTION )
+    {
+        a->Release();
+        return 0;
+    }
+
+    return a;
+}
+
 static ScriptArray* ScriptArrayFactoryDefVal( asIObjectType* ot, asUINT length, void* defVal )
 {
     ScriptArray* a = new ScriptArray( length, defVal, ot );
@@ -66,7 +82,7 @@ static ScriptArray* ScriptArrayFactoryDefVal( asIObjectType* ot, asUINT length, 
 
 static ScriptArray* ScriptArrayFactory( asIObjectType* ot )
 {
-    return ScriptArrayFactory2( ot, 0 );
+    return ScriptArrayFactory2( ot, asUINT( 0 ) );
 }
 
 // This optional callback is called when the template type is first used by the compiler.
@@ -192,7 +208,7 @@ static void RegisterScriptArray_Native( asIScriptEngine* engine )
     assert( r >= 0 );
 
     // Register the factory that will be used for initialization lists
-    r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_LIST_FACTORY, "array<T>@ f(int&in, uint)", asFUNCTIONPR( ScriptArrayFactory2, (asIObjectType*, asUINT), ScriptArray* ), asCALL_CDECL );
+    r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_LIST_FACTORY, "array<T>@ f(int&in type, int&in list) {repeat T}", asFUNCTIONPR( ScriptArrayListFactory, (asIObjectType*, void*), ScriptArray* ), asCALL_CDECL );
     assert( r >= 0 );
 
     // The memory management methods
@@ -315,6 +331,93 @@ void ScriptArray::Assign( const ScriptArray& other )
         // Copy the value of each element
         CopyBuffer( buffer, other.buffer );
     }
+}
+
+ScriptArray::ScriptArray( asIObjectType* ot, void* buf )
+{
+    refCount = 1;
+    gcFlag = false;
+    objType = ot;
+    objType->AddRef();
+    buffer = 0;
+
+    Precache();
+
+    asIScriptEngine* engine = ot->GetEngine();
+
+    // Determine element size
+    if( subTypeId & asTYPEID_MASK_OBJECT )
+        elementSize = sizeof(asPWORD);
+    else
+        elementSize = engine->GetSizeOfPrimitiveType( subTypeId );
+
+    // Determine the initial size from the buffer
+    asUINT length = *(asUINT*)buf;
+
+    // Make sure the array size isn't too large for us to handle
+    if( !CheckMaxSize( length ) )
+    {
+        // Don't continue with the initialization
+        return;
+    }
+
+    // Copy the values of the array elements from the buffer
+    if( (ot->GetSubTypeId() & asTYPEID_MASK_OBJECT) == 0 )
+    {
+        CreateBuffer( &buffer, length );
+
+        // Copy the values of the primitive type into the internal buffer
+        memcpy( At( 0 ), ( ( (asUINT*)buf ) + 1 ), length * elementSize );
+    }
+    else if( ot->GetSubTypeId() & asTYPEID_OBJHANDLE )
+    {
+        CreateBuffer( &buffer, length );
+
+        // Copy the handles into the internal buffer
+        memcpy( At( 0 ), ( ( (asUINT*)buf ) + 1 ), length * elementSize );
+
+        // With object handles it is safe to clear the memory in the received buffer
+        // instead of increasing the ref count. It will save time both by avoiding the
+        // call the increase ref, and also relieve the engine from having to release
+        // its references too
+        memset( ( ( (asUINT*)buf ) + 1 ), 0, length * elementSize );
+    }
+    else if( ot->GetSubType()->GetFlags() & asOBJ_REF )
+    {
+        // Only allocate the buffer, but not the objects
+        subTypeId |= asTYPEID_OBJHANDLE;
+        CreateBuffer( &buffer, length );
+        subTypeId &= ~asTYPEID_OBJHANDLE;
+
+        // Copy the handles into the internal buffer
+        memcpy( buffer->data, ( ( (asUINT*)buf ) + 1 ), length * elementSize );
+
+        // For ref types we can do the same as for handles, as they are
+        // implicitly stored as handles.
+        memset( ( ( (asUINT*)buf ) + 1 ), 0, length * elementSize );
+    }
+    else
+    {
+        // TODO: Optimize by calling the copy constructor of the object instead of
+        //       constructing with the default constructor and then assigning the value
+        // TODO: With C++11 ideally we should be calling the move constructor, instead
+        //       of the copy constructor as the engine will just discard the objects in the
+        //       buffer afterwards.
+        CreateBuffer( &buffer, length );
+
+        // For value types we need to call the opAssign for each individual object
+        for( asUINT n = 0; n < length; n++ )
+        {
+            void*   obj = At( n );
+            asBYTE* srcObj = (asBYTE*)buf;
+            srcObj += 4 + n * ot->GetSubType()->GetSize();
+            engine->AssignScriptObject( obj, srcObj, ot->GetSubType() );
+        }
+    }
+
+    // Notify the GC of the successful creation
+    if( objType->GetFlags() & asOBJ_GC )
+        objType->GetEngine()->NotifyGarbageCollectorOfNewObject( this, objType );
 }
 
 ScriptArray::ScriptArray( asUINT length, asIObjectType* ot )
@@ -469,6 +572,9 @@ void ScriptArray::Reserve( asUINT maxElements )
     if( maxElements <= buffer->maxElements )
         return;
 
+    if( !CheckMaxSize( maxElements ) )
+        return;
+
     // Allocate memory for the buffer
     ArrayBuffer* newBuffer;
     #if defined (__S3E__)    // Marmalade doesn't understand (nothrow)
@@ -500,11 +606,8 @@ void ScriptArray::Reserve( asUINT maxElements )
 
 void ScriptArray::Resize( asUINT numElements )
 {
-    if( numElements & 0x80000000 )
-    {
-        CheckMaxSize( numElements );
+    if( !CheckMaxSize( numElements ) )
         return;
-    }
 
     Resize( (int)numElements - (int)buffer->numElements, (asUINT) - 1 );
 }
@@ -954,6 +1057,7 @@ bool ScriptArray::operator==( const ScriptArray& other ) const
         }
 
     if( cmpContext )
+    {
         if( isNested )
         {
             asEContextState state = cmpContext->GetState();
@@ -963,6 +1067,7 @@ bool ScriptArray::operator==( const ScriptArray& other ) const
         }
         else
             cmpContext->Release();
+    }
 
     return isEqual;
 }
@@ -1155,6 +1260,7 @@ int ScriptArray::Find( asUINT index, void* value ) const
     }
 
     if( cmpContext )
+    {
         if( isNested )
         {
             asEContextState state = cmpContext->GetState();
@@ -1164,6 +1270,7 @@ int ScriptArray::Find( asUINT index, void* value ) const
         }
         else
             cmpContext->Release();
+    }
 
     return ret;
 }
@@ -1328,6 +1435,7 @@ void ScriptArray::Sort( asUINT index, asUINT count, bool asc )
     }
 
     if( cmpContext )
+    {
         if( isNested )
         {
             asEContextState state = cmpContext->GetState();
@@ -1337,6 +1445,7 @@ void ScriptArray::Sort( asUINT index, asUINT count, bool asc )
         }
         else
             cmpContext->Release();
+    }
 }
 
 // internal
@@ -1464,7 +1573,7 @@ void ScriptArray::Precache()
 
                 if( (flags & asTM_INREF) )
                 {
-                    if( (paramTypeId & asTYPEID_OBJHANDLE) || mustBeConst && !(flags & asTM_CONST) )
+                    if( (paramTypeId & asTYPEID_OBJHANDLE) || (mustBeConst && !(flags & asTM_CONST) ) )
                         continue;
                 }
                 else if( paramTypeId & asTYPEID_OBJHANDLE )
@@ -1585,6 +1694,14 @@ static void ScriptArrayFactory2_Generic( asIScriptGeneric* gen )
     asUINT length = gen->GetArgDWord( 1 );
 
     *(ScriptArray**)gen->GetAddressOfReturnLocation() = ScriptArrayFactory2( ot, length );
+}
+
+static void ScriptArrayListFactory_Generic( asIScriptGeneric* gen )
+{
+    asIObjectType* ot = *(asIObjectType**)gen->GetAddressOfArg( 0 );
+    void* buf = gen->GetArgAddress( 1 );
+
+    *(ScriptArray**)gen->GetAddressOfReturnLocation() = ScriptArrayListFactory( ot, buf );
 }
 
 static void ScriptArrayFactoryDefVal_Generic( asIScriptGeneric* gen )
@@ -1792,7 +1909,8 @@ static void RegisterScriptArray_Generic( asIScriptEngine* engine )
     assert( r >= 0 );
     r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_FACTORY, "array<T>@ f(int&in, uint, const T &in)", asFUNCTION( ScriptArrayFactoryDefVal_Generic ), asCALL_GENERIC );
     assert( r >= 0 );
-    r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_LIST_FACTORY, "array<T>@ f(int&in, uint)", asFUNCTION( ScriptArrayFactory2_Generic ), asCALL_GENERIC );
+    r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_LIST_FACTORY, "array<T>@ f(int&in, int&in) {repeat T}", asFUNCTION( ScriptArrayListFactory_Generic ), asCALL_GENERIC );
+    assert( r >= 0 );
     assert( r >= 0 );
     r = engine->RegisterObjectBehaviour( "array<T>", asBEHAVE_ADDREF, "void f()", asFUNCTION( ScriptArrayAddRef_Generic ), asCALL_GENERIC );
     assert( r >= 0 );

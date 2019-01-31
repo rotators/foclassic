@@ -25,6 +25,7 @@ protected:
 
     ScriptDictionary();
     ScriptDictionary( const ScriptDictionary& );
+    ScriptDictionary( asBYTE* buffer );
     ScriptDictionary( asIScriptEngine* engine );
 
 public:
@@ -94,6 +95,7 @@ protected:
     // Our properties
     asIScriptEngine* engine;
     mutable int      refCount;
+    mutable bool     gcFlag;
 
     // TODO: optimize: Use C++11 std::unordered_map instead
     std::map<std::string, valueStruct> dict;

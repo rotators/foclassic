@@ -47,7 +47,6 @@
 #include "as_datatype.h"
 #include "as_objecttype.h"
 #include "as_module.h"
-#include "as_restore.h"
 #include "as_callfunc.h"
 #include "as_configgroup.h"
 #include "as_memory.h"
@@ -61,13 +60,6 @@ class asCContext;
 
 // TODO: import: Remove this when import is removed
 struct sBindInfo;
-
-// TODO: DiscardModule should take an optional pointer to asIScriptModule instead of module name. If null, nothing is done.
-
-// TODO: Should have a CreateModule/GetModule instead of just GetModule with parameters.
-
-// TODO: Should allow enumerating modules, in case they have not been named.
-
 
 class asCScriptEngine : public asIScriptEngine
 {
@@ -154,6 +146,8 @@ public:
 	// Script modules
 	virtual asIScriptModule *GetModule(const char *module, asEGMFlags flag);
 	virtual int              DiscardModule(const char *module);
+	virtual asUINT           GetModuleCount() const;
+	virtual asIScriptModule *GetModuleByIndex(asUINT index) const;
 
 	// Script functions
 	virtual asIScriptFunction *GetFunctionById(int funcId) const;
@@ -269,7 +263,11 @@ public:
 
 	int CreateContext(asIScriptContext **context, bool isInternal);
 
-	asCObjectType *GetObjectType(const char *type, asSNameSpace *ns);
+	asCObjectType *GetObjectType(const char *type, asSNameSpace *ns) const;
+
+	asCObjectType *GetListPatternType(int listPatternFuncId);
+	void DestroyList(asBYTE *buffer, const asCObjectType *listPatternType);
+	void DestroySubList(asBYTE *&buffer, asSListPatternNode *&patternNode);
 
 	int AddBehaviourFunction(asCScriptFunction &func, asSSystemFunctionInterface &internal);
 
@@ -344,7 +342,12 @@ public:
 	asCArray<asCObjectType *>      templateSubTypes;
 
 	// Store information about template types
+	// This list will contain all instances of templates, both registered specialized 
+	// types and those automacially instanciated from scripts
 	asCArray<asCObjectType *>      templateTypes;
+
+	// Store information about list patterns
+	asCArray<asCObjectType *>      listPatternTypes;
 
 	// Stores all global properties, both those registered by application, and those declared by scripts.
 	// The id of a global property is the index in this array.
@@ -377,8 +380,8 @@ public:
 
 	// Stores script declared object types
 	asCArray<asCObjectType *> classTypes;
-	// This array stores the template instances types, that have been generated from template types
-	asCArray<asCObjectType *> templateInstanceTypes;
+	// This array stores the template instances types that have been automatically generated from template types
+	asCArray<asCObjectType *> generatedTemplateTypes;
 	// Stores the funcdefs
 	asCArray<asCScriptFunction *> funcDefs;
 
@@ -421,7 +424,7 @@ public:
 	asCArray<asPWORD>       userData;
 
 	struct SEngineClean { asPWORD type; asCLEANENGINEFUNC_t cleanFunc; };
-	asCArray<SEngineClean> cleanEngineFuncs;
+	asCArray<SEngineClean>  cleanEngineFuncs;
 	asCLEANMODULEFUNC_t     cleanModuleFunc;
 	asCLEANCONTEXTFUNC_t    cleanContextFunc;
 	asCLEANFUNCTIONFUNC_t   cleanFunctionFunc;

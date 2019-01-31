@@ -91,7 +91,7 @@ asCScriptNode *asCParser::GetScriptNode()
 	return scriptNode;
 }
 
-int asCParser::ParseFunctionDefinition(asCScriptCode *script)
+int asCParser::ParseFunctionDefinition(asCScriptCode *script, bool expectListPattern)
 {
 	Reset();
 
@@ -101,6 +101,9 @@ int asCParser::ParseFunctionDefinition(asCScriptCode *script)
 	this->script = script;
 
 	scriptNode = ParseFunctionDefinition();
+
+	if( expectListPattern )
+		scriptNode->AddChildLast(ParseListPattern());
 
 	// The declaration should end after the definition
 	if( !isSyntaxError )
@@ -378,9 +381,8 @@ asCScriptNode *asCParser::ParseType(bool allowConst, bool allowVariableType)
 
 	// If the datatype is a template type, then parse the subtype within the < >
 	asCScriptNode *type = node->lastChild;
-	asCString typeName;
-	typeName.Assign(&script->code[type->tokenPos], type->tokenLength);
-	if( engine->IsTemplateType(typeName.AddressOf()) )
+	tempString.Assign(&script->code[type->tokenPos], type->tokenLength);
+	if( engine->IsTemplateType(tempString.AddressOf()) )
 	{
 		GetToken(&t);
 		if( t.type != ttLessThan )
@@ -506,9 +508,9 @@ asCScriptNode *asCParser::ParseDataType(bool allowVariableType)
 	{
 		if( t1.type == ttIdentifier )
 		{
-			asCString errMsg, Identifier;
-			Identifier.Assign(&script->code[t1.pos], t1.length);
-			errMsg.Format(TXT_IDENTIFIER_s_NOT_DATA_TYPE, Identifier.AddressOf());
+			asCString errMsg;
+			tempString.Assign(&script->code[t1.pos], t1.length);
+			errMsg.Format(TXT_IDENTIFIER_s_NOT_DATA_TYPE, tempString.AddressOf());
 			Error(errMsg, &t1);
 		}
 		else
@@ -866,9 +868,8 @@ bool asCParser::IsDataType(const sToken &token)
 		if( checkValidTypes )
 		{
 			// Check if this is an existing type, regardless of namespace
-			asCString str;
-			str.Assign(&script->code[token.pos], token.length);
-			if( !builder->DoesTypeExist(str.AddressOf()) )
+			tempString.Assign(&script->code[token.pos], token.length);
+			if( !builder->DoesTypeExist(tempString.AddressOf()) )
 				return false;
 		}
 		return true;
@@ -928,7 +929,91 @@ asCString asCParser::ExpectedOneOf(const char **tokens, int count)
 	return str;
 }
 
-#ifndef AS_NO_COMPILER
+asCScriptNode *asCParser::ParseListPattern()
+{
+	asCScriptNode *node = CreateNode(snListPattern);
+	if( node == 0 ) return 0;
+
+	sToken t1;
+
+	GetToken(&t1);
+	if( t1.type != ttStartStatementBlock )
+	{
+		Error(ExpectedToken("{"), &t1);
+		return node;
+	}
+
+	node->UpdateSourcePos(t1.pos, t1.length);
+
+	sToken start = t1;
+
+	bool isBeginning = true;
+	bool afterType = false;
+	while( !isSyntaxError )
+	{
+		GetToken(&t1);
+		if( t1.type == ttEndStatementBlock )
+		{
+			if( !afterType )
+				Error(TXT_EXPECTED_DATA_TYPE, &t1);
+			break;
+		}
+		else if( t1.type == ttStartStatementBlock )
+		{
+			if( afterType )
+			{
+				asCString msg;
+				msg.Format(TXT_EXPECTED_s_OR_s, ",", "}");
+				Error(msg.AddressOf(), &t1);
+			}
+			RewindTo(&t1);
+			node->AddChildLast(ParseListPattern());
+			afterType = true;
+		}
+		else if( t1.type == ttIdentifier && IdentifierIs(t1, "repeat") )
+		{
+			if( !isBeginning )
+			{
+				asCString msg;
+				msg.Format(TXT_UNEXPECTED_TOKEN_s, "repeat");
+				Error(msg.AddressOf(), &t1);
+			}
+			RewindTo(&t1);
+			node->AddChildLast(ParseIdentifier());
+		}
+		else if( t1.type == ttEnd )
+		{
+			Error(TXT_UNEXPECTED_END_OF_FILE, &t1);
+			Info(TXT_WHILE_PARSING_STATEMENT_BLOCK, &start);
+			break;
+		}
+		else if( t1.type == ttListSeparator )
+		{
+			if( !afterType )
+				Error(TXT_EXPECTED_DATA_TYPE, &t1);
+			afterType = false;
+		}
+		else
+		{
+			if( afterType )
+			{
+				asCString msg;
+				msg.Format(TXT_EXPECTED_s_OR_s, ",", "}");
+				Error(msg.AddressOf(), &t1);
+			}
+			RewindTo(&t1);
+			node->AddChildLast(ParseType(true, true));
+			afterType = true;
+		}
+
+		isBeginning = false;
+	}
+
+	node->UpdateSourcePos(t1.pos, t1.length);
+
+	return node;
+}
+
 bool asCParser::IdentifierIs(const sToken &t, const char *str)
 {
 	if( t.type != ttIdentifier ) 
@@ -937,12 +1022,12 @@ bool asCParser::IdentifierIs(const sToken &t, const char *str)
 	return script->TokenEquals(t.pos, t.length, str);
 }
 
+#ifndef AS_NO_COMPILER
 bool asCParser::CheckTemplateType(sToken &t)
 {
 	// Is this a template type?
-	asCString typeName;
-	typeName.Assign(&script->code[t.pos], t.length);
-	if( engine->IsTemplateType(typeName.AddressOf()) )
+	tempString.Assign(&script->code[t.pos], t.length);
+	if( engine->IsTemplateType(tempString.AddressOf()) )
 	{
 		// Expect the sub type within < >
 		GetToken(&t);
@@ -1685,9 +1770,8 @@ asCScriptNode *asCParser::ParseImport()
 		return node;
 	}
 
-	asCString str;
-	str.Assign(&script->code[t.pos], t.length);
-	if( str != FROM_TOKEN )
+	tempString.Assign(&script->code[t.pos], t.length);
+	if( tempString != FROM_TOKEN )
 	{
 		Error(ExpectedToken(FROM_TOKEN), &t);
 		return node;
@@ -2588,9 +2672,8 @@ asCScriptNode *asCParser::ParseInterface()
 	// Allow keyword 'shared' before 'interface'
 	if( t.type == ttIdentifier )
 	{
-		asCString str;
-		str.Assign(&script->code[t.pos], t.length);
-		if( str != SHARED_TOKEN )
+		tempString.Assign(&script->code[t.pos], t.length);
+		if( tempString != SHARED_TOKEN )
 		{
 			Error(ExpectedToken(SHARED_TOKEN), &t);
 			return node;
