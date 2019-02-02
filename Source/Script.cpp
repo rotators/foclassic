@@ -1897,7 +1897,7 @@ int Script::BindImportedFunctions()
             asIScriptFunction* importFunction = importModule->GetFunctionByDecl( importFunctionDecl );
             if( !importFunction )
             {
-                WriteLogF( _FUNC_ " Module<%s> cannot %s : source function does not exists\n", module->GetName(), importString );
+                WriteLogF( _FUNC_, " Module<%s> cannot %s : source function does not exists\n", module->GetName(), importString );
                 errors++;
                 continue;
             }
@@ -1905,7 +1905,7 @@ int Script::BindImportedFunctions()
             int result = module->BindImportedFunction( i, importFunction );
             if( result < 0 )
             {
-                WriteLogF( _FUNC_ " Module<%s> cannot %s : bind error<%d>\n", module->GetName(), importString, result );
+                WriteLogF( _FUNC_, " Module<%s> cannot %s : bind error<%d>\n", module->GetName(), importString, result );
                 errors++;
                 continue;
             }
