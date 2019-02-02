@@ -1595,14 +1595,15 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                     CBytecodeStream binary;
                     binary.Write( file_bin.GetCurBuf(), file_bin.GetFsize() - file_bin.GetCurPos() );
 
-                    if( module->LoadByteCode( &binary ) >= 0 )
+                    int result = module->LoadByteCode( &binary );
+                    if( result >= 0 )
                     {
                         ScriptPreprocessor->GetParsedPragmas() = pragmas;
                         modules.push_back( module );
                         return true;
                     }
                     else
-                        WriteLogF( _FUNC_, " - Can't load binary, script<%s>.\n", module_real );
+                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, result );
                 }
                 else
                     WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
@@ -1861,17 +1862,58 @@ int Script::BindImportedFunctions()
     EngineData*      edata = (EngineData*)Engine->GetUserData();
     ScriptModuleVec& modules = edata->Modules;
     int              errors = 0;
+
+    WriteLog( "Import script functions...\n" );
+
     for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
     {
         asIScriptModule* module = *it;
-        int              result = module->BindAllImportedFunctions();
-        if( result < 0 )
+        /*
+           int              result = module->BindAllImportedFunctions();
+           if( result < 0 )
+           {
+           WriteLogF( _FUNC_, " - Fail to bind imported functions, module<%s>, error<%d>.\n", module->GetName(), result );
+           errors++;
+           continue;
+           }
+         */
+        for( asUINT i = 0, j = module->GetImportedFunctionCount(); i < j; i++ )
         {
-            WriteLogF( _FUNC_, " - Fail to bind imported functions, module<%s>, error<%d>.\n", module->GetName(), result );
-            errors++;
-            continue;
+            const char* importModuleName = module->GetImportedFunctionSourceModule( i );
+            const char* importFunctionDecl = module->GetImportedFunctionDeclaration( i );
+            const char* importString = Str::FormatBuf( "import %s from \"%s\"", importFunctionDecl, importModuleName );
+
+            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+                WriteLog( " %s : %s\n", module->GetName(), importString );
+
+            asIScriptModule* importModule = Engine->GetModule( importModuleName, asGM_ONLY_IF_EXISTS );
+            if( !importModule )
+            {
+                WriteLogF( _FUNC_, " Module<%s> cannot %s : source module does not exists\n", module->GetName(), importString );
+                errors++;
+                continue;
+            }
+
+            asIScriptFunction* importFunction = importModule->GetFunctionByDecl( importFunctionDecl );
+            if( !importFunction )
+            {
+                WriteLogF( _FUNC_ " Module<%s> cannot %s : source function does not exists\n", module->GetName(), importString );
+                errors++;
+                continue;
+            }
+
+            int result = module->BindImportedFunction( i, importFunction );
+            if( result < 0 )
+            {
+                WriteLogF( _FUNC_ " Module<%s> cannot %s : bind error<%d>\n", module->GetName(), importString, result );
+                errors++;
+                continue;
+            }
         }
     }
+
+    WriteLog( "Import scripts functions... %s\n", !errors ? "OK" : "failed" );
+
     return errors;
 }
 

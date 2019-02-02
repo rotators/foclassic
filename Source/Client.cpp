@@ -9840,9 +9840,22 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
         }
     }
 
+    if( errors )
+    {
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        return false;
+    }
+
     // Bind functions
-    errors += Script::BindImportedFunctions();
-    errors += Script::RebindFunctions();
+    errors = Script::BindImportedFunctions();
+
+    if( errors )
+    {
+        AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
+        return false;
+    }
+
+    errors = Script::RebindFunctions();
 
     // Bind reserved functions
     const char* config = msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG );

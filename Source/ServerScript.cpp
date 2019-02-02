@@ -398,13 +398,16 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
         }
     }
 
-    // Imported functions
-    if( success )
-        success = Script::BindImportedFunctions() == 0;         // returns number of errors
-
     if( !success )
     {
         WriteLog( "Load %s modules fail\n", target_lower.c_str() );
+        ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+        return false;
+    }
+
+    // Imported functions
+    if( Script::BindImportedFunctions() )            // returns number of errors
+    {
         ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
         return false;
     }
