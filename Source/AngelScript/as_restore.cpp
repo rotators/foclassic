@@ -79,14 +79,12 @@ int asCReader::Read(bool *wasDebugInfoStripped)
 		asUINT i;
 		for( i = 0; i < module->scriptFunctions.GetLength(); i++ )
 			if( !dontTranslate.MoveTo(0, module->scriptFunctions[i]) )
-				if( module->scriptFunctions[i]->scriptData )
-					module->scriptFunctions[i]->scriptData->byteCode.SetLength(0);
+				module->scriptFunctions[i]->scriptData->byteCode.SetLength(0);
 
 		asCSymbolTable<asCGlobalProperty>::iterator it = module->scriptGlobals.List();
 		for( ; it; it++ )
 			if( (*it)->GetInitFunc() )
-				if( (*it)->GetInitFunc()->scriptData )
-					(*it)->GetInitFunc()->scriptData->byteCode.SetLength(0);
+				(*it)->GetInitFunc()->scriptData->byteCode.SetLength(0);
 
 		module->InternalReset();
 	}
@@ -797,7 +795,6 @@ asCScriptFunction *asCReader::ReadFunction(bool &isNew, bool addToModule, bool a
 			asCString name;
 			ReadString(&name);
 			func->scriptData->scriptSectionIdx = engine->GetScriptSectionNameIndex(name.AddressOf());
-			func->scriptData->declaredAt = ReadEncodedUInt();
 		}
 	}
 	else if( func->funcType == asFUNC_VIRTUAL )
@@ -1576,17 +1573,6 @@ asCObjectType* asCReader::ReadObjectType()
 			return 0;
 		}
 	}
-	else if( ch == 'l' )
-	{
-		asCObjectType *st = ReadObjectType();
-		if( st == 0 || st->beh.listFactory == 0 )
-		{
-			// TODO: Write approprate error
-			error = true;
-			return 0;
-		}
-		ot = engine->GetListPatternType(st->beh.listFactory);
-	}
 	else if( ch == 's' )
 	{
 		// Read the name of the template subtype
@@ -1620,6 +1606,7 @@ asCObjectType* asCReader::ReadObjectType()
 		ReadString(&typeName);
 		ReadString(&ns);
 		asSNameSpace *nameSpace = engine->AddNameSpace(ns.AddressOf());
+
 
 		if( typeName.GetLength() && typeName != "_builtin_object_" && typeName != "_builtin_function_" )
 		{
@@ -1851,22 +1838,6 @@ void asCReader::ReadByteCode(asCScriptFunction *func)
 				bc += 2;
 			}
 			break;
-		case asBCTYPE_rW_DW_DW_ARG:
-			{
-				*(asBYTE*)(bc) = b;
-
-				// Read the 1st argument
-				asWORD w = ReadEncodedUInt16();
-				*(((asWORD*)bc)+1) = w;
-				bc++;
-
-				// Read the 2nd argument
-				*bc++ = ReadEncodedUInt();
-
-				// Read the 3rd argument
-				*bc++ = ReadEncodedUInt();
-			}
-			break;
 		default:
 			{
 				// This should never happen
@@ -2049,7 +2020,8 @@ void asCReader::TranslateFunction(asCScriptFunction *func)
 	for( n = 0; n < func->scriptData->byteCode.GetLength(); bcNum++ )
 	{
 		int c = *(asBYTE*)&bc[n];
-		if( c == asBC_REFCPY || 
+		if( c == asBC_FREE ||
+			c == asBC_REFCPY || 
 			c == asBC_RefCpyV ||
 			c == asBC_OBJTYPE )
 		{
@@ -2081,18 +2053,8 @@ void asCReader::TranslateFunction(asCScriptFunction *func)
 			int *tid = (int*)&bc[n+2];
 			*tid = FindTypeId(*tid);
 
-			asCObjectType *ot = engine->GetObjectTypeFromTypeId(*tid);
-			if( ot && (ot->flags & asOBJ_LIST_PATTERN) )
-			{
-				// List patterns have a different way of adjusting the offsets
-				SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-				*(((short*)&bc[n])+2) = (short)listAdj->AdjustOffset(*(((short*)&bc[n])+2), ot);
-			}
-			else
-			{
-				// Translate the prop index into the property offset
-				*(((short*)&bc[n])+2) = FindObjectPropOffset(*(((short*)&bc[n])+2));
-			}
+			// Translate the prop index into the property offset
+			*(((short*)&bc[n])+2) = FindObjectPropOffset(*(((short*)&bc[n])+2));
 		}
 		else if( c == asBC_COPY )
 		{
@@ -2256,58 +2218,6 @@ void asCReader::TranslateFunction(asCScriptFunction *func)
 			// The size is dword offset 
 			bc[n+1] = size;
 		}
-		else if( c == asBC_AllocMem )
-		{
-			// The size of the allocated memory is only known after all the elements has been seen.
-			// This helper class will collect this information and adjust the size when the 
-			// corresponding asBC_FREE is encountered
-
-			// The adjuster also needs to know the list type so it can know the type of the elements
-			asCObjectType *ot = func->GetObjectTypeOfLocalVar(asBC_SWORDARG0(&bc[n]));
-			listAdjusters.PushLast(asNEW(SListAdjuster)(&bc[n], ot));
-		}
-		else if( c == asBC_FREE )
-		{
-			// Translate the index to the true object type
-			asPWORD *pot = (asPWORD*)&bc[n+1];
-			*(asCObjectType**)pot = FindObjectType(*(int*)pot);
-
-			asCObjectType *ot = *(asCObjectType**)pot;
-			if( ot && (ot->flags & asOBJ_LIST_PATTERN) )
-			{
-				// Finalize the adjustment of the list buffer that was initiated with asBC_AllocMem
-				SListAdjuster *list = listAdjusters.PopLast();
-				list->AdjustAllocMem();
-				asDELETE(list, SListAdjuster);
-			}
-		}
-		else if( c == asBC_SetListSize )
-		{
-			// Adjust the offset in the list where the size is informed
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			bc[n+1] = listAdj->AdjustOffset(bc[n+1], listAdj->patternType);
-
-			// Inform the list adjuster how many values will be repeated
-			listAdj->SetRepeatCount(bc[n+2]);
-		}
-		else if( c == asBC_PshListElmnt )
-		{
-			// Adjust the offset in the list where the size is informed
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			bc[n+1] = listAdj->AdjustOffset(bc[n+1], listAdj->patternType);
-		}
-		else if( c == asBC_SetListType )
-		{
-			// Adjust the offset in the list where the typeid is informed
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			bc[n+1] = listAdj->AdjustOffset(bc[n+1], listAdj->patternType);
-
-			// Translate the type id
-			bc[n+2] = FindTypeId(bc[n+2]);
-
-			// Inform the list adjuster the type id of the next element
-			listAdj->SetNextType(bc[n+2]);
-		}
 
 		n += asBCTypeSize[asBCInfo[c].type];
 	}
@@ -2330,7 +2240,6 @@ void asCReader::TranslateFunction(asCScriptFunction *func)
 		case asBCTYPE_wW_W_ARG:
 		case asBCTYPE_rW_QW_ARG:
 		case asBCTYPE_rW_W_DW_ARG:
-		case asBCTYPE_rW_DW_DW_ARG:
 			{
 				asBC_SWORDARG0(&bc[n]) = (short)AdjustStackPosition(asBC_SWORDARG0(&bc[n]));
 			}
@@ -2415,180 +2324,6 @@ void asCReader::TranslateFunction(asCScriptFunction *func)
 		func->scriptData->sectionIdxs[n] = instructionNbrToPos[func->scriptData->sectionIdxs[n]];
 
 	CalculateStackNeeded(func);
-}
-
-asCReader::SListAdjuster::SListAdjuster(asDWORD *bc, asCObjectType *listType) : 
-	allocMemBC(bc), maxOffset(0), patternType(listType), repeatCount(0), lastOffset(-1), nextTypeId(-1)
-{
-	asASSERT( patternType && (patternType->flags & asOBJ_LIST_PATTERN) );
-
-	// Find the first expected value in the list
-	asSListPatternNode *node = patternType->engine->scriptFunctions[patternType->templateSubTypes[0].GetBehaviour()->listFactory]->listPattern;
-	asASSERT( node && node->type == asLPT_START );
-	patternNode = node->next;
-}
-
-int asCReader::SListAdjuster::AdjustOffset(int offset, asCObjectType *listPatternType)
-{
-	// TODO: cleanup: The listPatternType parameter is not needed
-	asASSERT( listPatternType == patternType );
-	UNUSED_VAR( listPatternType );
-
-	asASSERT( offset >= lastOffset );
-
-	// If it is the same offset being accessed again, just return the same adjusted value
-	if( lastOffset == offset )
-		return lastAdjustedOffset;
-
-	lastOffset = offset;
-	lastAdjustedOffset = maxOffset;
-
-	// What is being expected at this position?
-	if( patternNode->type == asLPT_REPEAT )
-	{
-		// Align the offset to 4 bytes boundary
-		if( maxOffset & 0x3 )
-		{
-			maxOffset += 4 - (maxOffset & 0x3);
-			lastAdjustedOffset = maxOffset;
-		}
-
-		// Don't move the patternNode yet because the caller must make a call to SetRepeatCount too
-		maxOffset += 4;
-		return lastAdjustedOffset;
-	}
-	else if( patternNode->type == asLPT_TYPE )
-	{
-		const asCDataType &dt = reinterpret_cast<asSListPatternDataTypeNode*>(patternNode)->dataType;
-		if( dt.GetTokenType() == ttQuestion )
-		{
-			if( nextTypeId != -1 )
-			{
-				if( repeatCount > 0 )
-					repeatCount--;
-
-				asCDataType dt = patternType->engine->GetDataTypeFromTypeId(nextTypeId);
-				asUINT size;
-				if( dt.IsObjectHandle() )
-					size = AS_PTR_SIZE*4;
-				else
-					size = dt.GetSizeInMemoryBytes();
-
-				// Align the offset to 4 bytes boundary
-				if( size >= 4 && (maxOffset & 0x3) )
-				{
-					maxOffset += 4 - (maxOffset & 0x3);
-					lastAdjustedOffset = maxOffset;
-				}
-
-				// Only move the patternNode if we're not expecting any more repeated entries
-				if( repeatCount == 0 )
-					patternNode = patternNode->next;
-
-				nextTypeId = -1;
-
-				maxOffset += size;
-				return lastAdjustedOffset;
-			}
-			else
-			{
-				// Align the offset to 4 bytes boundary
-				if( maxOffset & 0x3 )
-				{
-					maxOffset += 4 - (maxOffset & 0x3);
-					lastAdjustedOffset = maxOffset;
-				}
-
-				// The first adjustment is for the typeId
-				maxOffset += 4;
-
-				return lastAdjustedOffset;
-			}
-		}
-		else
-		{
-			if( repeatCount > 0 )
-				repeatCount--;
-
-			// Determine the size of the element
-			asUINT size;
-			asCDataType dt = reinterpret_cast<asSListPatternDataTypeNode*>(patternNode)->dataType;
-			if( dt.IsObjectHandle() )
-				size = AS_PTR_SIZE*4;
-			else
-				size = dt.GetSizeInMemoryBytes();
-
-			// Align the offset to 4 bytes boundary
-			if( size >= 4 && (maxOffset & 0x3) )
-			{
-				maxOffset += 4 - (maxOffset & 0x3);
-				lastAdjustedOffset = maxOffset;
-			}
-
-			maxOffset += size;
-
-			// Only move the patternNode if we're not expecting any more repeated entries
-			if( repeatCount == 0 )
-				patternNode = patternNode->next;
-
-			return lastAdjustedOffset;
-		}
-	}
-	else if( patternNode->type == asLPT_START )
-	{
-		if( repeatCount > 0 )
-			repeatCount--;
-		SInfo info = {repeatCount, patternNode};
-		stack.PushLast(info);
-
-		repeatCount = 0;
-		patternNode = patternNode->next;
-
-		lastOffset--;
-		return AdjustOffset(offset, listPatternType);
-	}
-	else if( patternNode->type == asLPT_END )
-	{
-		SInfo info = stack.PopLast();
-		repeatCount = info.repeatCount;
-		if( repeatCount )
-			patternNode = info.startNode;
-		else
-			patternNode = patternNode->next;
-
-		lastOffset--;
-		return AdjustOffset(offset, listPatternType);
-	}
-	else
-	{
-		// Something is wrong with the pattern list declaration
-		asASSERT( false );
-	}
-
-	return 0;
-}
-
-void asCReader::SListAdjuster::SetRepeatCount(asUINT rc)
-{
-	// Make sure the list is expecting a repeat at this location
-	asASSERT( patternNode->type == asLPT_REPEAT );
-
-	// Now move to the next patternNode
-	patternNode = patternNode->next;
-
-	repeatCount = rc;
-}
-
-void asCReader::SListAdjuster::AdjustAllocMem()
-{
-	allocMemBC[1] = maxOffset;
-}
-
-void asCReader::SListAdjuster::SetNextType(int typeId)
-{
-	asASSERT( nextTypeId == -1 );
-
-	nextTypeId = typeId;
 }
 
 void asCReader::CalculateStackNeeded(asCScriptFunction *func)
@@ -3373,7 +3108,6 @@ void asCWriter::WriteFunction(asCScriptFunction* func)
 				char c = 0;
 				WriteData(&c, 1);
 			}
-			WriteEncodedInt64(func->scriptData->declaredAt);
 		}
 	}
 	else if( func->funcType == asFUNC_VIRTUAL )
@@ -3666,35 +3400,25 @@ void asCWriter::WriteObjectType(asCObjectType* ot)
 		// Check for template instances/specializations
 		if( ot->templateSubTypes.GetLength() )
 		{
-			// Check for list pattern type or template type
-			if( ot->flags & asOBJ_LIST_PATTERN )
-			{
-				ch = 'l';
-				WriteData(&ch, 1);
-				WriteObjectType(ot->templateSubTypes[0].GetObjectType());
-			}
-			else
-			{
-				ch = 'a';
-				WriteData(&ch, 1);
-				WriteString(&ot->name);
+			ch = 'a';
+			WriteData(&ch, 1);
+			WriteString(&ot->name);
 
-				WriteEncodedInt64(ot->templateSubTypes.GetLength());
-				for( asUINT n = 0; n < ot->templateSubTypes.GetLength(); n++ )
+			WriteEncodedInt64(ot->templateSubTypes.GetLength());
+			for( asUINT n = 0; n < ot->templateSubTypes.GetLength(); n++ )
+			{
+				if( ot->templateSubTypes[0].IsObject() || ot->templateSubTypes[0].IsEnumType() )
 				{
-					if( ot->templateSubTypes[0].IsObject() || ot->templateSubTypes[0].IsEnumType() )
-					{
-						ch = 's';
-						WriteData(&ch, 1);
-						WriteDataType(&ot->templateSubTypes[0]);
-					}
-					else
-					{
-						ch = 't';
-						WriteData(&ch, 1);
-						eTokenType t = ot->templateSubTypes[0].GetTokenType();
-						WriteEncodedInt64(t);
-					}
+					ch = 's';
+					WriteData(&ch, 1);
+					WriteDataType(&ot->templateSubTypes[0]);
+				}
+				else
+				{
+					ch = 't';
+					WriteData(&ch, 1);
+					eTokenType t = ot->templateSubTypes[0].GetTokenType();
+					WriteEncodedInt64(t);
 				}
 			}
 		}
@@ -3999,7 +3723,8 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 				*(int*)&tmp[1+AS_PTR_SIZE] = 1+FindFunctionIndex(engine->scriptFunctions[*(int*)&tmp[1+AS_PTR_SIZE]]);
 			}
 		}
-		else if( c == asBC_REFCPY  || // PTR_ARG
+		else if( c == asBC_FREE    || // wW_PTR_ARG
+			     c == asBC_REFCPY  || // PTR_ARG
 				 c == asBC_RefCpyV || // wW_PTR_ARG
 				 c == asBC_OBJTYPE )  // PTR_ARG
 		{
@@ -4018,7 +3743,7 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 			*(int*)(tmp+1) = FindTypeIdIdx(*(int*)(tmp+1));
 		}
 		else if( c == asBC_ADDSi ||      // W_DW_ARG
-			     c == asBC_LoadThisR )   // W_DW_ARG
+			     c == asBC_LoadThisR )   // W_DW_ARG	 
 		{
 			// Translate property offsets into indices
 			*(((short*)tmp)+1) = (short)FindObjectPropIndex(*(((short*)tmp)+1), *(int*)(tmp+1));
@@ -4029,19 +3754,8 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 		else if( c == asBC_LoadRObjR ||    // rW_W_DW_ARG
 			     c == asBC_LoadVObjR )     // rW_W_DW_ARG
 		{
-			asCObjectType *ot = engine->GetObjectTypeFromTypeId(*(int*)(tmp+2));
-			if( ot->flags & asOBJ_LIST_PATTERN )
-			{
-				// List patterns have a different way of translating the offsets
-				SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-				*(((short*)tmp)+2) = (short)listAdj->AdjustOffset(*(((short*)tmp)+2), ot);
-			}
-			else
-			{
-				// Translate property offsets into indices
-				// TODO: optimize: Pass the object type directly to the method instead of the type id
-				*(((short*)tmp)+2) = (short)FindObjectPropIndex(*(((short*)tmp)+2), *(int*)(tmp+2));
-			}
+			// Translate property offsets into indices
+			*(((short*)tmp)+2) = (short)FindObjectPropIndex(*(((short*)tmp)+2), *(int*)(tmp+2));
 
 			// Translate type ids into indices
 			*(int*)(tmp+2) = FindTypeIdIdx(*(int*)(tmp+2));
@@ -4130,58 +3844,7 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 			// Adjust the offset according to the function call that comes after
 			asBC_WORDARG0(tmp) = (asWORD)AdjustGetOffset(asBC_WORDARG0(tmp), func, asDWORD(bc - startBC));
 		}
-		else if( c == asBC_AllocMem )
-		{
-			// It's not necessary to store the size of the list buffer, as it will be recalculated in the reader
-			asBC_DWORDARG(tmp) = 0;
 
-			// Determine the type of the list pattern from the variable
-			short var = asBC_WORDARG0(tmp);
-			asCObjectType *ot = func->GetObjectTypeOfLocalVar(var);
-
-			// Create this helper object to adjust the offset of the elements accessed in the buffer
-			listAdjusters.PushLast(asNEW(SListAdjuster)(ot));
-		}
-		else if( c == asBC_FREE ) // wW_PTR_ARG
-		{
-			// Translate object type pointers into indices
-			asCObjectType *ot = *(asCObjectType**)(tmp+1);
-			*(asPWORD*)(tmp+1) = FindObjectTypeIdx(ot);
-
-			// Pop and destroy the list adjuster helper that was created with asBC_AllocMem
-			if( ot && (ot->flags & asOBJ_LIST_PATTERN) )
-			{
-				SListAdjuster *list = listAdjusters.PopLast();
-				asDELETE(list, SListAdjuster);
-			}
-		}
-		else if( c == asBC_SetListSize )
-		{
-			// Adjust the offset in the initialization list
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			tmp[1] = listAdj->AdjustOffset(tmp[1], listAdj->patternType);
-
-			// Tell the adjuster how many repeated values there are
-			listAdj->SetRepeatCount(tmp[2]);
-		}
-		else if( c == asBC_PshListElmnt )   // W_DW_ARG
-		{
-			// Adjust the offset in the initialization list
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			tmp[1] = listAdj->AdjustOffset(tmp[1], listAdj->patternType);
-		}
-		else if( c == asBC_SetListType )
-		{
-			// Adjust the offset in the initialization list
-			SListAdjuster *listAdj = listAdjusters[listAdjusters.GetLength()-1];
-			tmp[1] = listAdj->AdjustOffset(tmp[1], listAdj->patternType);
-
-			// Inform the adjuster of the type id of the next element
-			listAdj->SetNextType(tmp[2]);
-
-			// Translate the type id
-			tmp[2] = FindTypeIdIdx(tmp[2]);
-		}
 		// Adjust the variable offsets
 		switch( asBCInfo[c].type )
 		{
@@ -4193,7 +3856,6 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 		case asBCTYPE_wW_W_ARG:
 		case asBCTYPE_rW_QW_ARG:
 		case asBCTYPE_rW_W_DW_ARG:
-		case asBCTYPE_rW_DW_DW_ARG:
 			{
 				asBC_SWORDARG0(tmp) = (short)AdjustStackPosition(asBC_SWORDARG0(tmp));
 			}
@@ -4384,23 +4046,6 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 				WriteEncodedInt64(qw);
 			}
 			break;
-		case asBCTYPE_rW_DW_DW_ARG:
-			{
-				// Write the instruction code
-				asBYTE b = (asBYTE)c;
-				WriteData(&b, 1);
-
-				// Write the short argument
-				short w = *(((short*)tmp)+1);
-				WriteEncodedInt64(w);
-
-				// Write the dword argument
-				WriteEncodedInt64((int)tmp[1]);
-
-				// Write the dword argument
-				WriteEncodedInt64((int)tmp[2]);
-			}
-			break;
 		default:
 			{
 				// This should never happen
@@ -4416,123 +4061,6 @@ void asCWriter::WriteByteCode(asCScriptFunction *func)
 		bc += asBCTypeSize[asBCInfo[c].type];
 		length -= asBCTypeSize[asBCInfo[c].type];
 	}
-}
-
-asCWriter::SListAdjuster::SListAdjuster(asCObjectType *ot) : patternType(ot), repeatCount(0), entries(0), lastOffset(-1), nextTypeId(-1)
-{ 
-	asASSERT( ot && (ot->flags & asOBJ_LIST_PATTERN) ); 
-
-	// Find the first expected value in the list
-	asSListPatternNode *node = ot->engine->scriptFunctions[patternType->templateSubTypes[0].GetBehaviour()->listFactory]->listPattern;
-	asASSERT( node && node->type == asLPT_START );
-	patternNode = node->next;
-}
-
-int asCWriter::SListAdjuster::AdjustOffset(int offset, asCObjectType *listPatternType)
-{
-	// TODO: cleanup: The listPatternType parameter is not needed
-	asASSERT( patternType == listPatternType );
-	UNUSED_VAR(listPatternType);
-	
-	asASSERT( offset >= lastOffset );
-
-	// If it is the same offset being accessed again, just return the same adjusted value
-	if( offset == lastOffset )
-		return entries-1;
-
-	lastOffset = offset;
-
-	// What is being expected at this position?
-	if( patternNode->type == asLPT_REPEAT )
-	{
-		// Don't move the patternNode yet because the caller must make a call to SetRepeatCount too
-		return entries++;
-	}
-	else if( patternNode->type == asLPT_TYPE )
-	{
-		const asCDataType &dt = reinterpret_cast<asSListPatternDataTypeNode*>(patternNode)->dataType;
-		if( dt.GetTokenType() == ttQuestion )
-		{
-			// The bytecode need to inform the type that will 
-			// come next and then adjust that position too before 
-			// we can move to the next node
-			if( nextTypeId != -1 )
-			{
-				if( repeatCount > 0 )
-					repeatCount--;
-
-				// Only move the patternNode if we're not expecting any more repeated entries
-				if( repeatCount == 0 )
-					patternNode = patternNode->next;
-
-				nextTypeId = -1;
-			}
-		}
-		else 
-		{
-			if( repeatCount > 0 )
-				repeatCount--;
-
-			// Only move the patternNode if we're not expecting any more repeated entries
-			if( repeatCount == 0 )
-				patternNode = patternNode->next;
-		}
-
-		return entries++;
-	}
-	else if( patternNode->type == asLPT_START )
-	{
-		if( repeatCount > 0 )
-			repeatCount--;
-		SInfo info = {repeatCount, patternNode};
-		stack.PushLast(info);
-
-		repeatCount = 0;
-		patternNode = patternNode->next;
-
-		lastOffset--;
-		return AdjustOffset(offset, listPatternType);
-	}
-	else if( patternNode->type == asLPT_END )
-	{
-		SInfo info = stack.PopLast();
-		repeatCount = info.repeatCount;
-		if( repeatCount )
-			patternNode = info.startNode;
-		else
-			patternNode = patternNode->next;
-
-		lastOffset--;
-		return AdjustOffset(offset, listPatternType);
-	}
-	else
-	{
-		// Something is wrong with the pattern list declaration
-		asASSERT( false );
-	}
-
-	return 0;
-}
-
-void asCWriter::SListAdjuster::SetRepeatCount(asUINT rc)
-{
-	// Make sure the list is expecting a repeat at this location
-	asASSERT( patternNode->type == asLPT_REPEAT );
-
-	// Now move to the next patternNode
-	patternNode = patternNode->next;
-
-	repeatCount = rc;
-}
-
-void asCWriter::SListAdjuster::SetNextType(int typeId)
-{
-	// Make sure the list is expecting a type at this location
-	asASSERT( patternNode->type == asLPT_TYPE && 
-	          reinterpret_cast<asSListPatternDataTypeNode*>(patternNode)->dataType.GetTokenType() == ttQuestion );
-
-	// Inform the type id for the next adjustment 
-	nextTypeId = typeId;
 }
 
 void asCWriter::WriteUsedTypeIds()

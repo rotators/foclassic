@@ -40,7 +40,6 @@
 #ifndef AS_NO_COMPILER
 
 #include "as_typeinfo.h"
-#include "as_scriptengine.h"
 
 BEGIN_AS_NAMESPACE
 
@@ -119,20 +118,6 @@ void asCTypeInfo::SetConstantD(const asCDataType &dt, double value)
 	doubleValue = value;
 }
 
-void asCTypeInfo::SetUndefinedFuncHandle(asCScriptEngine *engine)
-{
-	// This is used for when the expression evaluates to a 
-	// function, but it is not yet known exactly which. The
-	// owner expression will hold the name of the function
-	// to determine the exact function when the signature is
-	// known.
-	Set(asCDataType::CreateObjectHandle(&engine->functionBehaviours, true));
-	isConstant       = true;
-	isExplicitHandle = false;
-	qwordValue       = 1; // Set to a different value than 0 to differentiate from null constant
-	isLValue         = false;
-}
-
 void asCTypeInfo::SetNullConstant()
 {
 	Set(asCDataType::CreateNullHandle());
@@ -144,8 +129,7 @@ void asCTypeInfo::SetNullConstant()
 
 bool asCTypeInfo::IsNullConstant() const
 {
-	// We can't check the actual object type, because the null constant may have been cast to another type
-	if( isConstant && dataType.IsObjectHandle() && qwordValue == 0 )
+	if( isConstant && dataType.IsObjectHandle() )
 		return true;
 
 	return false;

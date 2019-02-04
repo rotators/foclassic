@@ -156,12 +156,6 @@ static void ScriptObject_GetFlag_Generic(asIScriptGeneric *gen)
 	*(bool*)gen->GetAddressOfReturnLocation() = self->GetFlag();
 }
 
-static void ScriptObject_GetWeakRefFlag_Generic(asIScriptGeneric *gen)
-{
-	asCScriptObject *self = (asCScriptObject*)gen->GetObject();
-	*(asILockableSharedBool**)gen->GetAddressOfReturnLocation() = self->GetWeakRefFlag();
-}
-
 static void ScriptObject_EnumReferences_Generic(asIScriptGeneric *gen)
 {
 	asCScriptObject *self = (asCScriptObject*)gen->GetObject();
@@ -207,9 +201,6 @@ void RegisterScriptObject(asCScriptEngine *engine)
 	r = engine->RegisterBehaviourToObjectType(&engine->scriptTypeBehaviours, asBEHAVE_RELEASE, "void f()", asFUNCTION(ScriptObject_Release_Generic), asCALL_GENERIC, 0); asASSERT( r >= 0 );
 	r = engine->RegisterMethodToObjectType(&engine->scriptTypeBehaviours, "int &opAssign(int &in)", asFUNCTION(ScriptObject_Assignment_Generic), asCALL_GENERIC); asASSERT( r >= 0 );
 
-	// Weakref behaviours
-	r = engine->RegisterBehaviourToObjectType(&engine->scriptTypeBehaviours, asBEHAVE_GET_WEAKREF_FLAG, "int &f()", asFUNCTION(ScriptObject_GetWeakRefFlag_Generic), asCALL_GENERIC, 0); asASSERT( r >= 0 );
-
 	// Register GC behaviours
 	r = engine->RegisterBehaviourToObjectType(&engine->scriptTypeBehaviours, asBEHAVE_GETREFCOUNT, "int f()", asFUNCTION(ScriptObject_GetRefCount_Generic), asCALL_GENERIC, 0); asASSERT( r >= 0 );
 	r = engine->RegisterBehaviourToObjectType(&engine->scriptTypeBehaviours, asBEHAVE_SETGCFLAG, "void f()", asFUNCTION(ScriptObject_SetFlag_Generic), asCALL_GENERIC, 0); asASSERT( r >= 0 );
@@ -244,7 +235,6 @@ asCScriptObject::asCScriptObject(asCObjectType *ot, bool doInitialize)
 	objType->AddRef();
 	isDestructCalled = false;
 	weakRefFlag = 0;
-	hasRefCountReachedZero = false;
 
 	// Notify the garbage collector of this object
 	if( objType->flags & asOBJ_GC )
@@ -318,21 +308,13 @@ void asCScriptObject::Destruct()
 asCScriptObject::~asCScriptObject()
 {
 	if( weakRefFlag )
-	{
 		weakRefFlag->Release();
-		weakRefFlag = 0;
-	}
 
 	// The engine pointer should be available from the objectType
 	asCScriptEngine *engine = objType->engine;
 
 	// Destroy all properties
-	// In most cases the members are initialized in the order they have been declared, 
-	// so it's safer to uninitialize them from last to first. The order may be different
-	// depending on the use of inheritance and or initialization in the declaration.
-	// TODO: Should the order of initialization be stored by the compiler so that the 
-	//       reverse order can be guaranteed during the destruction?
-	for( int n = (int)objType->properties.GetLength()-1; n >= 0; n-- )
+	for( asUINT n = 0; n < objType->properties.GetLength(); n++ )
 	{
 		asCObjectProperty *prop = objType->properties[n];
 		if( prop->type.IsObject() )
@@ -348,18 +330,11 @@ asCScriptObject::~asCScriptObject()
 	}
 
 	objType->Release();
-	objType = 0;
-
-	// Something is really wrong if the refCount is not 0 by now
-	asASSERT( refCount.get() == 0 );
 }
 
 asILockableSharedBool *asCScriptObject::GetWeakRefFlag() const
 {
-	// If the object's refCount has already reached zero then the object is already
-	// about to be destroyed so it's ok to return null if the weakRefFlag doesn't already
-	// exist
-	if( weakRefFlag || hasRefCountReachedZero )
+	if( weakRefFlag )
 		return weakRefFlag;
 
 	// Lock globally so no other thread can attempt
@@ -386,20 +361,6 @@ asIScriptEngine *asCScriptObject::GetEngine() const
 
 int asCScriptObject::AddRef() const
 {
-	// Warn in case the application tries to increase the refCount after it has reached zero.
-	// This may happen for example if the application calls a method on the class while it is
-	// being destroyed. The application shouldn't do this because it may cause application
-	// crashes if members that have already been destroyed are accessed accidentally.
-	if( hasRefCountReachedZero )
-	{
-		if( objType && objType->engine )
-		{
-			asCString msg;
-			msg.Format(TXT_RESURRECTING_SCRIPTOBJECT_s, objType->name.AddressOf());
-			objType->engine->WriteMessage("", 0, 0, asMSGTYPE_ERROR, msg.AddressOf());
-		}
-	}
-
 	// Increase counter and clear flag set by GC
 	gcFlag = false;
 	return refCount.atomicInc();
@@ -436,18 +397,8 @@ int asCScriptObject::Release() const
 	int r = refCount.atomicDec();
 	if( r == 0 )
 	{
-		// Flag this object as being destroyed so the application
-		// can be warned if the code attempts to resurrect the object
-		// during the destructor. This also avoids a recursive call
-		// to the destructor which would crash the application if it
-		// really does resurrect the object.
-		if( !hasRefCountReachedZero )
-		{
-			hasRefCountReachedZero = true;
-
-			// This cast is OK since we are the last reference
-			const_cast<asCScriptObject*>(this)->Destruct();
-		}
+		// This cast is OK since we are the last reference
+		const_cast<asCScriptObject*>(this)->Destruct();
 		return 0;
 	}
 

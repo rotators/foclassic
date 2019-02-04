@@ -85,7 +85,6 @@ asCBuilder::asCBuilder(asCScriptEngine *engine, asCModule *module)
 {
 	this->engine = engine;
 	this->module = module;
-	silent = false;
 }
 
 asCBuilder::~asCBuilder()
@@ -367,9 +366,6 @@ int asCBuilder::CompileFunction(const char *sectionName, const char *code, int l
 	GetParsedFunctionDetails(node, scripts[0], 0, func->name, func->returnType, parameterNames, func->parameterTypes, func->inOutFlags, func->defaultArgs, func->isReadOnly, isConstructor, isDestructor, isPrivate, isFinal, isOverride, isShared, module->defaultNamespace);
 	func->id                           = engine->GetNextScriptFunctionId();
 	func->scriptData->scriptSectionIdx = engine->GetScriptSectionNameIndex(sectionName ? sectionName : "");
-	int row, col;
-	scripts[0]->ConvertPosToRowCol(node->tokenPos, &row, &col);
-	func->scriptData->declaredAt       = (row & 0xFFFFF)|((col & 0xFFF)<<20);
 	func->nameSpace                    = module->defaultNamespace;
 
 	// Make sure the default args are declared correctly
@@ -932,7 +928,7 @@ asCGlobalProperty *asCBuilder::GetGlobalProperty(const char *prop, asSNameSpace 
 	return 0;
 }
 
-int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *decl, asCScriptFunction *func, bool isSystemFunction, asCArray<bool> *paramAutoHandles, bool *returnAutoHandle, asSNameSpace *ns, asCScriptNode **listPattern)
+int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *decl, asCScriptFunction *func, bool isSystemFunction, asCArray<bool> *paramAutoHandles, bool *returnAutoHandle, asSNameSpace *ns)
 {
 	asASSERT( objType || ns );
 
@@ -944,7 +940,7 @@ int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *dec
 	source.SetCode(TXT_SYSTEM_FUNCTION, decl, true);
 
 	asCParser parser(this);
-	int r = parser.ParseFunctionDefinition(&source, listPattern != 0);
+	int r = parser.ParseFunctionDefinition(&source);
 	if( r < 0 )
 		return asINVALID_DECLARATION;
 
@@ -974,7 +970,7 @@ int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *dec
 	if( isSystemFunction &&
 		(func->returnType.GetObjectType() &&
 		 (func->returnType.GetObjectType()->flags & asOBJ_REF)) &&
-		!(func->returnType.IsReference() ||
+        !(func->returnType.IsReference() ||
 		  func->returnType.IsObjectHandle()) )
 		return asINVALID_DECLARATION;
 
@@ -1009,7 +1005,7 @@ int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *dec
 		// Reference types cannot be passed by value to system functions
 		if( isSystemFunction &&
 			(type.GetObjectType() &&
-			 (type.GetObjectType()->flags & asOBJ_REF)) &&
+		     (type.GetObjectType()->flags & asOBJ_REF)) &&
 			!(type.IsReference() ||
 			  type.IsObjectHandle()) )
 			return asINVALID_DECLARATION;
@@ -1054,35 +1050,15 @@ int asCBuilder::ParseFunctionDeclaration(asCObjectType *objType, const char *dec
 	}
 
 	// Set the read-only flag if const is declared after parameter list
-	n = paramList->next;
-	if( n && n->nodeType == snUndefined && n->tokenType == ttConst )
+	if( node->lastChild->nodeType == snUndefined && node->lastChild->tokenType == ttConst )
 	{
 		if( objType == 0 )
 			return asINVALID_DECLARATION;
 		func->isReadOnly = true;
-
-		n = n->next;
 	}
 	else
 		func->isReadOnly = false;
 
-	// If the caller expects a list pattern, check for the existence, else report an error if not
-	if( listPattern )
-	{
-		if( n == 0 || n->nodeType != snListPattern ) 
-			return asINVALID_DECLARATION;
-		else
-		{
-			*listPattern = n;
-			n->DisconnectParent();
-		}
-	}
-	else
-	{
-		if( n )
-			return asINVALID_DECLARATION;
-	}
-	
 	// Make sure the default args are declared correctly
 	ValidateDefaultArgs(&source, node, func);
 
@@ -1325,7 +1301,10 @@ int asCBuilder::RegisterFuncDef(asCScriptNode *node, asCScriptCode *file, asSNam
 
 void asCBuilder::CompleteFuncDef(sFuncDef *funcDef)
 {
+	asCDataType                returnType;
 	asCArray<asCString>        parameterNames;
+	asCArray<asCDataType>      parameterTypes;
+	asCArray<asETypeModifiers> inOutFlags;
 	asCArray<asCString *>      defaultArgs;
 	bool                       isConstMethod;
 	bool                       isConstructor;
@@ -1338,37 +1317,44 @@ void asCBuilder::CompleteFuncDef(sFuncDef *funcDef)
 	asCScriptFunction *func = module->funcDefs[funcDef->idx];
 	asASSERT( func );
 
-	GetParsedFunctionDetails(funcDef->node, funcDef->script, 0, funcDef->name, func->returnType, parameterNames, func->parameterTypes, func->inOutFlags, defaultArgs, isConstMethod, isConstructor, isDestructor, isPrivate, isOverride, isFinal, isShared, func->nameSpace);
+	GetParsedFunctionDetails(funcDef->node, funcDef->script, 0, funcDef->name, returnType, parameterNames, parameterTypes, inOutFlags, defaultArgs, isConstMethod, isConstructor, isDestructor, isPrivate, isOverride, isFinal, isShared, func->nameSpace);
 
-	// There should not be any defaultArgs, but if there are any we need to delete them to avoid leaks
-	for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-		if( defaultArgs[n] )
-			asDELETE(defaultArgs[n], asCString);
-
-	// TODO: Should we force the use of 'shared' for this check to be done?
-	// Check if there is another identical funcdef from another module and if so reuse that instead
-	for( asUINT n = 0; n < engine->funcDefs.GetLength(); n++ )
+	if( func )
 	{
-		asCScriptFunction *f2 = engine->funcDefs[n];
-		if( f2 == 0 || func == f2 )
-			continue;
-
-		if( f2->name == func->name &&
-			f2->nameSpace == func->nameSpace &&
-			f2->IsSignatureExceptNameEqual(func) )
+		func->returnType = returnType;
+		for( asUINT p = 0; p < parameterTypes.GetLength(); p++ )
 		{
-			// Replace our funcdef for the existing one
-			funcDef->idx = f2->id;
-			module->funcDefs[module->funcDefs.IndexOf(func)] = f2;
-			f2->AddRef();
+			func->parameterTypes.PushLast(parameterTypes[p]);
+			func->inOutFlags.PushLast(inOutFlags[p]);
 
-			engine->funcDefs.RemoveValue(func);
+			// Don't copy the default arg expression as it is not allowed for function definitions
+		}
 
-			func->Release();
+		// TODO: Should we force the use of 'shared' for this check to be done?
+		// Check if there is another identical funcdef from another module and if so reuse that instead
+		for( asUINT n = 0; n < engine->funcDefs.GetLength(); n++ )
+		{
+			asCScriptFunction *f2 = engine->funcDefs[n];
+			if( f2 == 0 || func == f2 )
+				continue;
 
-			// funcdefs aren't destroyed when the refCount reaches zero so we need to manually delete them
-			asDELETE(func, asCScriptFunction);
-			break;
+			if( f2->name == func->name &&
+				f2->nameSpace == func->nameSpace &&
+				f2->IsSignatureExceptNameEqual(func) )
+			{
+				// Replace our funcdef for the existing one
+				funcDef->idx = f2->id;
+				module->funcDefs[module->funcDefs.IndexOf(func)] = f2;
+				f2->AddRef();
+
+				engine->funcDefs.RemoveValue(func);
+
+				func->Release();
+
+				// funcdefs aren't destroyed when the refCount reaches zero so we need to manually delete them
+				asDELETE(func, asCScriptFunction);
+				break;
+			}
 		}
 	}
 }
@@ -1887,12 +1873,6 @@ void asCBuilder::CompileGlobalVariables()
 					// Finalize the init function for this variable
 					initFunc->returnType = asCDataType::CreatePrimitive(ttVoid, false);
 					initFunc->scriptData->scriptSectionIdx = engine->GetScriptSectionNameIndex(gvar->script->name.AddressOf());
-					if( gvar->nextNode )
-					{
-						int row, col;
-						gvar->script->ConvertPosToRowCol(gvar->nextNode->tokenPos, &row, &col);
-						initFunc->scriptData->declaredAt = (row & 0xFFFFF)|((col & 0xFFF)<<20);
-					}
 
 					gvar->property->SetInitFunc(initFunc);
 
@@ -3160,8 +3140,7 @@ void asCBuilder::AddDefaultConstructor(asCObjectType *objType, asCScriptCode *fi
 	asCArray<asCString *> defaultArgs;
 
 	// Add the script function
-	// TODO: declaredAt should be set to where the class has been declared
-	module->AddScriptFunction(file->idx, 0, funcId, objType->name, returnType, parameterTypes, inOutFlags, defaultArgs, false, objType);
+	module->AddScriptFunction(file->idx, funcId, objType->name, returnType, parameterTypes, inOutFlags, defaultArgs, false, objType);
 
 	// Set it as default constructor
 	if( objType->beh.construct )
@@ -3195,8 +3174,7 @@ void asCBuilder::AddDefaultConstructor(asCObjectType *objType, asCScriptCode *fi
 	objType->beh.factory = funcId;
 	objType->beh.factories[0] = funcId;
 	returnType = asCDataType::CreateObjectHandle(objType, false);
-	// TODO: should be the same as the constructor
-	module->AddScriptFunction(file->idx, 0, funcId, objType->name, returnType, parameterTypes, inOutFlags, defaultArgs, false);
+	module->AddScriptFunction(file->idx, funcId, objType->name, returnType, parameterTypes, inOutFlags, defaultArgs, false);
 	functions.PushLast(0);
 	asCCompiler compiler(engine);
 	compiler.CompileFactory(this, file, engine->scriptFunctions[funcId]);
@@ -3655,12 +3633,12 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 {
 	// Determine default namespace if not specified
 	if( ns == 0 )
-	{
+    {
 		if( objType )
 			ns = objType->nameSpace;
 		else
 			ns = engine->nameSpaces[0];
-	}
+    }
 
 	if( isExistingShared )
 	{
@@ -3694,11 +3672,6 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 			WriteError(str, file, node);
 		}
 
-		// Free the default args
-		for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-			if( defaultArgs[n] )
-				asDELETE(defaultArgs[n], asCString);
-
 		node->Destroy(engine);
 		return 0;
 	}
@@ -3722,12 +3695,6 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 		{
 			// Mixins cannot implement constructors/destructors
 			WriteError(TXT_MIXIN_CANNOT_HAVE_CONSTRUCTOR, file, node);
-
-			// Free the default args
-			for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-				if( defaultArgs[n] )
-					asDELETE(defaultArgs[n], asCString);
-
 			node->Destroy(engine);
 			return 0;
 		}
@@ -3746,14 +3713,7 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 	{
 		sFunctionDescription *func = asNEW(sFunctionDescription);
 		if( func == 0 )
-		{
-			// Free the default args
-			for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-				if( defaultArgs[n] )
-					asDELETE(defaultArgs[n], asCString);
-
 			return asOUT_OF_MEMORY;
-		}
 
 		functions.PushLast(func);
 
@@ -3831,12 +3791,6 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 					node->Destroy(engine);
 				sFunctionDescription *func = functions.PopLast();
 				asDELETE(func, sFunctionDescription);
-
-				// Free the default args
-				for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-					if( defaultArgs[n] )
-						asDELETE(defaultArgs[n], asCString);
-
 				return 0;
 			}
 
@@ -3848,11 +3802,6 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 	// Register the function
 	if( isExistingShared )
 	{
-		// Delete the default args as they won't be used anymore
-		for( asUINT n = 0; n < defaultArgs.GetLength(); n++ )
-			if( defaultArgs[n] )
-				asDELETE(defaultArgs[n], asCString);
-
 		asCScriptFunction *f = engine->scriptFunctions[funcId];
 		module->AddScriptFunction(f);
 
@@ -3861,12 +3810,7 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 		f->AddRef();
 	}
 	else
-	{
-		int row = 0, col = 0;
-		if( node )
-			file->ConvertPosToRowCol(node->tokenPos, &row, &col);
-		module->AddScriptFunction(file->idx, (row&0xFFFFF)|((col&0xFFF)<<20), funcId, name, returnType, parameterTypes, inOutFlags, defaultArgs, isInterface, objType, isConstMethod, isGlobalFunction, isPrivate, isFinal, isOverride, isShared, ns);
-	}
+		module->AddScriptFunction(file->idx, funcId, name, returnType, parameterTypes, inOutFlags, defaultArgs, isInterface, objType, isConstMethod, isGlobalFunction, isPrivate, isFinal, isOverride, isShared, ns);
 
 	// Make sure the default args are declared correctly
 	ValidateDefaultArgs(file, node, engine->scriptFunctions[funcId]);
@@ -3905,7 +3849,7 @@ int asCBuilder::RegisterScriptFunction(asCScriptNode *node, asCScriptCode *file,
 					defaultArgs[n] = asNEW(asCString)(*defaultArgs[n]);
 
 			asCDataType dt = asCDataType::CreateObjectHandle(objType, false);
-			module->AddScriptFunction(file->idx, engine->scriptFunctions[funcId]->scriptData->declaredAt, factoryId, name, dt, parameterTypes, inOutFlags, defaultArgs, false);
+			module->AddScriptFunction(file->idx, factoryId, name, dt, parameterTypes, inOutFlags, defaultArgs, false);
 
 			// If the object is shared, then the factory must also be marked as shared
 			if( objType->flags & asOBJ_SHARED )
@@ -4277,9 +4221,7 @@ void asCBuilder::WriteInfo(const asCString &scriptname, const asCString &message
 	else
 	{
 		preMessage.isSet = false;
-
-		if( !silent )
-			engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_INFORMATION, message.AddressOf());
+		engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_INFORMATION, message.AddressOf());
 	}
 }
 
@@ -4298,7 +4240,7 @@ void asCBuilder::WriteError(const asCString &message, asCScriptCode *file, asCSc
 	if( node && file )
 		file->ConvertPosToRowCol(node->tokenPos, &r, &c);
 
-	WriteError(file ? file->name : asCString(""), message, r, c);
+	WriteError(file ? file->name : "", message, r, c);
 }
 
 void asCBuilder::WriteError(const asCString &scriptname, const asCString &message, int r, int c)
@@ -4309,8 +4251,7 @@ void asCBuilder::WriteError(const asCString &scriptname, const asCString &messag
 	if( preMessage.isSet )
 		WriteInfo(preMessage.scriptname, preMessage.message, preMessage.r, preMessage.c, false);
 
-	if( !silent )
-		engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_ERROR, message.AddressOf());
+	engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_ERROR, message.AddressOf());
 }
 
 void asCBuilder::WriteWarning(const asCString &scriptname, const asCString &message, int r, int c)
@@ -4323,8 +4264,7 @@ void asCBuilder::WriteWarning(const asCString &scriptname, const asCString &mess
 		if( preMessage.isSet )
 			WriteInfo(preMessage.scriptname, preMessage.message, preMessage.r, preMessage.c, false);
 
-		if( !silent )
-			engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_WARNING, message.AddressOf());
+		engine->WriteMessage(scriptname.AddressOf(), r, c, asMSGTYPE_WARNING, message.AddressOf());
 	}
 }
 
@@ -4434,10 +4374,9 @@ asCDataType asCBuilder::CreateDataTypeFromNode(asCScriptNode *node, asCScriptCod
 			{
 				for( asUINT subtypeIndex = 0; subtypeIndex < currentType->templateSubTypes.GetLength(); subtypeIndex++)
 				{
-					asCObjectType *type = currentType->templateSubTypes[subtypeIndex].GetObjectType();
-					if( type && str == type->name )
+					if(str == currentType->templateSubTypes[subtypeIndex].GetObjectType()->name )
 					{
-						ot = type;
+						ot = currentType->templateSubTypes[subtypeIndex].GetObjectType();
 						break;
 					}
 				}
@@ -4680,9 +4619,7 @@ asCDataType asCBuilder::ModifyDataTypeFromNode(const asCDataType &type, asCScrip
 	if( n && n->tokenType == ttPlus )
 	{
 		// Autohandles are not supported for types with NOCOUNT
-		// If the type is not a handle then there was an error with building the type, but 
-		// this error would already have been reported so no need to report another error here
-		if( dt.IsObjectHandle() && (dt.GetObjectType()->flags & asOBJ_NOCOUNT) )
+		if( dt.GetObjectType()->flags & asOBJ_NOCOUNT )
 			WriteError(TXT_AUTOHANDLE_CANNOT_BE_USED_FOR_NOCOUNT, file, node->firstChild);
 
 		if( autoHandle ) *autoHandle = true;
@@ -4702,7 +4639,7 @@ asCObjectType *asCBuilder::GetObjectType(const char *type, asSNameSpace *ns)
 
 // This function will return true if there are any types in the engine or module
 // with the given name. The namespace is ignored in this verification.
-bool asCBuilder::DoesTypeExist(const asCString &type)
+bool asCBuilder::DoesTypeExist(const char *type)
 {
 	asUINT n;
 

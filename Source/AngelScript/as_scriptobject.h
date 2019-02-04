@@ -129,8 +129,7 @@ public:
 
 protected:
 	mutable asCAtomic refCount;
-	mutable asBYTE gcFlag:1;
-	mutable asBYTE hasRefCountReachedZero:1;
+	mutable bool gcFlag;
 	bool isDestructCalled;
 	mutable asCLockableSharedBool *weakRefFlag;
 };

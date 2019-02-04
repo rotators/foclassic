@@ -46,7 +46,6 @@
 #include "as_scriptengine.h"
 #include "as_texts.h"
 #include "as_tokendef.h"
-#include "as_context.h"
 
 BEGIN_AS_NAMESPACE
 

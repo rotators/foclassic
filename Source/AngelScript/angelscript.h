@@ -58,8 +58,8 @@ BEGIN_AS_NAMESPACE
 
 // AngelScript version
 
-#define ANGELSCRIPT_VERSION        22800
-#define ANGELSCRIPT_VERSION_STRING "2.28.0"
+#define ANGELSCRIPT_VERSION        22701
+#define ANGELSCRIPT_VERSION_STRING "2.27.1"
 
 // Data types
 
@@ -163,7 +163,6 @@ enum asEBehaviours
 {
 	// Value object memory management
 	asBEHAVE_CONSTRUCT,
-	asBEHAVE_LIST_CONSTRUCT,
 	asBEHAVE_DESTRUCT,
 
 	// Reference object memory management
@@ -618,8 +617,6 @@ public:
 	// Script modules
 	virtual asIScriptModule *GetModule(const char *module, asEGMFlags flag = asGM_ONLY_IF_EXISTS) = 0;
 	virtual int              DiscardModule(const char *module) = 0;
-	virtual asUINT           GetModuleCount() const = 0;
-	virtual asIScriptModule *GetModuleByIndex(asUINT index) const = 0;
 
 	// Script functions
 	virtual asIScriptFunction *GetFunctionById(int funcId) const = 0;
@@ -815,7 +812,7 @@ public:
 	virtual int                GetLineNumber(asUINT stackLevel = 0, int *column = 0, const char **sectionName = 0) = 0;
 	virtual int                GetVarCount(asUINT stackLevel = 0) = 0;
 	virtual const char        *GetVarName(asUINT varIndex, asUINT stackLevel = 0) = 0;
-	virtual const char        *GetVarDeclaration(asUINT varIndex, asUINT stackLevel = 0, bool includeNamespace = false) = 0;
+	virtual const char        *GetVarDeclaration(asUINT varIndex, asUINT stackLevel = 0) = 0;
 	virtual int                GetVarTypeId(asUINT varIndex, asUINT stackLevel = 0) = 0;
 	virtual void              *GetAddressOfVar(asUINT varIndex, asUINT stackLevel = 0) = 0;
 	virtual bool               IsVarInScope(asUINT varIndex, asUINT stackLevel = 0) = 0;
@@ -938,7 +935,7 @@ public:
 	// Properties
 	virtual asUINT      GetPropertyCount() const = 0;
 	virtual int         GetProperty(asUINT index, const char **name, int *typeId = 0, bool *isPrivate = 0, int *offset = 0, bool *isReference = 0, asDWORD *accessMask = 0) const = 0;
-	virtual const char *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const = 0;
+	virtual const char *GetPropertyDeclaration(asUINT index) const = 0;
 
 	// Behaviours
 	virtual asUINT             GetBehaviourCount() const = 0;
@@ -997,7 +994,7 @@ public:
 	// Debug information
 	virtual asUINT           GetVarCount() const = 0;
 	virtual int              GetVar(asUINT index, const char **name, int *typeId = 0) const = 0;
-	virtual const char      *GetVarDecl(asUINT index, bool includeNamespace = false) const = 0;
+	virtual const char      *GetVarDecl(asUINT index) const = 0;
 	virtual int              FindNextLineWithCode(int line) const = 0;
 
 	// For JIT compilation
@@ -1422,12 +1419,8 @@ enum asEBCInstr
 	asBC_RefCpyV		= 186,
 	asBC_JLowZ			= 187,
 	asBC_JLowNZ			= 188,
-	asBC_AllocMem		= 189,
-	asBC_SetListSize	= 190,
-	asBC_PshListElmnt	= 191,
-	asBC_SetListType	= 192,
 
-	asBC_MAXBYTECODE	= 193,
+	asBC_MAXBYTECODE	= 189,
 
 	// Temporary tokens. Can't be output to the final program
 	asBC_VarDecl		= 251,
@@ -1459,12 +1452,11 @@ enum asEBCType
 	asBCTYPE_QW_DW_ARG    = 16,
 	asBCTYPE_rW_QW_ARG    = 17,
 	asBCTYPE_W_DW_ARG     = 18,
-	asBCTYPE_rW_W_DW_ARG  = 19,
-	asBCTYPE_rW_DW_DW_ARG = 20
+	asBCTYPE_rW_W_DW_ARG  = 19
 };
 
 // Instruction type sizes
-const int asBCTypeSize[21] =
+const int asBCTypeSize[20] =
 {
 	0, // asBCTYPE_INFO
 	1, // asBCTYPE_NO_ARG
@@ -1485,8 +1477,7 @@ const int asBCTypeSize[21] =
 	4, // asBCTYPE_QW_DW_ARG
 	3, // asBCTYPE_rW_QW_ARG
 	2, // asBCTYPE_W_DW_ARG
-	3, // asBCTYPE_rW_W_DW_ARG
-	3  // asBCTYPE_rW_DW_DW_ARG
+	3  // asBCTYPE_rW_W_DW_ARG
 };
 
 // Instruction info
@@ -1710,11 +1701,11 @@ const asSBCInfo asBCInfo[256] =
 	asBCINFO(RefCpyV,	wW_PTR_ARG,		0),
 	asBCINFO(JLowZ,		DW_ARG,			0),
 	asBCINFO(JLowNZ,	DW_ARG,			0),
-	asBCINFO(AllocMem,	wW_DW_ARG,		0),
-	asBCINFO(SetListSize, rW_DW_DW_ARG,	0),
-	asBCINFO(PshListElmnt, rW_DW_ARG,	AS_PTR_SIZE),
-	asBCINFO(SetListType, rW_DW_DW_ARG,	0),
 
+	asBCINFO_DUMMY(189),
+	asBCINFO_DUMMY(190),
+	asBCINFO_DUMMY(191),
+	asBCINFO_DUMMY(192),
 	asBCINFO_DUMMY(193),
 	asBCINFO_DUMMY(194),
 	asBCINFO_DUMMY(195),
@@ -1782,11 +1773,11 @@ const asSBCInfo asBCInfo[256] =
 };
 
 // Macros to access bytecode instruction arguments
-#define asBC_DWORDARG(x)  (*(((asDWORD*)x)+1))
-#define asBC_INTARG(x)    (*(int*)(((asDWORD*)x)+1))
-#define asBC_QWORDARG(x)  (*(asQWORD*)(((asDWORD*)x)+1))
-#define asBC_FLOATARG(x)  (*(float*)(((asDWORD*)x)+1))
-#define asBC_PTRARG(x)    (*(asPWORD*)(((asDWORD*)x)+1))
+#define asBC_DWORDARG(x)  (asDWORD(*(x+1)))
+#define asBC_INTARG(x)    (int(*(x+1)))
+#define asBC_QWORDARG(x)  (*(asQWORD*)(x+1))
+#define asBC_FLOATARG(x)  (*(float*)(x+1))
+#define asBC_PTRARG(x)    (*(asPWORD*)(x+1))
 #define asBC_WORDARG0(x)  (*(((asWORD*)x)+1))
 #define asBC_WORDARG1(x)  (*(((asWORD*)x)+2))
 #define asBC_SWORDARG0(x) (*(((short*)x)+1))

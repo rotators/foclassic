@@ -52,7 +52,6 @@ class asCScriptEngine;
 class asCModule;
 class asCConfigGroup;
 class asCGlobalProperty;
-class asCScriptNode;
 struct asSNameSpace;
 
 struct asSScriptVariable
@@ -61,30 +60,6 @@ struct asSScriptVariable
 	asCDataType type;
 	int         stackOffset;
 	asUINT      declaredAtProgramPos;
-};
-
-enum asEListPatternNodeType
-{
-	asLPT_REPEAT,
-	asLPT_START,
-	asLPT_END,
-	asLPT_TYPE
-};
-
-struct asSListPatternNode
-{
-	asSListPatternNode(asEListPatternNodeType t) : type(t), next(0) {}
-	virtual ~asSListPatternNode() {};
-	virtual asSListPatternNode *Duplicate() { return asNEW(asSListPatternNode)(type); }
-	asEListPatternNodeType  type;
-	asSListPatternNode     *next;
-};
-
-struct asSListPatternDataTypeNode : public asSListPatternNode
-{
-	asSListPatternDataTypeNode(const asCDataType &dt) : asSListPatternNode(asLPT_TYPE), dataType(dt) {}
-	asSListPatternNode *Duplicate() { return asNEW(asSListPatternDataTypeNode)(dataType); }
-	asCDataType dataType;
 };
 
 enum asEObjVarInfoOption
@@ -103,6 +78,10 @@ struct asSObjectVariableInfo
 };
 
 struct asSSystemFunctionInterface;
+
+// TODO: GetModuleName should be removed. A function won't belong to a specific module anymore
+//       as the function can be removed from the module, but still remain alive. For example
+//       for dynamically generated functions held by a function pointer.
 
 // TODO: Might be interesting to allow enumeration of accessed global variables, and 
 //       also functions/methods that are being called. This could be used to build a 
@@ -156,7 +135,7 @@ public:
 	// Debug information
 	asUINT               GetVarCount() const;
 	int                  GetVar(asUINT index, const char **name, int *typeId = 0) const;
-	const char *         GetVarDecl(asUINT index, bool includeNamespace = false) const;
+	const char *         GetVarDecl(asUINT index) const;
 	int                  FindNextLineWithCode(int line) const;
 
 	// For JIT compilation
@@ -190,12 +169,7 @@ public:
 	bool      IsSignatureExceptNameAndReturnTypeEqual(const asCArray<asCDataType> &paramTypes, const asCArray<asETypeModifiers> &inOutFlags, const asCObjectType *type, bool isReadOnly) const;
 	bool      IsSignatureExceptNameAndObjectTypeEqual(const asCScriptFunction *func) const;
 
-	asCObjectType *GetObjectTypeOfLocalVar(short varOffset);
-
 	void      MakeDelegate(asCScriptFunction *func, void *obj);
-
-	int       RegisterListPattern(const char *decl, asCScriptNode *listPattern);
-	int       ParseListPattern(asSListPatternNode *&target, const char *decl, asCScriptNode *listPattern);
 
 	bool      DoesReturnOnStack() const;
 
@@ -252,9 +226,6 @@ public:
 	void              *objForDelegate;
 	asCScriptFunction *funcForDelegate;
 
-	// Used by list factory behaviour
-	asSListPatternNode *listPattern;
-
 	// Used by asFUNC_SCRIPT
 	struct ScriptFunctionData
 	{
@@ -289,8 +260,6 @@ public:
 		asCArray<int>                   lineNumbers;
 		// Store the script section where the code was declared
 		int                             scriptSectionIdx;
-		// Store the location where the function was declared
-		int                             declaredAt;
 		// Store position/index pairs if the bytecode is compiled from multiple script sections
 		asCArray<int>                   sectionIdxs;
 	};

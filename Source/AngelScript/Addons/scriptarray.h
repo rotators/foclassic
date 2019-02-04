@@ -11,7 +11,7 @@ public:
     #ifdef FOCLASSIC_EXTENSION
     static ScriptArray& Create( const char* type ) // TODO asIScriptEngine* engine
     {
-        static int   typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
+        int          typeId = ASEngine->GetTypeIdByDecl( std::string( type ).append( "[]" ).c_str() );
         ScriptArray* scriptArray = (ScriptArray*)ASEngine->CreateScriptObject( ASEngine->GetObjectTypeById( typeId ) );
         return *scriptArray;
     }
@@ -20,7 +20,6 @@ protected:
 
     ScriptArray();
     ScriptArray( const ScriptArray& );
-    ScriptArray( asIObjectType* ot, void* initBuf );     // Called from script when initialized with list
     ScriptArray( asUINT length, asIObjectType* ot );
     ScriptArray( asUINT length, void* defVal, asIObjectType* ot );
     virtual ~ScriptArray();

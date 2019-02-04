@@ -60,7 +60,6 @@ struct asCTypeInfo
 	void SetConstantF(const asCDataType &dataType, float value);
 	void SetConstantD(const asCDataType &dataType, double value);
 	void SetNullConstant();
-	void SetUndefinedFuncHandle(asCScriptEngine *engine);
 	void SetVoidExpression();
 	void SetDummy();
 
