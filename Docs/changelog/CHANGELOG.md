@@ -8,16 +8,21 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v6]() (WIP)
 
-- precompiled scripts (Client cache/.fosb files) are saved with version of AngelScript used to compile them; in case of version mismatch:
-    - [Client] new cache is requested
-    - [Server] script is compiled from source
 - Client cache contains more detailed informations about engine version used to compile scripts
     - new cache is requested if cached version info does not match Client
 - all players are disconnected when reloading client scripts
+- scripts changes
+    - import errors slightly more developer-friendly
+    - script functions are no longer imported if loading scripts step contains errors
+    - [Server] with `VerboseInit` enabled, all imports are displayed in log
+    - [Client, Server] precompiled scripts (cache/.fosb files) are saved with version of AngelScript used to compile them; in case of version mismatch:
+        - [Client] new cache is requested
+        - [Server] script is compiled from source
+    - [Client, Server] importing functions from other modules is done only if no errors has been detected during scripts loading
 - temporary changes
     - warnings during scripts compilation are treated as errors
 - additional notes
-    - as this release is quite big (many, many changes in script engine), it has been splitted into smaller parts (marked with git tags) which should be easier to handle for everyone
+    - as this release contains more than one AngelScript update, it has been splitted into smaller parts (marked with git tags) which should be easier to handle for everyone
     - table below contains links to official AngelScript announcements (_Version_) as well as script engine repository (_Revision_); other than that, it's recommended to read [more detailed changelog](http://angelcode.com/angelscript/changes.php?ver=2) - especially sections _script language_ and _library interface_ (in case of extensions workin with _angelscript.h_)
     - for long-running servers, it's recommended to update engine tag-by-tag; links to compiled binaries are provided (note that AppVeyor keeps artifacts for about 6 months)
 

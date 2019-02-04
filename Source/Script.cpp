@@ -1883,8 +1883,10 @@ int Script::BindImportedFunctions()
             const char* importFunctionDecl = module->GetImportedFunctionDeclaration( i );
             const char* importString = Str::FormatBuf( "import %s from \"%s\"", importFunctionDecl, importModuleName );
 
+            #if defined (__SERVER)
             if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
                 WriteLog( " %s : %s\n", module->GetName(), importString );
+            #endif
 
             asIScriptModule* importModule = Engine->GetModule( importModuleName, asGM_ONLY_IF_EXISTS );
             if( !importModule )
