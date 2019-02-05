@@ -7,8 +7,9 @@
 #include "Log.h"
 #include "Random.h"
 #include "ScriptBind.h"
+#include "ScriptUtils.h"
 
-// copy macros related to registration
+// "copy" macros related to registration
 // redefined during dummy registration
 
 #define focFUNCTION( func )                        asFUNCTION( func )
@@ -86,39 +87,6 @@ BIND_NAMESPACE_BEGIN
 }
 BIND_NAMESPACE_END
 
-#pragma TODO("Generate BindError automagically")
-static const char* BindError[] =
-{
-    "SUCCESS",                                      //  0
-    "ERROR",                                        // -1
-    "CONTEXT_ACTIVE",                               // -2
-    "CONTEXT_NOT_FINISHED",                         // -3
-    "CONTEXT_NOT_PREPARED",                         // -4
-    "INVALID_ARG",                                  // -5
-    "NO_FUNCTION",                                  // -6
-    "NOT_SUPPORTED",                                // -7
-    "INVALID_NAME",                                 // -8
-    "NAME_TAKEN",                                   // -9
-    "INVALID_DECLARATION",                          // -10
-    "INVALID_OBJECT",                               // -11
-    "INVALID_TYPE",                                 // -12
-    "ALREADY_REGISTERED",                           // -13
-    "MULTIPLE_FUNCTIONS",                           // -14
-    "NO_MODULE",                                    // -15
-    "NO_GLOBAL_VAR",                                // -16
-    "INVALID_CONFIGURATION",                        // -17
-    "INVALID_INTERFACE",                            // -18
-    "CANT_BIND_ALL_FUNCTIONS",                      // -19
-    "LOWER_ARRAY_DIMENSION_NOT_REGISTERED",         // -20
-    "WRONG_CONFIG_GROUP",                           // -21
-    "CONFIG_GROUP_IS_IN_USE",                       // -22
-    "ILLEGAL_BEHAVIOUR_FOR_TYPE",                   // -23
-    "WRONG_CALLING_CONV",                           // -24
-    "BUILD_IN_PROGRESS",                            // -25
-    "INIT_GLOBAL_VARS_FAILED",                      // -26
-    "OUT_OF_MEMORY",                                // -27
-};
-
 bool ScriptBind::SetEngineProperty( asIScriptEngine* engine, asEEngineProp property, asPWORD value )
 {
     if( !BindChecks( engine ) )
@@ -131,7 +99,7 @@ bool ScriptBind::SetEngineProperty( asIScriptEngine* engine, asEEngineProp prope
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %u : %s\n", _FUNC_, property, BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %u : %s\n", _FUNC_, property, Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -150,7 +118,7 @@ bool ScriptBind::RegisterGlobalProperty( asIScriptEngine* engine, const string& 
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, declaration.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, declaration.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -170,7 +138,7 @@ bool ScriptBind::RegisterGlobalFunction( asIScriptEngine* engine, const string& 
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, declaration.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, declaration.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -189,7 +157,7 @@ bool ScriptBind::RegisterObjectType( asIScriptEngine* engine, const string& obje
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, object.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s : %s\n", _FUNC_, object.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -208,7 +176,7 @@ bool ScriptBind::RegisterObjectBehaviour( asIScriptEngine* engine, const string&
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -227,7 +195,7 @@ bool ScriptBind::RegisterObjectProperty( asIScriptEngine* engine, const string& 
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 
@@ -247,7 +215,7 @@ bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, const string& ob
     }
     else
     {
-        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), BindError[abs( result )] );
+        WriteLog( "BIND ERROR : %s : %s %s : %s\n", _FUNC_, object.c_str(), declaration.c_str(), Script::GetASReturnCode( result ) );
         BindSuccess = false;
     }
 

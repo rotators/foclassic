@@ -39,6 +39,7 @@ DataFile* DataFile::Open( const char* fname )
                 delete dat;
             return NULL;
         }
+
         return dat;
     }
     else if( Str::CompareCase( ext, ".zip" ) || Str::CompareCase( ext, ".bos" ) ) // Try open ZIP, BOS
@@ -51,6 +52,7 @@ DataFile* DataFile::Open( const char* fname )
                 delete zip;
             return NULL;
         }
+
         return zip;
     }
     else     // Bad file format

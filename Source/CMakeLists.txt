@@ -160,6 +160,8 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	ScriptFunctions.h
 	ScriptPragmas.cpp
 	ScriptPragmas.h
+	ScriptUtils.cpp
+	ScriptUtils.h
 	SinglePlayer.cpp
 	SinglePlayer.h
 	Utils.cpp
@@ -173,7 +175,14 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 ##
 
 add_library( ScriptBindDummy STATIC "" )
-target_sources( ScriptBindDummy PUBLIC ${CMAKE_CURRENT_LIST_DIR}/ScriptBind.h PRIVATE ScriptBind.cpp )
+target_sources( ScriptBindDummy
+	PUBLIC
+		${CMAKE_CURRENT_LIST_DIR}/ScriptBind.h
+		${CMAKE_CURRENT_LIST_DIR}/ScriptUtils.h
+	PRIVATE
+		ScriptBind.cpp
+		ScriptUtils.cpp
+)
 target_compile_definitions( ScriptBindDummy PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ScriptBindDummy PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ScriptBindDummy angelscript-preprocessor Shared )
@@ -345,7 +354,6 @@ endif()
 add_executable( ASCompiler "" )
 target_sources( ASCompiler
 	PRIVATE
-		ASCompiler.cpp
 		ASCompiler.h
 		Exception.cpp
 		Exception.h
@@ -355,8 +363,11 @@ target_sources( ASCompiler
 		IniParser.h
 		Log.cpp
 		Log.h
+		MainASCompiler.cpp
 		ScriptPragmas.cpp
 		ScriptPragmas.h
+		ScriptUtils.cpp
+		ScriptUtils.h
 )
 target_compile_definitions( ASCompiler PRIVATE FOCLASSIC_SCRIPT_COMPILER )
 target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )

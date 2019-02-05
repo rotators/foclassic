@@ -1480,6 +1480,10 @@ void FOServer::Process( ClientPtr& cl )
                     cl->Bout << (uint)Statistics.Uptime;
                     cl->Bout << (uint)0;
                     cl->Bout << (uchar)0;
+                    // Known engine identifiers
+                    // 0xFC FOClassic
+                    // 0xF0 FOnline
+                    // 0xA0 Ashes of Phoenix
                     cl->Bout << (uchar)0xFC;
                     cl->Bout << (ushort)FOCLASSIC_VERSION;
 

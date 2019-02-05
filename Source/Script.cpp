@@ -18,6 +18,7 @@
 #include "Ini.h"
 #include "Log.h"
 #include "Script.h"
+#include "ScriptUtils.h"
 #include "Text.h"
 #include "Thread.h"
 #include "Timer.h"
@@ -1603,7 +1604,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                         return true;
                     }
                     else
-                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, result );
+                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, GetASReturnCode( result ));
                 }
                 else
                     WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
@@ -1666,7 +1667,7 @@ public:
         asIScriptModule* module = *it;
         if( Str::Compare( module->GetName(), module_real ) )
         {
-            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_real );
+            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discarding.\n", module_real );
             Engine->DiscardModule( module_real );
             modules.erase( it );
             break;
@@ -1683,14 +1684,14 @@ public:
     int as_result = module->AddScriptSection( module_real, result.String.c_str() );
     if( as_result < 0 )
     {
-        WriteLogF( _FUNC_, " - Unable to AddScriptSection module<%s>, result<%d>.\n", module_real, as_result );
+        WriteLogF( _FUNC_, " - Unable to AddScriptSection module<%s>, result<%s>.\n", module_real, GetASReturnCode( as_result ) );
         return false;
     }
 
     as_result = module->Build();
     if( as_result < 0 )
     {
-        WriteLogF( _FUNC_, " - Unable to Build module<%s>, result<%d>.\n", module_real, as_result );
+        WriteLogF( _FUNC_, " - Unable to Build module<%s>, result<%s>.\n", module_real, GetASReturnCode( as_result ) );
         return false;
     }
 
@@ -1907,7 +1908,7 @@ int Script::BindImportedFunctions()
             int result = module->BindImportedFunction( i, importFunction );
             if( result < 0 )
             {
-                WriteLogF( _FUNC_, " Module<%s> cannot %s : bind error<%d>\n", module->GetName(), importString, result );
+                WriteLogF( _FUNC_, " Module<%s> cannot %s : bind error<%s>\n", module->GetName(), importString, GetASReturnCode( result ) );
                 errors++;
                 continue;
             }

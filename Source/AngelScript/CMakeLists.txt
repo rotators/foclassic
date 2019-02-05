@@ -95,3 +95,7 @@ set_property( TARGET angelscript PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Lib
 
 source_group( " "     REGULAR_EXPRESSION "\.([Cc]|[Cc][Pp][Pp]|[Hh])$" )
 source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
+
+if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tests" )
+	add_subdirectory( Tests )
+endif()
