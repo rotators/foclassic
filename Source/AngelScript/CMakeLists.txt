@@ -138,7 +138,7 @@ foreach( retcode IN LISTS ASERETCODES )
 	endif()
 endforeach()
 
-if( "${AS_RETURN_CODES}" MATCHES "(.*), // ([0-9\-]+)\n")
+if( "${AS_RETURN_CODES}" MATCHES "(.*), // ([0-9\-]+)\n$")
 	set( AS_RETURN_CODES "${CMAKE_MATCH_1}  // ${CMAKE_MATCH_2}" )
 endif()
 
