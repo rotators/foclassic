@@ -46,49 +46,51 @@ include( SourceOptions )
 ## set variables
 ##
 
-set( FOCLASSIC_ROOT_DIR             "${CMAKE_CURRENT_LIST_DIR}" )
-set( FOCLASSIC_BINARY_DIR           "${CMAKE_CURRENT_BINARY_DIR}" )
+set( FOCLASSIC_ROOT_DIR                  "${CMAKE_CURRENT_LIST_DIR}" )
+set( FOCLASSIC_BINARY_DIR                "${CMAKE_CURRENT_BINARY_DIR}" )
 
 # main directories
-set( SOURCE_DIR                     "${FOCLASSIC_ROOT_DIR}/Source" )
-set( EXTENSIONS_DIR                 "${FOCLASSIC_ROOT_DIR}/Extensions" )
-set( DOCS_DIR                       "${FOCLASSIC_ROOT_DIR}/Docs" )
+set( SOURCE_DIR                          "${FOCLASSIC_ROOT_DIR}/Source" )
+set( EXTENSIONS_DIR                      "${FOCLASSIC_ROOT_DIR}/Extensions" )
+set( DOCS_DIR                            "${FOCLASSIC_ROOT_DIR}/Docs" )
 
 # libraries directories
-set( SHARED_DIR                     "${SOURCE_DIR}/Shared" )
-set( LIBS_DIR                       "${SOURCE_DIR}/Libs" )
-set( AS_DIR                         "${SOURCE_DIR}/AngelScript" )
-set( AS_ADDONS_DIR                  "${AS_DIR}/Addons" )
-set( DAT_DIR                        "${SOURCE_DIR}/DatFile" )
+set( SHARED_DIR                          "${SOURCE_DIR}/Shared" )
+set( LIBS_DIR                            "${SOURCE_DIR}/Libs" )
+set( AS_DIR                              "${SOURCE_DIR}/AngelScript" )
+set( AS_ADDONS_DIR                       "${AS_DIR}/Addons" )
+set( DAT_DIR                             "${SOURCE_DIR}/DatFile" )
 
 # release directories
-set( RELEASE_DIR_NAME               "FOClassic-v${PROJECT_VERSION_MINOR}" )
-set( RELEASE_DIR                    "${FOCLASSIC_BINARY_DIR}/${RELEASE_DIR_NAME}" )
-set( RELEASE_CMAKE_DIR              "${RELEASE_DIR}/CMake" )
-set( RELEASE_HEADERS_DIR            "${RELEASE_DIR}/Headers" )
+set( RELEASE_DIR_NAME                    "FOClassic-v${PROJECT_VERSION_MINOR}" )
+set( RELEASE_DIR                         "${FOCLASSIC_BINARY_DIR}/${RELEASE_DIR_NAME}" )
+set( RELEASE_CMAKE_DIR                   "${RELEASE_DIR}/CMake" )
+set( RELEASE_HEADERS_DIR                 "${RELEASE_DIR}/Headers" )
 
 # other directories
-set( TEMPLATES_DIR                   "${FOCLASSIC_CMAKE_DIR}/Templates" )
-set( FOCMAKE_DIR                     "${FOCLASSIC_BINARY_DIR}/CMake" )
-set( FOCLASSIC_INCLUDE_DIR           "${FOCMAKE_DIR}/include" )
+set( TEMPLATES_DIR                       "${FOCLASSIC_CMAKE_DIR}/Templates" )
+set( FOCMAKE_DIR                         "${FOCLASSIC_BINARY_DIR}/CMake" )
+set( FOCLASSIC_INCLUDE_DIR               "${FOCMAKE_DIR}/include" )
 
 # templates
-set( ENGINE_GLOBAL_HEADER_TEMPLATE   "${TEMPLATES_DIR}/CMake.h" )
-set( ENGINE_NET_HEADER_TEMPLATE      "${TEMPLATES_DIR}/CMake.Net.h" )
-set( SCRIPTS_HEADER_TEMPLATE         "${SHARED_DIR}/Defines.Public.h" )
-set( VERSION_TEMPLATE                "${TEMPLATES_DIR}/VERSION" )
+set( ENGINE_GLOBAL_HEADER_TEMPLATE       "${TEMPLATES_DIR}/CMake.h" )
+set( ENGINE_ANGELSCRIPT_HEADER_TEMPLATE  "${TEMPLATES_DIR}/CMake.AngelScript.h" )
+set( ENGINE_NET_HEADER_TEMPLATE          "${TEMPLATES_DIR}/CMake.Net.h" )
+set( SCRIPTS_HEADER_TEMPLATE             "${SHARED_DIR}/Defines.Public.h" )
+set( VERSION_TEMPLATE                    "${TEMPLATES_DIR}/VERSION" )
 
 # special files
-set( CHANGELOG_FILE                  "${DOCS_DIR}/changelog/CHANGELOG.md" )
-set( ENGINE_GLOBAL_HEADER_FILE       "${FOCLASSIC_INCLUDE_DIR}/CMake.h" )
-set( ENGINE_NET_HEADER_FILE          "${FOCLASSIC_INCLUDE_DIR}/CMake.Net.h" )
+set( CHANGELOG_FILE                      "${DOCS_DIR}/changelog/CHANGELOG.md" )
+set( ENGINE_GLOBAL_HEADER_FILE           "${FOCLASSIC_INCLUDE_DIR}/CMake.h" )
+set( ENGINE_ANGELSCRIPT_HEADER_FILE      "${FOCLASSIC_INCLUDE_DIR}/CMake.AngelScript.h" )
+set( ENGINE_NET_HEADER_FILE              "${FOCLASSIC_INCLUDE_DIR}/CMake.Net.h" )
 
 ##
 ## customization
 ##
 
-set( USER_TOP_FOCLASSIC_FILE         "${CMAKE_SOURCE_DIR}/CMakeFOClassic.txt" )
-set( USER_FOCLASSIC_FILE             "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.txt" )
+set( USER_TOP_FOCLASSIC_FILE             "${CMAKE_SOURCE_DIR}/CMakeFOClassic.txt" )
+set( USER_FOCLASSIC_FILE                 "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.txt" )
 
 message( STATUS "Customization setup..." )
 

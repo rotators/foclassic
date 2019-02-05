@@ -3,6 +3,36 @@
 ## TODO (VS2017) ac_callfunc* not handled correctly (LNK4221)
 ##
 
+function( EnumToList file enum var )
+
+	if( NOT EXISTS "${file}" )
+		message( FATAL_ERROR "${file} does not exists" )
+	endif()
+
+	set( found 0 )
+	file( STRINGS "${file}" content )
+	foreach( str IN LISTS content )
+		if( found EQUAL 0 )
+			if( "${str}" MATCHES "^[\t\ ]*enum[\t\ ]+${enum}" )
+				set( found 1 )
+			endif()
+		elseif( found EQUAL 1 )
+			set( found 2 )
+		else()
+			if( str MATCHES "^[\t\ ]+([A-Za-z0-9_]+)[\t\ ]*=[\t\ ]*([0-9\-]+)")
+				list( APPEND ${var} "${CMAKE_MATCH_1}=${CMAKE_MATCH_2}" )
+			else()
+				break()
+			endif()
+		endif()
+	endforeach()
+
+	if( ${var} )
+		set( ${var} ${${var}} PARENT_SCOPE )
+	endif()
+
+endfunction()
+
 add_library( angelscript STATIC "" )
 target_sources( angelscript
 	PUBLIC
@@ -99,3 +129,18 @@ source_group( "CMake" REGULAR_EXPRESSION "[Cc][Mm][Aa][Kk][Ee]" )
 if( EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tests" )
 	add_subdirectory( Tests )
 endif()
+
+EnumToList( "${CMAKE_CURRENT_LIST_DIR}/angelscript.h" asERetCodes ASERETCODES )
+foreach( retcode IN LISTS ASERETCODES )
+	if( retcode MATCHES "(.*)=(.*)" )
+		math( EXPR AS_RETURN_CODES_LENGTH "${AS_RETURN_CODES_LENGTH} + 1" )
+		string( APPEND AS_RETURN_CODES "\"${CMAKE_MATCH_1}\", // ${CMAKE_MATCH_2}\n" )
+	endif()
+endforeach()
+
+if( "${AS_RETURN_CODES}" MATCHES "(.*), // ([0-9\-]+)\n")
+	set( AS_RETURN_CODES "${CMAKE_MATCH_1}  // ${CMAKE_MATCH_2}" )
+endif()
+
+configure_file( "${ENGINE_ANGELSCRIPT_HEADER_TEMPLATE}" "${ENGINE_ANGELSCRIPT_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
+FormatSource( "${ENGINE_ANGELSCRIPT_HEADER_FILE}" "${FOCLASSIC_ROOT_DIR}" dummy )

@@ -1831,7 +1831,7 @@ bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint le
         asIScriptModule* module = *it;
         if( Str::Compare( module->GetName(), module_name ) )
         {
-            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_name );
+            WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discarding.\n", module_name );
             Engine->DiscardModule( module_name );
             modules.erase( it );
             break;
@@ -1850,7 +1850,7 @@ bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint le
     int             result = module->LoadByteCode( &binary );
     if( result < 0 )
     {
-        WriteLogF( _FUNC_, " - Can't load binary, module<%s>, result<%d>.\n", module_name, result );
+        WriteLogF( _FUNC_, " - Can't load binary, module<%s>, result<%s>.\n", module_name, GetASReturnCode( result ) );
         return false;
     }
 
