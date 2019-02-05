@@ -1604,7 +1604,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                         return true;
                     }
                     else
-                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, GetASReturnCode( result ));
+                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, GetASReturnCode( result ) );
                 }
                 else
                     WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
