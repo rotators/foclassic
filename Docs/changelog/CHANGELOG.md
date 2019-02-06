@@ -14,13 +14,15 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - scripts changes
     - import errors slightly more developer-friendly
     - script functions are no longer imported if loading scripts step contains errors
+    - when possible, AngelScript error codes are converted to their names from _angelscript.h_ (`asINVALID_CONFIGURATION`, `asOUT_OF_MEMORY` etc.)
     - [Server] with `VerboseInit` enabled, all imports are displayed in log
-    - [Client, Server] precompiled scripts (cache/.fosb files) are saved with version of AngelScript used to compile them; in case of version mismatch:
+    - [Server] dependencies saved in _.fosb_ files are relative to scripts directory
+    - [Client, Server] precompiled scripts (cache/_.fosb_ files) are saved with version of AngelScript used to compile them; in case of version mismatch:
         - [Client] new cache is requested
         - [Server] script is compiled from source
     - [Client, Server] importing functions from other modules is done only if no errors has been detected during scripts loading
 - temporary changes
-    - warnings during scripts compilation are treated as errors
+    - warnings during scripts compilation are treated as errors (enabled during AngelScript updates, disabled in release)
 - additional notes
     - as this release contains more than one AngelScript update, it has been splitted into smaller parts (marked with git tags) which should be easier to handle for everyone
     - table below contains links to official AngelScript announcements (_Version_) as well as script engine repository (_Revision_); other than that, it's recommended to read [more detailed changelog](http://angelcode.com/angelscript/changes.php?ver=2) - especially sections _script language_ and _library interface_ (in case of extensions workin with _angelscript.h_)

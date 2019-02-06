@@ -1510,14 +1510,14 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         file.LoadFile( fname_real, ScriptsPath );
         file_bin.LoadFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath );
 
-        if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(uint) )
+        if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(ScriptSaveSignature) )
         {
-            // Load signature
+            // Check signature
             uchar signature[sizeof(ScriptSaveSignature)];
             bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
             bool  load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
 
-            // Load AngelScript version
+            // Check AngelScript version
             if( load )
             {
                 uint as_version = file_bin.GetBEUInt();
@@ -1527,7 +1527,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
             StrVec pragmas;
             if( load )
             {
-                // Load file dependencies and pragmas
+                // Check file dependencies and pragmas
                 StrVec dependencies;
                 char   str[1024];
                 uint   dependencies_size = file_bin.GetBEUInt();
@@ -1556,15 +1556,20 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                 if( have_source )
                 {
                     // Include files
-                    for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
+                    for( uint d = 0, dLen = (uint)dependencies.size(); d < dLen; d++ )
                     {
                         FileManager file_dep;
-                        file_dep.LoadFile( dependencies[i].c_str(), ScriptsPath );
+                        file_dep.LoadFile( dependencies[d].c_str(), ScriptsPath );
                         file_dep.GetTime( NULL, NULL, &last_write );
+
                         if( !outdated )
                             outdated = !file_dep.IsLoaded();
+
                         if( !outdated )
                             outdated = (file_dep.IsLoaded() && last_write > last_write_bin);
+
+                        if( outdated )
+                            break;
                     }
                 }
 
@@ -1580,7 +1585,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                     asIScriptModule* module = *it;
                     if( Str::Compare( module->GetName(), module_real ) )
                     {
-                        WriteLogF( _FUNC_, " - Warning, script for this name<%s> already exist. Discard it.\n", module_real );
+                        WriteLogF( _FUNC_, " - Warning, script with name<%s> already exist. Discarding.\n", module_real );
                         Engine->DiscardModule( module_real );
                         modules.erase( it );
                         break;
@@ -1604,7 +1609,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
                         return true;
                     }
                     else
-                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%d>\n", module_real, GetASReturnCode( result ) );
+                        WriteLogF( _FUNC_, " - Can't load binary, script<%s> error<%s>\n", module_real, GetASReturnCode( result ) );
                 }
                 else
                     WriteLogF( _FUNC_, " - Create module fail, script<%s>.\n", module_real );
@@ -1775,11 +1780,32 @@ public:
     if( !skip_binary && !file_bin.IsLoaded() )
     {
         CBytecodeStream binary;
-        if( module->SaveByteCode( &binary ) >= 0 )
+        int             save_result = module->SaveByteCode( &binary );
+        if( save_result >= 0 )
         {
             std::vector<asBYTE>& data = binary.GetBuf();
-            const StrVec&        dependencies = ScriptPreprocessor->GetFileDependencies();
+            StrVec&              dependencies = ScriptPreprocessor->GetFilesPreprocessed();
             const StrVec&        pragmas = ScriptPreprocessor->GetParsedPragmas();
+
+            // Format dependencies paths and make them relative to PATH_SCRIPTS
+
+            const char* scripts_path = FileManager::GetFullPath( "", PATH_SCRIPTS );
+
+            for( int d = 0, dLen = dependencies.size(); d < dLen; d++ )
+            {
+                // char* dep_original = Str::Duplicate( dependencies[d].c_str() );
+
+                char dep[MAX_FOPATH];
+                Str::Copy( dep, dependencies[d].c_str() );
+                FileManager::FormatPath( dep );
+                Str::Replacement( dep, '\\', '/' );
+                dependencies[d].assign( dep );
+                dependencies[d].erase( 0, Str::Length( scripts_path ) );
+
+                // if( !d )
+                //    WriteLog( "Module<%s> dependencies:\n", module_name );
+                // WriteLog( "\t%s -> %s\n", dep_original, dependencies[d].c_str() );
+            }
 
             file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
             file_bin.SetBEUInt( (uint)ANGELSCRIPT_VERSION );
@@ -1799,7 +1825,7 @@ public:
         }
         else
         {
-            WriteLogF( _FUNC_, " - Can't write bytecode, script<%s>.\n", module_real );
+            WriteLogF( _FUNC_, " - Can't write bytecode, script<%s> error<%s>\n", module_real, GetASReturnCode( save_result ) );
             return false;
         }
 
@@ -2346,7 +2372,7 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
         int result = ctx->Prepare( script_func );
         if( result < 0 )
         {
-            WriteLogF( _FUNC_, " - Prepare error, context name<%s>, bind_id<%d>, func_id<%d>, error<%d>.\n", ctx->GetUserData(), bind_id, script_func->GetId(), result );
+            WriteLogF( _FUNC_, " - Prepare error, context name<%s>, bind_id<%d>, func_id<%d>, error<%s>.\n", ctx->GetUserData(), bind_id, script_func->GetId(), GetASReturnCode( result ) );
             GlobalCtxIndex--;
             EndExecution();
             return false;
@@ -2613,7 +2639,7 @@ bool Script::RunPrepared()
 
         if( result < 0 )
         {
-            WriteLogF( _FUNC_, " - Context<%s> execute error<%d>, state<%s>.\n", ctx->GetUserData(), result, ContextStatesStr[(int)state] );
+            WriteLogF( _FUNC_, " - Context<%s> execute error<%s>, state<%s>.\n", ctx->GetUserData(), GetASReturnCode( result ), ContextStatesStr[(int)state] );
             EndExecution();
             return false;
         }
