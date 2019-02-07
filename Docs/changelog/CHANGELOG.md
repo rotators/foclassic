@@ -6,14 +6,13 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - [Nightly builds](https://ci.appveyor.com/project/rotators/foclassic/) (Linux, Windows)
 
 
-## [v6]() (WIP)
+## [v6](https://github.com/rotators/foclassic/releases/tag/v6/)
 
 - Client cache contains more detailed informations about engine version used to compile scripts
     - new cache is requested if cached version info does not match Client
 - all players are disconnected when reloading client scripts
 - scripts changes
     - import errors slightly more developer-friendly
-    - script functions are no longer imported if loading scripts step contains errors
     - when possible, AngelScript error codes are converted to their names from _angelscript.h_ (`asINVALID_CONFIGURATION`, `asOUT_OF_MEMORY` etc.)
     - [Server] with `VerboseInit` enabled, all imports are displayed in log
     - [Server] dependencies saved in _.fosb_ files are relative to scripts directory
@@ -34,7 +33,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 | [2.26.2](https://www.gamedev.net/forums/topic/641123--/) | [r1602](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1602) | [v6-angelscript-2.26.2](https://github.com/rotators/foclassic/tree/v6-angelscript-2.26.2) | https://ci.appveyor.com/project/rotators/foclassic/builds/21912852 |
 | [2.26.3](https://www.gamedev.net/forums/topic/642897--/) | [r1633](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1633) | [v6-angelscript-2.26.3](https://github.com/rotators/foclassic/tree/v6-angelscript-2.26.3) | https://ci.appveyor.com/project/rotators/foclassic/builds/21913947 |
 | [2.27.0](https://www.gamedev.net/forums/topic/645977--/) | [r1682](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1682) | [v6-angelscript-2.27.0](https://github.com/rotators/foclassic/tree/v6-angelscript-2.27.0) | https://ci.appveyor.com/project/rotators/foclassic/builds/21952914 |
-| [2.27.1](https://www.gamedev.net/forums/topic/646723--/) | [r1699](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1699) | -                                                                                         | -                                                                  |
+| [2.27.1](https://www.gamedev.net/forums/topic/646723--/) | [r1699](http://svn.code.sf.net/p/angelscript/code/trunk/sdk/?p=1699) | [v6](https://github.com/rotators/foclassic/tree/v6)                                       | https://github.com/rotators/foclassic/releases/tag/v6/             |
 
 
 ## [v5](https://github.com/rotators/foclassic/releases/tag/v5/)
