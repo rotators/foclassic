@@ -54,6 +54,8 @@ DialogAnswer::~DialogAnswer()
 
 bool DialogManager::LoadDialogs( const char* list_name )
 {
+    ConfigFile->RemoveSection( SECTION_SERVER_DIALOGS );
+
     WriteLog( "Load dialogs..." );
 
     if( !list_name )
@@ -129,6 +131,8 @@ bool DialogManager::LoadDialogs( const char* list_name )
             WriteLog( "Load dialog<%u:%s>... cannot add dialog, skipped\n", dialog_id, dialog_name.c_str() );
             continue;
         }
+
+        ConfigFile->SetStr( SECTION_SERVER_DIALOGS, dialog_name, to_string( (long long)dialog_id ) );
 
         loaded++;
     }
