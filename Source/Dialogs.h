@@ -172,7 +172,7 @@ public:
     string        LastErrors;
 
     bool LoadDialogs( const char* list_name );
-    void SaveList( const char* path, const char* list_name );
+    // void SaveList( const char* path, const char* list_name );
     void Finish();
 
     bool AddDialogs( DialogPack* pack );

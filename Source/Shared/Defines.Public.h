@@ -163,6 +163,9 @@
 #define SECTION_MAPPER                                    "Mapper"       // main section
 #define SECTION_SERVER                                    "Server"       // main section
 
+// merged sections, available at runtime
+#define SECTION_SERVER_DIALOGS                            "Dialogs"      // from dialogs.cfg
+
 // detail sections, available only when reading configuration from disk
 
 #define SECTION_CLIENT_DX                                 "ClientDX" // detail section

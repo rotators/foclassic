@@ -159,7 +159,7 @@
 
 #define MAX_ANSWERS                           (100)
 #define PROCESS_TALK_TICK                     (1000)
-#define DIALOGS_LST_NAME                      "dialogs.lst"
+#define DIALOGS_LST_NAME                      "dialogs.cfg"
 
 #define SCRIPTS_LST                           "scripts.cfg"
 #define MAX_START_SPECIAL                     (40)

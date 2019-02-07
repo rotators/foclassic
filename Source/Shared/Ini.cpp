@@ -226,9 +226,10 @@ unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys )
 
     if( IsSection( section ) )
     {
-        for( IniSection::iterator it = Sections[section].begin(); it != Sections[section].end(); ++it, count++ )
+        for( IniSection::iterator it = Sections[section].begin(); it != Sections[section].end(); ++it )
         {
             keys.push_back( it->first );
+            count++;
         }
     }
 

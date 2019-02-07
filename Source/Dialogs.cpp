@@ -62,89 +62,88 @@ bool DialogManager::LoadDialogs( const char* list_name )
         return false;
     }
 
-    FileManager lst;
-    if( !lst.LoadFile( list_name, PATH_SERVER_DIALOGS ) )
+    WriteLogX( "\n" );
+
+    Ini dialogs_cfg;
+    if( !dialogs_cfg.LoadFile( FileManager::GetFullPath( list_name, PATH_SERVER_DIALOGS ) ) )
     {
-        WriteLogX( "file<%s> not found\n", list_name );
+        WriteLog( "Load dialogs.. cannot load file<%s>\n", list_name );
         return false;
     }
 
-    WriteLogX( "\n" );
-
-    istrstream str( (char*)lst.GetBuf() );
-    int        dlg_count = 0;
-    int        dlg_loaded = 0;
-    while( !str.eof() )
+    StrVec dialogs;
+    if( !dialogs_cfg.IsSection( SECTION_SERVER_DIALOGS ) || dialogs_cfg.GetSectionKeys( SECTION_SERVER_DIALOGS, dialogs ) == 0 )
     {
-        char ch;
-        str >> ch;
-        if( ch != '$' )
-            continue;
+        WriteLog( "Load dialogs... section<%s> in file<%s> not found or empty\n", SECTION_SERVER_DIALOGS, list_name );
+        return false;
+    }
 
-        dlg_count++;
+    uint total = dialogs.size(), loaded = 0;
+    for( auto it = dialogs.begin(), end = dialogs.end(); it != end; ++it )
+    {
+        string dialog_name = *it;
 
-        uint dlg_id;
-        str >> dlg_id;
-        if( str.fail() )
+        // silently skip empty keys
+        if( dialogs_cfg.IsSectionKeyEmpty( SECTION_SERVER_DIALOGS, dialog_name ) )
         {
-            WriteLog( "Unable to read id of dialog.\n" );
-            continue;
-        }
-
-        char dlg_name[MAX_FOTEXT];
-        str >> dlg_name;
-        if( str.fail() )
-        {
-            WriteLog( "Unable to read name of dialog.\n" );
+            total--;
             continue;
         }
 
-        if( DialogsPacks.count( dlg_id ) )
+        // silently skip dialogs with negative id
+        int dialog_id = dialogs_cfg.GetInt( SECTION_SERVER_DIALOGS, dialog_name, 0 );
+        if( !dialog_id )
         {
-            WriteLog( "Dialog id<%u> is already parsed.\n", dlg_id );
+            total--;
             continue;
         }
 
-        char name[256];
-        Str::Copy( name, dlg_name );
-        Str::Append( name, DIALOG_FILE_EXT );
-
-        FileManager fdlg;
-        if( !fdlg.LoadFile( name, PATH_SERVER_DIALOGS ) )
+        if( DialogsPacks.count( dialog_id ) )
         {
-            WriteLog( "Unable to open dialog file, id<%u>, name<%s>.\n", dlg_id, name );
+            WriteLog( "Load dialog<%s>... id<%u> already used by dialog<%s>, skipped\n", dialog_name.c_str(), dialog_id, DialogsPacks[dialog_id]->PackName.c_str() );
             continue;
         }
 
         if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-            WriteLog( "Load dialog<%u:%s>\n", dlg_id, dlg_name );
+            WriteLog( "Load dialog<%u:%s>\n", dialog_id, dialog_name.c_str() );
 
-        DialogPack* pack = ParseDialog( dlg_name, dlg_id, (char*)fdlg.GetBuf() );
+        string dialog_file = dialog_name;
+        dialog_file += DIALOG_FILE_EXT;
+
+        FileManager fodlg;
+        if( !fodlg.LoadFile( dialog_file.c_str(), PATH_SERVER_DIALOGS ) )
+        {
+            WriteLog( "Load dialog<%u:%s>... cannot load dialog file, skipped\n", dialog_id, dialog_name.c_str() );
+            continue;
+        }
+
+        DialogPack* pack = ParseDialog( dialog_name.c_str(), dialog_id, (char*)fodlg.GetBuf() );
         if( !pack )
         {
-            WriteLog( "Unable to parse dialog, id<%u>, path<%s>.\n", dlg_id, dlg_name );
+            WriteLog( "Load dialog<%u:%s>... cannot parse dialog file, skipped\n", dialog_id, dialog_name.c_str() );
             continue;
         }
 
         if( !AddDialogs( pack ) )
         {
-            WriteLog( "Unable to add dialogs pack, id<%u>, path<%s>.\n", dlg_id, dlg_name );
+            WriteLog( "Load dialog<%u:%s>... cannot add dialog, skipped\n", dialog_id, dialog_name.c_str() );
             continue;
         }
 
-        dlg_loaded++;
+        loaded++;
     }
 
-    WriteLog( "Load dialogs... loaded<%u", dlg_loaded );
-    if( dlg_loaded != dlg_count )
-        WriteLogX( "/%u", dlg_count );
+    WriteLog( "Load dialogs... loaded<%u", loaded );
+    if( total != loaded )
+        WriteLogX( "/%u", total );
     WriteLogX( ">\n" );
 
-    return dlg_count == dlg_loaded;
+    return total == loaded;
 }
 
-void DialogManager::SaveList( const char* list_path, const char* list_name )
-{
+/*
+   void DialogManager::SaveList( const char* list_path, const char* list_name )
+   {
     if( !list_path || !list_name )
         return;
     char full_path[1024];
@@ -165,7 +164,8 @@ void DialogManager::SaveList( const char* list_path, const char* list_name )
     fm.SetStr( "**************************************************************************************\n" );
 
     fm.SaveOutBufToFile( full_path, -1 );
-}
+   }
+ */
 
 bool DialogManager::AddDialogs( DialogPack* pack )
 {
