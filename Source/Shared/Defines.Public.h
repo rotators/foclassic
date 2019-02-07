@@ -301,7 +301,7 @@
 #define ANGELSCRIPT_AUTO_GARBAGE_COLLECT                  (16) // engine default: false
 #define ANGELSCRIPT_DISALLOW_GLOBAL_VARS                  (17)
 #define ANGELSCRIPT_ALWAYS_IMPL_DEFAULT_CONSTRUCT         (18) // engine default: true
-#define ANGELSCRIPT_COMPILER_WARNINGS                     (19) // engine default: 2
+#define ANGELSCRIPT_COMPILER_WARNINGS                     (19) // engine default: 1
 #define ANGELSCRIPT_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE    (20)
 
 // Item deterioration info

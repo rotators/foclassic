@@ -260,11 +260,11 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
 
     SetEngineProperty( engine, asEP_ALLOW_UNSAFE_REFERENCES, true );
     SetEngineProperty( engine, asEP_OPTIMIZE_BYTECODE, true );
-    SetEngineProperty( engine, asEP_SCRIPT_SCANNER, 1 );
-    SetEngineProperty( engine, asEP_USE_CHARACTER_LITERALS, 1 );
+    SetEngineProperty( engine, asEP_USE_CHARACTER_LITERALS, true );
+    SetEngineProperty( engine, asEP_SCRIPT_SCANNER, 1 );    // 0 = ASCII, 1 = UTF8
     SetEngineProperty( engine, asEP_AUTO_GARBAGE_COLLECT, false );
     SetEngineProperty( engine, asEP_ALWAYS_IMPL_DEFAULT_CONSTRUCT, true  );
-    SetEngineProperty( engine, asEP_COMPILER_WARNINGS, 2 );     // treat warnings as errors
+    SetEngineProperty( engine, asEP_COMPILER_WARNINGS, 1 ); // 0 = dismiss, 1 = emit, 2 = treat as error
 
     #if ANGELSCRIPT_VERSION >= 22900
     # pragma TODO("asCALL_THISCALL_OBJFIRST")

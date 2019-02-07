@@ -1793,18 +1793,12 @@ public:
 
             for( int d = 0, dLen = dependencies.size(); d < dLen; d++ )
             {
-                // char* dep_original = Str::Duplicate( dependencies[d].c_str() );
-
                 char dep[MAX_FOPATH];
                 Str::Copy( dep, dependencies[d].c_str() );
                 FileManager::FormatPath( dep );
                 Str::Replacement( dep, '\\', '/' );
                 dependencies[d].assign( dep );
                 dependencies[d].erase( 0, Str::Length( scripts_path ) );
-
-                // if( !d )
-                //    WriteLog( "Module<%s> dependencies:\n", module_name );
-                // WriteLog( "\t%s -> %s\n", dep_original, dependencies[d].c_str() );
             }
 
             file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
