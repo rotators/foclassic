@@ -1841,6 +1841,7 @@ public:
     return true;
 }
 
+#if defined (FOCLASSIC_CLIENT)
 bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint len )
 {
     if( !bytecode || !len )
@@ -1883,6 +1884,7 @@ bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint le
     modules.push_back( module );
     return true;
 }
+#endif
 
 int Script::BindImportedFunctions()
 {

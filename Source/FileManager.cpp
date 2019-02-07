@@ -9,61 +9,61 @@
 
 const char* PathList[PATH_LIST_COUNT] =
 {
-    // Client and mapper paths
-    "",
-    "",
-    "art" DIR_SLASH_S,
-    "art" DIR_SLASH_S "critters" DIR_SLASH_S,
-    "art" DIR_SLASH_S "intrface" DIR_SLASH_S,
-    "art" DIR_SLASH_S "inven" DIR_SLASH_S,
-    "art" DIR_SLASH_S "items" DIR_SLASH_S,
-    "art" DIR_SLASH_S "misc" DIR_SLASH_S,
-    "art" DIR_SLASH_S "scenery" DIR_SLASH_S,
-    "art" DIR_SLASH_S "skilldex" DIR_SLASH_S,
-    "art" DIR_SLASH_S "splash" DIR_SLASH_S,
-    "art" DIR_SLASH_S "tiles" DIR_SLASH_S,
-    "art" DIR_SLASH_S "walls" DIR_SLASH_S,
-    "textures" DIR_SLASH_S,
-    "effects" DIR_SLASH_S,
-    "",
-    "sound" DIR_SLASH_S "music" DIR_SLASH_S,
-    "sound" DIR_SLASH_S "sfx" DIR_SLASH_S,
-    "scripts" DIR_SLASH_S,
-    "video" DIR_SLASH_S,
-    "text" DIR_SLASH_S,
-    "save" DIR_SLASH_S,
-    "fonts" DIR_SLASH_S,
-    "cache" DIR_SLASH_S,
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
+    // Client and Mapper paths
+    "",                                         // PATH_ROOT                 0
+    "",                                         // PATH_DATA                 1
+    "art" DIR_SLASH_S,                          // PATH_ART                  2
+    "art" DIR_SLASH_S "critters" DIR_SLASH_S,   // PATH_ART_CRITTERS         3
+    "art" DIR_SLASH_S "intrface" DIR_SLASH_S,   // PATH_ART_INTRFACE         4
+    "art" DIR_SLASH_S "inven" DIR_SLASH_S,      // PATH_ART_INVEN            5
+    "art" DIR_SLASH_S "items" DIR_SLASH_S,      // PATH_ART_ITEMS            6
+    "art" DIR_SLASH_S "misc" DIR_SLASH_S,       // PATH_ART_MISC             7
+    "art" DIR_SLASH_S "scenery" DIR_SLASH_S,    // PATH_ART_SCENERY          8
+    "art" DIR_SLASH_S "skilldex" DIR_SLASH_S,   // PATH_ART_SKILLDEX         9
+    "art" DIR_SLASH_S "splash" DIR_SLASH_S,     // PATH_ART_SPLASH          10
+    "art" DIR_SLASH_S "tiles" DIR_SLASH_S,      // PATH_ART_TILES           11
+    "art" DIR_SLASH_S "walls" DIR_SLASH_S,      // PATH_ART_WALLS           12
+    "textures" DIR_SLASH_S,                     // PATH_TEXTURES            13
+    "effects" DIR_SLASH_S,                      // PATH_EFFECTS             14
+    "",                                         //                          15
+    "sound" DIR_SLASH_S "music" DIR_SLASH_S,    // PATH_SND_MUSIC           16
+    "sound" DIR_SLASH_S "sfx" DIR_SLASH_S,      // PATH_SND_SFX             17
+    "scripts" DIR_SLASH_S,                      // PATH_SCRIPTS             18
+    "video" DIR_SLASH_S,                        // PATH_VIDEO               19
+    "text" DIR_SLASH_S,                         // PATH_TEXTS               20
+    "save" DIR_SLASH_S,                         // PATH_SAVE                21
+    "fonts" DIR_SLASH_S,                        // PATH_FONTS               22
+    "cache" DIR_SLASH_S,                        // PATH_CACHE               23
+    "",                                         //                          24
+    "",                                         //                          25
+    "",                                         //                          26
+    "",                                         //                          27
+    "",                                         //                          28
+    "",                                         //                          29
 
     // Server paths
-    "",
-    "data" DIR_SLASH_S,
-    "text" DIR_SLASH_S,
-    "dialogs" DIR_SLASH_S,
-    "maps" DIR_SLASH_S,
-    "proto" DIR_SLASH_S "items" DIR_SLASH_S,
-    "proto" DIR_SLASH_S "critters" DIR_SLASH_S,
-    "scripts" DIR_SLASH_S,
-    "save" DIR_SLASH_S,
-    "save" DIR_SLASH_S "clients" DIR_SLASH_S,
-    "save" DIR_SLASH_S "bans" DIR_SLASH_S,
-    "logs" DIR_SLASH_S,
-    "dumps" DIR_SLASH_S,
-    "profiler" DIR_SLASH_S,
-    "",
+    "",                                         // PATH_SERVER_ROOT         30
+    "data" DIR_SLASH_S,                         // PATH_SERVER_DATA         31
+    "text" DIR_SLASH_S,                         // PATH_SERVER_TEXTS        32
+    "dialogs" DIR_SLASH_S,                      // PATH_SERVER_DIALOGS      33
+    "maps" DIR_SLASH_S,                         // PATH_SERVER_MAPS         34
+    "proto" DIR_SLASH_S "items" DIR_SLASH_S,    // PATH_SERVER_PRO_ITEMS    35
+    "proto" DIR_SLASH_S "critters" DIR_SLASH_S, // PATH_SERVER_PRO_CRITTERS 36
+    "scripts" DIR_SLASH_S,                      // PATH_SERVER_SCRIPTS      37
+    "save" DIR_SLASH_S,                         // PATH_SERVER_SAVE         38
+    "save" DIR_SLASH_S "clients" DIR_SLASH_S,   // PATH_SERVER_CLIENTS      39
+    "save" DIR_SLASH_S "bans" DIR_SLASH_S,      // PATH_SERVER_BANS         40
+    "logs" DIR_SLASH_S,                         // PATH_SERVER_LOGS         41
+    "dumps" DIR_SLASH_S,                        // PATH_SERVER_DUMPS        42
+    "profiler" DIR_SLASH_S,                     // PATH_SERVER_PROFILER     43
+    "",                                         //                          44
 
     // Other
-    "",
-    "data" DIR_SLASH_S,
-    "",
-    "",
-    "",
+    "",                                         // PATH_MAPPER_ROOT         45
+    "data" DIR_SLASH_S,                         // PATH_MAPPER_DATA         46
+    "",                                         //                          47
+    "",                                         //                          48
+    ""                                          //                          49
 };
 
 DataFileVec FileManager::dataFiles;
