@@ -21,6 +21,7 @@ add_subdirectory( event2.bin )
 
 set( OPTION_BUILD_EXAMPLES OFF )
 add_subdirectory( fltk )
+
 #add_subdirectory( fltk.bin )
 
 add_subdirectory( glew )
@@ -43,6 +44,10 @@ if( MISSING_FILES )
 	message( FATAL_ERROR "Configuring libraries... ERROR: missing submodules" )
 endif()
 
-set_property( TARGET acm angelscript-preprocessor glew sha2 zlib PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
+set_property( TARGET acm angelscript-preprocessor fltk fltk_gl glew sha2 zlib PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
+
+set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY EXCLUDE_FROM_ALL 1 )
+set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY EXCLUDE_FROM_DEFAULT_BUILD 1 )
+set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs/Unused" )
 
 message( STATUS "Configuring libraries... OK" )
