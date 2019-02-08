@@ -5,6 +5,7 @@
 add_subdirectory( AngelScript )
 add_subdirectory( Libs )
 
+PdbSetup( angelscript )
 PdbSetup( angelscript-preprocessor )
 
 message( STATUS "Configuring engine..." )

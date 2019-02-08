@@ -60,24 +60,22 @@ bool DialogManager::LoadDialogs( const char* list_name )
 
     if( !list_name )
     {
-        WriteLogX( " ERROR: list name nullptr.\n" );
+        WriteLog( "Load dialogs... ERROR list_name nullptr\n" );
         return false;
     }
-
-    WriteLogX( "\n" );
 
     Ini dialogs_cfg;
     if( !dialogs_cfg.LoadFile( FileManager::GetFullPath( list_name, PATH_SERVER_DIALOGS ) ) )
     {
-        WriteLog( "Load dialogs.. cannot load file<%s>\n", list_name );
-        return false;
+        WriteLog( "Load dialogs.. skipped : cannot load file<%s>\n", list_name );
+        return true;
     }
 
     StrVec dialogs;
     if( !dialogs_cfg.IsSection( SECTION_SERVER_DIALOGS ) || dialogs_cfg.GetSectionKeys( SECTION_SERVER_DIALOGS, dialogs ) == 0 )
     {
-        WriteLog( "Load dialogs... section<%s> in file<%s> not found or empty\n", SECTION_SERVER_DIALOGS, list_name );
-        return false;
+        WriteLog( "Load dialogs... skipped : no dialogs found\n" );
+        return true;
     }
 
     uint total = dialogs.size(), loaded = 0;

@@ -13,6 +13,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - all dialogs must be defined in `Dialogs` section; any other sections, if present, are ignored and can be used for game-specific settings
     - key name should be a path to dialog file (without extension), key value defines dialog id; examples: `all_alco = 1`, `hub/keri = 1000`
     - dialogs defined without/with invalid id (not a number, value less or equal 0) are silently ignored
+- Server will continue initialization even if _dialogs.cfg_ is missing
 
 
 ## [v6](https://github.com/rotators/foclassic/releases/tag/v6/)
