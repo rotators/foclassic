@@ -49,8 +49,12 @@ endif()
 
 set_property( TARGET acm angelscript-preprocessor fltk fltk_gl glew sha2 zlib PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
 
-set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY EXCLUDE_FROM_ALL 1 )
-set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY EXCLUDE_FROM_DEFAULT_BUILD 1 )
-set_property( TARGET fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs/Unused" )
+foreach( trash_target IN ITEMS fltk_forms fltk_images fltk_jpeg fltk_png fltk_z fluid uninstall )
+	if( TARGET ${trash_target} )
+		set_property( TARGET ${trash_target} PROPERTY EXCLUDE_FROM_ALL 1 )
+		set_property( TARGET ${trash_target} PROPERTY EXCLUDE_FROM_DEFAULT_BUILD 1 )
+		set_property( TARGET ${trash_target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs/Unused" )
+	endif()
+endforeach()
 
 message( STATUS "Configuring libraries... OK" )
