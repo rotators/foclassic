@@ -6,3 +6,7 @@
 	url = https://github.com/rotators/angelscript-preprocessor.git
 	branch = master
 	path = Source/Libs/angelscript-preprocessor
+[submodule "fltk"]
+	path = Source/Libs/fltk
+	url = https://github.com/fltk/fltk.git
+	branch = branch-1.3

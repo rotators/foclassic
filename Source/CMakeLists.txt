@@ -69,7 +69,7 @@ set( ASCOMPILER_LIBS ${FOCLASSIC_LIBS} ScriptBindDummy )
 find_package( OpenGL REQUIRED )
 # DX needs glew/glu due to 3dStuff.cpp VecProject() VecUnproject()
 set( DX_LIBS glew dx9 OpenGL::GLU )
-set( GL_LIBS fltkgl glew OpenGL::GL OpenGL::GLU )
+set( GL_LIBS fltk_gl glew OpenGL::GL OpenGL::GLU )
 
 list( APPEND CLIENT_DX_LIBS  ${CLIENT_LIBS}        ${DX_LIBS} )
 list( APPEND CLIENT_GL_LIBS  ${CLIENT_LIBS} theora ${GL_LIBS} )
@@ -434,6 +434,11 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		target_link_libraries( ${target} PlatformMapper )
 	elseif( "${target}" STREQUAL "Server" )
 		target_link_libraries( ${target} PlatformServer )
+	endif()
+
+	if( "${target}" MATCHES "^(Client|Mapper|Server)" )
+		target_include_directories( ${target} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/Libs/fltk" )
+		target_include_directories( ${target} PRIVATE "${FLTK_BINARY_DIR}" )
 	endif()
 
 	##
