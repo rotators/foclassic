@@ -12,6 +12,9 @@ function( add_submodule dir )
 	endif()
 endfunction()
 
+macro( install )
+endmacro()
+
 add_subdirectory( acm )
 add_submodule( angelscript-preprocessor )
 add_subdirectory( assimp )
