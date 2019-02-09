@@ -216,8 +216,7 @@ function( CreateBuildDirectory dir generator tool file )
 		endif()
 		message( STATUS "Starting generator (${generator}${info})" )
 		execute_process(
-			COMMAND ${CMAKE_COMMAND} ${toolchain} -G "${generator}" ${toolset} "${CMAKE_CURRENT_LIST_DIR}"
-			WORKING_DIRECTORY "${dir}"
+			COMMAND ${CMAKE_COMMAND} ${toolchain} -G "${generator}" ${toolset} -S "${CMAKE_CURRENT_LIST_DIR}" -B ${dir}
 			RESULT_VARIABLE result
 		)
 		if( NOT result EQUAL 0 )

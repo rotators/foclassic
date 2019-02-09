@@ -56,7 +56,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
 {
     ConfigFile->RemoveSection( SECTION_SERVER_DIALOGS );
 
-    WriteLog( "Load dialogs..." );
+    WriteLog( "Load dialogs...\n" );
 
     if( !list_name )
     {
