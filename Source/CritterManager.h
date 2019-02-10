@@ -25,7 +25,7 @@ public:
     void Clear();
 
     bool      LoadProtos();
-    CritData* GetProto( ushort proto_id );
+    CritData* GetProto( uint16 proto_id );
     CritData* GetAllProtos();
 
     #ifdef FOCLASSIC_SERVER
@@ -45,15 +45,15 @@ public:
     void CritterToGarbage( Critter* cr );
     void CritterGarbager();
 
-    Npc* CreateNpc( ushort proto_id, uint params_count, int* params, uint items_count, int* items, const char* script, Map* map, ushort hx, ushort hy, uchar dir, bool accuracy );
-    Npc* CreateNpc( ushort proto_id, bool copy_data );
+    Npc* CreateNpc( uint16 proto_id, uint params_count, int* params, uint items_count, int* items, const char* script, Map* map, uint16 hx, uint16 hy, uint8 dir, bool accuracy );
+    Npc* CreateNpc( uint16 proto_id, bool copy_data );
 
     void     AddCritter( Critter* cr );
     CrMap&   GetCrittersNoLock() { return allCritters; }
     void     GetCopyCritters( CrVec& critters, bool sync_lock );
     void     GetCopyNpcs( PcVec& npcs, bool sync_lock );
     void     GetCopyPlayers( ClVec& players, bool sync_lock );
-    void     GetGlobalMapCritters( ushort wx, ushort wy, uint radius, int find_type, CrVec& critters, bool sync_lock );
+    void     GetGlobalMapCritters( uint16 wx, uint16 wy, uint radius, int find_type, CrVec& critters, bool sync_lock );
     Critter* GetCritter( uint crid, bool sync_lock );
     Client*  GetPlayer( uint crid, bool sync_lock );
     Client*  GetPlayer( const char* name, bool sync_lock );

@@ -219,9 +219,9 @@ void FileManager::UnloadFile()
     curPos = 0;
 }
 
-uchar* FileManager::ReleaseBuffer()
+uint8* FileManager::ReleaseBuffer()
 {
-    uchar* tmp = fileBuf;
+    uint8* tmp = fileBuf;
     fileBuf = NULL;
     fileSize = 0;
     curPos = 0;
@@ -288,7 +288,7 @@ bool FileManager::LoadFile( const char* fname, int path_type )
         FileGetTime( file, timeCreate, timeAccess, timeWrite );
 
         uint   size = FileGetSize( file );
-        uchar* buf = new uchar[size + 1];
+        uint8* buf = new uint8[size + 1];
         if( !buf )
             return false;
 
@@ -334,13 +334,13 @@ bool FileManager::LoadFile( const char* fname, int path_type )
     return false;
 }
 
-bool FileManager::LoadStream( const uchar* stream, uint length )
+bool FileManager::LoadStream( const uint8* stream, uint length )
 {
     UnloadFile();
     if( !length )
         return false;
     fileSize = length;
-    fileBuf = new uchar[fileSize + 1];
+    fileBuf = new uint8[fileSize + 1];
     if( !fileBuf )
         return false;
     memcpy( fileBuf, stream, fileSize );
@@ -364,7 +364,7 @@ void FileManager::GoBack( uint offs )
     curPos -= offs;
 }
 
-bool FileManager::FindFragment( const uchar* fragment, uint fragment_len, uint begin_offs )
+bool FileManager::FindFragment( const uint8* fragment, uint fragment_len, uint begin_offs )
 {
     if( !fileBuf || fragment_len > fileSize )
         return false;
@@ -441,32 +441,32 @@ void FileManager::GetStr( char* str )
     curPos += len;
 }
 
-uchar FileManager::GetUChar()
+uint8 FileManager::GetUChar()
 {
-    if( curPos + sizeof(uchar) > fileSize )
+    if( curPos + sizeof(uint8) > fileSize )
         return 0;
-    uchar res = 0;
+    uint8 res = 0;
     res = fileBuf[curPos++];
     return res;
 }
 
-ushort FileManager::GetBEUShort()
+uint16 FileManager::GetBEUShort()
 {
-    if( curPos + sizeof(ushort) > fileSize )
+    if( curPos + sizeof(uint16) > fileSize )
         return 0;
-    ushort res = 0;
-    uchar* cres = (uchar*)&res;
+    uint16 res = 0;
+    uint8* cres = (uint8*)&res;
     cres[1] = fileBuf[curPos++];
     cres[0] = fileBuf[curPos++];
     return res;
 }
 
-ushort FileManager::GetLEUShort()
+uint16 FileManager::GetLEUShort()
 {
-    if( curPos + sizeof(ushort) > fileSize )
+    if( curPos + sizeof(uint16) > fileSize )
         return 0;
-    ushort res = 0;
-    uchar* cres = (uchar*)&res;
+    uint16 res = 0;
+    uint8* cres = (uint8*)&res;
     cres[0] = fileBuf[curPos++];
     cres[1] = fileBuf[curPos++];
     return res;
@@ -477,7 +477,7 @@ uint FileManager::GetBEUInt()
     if( curPos + sizeof(uint) > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*)&res;
+    uint8* cres = (uint8*)&res;
     for( int i = 3; i >= 0; i-- )
         cres[i] = fileBuf[curPos++];
     return res;
@@ -488,7 +488,7 @@ uint FileManager::GetLEUInt()
     if( curPos + sizeof(uint) > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*)&res;
+    uint8* cres = (uint8*)&res;
     for( int i = 0; i <= 3; i++ )
         cres[i] = fileBuf[curPos++];
     return res;
@@ -496,10 +496,10 @@ uint FileManager::GetLEUInt()
 
 uint FileManager::GetLE3UChar()
 {
-    if( curPos + sizeof(uchar) * 3 > fileSize )
+    if( curPos + sizeof(uint8) * 3 > fileSize )
         return 0;
     uint   res = 0;
-    uchar* cres = (uchar*)&res;
+    uint8* cres = (uint8*)&res;
     for( int i = 0; i <= 2; i++ )
         cres[i] = fileBuf[curPos++];
     return res;
@@ -510,7 +510,7 @@ float FileManager::GetBEFloat()
     if( curPos + sizeof(float) > fileSize )
         return 0.0f;
     float  res;
-    uchar* cres = (uchar*)&res;
+    uint8* cres = (uint8*)&res;
     for( int i = 3; i >= 0; i-- )
         cres[i] = fileBuf[curPos++];
     return res;
@@ -521,7 +521,7 @@ float FileManager::GetLEFloat()
     if( curPos + sizeof(float) > fileSize )
         return 0.0f;
     float  res;
-    uchar* cres = (uchar*)&res;
+    uint8* cres = (uint8*)&res;
     for( int i = 0; i <= 3; i++ )
         cres[i] = fileBuf[curPos++];
     return res;
@@ -561,7 +561,7 @@ bool FileManager::ResizeOutBuf()
 {
     if( !lenOutBuf )
     {
-        dataOutBuf = new uchar[OUT_BUF_START_SIZE];
+        dataOutBuf = new uint8[OUT_BUF_START_SIZE];
         if( !dataOutBuf )
             return false;
         lenOutBuf = OUT_BUF_START_SIZE;
@@ -569,8 +569,8 @@ bool FileManager::ResizeOutBuf()
         return true;
     }
 
-    uchar* old_obuf = dataOutBuf;
-    dataOutBuf = new uchar[lenOutBuf * 2];
+    uint8* old_obuf = dataOutBuf;
+    dataOutBuf = new uint8[lenOutBuf * 2];
     if( !dataOutBuf )
         return false;
     memzero( (void*)dataOutBuf, lenOutBuf * 2 );
@@ -657,31 +657,31 @@ void FileManager::SetStr( const char* fmt, ... )
     SetData( str, Str::Length( str ) );
 }
 
-void FileManager::SetUChar( uchar data )
+void FileManager::SetUChar( uint8 data )
 {
-    if( posOutBuf + sizeof(uchar) > lenOutBuf && !ResizeOutBuf() )
+    if( posOutBuf + sizeof(uint8) > lenOutBuf && !ResizeOutBuf() )
         return;
     dataOutBuf[posOutBuf++] = data;
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
 
-void FileManager::SetBEUShort( ushort data )
+void FileManager::SetBEUShort( uint16 data )
 {
-    if( posOutBuf + sizeof(ushort) > lenOutBuf && !ResizeOutBuf() )
+    if( posOutBuf + sizeof(uint16) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*)&data;
+    uint8* pdata = (uint8*)&data;
     dataOutBuf[posOutBuf++] = pdata[1];
     dataOutBuf[posOutBuf++] = pdata[0];
     if( posOutBuf > endOutBuf )
         endOutBuf = posOutBuf;
 }
 
-void FileManager::SetLEUShort( ushort data )
+void FileManager::SetLEUShort( uint16 data )
 {
-    if( posOutBuf + sizeof(ushort) > lenOutBuf && !ResizeOutBuf() )
+    if( posOutBuf + sizeof(uint16) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*)&data;
+    uint8* pdata = (uint8*)&data;
     dataOutBuf[posOutBuf++] = pdata[0];
     dataOutBuf[posOutBuf++] = pdata[1];
     if( posOutBuf > endOutBuf )
@@ -692,7 +692,7 @@ void FileManager::SetBEUInt( uint data )
 {
     if( posOutBuf + sizeof(uint) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*)&data;
+    uint8* pdata = (uint8*)&data;
     dataOutBuf[posOutBuf++] = pdata[3];
     dataOutBuf[posOutBuf++] = pdata[2];
     dataOutBuf[posOutBuf++] = pdata[1];
@@ -705,7 +705,7 @@ void FileManager::SetLEUInt( uint data )
 {
     if( posOutBuf + sizeof(uint) > lenOutBuf && !ResizeOutBuf() )
         return;
-    uchar* pdata = (uchar*)&data;
+    uint8* pdata = (uint8*)&data;
     dataOutBuf[posOutBuf++] = pdata[0];
     dataOutBuf[posOutBuf++] = pdata[1];
     dataOutBuf[posOutBuf++] = pdata[2];

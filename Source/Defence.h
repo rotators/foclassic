@@ -184,7 +184,7 @@ uint UIDDUMMY10 = -1;
             UID_DUMMY_CALCS7;                                                                    \
             if( ioctl( d_sd, SIOCGIFHWADDR, &d_ifreg ) )                                         \
                 break;                                                                           \
-            uchar d_macaddr[8];                                                                  \
+            uint8 d_macaddr[8];                                                                  \
             UID_DUMMY_CALCS4;                                                                    \
             memmove( (void*)&d_macaddr[0], (void*)&d_ifreg.ifr_ifru.ifru_hwaddr.sa_data[0], 6 ); \
             uint d_lo = *(uint*)&d_macaddr[4];                                                   \

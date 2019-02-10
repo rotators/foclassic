@@ -10,7 +10,7 @@ extern HANDLE SingleplayerClientProcess;
 class InterprocessData
 {
 public:
-    ushort NetPort;
+    uint16 NetPort;
     bool   Pause;
 
 private:
@@ -32,7 +32,7 @@ public:
 class InterprocessData
 {
 public:
-    ushort NetPort;
+    uint16 NetPort;
     bool   Pause;
 };
 #endif

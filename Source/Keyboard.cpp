@@ -6,13 +6,13 @@
 #include "SpriteManager.h"
 #include "Window.h"
 
-static uchar  KeysMap[0x10000] = { 0 };
-static ushort KeysMapRevert[0x100] = { 0 };
-static uchar  KeysMapUser[0x100] = { 0 };
+static uint8  KeysMap[0x10000] = { 0 };
+static uint16 KeysMapRevert[0x100] = { 0 };
+static uint8  KeysMapUser[0x100] = { 0 };
 
 // TODO deuglify
 #define MAKE_KEY_CODE( name, index, code ) \
-    const uchar name = index;              \
+    const uint8 name = index;              \
     struct name ## _INIT { name ## _INIT() { KeysMap[code] = index; KeysMapRevert[index] = code; } } name ## _INIT_;
 #include "Keyboard.h"
 
@@ -23,7 +23,7 @@ namespace Keyb
     bool AltDwn = false;
     bool KeyPressed[0x100] = { 0 };
 
-    void GetCharInternal( uchar dik, const char* dik_text, char* str, uint* position, uint max, int flags );
+    void GetCharInternal( uint8 dik, const char* dik_text, char* str, uint* position, uint max, int flags );
     bool IsInvalidChar( const char* str, uint flags );
 }
 
@@ -56,7 +56,7 @@ void Keyb::Lost()
     memzero( KeyPressed, sizeof(KeyPressed) );
 }
 
-void Keyb::GetChar( uchar dik, const char* dik_text, string& str, uint* position, uint max, int flags )
+void Keyb::GetChar( uint8 dik, const char* dik_text, string& str, uint* position, uint max, int flags )
 {
     char* big_buf = Str::GetBigBuf();
     Str::Copy( big_buf, BIG_BUF_SIZE, str.c_str() );
@@ -64,14 +64,14 @@ void Keyb::GetChar( uchar dik, const char* dik_text, string& str, uint* position
     str = big_buf;
 }
 
-void Keyb::GetChar( uchar dik, const char* dik_text, char* str, uint str_size, uint* position, uint max, int flags )
+void Keyb::GetChar( uint8 dik, const char* dik_text, char* str, uint str_size, uint* position, uint max, int flags )
 {
     string str_ = str;
     GetChar( dik, dik_text, str_, position, max, flags );
     Str::Copy( str, str_size, str_.c_str() );
 }
 
-void Keyb::GetCharInternal( uchar dik, const char* dik_text, char* str, uint* position, uint max, int flags )
+void Keyb::GetCharInternal( uint8 dik, const char* dik_text, char* str, uint* position, uint max, int flags )
 {
     if( AltDwn )
         return;
@@ -246,12 +246,12 @@ bool Keyb::IsInvalidChar( const char* str, uint flags )
     return !SprMngr.HaveLetter( -1, str );
 }
 
-uchar Keyb::MapKey( ushort code )
+uint8 Keyb::MapKey( uint16 code )
 {
     return KeysMapUser[KeysMap[code]];
 }
 
-ushort Keyb::UnmapKey( uchar key )
+uint16 Keyb::UnmapKey( uint8 key )
 {
     return KeysMapRevert[key];
 }

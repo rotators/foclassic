@@ -228,7 +228,7 @@ private:
 
     Surface* CreateNewSurface( int w, int h );
     Surface* FindSurfacePlace( SpriteInfo* si, int& x, int& y );
-    uint     FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint size );
+    uint     FillSurfaceFromMemory( SpriteInfo* si, uint8* data, uint size );
 
     // Load sprites
 public:
@@ -274,7 +274,7 @@ public:
 
     void PrepareSquare( PointVec& points, Rect r, uint color );
     void PrepareSquare( PointVec& points, Point lt, Point rt, Point lb, Point rb, uint color );
-    bool PrepareBuffer( Sprites& dtree, Surface_ surf, int ox, int oy, uchar alpha );
+    bool PrepareBuffer( Sprites& dtree, Surface_ surf, int ox, int oy, uint8 alpha );
     bool Flush();
 
     bool DrawSprite( uint id, int x, int y, uint color = 0 );
@@ -353,7 +353,7 @@ private:
     // Transparent egg
 private:
     bool        eggValid;
-    ushort      eggHx, eggHy;
+    uint16      eggHx, eggHy;
     int         eggX, eggY;
     short*      eggOX, * eggOY;
     SpriteInfo* sprEgg;
@@ -361,8 +361,8 @@ private:
     float       eggSurfWidth, eggSurfHeight;
 
 public:
-    bool CompareHexEgg( ushort hx, ushort hy, int egg_type );
-    void SetEgg( ushort hx, ushort hy, Sprite* spr );
+    bool CompareHexEgg( uint16 hx, uint16 hy, int egg_type );
+    void SetEgg( uint16 hx, uint16 hy, Sprite* spr );
     void EggNotValid() { eggValid = false; }
 
     // Fonts

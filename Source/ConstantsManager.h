@@ -16,7 +16,7 @@ namespace ConstantsManager
     int         GetParamId( const char* str );
     const char* GetParamName( uint index );
     int         GetItemPid( const char* str );
-    const char* GetItemName( ushort pid );
+    const char* GetItemName( uint16 pid );
     int         GetDefineValue( const char* str );
     const char* GetPictureName( uint index );
 };

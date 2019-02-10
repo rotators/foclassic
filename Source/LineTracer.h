@@ -6,20 +6,20 @@
 class LineTracer
 {
 public:
-    LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx, ushort maxhy, float angle, bool is_square );
-    uchar GetNextHex( ushort& cx, ushort& cy );
-    void  GetNextSquare( ushort& cx, ushort& cy );
+    LineTracer( uint16 hx, uint16 hy, uint16 tx, uint16 ty, uint16 maxhx, uint16 maxhy, float angle, bool is_square );
+    uint8 GetNextHex( uint16& cx, uint16& cy );
+    void  GetNextSquare( uint16& cx, uint16& cy );
 
 private:
-    ushort maxHx;
-    ushort maxHy;
+    uint16 maxHx;
+    uint16 maxHy;
     float  x1;
     float  y1;
     float  x2;
     float  y2;
     float  dir;
-    uchar  dir1;
-    uchar  dir2;
+    uint8  dir1;
+    uint8  dir2;
     float  dx;
     float  dy;
 
@@ -34,7 +34,7 @@ void LineTracer::NormalizeDir()
         dir = fmod( dir, 360.0f );
 }
 
-LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx, ushort maxhy, float angle, bool is_square )
+LineTracer::LineTracer( uint16 hx, uint16 hy, uint16 tx, uint16 ty, uint16 maxhx, uint16 maxhy, float angle, bool is_square )
 {
     maxHx = maxhx;
     maxHy = maxhy;
@@ -117,12 +117,12 @@ LineTracer::LineTracer( ushort hx, ushort hy, ushort tx, ushort ty, ushort maxhx
     }
 }
 
-uchar LineTracer::GetNextHex( ushort& cx, ushort& cy )
+uint8 LineTracer::GetNextHex( uint16& cx, uint16& cy )
 {
-    ushort t1x = cx;
-    ushort t2x = cx;
-    ushort t1y = cy;
-    ushort t2y = cy;
+    uint16 t1x = cx;
+    uint16 t2x = cx;
+    uint16 t1y = cy;
+    uint16 t2y = cy;
     MoveHexByDir( t1x, t1y, dir1, maxHx, maxHy );
     MoveHexByDir( t2x, t2y, dir2, maxHx, maxHy );
     float dist1 = dx * (y1 - (SQRT3T2_FLOAT * float(t1y) - (float(t1x & 1) ) * SQRT3_FLOAT) ) - dy * (x1 - 3 * float(t1x) );
@@ -143,12 +143,12 @@ uchar LineTracer::GetNextHex( ushort& cx, ushort& cy )
     }
 }
 
-void LineTracer::GetNextSquare( ushort& cx, ushort& cy )
+void LineTracer::GetNextSquare( uint16& cx, uint16& cy )
 {
     x1 += dx;
     y1 += dy;
-    cx = (ushort)floor( x1 );
-    cy = (ushort)floor( y1 );
+    cx = (uint16)floor( x1 );
+    cy = (uint16)floor( y1 );
     if( cx >= maxHx )
         cx = maxHx - 1;
     if( cy >= maxHy )

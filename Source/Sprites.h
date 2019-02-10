@@ -21,8 +21,8 @@ public:
     int      CutType;
     Sprite*  Parent, * Child;
     float    CutX, CutW, CutTexL, CutTexR;
-    uchar*   Alpha;
-    uchar*   Light;
+    uint8*   Alpha;
+    uint8*   Light;
     int      EggType;
     int      ContourType;
     uint     ContourColor;
@@ -44,9 +44,9 @@ public:
     void SetContour( int contour );
     void SetContour( int contour, uint color );
     void SetColor( uint color );
-    void SetAlpha( uchar* alpha );
+    void SetAlpha( uint8* alpha );
     void SetFlash( uint mask );
-    void SetLight( uchar* light, int maxhx, int maxhy );
+    void SetLight( uint8* light, int maxhx, int maxhy );
 };
 typedef vector<Sprite*> SpriteVec;
 
@@ -61,7 +61,7 @@ private:
     // Data
     SpriteVec spritesTree;
     uint      spritesTreeSize;
-    Sprite&   PutSprite( uint index, int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback );
+    Sprite&   PutSprite( uint index, int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback );
 
 public:
     Sprites() : spritesTreeSize( 0 ) {}
@@ -69,8 +69,8 @@ public:
     auto    Begin()->SpriteVec::iterator { return spritesTree.begin(); }
     auto    End()->SpriteVec::iterator   { return spritesTree.begin() + spritesTreeSize; }
     uint    Size()                       { return spritesTreeSize; }
-    Sprite& AddSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback );
-    Sprite& InsertSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback );
+    Sprite& AddSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback );
+    Sprite& InsertSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback );
     void    Resize( uint size );
     void    Clear() { Resize( 0 ); }
     void    Unvalidate();

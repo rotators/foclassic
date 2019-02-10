@@ -25,7 +25,7 @@ class TemplateVar
 {
 public:
     int       Type;
-    ushort    TempId;
+    uint16    TempId;
     string    Name;
     string    Desc;
     int       StartVal;
@@ -55,7 +55,7 @@ public:
     int          VarValue;
     TemplateVar* VarTemplate;
     uint         QuestVarIndex;
-    ushort       Type;
+    uint16       Type;
     short        RefCount;
     SyncObject   Sync;
 
@@ -130,7 +130,7 @@ private:
     bool         isInit;
     string       varsPath;
     TempVarVec   tempVars;
-    StrUShortMap varsNames;
+    StrUInt16Map varsNames;
     Mutex        varsLocker;
 
     bool LoadTemplateVars( const char* str, TempVarVec& vars );   // Return count error
@@ -143,9 +143,9 @@ public:
 
     bool         UpdateVarsTemplate();
     bool         AddTemplateVar( TemplateVar* var );
-    void         EraseTemplateVar( ushort temp_id );
-    TemplateVar* GetTemplateVar( ushort temp_id );
-    ushort       GetTemplateVarId( const char* var_name );
+    void         EraseTemplateVar( uint16 temp_id );
+    TemplateVar* GetTemplateVar( uint16 temp_id );
+    uint16       GetTemplateVarId( const char* var_name );
     bool         IsTemplateVarAviable( const char* var_name );
     void         SaveTemplateVars();
     TempVarVec&  GetTemplateVars() { return tempVars; }
@@ -155,11 +155,11 @@ public:
     void     SaveVarsDataFile( void (* save_func)( void*, size_t ) );
     bool     LoadVarsDataFile( void* f, int version );
     bool     CheckVar( const char* var_name, uint master_id, uint slave_id, char oper, int val );
-    bool     CheckVar( ushort temp_id, uint master_id, uint slave_id, char oper, int val );
+    bool     CheckVar( uint16 temp_id, uint master_id, uint slave_id, char oper, int val );
     GameVar* ChangeVar( const char* var_name, uint master_id, uint slave_id, char oper, int val );
-    GameVar* ChangeVar( ushort temp_id, uint master_id, uint slave_id, char oper, int val );
+    GameVar* ChangeVar( uint16 temp_id, uint master_id, uint slave_id, char oper, int val );
     GameVar* GetVar( const char* var_name, uint master_id, uint slave_id,  bool create );
-    GameVar* GetVar( ushort temp_id, uint master_id, uint slave_id,  bool create );
+    GameVar* GetVar( uint16 temp_id, uint master_id, uint slave_id,  bool create );
     void     SwapVars( uint id1, uint id2 );
     uint     ClearUnusedVars( UIntSet& ids1, UIntSet& ids2, UIntSet& ids_locs, UIntSet& ids_maps, UIntSet& ids_items );
     void     GetQuestVars( uint master_id, UIntVec& vars );

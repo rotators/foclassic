@@ -33,25 +33,25 @@ struct AIDataPlane
             uint   TargId;
             int    MinHp;
             bool   IsGag;
-            ushort GagHexX, GagHexY;
-            ushort LastHexX, LastHexY;
+            uint16 GagHexX, GagHexY;
+            uint16 LastHexX, LastHexY;
         } Attack;
 
         struct
         {
             bool   IsRun;
-            ushort HexX;
-            ushort HexY;
-            uchar  Dir;
+            uint16 HexX;
+            uint16 HexY;
+            uint8  Dir;
             uint   Cut;
         } Walk;
 
         struct
         {
             bool   IsRun;
-            ushort HexX;
-            ushort HexY;
-            ushort Pid;
+            uint16 HexX;
+            uint16 HexY;
+            uint16 Pid;
             uint   UseItemId;
             bool   ToOpen;
         } Pick;
@@ -68,8 +68,8 @@ struct AIDataPlane
         uint   Iter;
         bool   IsRun;
         uint   TargId;
-        ushort HexX;
-        ushort HexY;
+        uint16 HexX;
+        uint16 HexY;
         uint   Cut;
         uint   Trace;
     } Move;

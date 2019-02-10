@@ -61,7 +61,7 @@ void FOMsg::AddStr( uint num, const string& str )
         strData.insert( PAIR( num, str ) );
 }
 
-void FOMsg::AddBinary( uint num, const uchar* binary, uint len )
+void FOMsg::AddBinary( uint num, const uint8* binary, uint len )
 {
     CharVec str;
     str.reserve( len * 2 + 1 );
@@ -162,14 +162,14 @@ int FOMsg::GetInt( uint num )
     return atoi( (*it).second.c_str() );
 }
 
-const uchar* FOMsg::GetBinary( uint num, uint& len )
+const uint8* FOMsg::GetBinary( uint num, uint& len )
 {
     if( !Count( num ) )
         return NULL;
 
-    static THREAD UCharVec* binary = NULL;
+    static THREAD UInt8Vec* binary = NULL;
     if( !binary )
-        binary = new UCharVec();
+        binary = new UInt8Vec();
 
     const char* str = GetStr( num );
     binary->clear();
@@ -234,9 +234,9 @@ void FOMsg::CalculateHash()
         memcpy( &toSend[toSend.size() - str_len], (void*)str.c_str(), str_len );
         #endif
 
-        Crypt.Crc32( (uchar*)&num, sizeof(num), strDataHash );
-        Crypt.Crc32( (uchar*)&str_len, sizeof(str_len), strDataHash );
-        Crypt.Crc32( (uchar*)str.c_str(), str_len, strDataHash );
+        Crypt.Crc32( (uint8*)&num, sizeof(num), strDataHash );
+        Crypt.Crc32( (uint8*)&str_len, sizeof(str_len), strDataHash );
+        Crypt.Crc32( (uint8*)str.c_str(), str_len, strDataHash );
     }
 }
 
@@ -325,7 +325,7 @@ int FOMsg::LoadMsgFileBuf( char* data, uint data_len )
     Clear();
 
     #ifdef FOCLASSIC_CLIENT
-    char* buf = (char*)Crypt.Uncompress( (uchar*)data, data_len, 10 );
+    char* buf = (char*)Crypt.Uncompress( (uint8*)data, data_len, 10 );
     if( !buf )
         return -3;
     #else
@@ -412,10 +412,10 @@ int FOMsg::SaveMsgFile( const char* fname, int path_type )
     uint  buf_len = (uint)str.length();
 
     #ifdef FOCLASSIC_CLIENT
-    buf = (char*)Crypt.Compress( (uchar*)buf, buf_len );
+    buf = (char*)Crypt.Compress( (uint8*)buf, buf_len );
     if( !buf )
         return -2;
-    Crypt.SetCache( fname, (uchar*)buf, buf_len );
+    Crypt.SetCache( fname, (uint8*)buf, buf_len );
     delete[] buf;
     #else
     fm.SetData( buf, buf_len );

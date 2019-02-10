@@ -23,7 +23,7 @@ class Sound
 public:
     PaStream* Stream;
 
-    uchar*    Buf;
+    uint8*    Buf;
     uint      BufSize;
     uint      BufCur;
 
@@ -132,7 +132,7 @@ void SoundManager::SetMusicVolume( int volume )
     musicVolume = CLAMP( volume, 0, 100 );
 }
 
-bool SoundManager::ProcessSound( Sound* sound, uchar* output, uint outputSamples )
+bool SoundManager::ProcessSound( Sound* sound, uint8* output, uint outputSamples )
 {
     // Playing
     if( sound->BufCur < sound->BufSize )
@@ -263,7 +263,7 @@ Sound* SoundManager::Load( const char* fname, int path_type )
                             unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo,
                             PaStreamCallbackFlags statusFlags, void* userData )
         {
-            if( SndMngr.ProcessSound( (Sound*)userData, (uchar*)output, frameCount ) )
+            if( SndMngr.ProcessSound( (Sound*)userData, (uint8*)output, frameCount ) )
                 return paContinue;
             return paComplete;
         }
@@ -322,13 +322,13 @@ bool SoundManager::LoadWAV( Sound* sound, const char* fname, int path_type )
 
     struct                      // WAVEFORMATEX
     {
-        ushort wFormatTag;      // Integer identifier of the format
-        ushort nChannels;       // Number of audio channels
+        uint16 wFormatTag;      // Integer identifier of the format
+        uint16 nChannels;       // Number of audio channels
         uint   nSamplesPerSec;  // Audio sample rate
         uint   nAvgBytesPerSec; // Bytes per second (possibly approximate)
-        ushort nBlockAlign;     // Size in bytes of a sample block (all channels)
-        ushort wBitsPerSample;  // Size in bits of a single per-channel sample
-        ushort cbSize;          // Bytes of extra data appended to this struct
+        uint16 nBlockAlign;     // Size in bytes of a sample block (all channels)
+        uint16 wBitsPerSample;  // Size in bits of a single per-channel sample
+        uint16 cbSize;          // Bytes of extra data appended to this struct
     } waveformatex;
 
     fm.CopyMem( &waveformatex, 16 );
@@ -393,7 +393,7 @@ bool SoundManager::LoadACM( Sound* sound, const char* fname, int path_type )
 
     sound->BufSize = samples * sound->SampleSize;
     sound->Buf = new unsigned char[sound->BufSize];
-    int dec_data = acm->readAndDecompress( (ushort*)sound->Buf, sound->BufSize );
+    int dec_data = acm->readAndDecompress( (uint16*)sound->Buf, sound->BufSize );
     if( dec_data != (int)sound->BufSize )
     {
         WriteLogF( _FUNC_, " - Decode Acm error.\n" );
@@ -583,7 +583,7 @@ bool SoundManager::PlaySound( const char* name )
     return true;
 }
 
-bool SoundManager::PlaySoundType( uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext )
+bool SoundManager::PlaySoundType( uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext )
 {
     if( !isActive || !GetSoundVolume() )
         return true;

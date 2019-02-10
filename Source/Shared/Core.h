@@ -38,12 +38,12 @@ extern uint DistGame( int x1, int y1, int x2, int y2 );
 extern int  GetNearDir( int x1, int y1, int x2, int y2 );
 extern int  GetFarDir( int x1, int y1, int x2, int y2 );
 extern int  GetFarDir( int x1, int y1, int x2, int y2, float offset );
-extern bool CheckDist( ushort x1, ushort y1, ushort x2, ushort y2, uint dist );
+extern bool CheckDist( uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint dist );
 extern int  ReverseDir( int dir );
 extern void GetStepsXY( float& sx, float& sy, int x1, int y1, int x2, int y2 );
 extern void ChangeStepsXY( float& sx, float& sy, float deq );
-extern bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy );
-extern void MoveHexByDirUnsafe( int& hx, int& hy, uchar dir );
+extern bool MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint16 maxhx, uint16 maxhy );
+extern void MoveHexByDirUnsafe( int& hx, int& hy, uint8 dir );
 extern bool IntersectCircleLine( int cx, int cy, int radius, int x1, int y1, int x2, int y2 );
 
 // hex offsets

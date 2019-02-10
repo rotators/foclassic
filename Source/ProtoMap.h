@@ -13,10 +13,10 @@ class ProtoMap;
 class MapObject // Available in fonline.h
 {
 public:
-    uchar  MapObjType;
-    ushort ProtoId;
-    ushort MapX;
-    ushort MapY;
+    uint8  MapObjType;
+    uint16 ProtoId;
+    uint16 MapX;
+    uint16 MapY;
     short  Dir;
 
     uint   UID;
@@ -25,9 +25,9 @@ public:
     uint   ParentChildIndex;
 
     uint   LightColor;
-    uchar  LightDay;
-    uchar  LightDirOff;
-    uchar  LightDistance;
+    uint8  LightDay;
+    uint8  LightDirOff;
+    uint8  LightDistance;
     char   LightIntensity;
 
     char   ScriptName[MAPOBJ_SCRIPT_NAME + 1];
@@ -40,7 +40,7 @@ public:
     {
         struct
         {
-            uchar Cond;
+            uint8 Cond;
             uint  Anim1;
             uint  Anim2;
             short ParamIndex[MAPOBJ_CRITTER_PARAMS];
@@ -51,26 +51,26 @@ public:
         {
             short  OffsetX;
             short  OffsetY;
-            uchar  AnimStayBegin;
-            uchar  AnimStayEnd;
-            ushort AnimWait;
-            uchar  InfoOffset;
+            uint8  AnimStayBegin;
+            uint8  AnimStayEnd;
+            uint16 AnimWait;
+            uint8  InfoOffset;
             uint   PicMapHash;
             uint   PicInvHash;
 
             uint   Count;
-            uchar  ItemSlot;
+            uint8  ItemSlot;
 
-            uchar  BrokenFlags;
-            uchar  BrokenCount;
-            ushort Deterioration;
+            uint8  BrokenFlags;
+            uint8  BrokenCount;
+            uint16 Deterioration;
 
-            ushort AmmoPid;
+            uint16 AmmoPid;
             uint   AmmoCount;
 
             uint   LockerDoorId;
-            ushort LockerCondition;
-            ushort LockerComplexity;
+            uint16 LockerCondition;
+            uint16 LockerComplexity;
 
             short  TrapValue;
 
@@ -81,10 +81,10 @@ public:
         {
             short  OffsetX;
             short  OffsetY;
-            uchar  AnimStayBegin;
-            uchar  AnimStayEnd;
-            ushort AnimWait;
-            uchar  InfoOffset;
+            uint8  AnimStayBegin;
+            uint8  AnimStayEnd;
+            uint16 AnimWait;
+            uint8  InfoOffset;
             uint   PicMapHash;
             uint   PicInvHash;
 
@@ -92,14 +92,14 @@ public:
             bool   CanTalk;
             uint   TriggerNum;
 
-            uchar  ParamsCount;
+            uint8  ParamsCount;
             int    Param[5];
 
-            ushort ToMapPid;
+            uint16 ToMapPid;
             uint   ToEntire;
-            uchar  ToDir;
+            uint8  ToDir;
 
-            uchar  SpriteCut;
+            uint8  SpriteCut;
         } MScenery;
     };
 
@@ -142,24 +142,24 @@ typedef vector<MapObject>  MapObjectVec;
 
 struct SceneryCl
 {
-    ushort ProtoId;
-    uchar  Flags;
-    uchar  SpriteCut;
-    ushort MapX;
-    ushort MapY;
+    uint16 ProtoId;
+    uint8  Flags;
+    uint8  SpriteCut;
+    uint16 MapX;
+    uint16 MapY;
     short  OffsetX;
     short  OffsetY;
     uint   LightColor;
-    uchar  LightDistance;
-    uchar  LightFlags;
+    uint8  LightDistance;
+    uint8  LightFlags;
     char   LightIntensity;
-    uchar  InfoOffset;
-    uchar  AnimStayBegin;
-    uchar  AnimStayEnd;
-    ushort AnimWait;
+    uint8  InfoOffset;
+    uint8  AnimStayBegin;
+    uint8  AnimStayEnd;
+    uint16 AnimWait;
     uint   PicMapHash;
     short  Dir;
-    ushort Reserved1;
+    uint16 Reserved1;
 };
 typedef vector<SceneryCl> SceneryClVec;
 
@@ -170,17 +170,17 @@ public:
     struct
     {
         uint   Version;
-        ushort MaxHexX, MaxHexY;
+        uint16 MaxHexX, MaxHexY;
         int    WorkHexX, WorkHexY;
         char   ScriptModule[MAX_SCRIPT_NAME + 1];
         char   ScriptFunc[MAX_SCRIPT_NAME + 1];
         int    Time;
         bool   NoLogOut;
         int    DayTime[4];
-        uchar  DayColor[12];
+        uint8  DayColor[12];
 
         // Deprecated
-        ushort HeaderSize;
+        uint16 HeaderSize;
         bool   Packed;
         uint   UnpackedDataLen;
     } Header;
@@ -193,16 +193,16 @@ public:
     struct Tile     // 12 bytes
     {
         uint   NameHash;
-        ushort HexX, HexY;
+        uint16 HexX, HexY;
         char   OffsX, OffsY;
-        uchar  Layer;
+        uint8  Layer;
         bool   IsRoof;
         #ifdef FOCLASSIC_MAPPER
         bool   IsSelected;
         #endif
 
         Tile() { memzero( this, sizeof(Tile) ); }
-        Tile( uint name, ushort hx, ushort hy, char ox, char oy, uchar layer, bool is_roof ) : NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
+        Tile( uint name, uint16 hx, uint16 hy, char ox, char oy, uint8 layer, bool is_roof ) : NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
     };
     typedef vector<Tile>    TileVec;
     TileVec Tiles;
@@ -211,7 +211,7 @@ public:
     typedef vector<TileVec> TileVecVec;
     TileVecVec TilesField;
     TileVecVec RoofsField;
-    TileVec&   GetTiles( ushort hx, ushort hy, bool is_roof ) { return is_roof ? RoofsField[hy * Header.MaxHexX + hx] : TilesField[hy * Header.MaxHexX + hx]; }
+    TileVec&   GetTiles( uint16 hx, uint16 hy, bool is_roof ) { return is_roof ? RoofsField[hy * Header.MaxHexX + hx] : TilesField[hy * Header.MaxHexX + hx]; }
     #endif
 
 private:
@@ -236,7 +236,7 @@ public:
     MapObjectPtrVec ItemsVec;
     MapObjectPtrVec SceneryVec;
     MapObjectPtrVec GridsVec;
-    uchar*          HexFlags;
+    uint8*          HexFlags;
 
 private:
     bool LoadCache( FileManager& fm );
@@ -249,12 +249,12 @@ public:
     struct MapEntire
     {
         uint   Number;
-        ushort HexX;
-        ushort HexY;
-        uchar  Dir;
+        uint16 HexX;
+        uint16 HexY;
+        uint8  Dir;
 
         MapEntire() { memzero( this, sizeof(MapEntire) ); }
-        MapEntire( ushort hx, ushort hy, uchar dir, uint type ) : HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
+        MapEntire( uint16 hx, uint16 hy, uint8 dir, uint type ) : HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
     };
     typedef vector<MapEntire> EntiresVec;
 
@@ -265,14 +265,14 @@ public:
     uint       CountEntire( uint num );
     MapEntire* GetEntire( uint num, uint skip );
     MapEntire* GetEntireRandom( uint num );
-    MapEntire* GetEntireNear( uint num, ushort hx, ushort hy );
-    MapEntire* GetEntireNear( uint num, uint num_ext, ushort hx, ushort hy );
+    MapEntire* GetEntireNear( uint num, uint16 hx, uint16 hy );
+    MapEntire* GetEntireNear( uint num, uint num_ext, uint16 hx, uint16 hy );
     void       GetEntires( uint num, EntiresVec& entires );
 
 private:
     int    pathType;
     string pmapName;
-    ushort pmapPid;
+    uint16 pmapPid;
     bool   isInit;
 
 public:
@@ -282,7 +282,7 @@ public:
     #endif
     ~ProtoMap();
 
-    bool Init( ushort pid, const char* name, int path_type );
+    bool Init( uint16 pid, const char* name, int path_type );
     void Clear();
     bool Refresh();
 
@@ -293,7 +293,7 @@ public:
     #endif
 
     bool        IsInit()  { return isInit; }
-    ushort      GetPid()  { return isInit ? pmapPid : 0; }
+    uint16      GetPid()  { return isInit ? pmapPid : 0; }
     const char* GetName() { return pmapName.c_str(); }
 
     long RefCounter;
@@ -301,11 +301,11 @@ public:
     void Release() { if( !--RefCounter ) delete this; }
 
     #ifdef FOCLASSIC_SERVER
-    MapObject* GetMapScenery( ushort hx, ushort hy, ushort pid );
-    void       GetMapSceneriesHex( ushort hx, ushort hy, MapObjectPtrVec& mobjs );
-    void       GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs );
-    void       GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs );
-    MapObject* GetMapGrid( ushort hx, ushort hy );
+    MapObject* GetMapScenery( uint16 hx, uint16 hy, uint16 pid );
+    void       GetMapSceneriesHex( uint16 hx, uint16 hy, MapObjectPtrVec& mobjs );
+    void       GetMapSceneriesHexEx( uint16 hx, uint16 hy, uint radius, uint16 pid, MapObjectPtrVec& mobjs );
+    void       GetMapSceneriesByPid( uint16 pid, MapObjectPtrVec& mobjs );
+    MapObject* GetMapGrid( uint16 hx, uint16 hy );
     #endif
 };
 typedef vector<ProtoMap>  ProtoMapVec;

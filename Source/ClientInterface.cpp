@@ -126,7 +126,7 @@ bool FOClient::AppendIfaceIni( const char* ini_name )
         {
             DataFile* pfile = pfiles[k];
             uint      len;
-            uchar*    data = pfile->OpenFile( file_name.c_str(), len );
+            uint8*    data = pfile->OpenFile( file_name.c_str(), len );
 
             if( data )
             {
@@ -145,7 +145,7 @@ bool FOClient::AppendIfaceIni( const char* ini_name )
     return true;
 }
 
-void FOClient::AppendIfaceIni( uchar* data, uint len )
+void FOClient::AppendIfaceIni( uint8* data, uint len )
 {
     typedef multimap<int, pair<char*, uint>, less<int>> IniMMap;
     IniMMap sections;
@@ -2101,7 +2101,7 @@ void FOClient::ConsoleDraw()
 
         if( GameOpt.DebugInfo )
         {
-            ushort hx, hy;
+            uint16 hx, hy;
             GetCurHex( hx, hy, false );
             PointF p = Animation3d::Convert2dTo3d( GameOpt.MouseX, GameOpt.MouseY );
             SprMngr.DrawStr( Rect( 250, 5, 450, 300 ), Str::FormatBuf(
@@ -2149,7 +2149,7 @@ void FOClient::ConsoleDraw()
     }
 }
 
-void FOClient::ConsoleKeyDown( uchar dik, const char* dik_text )
+void FOClient::ConsoleKeyDown( uint8 dik, const char* dik_text )
 {
     if( !IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && !IsMainScreen( CLIENT_MAIN_SCREEN_WORLDMAP ) )
         return;
@@ -2230,7 +2230,7 @@ void FOClient::ConsoleKeyDown( uchar dik, const char* dik_text )
     }
 }
 
-void FOClient::ConsoleKeyUp( uchar key )
+void FOClient::ConsoleKeyUp( uint8 key )
 {
     ConsoleLastKey = 0;
 }
@@ -2250,7 +2250,7 @@ void FOClient::GameDraw()
     // Move cursor
     if( IsCurMode( CURSOR_MOVE ) )
     {
-        ushort hx, hy;
+        uint16 hx, hy;
         if( (GameOpt.ScrollMouseRight || GameOpt.ScrollMouseLeft || GameOpt.ScrollMouseUp || GameOpt.ScrollMouseDown) || !GetCurHex( hx, hy, false ) )
         {
             HexMngr.SetCursorVisible( false );
@@ -2335,7 +2335,7 @@ void FOClient::GameDraw()
     }
 }
 
-void FOClient::GameKeyDown( uchar dik, const char* dik_text )
+void FOClient::GameKeyDown( uint8 dik, const char* dik_text )
 {
     if( ConsoleActive )
         return;
@@ -2602,7 +2602,7 @@ void FOClient::GameLMouseDown()
     else if( IsCurMode( CURSOR_MOVE ) )
     {
         ActionEvent* act = (IsAction( CHOSEN_MOVE ) ? &ChosenAction[0] : NULL);
-        ushort hx, hy;
+        uint16 hx, hy;
         if( act && Timer::FastTick() - act->Param[5] < (GameOpt.DoubleClickTime ? GameOpt.DoubleClickTime : GetDoubleClickTicks() ) )
         {
             act->Param[2] = (GameOpt.AlwaysRun ? 0 : 1);
@@ -3331,7 +3331,7 @@ void FOClient::LogDraw()
     }
 }
 
-void FOClient::LogKeyDown( uchar dik, const char* dik_text )
+void FOClient::LogKeyDown( uint8 dik, const char* dik_text )
 {
     if( Singleplayer )
         return;
@@ -3460,8 +3460,8 @@ void FOClient::LogTryConnect()
         }
 
         // Save login and password
-        Crypt.SetCache( "__name", (uchar*)GameOpt.Name.c_str(), (uint)GameOpt.Name.length() + 1 );
-        Crypt.SetCache( "__pass", (uchar*)Password.c_str(), (uint)Password.length() + 1 );
+        Crypt.SetCache( "__name", (uint8*)GameOpt.Name.c_str(), (uint)GameOpt.Name.length() + 1 );
+        Crypt.SetCache( "__pass", (uint8*)Password.c_str(), (uint)Password.length() + 1 );
 
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_CONNECTION ) );
     }
@@ -4000,7 +4000,7 @@ void FOClient::DlgRMouseDown( bool is_dialog )
         SetCurCastling( CURSOR_DEFAULT, CURSOR_HAND );
 }
 
-void FOClient::DlgKeyDown( bool is_dialog, uchar dik, const char* dik_text )
+void FOClient::DlgKeyDown( bool is_dialog, uint8 dik, const char* dik_text )
 {
     int num = -1;
     switch( dik )
@@ -4713,7 +4713,7 @@ void FOClient::LMenuCollect()
         LMenuSet( LMENU_OFF );
 }
 
-void FOClient::LMenuSet( uchar set_lmenu )
+void FOClient::LMenuSet( uint8 set_lmenu )
 {
     if( IsLMenu() )
         SetCurPos( LMenuRestoreCurX, LMenuRestoreCurY );
@@ -5565,7 +5565,7 @@ void FOClient::ShowScreen( int screen, int p0, int p1, int p2 )
             GmapTownPicPos[3] = MODE_HEIGHT;
             int pic_offsx = 0;
             int pic_offsy = 0;
-            ushort loc_pid = GmapTownLoc.LocPid;
+            uint16 loc_pid = GmapTownLoc.LocPid;
 
             AnyFrames* anim = ResMngr.GetIfaceAnim( Str::GetHash( MsgGM->GetStr( STR_GM_PIC_( loc_pid ) ) ) );
             if( !anim )
@@ -6309,7 +6309,7 @@ void FOClient::GmapTownDraw()
         return;
     }
 
-    ushort loc_pid = GmapTownLoc.LocPid;
+    uint16 loc_pid = GmapTownLoc.LocPid;
 
     if( DistSqrt( GmapTownLoc.LocWx, GmapTownLoc.LocWy, WorldmapGroupCurX, WorldmapGroupCurY ) > GmapTownLoc.Radius )
     {
@@ -6612,7 +6612,7 @@ void FOClient::GmapMouseMove()
     }
 }
 
-void FOClient::GmapKeyDown( uchar dik, const char* dik_text )
+void FOClient::GmapKeyDown( uint8 dik, const char* dik_text )
 {
     if( ConsoleActive )
         return;
@@ -6832,7 +6832,7 @@ void FOClient::SboxLMouseUp()
     }
     else
     {
-        ushort cur_skill;
+        uint16 cur_skill;
         if( IfaceHold == IFACE_SBOX_SNEAK && IsCurInRect( SboxBSneak, SboxX, SboxY ) )
             cur_skill = SK_SNEAK;
         else if( IfaceHold == IFACE_SBOX_LOCKPICK && IsCurInRect( SboxBLockpick, SboxX, SboxY ) )
@@ -8003,7 +8003,7 @@ void FOClient::ChaNameLMouseDown()
         IfaceHold = IFACE_CHA_NAME_PASS;
 }
 
-void FOClient::ChaNameKeyDown( uchar dik, const char* dik_text )
+void FOClient::ChaNameKeyDown( uint8 dik, const char* dik_text )
 {
     if( !IsMainScreen( CLIENT_MAIN_SCREEN_REGISTRATION ) || !RegNewCr )
         return;
@@ -8627,7 +8627,7 @@ void FOClient::PipDraw()
         }
         case PIP__AUTOMAPS_MAP:
         {
-            ushort map_pid = AutomapSelected.MapPids[AutomapSelected.CurMap];
+            uint16 map_pid = AutomapSelected.MapPids[AutomapSelected.CurMap];
             const char* map_name = AutomapSelected.MapNames[AutomapSelected.CurMap].c_str();
 
             scr = 0;
@@ -8651,7 +8651,7 @@ void FOClient::PipDraw()
             }
 
             // Try load map
-            ushort maxhx, maxhy;
+            uint16 maxhx, maxhy;
             ItemVec items;
             if( !HexMngr.GetMapData( map_pid, items, maxhx, maxhy ) )
             {
@@ -8674,7 +8674,7 @@ void FOClient::PipDraw()
             for( auto it = items.begin(), end = items.end(); it != end; ++it )
             {
                 Item& item = *it;
-                ushort pid = item.GetProtoId();
+                uint16 pid = item.GetProtoId();
                 if( pid == SP_SCEN_IBLOCK || pid == SP_MISC_SCRBLOCK )
                     continue;
 
@@ -9664,7 +9664,7 @@ void FOClient::CurDraw()
             break;
         }
         case CURSOR_MOVE:
-            ushort hx, hy;
+            uint16 hx, hy;
             if( GetCurHex( hx, hy, false ) )
                 break;
         /*{
@@ -10251,7 +10251,7 @@ void FOClient::SayMouseMove()
     }
 }
 
-void FOClient::SayKeyDown( uchar dik, const char* dik_text )
+void FOClient::SayKeyDown( uint8 dik, const char* dik_text )
 {
     if( dik == DIK_RETURN || dik == DIK_NUMPADENTER )
     {
@@ -10381,7 +10381,7 @@ void FOClient::SplitDraw()
     SprMngr.DrawStr( Rect( SplitWValue, SplitX, SplitY ), Str::FormatBuf( "%05d", SplitValue ), FONT_FLAG_NOBREAK, COLOR_IFACE, FONT_TYPE_BIG_NUM );
 }
 
-void FOClient::SplitKeyDown( uchar dik, const char* dik_text )
+void FOClient::SplitKeyDown( uint8 dik, const char* dik_text )
 {
     int add = 0;
 
@@ -10606,7 +10606,7 @@ void FOClient::TimerDraw()
     SprMngr.DrawStr( Rect( TimerWValue, TimerX, TimerY ), Str::FormatBuf( "%d%c%02d", TimerValue / 60, '9' + 3, TimerValue % 60 ), FONT_FLAG_NOBREAK, COLOR_IFACE, FONT_TYPE_BIG_NUM );
 }
 
-void FOClient::TimerKeyDown( uchar dik, const char* dik_text )
+void FOClient::TimerKeyDown( uint8 dik, const char* dik_text )
 {
     switch( dik )
     {
@@ -10829,7 +10829,7 @@ void FOClient::FixGenerate( int fix_mode )
         FixDrawComp.clear();
 
         // Out items
-        UCharVec tmp_vec;            // Temp vector
+        UInt8Vec tmp_vec;            // Temp vector
         for( uint i = 0; i < craft->OutItems.size(); i++ )
             tmp_vec.push_back( 0 );  // Push AND
         FixGenerateItems( craft->OutItems, craft->OutItemsVal, tmp_vec, str, r, x );
@@ -10927,7 +10927,7 @@ void FOClient::FixGenerateStrLine( string& str, Rect& r )
     r.T = r.B;
 }
 
-void FOClient::FixGenerateItems( UShortVec& items_vec, UIntVec& val_vec, UCharVec& or_vec, string& str, Rect& r, int& x )
+void FOClient::FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x )
 {
     str = "";
     for( uint i = 0, j = (uint)items_vec.size(); i < j; i++ )
@@ -11340,7 +11340,7 @@ void FOClient::IboxLMouseUp()
     IfaceHold = IFACE_NONE;
 }
 
-void FOClient::IboxKeyDown( uchar dik, const char* dik_text )
+void FOClient::IboxKeyDown( uint8 dik, const char* dik_text )
 {
     if( IfaceHold == IFACE_IBOX_TITLE )
         Keyb::GetChar( dik, dik_text, IboxTitle, &IboxTitleCur, USER_HOLO_MAX_TITLE_LEN, KIF_NO_SPEC_SYMBOLS );
@@ -11355,7 +11355,7 @@ void FOClient::IboxKeyDown( uchar dik, const char* dik_text )
     Timer::StartAccelerator( ACCELERATE_IBOX );
 }
 
-void FOClient::IboxKeyUp( uchar dik )
+void FOClient::IboxKeyUp( uint8 dik )
 {
     IboxLastKey = 0;
     IboxLastKeyText = "";
@@ -11418,7 +11418,7 @@ void FOClient::SaveLoadCollect()
         uint64 tc, ta, tw;
         FileGetTime( f, tc, ta, tw );
 
-        uchar signature[sizeof(WorldSaveSignature)];
+        uint8 signature[sizeof(WorldSaveSignature)];
         if( !FileRead( f, signature, sizeof(signature) ) )
             continue;
 
@@ -11427,7 +11427,7 @@ void FOClient::SaveLoadCollect()
             if( !BINARY_SIGNATURE_VALID( WorldSaveSignature, signature ) )
                 continue;
 
-            uchar version = BINARY_SIGNATURE_VERSION( signature );
+            uint8 version = BINARY_SIGNATURE_VERSION( signature );
             if( !version || version < WORLD_SAVE_V1 || version > WORLD_SAVE_LAST )
                 continue;
         }
@@ -11452,7 +11452,7 @@ void FOClient::SaveLoadCollect()
         if( !FileRead( f, crname, sizeof(crname) ) )
             continue;
         // Map pid
-        ushort map_pid;
+        uint16 map_pid;
         FileSetPointer( f, pos2 + crname_size + 68, SEEK_SET );
         if( !FileRead( f, &map_pid, sizeof(map_pid) ) )
             continue;
@@ -11466,7 +11466,7 @@ void FOClient::SaveLoadCollect()
 
         // Picture data
         uint pic_data_len;
-        UCharVec pic_data;
+        UInt8Vec pic_data;
         FileSetPointer( f, pos2 + crname_size + 7404 + 6944 + te_size, SEEK_SET );
         if( !FileRead( f, &pic_data_len, sizeof(pic_data_len) ) )
             continue;
@@ -11478,7 +11478,7 @@ void FOClient::SaveLoadCollect()
         }
 
         // Game time
-        ushort year, month, day, hour, minute;
+        uint16 year, month, day, hour, minute;
         FileSetPointer( f, pos2 + crname_size + 7404 + 6944 + te_size + 4 + pic_data_len + 2, SEEK_SET );
         if( !FileRead( f, &year, sizeof(year) ) )
             continue;
@@ -11554,7 +11554,7 @@ void FOClient::SaveLoadSaveGame( const char* name )
     FileDelete( fname );
 
     // Get image data from surface
-    UCharVec pic_data;
+    UInt8Vec pic_data;
     if( SaveLoadDraftValid )
     {
         #ifdef FO_D3D
@@ -11567,7 +11567,7 @@ void FOClient::SaveLoadSaveGame( const char* name )
         SAFEREL( img );
         #else
         // Get data
-        uchar* data = new uchar[SAVE_LOAD_IMAGE_WIDTH * SAVE_LOAD_IMAGE_HEIGHT * 3];
+        uint8* data = new uint8[SAVE_LOAD_IMAGE_WIDTH * SAVE_LOAD_IMAGE_HEIGHT * 3];
         GL( glBindTexture( GL_TEXTURE_2D, SaveLoadDraft.TargetTexture->Id ) );
         GL( glGetTexImage( GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, data ) );
         GL( glBindTexture( GL_TEXTURE_2D, 0 ) );

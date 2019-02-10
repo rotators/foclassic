@@ -21,7 +21,7 @@ public:
     // Add String value in strData and Nums
     void AddStr( uint num, const char* str );
     void AddStr( uint num, const string& str );
-    void AddBinary( uint num, const uchar* binary, uint len );
+    void AddBinary( uint num, const uint8* binary, uint len );
 
     // Generate random number with interval from 10000000 to 99999999
     uint           AddStr( const char* str );
@@ -30,7 +30,7 @@ public:
     uint           GetStrNumUpper( uint num );    // Gets const pointer on String value by upper num in strData
     uint           GetStrNumLower( uint num );    // Gets const pointer on String value by lower num in strData
     int            GetInt( uint num );            // Gets integer value of string
-    const uchar*   GetBinary( uint num, uint& len );
+    const uint8*   GetBinary( uint num, uint& len );
     int            Count( uint num );             // Return count of string exist
     void           EraseStr( uint num );          // Delete string
     uint           GetSize();                     // Gets Size of All Strings, without only FOMSG_ERRNUM

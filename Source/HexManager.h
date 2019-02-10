@@ -41,14 +41,14 @@ struct ViewField
 
 struct LightSource
 {
-    ushort HexX;
-    ushort HexY;
+    uint16 HexX;
+    uint16 HexY;
     uint   ColorRGB;
-    uchar  Distance;
-    uchar  Flags;
+    uint8  Distance;
+    uint8  Flags;
     int    Intensity;
 
-    LightSource( ushort hx, ushort hy, uint color, uchar distance, int inten, uchar flags ) : HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
+    LightSource( uint16 hx, uint16 hy, uint color, uint8 distance, int inten, uint8 flags ) : HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
 };
 typedef vector<LightSource> LightSourceVec;
 
@@ -63,7 +63,7 @@ struct Field
         AnyFrames* Anim;
         short      OffsX;
         short      OffsY;
-        uchar      Layer;
+        uint8      Layer;
     };
     typedef vector<Tile> TileVec;
 
@@ -83,16 +83,16 @@ struct Field
     bool       IsExitGrid;
     bool       IsNotPassed;
     bool       IsNotRaked;
-    uchar      Corner;
+    uint8      Corner;
     bool       IsNoLight;
-    uchar      LightValues[3];
+    uint8      LightValues[3];
     bool       IsMultihex;
 
     void Clear();
     void AddItem( ItemHex* item );
     void EraseItem( ItemHex* item );
     void ProcessCache();
-    void AddTile( AnyFrames* anim, short ox, short oy, uchar layer, bool is_roof );
+    void AddTile( AnyFrames* anim, short ox, short oy, uint8 layer, bool is_roof );
     Field() { Clear(); }
 };
 
@@ -109,7 +109,7 @@ struct Drop
     short DropCnt;
 
     Drop() : CurSprId( 0 ), OffsX( 0 ), OffsY( 0 ), DropCnt( 0 ), GroundOffsY( 0 ) {};
-    Drop( ushort id, short x, short y, short ground_y ) : CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
+    Drop( uint16 id, short x, short y, short ground_y ) : CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
 };
 typedef vector<Drop*> DropVec;
 
@@ -121,7 +121,7 @@ class HexManager
 {
     // Hexes
 private:
-    ushort     maxHexX, maxHexY;
+    uint16     maxHexX, maxHexY;
     Field*     hexField;
     bool*      hexToDraw;
     char*      hexTrack;
@@ -133,50 +133,50 @@ private:
     string     curDataPrefix;
 
 public:
-    bool   ResizeField( ushort w, ushort h );
-    Field& GetField( ushort hx, ushort hy )     { return hexField[hy * maxHexX + hx]; }
-    bool&  GetHexToDraw( ushort hx, ushort hy ) { return hexToDraw[hy * maxHexX + hx]; }
-    char&  GetHexTrack( ushort hx, ushort hy )  { return hexTrack[hy * maxHexX + hx]; }
-    ushort GetMaxHexX()                         { return maxHexX; }
-    ushort GetMaxHexY()                         { return maxHexY; }
+    bool   ResizeField( uint16 w, uint16 h );
+    Field& GetField( uint16 hx, uint16 hy )     { return hexField[hy * maxHexX + hx]; }
+    bool&  GetHexToDraw( uint16 hx, uint16 hy ) { return hexToDraw[hy * maxHexX + hx]; }
+    char&  GetHexTrack( uint16 hx, uint16 hy )  { return hexTrack[hy * maxHexX + hx]; }
+    uint16 GetMaxHexX()                         { return maxHexX; }
+    uint16 GetMaxHexY()                         { return maxHexY; }
     void   ClearHexToDraw()                     { memzero( hexToDraw, maxHexX * maxHexY * sizeof(bool) ); }
     void   ClearHexTrack()                      { memzero( hexTrack, maxHexX * maxHexY * sizeof(char) ); }
     void   SwitchShowTrack();
     bool   IsShowTrack() { return isShowTrack; };
 
-    bool FindPath( CritterCl* cr, ushort start_x, ushort start_y, ushort& end_x, ushort& end_y, UCharVec& steps, int cut );
-    bool CutPath( CritterCl* cr, ushort start_x, ushort start_y, ushort& end_x, ushort& end_y, int cut );
-    bool TraceBullet( ushort hx, ushort hy, ushort tx, ushort ty, uint dist, float angle, CritterCl* find_cr, bool find_cr_safe, CritVec* critters, int find_type, UShortPair* pre_block, UShortPair* block, UShortPairVec* steps, bool check_passed );
+    bool FindPath( CritterCl* cr, uint16 start_x, uint16 start_y, uint16& end_x, uint16& end_y, UInt8Vec& steps, int cut );
+    bool CutPath( CritterCl* cr, uint16 start_x, uint16 start_y, uint16& end_x, uint16& end_y, int cut );
+    bool TraceBullet( uint16 hx, uint16 hy, uint16 tx, uint16 ty, uint dist, float angle, CritterCl* find_cr, bool find_cr_safe, CritVec* critters, int find_type, UInt16Pair* pre_block, UInt16Pair* block, UShortPairVec* steps, bool check_passed );
 
     // Center
 public:
     void FindSetCenter( int cx, int cy );
 
 private:
-    void FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int steps );
+    void FindSetCenterDir( uint16& hx, uint16& hy, int dirs[2], int steps );
 
     // Map load
 private:
-    ushort curPidMap;
+    uint16 curPidMap;
     int    curMapTime;
     int    dayTime[4];
-    uchar  dayColor[12];
+    uint8  dayColor[12];
     uint   curHashTiles;
     uint   curHashWalls;
     uint   curHashScen;
 
 public:
     bool   IsMapLoaded()  { return hexField != NULL; }
-    ushort GetCurPidMap() { return curPidMap; }
-    bool   LoadMap( ushort map_pid );
+    uint16 GetCurPidMap() { return curPidMap; }
+    bool   LoadMap( uint16 map_pid );
     void   UnloadMap();
-    void   GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls, uint& hash_scen );
-    bool   GetMapData( ushort map_pid, ItemVec& items, ushort& maxhx, ushort& maxhy );
+    void   GetMapHash( uint16 map_pid, uint& hash_tiles, uint& hash_walls, uint& hash_scen );
+    bool   GetMapData( uint16 map_pid, ItemVec& items, uint16& maxhx, uint16& maxhy );
     bool   ParseScenery( SceneryCl& scen );
     int    GetDayTime();
     int    GetMapTime();
     int*   GetMapDayTime();
-    uchar* GetMapDayColor();
+    uint8* GetMapDayColor();
 
     // Init, finish, restore
 private:
@@ -198,7 +198,7 @@ private:
 public:
     void ChangeZoom( int zoom );   // <0 in, >0 out, 0 normalize
     void GetScreenHexes( int& sx, int& sy );
-    void GetHexCurrentPosition( ushort hx, ushort hy, int& x, int& y );
+    void GetHexCurrentPosition( uint16 hx, uint16 hy, int& x, int& y );
 
 public:
     bool SpritesCanDrawMap;
@@ -236,7 +236,7 @@ private:
 public:
     void SwitchShowHex();
     void SwitchShowRain();
-    void SetWeather( int time, uchar rain );
+    void SetWeather( int time, uint8 rain );
 
     void SetCrit( CritterCl* cr );
     bool TransitCritter( CritterCl* cr, int hx, int hy, bool animate, bool force );
@@ -265,56 +265,56 @@ public:
     void     RemoveCrit( CritterCl* cr );
     void     EraseCrit( uint crid );
     void     ClearCritters();
-    void     GetCritters( ushort hx, ushort hy, CritVec& crits, int find_type );
+    void     GetCritters( uint16 hx, uint16 hy, CritVec& crits, int find_type );
     CritMap& GetCritters() { return allCritters; }
     void     SetCritterContour( uint crid, int contour );
     void     SetCrittersContour( int contour );
-    void     SetMultihex( ushort hx, ushort hy, uint multihex, bool set );
+    void     SetMultihex( uint16 hx, uint16 hy, uint multihex, bool set );
 
     // Items
 private:
     ItemHexVec hexItems;
 
-    void PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item );
-    void ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item );
+    void PlaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item );
+    void ReplaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item );
 
 public:
-    bool        AddItem( uint id, ushort pid, ushort hx, ushort hy, bool is_added, Item::ItemData* data );
+    bool        AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data );
     void        ChangeItem( uint id, const Item::ItemData& data );
     void        FinishItem( uint id, bool is_deleted );
     auto        DeleteItem( ItemHex* item, bool with_delete = true )->ItemHexVec::iterator;
     void        PushItem( ItemHex* item );
-    ItemHex*    GetItem( ushort hx, ushort hy, ushort pid );
-    ItemHex*    GetItemById( ushort hx, ushort hy, uint id );
+    ItemHex*    GetItem( uint16 hx, uint16 hy, uint16 pid );
+    ItemHex*    GetItemById( uint16 hx, uint16 hy, uint id );
     ItemHex*    GetItemById( uint id );
-    void        GetItems( ushort hx, ushort hy, ItemHexVec& items );
+    void        GetItems( uint16 hx, uint16 hy, ItemHexVec& items );
     ItemHexVec& GetItems() { return hexItems; }
-    Rect        GetRectForText( ushort hx, ushort hy );
+    Rect        GetRectForText( uint16 hx, uint16 hy );
     void        ProcessItems();
 
     // Light
 private:
     bool           requestRebuildLight;
-    uchar*         hexLight;
+    uint8*         hexLight;
     uint           lightPointsCount;
     PointVecVec    lightPoints;
     PointVec       lightSoftPoints;
     LightSourceVec lightSources;
     LightSourceVec lightSourcesScen;
 
-    void MarkLight( ushort hx, ushort hy, uint inten );
-    void MarkLightEndNeighbor( ushort hx, ushort hy, bool north_south, uint inten );
-    void MarkLightEnd( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint inten );
-    void MarkLightStep( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint inten );
-    void TraceLight( ushort from_hx, ushort from_hy, ushort& hx, ushort& hy, int dist, uint inten );
+    void MarkLight( uint16 hx, uint16 hy, uint inten );
+    void MarkLightEndNeighbor( uint16 hx, uint16 hy, bool north_south, uint inten );
+    void MarkLightEnd( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint inten );
+    void MarkLightStep( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint inten );
+    void TraceLight( uint16 from_hx, uint16 from_hy, uint16& hx, uint16& hy, int dist, uint inten );
     void ParseLightTriangleFan( LightSource& ls );
-    void ParseLight( ushort hx, ushort hy, int dist, uint inten, uint flags );
+    void ParseLight( uint16 hx, uint16 hy, int dist, uint inten, uint flags );
     void RealRebuildLight();
     void CollectLightSources();
 
 public:
-    void            ClearHexLight()                     { memzero( hexLight, maxHexX * maxHexY * sizeof(uchar) * 3 ); }
-    uchar*          GetLightHex( ushort hx, ushort hy ) { return &hexLight[hy * maxHexX * 3 + hx * 3]; }
+    void            ClearHexLight()                     { memzero( hexLight, maxHexX * maxHexY * sizeof(uint8) * 3 ); }
+    uint8*          GetLightHex( uint16 hx, uint16 hy ) { return &hexLight[hy * maxHexX * 3 + hx * 3]; }
     void            RebuildLight()                      { requestRebuildLight = true; }
     LightSourceVec& GetLights()                         { return lightSources; }
 
@@ -334,14 +334,14 @@ public:
 
     // Pixel get
 public:
-    bool       GetHexPixel( int x, int y, ushort& hx, ushort& hy );
+    bool       GetHexPixel( int x, int y, uint16& hx, uint16& hy );
     ItemHex*   GetItemPixel( int x, int y, bool& item_egg ); // With transparent egg
     CritterCl* GetCritterPixel( int x, int y, bool ignore_dead_and_chosen );
     void       GetSmthPixel( int x, int y, ItemHex*& item, CritterCl*& cr );
 
     // Effects
 public:
-    bool RunEffect( ushort eff_pid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy );
+    bool RunEffect( uint16 eff_pid, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy );
 
     // Rain
 private:
@@ -384,20 +384,20 @@ public:
 public:
     void ClearSelTiles();
     void ParseSelTiles();
-    void SetTile( uint name_hash, ushort hx, ushort hy, short ox, short oy, uchar layer, bool is_roof, bool select );
+    void SetTile( uint name_hash, uint16 hx, uint16 hy, short ox, short oy, uint8 layer, bool is_roof, bool select );
 
     // Ignore pids to draw
 private:
-    UShortSet fastPids;
-    UShortSet ignorePids;
+    UInt16Set fastPids;
+    UInt16Set ignorePids;
 
 public:
-    void AddFastPid( ushort pid );
-    bool IsFastPid( ushort pid );
+    void AddFastPid( uint16 pid );
+    bool IsFastPid( uint16 pid );
     void ClearFastPids();
-    void AddIgnorePid( ushort pid );
-    void SwitchIgnorePid( ushort pid );
-    bool IsIgnorePid( ushort pid );
+    void AddIgnorePid( uint16 pid );
+    void SwitchIgnorePid( uint16 pid );
+    bool IsIgnorePid( uint16 pid );
     void ClearIgnorePids();
 
     void GetHexesRect( const Rect& rect, UShortPairVec& hexes );

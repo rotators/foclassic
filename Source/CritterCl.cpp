@@ -131,7 +131,7 @@ void CritterCl::SetFade( bool fade_up )
     fadingEnable = true;
 }
 
-uchar CritterCl::GetFadeAlpha()
+uint8 CritterCl::GetFadeAlpha()
 {
     uint tick = Timer::GameTick();
     int  fading_proc = 100 - Procent( FADING_PERIOD, FadingTick > tick ? FadingTick - tick : 0 );
@@ -226,7 +226,7 @@ Item* CritterCl::GetItem( uint item_id )
     return NULL;
 }
 
-Item* CritterCl::GetItemByPid( ushort item_pid )
+Item* CritterCl::GetItemByPid( uint16 item_pid )
 {
     for( auto it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
         if( (*it)->GetProtoId() == item_pid )
@@ -234,7 +234,7 @@ Item* CritterCl::GetItemByPid( ushort item_pid )
     return NULL;
 }
 
-Item* CritterCl::GetItemByPidInvPriority( ushort item_pid )
+Item* CritterCl::GetItemByPidInvPriority( uint16 item_pid )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
     if( !proto_item )
@@ -267,7 +267,7 @@ Item* CritterCl::GetItemByPidInvPriority( ushort item_pid )
     return NULL;
 }
 
-Item* CritterCl::GetItemByPidSlot( ushort item_pid, int slot )
+Item* CritterCl::GetItemByPidSlot( uint16 item_pid, int slot )
 {
     for( auto it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
     {
@@ -314,7 +314,7 @@ void CritterCl::GetItemsType( int type, ItemPtrVec& items )
     }
 }
 
-uint CritterCl::CountItemPid( ushort item_pid )
+uint CritterCl::CountItemPid( uint16 item_pid )
 {
     uint result = 0;
     for( auto it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
@@ -323,7 +323,7 @@ uint CritterCl::CountItemPid( ushort item_pid )
     return result;
 }
 
-uint CritterCl::CountItemType( uchar type )
+uint CritterCl::CountItemType( uint8 type )
 {
     uint res = 0;
     for( auto it = InvItems.begin(), end = InvItems.end(); it != end; ++it )
@@ -439,7 +439,7 @@ int CritterCl::GetFreeVolume()
     return max_volume - cur_volume;
 }
 
-Item* CritterCl::GetSlotUse( uchar num_slot, uchar& use )
+Item* CritterCl::GetSlotUse( uint8 num_slot, uint8& use )
 {
     Item* item = NULL;
     switch( num_slot )
@@ -463,13 +463,13 @@ Item* CritterCl::GetSlotUse( uchar num_slot, uchar& use )
     return item;
 }
 
-uint CritterCl::GetUsePicName( uchar num_slot )
+uint CritterCl::GetUsePicName( uint8 num_slot )
 {
     static uint use_on_pic = Str::GetHash( "art\\intrface\\useon.frm" );
     static uint use_pic = Str::GetHash( "art\\intrface\\uset.frm" );
     static uint reload_pic = Str::GetHash( "art\\intrface\\reload.frm" );
 
-    uchar       use;
+    uint8       use;
     Item*       item = GetSlotUse( num_slot, use );
     if( !item )
         return 0;
@@ -490,9 +490,9 @@ uint CritterCl::GetUsePicName( uchar num_slot )
     return 0;
 }
 
-bool CritterCl::IsItemAim( uchar num_slot )
+bool CritterCl::IsItemAim( uint8 num_slot )
 {
-    uchar use;
+    uint8 use;
     Item* item = GetSlotUse( num_slot, use );
     if( !item )
         return false;
@@ -537,7 +537,7 @@ uint CritterCl::GetTalkDistance()
 
 uint CritterCl::GetAttackDist()
 {
-    uchar use;
+    uint8 use;
     Item* weap = GetSlotUse( SLOT_HAND1, use );
     if( !weap->IsWeapon() )
         return 0;
@@ -690,7 +690,7 @@ const char* CritterCl::GetMoneyStr()
 bool CritterCl::NextRateItem( bool prev )
 {
     bool  result = false;
-    uchar old_rate = ItemSlotMain->Data.Mode;
+    uint8 old_rate = ItemSlotMain->Data.Mode;
     if( !ItemSlotMain->IsWeapon() )
     {
         if( ItemSlotMain->IsCanUse() || ItemSlotMain->IsCanUseOnSmth() )
@@ -705,8 +705,8 @@ bool CritterCl::NextRateItem( bool prev )
         {
             ProtoItem* old_unarmed = ItemSlotMain->Proto;
             ProtoItem* unarmed = ItemSlotMain->Proto;
-            uchar      tree = ItemSlotMain->Proto->Weapon_UnarmedTree;
-            uchar      priority = ItemSlotMain->Proto->Weapon_UnarmedPriority;
+            uint8      tree = ItemSlotMain->Proto->Weapon_UnarmedTree;
+            uint8      priority = ItemSlotMain->Proto->Weapon_UnarmedPriority;
             while( true )
             {
                 if( prev )
@@ -850,7 +850,7 @@ bool CritterCl::NextRateItem( bool prev )
     return ItemSlotMain->Data.Mode != old_rate || result;
 }
 
-void CritterCl::SetAim( uchar hit_location )
+void CritterCl::SetAim( uint8 hit_location )
 {
     UNSETFLAG( ItemSlotMain->Data.Mode, 0xF0 );
     if( !IsItemAim( SLOT_HAND1 ) )
@@ -858,12 +858,12 @@ void CritterCl::SetAim( uchar hit_location )
     SETFLAG( ItemSlotMain->Data.Mode, hit_location << 4 );
 }
 
-uint CritterCl::GetUseApCost( Item* item, uchar rate )
+uint CritterCl::GetUseApCost( Item* item, uint8 rate )
 {
     return GameOpt.GetUseApCost ? GameOpt.GetUseApCost( this, item, rate ) : 1;
 }
 
-ProtoItem* CritterCl::GetUnarmedItem( uchar tree, uchar priority )
+ProtoItem* CritterCl::GetUnarmedItem( uint8 tree, uint8 priority )
 {
     ProtoItem* best_unarmed = NULL;
     for( int i = ITEM_SLOT_BEGIN; i <= ITEM_SLOT_END; i++ )
@@ -905,16 +905,16 @@ void CritterCl::FixLastHexes()
     LastHexY.push_back( HexY );
 }
 
-ushort CritterCl::PopLastHexX()
+uint16 CritterCl::PopLastHexX()
 {
-    ushort hx = LastHexX[LastHexX.size() - 1];
+    uint16 hx = LastHexX[LastHexX.size() - 1];
     LastHexX.pop_back();
     return hx;
 }
 
-ushort CritterCl::PopLastHexY()
+uint16 CritterCl::PopLastHexY()
 {
-    ushort hy = LastHexY[LastHexY.size() - 1];
+    uint16 hy = LastHexY[LastHexY.size() - 1];
     LastHexY.pop_back();
     return hy;
 }
@@ -1191,7 +1191,7 @@ void CritterCl::NextAnim( bool erase_front )
 void CritterCl::Animate( uint anim1, uint anim2, Item* item )
 {
     uint  crtype = GetCrType();
-    uchar dir = GetDir();
+    uint8 dir = GetDir();
     if( !anim1 )
         anim1 = GetAnim1( item );
     if( item )
@@ -1459,7 +1459,7 @@ void CritterCl::SetBaseType( uint type )
     ProcessChangedParams();
 }
 
-void CritterCl::SetDir( uchar dir )
+void CritterCl::SetDir( uint8 dir )
 {
     if( dir >= DIRS_COUNT || !CritType::IsCanRotate( GetCrType() ) )
         dir = 0;

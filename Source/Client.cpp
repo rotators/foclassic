@@ -283,8 +283,8 @@ bool FOClient::Init()
         {
             GameOpt.Name = "login";
             Password = "password";
-            Crypt.SetCache( "__name", (uchar*)GameOpt.Name.c_str(), (uint)GameOpt.Name.length() + 1 );
-            Crypt.SetCache( "__pass", (uchar*)Password.c_str(), (uint)Password.length() + 1 );
+            Crypt.SetCache( "__name", (uint8*)GameOpt.Name.c_str(), (uint)GameOpt.Name.length() + 1 );
+            Crypt.SetCache( "__pass", (uint8*)Password.c_str(), (uint)Password.length() + 1 );
             refresh_cache = true;
         }
     }
@@ -407,14 +407,14 @@ bool FOClient::Init()
     // Item prototypes
     ItemMngr.ClearProtos();
     uint   protos_len;
-    uchar* protos = Crypt.GetCache( "item_protos", protos_len );
+    uint8* protos = Crypt.GetCache( "item_protos", protos_len );
     if( protos )
     {
-        uchar* protos_uc = Crypt.Uncompress( protos, protos_len, 15 );
+        uint8* protos_uc = Crypt.Uncompress( protos, protos_len, 15 );
         delete[] protos;
 
         uint   protos_count_len;
-        uchar* protos_count = Crypt.GetCache( "item_protos_count", protos_count_len );
+        uint8* protos_count = Crypt.GetCache( "item_protos_count", protos_count_len );
         uint   count = 0;
         if( protos_count )
         {
@@ -612,14 +612,14 @@ void FOClient::LookBordersPrepare()
     if( HexMngr.IsMapLoaded() && Chosen )
     {
         uint   dist = Chosen->GetLook();
-        ushort base_hx = Chosen->GetHexX();
-        ushort base_hy = Chosen->GetHexY();
+        uint16 base_hx = Chosen->GetHexX();
+        uint16 base_hy = Chosen->GetHexY();
         int    hx = base_hx;
         int    hy = base_hy;
         int    chosen_dir = Chosen->GetDir();
         uint   dist_shoot = Chosen->GetAttackDist();
-        ushort maxhx = HexMngr.GetMaxHexX();
-        ushort maxhy = HexMngr.GetMaxHexY();
+        uint16 maxhx = HexMngr.GetMaxHexX();
+        uint16 maxhy = HexMngr.GetMaxHexY();
         bool   seek_start = true;
         for( int i = 0; i < (GameOpt.MapHexagonal ? 6 : 4); i++ )
         {
@@ -641,8 +641,8 @@ void FOClient::LookBordersPrepare()
                     MoveHexByDirUnsafe( hx, hy, dir );
                 }
 
-                ushort hx_ = CLAMP( hx, 0, maxhx - 1 );
-                ushort hy_ = CLAMP( hy, 0, maxhy - 1 );
+                uint16 hx_ = CLAMP( hx, 0, maxhx - 1 );
+                uint16 hy_ = CLAMP( hy, 0, maxhy - 1 );
                 if( FLAG( GameOpt.LookChecks, LOOK_CHECK_DIR ) )
                 {
                     int dir_ = GetFarDir( base_hx, base_hy, hx_, hy_ );
@@ -650,7 +650,7 @@ void FOClient::LookBordersPrepare()
                     if( ii > DIRS_COUNT / 2 )
                         ii = DIRS_COUNT - ii;
                     uint       dist_ = dist - dist * GameOpt.LookDir[ii] / 100;
-                    UShortPair block;
+                    UInt16Pair block;
                     HexMngr.TraceBullet( base_hx, base_hy, hx_, hy_, dist_, 0.0f, NULL, false, NULL, 0, NULL, &block, NULL, false );
                     hx_ = block.first;
                     hy_ = block.second;
@@ -658,16 +658,16 @@ void FOClient::LookBordersPrepare()
 
                 if( FLAG( GameOpt.LookChecks, LOOK_CHECK_TRACE ) )
                 {
-                    UShortPair block;
+                    UInt16Pair block;
                     HexMngr.TraceBullet( base_hx, base_hy, hx_, hy_, 0, 0.0f, NULL, false, NULL, 0, NULL, &block, NULL, true );
                     hx_ = block.first;
                     hy_ = block.second;
                 }
 
-                ushort     hx__ = hx_;
-                ushort     hy__ = hy_;
+                uint16     hx__ = hx_;
+                uint16     hy__ = hy_;
                 uint       dist_look = DistGame( base_hx, base_hy, hx_, hy_ );
-                UShortPair block;
+                UInt16Pair block;
                 HexMngr.TraceBullet( base_hx, base_hy, hx_, hy_, min( dist_look, dist_shoot ), 0.0f, NULL, false, NULL, 0, NULL, &block, NULL, true );
                 hx__ = block.first;
                 hy__ = block.second;
@@ -801,7 +801,7 @@ int FOClient::MainLoop()
     AnimProcess();
 
     // Game time
-    ushort full_second = GameOpt.FullSecond;
+    uint16 full_second = GameOpt.FullSecond;
     Timer::ProcessGameTime();
     if( full_second != GameOpt.FullSecond )
         SetDayTime( false );
@@ -983,8 +983,8 @@ void FOClient::ProcessScreenEffectFading()
 
             for( int i = 0; i < 4; i++ )
             {
-                int sc = ( (uchar*)&e.StartColor )[i];
-                int ec = ( (uchar*)&e.EndColor )[i];
+                int sc = ( (uint8*)&e.StartColor )[i];
+                int ec = ( (uint8*)&e.EndColor )[i];
                 int dc = ec - sc;
                 res[i] = sc + dc * proc / 100;
             }
@@ -1092,7 +1092,7 @@ void FOClient::ProcessScreenEffectMirror()
                         LPDIRECT3DVERTEXBUFFER vb;
                         SprMngr.GetDevice()->CreateVertexBuffer(6*sizeof(MYVERTEX),D3DUSAGE_DYNAMIC|D3DUSAGE_WRITEONLY,D3DFVF_MYVERTEX,D3DPOOL_DEFAULT,&vb);
                         void* vertices;
-                        vb->Lock(0,6*sizeof(MYVERTEX),(uchar**)&vertices,D3DLOCK_DISCARD);
+                        vb->Lock(0,6*sizeof(MYVERTEX),(uint8**)&vertices,D3DLOCK_DISCARD);
                         memcpy(vertices,vb_,6*sizeof(MYVERTEX));
                         vb->Unlock();
                         SprMngr.GetDevice()->SetStreamSource(0,vb,sizeof(MYVERTEX));
@@ -1146,8 +1146,8 @@ void FOClient::ParseKeyboard()
         const char* event_text = events_text[i / 2].c_str();
 
         // Keys codes mapping
-        uchar dikdw = 0;
-        uchar dikup = 0;
+        uint8 dikdw = 0;
+        uint8 dikup = 0;
         if( event == FL_KEYDOWN )
             dikdw = Keyb::MapKey( event_key );
         else if( event == FL_KEYUP )
@@ -2525,7 +2525,7 @@ bool FOClient::InitNet()
     return true;
 }
 
-bool FOClient::FillSockAddr( sockaddr_in& saddr, const char* host, ushort port )
+bool FOClient::FillSockAddr( sockaddr_in& saddr, const char* host, uint16 port )
 {
     saddr.sin_family = AF_INET;
     saddr.sin_port = htons( port );
@@ -2621,18 +2621,18 @@ bool FOClient::NetConnect()
             while( 0 )
 // ==========================================
 
-        uchar b1, b2;
+        uint8 b1, b2;
         Bin.Reset();
         Bout.Reset();
         // Authentication
         if( GameOpt.ProxyType == PROXY_SOCKS4 )
         {
             // Connect
-            Bout << uchar( 4 );           // Socks version
-            Bout << uchar( 1 );           // Connect command
-            Bout << ushort( SockAddr.sin_port );
+            Bout << uint8( 4 );           // Socks version
+            Bout << uint8( 1 );           // Connect command
+            Bout << uint16( SockAddr.sin_port );
             Bout << uint( SockAddr.sin_addr.s_addr );
-            Bout << uchar( 0 );
+            Bout << uint8( 0 );
             SEND_RECV;
             Bin >> b1;             // Null byte
             Bin >> b2;             // Answer code
@@ -2658,18 +2658,18 @@ bool FOClient::NetConnect()
         }
         else if( GameOpt.ProxyType == PROXY_SOCKS5 )
         {
-            Bout << uchar( 5 );                                                                // Socks version
-            Bout << uchar( 1 );                                                                // Count methods
-            Bout << uchar( 2 );                                                                // Method
+            Bout << uint8( 5 );                                                                // Socks version
+            Bout << uint8( 1 );                                                                // Count methods
+            Bout << uint8( 2 );                                                                // Method
             SEND_RECV;
             Bin >> b1;                                                                         // Socks version
             Bin >> b2;                                                                         // Method
             if( b2 == 2 )                                                                      // User/Password
             {
-                Bout << uchar( 1 );                                                            // Subnegotiation version
-                Bout << uchar( GameOpt.ProxyUser.length() );                                   // Name length
+                Bout << uint8( 1 );                                                            // Subnegotiation version
+                Bout << uint8( GameOpt.ProxyUser.length() );                                   // Name length
                 Bout.Push( GameOpt.ProxyUser.c_str(), (uint)GameOpt.ProxyUser.length() );      // Name
-                Bout << uchar( GameOpt.ProxyPass.length() );                                   // Pass length
+                Bout << uint8( GameOpt.ProxyPass.length() );                                   // Pass length
                 Bout.Push( GameOpt.ProxyPass.c_str(), (uint)GameOpt.ProxyPass.length() );      // Pass
                 SEND_RECV;
                 Bin >> b1;                                                                     // Subnegotiation version
@@ -2686,12 +2686,12 @@ bool FOClient::NetConnect()
                 return false;
             }
             // Connect
-            Bout << uchar( 5 );           // Socks version
-            Bout << uchar( 1 );           // Connect command
-            Bout << uchar( 0 );           // Reserved
-            Bout << uchar( 1 );           // IP v4 address
+            Bout << uint8( 5 );           // Socks version
+            Bout << uint8( 1 );           // Connect command
+            Bout << uint8( 0 );           // Reserved
+            Bout << uint8( 1 );           // IP v4 address
             Bout << uint( SockAddr.sin_addr.s_addr );
-            Bout << ushort( SockAddr.sin_port );
+            Bout << uint16( SockAddr.sin_port );
             SEND_RECV;
             Bin >> b1;             // Socks version
             Bin >> b2;             // Answer code
@@ -2946,9 +2946,9 @@ int FOClient::NetInput( bool unpack )
 
     if( unpack && !GameOpt.DisableZlibCompression )
     {
-        ZStream.next_in = (uchar*)ComBuf;
+        ZStream.next_in = (uint8*)ComBuf;
         ZStream.avail_in = pos;
-        ZStream.next_out = (uchar*)Bin.GetData() + Bin.GetEndPos();
+        ZStream.next_out = (uint8*)Bin.GetData() + Bin.GetEndPos();
         ZStream.avail_out = Bin.GetLen() - Bin.GetEndPos();
 
         if( inflate( &ZStream, Z_SYNC_FLUSH ) != Z_OK )
@@ -2963,7 +2963,7 @@ int FOClient::NetInput( bool unpack )
         {
             Bin.GrowBuf( 2048 );
 
-            ZStream.next_out = (uchar*)Bin.GetData() + Bin.GetEndPos();
+            ZStream.next_out = (uint8*)Bin.GetData() + Bin.GetEndPos();
             ZStream.avail_out = Bin.GetLen() - Bin.GetEndPos();
 
             if( inflate( &ZStream, Z_SYNC_FLUSH ) != Z_OK )
@@ -3297,8 +3297,8 @@ void FOClient::Net_SendLogIn( const char* name, const char* pass )
 
     uint uid1 = *UID1;
     Bout << NETMSG_LOGIN;
-    Bout << (ushort)FOCLASSIC_STAGE;
-    Bout << (ushort)FOCLASSIC_VERSION;
+    Bout << (uint16)FOCLASSIC_STAGE;
+    Bout << (uint16)FOCLASSIC_VERSION;
     uint uid4 = *UID4;
     Bout << uid4;
     uid4 = uid1;                                                                                                                                                        // UID4
@@ -3354,18 +3354,18 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
         return;
     }
 
-    ushort count = 0;
+    uint16 count = 0;
     for( int i = 0; i < MAX_PARAMS; i++ )
         if( newcr->ParamsReg[i] && CritterCl::ParamsRegEnabled[i] )
             count++;
 
-    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(ushort) + UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(count) + (sizeof(ushort) + sizeof(int) ) * count;
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uint16) + UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(count) + (sizeof(uint16) + sizeof(int) ) * count;
 
     Bout << NETMSG_REGISTER;
     Bout << msg_len;
 
-    Bout << (ushort)FOCLASSIC_STAGE;
-    Bout << (ushort)FOCLASSIC_VERSION;
+    Bout << (uint16)FOCLASSIC_STAGE;
+    Bout << (uint16)FOCLASSIC_VERSION;
 
     // Begin data encrypting
     Bout.SetEncryptKey( 892018 + NETSALT_REGISTER );
@@ -3377,7 +3377,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     Bout.Push( pass_hash, PASS_HASH_SIZE );
 
     Bout << count;
-    for( ushort i = 0; i < MAX_PARAMS; i++ )
+    for( uint16 i = 0; i < MAX_PARAMS; i++ )
     {
         int val = newcr->ParamsReg[i];
         if( val && CritterCl::ParamsRegEnabled[i] )
@@ -3390,7 +3390,7 @@ void FOClient::Net_SendCreatePlayer( CritterCl* newcr )
     WriteLog( "complete.\n" );
 }
 
-void FOClient::Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_data )
+void FOClient::Net_SendSaveLoad( bool save, const char* fname, UInt8Vec* pic_data )
 {
     if( save )
         WriteLog( "Request save to file<%s>...", fname );
@@ -3398,7 +3398,7 @@ void FOClient::Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_dat
         WriteLog( "Request load from file<%s>...", fname );
 
     uint   msg = NETMSG_SINGLEPLAYER_SAVE_LOAD;
-    ushort fname_len = Str::Length( fname );
+    uint16 fname_len = Str::Length( fname );
     uint   msg_len = sizeof(msg) + sizeof(save) + sizeof(fname_len) + fname_len;
     if( save )
         msg_len += sizeof(uint) + (uint)pic_data->size();
@@ -3418,7 +3418,7 @@ void FOClient::Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_dat
     WriteLog( "complete.\n" );
 }
 
-void FOClient::Net_SendText( const char* send_str, uchar how_say )
+void FOClient::Net_SendText( const char* send_str, uint8 how_say )
 {
     if( !send_str || !send_str[0] )
         return;
@@ -3451,7 +3451,7 @@ void FOClient::Net_SendText( const char* send_str, uchar how_say )
         return;
     }
 
-    ushort len = Str::Length( str );
+    uint16 len = Str::Length( str );
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(how_say) + sizeof(len) + len;
 
     Bout << NETMSG_SEND_TEXT;
@@ -3479,10 +3479,10 @@ void FOClient::Net_SendDir()
         return;
 
     Bout << NETMSG_DIR;
-    Bout << (uchar)Chosen->GetDir();
+    Bout << (uint8)Chosen->GetDir();
 }
 
-void FOClient::Net_SendMove( UCharVec steps )
+void FOClient::Net_SendMove( UInt8Vec steps )
 {
     if( !Chosen )
         return;
@@ -3508,16 +3508,16 @@ void FOClient::Net_SendMove( UCharVec steps )
     Bout << Chosen->HexY;
 }
 
-void FOClient::Net_SendUseSkill( ushort skill, CritterCl* cr )
+void FOClient::Net_SendUseSkill( uint16 skill, CritterCl* cr )
 {
     Bout << NETMSG_SEND_USE_SKILL;
     Bout << skill;
-    Bout << (uchar)TARGET_CRITTER;
+    Bout << (uint8)TARGET_CRITTER;
     Bout << cr->GetId();
-    Bout << (ushort)0;
+    Bout << (uint16)0;
 }
 
-void FOClient::Net_SendUseSkill( ushort skill, ItemHex* item )
+void FOClient::Net_SendUseSkill( uint16 skill, ItemHex* item )
 {
     Bout << NETMSG_SEND_USE_SKILL;
     Bout << skill;
@@ -3526,28 +3526,28 @@ void FOClient::Net_SendUseSkill( ushort skill, ItemHex* item )
     {
         uint hex = (item->GetHexX() << 16) | item->GetHexY();
 
-        Bout << (uchar)TARGET_SCENERY;
+        Bout << (uint8)TARGET_SCENERY;
         Bout << hex;
         Bout << item->GetProtoId();
     }
     else
     {
-        Bout << (uchar)TARGET_ITEM;
+        Bout << (uint8)TARGET_ITEM;
         Bout << item->GetId();
-        Bout << (ushort)0;
+        Bout << (uint16)0;
     }
 }
 
-void FOClient::Net_SendUseSkill( ushort skill, Item* item )
+void FOClient::Net_SendUseSkill( uint16 skill, Item* item )
 {
     Bout << NETMSG_SEND_USE_SKILL;
     Bout << skill;
-    Bout << (uchar)TARGET_SELF_ITEM;
+    Bout << (uint8)TARGET_SELF_ITEM;
     Bout << item->GetId();
-    Bout << (ushort)0;
+    Bout << (uint16)0;
 }
 
-void FOClient::Net_SendUseItem( uchar ap, uint item_id, ushort item_pid, uchar rate, uchar target_type, uint target_id, ushort target_pid, uint param )
+void FOClient::Net_SendUseItem( uint8 ap, uint item_id, uint16 item_pid, uint8 rate, uint8 target_type, uint target_id, uint16 target_pid, uint param )
 {
     Bout << NETMSG_SEND_USE_ITEM;
     Bout << ap;
@@ -3560,7 +3560,7 @@ void FOClient::Net_SendUseItem( uchar ap, uint item_id, ushort item_pid, uchar r
     Bout << param;
 }
 
-void FOClient::Net_SendPickItem( ushort targ_x, ushort targ_y, ushort pid )
+void FOClient::Net_SendPickItem( uint16 targ_x, uint16 targ_y, uint16 pid )
 {
     Bout << NETMSG_SEND_PICK_ITEM;
     Bout << targ_x;
@@ -3568,14 +3568,14 @@ void FOClient::Net_SendPickItem( ushort targ_x, ushort targ_y, ushort pid )
     Bout << pid;
 }
 
-void FOClient::Net_SendPickCritter( uint crid, uchar pick_type )
+void FOClient::Net_SendPickCritter( uint crid, uint8 pick_type )
 {
     Bout << NETMSG_SEND_PICK_CRITTER;
     Bout << crid;
     Bout << pick_type;
 }
 
-void FOClient::Net_SendChangeItem( uchar ap, uint item_id, uchar from_slot, uchar to_slot, uint count )
+void FOClient::Net_SendChangeItem( uint8 ap, uint item_id, uint8 from_slot, uint8 to_slot, uint count )
 {
     Bout << NETMSG_SEND_CHANGE_ITEM;
     Bout << ap;
@@ -3587,7 +3587,7 @@ void FOClient::Net_SendChangeItem( uchar ap, uint item_id, uchar from_slot, ucha
     CollectContItems();
 }
 
-void FOClient::Net_SendItemCont( uchar transfer_type, uint cont_id, uint item_id, uint count, uchar take_flags )
+void FOClient::Net_SendItemCont( uint8 transfer_type, uint cont_id, uint item_id, uint count, uint8 take_flags )
 {
     Bout << NETMSG_SEND_ITEM_CONT;
     Bout << transfer_type;
@@ -3620,7 +3620,7 @@ void FOClient::Net_SendSortValueItem( Item* item )
     CollectContItems();
 }
 
-void FOClient::Net_SendTalk( uchar is_npc, uint id_to_talk, uchar answer )
+void FOClient::Net_SendTalk( uint8 is_npc, uint id_to_talk, uint8 answer )
 {
     Bout << NETMSG_SEND_TALK_NPC;
     Bout << is_npc;
@@ -3628,7 +3628,7 @@ void FOClient::Net_SendTalk( uchar is_npc, uint id_to_talk, uchar answer )
     Bout << answer;
 }
 
-void FOClient::Net_SendSayNpc( uchar is_npc, uint id_to_talk, const char* str )
+void FOClient::Net_SendSayNpc( uint8 is_npc, uint id_to_talk, const char* str )
 {
     Bout << NETMSG_SEND_SAY_NPC;
     Bout << is_npc;
@@ -3638,8 +3638,8 @@ void FOClient::Net_SendSayNpc( uchar is_npc, uint id_to_talk, const char* str )
 
 void FOClient::Net_SendBarter( uint npc_id, ItemVec& cont_sale, ItemVec& cont_buy )
 {
-    ushort sale_count = (ushort)cont_sale.size();
-    ushort buy_count = (ushort)cont_buy.size();
+    uint16 sale_count = (uint16)cont_sale.size();
+    uint16 buy_count = (uint16)cont_buy.size();
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(sale_count) + sizeof(buy_count) +
                      (sizeof(uint) + sizeof(uint) ) * sale_count + (sizeof(uint) + sizeof(uint) ) * buy_count;
 
@@ -3667,7 +3667,7 @@ void FOClient::Net_SendGetGameInfo()
     Bout << NETMSG_SEND_GET_INFO;
 }
 
-void FOClient::Net_SendGiveMap( bool automap, ushort map_pid, uint loc_id, uint tiles_hash, uint walls_hash, uint scen_hash )
+void FOClient::Net_SendGiveMap( bool automap, uint16 map_pid, uint loc_id, uint tiles_hash, uint walls_hash, uint scen_hash )
 {
     Bout << NETMSG_SEND_GIVE_MAP;
     Bout << automap;
@@ -3683,13 +3683,13 @@ void FOClient::Net_SendLoadMapOk()
     Bout << NETMSG_SEND_LOAD_MAP_OK;
 }
 
-void FOClient::Net_SendGiveGlobalInfo( uchar info_flags )
+void FOClient::Net_SendGiveGlobalInfo( uint8 info_flags )
 {
     Bout << NETMSG_SEND_GIVE_GLOBAL_INFO;
     Bout << info_flags;
 }
 
-void FOClient::Net_SendRuleGlobal( uchar command, uint param1, uint param2 )
+void FOClient::Net_SendRuleGlobal( uint8 command, uint param1, uint param2 )
 {
     Bout << NETMSG_SEND_RULE_GLOBAL;
     Bout << command;
@@ -3699,16 +3699,16 @@ void FOClient::Net_SendRuleGlobal( uchar command, uint param1, uint param2 )
     WaitPing();
 }
 
-void FOClient::Net_SendLevelUp( ushort perk_up )
+void FOClient::Net_SendLevelUp( uint16 perk_up )
 {
     if( !Chosen )
         return;
 
-    ushort count = 0;
+    uint16 count = 0;
     for( uint i = 0; i < SKILL_COUNT; i++ )
         if( ChaSkillUp[i] )
             count++;
-    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(count) + sizeof(ushort) * 2 * count + sizeof(perk_up);
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(count) + sizeof(uint16) * 2 * count + sizeof(perk_up);
 
     Bout << NETMSG_SEND_LEVELUP;
     Bout << msg_len;
@@ -3719,11 +3719,11 @@ void FOClient::Net_SendLevelUp( ushort perk_up )
     {
         if( ChaSkillUp[i] )
         {
-            ushort skill_up = ChaSkillUp[i];
+            uint16 skill_up = ChaSkillUp[i];
             if( Chosen->IsTagSkill( i + SKILL_BEGIN ) )
                 skill_up /= 2;
 
-            Bout << ushort( i + SKILL_BEGIN );
+            Bout << uint16( i + SKILL_BEGIN );
             Bout << skill_up;
         }
     }
@@ -3734,7 +3734,7 @@ void FOClient::Net_SendLevelUp( ushort perk_up )
 
 void FOClient::Net_SendCraftAsk( UIntVec numbers )
 {
-    ushort count = (ushort)numbers.size();
+    uint16 count = (uint16)numbers.size();
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(count) + sizeof(uint) * count;
     Bout << NETMSG_CRAFT_ASK;
     Bout << msg_len;
@@ -3750,13 +3750,13 @@ void FOClient::Net_SendCraft( uint craft_num )
     Bout << craft_num;
 }
 
-void FOClient::Net_SendPing( uchar ping )
+void FOClient::Net_SendPing( uint8 ping )
 {
     Bout << NETMSG_PING;
     Bout << ping;
 }
 
-void FOClient::Net_SendPlayersBarter( uchar barter, uint param, uint param_ext )
+void FOClient::Net_SendPlayersBarter( uint8 barter, uint param, uint param_ext )
 {
     Bout << NETMSG_PLAYERS_BARTER;
     Bout << barter;
@@ -3788,8 +3788,8 @@ void FOClient::Net_SendSetUserHoloStr( Item* holodisk, const char* title, const 
         return;
     }
 
-    ushort title_len = (ushort)Str::Length( title );
-    ushort text_len = (ushort)Str::Length( text );
+    uint16 title_len = (uint16)Str::Length( title );
+    uint16 text_len = (uint16)Str::Length( text );
     if( !title_len || !text_len || title_len > USER_HOLO_MAX_TITLE_LEN || text_len > USER_HOLO_MAX_LEN )
     {
         WriteLogF( _FUNC_, " - Length of texts is greather of maximum or zero, title cur<%u>, title max<%u>, text cur<%u>, text max<%u>.\n", title_len, USER_HOLO_MAX_TITLE_LEN, text_len, USER_HOLO_MAX_LEN );
@@ -3817,7 +3817,7 @@ void FOClient::Net_SendGetUserHoloStr( uint str_num )
     Bout << str_num;
 }
 
-void FOClient::Net_SendCombat( uchar type, int val )
+void FOClient::Net_SendCombat( uint8 type, int val )
 {
     Bout << NETMSG_SEND_COMBAT;
     Bout << type;
@@ -3826,9 +3826,9 @@ void FOClient::Net_SendCombat( uchar type, int val )
 
 void FOClient::Net_SendRunScript( bool unsafe, const char* func_name, int p0, int p1, int p2, const char* p3, UIntVec& p4 )
 {
-    ushort func_name_len = (ushort)Str::Length( func_name );
-    ushort p3len = (p3 ? (ushort)Str::Length( p3 ) : 0);
-    ushort p4size = (ushort)p4.size();
+    uint16 func_name_len = (uint16)Str::Length( func_name );
+    uint16 p3len = (p3 ? (uint16)Str::Length( p3 ) : 0);
+    uint16 p4size = (uint16)p4.size();
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(unsafe) + sizeof(func_name_len) + func_name_len +
                      sizeof(p0) + sizeof(p1) + sizeof(p2) + sizeof(p3len) + p3len + sizeof(p4size) + p4size * sizeof(uint);
 
@@ -3890,13 +3890,13 @@ void FOClient::Net_OnAddCritter( bool is_npc )
     Bin >> crid;
     Bin >> base_type;
 
-    ushort hx, hy;
-    uchar  dir;
+    uint16 hx, hy;
+    uint8  dir;
     Bin >> hx;
     Bin >> hy;
     Bin >> dir;
 
-    uchar cond;
+    uint8 cond;
     uint  anim1life, anim1ko, anim1dead;
     uint  anim2life, anim2ko, anim2dead;
     uint  flags;
@@ -3912,7 +3912,7 @@ void FOClient::Net_OnAddCritter( bool is_npc )
     Bin >> multihex;
 
     // Npc
-    ushort npc_pid;
+    uint16 npc_pid;
     uint   npc_dialog_id;
     if( is_npc )
     {
@@ -3931,9 +3931,9 @@ void FOClient::Net_OnAddCritter( bool is_npc )
     // Parameters
     int    params[MAX_PARAMS];
     memzero( params, sizeof(params) );
-    ushort count, index;
+    uint16 count, index;
     Bin >> count;
-    for( uint i = 0, j = min( count, ushort( MAX_PARAMS ) ); i < j; i++ )
+    for( uint i = 0, j = min( count, uint16( MAX_PARAMS ) ); i < j; i++ )
     {
         Bin >> index;
         Bin >> params[index < MAX_PARAMS ? index : 0];
@@ -4033,10 +4033,10 @@ void FOClient::Net_OnText()
 {
     uint   msg_len;
     uint   crid;
-    uchar  how_say;
-    ushort intellect;
+    uint8  how_say;
+    uint16 intellect;
     bool   unsafe_text;
-    ushort len;
+    uint16 len;
     char   str[MAX_FOTEXT + 1];
 
     Bin >> msg_len;
@@ -4046,10 +4046,10 @@ void FOClient::Net_OnText()
     Bin >> unsafe_text;
 
     Bin >> len;
-    Bin.Pop( str, min( len, ushort( MAX_FOTEXT ) ) );
+    Bin.Pop( str, min( len, uint16( MAX_FOTEXT ) ) );
     if( len > MAX_FOTEXT )
         Bin.Pop( Str::GetBigBuf(), len - MAX_FOTEXT );
-    str[min( len, ushort( MAX_FOTEXT ) )] = 0;
+    str[min( len, uint16( MAX_FOTEXT ) )] = 0;
 
     CHECK_IN_BUFF_ERROR;
 
@@ -4069,8 +4069,8 @@ void FOClient::Net_OnTextMsg( bool with_lexems )
 {
     uint   msg_len;
     uint   crid;
-    uchar  how_say;
-    ushort msg_num;
+    uint8  how_say;
+    uint16 msg_num;
     uint   num_str;
 
     if( with_lexems )
@@ -4083,7 +4083,7 @@ void FOClient::Net_OnTextMsg( bool with_lexems )
     char lexems[MAX_DLG_LEXEMS_TEXT + 1] = { 0 };
     if( with_lexems )
     {
-        ushort lexems_len;
+        uint16 lexems_len;
         Bin >> lexems_len;
         if( lexems_len && lexems_len <= MAX_DLG_LEXEMS_TEXT )
         {
@@ -4122,7 +4122,7 @@ void FOClient::Net_OnTextMsg( bool with_lexems )
     }
 }
 
-void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect )
+void FOClient::OnText( const char* str, uint crid, int how_say, uint16 intellect )
 {
     char fstr[MAX_FOTEXT];
     Str::Copy( fstr, str );
@@ -4217,7 +4217,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
         }
         else if( how_say == SAY_RADIO )
         {
-            ushort channel = 0;
+            uint16 channel = 0;
             if( Chosen )
             {
                 Item* radio = Chosen->GetItem( crid );
@@ -4320,7 +4320,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
     FlashGameWindow();
 }
 
-void FOClient::OnMapText( const char* str, ushort hx, ushort hy, uint color, ushort intellect )
+void FOClient::OnMapText( const char* str, uint16 hx, uint16 hy, uint color, uint16 intellect )
 {
     uint          len = Str::Length( str );
     uint          text_delay = GameOpt.TextDelay + len * 100;
@@ -4367,11 +4367,11 @@ void FOClient::OnMapText( const char* str, ushort hx, ushort hy, uint color, ush
 void FOClient::Net_OnMapText()
 {
     uint   msg_len;
-    ushort hx, hy;
+    uint16 hx, hy;
     uint   color;
-    ushort len;
+    uint16 len;
     char   str[MAX_FOTEXT + 1];
-    ushort intellect;
+    uint16 intellect;
     bool   unsafe_text;
 
     Bin >> msg_len;
@@ -4380,10 +4380,10 @@ void FOClient::Net_OnMapText()
     Bin >> color;
 
     Bin >> len;
-    Bin.Pop( str, min( len, ushort( MAX_FOTEXT ) ) );
+    Bin.Pop( str, min( len, uint16( MAX_FOTEXT ) ) );
     if( len > MAX_FOTEXT )
         Bin.Pop( Str::GetBigBuf(), len - MAX_FOTEXT );
-    str[min( len, ushort( MAX_FOTEXT ) )] = 0;
+    str[min( len, uint16( MAX_FOTEXT ) )] = 0;
 
     Bin >> intellect;
     Bin >> unsafe_text;
@@ -4404,9 +4404,9 @@ void FOClient::Net_OnMapText()
 
 void FOClient::Net_OnMapTextMsg()
 {
-    ushort hx, hy;
+    uint16 hx, hy;
     uint   color;
-    ushort msg_num;
+    uint16 msg_num;
     uint   num_str;
 
     Bin >> hx;
@@ -4431,11 +4431,11 @@ void FOClient::Net_OnMapTextMsg()
 void FOClient::Net_OnMapTextMsgLex()
 {
     uint   msg_len;
-    ushort hx, hy;
+    uint16 hx, hy;
     uint   color;
-    ushort msg_num;
+    uint16 msg_num;
     uint   num_str;
-    ushort lexems_len;
+    uint16 lexems_len;
 
     Bin >> msg_len;
     Bin >> hx;
@@ -4470,7 +4470,7 @@ void FOClient::Net_OnMapTextMsgLex()
 void FOClient::Net_OnCritterDir()
 {
     uint  crid;
-    uchar dir;
+    uint8 dir;
     Bin >> crid;
     Bin >> dir;
 
@@ -4490,8 +4490,8 @@ void FOClient::Net_OnCritterMove()
 {
     uint   crid;
     uint   move_params;
-    ushort new_hx;
-    ushort new_hy;
+    uint16 new_hx;
+    uint16 new_hy;
     Bin >> crid;
     Bin >> move_params;
     Bin >> new_hx;
@@ -4504,8 +4504,8 @@ void FOClient::Net_OnCritterMove()
     if( !cr )
         return;
 
-    ushort last_hx = cr->GetHexX();
-    ushort last_hy = cr->GetHexY();
+    uint16 last_hx = cr->GetHexX();
+    uint16 last_hy = cr->GetHexY();
     cr->IsRunning = FLAG( move_params, MOVE_PARAM_RUN );
 
     if( cr != Chosen )
@@ -4539,7 +4539,7 @@ void FOClient::Net_OnCritterMove()
                 HexMngr.ClearHexTrack();
                 for(int i=4;i<cr->MoveDirs.size();i++)
                 {
-                        UShortPair& step=cr->MoveDirs[i];
+                        UInt16Pair& step=cr->MoveDirs[i];
                         HexMngr.HexTrack[step.second][step.first]=1;
                 }
                 HexMngr.HexTrack[last_hy][last_hx]=2;
@@ -4558,8 +4558,8 @@ void FOClient::Net_OnCritterMove()
 void FOClient::Net_OnSomeItem()
 {
     uint           item_id;
-    ushort         item_pid;
-    uchar          slot;
+    uint16         item_pid;
+    uint8          slot;
     Item::ItemData data;
     Bin >> item_id;
     Bin >> item_pid;
@@ -4601,8 +4601,8 @@ void FOClient::Net_OnCritterKnockout()
     uint   crid;
     uint   anim2begin;
     uint   anim2idle;
-    ushort knock_hx;
-    ushort knock_hy;
+    uint16 knock_hx;
+    uint16 knock_hy;
     Bin >> crid;
     Bin >> anim2begin;
     Bin >> anim2idle;
@@ -4627,8 +4627,8 @@ void FOClient::Net_OnCritterMoveItem()
 {
     uint  msg_len;
     uint  crid;
-    uchar action;
-    uchar prev_slot;
+    uint8 action;
+    uint8 prev_slot;
     bool  is_item;
     Bin >> msg_len;
     Bin >> crid;
@@ -4637,17 +4637,17 @@ void FOClient::Net_OnCritterMoveItem()
     Bin >> is_item;
 
     // Slot items
-    UCharVec               slots_data_slot;
+    UInt8Vec               slots_data_slot;
     UIntVec                slots_data_id;
-    UShortVec              slots_data_pid;
+    UInt16Vec              slots_data_pid;
     vector<Item::ItemData> slots_data_data;
-    uchar                  slots_data_count;
+    uint8                  slots_data_count;
     Bin >> slots_data_count;
-    for( uchar i = 0; i < slots_data_count; i++ )
+    for( uint8 i = 0; i < slots_data_count; i++ )
     {
-        uchar          slot;
+        uint8          slot;
         uint           id;
-        ushort         pid;
+        uint16         pid;
         Item::ItemData data;
         Bin >> slot;
         Bin >> id;
@@ -4678,7 +4678,7 @@ void FOClient::Net_OnCritterMoveItem()
         cr->DefItemSlotHand->Init( ItemMngr.GetProtoItem( ITEM_DEF_SLOT ) );
         cr->DefItemSlotArmor->Init( ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) );
 
-        for( uchar i = 0; i < slots_data_count; i++ )
+        for( uint8 i = 0; i < slots_data_count; i++ )
         {
             ProtoItem* proto_item = ItemMngr.GetProtoItem( slots_data_pid[i] );
             if( proto_item )
@@ -4708,7 +4708,7 @@ void FOClient::Net_OnCritterMoveItem()
 void FOClient::Net_OnCritterItemData()
 {
     uint           crid;
-    uchar          slot;
+    uint8          slot;
     Item::ItemData data;
     memzero( &data, sizeof(data) );
     Bin >> crid;
@@ -4793,8 +4793,8 @@ void FOClient::Net_OnCheckUID0()
     #define CHECKUIDBIN                       \
         uint uid[5];                          \
         uint  uidxor[5];                      \
-        uchar rnd_count, rnd_count2;          \
-        uchar dummy;                          \
+        uint8 rnd_count, rnd_count2;          \
+        uint8 dummy;                          \
         uint  msg_len;                        \
         Bin >> msg_len;                       \
         Bin >> uid[3];                        \
@@ -4825,7 +4825,7 @@ void FOClient::Net_OnCheckUID0()
 void FOClient::Net_OnCritterParam()
 {
     uint   crid;
-    ushort index;
+    uint16 index;
     int    value;
     Bin >> crid;
     Bin >> index;
@@ -4893,9 +4893,9 @@ void FOClient::Net_OnCheckUID1()
 void FOClient::Net_OnCritterXY()
 {
     uint   crid;
-    ushort hx;
-    ushort hy;
-    uchar  dir;
+    uint16 hx;
+    uint16 hy;
+    uint8  dir;
     Bin >> crid;
     Bin >> hx;
     Bin >> hy;
@@ -4981,7 +4981,7 @@ void FOClient::Net_OnChosenParams()
 
 void FOClient::Net_OnChosenParam()
 {
-    ushort index;
+    uint16 index;
     int    value;
     Bin >> index;
     Bin >> value;
@@ -5101,8 +5101,8 @@ void FOClient::Net_OnChosenParam()
         }
         case OTHER_TELEPORT:
         {
-            ushort hx = (value >> 16) & 0xFFFF;
-            ushort hy = value & 0xFFFF;
+            uint16 hx = (value >> 16) & 0xFFFF;
+            uint16 hy = value & 0xFFFF;
             if( hx < HexMngr.GetMaxHexX() && hy < HexMngr.GetMaxHexY() )
             {
                 CritterCl* cr = HexMngr.GetField( hx, hy ).Crit;
@@ -5141,14 +5141,14 @@ void FOClient::Net_OnChosenClearItems()
 void FOClient::Net_OnChosenAddItem()
 {
     uint   item_id;
-    ushort pid;
-    uchar  slot;
+    uint16 pid;
+    uint8  slot;
     Bin >> item_id;
     Bin >> pid;
     Bin >> slot;
 
     Item* item = NULL;
-    uchar prev_slot = SLOT_INV;
+    uint8 prev_slot = SLOT_INV;
     uint  prev_light_hash = 0;
     if( Chosen )
     {
@@ -5233,10 +5233,10 @@ void FOClient::Net_OnChosenEraseItem()
 void FOClient::Net_OnAddItemOnMap()
 {
     uint           item_id;
-    ushort         item_pid;
-    ushort         item_x;
-    ushort         item_y;
-    uchar          is_added;
+    uint16         item_pid;
+    uint16         item_x;
+    uint16         item_y;
+    uint8          is_added;
     Item::ItemData data;
     Bin >> item_id;
     Bin >> item_pid;
@@ -5326,8 +5326,8 @@ void FOClient::Net_OnEraseItemFromMap()
 void FOClient::Net_OnAnimateItem()
 {
     uint  item_id;
-    uchar from_frm;
-    uchar to_frm;
+    uint8 from_frm;
+    uint8 to_frm;
     Bin >> item_id;
     Bin >> from_frm;
     Bin >> to_frm;
@@ -5372,10 +5372,10 @@ void FOClient::Net_OnCombatResult()
 
 void FOClient::Net_OnEffect()
 {
-    ushort eff_pid;
-    ushort hx;
-    ushort hy;
-    ushort radius;
+    uint16 eff_pid;
+    uint16 hx;
+    uint16 hy;
+    uint16 radius;
     Bin >> eff_pid;
     Bin >> hx;
     Bin >> hy;
@@ -5405,13 +5405,13 @@ void FOClient::Net_OnEffect()
 #pragma MESSAGE("Synchronize effects showing.")
 void FOClient::Net_OnFlyEffect()
 {
-    ushort eff_pid;
+    uint16 eff_pid;
     uint   eff_cr1_id;
     uint   eff_cr2_id;
-    ushort eff_cr1_hx;
-    ushort eff_cr1_hy;
-    ushort eff_cr2_hx;
-    ushort eff_cr2_hy;
+    uint16 eff_cr1_hx;
+    uint16 eff_cr1_hy;
+    uint16 eff_cr2_hx;
+    uint16 eff_cr2_hy;
     Bin >> eff_pid;
     Bin >> eff_cr1_id;
     Bin >> eff_cr2_id;
@@ -5456,10 +5456,10 @@ void FOClient::Net_OnPlaySound( bool by_type )
     else
     {
         uint  synchronize_crid;
-        uchar sound_type;
-        uchar sound_type_ext;
-        uchar sound_id;
-        uchar sound_id_ext;
+        uint8 sound_type;
+        uint8 sound_type_ext;
+        uint8 sound_id;
+        uint8 sound_id_ext;
         Bin >> synchronize_crid;
         Bin >> sound_type;
         Bin >> sound_type_ext;
@@ -5471,7 +5471,7 @@ void FOClient::Net_OnPlaySound( bool by_type )
 
 void FOClient::Net_OnPing()
 {
-    uchar ping;
+    uint8 ping;
     Bin >> ping;
 
     if( ping == PING_WAIT )
@@ -5487,7 +5487,7 @@ void FOClient::Net_OnPing()
             return;
 
         Bout << NETMSG_PING;
-        Bout << (uchar)PING_CLIENT;
+        Bout << (uint8)PING_CLIENT;
     }
     else if( ping == PING_PING )
     {
@@ -5503,9 +5503,9 @@ void FOClient::Net_OnPing()
 void FOClient::Net_OnChosenTalk()
 {
     uint  msg_len;
-    uchar is_npc;
+    uint8 is_npc;
     uint  talk_id;
-    uchar count_answ;
+    uint8 count_answ;
     uint  text_id;
     uint  talk_time;
 
@@ -5530,7 +5530,7 @@ void FOClient::Net_OnChosenTalk()
     }
 
     // Text params
-    ushort lexems_len;
+    uint16 lexems_len;
     char   lexems[MAX_DLG_LEXEMS_TEXT + 1] = { 0 };
     Bin >> lexems_len;
     if( lexems_len && lexems_len <= MAX_DLG_LEXEMS_TEXT )
@@ -5659,11 +5659,11 @@ void FOClient::Net_OnCheckUID2()
 void FOClient::Net_OnGameInfo()
 {
     int    time;
-    uchar  rain;
+    uint8  rain;
     bool   turn_based;
     bool   no_log_out;
     int*   day_time = HexMngr.GetMapDayTime();
-    uchar* day_color = HexMngr.GetMapDayColor();
+    uint8* day_color = HexMngr.GetMapDayColor();
     Bin >> GameOpt.YearStart;
     Bin >> GameOpt.Year;
     Bin >> GameOpt.Month;
@@ -5677,7 +5677,7 @@ void FOClient::Net_OnGameInfo()
     Bin >> turn_based;
     Bin >> no_log_out;
     Bin.Pop( (char*)day_time, sizeof(int) * 4 );
-    Bin.Pop( (char*)day_color, sizeof(uchar) * 12 );
+    Bin.Pop( (char*)day_color, sizeof(uint8) * 12 );
 
     CHECK_IN_BUFF_ERROR;
 
@@ -5702,9 +5702,9 @@ void FOClient::Net_OnLoadMap()
 {
     WriteLog( "Change map...\n" );
 
-    ushort map_pid;
+    uint16 map_pid;
     int    map_time;
-    uchar  map_rain;
+    uint8  map_rain;
     uint   hash_tiles;
     uint   hash_walls;
     uint   hash_scen;
@@ -5797,9 +5797,9 @@ void FOClient::Net_OnMap()
     WriteLog( "Get map" );
 
     uint   msg_len;
-    ushort map_pid;
-    ushort maxhx, maxhy;
-    uchar  send_info;
+    uint16 map_pid;
+    uint16 maxhx, maxhy;
+    uint8  send_info;
     Bin >> msg_len;
     Bin >> map_pid;
     Bin >> maxhx;
@@ -5867,14 +5867,14 @@ void FOClient::Net_OnMap()
     CHECK_IN_BUFF_ERROR;
 
     uint        cache_len;
-    uchar*      cache = Crypt.GetCache( map_name, cache_len );
+    uint8*      cache = Crypt.GetCache( map_name, cache_len );
     FileManager fm;
 
     WriteLogX( " Old:" );
     if( cache && fm.LoadStream( cache, cache_len ) )
     {
         uint   buf_len = fm.GetFsize();
-        uchar* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
+        uint8* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
         if( buf )
         {
             fm.UnloadFile();
@@ -5955,7 +5955,7 @@ void FOClient::Net_OnMap()
             fm.SetData( scen_data, scen_len );
 
         uint   obuf_len = fm.GetOutBufLen();
-        uchar* buf = Crypt.Compress( fm.GetOutBuf(), obuf_len );
+        uint8* buf = Crypt.Compress( fm.GetOutBuf(), obuf_len );
         if( !buf )
         {
             WriteLog( "Failed to compress data<%s>, disconnect.\n", map_name );
@@ -5994,14 +5994,14 @@ void FOClient::Net_OnMap()
 void FOClient::Net_OnGlobalInfo()
 {
     uint  msg_len;
-    uchar info_flags;
+    uint8 info_flags;
     Bin >> msg_len;
     Bin >> info_flags;
 
     if( FLAG( info_flags, GM_INFO_LOCATIONS ) )
     {
         GmapLoc.clear();
-        ushort count_loc;
+        uint16 count_loc;
         Bin >> count_loc;
 
         for( int i = 0; i < count_loc; i++ )
@@ -6048,7 +6048,7 @@ void FOClient::Net_OnGlobalInfo()
 
     if( FLAG( info_flags, GM_INFO_GROUP_PARAM ) )
     {
-        ushort cur_x, cur_y, to_x, to_y;
+        uint16 cur_x, cur_y, to_x, to_y;
         uint   speed;
         Bin >> cur_x;
         Bin >> cur_y;
@@ -6105,8 +6105,8 @@ void FOClient::Net_OnGlobalInfo()
 
     if( FLAG( info_flags, GM_INFO_FOG ) )
     {
-        ushort zx, zy;
-        uchar  fog;
+        uint16 zx, zy;
+        uint8  fog;
         Bin >> zx;
         Bin >> zy;
         Bin >> fog;
@@ -6126,7 +6126,7 @@ void FOClient::Net_OnGlobalEntrances()
 {
     uint  msg_len;
     uint  loc_id;
-    uchar count;
+    uint8 count;
     bool  entrances[0x100];
     memzero( entrances, sizeof(entrances) );
     Bin >> msg_len;
@@ -6135,7 +6135,7 @@ void FOClient::Net_OnGlobalEntrances()
 
     for( int i = 0; i < count; i++ )
     {
-        uchar e;
+        uint8 e;
         Bin >> e;
         entrances[e] = true;
     }
@@ -6149,10 +6149,10 @@ void FOClient::Net_OnGlobalEntrances()
 void FOClient::Net_OnContainerInfo()
 {
     uint   msg_len;
-    uchar  transfer_type;
+    uint8  transfer_type;
     uint   talk_time;
     uint   cont_id;
-    ushort cont_pid;     // Or Barter K
+    uint16 cont_pid;     // Or Barter K
     uint   items_count;
     Bin >> msg_len;
     Bin >> transfer_type;
@@ -6178,7 +6178,7 @@ void FOClient::Net_OnContainerInfo()
     for( uint i = 0; i < items_count; i++ )
     {
         uint           item_id;
-        ushort         item_pid;
+        uint16         item_pid;
         Item::ItemData data;
         Bin >> item_id;
         Bin >> item_pid;
@@ -6271,8 +6271,8 @@ void FOClient::Net_OnContainerInfo()
 void FOClient::Net_OnFollow()
 {
     uint   rule;
-    uchar  follow_type;
-    ushort map_pid;
+    uint8  follow_type;
+    uint16 map_pid;
     uint   wait_time;
     Bin >> rule;
     Bin >> follow_type;
@@ -6315,7 +6315,7 @@ void FOClient::Net_OnFollow()
 
 void FOClient::Net_OnPlayersBarter()
 {
-    uchar barter;
+    uint8 barter;
     uint  param;
     uint  param_ext;
     Bin >> barter;
@@ -6515,7 +6515,7 @@ void FOClient::Net_OnPlayersBarter()
 void FOClient::Net_OnPlayersBarterSetHide()
 {
     uint           id;
-    ushort         pid;
+    uint16         pid;
     uint           count;
     Item::ItemData data;
     Bin >> id;
@@ -6650,12 +6650,12 @@ void FOClient::Net_OnRunClientScript()
 {
     char          str[MAX_FOTEXT];
     uint          msg_len;
-    ushort        func_name_len;
+    uint16        func_name_len;
     ScriptString* func_name = new ScriptString();
     int           p0, p1, p2;
-    ushort        p3len;
+    uint16        p3len;
     ScriptString* p3 = NULL;
-    ushort        p4size;
+    uint16        p4size;
     ScriptArray*  p4 = NULL;
     Bin >> msg_len;
     Bin >> func_name_len;
@@ -6724,7 +6724,7 @@ void FOClient::Net_OnCritterLexems()
 {
     uint   msg_len;
     uint   critter_id;
-    ushort lexems_len;
+    uint16 lexems_len;
     char   lexems[LEXEMS_SIZE];
     Bin >> msg_len;
     Bin >> critter_id;
@@ -6757,7 +6757,7 @@ void FOClient::Net_OnItemLexems()
 {
     uint   msg_len;
     uint   item_id;
-    ushort lexems_len;
+    uint16 lexems_len;
     char   lexems[LEXEMS_SIZE];
     Bin >> msg_len;
     Bin >> item_id;
@@ -6816,7 +6816,7 @@ void FOClient::Net_OnMsgData()
 {
     uint    msg_len;
     uint    lang;
-    ushort  num_msg;
+    uint16  num_msg;
     uint    data_hash;
     CharVec data;
     Bin >> msg_len;
@@ -6840,7 +6840,7 @@ void FOClient::Net_OnMsgData()
         return;
     }
 
-    if( data_hash != Crypt.Crc32( (uchar*)&data[0], (uint)data.size() ) )
+    if( data_hash != Crypt.Crc32( (uint8*)&data[0], (uint)data.size() ) )
     {
         WriteLogF( _FUNC_, " - Invalid hash<%s>.\n", TextMsgFileName[num_msg] );
         return;
@@ -6894,7 +6894,7 @@ void FOClient::Net_OnMsgData()
 void FOClient::Net_OnProtoItemData()
 {
     uint         msg_len;
-    uchar        type;
+    uint8        type;
     uint         data_hash;
     ProtoItemVec data;
     Bin >> msg_len;
@@ -6905,7 +6905,7 @@ void FOClient::Net_OnProtoItemData()
 
     CHECK_IN_BUFF_ERROR;
 
-    if( data_hash != Crypt.Crc32( (uchar*)&data[0], (uint)data.size() * sizeof(ProtoItem) ) )
+    if( data_hash != Crypt.Crc32( (uint8*)&data[0], (uint)data.size() * sizeof(ProtoItem) ) )
     {
         WriteLogF( _FUNC_, " - Hash error.\n" );
         return;
@@ -6917,7 +6917,7 @@ void FOClient::Net_OnProtoItemData()
     ProtoItemVec proto_items;
     ItemMngr.GetCopyAllProtos( proto_items );
     uint         len = (uint)proto_items.size() * sizeof(ProtoItem);
-    uchar*       proto_data = Crypt.Compress( (uchar*)&proto_items[0], len );
+    uint8*       proto_data = Crypt.Compress( (uint8*)&proto_items[0], len );
     if( !proto_data )
     {
         WriteLogF( _FUNC_, " - Compression fail.\n" );
@@ -6927,7 +6927,7 @@ void FOClient::Net_OnProtoItemData()
     delete[] proto_data;
 
     uint count = (uint)proto_items.size();
-    Crypt.SetCache( "item_protos_count", (uchar*)&count, sizeof(count) );
+    Crypt.SetCache( "item_protos_count", (uint8*)&count, sizeof(count) );
 
     // Refresh craft names
     MrFixit.GenerateNames( *MsgGame, *MsgItem );
@@ -6973,8 +6973,8 @@ void FOClient::Net_OnHoloInfo()
 {
     uint   msg_len;
     bool   clear;
-    ushort offset;
-    ushort count;
+    uint16 offset;
+    uint16 count;
     Bin >> msg_len;
     Bin >> clear;
     Bin >> offset;
@@ -6997,7 +6997,7 @@ void FOClient::Net_OnUserHoloStr()
 {
     uint   msg_len;
     uint   str_num;
-    ushort text_len;
+    uint16 text_len;
     char   text[USER_HOLO_MAX_LEN + 1];
     Bin >> msg_len;
     Bin >> str_num;
@@ -7025,7 +7025,7 @@ void FOClient::Net_OnAutomapsInfo()
 {
     uint   msg_len;
     bool   clear;
-    ushort locs_count;
+    uint16 locs_count;
     Bin >> msg_len;
     Bin >> clear;
 
@@ -7042,11 +7042,11 @@ void FOClient::Net_OnAutomapsInfo()
     }
 
     Bin >> locs_count;
-    for( ushort i = 0; i < locs_count; i++ )
+    for( uint16 i = 0; i < locs_count; i++ )
     {
         uint   loc_id;
-        ushort loc_pid;
-        ushort maps_count;
+        uint16 loc_pid;
+        uint16 maps_count;
         Bin >> loc_id;
         Bin >> loc_pid;
         Bin >> maps_count;
@@ -7067,9 +7067,9 @@ void FOClient::Net_OnAutomapsInfo()
             amap.LocPid = loc_pid;
             amap.LocName = MsgGM->GetStr( STR_GM_NAME_( loc_pid ) );
 
-            for( ushort j = 0; j < maps_count; j++ )
+            for( uint16 j = 0; j < maps_count; j++ )
             {
-                ushort map_pid;
+                uint16 map_pid;
                 Bin >> map_pid;
 
                 amap.MapPids.push_back( map_pid );
@@ -7095,7 +7095,7 @@ void FOClient::Net_OnCheckUID4()
 
 void FOClient::Net_OnViewMap()
 {
-    ushort hx, hy;
+    uint16 hx, hy;
     uint   loc_id, loc_ent;
     Bin >> hx;
     Bin >> hy;
@@ -7123,7 +7123,7 @@ void FOClient::Net_OnViewMap()
 void FOClient::Net_OnCraftAsk()
 {
     uint   msg_len;
-    ushort count;
+    uint16 count;
     Bin >> msg_len;
     Bin >> count;
 
@@ -7143,7 +7143,7 @@ void FOClient::Net_OnCraftAsk()
 
 void FOClient::Net_OnCraftResult()
 {
-    uchar craft_result;
+    uint8 craft_result;
     Bin >> craft_result;
 
     if( craft_result != CRAFT_RESULT_NONE )
@@ -7184,7 +7184,7 @@ bool FOClient::IsCurInInterface()
     return false;
 }
 
-bool FOClient::GetCurHex( ushort& hx, ushort& hy, bool ignore_interface )
+bool FOClient::GetCurHex( uint16& hx, uint16& hy, bool ignore_interface )
 {
     hx = hy = 0;
     if( !ignore_interface && IsCurInInterface() )
@@ -7399,7 +7399,7 @@ void FOClient::ChosenChangeSlot()
         AddActionBack( CHOSEN_MOVE_ITEM, Chosen->ItemSlotMain->GetId(), Chosen->ItemSlotMain->GetCount(), SLOT_HAND2 );
     else
     {
-        uchar      tree = Chosen->DefItemSlotHand->Proto->Weapon_UnarmedTree + 1;
+        uint8      tree = Chosen->DefItemSlotHand->Proto->Weapon_UnarmedTree + 1;
         ProtoItem* unarmed = Chosen->GetUnarmedItem( tree, 0 );
         if( !unarmed )
             unarmed = Chosen->GetUnarmedItem( 0, 0 );
@@ -7550,15 +7550,15 @@ void FOClient::CrittersProcess()
         case CHOSEN_MOVE_TO_CRITTER:
         case CHOSEN_MOVE:
         {
-            ushort hx = act.Param[0];
-            ushort hy = act.Param[1];
+            uint16 hx = act.Param[0];
+            uint16 hy = act.Param[1];
             bool   is_run = act.Param[2] != 0;
             int    cut = act.Param[3];
             bool   wait_click = act.Param[4] != 0;
             uint   start_tick = act.Param[5];
 
-            ushort from_hx = 0;
-            ushort from_hy = 0;
+            uint16 from_hx = 0;
+            uint16 from_hy = 0;
             int    ap_cost_real = 0;
             bool   skip_find = false;
 
@@ -7619,8 +7619,8 @@ void FOClient::CrittersProcess()
 
             if( hx == MoveLastHx && hy == MoveLastHy && MoveDirs.size() )
             {
-                ushort hx_ = from_hx;
-                ushort hy_ = from_hy;
+                uint16 hx_ = from_hx;
+                uint16 hy_ = from_hy;
                 MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
                 if( !HexMngr.GetField( hx_, hy_ ).IsNotPassed )
                     skip_find = true;
@@ -7633,8 +7633,8 @@ void FOClient::CrittersProcess()
                 MoveDirs.clear();
                 if( !IsTurnBased && MoveDirs.size() )
                 {
-                    ushort hx_ = from_hx;
-                    ushort hy_ = from_hy;
+                    uint16 hx_ = from_hx;
+                    uint16 hy_ = from_hy;
                     MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
                     if( !HexMngr.GetField( hx_, hy_ ).IsNotPassed )
                     {
@@ -7649,8 +7649,8 @@ void FOClient::CrittersProcess()
                 else
                     MoveDirs.clear();
 
-                ushort hx_ = hx;
-                ushort hy_ = hy;
+                uint16 hx_ = hx;
+                uint16 hy_ = hy;
                 bool   result = HexMngr.CutPath( Chosen, from_hx, from_hy, hx_, hy_, cut );
                 if( !result )
                 {
@@ -7662,7 +7662,7 @@ void FOClient::CrittersProcess()
                 }
 
                 ChosenAction[0].Param[3] = cut;
-                UCharVec steps;
+                UInt8Vec steps;
                 if( HexMngr.FindPath( Chosen, from_hx, from_hy, hx_, hy_, steps, -1 ) )
                 {
                     for( uint i = 0, j = (uint)steps.size(); i < j; i++ )
@@ -7681,8 +7681,8 @@ label_EndMove:
             // Transit
             if( MoveDirs.size() )
             {
-                ushort hx_ = Chosen->GetHexX();
-                ushort hy_ = Chosen->GetHexY();
+                uint16 hx_ = Chosen->GetHexX();
+                uint16 hy_ = Chosen->GetHexY();
                 MoveHexByDir( hx_, hy_, MoveDirs[0], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
                 HexMngr.TransitCritter( Chosen, hx_, hy_, true, false );
                 if( IsTurnBased )
@@ -7764,13 +7764,13 @@ label_EndMove:
         case CHOSEN_USE_ITEM:
         {
             uint   item_id = act.Param[0];
-            ushort item_pid = act.Param[1];
-            uchar  target_type = act.Param[2];
+            uint16 item_pid = act.Param[1];
+            uint8  target_type = act.Param[2];
             uint   target_id = act.Param[3];
-            uchar  rate = act.Param[4];
+            uint8  rate = act.Param[4];
             uint   param = act.Param[5];
-            uchar  use = (rate & 0xF);
-            uchar  aim = (rate >> 4);
+            uint8  use = (rate & 0xF);
+            uint8  aim = (rate >> 4);
 
             // Find item
             Item* item = (item_id ? Chosen->GetItem( item_id ) : Chosen->DefItemSlotHand);
@@ -7836,7 +7836,7 @@ label_EndMove:
             // Aim overriding
             if( is_attack && ClientFunctions.HitAim && Script::PrepareContext( ClientFunctions.HitAim, _FUNC_, "Game" ) )
             {
-                uchar new_aim = aim;
+                uint8 new_aim = aim;
                 Script::SetArgAddress( &new_aim );
                 if( Script::RunPrepared() && new_aim != aim )
                 {
@@ -7933,7 +7933,7 @@ label_EndMove:
             // Find Target
             if( !is_self && HexMngr.IsMapLoaded() )
             {
-                ushort hx, hy;
+                uint16 hx, hy;
                 if( target_cr )
                 {
                     hx = target_cr->GetHexX();
@@ -7976,7 +7976,7 @@ label_EndMove:
 
                 // Refresh orientation
                 CHECK_NEED_AP( ap_cost );
-                uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+                uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
                 if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy ) >= 1 && Chosen->GetDir() != dir )
                 {
                     Chosen->SetDir( dir );
@@ -8021,7 +8021,7 @@ label_EndMove:
             if( !item )
                 break;
 
-            uchar from_slot = item->AccCritter.Slot;
+            uint8 from_slot = item->AccCritter.Slot;
             if( item->AccCritter.Slot != from_slot || from_slot == to_slot )
                 break;
             if( to_slot != SLOT_GROUND && !CritterCl::SlotEnabled[to_slot] )
@@ -8216,7 +8216,7 @@ label_EndMove:
         }
         case CHOSEN_USE_SKILL_ON_CRITTER:
         {
-            ushort     skill = act.Param[0];
+            uint16     skill = act.Param[0];
             uint       crid = act.Param[1];
 
             CritterCl* cr = (crid ? GetCritter( crid ) : Chosen);
@@ -8246,7 +8246,7 @@ label_EndMove:
                             bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                             uint   cut_dist = Chosen->GetUseDist() + cr->GetMultihex();
                             SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, cut_dist );
-                            ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                            uint16 hx = cr->GetHexX(), hy = cr->GetHexY();
                             if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, cut_dist ) )
                                 AddActionBack( act );
                             return;
@@ -8260,7 +8260,7 @@ label_EndMove:
                 {
                     // Refresh orientation
                     CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-                    uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+                    uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
                     if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
                     {
                         Chosen->SetDir( dir );
@@ -8279,7 +8279,7 @@ label_EndMove:
         case CHOSEN_USE_SKILL_ON_ITEM:
         {
             bool   is_inv = act.Param[0] != 0;
-            ushort skill = act.Param[1];
+            uint16 skill = act.Param[1];
             uint   item_id = act.Param[2];
 
             Item*  item_action;
@@ -8323,7 +8323,7 @@ label_EndMove:
                             break;
                         bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                         SetAction( CHOSEN_MOVE, item->GetHexX(), item->GetHexY(), is_run, Chosen->GetUseDist(), 0 );
-                        ushort hx = item->GetHexX(), hy = item->GetHexY();
+                        uint16 hx = item->GetHexX(), hy = item->GetHexY();
                         if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, Chosen->GetUseDist() ) )
                             AddActionBack( act );
                         return;
@@ -8331,7 +8331,7 @@ label_EndMove:
 
                     // Refresh orientation
                     CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
-                    uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
+                    uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
                     if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
                     {
                         Chosen->SetDir( dir );
@@ -8350,10 +8350,10 @@ label_EndMove:
         }
         case CHOSEN_USE_SKILL_ON_SCENERY:
         {
-            ushort skill = act.Param[0];
-            ushort pid = act.Param[1];
-            ushort hx = act.Param[2];
-            ushort hy = act.Param[3];
+            uint16 skill = act.Param[0];
+            uint16 pid = act.Param[1];
+            uint16 hx = act.Param[2];
+            uint16 hy = act.Param[3];
 
             if( !HexMngr.IsMapLoaded() )
                 break;
@@ -8377,7 +8377,7 @@ label_EndMove:
             CHECK_NEED_AP( Chosen->GetApCostUseSkill() );
 
             // Refresh orientation
-            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
+            uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() );
             if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), item->GetHexX(), item->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
             {
                 Chosen->SetDir( dir );
@@ -8418,7 +8418,7 @@ label_EndMove:
                     break;
                 bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, talk_distance );
-                ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                uint16 hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, talk_distance ) )
                     AddActionBack( act );
                 return;
@@ -8431,7 +8431,7 @@ label_EndMove:
             }
 
             // Refresh orientation
-            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+            uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
             if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
             {
                 Chosen->SetDir( dir );
@@ -8444,9 +8444,9 @@ label_EndMove:
         }
         case CHOSEN_PICK_ITEM:
         {
-            ushort pid = act.Param[0];
-            ushort hx = act.Param[1];
-            ushort hy = act.Param[2];
+            uint16 pid = act.Param[0];
+            uint16 hx = act.Param[1];
+            uint16 hy = act.Param[2];
 
             if( !HexMngr.IsMapLoaded() )
                 break;
@@ -8471,7 +8471,7 @@ label_EndMove:
             CHECK_NEED_AP( Chosen->GetApCostPickItem() );
 
             // Refresh orientation
-            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
+            uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy );
             if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), hx, hy ) >= 1 && Chosen->GetDir() != dir )
             {
                 Chosen->SetDir( dir );
@@ -8509,7 +8509,7 @@ label_EndMove:
                     break;
                 bool   is_run = (GameOpt.AlwaysRun && dist >= GameOpt.AlwaysRunUseDist);
                 SetAction( CHOSEN_MOVE_TO_CRITTER, cr->GetId(), 0, is_run, pick_dist );
-                ushort hx = cr->GetHexX(), hy = cr->GetHexY();
+                uint16 hx = cr->GetHexX(), hy = cr->GetHexY();
                 if( HexMngr.CutPath( Chosen, Chosen->GetHexX(), Chosen->GetHexY(), hx, hy, pick_dist ) )
                     AddActionBack( act );
                 return;
@@ -8518,7 +8518,7 @@ label_EndMove:
             CHECK_NEED_AP( Chosen->GetApCostPickCritter() );
 
             // Refresh orientation
-            uchar dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
+            uint8 dir = GetFarDir( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() );
             if( DistGame( Chosen->GetHexX(), Chosen->GetHexY(), cr->GetHexX(), cr->GetHexY() ) >= 1 && Chosen->GetDir() != dir )
             {
                 Chosen->SetDir( dir );
@@ -8682,7 +8682,7 @@ void FOClient::ProcessMouseScroll()
         GameOpt.ScrollMouseUp = false;
 }
 
-void FOClient::ProcessKeybScroll( bool down, uchar dik )
+void FOClient::ProcessKeybScroll( bool down, uint8 dik )
 {
     if( down && IsMainScreen( CLIENT_MAIN_SCREEN_GAME ) && ConsoleActive )
         return;
@@ -8949,7 +8949,7 @@ auto FOClient::FindIntellectWord( const char* word, PCharPairVec& text, Randomiz
     return it;
 }
 
-void FOClient::FmtTextIntellect( char* str, ushort intellect )
+void FOClient::FmtTextIntellect( char* str, uint16 intellect )
 {
     static bool is_parsed = false;
     if( !is_parsed )
@@ -8959,7 +8959,7 @@ void FOClient::FmtTextIntellect( char* str, ushort intellect )
         is_parsed = true;
     }
 
-    uchar intellegence = intellect & 0xF;
+    uint8 intellegence = intellect & 0xF;
     if( !intellect || intellegence >= 5 )
         return;
 
@@ -9463,9 +9463,9 @@ void FOClient::RenderVideo()
         {
             // Get YUV
             th_ycbcr_buffer& cbuf = CurVideo->ColorBuffer;
-            uchar            cy = *(cbuf[0].data + y * cbuf[0].stride + x);
-            uchar            cu = *(cbuf[1].data + y / dj * cbuf[1].stride + x / di);
-            uchar            cv = *(cbuf[2].data + y / dj * cbuf[2].stride + x / di);
+            uint8            cy = *(cbuf[0].data + y * cbuf[0].stride + x);
+            uint8            cu = *(cbuf[1].data + y / dj * cbuf[1].stride + x / di);
+            uint8            cv = *(cbuf[2].data + y / dj * cbuf[2].stride + x / di);
 
             // Convert YUV to RGB
             float cr = cy + 1.402f * (cv - 127);
@@ -9561,7 +9561,7 @@ void FOClient::StopVideo()
 }
 #endif
 
-uint FOClient::AnimLoad( uint name_hash, uchar dir, int res_type )
+uint FOClient::AnimLoad( uint name_hash, uint8 dir, int res_type )
 {
     AnyFrames* anim = ResMngr.GetAnim( name_hash, dir, res_type );
     if( !anim )
@@ -9644,7 +9644,7 @@ void FOClient::AnimRun( uint anim_id, uint flags )
     flags >>= 16;
 
     // Set frm
-    uchar cur_frm = flags & 0xFF;
+    uint8 cur_frm = flags & 0xFF;
     if( cur_frm > 0 )
     {
         cur_frm--;
@@ -9789,7 +9789,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
         const char*  dll_name = msg_script.GetStr( i );
         uint         len;
-        const uchar* dll_binary = msg_script.GetBinary( i + 1, len );
+        const uint8* dll_binary = msg_script.GetBinary( i + 1, len );
         if( !dll_binary )
             break;
 
@@ -9829,7 +9829,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
         const char*  module_name = msg_script.GetStr( i );
         uint         len;
-        const uchar* bytecode = msg_script.GetBinary( i + 1, len );
+        const uint8* bytecode = msg_script.GetBinary( i + 1, len );
         if( !bytecode )
             break;
 
@@ -10103,21 +10103,21 @@ uint FOClient::SScriptFunc::Crit_ItemsVolume( CritterCl* cr )
     return cr->GetItemsVolume();
 }
 
-uint FOClient::SScriptFunc::Crit_CountItem( CritterCl* cr, ushort proto_id )
+uint FOClient::SScriptFunc::Crit_CountItem( CritterCl* cr, uint16 proto_id )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return cr->CountItemPid( proto_id );
 }
 
-uint FOClient::SScriptFunc::Crit_CountItemByType( CritterCl* cr, uchar type )
+uint FOClient::SScriptFunc::Crit_CountItemByType( CritterCl* cr, uint8 type )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return cr->CountItemType( type );
 }
 
-Item* FOClient::SScriptFunc::Crit_GetItem( CritterCl* cr, ushort proto_id, int slot )
+Item* FOClient::SScriptFunc::Crit_GetItem( CritterCl* cr, uint16 proto_id, int slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -10152,7 +10152,7 @@ uint FOClient::SScriptFunc::Crit_GetItemsByType( CritterCl* cr, int type, Script
     return (uint)items_.size();
 }
 
-ProtoItem* FOClient::SScriptFunc::Crit_GetSlotProto( CritterCl* cr, int slot, uchar& mode )
+ProtoItem* FOClient::SScriptFunc::Crit_GetSlotProto( CritterCl* cr, int slot, uint8& mode )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -10254,14 +10254,14 @@ uint FOClient::SScriptFunc::Item_GetScriptId( Item* item )
     return item->Data.ScriptId;
 }
 
-uchar FOClient::SScriptFunc::Item_GetType( Item* item )
+uint8 FOClient::SScriptFunc::Item_GetType( Item* item )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return item->GetType();
 }
 
-ushort FOClient::SScriptFunc::Item_GetProtoId( Item* item )
+uint16 FOClient::SScriptFunc::Item_GetProtoId( Item* item )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -10275,7 +10275,7 @@ uint FOClient::SScriptFunc::Item_GetCount( Item* item )
     return item->GetCount();
 }
 
-bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort& hy )
+bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, uint16& hx, uint16& hy )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -10316,7 +10316,7 @@ bool FOClient::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
     return true;
 }
 
-void FOClient::SScriptFunc::Item_Animate( Item* item, uchar from_frame, uchar to_frame )
+void FOClient::SScriptFunc::Item_Animate( Item* item, uint8 from_frame, uint8 to_frame )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -10472,7 +10472,7 @@ CritterCl* FOClient::SScriptFunc::Global_GetCritter( uint critter_id )
     return cr;
 }
 
-uint FOClient::SScriptFunc::Global_GetCritters( ushort hx, ushort hy, uint radius, int find_type, ScriptArray* critters )
+uint FOClient::SScriptFunc::Global_GetCritters( uint16 hx, uint16 hy, uint radius, int find_type, ScriptArray* critters )
 {
     if( hx >= Self->HexMngr.GetMaxHexX() || hy >= Self->HexMngr.GetMaxHexY() )
         SCRIPT_ERROR_R0( "Invalid hexes args." );
@@ -10494,7 +10494,7 @@ uint FOClient::SScriptFunc::Global_GetCritters( ushort hx, ushort hy, uint radiu
     return (uint)cr_vec.size();
 }
 
-uint FOClient::SScriptFunc::Global_GetCrittersByPids( ushort pid, int find_type, ScriptArray* critters )
+uint FOClient::SScriptFunc::Global_GetCrittersByPids( uint16 pid, int find_type, ScriptArray* critters )
 {
     CritMap& crits = Self->HexMngr.GetCritters();
     CritVec  cr_vec;
@@ -10523,7 +10523,7 @@ uint FOClient::SScriptFunc::Global_GetCrittersByPids( ushort pid, int find_type,
     return (uint)cr_vec.size();
 }
 
-uint FOClient::SScriptFunc::Global_GetCrittersInPath( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters )
+uint FOClient::SScriptFunc::Global_GetCrittersInPath( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters )
 {
     CritVec cr_vec;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, &cr_vec, FIND_LIFE | FIND_KO, NULL, NULL, NULL, true );
@@ -10532,10 +10532,10 @@ uint FOClient::SScriptFunc::Global_GetCrittersInPath( ushort from_hx, ushort fro
     return (uint)cr_vec.size();
 }
 
-uint FOClient::SScriptFunc::Global_GetCrittersInPathBlock( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters, ushort& pre_block_hx, ushort& pre_block_hy, ushort& block_hx, ushort& block_hy )
+uint FOClient::SScriptFunc::Global_GetCrittersInPathBlock( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters, uint16& pre_block_hx, uint16& pre_block_hy, uint16& block_hx, uint16& block_hy )
 {
     CritVec    cr_vec;
-    UShortPair block, pre_block;
+    UInt16Pair block, pre_block;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, &cr_vec, FIND_LIFE | FIND_KO, &block, &pre_block, NULL, true );
     if( critters )
         Script::AppendVectorToArrayRef<CritterCl*>( cr_vec, critters );
@@ -10546,15 +10546,15 @@ uint FOClient::SScriptFunc::Global_GetCrittersInPathBlock( ushort from_hx, ushor
     return (uint)cr_vec.size();
 }
 
-void FOClient::SScriptFunc::Global_GetHexInPath( ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist )
+void FOClient::SScriptFunc::Global_GetHexInPath( uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist )
 {
-    UShortPair pre_block, block;
+    UInt16Pair pre_block, block;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, NULL, 0, &block, &pre_block, NULL, true );
     to_hx = pre_block.first;
     to_hy = pre_block.second;
 }
 
-uint FOClient::SScriptFunc::Global_GetPathLengthHex( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint cut )
+uint FOClient::SScriptFunc::Global_GetPathLengthHex( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint cut )
 {
     if( from_hx >= Self->HexMngr.GetMaxHexX() || from_hy >= Self->HexMngr.GetMaxHexY() )
         SCRIPT_ERROR_R0( "Invalid from hexes args." );
@@ -10563,13 +10563,13 @@ uint FOClient::SScriptFunc::Global_GetPathLengthHex( ushort from_hx, ushort from
 
     if( cut > 0 && !Self->HexMngr.CutPath( NULL, from_hx, from_hy, to_hx, to_hy, cut ) )
         return 0;
-    UCharVec steps;
+    UInt8Vec steps;
     if( !Self->HexMngr.FindPath( NULL, from_hx, from_hy, to_hx, to_hy, steps, -1 ) )
         steps.clear();
     return (uint)steps.size();
 }
 
-uint FOClient::SScriptFunc::Global_GetPathLengthCr( CritterCl* cr, ushort to_hx, ushort to_hy, uint cut )
+uint FOClient::SScriptFunc::Global_GetPathLengthCr( CritterCl* cr, uint16 to_hx, uint16 to_hy, uint cut )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "Critter arg nullptr." );
@@ -10578,7 +10578,7 @@ uint FOClient::SScriptFunc::Global_GetPathLengthCr( CritterCl* cr, ushort to_hx,
 
     if( cut > 0 && !Self->HexMngr.CutPath( cr, cr->GetHexX(), cr->GetHexY(), to_hx, to_hy, cut ) )
         return 0;
-    UCharVec steps;
+    UInt8Vec steps;
     if( !Self->HexMngr.FindPath( cr, cr->GetHexX(), cr->GetHexY(), to_hx, to_hy, steps, -1 ) )
         steps.clear();
     return (uint)steps.size();
@@ -10599,7 +10599,7 @@ bool FOClient::SScriptFunc::Global_PlaySound( ScriptString& sound_name )
     return SndMngr.PlaySound( sound_name.c_str() );
 }
 
-bool FOClient::SScriptFunc::Global_PlaySoundType( uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext )
+bool FOClient::SScriptFunc::Global_PlaySoundType( uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext )
 {
     return SndMngr.PlaySoundType( sound_type, sound_type_ext, sound_id, sound_id_ext );
 }
@@ -10629,7 +10629,7 @@ uint FOClient::SScriptFunc::Global_GetTurnBasedTime()
     return 0;
 }
 
-ushort FOClient::SScriptFunc::Global_GetCurrentMapPid()
+uint16 FOClient::SScriptFunc::Global_GetCurrentMapPid()
 {
     if( !Self->HexMngr.IsMapLoaded() )
         return 0;
@@ -10678,7 +10678,7 @@ void FOClient::SScriptFunc::Global_MessageMsgType( int text_msg, uint str_num, i
     Self->AddMess( type, Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
-void FOClient::SScriptFunc::Global_MapMessage( ScriptString& text, ushort hx, ushort hy, uint ms, uint color, bool fade, int ox, int oy )
+void FOClient::SScriptFunc::Global_MapMessage( ScriptString& text, uint16 hx, uint16 hy, uint ms, uint color, bool fade, int ox, int oy )
 {
     FOClient::MapText t;
     t.HexX = hx;
@@ -10795,7 +10795,7 @@ int FOClient::SScriptFunc::Global_GetSomeValue( int var )
     return 0;
 }
 
-void FOClient::SScriptFunc::Global_MoveScreen( ushort hx, ushort hy, uint speed )
+void FOClient::SScriptFunc::Global_MoveScreen( uint16 hx, uint16 hy, uint speed )
 {
     if( hx >= Self->HexMngr.GetMaxHexX() || hy >= Self->HexMngr.GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid hex args." );
@@ -10814,7 +10814,7 @@ void FOClient::SScriptFunc::Global_LockScreenScroll( CritterCl* cr )
     Self->HexMngr.AutoScroll.LockedCritter = (cr ? cr->GetId() : 0);
 }
 
-int FOClient::SScriptFunc::Global_GetFog( ushort zone_x, ushort zone_y )
+int FOClient::SScriptFunc::Global_GetFog( uint16 zone_x, uint16 zone_y )
 {
     if( !Self->Chosen || Self->Chosen->IsNotValid )
         SCRIPT_ERROR_R0( "Chosen data not valid." );
@@ -11044,14 +11044,14 @@ uint FOClient::SScriptFunc::Global_GetDayTime( uint day_part )
     return 0;
 }
 
-void FOClient::SScriptFunc::Global_GetDayColor( uint day_part, uchar& r, uchar& g, uchar& b )
+void FOClient::SScriptFunc::Global_GetDayColor( uint day_part, uint8& r, uint8& g, uint8& b )
 {
     r = g = b = 0;
     if( day_part >= 4 )
         SCRIPT_ERROR_R( "Invalid day part arg." );
     if( Self->HexMngr.IsMapLoaded() )
     {
-        uchar* col = Self->HexMngr.GetMapDayColor();
+        uint8* col = Self->HexMngr.GetMapDayColor();
         r = col[0 + day_part];
         g = col[4 + day_part];
         b = col[8 + day_part];
@@ -11068,29 +11068,29 @@ void FOClient::SScriptFunc::Global_Log( ScriptString& text )
     Script::Log( text.c_str() );
 }
 
-ProtoItem* FOClient::SScriptFunc::Global_GetProtoItem( ushort proto_id )
+ProtoItem* FOClient::SScriptFunc::Global_GetProtoItem( uint16 proto_id )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( proto_id );
     // if(!proto_item) SCRIPT_ERROR_R0("Proto item not found.");
     return proto_item;
 }
 
-uint FOClient::SScriptFunc::Global_GetDistantion( ushort hex_x1, ushort hex_y1, ushort hex_x2, ushort hex_y2 )
+uint FOClient::SScriptFunc::Global_GetDistantion( uint16 hex_x1, uint16 hex_y1, uint16 hex_x2, uint16 hex_y2 )
 {
     return DistGame( hex_x1, hex_y1, hex_x2, hex_y2 );
 }
 
-uchar FOClient::SScriptFunc::Global_GetDirection( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+uint8 FOClient::SScriptFunc::Global_GetDirection( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy );
 }
 
-uchar FOClient::SScriptFunc::Global_GetOffsetDir( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset )
+uint8 FOClient::SScriptFunc::Global_GetOffsetDir( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float offset )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy, offset );
 }
 
-uint FOClient::SScriptFunc::Global_GetFullSecond( ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second )
+uint FOClient::SScriptFunc::Global_GetFullSecond( uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second )
 {
     if( !year )
         year = GameOpt.Year;
@@ -11116,7 +11116,7 @@ uint FOClient::SScriptFunc::Global_GetFullSecond( ushort year, ushort month, ush
     return Timer::GetFullSecond( year, month, day, hour, minute, second );
 }
 
-void FOClient::SScriptFunc::Global_GetGameTime( uint full_second, ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second )
+void FOClient::SScriptFunc::Global_GetGameTime( uint full_second, uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second )
 {
     DateTime dt = Timer::GetGameTime( full_second );
     year = dt.Year;
@@ -11144,7 +11144,7 @@ bool FOClient::SScriptFunc::Global_StrToFloat( ScriptString* text, float& result
     return true;
 }
 
-void FOClient::SScriptFunc::Global_MoveHexByDir( ushort& hx, ushort& hy, uchar dir, uint steps )
+void FOClient::SScriptFunc::Global_MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint steps )
 {
     if( !Self->HexMngr.IsMapLoaded() )
         SCRIPT_ERROR_R( "Map not loaded." );
@@ -11331,7 +11331,7 @@ void FOClient::SScriptFunc::Global_MouseClick( int x, int y, int button, int cur
     Self->CurMode = prev_cursor;
 }
 
-void FOClient::SScriptFunc::Global_KeyboardPress( uchar key1, uchar key2, ScriptString* key1_text, ScriptString* key2_text )
+void FOClient::SScriptFunc::Global_KeyboardPress( uint8 key1, uint8 key2, ScriptString* key1_text, ScriptString* key2_text )
 {
     IntVec prev_events = MainWindow->KeyboardEvents;
     StrVec prev_events_text = MainWindow->KeyboardEventsText;
@@ -11394,7 +11394,7 @@ uint FOClient::SScriptFunc::Global_GetTick()
     return Timer::FastTick();
 }
 
-void FOClient::SScriptFunc::Global_GetTime( ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second, ushort& milliseconds )
+void FOClient::SScriptFunc::Global_GetTime( uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds )
 {
     DateTime dt;
     Timer::GetCurrentDateTime( dt );
@@ -11438,7 +11438,7 @@ bool FOClient::SScriptFunc::Global_SetParameterChangeBehaviour( uint index, Scri
     return true;
 }
 
-void FOClient::SScriptFunc::Global_AllowSlot( uchar index, ScriptString& ini_option )
+void FOClient::SScriptFunc::Global_AllowSlot( uint8 index, ScriptString& ini_option )
 {
     if( index <= SLOT_ARMOR || index == SLOT_GROUND )
         SCRIPT_ERROR_R( "Invalid index arg." );
@@ -11636,7 +11636,7 @@ uint FOClient::SScriptFunc::Global_LoadSprite( ScriptString& spr_name, int path_
     return Self->AnimLoad( spr_name.c_str(), path_index, RES_SCRIPT );
 }
 
-uint FOClient::SScriptFunc::Global_LoadSpriteHash( uint name_hash, uchar dir )
+uint FOClient::SScriptFunc::Global_LoadSpriteHash( uint name_hash, uint8 dir )
 {
     return Self->AnimLoad( name_hash, dir, RES_SCRIPT );
 }
@@ -11779,7 +11779,7 @@ void FOClient::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     SprMngr.DrawPoints( points, primitive_type );
 }
 
-void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy )
+void FOClient::SScriptFunc::Global_DrawMapSprite( uint16 hx, uint16 hy, uint16 proto_id, uint spr_id, int spr_index, int ox, int oy )
 {
     if( !Self->HexMngr.SpritesCanDrawMap )
         return;
@@ -11830,7 +11830,7 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
 
         if( FLAG( proto_item->Flags, ITEM_FLAG_COLORIZE ) )
         {
-            spr.SetAlpha( ( (uchar*)&proto_item->LightColor ) + 3 );
+            spr.SetAlpha( ( (uint8*)&proto_item->LightColor ) + 3 );
             spr.SetColor( proto_item->LightColor & 0xFFFFFF );
         }
 
@@ -11839,7 +11839,7 @@ void FOClient::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
     }
 }
 
-void FOClient::SScriptFunc::Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uchar dir, int l, int t, int r, int b, bool scratch, bool center, uint color )
+void FOClient::SScriptFunc::Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color )
 {
     if( CritType::IsEnabled( crtype ) )
     {
@@ -12165,7 +12165,7 @@ void FOClient::SScriptFunc::Global_DrawHardcodedScreen( int screen )
     }
 }
 
-bool FOClient::SScriptFunc::Global_GetHexPos( ushort hx, ushort hy, int& x, int& y )
+bool FOClient::SScriptFunc::Global_GetHexPos( uint16 hx, uint16 hy, int& x, int& y )
 {
     x = y = 0;
     if( Self->HexMngr.IsMapLoaded() && hx < Self->HexMngr.GetMaxHexX() && hy < Self->HexMngr.GetMaxHexY() )
@@ -12180,9 +12180,9 @@ bool FOClient::SScriptFunc::Global_GetHexPos( ushort hx, ushort hy, int& x, int&
     return false;
 }
 
-bool FOClient::SScriptFunc::Global_GetMonitorHex( int x, int y, ushort& hx, ushort& hy, bool ignore_interface )
+bool FOClient::SScriptFunc::Global_GetMonitorHex( int x, int y, uint16& hx, uint16& hy, bool ignore_interface )
 {
-    ushort hx_, hy_;
+    uint16 hx_, hy_;
     if( Self->GetCurHex( hx_, hy_, ignore_interface ) )
     {
         hx = hx_;
@@ -12214,14 +12214,14 @@ CritterCl* FOClient::SScriptFunc::Global_GetMonitorCritter( int x, int y, bool i
     return cr;
 }
 
-ushort FOClient::SScriptFunc::Global_GetMapWidth()
+uint16 FOClient::SScriptFunc::Global_GetMapWidth()
 {
     if( !Self->HexMngr.IsMapLoaded() )
         SCRIPT_ERROR_R0( "Map is not loaded." );
     return Self->HexMngr.GetMaxHexX();
 }
 
-ushort FOClient::SScriptFunc::Global_GetMapHeight()
+uint16 FOClient::SScriptFunc::Global_GetMapHeight()
 {
     if( !Self->HexMngr.IsMapLoaded() )
         SCRIPT_ERROR_R0( "Map is not loaded." );

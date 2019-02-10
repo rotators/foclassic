@@ -775,7 +775,7 @@ uint Str::GetHash( const char* name )
     char name_[MAX_FOPATH];
     Copy( name_, name );
     uint len = FormatForHash( name_ );
-    return Crypt.Crc32( (uchar*)name_, len );
+    return Crypt.Crc32( (uint8*)name_, len );
 }
 
 const char* Str::GetName( uint hash )
@@ -792,7 +792,7 @@ void Str::AddNameHash( const char* name )
     char name_[MAX_FOPATH];
     Copy( name_, name );
     uint len = FormatForHash( name_ );
-    uint hash = Crypt.Crc32( (uchar*)name_, len );
+    uint hash = Crypt.Crc32( (uint8*)name_, len );
 
     auto it = NamesHash.find( hash );
     if( it == NamesHash.end() )

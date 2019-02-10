@@ -101,7 +101,7 @@ bool DataFileZip::ReadTree()
     return true;
 }
 
-uchar* DataFileZip::OpenFile( const char* fname, uint& len )
+uint8* DataFileZip::OpenFile( const char* fname, uint& len )
 {
     if( !zipHandle )
         return NULL;
@@ -115,7 +115,7 @@ uchar* DataFileZip::OpenFile( const char* fname, uint& len )
     if( unzGoToFilePos( zipHandle, &info.Pos ) != UNZ_OK )
         return NULL;
 
-    uchar* buf = new uchar[info.UncompressedSize + 1];
+    uint8* buf = new uint8[info.UncompressedSize + 1];
     if( !buf )
         return NULL;
 

@@ -16,7 +16,7 @@ class ItemHex : public Item
 public:
     ItemHex( uint id, ProtoItem* proto, Item::ItemData* data, int hx, int hy, int dir, short scr_x, short scr_y, int* hex_scr_x, int* hex_scr_y, int cut );
     // ~ItemHex() Destructor not been called because Item not have virtual destructor
-    bool operator==( const ushort& _right ) { return GetProtoId() == _right;  }
+    bool operator==( const uint16& _right ) { return GetProtoId() == _right;  }
 
 public:
     uint              SprId;
@@ -24,10 +24,10 @@ public:
     short             ScrX, ScrY;
     int*              HexScrX, * HexScrY;
     int               SpriteCut;
-    uchar             Alpha;
+    uint8             Alpha;
     AnyFrames*        Anim;
     static AnyFrames* DefaultAnim;
-    uchar             ScenFlags;
+    uint8             ScenFlags;
     bool              SprDrawValid;
     Sprite*           SprDraw, * SprTemp;
     Effect*           DrawEffect;
@@ -36,7 +36,7 @@ private:
     int   curSpr, begSpr, endSpr;
     uint  animBegSpr, animEndSpr;
     uint  animTick;
-    uchar maxAlpha;
+    uint8 maxAlpha;
     bool  isAnimated;
     uint  animNextTick;
 
@@ -45,8 +45,8 @@ public:
     bool   IsScenOrGrid()       { return Proto->IsScen() || Proto->IsGrid(); }
     bool   IsItem()             { return Proto->IsItem(); }
     bool   IsWall()             { return Proto->IsWall(); }
-    ushort GetHexX()            { return HexX; }
-    ushort GetHexY()            { return HexY; }
+    uint16 GetHexX()            { return HexX; }
+    uint16 GetHexY()            { return HexY; }
     short  GetOffsetX()         { return Data.OffsetX ? Data.OffsetX : Proto->OffsetX; }
     short  GetOffsetY()         { return Data.OffsetY ? Data.OffsetY : Proto->OffsetY; }
     bool   IsAnimated()         { return isAnimated; }
@@ -57,7 +57,7 @@ public:
     bool   IsTransparent()      { return maxAlpha < 0xFF; }
     bool   IsFullyTransparent() { return maxAlpha == 0; }
     void   RefreshAnim();
-    void   SetMaxAlpha( uchar alpha );
+    void   SetMaxAlpha( uint8 alpha );
     void   RestoreAlpha();
     void   RefreshAlpha();
     void   SetSprite( Sprite* spr );
@@ -93,7 +93,7 @@ public:
     bool       IsEffect()        { return isEffect; }
     bool       IsDynamicEffect() { return IsEffect() && (effSx || effSy); }
     void       SetEffect( float sx, float sy, uint dist );
-    UShortPair GetEffectStep();
+    UInt16Pair GetEffectStep();
 
     // Fade
 private:

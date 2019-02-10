@@ -70,12 +70,12 @@ public:
     BufferManager& operator>>( uint& i );
     BufferManager& operator<<( int i );
     BufferManager& operator>>( int& i );
-    BufferManager& operator<<( ushort i );
-    BufferManager& operator>>( ushort& i );
+    BufferManager& operator<<( uint16 i );
+    BufferManager& operator>>( uint16& i );
     BufferManager& operator<<( short i );
     BufferManager& operator>>( short& i );
-    BufferManager& operator<<( uchar i );
-    BufferManager& operator>>( uchar& i );
+    BufferManager& operator<<( uint8 i );
+    BufferManager& operator>>( uint8& i );
     BufferManager& operator<<( char i );
     BufferManager& operator>>( char& i );
     BufferManager& operator<<( bool i );

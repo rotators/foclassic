@@ -305,7 +305,7 @@ void Item::EventDrop( Critter* cr )
     Script::RunPrepared();
 }
 
-void Item::EventMove( Critter* cr, uchar from_slot )
+void Item::EventMove( Critter* cr, uint8 from_slot )
 {
     if( !PrepareScriptFunc( ITEM_EVENT_MOVE ) )
         return;
@@ -315,7 +315,7 @@ void Item::EventMove( Critter* cr, uchar from_slot )
     Script::RunPrepared();
 }
 
-void Item::EventWalk( Critter* cr, bool entered, uchar dir )
+void Item::EventWalk( Critter* cr, bool entered, uint8 dir )
 {
     if( !PrepareScriptFunc( ITEM_EVENT_WALK ) )
         return;
@@ -329,7 +329,7 @@ void Item::EventWalk( Critter* cr, bool entered, uchar dir )
 
 void Item::SetSortValue( ItemPtrVec& items )
 {
-    ushort sort_value = 0x7FFF;
+    uint16 sort_value = 0x7FFF;
     for( auto it = items.begin(), end = items.end(); it != end; ++it )
     {
         Item* item = *it;
@@ -384,9 +384,9 @@ void Item::Count_Sub( uint val )
 #ifdef FOCLASSIC_SERVER
 void Item::Repair()
 {
-    uchar&  flags = Data.BrokenFlags;
-    uchar&  broken_count = Data.BrokenCount;
-    ushort& deterioration = Data.Deterioration;
+    uint8&  flags = Data.BrokenFlags;
+    uint8&  broken_count = Data.BrokenCount;
+    uint16& deterioration = Data.Deterioration;
 
     if( FLAG( flags, BI_BROKEN ) )
     {
@@ -396,7 +396,7 @@ void Item::Repair()
 }
 #endif
 
-void Item::SetMode( uchar mode )
+void Item::SetMode( uint8 mode )
 {
     if( !IsWeapon() )
     {
@@ -410,8 +410,8 @@ void Item::SetMode( uchar mode )
     }
     else
     {
-        uchar use = (mode & 0xF);
-        uchar aim = (mode >> 4);
+        uint8 use = (mode & 0xF);
+        uint8 aim = (mode >> 4);
 
         switch( use )
         {
@@ -634,7 +634,7 @@ void Item::ContGetAllItems( ItemPtrVec& items, bool skip_hide, bool sync_lock )
 }
 
 # pragma MESSAGE("Add explicit sync lock.")
-Item* Item::ContGetItemByPid( ushort pid, uint stack_id )
+Item* Item::ContGetItemByPid( uint16 pid, uint stack_id )
 {
     if( !IsContainer() || !ChildItems )
         return NULL;
@@ -726,13 +726,13 @@ uint Item::LightGetHash()
     if( !IsLight() )
         return 0;
     if( Data.LightIntensity )
-        return Crypt.Crc32( (uchar*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_FLAG_LIGHT );
+        return Crypt.Crc32( (uint8*)&Data.LightIntensity, 7 ) + FLAG( Data.Flags, ITEM_FLAG_LIGHT );
     return (uint)Proto;
 }
 
 uint ProtoItem::GetHash()
 {
-    return Crypt.Crc32( (uchar*)this, sizeof(ProtoItem) );
+    return Crypt.Crc32( (uint8*)this, sizeof(ProtoItem) );
 }
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)

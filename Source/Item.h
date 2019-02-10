@@ -57,7 +57,7 @@ class ProtoItem
 {
 public:
     // Internal data
-    ushort ProtoId;
+    uint16 ProtoId;
     int    Type;
     uint   PicMap;
     uint   PicInv;
@@ -67,39 +67,39 @@ public:
     bool   GroundLevel;
     int    Corner;
     int    Dir;
-    uchar  Slot;
+    uint8  Slot;
     uint   Weight;
     uint   Volume;
     uint   Cost;
     uint   StartCount;
-    uchar  SoundId;
-    uchar  Material;
-    uchar  LightFlags;
-    uchar  LightDistance;
+    uint8  SoundId;
+    uint8  Material;
+    uint8  LightFlags;
+    uint8  LightDistance;
     char   LightIntensity;
     uint   LightColor;
     bool   DisableEgg;
-    ushort AnimWaitBase;
-    ushort AnimWaitRndMin;
-    ushort AnimWaitRndMax;
-    uchar  AnimStay[2];
-    uchar  AnimShow[2];
-    uchar  AnimHide[2];
+    uint16 AnimWaitBase;
+    uint16 AnimWaitRndMin;
+    uint16 AnimWaitRndMax;
+    uint8  AnimStay[2];
+    uint8  AnimShow[2];
+    uint8  AnimHide[2];
     short  OffsetX;
     short  OffsetY;
-    uchar  SpriteCut;
+    uint8  SpriteCut;
     char   DrawOrderOffsetHexY;
-    ushort RadioChannel;
-    ushort RadioFlags;
-    uchar  RadioBroadcastSend;
-    uchar  RadioBroadcastRecv;
-    uchar  IndicatorStart;
-    uchar  IndicatorMax;
+    uint16 RadioChannel;
+    uint16 RadioFlags;
+    uint8  RadioBroadcastSend;
+    uint8  RadioBroadcastRecv;
+    uint8  IndicatorStart;
+    uint8  IndicatorMax;
     uint   HolodiskNum;
     int    StartValue[ITEM_MAX_SCRIPT_VALUES];
-    uchar  BlockLines[ITEM_MAX_BLOCK_LINES];
-    ushort ChildPid[ITEM_MAX_CHILDS];
-    uchar  ChildLines[ITEM_MAX_CHILDS][ITEM_MAX_CHILD_LINES];
+    uint8  BlockLines[ITEM_MAX_BLOCK_LINES];
+    uint16 ChildPid[ITEM_MAX_CHILDS];
+    uint8  ChildLines[ITEM_MAX_CHILDS][ITEM_MAX_CHILD_LINES];
 
     // User data, binded with 'bindfield' pragma
     int UserData[PROTO_ITEM_USER_DATA_SIZE / sizeof(int)];
@@ -114,7 +114,7 @@ public:
     uint   Weapon_Anim1;
     uint   Weapon_MaxAmmoCount;
     int    Weapon_Caliber;
-    ushort Weapon_DefaultAmmoPid;
+    uint16 Weapon_DefaultAmmoPid;
     int    Weapon_MinStrength;
     int    Weapon_Perk;
     uint   Weapon_ActiveUses;
@@ -124,7 +124,7 @@ public:
     uint   Weapon_Round[USE_MAX];
     uint   Weapon_ApCost[USE_MAX];
     bool   Weapon_Aim[USE_MAX];
-    uchar  Weapon_SoundId[USE_MAX];
+    uint8  Weapon_SoundId[USE_MAX];
     int    Ammo_Caliber;
     bool   Door_NoBlockMove;
     bool   Door_NoBlockShoot;
@@ -133,7 +133,7 @@ public:
     bool   Container_CannotPickUp;
     bool   Container_MagicHandsGrnd;
     bool   Container_Changeble;
-    ushort Locker_Condition;
+    uint16 Locker_Condition;
     int    Grid_Type;
     uint   Car_Speed;
     uint   Car_Passability;
@@ -176,7 +176,7 @@ public:
     }
     bool IsCanPickUp() { return FLAG( Flags, ITEM_FLAG_CAN_PICKUP ); }
 
-    bool operator==( const ushort& _r ) { return ProtoId == _r;  }
+    bool operator==( const uint16& _r ) { return ProtoId == _r;  }
     ProtoItem() { Clear(); }
 
     #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
@@ -214,7 +214,7 @@ public:
     uint       Id;
     ProtoItem* Proto;
     int        From;
-    uchar      Accessory;
+    uint8      Accessory;
     bool       ViewPlaceOnMap;
     short      Reserved0;
 
@@ -223,14 +223,14 @@ public:
         struct
         {
             uint   MapId;
-            ushort HexX;
-            ushort HexY;
+            uint16 HexX;
+            uint16 HexY;
         } AccHex;
 
         struct
         {
             uint  Id;
-            uchar Slot;
+            uint8 Slot;
         } AccCritter;
 
         struct
@@ -246,40 +246,40 @@ public:
     {
         static char SendMask[ITEM_DATA_MASK_MAX][120];
 
-        ushort      SortValue;
-        uchar       Info;
-        uchar       Indicator;
+        uint16      SortValue;
+        uint8       Info;
+        uint8       Indicator;
         uint        PicMapHash;
         uint        PicInvHash;
-        ushort      AnimWaitBase;
-        uchar       AnimStay[2];
-        uchar       AnimShow[2];
-        uchar       AnimHide[2];
+        uint16      AnimWaitBase;
+        uint8       AnimStay[2];
+        uint8       AnimShow[2];
+        uint8       AnimHide[2];
         uint        Flags;
-        uchar       Mode;
+        uint8       Mode;
         char        LightIntensity;
-        uchar       LightDistance;
-        uchar       LightFlags;
+        uint8       LightDistance;
+        uint8       LightFlags;
         uint        LightColor;
-        ushort      ScriptId;
+        uint16      ScriptId;
         short       TrapValue;
         uint        Count;
         uint        Cost;
         int         ScriptValues[ITEM_MAX_SCRIPT_VALUES];
-        uchar       BrokenFlags;
-        uchar       BrokenCount;
-        ushort      Deterioration;
-        ushort      AmmoPid;
-        ushort      AmmoCount;
+        uint8       BrokenFlags;
+        uint8       BrokenCount;
+        uint16      Deterioration;
+        uint16      AmmoPid;
+        uint16      AmmoCount;
         uint        LockerId;
-        ushort      LockerCondition;
-        ushort      LockerComplexity;
+        uint16      LockerCondition;
+        uint16      LockerComplexity;
         uint        HolodiskNumber;
-        ushort      RadioChannel;
-        ushort      RadioFlags;
-        uchar       RadioBroadcastSend;
-        uchar       RadioBroadcastRecv;
-        ushort      Charge;
+        uint16      RadioChannel;
+        uint16      RadioFlags;
+        uint8       RadioBroadcastSend;
+        uint8       RadioBroadcastRecv;
+        uint16      Charge;
         short       OffsetX;
         short       OffsetY;
         short       Dir;
@@ -321,8 +321,8 @@ public:
     bool EventUseOnMe( Critter* cr, Item* used_item );
     bool EventSkill( Critter* cr, int skill );
     void EventDrop( Critter* cr );
-    void EventMove( Critter* cr, uchar from_slot );
-    void EventWalk( Critter* cr, bool entered, uchar dir );
+    void EventMove( Critter* cr, uint8 from_slot );
+    void EventWalk( Critter* cr, bool entered, uint8 dir );
     #endif // FOCLASSIC_SERVER
 
     void        Init( ProtoItem* proto );
@@ -332,7 +332,7 @@ public:
 
     // All
     uint   GetId()            { return Id; }
-    ushort GetProtoId()       { return Proto->ProtoId; }
+    uint16 GetProtoId()       { return Proto->ProtoId; }
     uint   GetInfo()          { return Proto->ProtoId * 100 + Data.Info; }
     uint   GetPicMap()        { return Data.PicMapHash ? Data.PicMapHash : Proto->PicMap; }
     uint   GetPicInv()        { return Data.PicInvHash ? Data.PicInvHash : Proto->PicInv; }
@@ -344,8 +344,8 @@ public:
     void Count_Sub( uint val );
 
     int    GetType() { return Proto->Type; }
-    void   SetMode( uchar mode );
-    ushort GetSortValue() { return Data.SortValue; }
+    void   SetMode( uint8 mode );
+    uint16 GetSortValue() { return Data.SortValue; }
 
     bool IsStackable() { return Proto->Stackable; }
     bool IsBlocks()    { return Proto->IsBlocks(); }
@@ -428,7 +428,7 @@ public:
     void  ContEraseItem( Item* item );
     Item* ContGetItem( uint item_id, bool skip_hide );
     void  ContGetAllItems( ItemPtrVec& items, bool skip_hide, bool sync_lock );
-    Item* ContGetItemByPid( ushort pid, uint stack_id );
+    Item* ContGetItemByPid( uint16 pid, uint stack_id );
     void  ContGetItems( ItemPtrVec& items, uint stack_id, bool sync_lock );
     int   ContGetFreeVolume( uint stack_id );
     bool  ContIsItems();
@@ -462,7 +462,7 @@ public:
     // Colorize
     bool  IsColorize()  { return FLAG( Data.Flags, ITEM_FLAG_COLORIZE ); }
     uint  GetColor()    { return (Data.LightColor ? Data.LightColor : Proto->LightColor) & 0xFFFFFF; }
-    uchar GetAlpha()    { return (Data.LightColor ? Data.LightColor : Proto->LightColor) >> 24; }
+    uint8 GetAlpha()    { return (Data.LightColor ? Data.LightColor : Proto->LightColor) >> 24; }
     uint  GetInvColor() { return FLAG( Data.Flags, ITEM_FLAG_COLORIZE_INV ) ? (Data.LightColor ? Data.LightColor : Proto->LightColor) : 0; }
 
     // Light
@@ -505,14 +505,14 @@ public:
     int maxhx__ = maxhx, maxhy__ = maxhy;                                    \
     for( uint i__ = 0; i__ < sizeof(lines); i__++ )                          \
     {                                                                        \
-        uchar block__ = lines[i__];                                          \
-        uchar dir__ = (block__ >> 4);                                        \
+        uint8 block__ = lines[i__];                                          \
+        uint8 dir__ = (block__ >> 4);                                        \
         if( dir__ >= DIRS_COUNT )                                            \
             break;                                                           \
-        uchar steps__ = (block__ & 0xF);                                     \
+        uint8 steps__ = (block__ & 0xF);                                     \
         if( !steps__ )                                                       \
             break;                                                           \
-        for( uchar j__ = 0; j__ < steps__; j__++ )                           \
+        for( uint8 j__ = 0; j__ < steps__; j__++ )                           \
         {                                                                    \
             MoveHexByDirUnsafe( hx__, hy__, dir__ );                         \
             if( hx__ < 0 || hy__ < 0 || hx__ >= maxhx__ || hy__ >= maxhy__ ) \

@@ -7,13 +7,13 @@
 class DataFileDat : public DataFile
 {
 private:
-    typedef map<string, uchar*> IndexMap;
+    typedef map<string, uint8*> IndexMap;
 
     IndexMap filesTree;
     string   fileName;
-    uchar*   memTree;
+    uint8*   memTree;
     void*    datHandle;
-    UCharVec readBuf;
+    UInt8Vec readBuf;
 
     uint64   timeCreate, timeAccess, timeWrite;
 
@@ -24,7 +24,7 @@ public:
     ~DataFileDat();
 
     const string& GetPackName() { return fileName; }
-    uchar*        OpenFile( const char* fname, uint& len );
+    uint8*        OpenFile( const char* fname, uint& len );
     void          GetFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result );
     void          GetTime( uint64* create, uint64* access, uint64* write );
 };

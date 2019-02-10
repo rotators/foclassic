@@ -299,7 +299,7 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
             if( Str::Compare( name, "BlockLines" ) || Str::CompareCount( name, "ChildLines_", 11 ) )
             {
                 // Get lines destination
-                uchar* lines;
+                uint8* lines;
                 uint   max_count;
                 if( Str::Compare( name, "BlockLines" ) )
                 {
@@ -337,8 +337,8 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 uint svalue_len = Str::Length( svalue );
                 for( uint k = 0; k / 2 < max_count && k + 1 < svalue_len; k += 2 )
                 {
-                    uchar dir = (svalue[k] - '0') & 0xF;
-                    uchar steps = (svalue[k + 1] - '0') & 0xF;
+                    uint8 dir = (svalue[k] - '0') & 0xF;
+                    uint8 steps = (svalue[k + 1] - '0') & 0xF;
                     if( dir >= DIRS_COUNT || !steps )
                         break;
                     lines[k / 2] = (dir << 4) | steps;
@@ -350,17 +350,17 @@ bool ItemManager::LoadProtos( ProtoItemVec& protos, const char* fname )
                 int size = engine->GetSizeOfPrimitiveType( type_id );
                 switch( size )
                 {
-                    case sizeof(uchar):
-                        *(uchar*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<uchar>( svalue );
+                    case sizeof(uint8):
+                        *(uint8*)( ( (uint8*)&proto_item ) + offset ) = ResolveProtoValue<uint8>( svalue );
                         break;
-                    case sizeof(ushort):
-                        *(ushort*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<ushort>( svalue );
+                    case sizeof(uint16):
+                        *(uint16*)( ( (uint8*)&proto_item ) + offset ) = ResolveProtoValue<uint16>( svalue );
                         break;
                     case sizeof(uint):
-                        *(uint*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<uint>( svalue );
+                        *(uint*)( ( (uint8*)&proto_item ) + offset ) = ResolveProtoValue<uint>( svalue );
                         break;
                     case sizeof(int64):
-                        *(int64*)( ( (uchar*)&proto_item ) + offset ) = ResolveProtoValue<int64>( svalue );
+                        *(int64*)( ( (uint8*)&proto_item ) + offset ) = ResolveProtoValue<int64>( svalue );
                         break;
                     default:
                         break;
@@ -459,7 +459,7 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
     for( uint i = 0, j = (uint)protos.size(); i < j; i++ )
     {
         ProtoItem& proto_item = protos[i];
-        ushort     pid = proto_item.ProtoId;
+        uint16     pid = proto_item.ProtoId;
 
         if( !pid || pid >= MAX_PROTO_ITEMS )
         {
@@ -494,12 +494,12 @@ void ItemManager::ParseProtos( ProtoItemVec& protos, const char* collection_name
         if( typeProto[i].size() )
         {
             std::sort( typeProto[i].begin(), typeProto[i].end(), CompProtoByPid );
-            protoHash[i] = Crypt.Crc32( (uchar*)&typeProto[i][0], sizeof(ProtoItem) * (uint)typeProto[i].size() );
+            protoHash[i] = Crypt.Crc32( (uint8*)&typeProto[i][0], sizeof(ProtoItem) * (uint)typeProto[i].size() );
         }
     }
 }
 
-ProtoItem* ItemManager::GetProtoItem( ushort pid )
+ProtoItem* ItemManager::GetProtoItem( uint16 pid )
 {
     if( !IsInitProto( pid ) )
         return NULL;
@@ -522,14 +522,14 @@ void ItemManager::GetCopyAllProtos( ProtoItemVec& protos )
     }
 }
 
-bool ItemManager::IsInitProto( ushort pid )
+bool ItemManager::IsInitProto( uint16 pid )
 {
     if( !pid || pid >= MAX_PROTO_ITEMS )
         return false;
     return allProto[pid].ProtoId != 0;
 }
 
-const char* ItemManager::GetProtoScript( ushort pid )
+const char* ItemManager::GetProtoScript( uint16 pid )
 {
     if( !IsInitProto( pid ) )
         return NULL;
@@ -553,7 +553,7 @@ void ItemManager::ClearProtos( int type /* = 0xFF */ )
     {
         for( uint i = 0; i < typeProto[type].size(); ++i )
         {
-            ushort pid = (typeProto[type])[i].ProtoId;
+            uint16 pid = (typeProto[type])[i].ProtoId;
             if( IsInitProto( pid ) )
             {
                 allProto[pid].Clear();
@@ -569,7 +569,7 @@ void ItemManager::ClearProtos( int type /* = 0xFF */ )
     }
 }
 
-void ItemManager::ClearProto( ushort pid )
+void ItemManager::ClearProto( uint16 pid )
 {
     ProtoItem* proto_item = GetProtoItem( pid );
     if( !proto_item )
@@ -588,7 +588,7 @@ void ItemManager::ClearProto( ushort pid )
     if( it != protos.end() )
         protos.erase( it );
 
-    hash = Crypt.Crc32( (uchar*)&protos[0], sizeof(ProtoItem) * (uint)protos.size() );
+    hash = Crypt.Crc32( (uint8*)&protos[0], sizeof(ProtoItem) * (uint)protos.size() );
 }
 
 #ifdef FOCLASSIC_SERVER
@@ -606,13 +606,13 @@ void ItemManager::SaveAllItemsFile( void (*save_func)( void*, size_t ) )
         save_func( &item->Data, sizeof(item->Data) );
         if( item->PLexems )
         {
-            uchar lex_len = Str::Length( item->PLexems );
+            uint8 lex_len = Str::Length( item->PLexems );
             save_func( &lex_len, sizeof(lex_len) );
             save_func( item->PLexems, lex_len );
         }
         else
         {
-            uchar zero = 0;
+            uint8 zero = 0;
             save_func( &zero, sizeof(zero) );
         }
     }
@@ -637,9 +637,9 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
     {
         uint   id;
         FileRead( f, &id, sizeof(id) );
-        ushort pid;
+        uint16 pid;
         FileRead( f, &pid, sizeof(pid) );
-        uchar  acc;
+        uint8  acc;
         FileRead( f, &acc, sizeof(acc) );
         char   acc_buf[8];
         FileRead( f, &acc_buf[0], sizeof(acc_buf) );
@@ -647,7 +647,7 @@ bool ItemManager::LoadAllItemsFile( void* f, int version )
         Item::ItemData data;
         FileRead( f, &data, sizeof(data) );
 
-        uchar lex_len;
+        uint8 lex_len;
         char  lexems[1024] = { 0 };
         FileRead( f, &lex_len, sizeof(lex_len) );
         if( lex_len )
@@ -762,7 +762,7 @@ void ItemManager::GetItemIds( UIntSet& item_ids )
         item_ids.insert( (*it).second->GetId() );
 }
 
-Item* ItemManager::CreateItem( ushort pid, uint count, uint item_id /* = 0 */ )
+Item* ItemManager::CreateItem( uint16 pid, uint count, uint item_id /* = 0 */ )
 {
     if( !IsInitProto( pid ) )
         return NULL;
@@ -1027,7 +1027,7 @@ void ItemManager::MoveItem( Item* item, uint count, Critter* to_cr )
     }
 }
 
-void ItemManager::MoveItem( Item* item, uint count, Map* to_map, ushort to_hx, ushort to_hy )
+void ItemManager::MoveItem( Item* item, uint count, Map* to_map, uint16 to_hx, uint16 to_hy )
 {
     if( item->Accessory == ITEM_ACCESSORY_HEX && item->AccHex.MapId == to_map->GetId() && item->AccHex.HexX == to_hx && item->AccHex.HexY == to_hy )
         return;
@@ -1069,7 +1069,7 @@ void ItemManager::MoveItem( Item* item, uint count, Item* to_cont, uint stack_id
     }
 }
 
-Item* ItemManager::AddItemContainer( Item* cont, ushort pid, uint count, uint stack_id )
+Item* ItemManager::AddItemContainer( Item* cont, uint16 pid, uint count, uint stack_id )
 {
     if( !cont || !cont->IsContainer() )
         return NULL;
@@ -1130,7 +1130,7 @@ Item* ItemManager::AddItemContainer( Item* cont, ushort pid, uint count, uint st
     return result;
 }
 
-Item* ItemManager::AddItemCritter( Critter* cr, ushort pid, uint count )
+Item* ItemManager::AddItemCritter( Critter* cr, uint16 pid, uint count )
 {
     if( !count )
         return NULL;
@@ -1192,7 +1192,7 @@ Item* ItemManager::AddItemCritter( Critter* cr, ushort pid, uint count )
     return result;
 }
 
-bool ItemManager::SubItemCritter( Critter* cr, ushort pid, uint count, ItemPtrVec* erased_items )
+bool ItemManager::SubItemCritter( Critter* cr, uint16 pid, uint count, ItemPtrVec* erased_items )
 {
     if( !count )
         return true;
@@ -1244,7 +1244,7 @@ bool ItemManager::SubItemCritter( Critter* cr, ushort pid, uint count, ItemPtrVe
     return true;
 }
 
-bool ItemManager::SetItemCritter( Critter* cr, ushort pid, uint count )
+bool ItemManager::SetItemCritter( Critter* cr, uint16 pid, uint count )
 {
     uint cur_count = cr->CountItemPid( pid );
     if( cur_count > count )
@@ -1438,7 +1438,7 @@ void ItemManager::RadioRegister( Item* radio, bool add )
     }
 }
 
-void ItemManager::RadioSendText( Critter* cr, const char* text, ushort text_len, bool unsafe_text, ushort text_msg, uint num_str, UShortVec& channels )
+void ItemManager::RadioSendText( Critter* cr, const char* text, uint16 text_len, bool unsafe_text, uint16 text_msg, uint num_str, UInt16Vec& channels )
 {
     ItemPtrVec radios;
     ItemPtrVec items = cr->GetItemsNoLock();
@@ -1464,9 +1464,9 @@ void ItemManager::RadioSendText( Critter* cr, const char* text, ushort text_len,
     }
 }
 
-void ItemManager::RadioSendTextEx( ushort channel, int broadcast_type, uint from_map_id, ushort from_wx, ushort from_wy,
-                                   const char* text, ushort text_len, ushort intellect, bool unsafe_text,
-                                   ushort text_msg, uint num_str, const char* lexems )
+void ItemManager::RadioSendTextEx( uint16 channel, int broadcast_type, uint from_map_id, uint16 from_wx, uint16 from_wy,
+                                   const char* text, uint16 text_len, uint16 intellect, bool unsafe_text,
+                                   uint16 text_msg, uint num_str, const char* lexems )
 {
     // Broadcast
     if( broadcast_type != RADIO_BROADCAST_FORCE_ALL && broadcast_type != RADIO_BROADCAST_WORLD &&
@@ -1603,7 +1603,7 @@ void ItemManager::RadioSendTextEx( ushort channel, int broadcast_type, uint from
 }
 #endif // FOCLASSIC_SERVER
 
-void ItemManager::AddItemStatistics( ushort pid, uint val )
+void ItemManager::AddItemStatistics( uint16 pid, uint val )
 {
     if( !IsInitProto( pid ) )
         return;
@@ -1613,7 +1613,7 @@ void ItemManager::AddItemStatistics( ushort pid, uint val )
     itemCount[pid] += (int64)val;
 }
 
-void ItemManager::SubItemStatistics( ushort pid, uint val )
+void ItemManager::SubItemStatistics( uint16 pid, uint val )
 {
     if( !IsInitProto( pid ) )
         return;
@@ -1623,7 +1623,7 @@ void ItemManager::SubItemStatistics( ushort pid, uint val )
     itemCount[pid] -= (int64)val;
 }
 
-int64 ItemManager::GetItemStatistics( ushort pid )
+int64 ItemManager::GetItemStatistics( uint16 pid )
 {
     SCOPE_LOCK( itemCountLocker );
 

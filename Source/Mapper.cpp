@@ -571,7 +571,7 @@ void FOMapper::ChangeGameTime()
     HexMngr.RefreshMap();
 }
 
-uint FOMapper::AnimLoad( uint name_hash, uchar dir, int res_type )
+uint FOMapper::AnimLoad( uint name_hash, uint8 dir, int res_type )
 {
     AnyFrames* anim = ResMngr.GetAnim( name_hash, dir, res_type );
     if( !anim )
@@ -654,7 +654,7 @@ void FOMapper::AnimRun( uint anim_id, uint flags )
     flags >>= 16;
 
     // Set frm
-    uchar cur_frm = flags & 0xFF;
+    uint8 cur_frm = flags & 0xFF;
     if( cur_frm > 0 )
     {
         cur_frm--;
@@ -757,8 +757,8 @@ void FOMapper::ParseKeyboard()
         const char* event_text = events_text[i / 2].c_str();
 
         // Keys codes mapping
-        uchar dikdw = 0;
-        uchar dikup = 0;
+        uint8 dikdw = 0;
+        uint8 dikup = 0;
         if( event == FL_KEYDOWN )
             dikdw = Keyb::MapKey( event_key );
         else if( event == FL_KEYUP )
@@ -1463,8 +1463,8 @@ void FOMapper::MainLoop()
             if( cr->IsNeedMove() )
             {
                 bool       err_move = ( (!cr->IsRunning && !CritType::IsCanWalk( cr->GetCrType() ) ) || (cr->IsRunning && !CritType::IsCanRun( cr->GetCrType() ) ) );
-                ushort     old_hx = cr->GetHexX();
-                ushort     old_hy = cr->GetHexY();
+                uint16     old_hx = cr->GetHexX();
+                uint16     old_hy = cr->GetHexY();
                 MapObject* mobj = FindMapObject( old_hx, old_hy, MAP_OBJECT_CRITTER, cr->Flags, false );
                 if( !err_move && mobj && HexMngr.TransitCritter( cr, cr->MoveSteps[0].first, cr->MoveSteps[0].second, true, false ) )
                 {
@@ -2039,7 +2039,7 @@ void FOMapper::IntDraw()
     if( HexMngr.IsMapLoaded() )
     {
         bool   hex_thru = false;
-        ushort hx, hy;
+        uint16 hx, hy;
         if( HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
             hex_thru = true;
         SprMngr.DrawStr( Rect( MODE_WIDTH - 100, 0, MODE_WIDTH, MODE_HEIGHT ),
@@ -2280,7 +2280,7 @@ void FOMapper::ObjDraw()
     }
 }
 
-void FOMapper::ObjKeyDown( uchar dik, const char* dik_text )
+void FOMapper::ObjKeyDown( uint8 dik, const char* dik_text )
 {
     if( !ObjVisible )
         return;
@@ -2316,12 +2316,12 @@ void FOMapper::ObjKeyDown( uchar dik, const char* dik_text )
     }
 }
 
-void FOMapper::ObjKeyDownA( MapObject* o, uchar dik, const char* dik_text )
+void FOMapper::ObjKeyDownA( MapObject* o, uint8 dik, const char* dik_text )
 {
     char*      val_c = NULL;
-    uchar*     val_b = NULL;
+    uint8*     val_b = NULL;
     short*     val_s = NULL;
-    ushort*    val_w = NULL;
+    uint16*    val_w = NULL;
     uint*      val_dw = NULL;
     int*       val_i = NULL;
     bool*      val_bool = NULL;
@@ -2711,15 +2711,15 @@ void FOMapper::IntLMouseDown()
                         if( !is_run && !CritType::IsCanWalk( crtype ) )
                             break;
 
-                        ushort   hx = so.MapNpc->GetHexX();
-                        ushort   hy = so.MapNpc->GetHexY();
-                        UCharVec steps;
+                        uint16   hx = so.MapNpc->GetHexX();
+                        uint16   hy = so.MapNpc->GetHexY();
+                        UInt8Vec steps;
                         if( HexMngr.FindPath( NULL, hx, hy, SelectHX1, SelectHY1, steps, -1 ) )
                         {
                             for( uint k = 0; k < steps.size(); k++ )
                             {
                                 MoveHexByDir( hx, hy, steps[k], HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
-                                so.MapNpc->MoveSteps.push_back( UShortPair( hx, hy ) );
+                                so.MapNpc->MoveSteps.push_back( UInt16Pair( hx, hy ) );
                             }
                             so.MapNpc->IsRunning = is_run;
                         }
@@ -2795,7 +2795,7 @@ void FOMapper::IntLMouseDown()
             // Switch ignore pid to draw
             if( Keyb::CtrlDwn )
             {
-                ushort  pid = (* CurItemProtos)[ind].ProtoId;
+                uint16  pid = (* CurItemProtos)[ind].ProtoId;
 
                 SubTab& stab = Tabs[INT_MODE_IGNORE][DEFAULT_SUB_TAB];
                 auto    it = std::find(stab.ItemProtos.begin(), stab.ItemProtos.end(), pid);
@@ -2877,8 +2877,8 @@ void FOMapper::IntLMouseDown()
                 else if( Keyb::ShiftDwn && InContObject && SelectedObj[0].MapNpc )
                 {
                     ProtoItem* proto_item = ItemMngr.GetProtoItem( InContObject->ProtoId );
-                    uchar      crtype = SelectedObj[0].MapNpc->GetCrType();
-                    uchar      anim1 = (proto_item->IsWeapon() ? proto_item->Weapon_Anim1 : 0);
+                    uint8      crtype = SelectedObj[0].MapNpc->GetCrType();
+                    uint8      anim1 = (proto_item->IsWeapon() ? proto_item->Weapon_Anim1 : 0);
 
                     if( proto_item->IsArmor() && CritType::IsCanArmor( crtype ) )
                     {
@@ -2888,7 +2888,7 @@ void FOMapper::IntLMouseDown()
                         }
                         else
                         {
-                            uchar to_slot = proto_item->Slot;
+                            uint8 to_slot = proto_item->Slot;
                             to_slot = to_slot ? to_slot : SLOT_ARMOR;
                             for( uint i = 0; i < SelectedObj[0].Childs.size(); i++ )
                             {
@@ -2949,7 +2949,7 @@ void FOMapper::IntLMouseDown()
                         if( child->MItem.ItemSlot == SLOT_HAND1 )
                         {
                             pitem_main = ItemMngr.GetProtoItem( child->ProtoId );
-                            uchar anim1 = (pitem_main->IsWeapon() ? pitem_main->Weapon_Anim1 : 0);
+                            uint8 anim1 = (pitem_main->IsWeapon() ? pitem_main->Weapon_Anim1 : 0);
                             if( anim1 && !CritType::IsAnim1( SelectedObj[0].MapNpc->GetCrType(), anim1 ) )
                             {
                                 pitem_main = NULL;
@@ -3203,8 +3203,8 @@ void FOMapper::IntLMouseUp()
                 CritVec    critters;
                 for( uint i = 0, j = (uint)h.size(); i < j; i++ )
                 {
-                    ushort hx = h[i].first;
-                    ushort hy = h[i].second;
+                    uint16 hx = h[i].first;
+                    uint16 hy = h[i].second;
 
                     // Items, critters
                     HexMngr.GetItems( hx, hy, items );
@@ -3219,7 +3219,7 @@ void FOMapper::IntLMouseUp()
 
                 for( uint k = 0; k < items.size(); k++ )
                 {
-                    ushort pid = items[k]->GetProtoId();
+                    uint16 pid = items[k]->GetProtoId();
                     if( HexMngr.IsIgnorePid( pid ) )
                         continue;
                     if( !GameOpt.ShowFast && HexMngr.IsFastPid( pid ) )
@@ -3459,7 +3459,7 @@ void FOMapper::IntSetMode( int mode )
     }
 }
 
-MapObject* FOMapper::FindMapObject( ProtoMap& pmap, ushort hx, ushort hy, uchar mobj_type, ushort pid, uint skip )
+MapObject* FOMapper::FindMapObject( ProtoMap& pmap, uint16 hx, uint16 hy, uint8 mobj_type, uint16 pid, uint skip )
 {
     for( uint i = 0, j = (uint)pmap.MObjects.size(); i < j; i++ )
     {
@@ -3476,7 +3476,7 @@ MapObject* FOMapper::FindMapObject( ProtoMap& pmap, ushort hx, ushort hy, uchar 
     return NULL;
 }
 
-void FOMapper::FindMapObjects( ProtoMap& pmap, ushort hx, ushort hy, uint radius, uchar mobj_type, ushort pid, MapObjectPtrVec& objects )
+void FOMapper::FindMapObjects( ProtoMap& pmap, uint16 hx, uint16 hy, uint radius, uint8 mobj_type, uint16 pid, MapObjectPtrVec& objects )
 {
     for( uint i = 0, j = (uint)pmap.MObjects.size(); i < j; i++ )
     {
@@ -3489,7 +3489,7 @@ void FOMapper::FindMapObjects( ProtoMap& pmap, ushort hx, ushort hy, uint radius
     }
 }
 
-MapObject* FOMapper::FindMapObject( ushort hx, ushort hy, uchar mobj_type, ushort pid, bool skip_selected )
+MapObject* FOMapper::FindMapObject( uint16 hx, uint16 hy, uint8 mobj_type, uint16 pid, bool skip_selected )
 {
     for( uint i = 0, j = (uint)CurProtoMap->MObjects.size(); i < j; i++ )
     {
@@ -3523,7 +3523,7 @@ void FOMapper::UpdateMapObject( MapObject* mobj )
     }
 }
 
-void FOMapper::MoveMapObject( MapObject* mobj, ushort hx, ushort hy )
+void FOMapper::MoveMapObject( MapObject* mobj, uint16 hx, uint16 hy )
 {
     if( hx >= HexMngr.GetMaxHexX() || hy >= HexMngr.GetMaxHexY() )
         return;
@@ -3685,7 +3685,7 @@ void FOMapper::SelectAddCrit( CritterCl* npc )
     SelectAdd( mobj );
 }
 
-void FOMapper::SelectAddTile( ushort hx, ushort hy, bool is_roof )
+void FOMapper::SelectAddTile( uint16 hx, uint16 hy, bool is_roof )
 {
     Field& f = HexMngr.GetField( hx, hy );
     if( !is_roof && f.Tiles.empty() )
@@ -4154,7 +4154,7 @@ void FOMapper::SelectDelete()
     CurMode = CUR_MODE_DEFAULT;
 }
 
-MapObject* FOMapper::ParseProto( ushort pid, ushort hx, ushort hy, MapObject* owner, bool is_child /* = false */ )
+MapObject* FOMapper::ParseProto( uint16 pid, uint16 hx, uint16 hy, MapObject* owner, bool is_child /* = false */ )
 {
     // Checks
     ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
@@ -4209,7 +4209,7 @@ MapObject* FOMapper::ParseProto( ushort pid, ushort hx, ushort hy, MapObject* ow
         if( !child )
             continue;
 
-        ushort child_hx = hx, child_hy = hy;
+        uint16 child_hx = hx, child_hy = hy;
         FOREACH_PROTO_ITEM_LINES( proto_item->ChildLines[i], child_hx, child_hy, HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY(),;
                                   );
 
@@ -4238,7 +4238,7 @@ MapObject* FOMapper::ParseProto( ushort pid, ushort hx, ushort hy, MapObject* ow
     return mobj;
 }
 
-void FOMapper::ParseTile( uint name_hash, ushort hx, ushort hy, short ox, short oy, uchar layer, bool is_roof )
+void FOMapper::ParseTile( uint name_hash, uint16 hx, uint16 hy, short ox, short oy, uint8 layer, bool is_roof )
 {
     if( hx >= HexMngr.GetMaxHexX() || hy >= HexMngr.GetMaxHexY() )
         return;
@@ -4249,7 +4249,7 @@ void FOMapper::ParseTile( uint name_hash, ushort hx, ushort hy, short ox, short 
     CurMode = CUR_MODE_DEFAULT;
 }
 
-void FOMapper::ParseNpc( ushort pid, ushort hx, ushort hy )
+void FOMapper::ParseNpc( uint16 pid, uint16 hx, uint16 hy )
 {
     CritData* pnpc = CrMngr.GetProto( pid );
     if( !pnpc )
@@ -4330,7 +4330,7 @@ MapObject* FOMapper::ParseMapObj( MapObject* mobj )
         cr->DefItemSlotArmor->Init( ItemMngr.GetProtoItem( ITEM_DEF_ARMOR ) );
         cr->HexX = mobj->MapX;
         cr->HexY = mobj->MapY;
-        cr->SetDir( (uchar)mobj->Dir );
+        cr->SetDir( (uint8)mobj->Dir );
         cr->Cond = CRITTER_CONDITION_LIFE;
         cr->Flags = mobj->ProtoId;
         memcpy( cr->Params, pnpc->Params, sizeof(pnpc->Params) );
@@ -4382,8 +4382,8 @@ void FOMapper::BufferCopy()
 
     for( uint i = 0, j = (uint)SelectedTile.size(); i < j; i++ )
     {
-        ushort             hx = SelectedTile[i].HexX;
-        ushort             hy = SelectedTile[i].HexY;
+        uint16             hx = SelectedTile[i].HexX;
+        uint16             hy = SelectedTile[i].HexY;
         Field&             f = HexMngr.GetField( hx, hy );
         Field::TileVec&    ftiles = (SelectedTile[i].IsRoof ? f.Roofs : f.Tiles);
         ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, SelectedTile[i].IsRoof );
@@ -4498,7 +4498,7 @@ void FOMapper::CurDraw()
             {
                 ProtoItem& proto_item = (*CurItemProtos)[GetTabIndex()];
 
-                ushort     hx, hy;
+                uint16     hx, hy;
                 if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
                     break;
 
@@ -4519,7 +4519,7 @@ void FOMapper::CurDraw()
                 if( !anim )
                     anim = ItemHex::DefaultAnim;
 
-                ushort hx, hy;
+                uint16 hx, hy;
                 if( !HexMngr.GetHexPixel( GameOpt.MouseX, GameOpt.MouseY, hx, hy ) )
                     break;
 
@@ -4549,7 +4549,7 @@ void FOMapper::CurDraw()
                 if( !spr_id )
                     spr_id = ItemHex::DefaultAnim->GetSprId(0);
 
-                ushort hx, hy;
+                uint16 hx, hy;
                 if( !HexMngr.GetHexPixel(GameOpt.MouseX, GameOpt.MouseY, hx, hy) )
                     break;
 
@@ -4666,7 +4666,7 @@ bool FOMapper::IsCurInInterface()
     return false;
 }
 
-bool FOMapper::GetCurHex(ushort& hx, ushort& hy, bool ignore_interface)
+bool FOMapper::GetCurHex(uint16& hx, uint16& hy, bool ignore_interface)
 {
     hx = hy = 0;
     if( !ignore_interface && IsCurInInterface() )
@@ -4687,7 +4687,7 @@ void FOMapper::ConsoleDraw()
     }
 }
 
-void FOMapper::ConsoleKeyDown(uchar dik, const char* dik_text)
+void FOMapper::ConsoleKeyDown(uint8 dik, const char* dik_text)
 {
     if( dik == DIK_RETURN || dik == DIK_NUMPADENTER )
     {
@@ -4770,7 +4770,7 @@ void FOMapper::ConsoleKeyDown(uchar dik, const char* dik_text)
     }
 }
 
-void FOMapper::ConsoleKeyUp( uchar key )
+void FOMapper::ConsoleKeyUp( uint8 key )
 {
     ConsoleLastKey = 0;
     ConsoleLastKeyText = "";
@@ -5014,7 +5014,7 @@ void FOMapper::ParseCommand( const char* cmd )
                 for( int hy = 0; hy < HexMngr.GetMaxHexY(); hy++ )
                 {
                     Field&    f = HexMngr.GetField( hx, hy );
-                    UShortVec pids;
+                    UInt16Vec pids;
                     for( auto it = f.Items.begin(), end = f.Items.end(); it != end; ++it )
                         pids.push_back( (*it)->GetProtoId() );
                     std::sort( pids.begin(), pids.end() );
@@ -5042,7 +5042,7 @@ void FOMapper::ParseCommand( const char* cmd )
                 {
                     if( !HexMngr.GetField( hx, hy ).ScrollBlock )
                         continue;
-                    ushort hx_ = hx, hy_ = hy;
+                    uint16 hx_ = hx, hy_ = hy;
                     int    count = 0;
                     MoveHexByDir( hx_, hy_, 4, HexMngr.GetMaxHexX(), HexMngr.GetMaxHexY() );
                     for( int i = 0; i < 5; i++ )
@@ -5093,8 +5093,8 @@ void FOMapper::ParseCommand( const char* cmd )
 
             SelectClear();
             HexMngr.UnloadMap();
-            ushort old_maxhx = CurProtoMap->Header.MaxHexX;
-            ushort old_maxhy = CurProtoMap->Header.MaxHexY;
+            uint16 old_maxhx = CurProtoMap->Header.MaxHexX;
+            uint16 old_maxhy = CurProtoMap->Header.MaxHexY;
             maxhx = CLAMP( maxhx, MAXHEX_MIN, MAXHEX_MAX );
             maxhy = CLAMP( maxhy, MAXHEX_MIN, MAXHEX_MAX );
             if( CurProtoMap->Header.WorkHexX >= maxhx )
@@ -5127,9 +5127,9 @@ void FOMapper::ParseCommand( const char* cmd )
             CurProtoMap->TilesField.resize( maxhx * maxhy );
             CurProtoMap->RoofsField.clear();
             CurProtoMap->RoofsField.resize( maxhx * maxhy );
-            for( int hy = 0; hy < min( (ushort)maxhy, old_maxhy ); hy++ )
+            for( int hy = 0; hy < min( (uint16)maxhy, old_maxhy ); hy++ )
             {
-                for( int hx = 0; hx < min( (ushort)maxhx, old_maxhx ); hx++ )
+                for( int hx = 0; hx < min( (uint16)maxhx, old_maxhx ); hx++ )
                 {
                     for( int r = 0; r <= 1; r++ )
                     {
@@ -5369,14 +5369,14 @@ void FOMapper::SScriptFunc::MapperObject_set_FuncName( MapObject& mobj, ScriptSt
     Str::Copy( mobj.FuncName, str ? str->c_str() : NULL );
 }
 
-uchar FOMapper::SScriptFunc::MapperObject_get_Critter_Cond( MapObject& mobj )
+uint8 FOMapper::SScriptFunc::MapperObject_get_Critter_Cond( MapObject& mobj )
 {
     if( mobj.MapObjType != MAP_OBJECT_CRITTER )
         SCRIPT_ERROR_R0( "Map object is not critter." );
     return mobj.MCritter.Cond;
 }
 
-void FOMapper::SScriptFunc::MapperObject_set_Critter_Cond( MapObject& mobj, uchar value )
+void FOMapper::SScriptFunc::MapperObject_set_Critter_Cond( MapObject& mobj, uint8 value )
 {
     if( mobj.MapObjType != MAP_OBJECT_CRITTER )
         SCRIPT_ERROR_R( "Map object is not critter." );
@@ -5449,7 +5449,7 @@ void FOMapper::SScriptFunc::MapperObject_Update( MapObject& mobj )
         Self->UpdateMapObject( &mobj );
 }
 
-MapObject* FOMapper::SScriptFunc::MapperObject_AddChild( MapObject& mobj, ushort pid )
+MapObject* FOMapper::SScriptFunc::MapperObject_AddChild( MapObject& mobj, uint16 pid )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
     if( !proto_item || !proto_item->IsContainer() )
@@ -5493,7 +5493,7 @@ uint FOMapper::SScriptFunc::MapperObject_GetChilds( MapObject& mobj, ScriptArray
     return (uint)objects_.size();
 }
 
-void FOMapper::SScriptFunc::MapperObject_MoveToHex( MapObject& mobj, ushort hx, ushort hy )
+void FOMapper::SScriptFunc::MapperObject_MoveToHex( MapObject& mobj, uint16 hx, uint16 hy )
 {
     ProtoMap* pmap = mobj.RunTime.FromMap;
     if( !pmap )
@@ -5523,7 +5523,7 @@ void FOMapper::SScriptFunc::MapperObject_MoveToHexOffset( MapObject& mobj, int x
     Self->MoveMapObject( &mobj, hx, hy );
 }
 
-void FOMapper::SScriptFunc::MapperObject_MoveToDir( MapObject& mobj, uchar dir )
+void FOMapper::SScriptFunc::MapperObject_MoveToDir( MapObject& mobj, uint8 dir )
 {
     ProtoMap* pmap = mobj.RunTime.FromMap;
     if( !pmap )
@@ -5539,7 +5539,7 @@ void FOMapper::SScriptFunc::MapperObject_MoveToDir( MapObject& mobj, uchar dir )
     Self->MoveMapObject( &mobj, hx, hy );
 }
 
-MapObject* FOMapper::SScriptFunc::MapperMap_AddObject( ProtoMap& pmap, ushort hx, ushort hy, int mobj_type, ushort pid )
+MapObject* FOMapper::SScriptFunc::MapperMap_AddObject( ProtoMap& pmap, uint16 hx, uint16 hy, int mobj_type, uint16 pid )
 {
     if( mobj_type == MAP_OBJECT_CRITTER )
     {
@@ -5590,12 +5590,12 @@ MapObject* FOMapper::SScriptFunc::MapperMap_AddObject( ProtoMap& pmap, ushort hx
     return mobj;
 }
 
-MapObject* FOMapper::SScriptFunc::MapperMap_GetObject( ProtoMap& pmap, ushort hx, ushort hy, int mobj_type, ushort pid, uint skip )
+MapObject* FOMapper::SScriptFunc::MapperMap_GetObject( ProtoMap& pmap, uint16 hx, uint16 hy, int mobj_type, uint16 pid, uint skip )
 {
     return Self->FindMapObject( pmap, hx, hy, mobj_type, pid, skip );
 }
 
-uint FOMapper::SScriptFunc::MapperMap_GetObjects( ProtoMap& pmap, ushort hx, ushort hy, uint radius, int mobj_type, ushort pid, ScriptArray* objects )
+uint FOMapper::SScriptFunc::MapperMap_GetObjects( ProtoMap& pmap, uint16 hx, uint16 hy, uint radius, int mobj_type, uint16 pid, ScriptArray* objects )
 {
     MapObjectPtrVec objects_;
     Self->FindMapObjects( pmap, hx, hy, radius, mobj_type, pid, objects_ );
@@ -5613,7 +5613,7 @@ void FOMapper::SScriptFunc::MapperMap_UpdateObjects( ProtoMap& pmap )
     }
 }
 
-void FOMapper::SScriptFunc::MapperMap_Resize( ProtoMap& pmap, ushort width, ushort height )
+void FOMapper::SScriptFunc::MapperMap_Resize( ProtoMap& pmap, uint16 width, uint16 height )
 {
     if( Self->CurProtoMap == &pmap )
         Self->HexMngr.UnloadMap();
@@ -5681,7 +5681,7 @@ void FOMapper::SScriptFunc::MapperMap_Resize( ProtoMap& pmap, ushort width, usho
     }
 }
 
-uint FOMapper::SScriptFunc::MapperMap_GetTilesCount( ProtoMap& pmap, ushort hx, ushort hy, bool roof )
+uint FOMapper::SScriptFunc::MapperMap_GetTilesCount( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_R0( "Invalid hex x arg." );
@@ -5692,7 +5692,7 @@ uint FOMapper::SScriptFunc::MapperMap_GetTilesCount( ProtoMap& pmap, ushort hx, 
     return (uint)tiles.size();
 }
 
-void FOMapper::SScriptFunc::MapperMap_DeleteTile( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index )
+void FOMapper::SScriptFunc::MapperMap_DeleteTile( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_R( "Invalid hex x arg." );
@@ -5722,7 +5722,7 @@ void FOMapper::SScriptFunc::MapperMap_DeleteTile( ProtoMap& pmap, ushort hx, ush
     }
 }
 
-uint FOMapper::SScriptFunc::MapperMap_GetTileHash( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index )
+uint FOMapper::SScriptFunc::MapperMap_GetTileHash( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_R0( "Invalid hex x arg." );
@@ -5733,7 +5733,7 @@ uint FOMapper::SScriptFunc::MapperMap_GetTileHash( ProtoMap& pmap, ushort hx, us
     return index < tiles.size() ? tiles[index].NameHash : 0;
 }
 
-void FOMapper::SScriptFunc::MapperMap_AddTileHash( ProtoMap& pmap, ushort hx, ushort hy, int ox, int oy, int layer, bool roof, uint pic_hash )
+void FOMapper::SScriptFunc::MapperMap_AddTileHash( ProtoMap& pmap, uint16 hx, uint16 hy, int ox, int oy, int layer, bool roof, uint pic_hash )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_R( "Invalid hex x arg." );
@@ -5755,7 +5755,7 @@ void FOMapper::SScriptFunc::MapperMap_AddTileHash( ProtoMap& pmap, ushort hx, us
     }
 }
 
-ScriptString* FOMapper::SScriptFunc::MapperMap_GetTileName( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index )
+ScriptString* FOMapper::SScriptFunc::MapperMap_GetTileName( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_RX( "Invalid hex x arg.", new ScriptString( "" ) );
@@ -5769,7 +5769,7 @@ ScriptString* FOMapper::SScriptFunc::MapperMap_GetTileName( ProtoMap& pmap, usho
     return new ScriptString( name ? name : "" );
 }
 
-void FOMapper::SScriptFunc::MapperMap_AddTileName( ProtoMap& pmap, ushort hx, ushort hy, int ox, int oy, int layer, bool roof, ScriptString* pic_name )
+void FOMapper::SScriptFunc::MapperMap_AddTileName( ProtoMap& pmap, uint16 hx, uint16 hy, int ox, int oy, int layer, bool roof, ScriptString* pic_name )
 {
     if( hx >= pmap.Header.MaxHexX )
         SCRIPT_ERROR_R( "Invalid hex x arg." );
@@ -5824,7 +5824,7 @@ void FOMapper::SScriptFunc::MapperMap_SetDayTime( ProtoMap& pmap, uint day_part,
     }
 }
 
-void FOMapper::SScriptFunc::MapperMap_GetDayColor( ProtoMap& pmap, uint day_part, uchar& r, uchar& g, uchar& b )
+void FOMapper::SScriptFunc::MapperMap_GetDayColor( ProtoMap& pmap, uint day_part, uint8& r, uint8& g, uint8& b )
 {
     if( day_part >= 4 )
         SCRIPT_ERROR_R( "Invalid day part arg." );
@@ -5833,7 +5833,7 @@ void FOMapper::SScriptFunc::MapperMap_GetDayColor( ProtoMap& pmap, uint day_part
     b = pmap.Header.DayColor[8 + day_part];
 }
 
-void FOMapper::SScriptFunc::MapperMap_SetDayColor( ProtoMap& pmap, uint day_part, uchar r, uchar g, uchar b )
+void FOMapper::SScriptFunc::MapperMap_SetDayColor( ProtoMap& pmap, uint day_part, uint8 r, uint8 g, uint8 b )
 {
     if( day_part >= 4 )
         SCRIPT_ERROR_R( "Invalid day part arg." );
@@ -5845,7 +5845,7 @@ void FOMapper::SScriptFunc::MapperMap_SetDayColor( ProtoMap& pmap, uint day_part
     // Update visibility
     if( Self->CurProtoMap == &pmap )
     {
-        uchar* dc = Self->HexMngr.GetMapDayColor();
+        uint8* dc = Self->HexMngr.GetMapDayColor();
         for( int i = 0; i < 12; i++ )
             dc[i] = pmap.Header.DayColor[i];
         Self->HexMngr.RefreshMap();
@@ -5879,7 +5879,7 @@ void FOMapper::SScriptFunc::Global_SetDefaultCritterParam( uint index, int param
     Self->DefaultCritterParam[index] = param;
 }
 
-void FOMapper::SScriptFunc::Global_AllowSlot( uchar index, ScriptString& slot_name )
+void FOMapper::SScriptFunc::Global_AllowSlot( uint8 index, ScriptString& slot_name )
 {
     if( index <= SLOT_ARMOR || index == SLOT_GROUND )
         SCRIPT_ERROR_R( "Invalid index arg." );
@@ -6165,7 +6165,7 @@ void FOMapper::SScriptFunc::Global_TabSetItemPids( int tab, ScriptString* sub_ta
         ProtoItemVec proto_items;
         for( int i = 0, j = item_pids->GetSize(); i < j; i++ )
         {
-            ushort     pid = *(ushort*)item_pids->At( i );
+            uint16     pid = *(uint16*)item_pids->At( i );
             ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
             if( proto_item )
                 proto_items.push_back( *proto_item );
@@ -6221,7 +6221,7 @@ void FOMapper::SScriptFunc::Global_TabSetCritterPids( int tab, ScriptString* sub
         CritDataVec cr_protos;
         for( int i = 0, j = critter_pids->GetSize(); i < j; i++ )
         {
-            ushort    pid = *(ushort*)critter_pids->At( i );
+            uint16    pid = *(uint16*)critter_pids->At( i );
             CritData* cr_data = CrMngr.GetProto( pid );
             if( cr_data )
                 cr_protos.push_back( cr_data );
@@ -6303,14 +6303,14 @@ ScriptString* FOMapper::SScriptFunc::Global_GetLastError()
     return new ScriptString( ScriptLastError );
 }
 
-ProtoItem* FOMapper::SScriptFunc::Global_GetProtoItem( ushort proto_id )
+ProtoItem* FOMapper::SScriptFunc::Global_GetProtoItem( uint16 proto_id )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( proto_id );
     // if(!proto_item) SCRIPT_ERROR_R0("Proto item not found.");
     return proto_item;
 }
 
-void FOMapper::SScriptFunc::Global_MoveScreen( ushort hx, ushort hy, uint speed )
+void FOMapper::SScriptFunc::Global_MoveScreen( uint16 hx, uint16 hy, uint speed )
 {
     if( hx >= Self->HexMngr.GetMaxHexX() || hy >= Self->HexMngr.GetMaxHexY() )
         SCRIPT_ERROR_R( "Invalid hex args." );
@@ -6322,7 +6322,7 @@ void FOMapper::SScriptFunc::Global_MoveScreen( ushort hx, ushort hy, uint speed 
         Self->HexMngr.ScrollToHex( hx, hy, double(speed) / 1000.0, false );
 }
 
-void FOMapper::SScriptFunc::Global_MoveHexByDir( ushort& hx, ushort& hy, uchar dir, uint steps )
+void FOMapper::SScriptFunc::Global_MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint steps )
 {
     if( !Self->HexMngr.IsMapLoaded() )
         SCRIPT_ERROR_R( "Map not loaded." );
@@ -6390,7 +6390,7 @@ void FOMapper::SScriptFunc::Global_MessageMsg( int text_msg, uint str_num )
     Self->AddMess( Self->CurLang.Msg[text_msg].GetStr( str_num ) );
 }
 
-void FOMapper::SScriptFunc::Global_MapMessage( ScriptString& text, ushort hx, ushort hy, uint ms, uint color, bool fade, int ox, int oy )
+void FOMapper::SScriptFunc::Global_MapMessage( ScriptString& text, uint16 hx, uint16 hy, uint ms, uint color, bool fade, int ox, int oy )
 {
     FOMapper::MapText t;
     t.HexX = hx;
@@ -6472,30 +6472,30 @@ ScriptString* FOMapper::SScriptFunc::Global_ReplaceTextInt( ScriptString& text, 
     return new ScriptString( str_.replace( pos, replace.length(), val ) );
 }
 
-uint FOMapper::SScriptFunc::Global_GetDistantion( ushort hex_x1, ushort hex_y1, ushort hex_x2, ushort hex_y2 )
+uint FOMapper::SScriptFunc::Global_GetDistantion( uint16 hex_x1, uint16 hex_y1, uint16 hex_x2, uint16 hex_y2 )
 {
     return DistGame( hex_x1, hex_y1, hex_x2, hex_y2 );
 }
 
-uchar FOMapper::SScriptFunc::Global_GetDirection( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+uint8 FOMapper::SScriptFunc::Global_GetDirection( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy );
 }
 
-uchar FOMapper::SScriptFunc::Global_GetOffsetDir( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset )
+uint8 FOMapper::SScriptFunc::Global_GetOffsetDir( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float offset )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy, offset );
 }
 
-void FOMapper::SScriptFunc::Global_GetHexInPath( ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist )
+void FOMapper::SScriptFunc::Global_GetHexInPath( uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist )
 {
-    UShortPair pre_block, block;
+    UInt16Pair pre_block, block;
     Self->HexMngr.TraceBullet( from_hx, from_hy, to_hx, to_hy, dist, angle, NULL, false, NULL, 0, &block, &pre_block, NULL, true );
     to_hx = pre_block.first;
     to_hy = pre_block.second;
 }
 
-uint FOMapper::SScriptFunc::Global_GetPathLengthHex( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint cut )
+uint FOMapper::SScriptFunc::Global_GetPathLengthHex( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint cut )
 {
     if( from_hx >= Self->HexMngr.GetMaxHexX() || from_hy >= Self->HexMngr.GetMaxHexY() )
         SCRIPT_ERROR_R0( "Invalid from hexes args." );
@@ -6504,13 +6504,13 @@ uint FOMapper::SScriptFunc::Global_GetPathLengthHex( ushort from_hx, ushort from
 
     if( cut > 0 && !Self->HexMngr.CutPath( NULL, from_hx, from_hy, to_hx, to_hy, cut ) )
         return 0;
-    UCharVec steps;
+    UInt8Vec steps;
     if( !Self->HexMngr.FindPath( NULL, from_hx, from_hy, to_hx, to_hy, steps, -1 ) )
         return 0;
     return (uint)steps.size();
 }
 
-bool FOMapper::SScriptFunc::Global_GetHexPos( ushort hx, ushort hy, int& x, int& y )
+bool FOMapper::SScriptFunc::Global_GetHexPos( uint16 hx, uint16 hy, int& x, int& y )
 {
     x = y = 0;
     if( Self->HexMngr.IsMapLoaded() && hx < Self->HexMngr.GetMaxHexX() && hy < Self->HexMngr.GetMaxHexY() )
@@ -6525,9 +6525,9 @@ bool FOMapper::SScriptFunc::Global_GetHexPos( ushort hx, ushort hy, int& x, int&
     return false;
 }
 
-bool FOMapper::SScriptFunc::Global_GetMonitorHex( int x, int y, ushort& hx, ushort& hy, bool ignore_interface )
+bool FOMapper::SScriptFunc::Global_GetMonitorHex( int x, int y, uint16& hx, uint16& hy, bool ignore_interface )
 {
-    ushort hx_ = 0, hy_ = 0;
+    uint16 hx_ = 0, hy_ = 0;
     if( Self->GetCurHex( hx_, hy_, ignore_interface ) )
     {
         hx = hx_;
@@ -6679,7 +6679,7 @@ void FOMapper::SScriptFunc::Global_MouseClick( int x, int y, int button, int cur
     Self->CurMode = prev_cursor;
 }
 
-void FOMapper::SScriptFunc::Global_KeyboardPress( uchar key1, uchar key2, ScriptString* key1_text, ScriptString* key2_text )
+void FOMapper::SScriptFunc::Global_KeyboardPress( uint8 key1, uint8 key2, ScriptString* key1_text, ScriptString* key2_text )
 {
     IntVec prev_events = MainWindow->KeyboardEvents;
     StrVec prev_events_text = MainWindow->KeyboardEventsText;
@@ -6746,7 +6746,7 @@ uint FOMapper::SScriptFunc::Global_LoadSprite( ScriptString& spr_name, int path_
     return Self->AnimLoad( spr_name.c_str(), path_index, RES_SCRIPT );
 }
 
-uint FOMapper::SScriptFunc::Global_LoadSpriteHash( uint name_hash, uchar dir )
+uint FOMapper::SScriptFunc::Global_LoadSpriteHash( uint name_hash, uint8 dir )
 {
     return Self->AnimLoad( name_hash, dir, RES_SCRIPT );
 }
@@ -6888,7 +6888,7 @@ void FOMapper::SScriptFunc::Global_DrawPrimitive( int primitive_type, ScriptArra
     SprMngr.DrawPoints( points, primitive_type );
 }
 
-void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy )
+void FOMapper::SScriptFunc::Global_DrawMapSprite( uint16 hx, uint16 hy, uint16 proto_id, uint spr_id, int spr_index, int ox, int oy )
 {
     if( !Self->HexMngr.SpritesCanDrawMap )
         return;
@@ -6940,7 +6940,7 @@ void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
 
         if( FLAG( proto_item->Flags, ITEM_FLAG_COLORIZE ) )
         {
-            spr.SetAlpha( ( (uchar*)&proto_item->LightColor ) + 3 );
+            spr.SetAlpha( ( (uint8*)&proto_item->LightColor ) + 3 );
             spr.SetColor( proto_item->LightColor & 0xFFFFFF );
         }
 
@@ -6949,7 +6949,7 @@ void FOMapper::SScriptFunc::Global_DrawMapSprite( ushort hx, ushort hy, ushort p
     }
 }
 
-void FOMapper::SScriptFunc::Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uchar dir, int l, int t, int r, int b, bool scratch, bool center, uint color )
+void FOMapper::SScriptFunc::Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color )
 {
     if( CritType::IsEnabled( crtype ) )
     {

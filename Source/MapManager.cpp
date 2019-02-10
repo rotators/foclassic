@@ -240,7 +240,7 @@ bool MapManager::LoadLocationsProtos()
     return errors == 0;
 }
 
-bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid )
+bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, uint16 pid )
 {
     char key1[MAX_FOTEXT];
     char key2[MAX_FOTEXT];
@@ -265,7 +265,7 @@ bool MapManager::LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, us
             break;
 
         char   map_name[MAX_FOPATH];
-        ushort map_pid = 0;
+        uint16 map_pid = 0;
         if( sscanf( res, "%s%hu", map_name, &map_pid ) != 2 )
         {
             WriteLogF( _FUNC_, " - Can't parse data in location<%s>, map index<%u>.\n", ploc.Name.c_str(), cur_map );
@@ -549,7 +549,7 @@ bool MapManager::GenerateWorld( const char* fname, int path_type )
         if( str.fail() || c != '@' )
             continue;
 
-        ushort loc_pid, loc_wx, loc_wy;
+        uint16 loc_pid, loc_wx, loc_wy;
         str >> loc_pid >> loc_wx >> loc_wy;
         if( str.fail() )
         {
@@ -590,21 +590,21 @@ void MapManager::GetLocationAndMapIds( UIntSet& loc_ids, UIntSet& map_ids )
         map_ids.insert( (*it).second->GetId() );
 }
 
-bool MapManager::IsInitProtoLocation( ushort pid_loc )
+bool MapManager::IsInitProtoLocation( uint16 pid_loc )
 {
     if( !pid_loc || pid_loc >= MAX_PROTO_LOCATIONS )
         return false;
     return ProtoLoc[pid_loc].IsInit;
 }
 
-ProtoLocation* MapManager::GetProtoLocation( ushort loc_pid )
+ProtoLocation* MapManager::GetProtoLocation( uint16 loc_pid )
 {
     if( !IsInitProtoLocation( loc_pid ) )
         return NULL;
     return &ProtoLoc[loc_pid];
 }
 
-Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint loc_id )
+Location* MapManager::CreateLocation( uint16 pid_loc, uint16 wx, uint16 wy, uint loc_id )
 {
     if( !IsInitProtoLocation( pid_loc ) )
     {
@@ -635,7 +635,7 @@ Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint
 
         for( uint i = 0; i < loc->Proto->ProtoMapPids.size(); ++i )
         {
-            ushort map_pid = loc->Proto->ProtoMapPids[i];
+            uint16 map_pid = loc->Proto->ProtoMapPids[i];
 
             Map*   map = CreateMap( map_pid, loc, 0 );
             if( !map )
@@ -683,14 +683,14 @@ Location* MapManager::CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint
     return loc;
 }
 
-bool MapManager::IsInitProtoMap( ushort pid_map )
+bool MapManager::IsInitProtoMap( uint16 pid_map )
 {
     if( pid_map >= MAX_PROTO_MAPS )
         return false;
     return ProtoMaps[pid_map].IsInit();
 }
 
-Map* MapManager::CreateMap( ushort pid_map, Location* loc_map, uint map_id )
+Map* MapManager::CreateMap( uint16 pid_map, Location* loc_map, uint map_id )
 {
     if( !loc_map )
         return NULL;
@@ -760,7 +760,7 @@ Map* MapManager::GetMap( uint map_id, bool sync_lock )
     return map;
 }
 
-Map* MapManager::GetMapByPid( ushort map_pid, uint skip_count )
+Map* MapManager::GetMapByPid( uint16 map_pid, uint skip_count )
 {
     if( !map_pid || map_pid >= MAX_PROTO_MAPS )
         return NULL;
@@ -806,14 +806,14 @@ uint MapManager::GetMapsCount()
     return count;
 }
 
-ProtoMap* MapManager::GetProtoMap( ushort pid_map )
+ProtoMap* MapManager::GetProtoMap( uint16 pid_map )
 {
     if( !IsInitProtoMap( pid_map ) )
         return NULL;
     return &ProtoMaps[pid_map];
 }
 
-bool MapManager::IsProtoMapNoLogOut( ushort pid_map )
+bool MapManager::IsProtoMapNoLogOut( uint16 pid_map )
 {
     ProtoMap* pmap = GetProtoMap( pid_map );
     return pmap ? pmap->Header.NoLogOut : false;
@@ -846,7 +846,7 @@ Location* MapManager::GetLocation( uint loc_id )
     return loc;
 }
 
-Location* MapManager::GetLocationByPid( ushort loc_pid, uint skip_count )
+Location* MapManager::GetLocationByPid( uint16 loc_pid, uint skip_count )
 {
     ProtoLocation* ploc = GetProtoLocation( loc_pid );
     if( !ploc )
@@ -1197,8 +1197,8 @@ void MapManager::GM_GlobalInvite( GlobalMapGroup* group, int combat_mode )
     uint     encounter_descriptor = group->EncounterDescriptor;
     group->EncounterDescriptor = 0;
     uint     map_id = 0;
-    ushort   hx = 0, hy = 0;
-    uchar    dir = 0;
+    uint16   hx = 0, hy = 0;
+    uint8    dir = 0;
     Critter* rule = group->Rule;
     bool     global_invite = true;
 
@@ -1245,7 +1245,7 @@ void MapManager::GM_GlobalInvite( GlobalMapGroup* group, int combat_mode )
     }
 }
 
-bool MapManager::GM_CheckEntrance( Location* loc, ScriptArray* arr, uchar entrance )
+bool MapManager::GM_CheckEntrance( Location* loc, ScriptArray* arr, uint8 entrance )
 {
     if( !loc->Proto->ScriptBindId )
         return true;
@@ -1450,7 +1450,7 @@ void MapManager::GM_StopGroup( Critter* cr )
     GM_GlobalProcess( cr, cr->GroupMove, WORLDMAP_PROCESS_STOPPED );
 }
 
-bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, ushort mx, ushort my, uchar mdir )
+bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, uint16 mx, uint16 my, uint8 mdir )
 {
     if( !map || !map->GetId() )
     {
@@ -1459,9 +1459,9 @@ bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, us
     }
 
     Critter* rule = group->Rule;
-    ushort   hx, hy;
-    uchar    dir;
-    ushort   car_hx, car_hy;
+    uint16   hx, hy;
+    uint8    dir;
+    uint16   car_hx, car_hy;
     Item*    car = group->GetCar();
     Critter* car_owner = NULL;
 
@@ -1543,7 +1543,7 @@ bool MapManager::GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, us
     return true;
 }
 
-bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool force /* = false */ )
+bool MapManager::GM_GroupToLoc( Critter* rule, uint loc_id, uint8 entrance, bool force /* = false */ )
 {
     if( rule->GetMap() )
         return false;
@@ -1671,22 +1671,22 @@ void MapManager::GM_GroupSetMove( GlobalMapGroup* group, float to_x, float to_y,
 void MapManager::TraceBullet( TraceData& trace )
 {
     Map*   map = trace.TraceMap;
-    ushort maxhx = map->GetMaxHexX();
-    ushort maxhy = map->GetMaxHexY();
-    ushort hx = trace.BeginHx;
-    ushort hy = trace.BeginHy;
-    ushort tx = trace.EndHx;
-    ushort ty = trace.EndHy;
+    uint16 maxhx = map->GetMaxHexX();
+    uint16 maxhy = map->GetMaxHexY();
+    uint16 hx = trace.BeginHx;
+    uint16 hy = trace.BeginHy;
+    uint16 tx = trace.EndHx;
+    uint16 ty = trace.EndHy;
 
     uint   dist = trace.Dist;
     if( !dist )
         dist = DistGame( hx, hy, tx, ty );
 
-    ushort     cx = hx;
-    ushort     cy = hy;
-    ushort     old_cx = cx;
-    ushort     old_cy = cy;
-    uchar      dir;
+    uint16     cx = hx;
+    uint16     cy = hy;
+    uint16     old_cx = cx;
+    uint16     old_cy = cy;
+    uint8      dir;
 
     LineTracer line_tracer( hx, hy, tx, ty, maxhx, maxhy, trace.Angle, !GameOpt.MapHexagonal );
 
@@ -1787,10 +1787,10 @@ int MapManager::FindPath( PathFindData& pfd )
 
     // Data
     uint   map_id = pfd.MapId;
-    ushort from_hx = pfd.FromX;
-    ushort from_hy = pfd.FromY;
-    ushort to_hx = pfd.ToX;
-    ushort to_hy = pfd.ToY;
+    uint16 from_hx = pfd.FromX;
+    uint16 from_hy = pfd.FromY;
+    uint16 to_hx = pfd.ToX;
+    uint16 to_hy = pfd.ToY;
     uint   multihex = pfd.Multihex;
     uint   cut = pfd.Cut;
     uint   trace = pfd.Trace;
@@ -1806,8 +1806,8 @@ int MapManager::FindPath( PathFindData& pfd )
     Map* map = GetMap( map_id );
     if( !map )
         return FPATH_MAP_NOT_FOUND;
-    ushort maxhx = map->GetMaxHexX();
-    ushort maxhy = map->GetMaxHexY();
+    uint16 maxhx = map->GetMaxHexX();
+    uint16 maxhy = map->GetMaxHexY();
 
     if( from_hx >= maxhx || from_hy >= maxhy || to_hx >= maxhx || to_hy >= maxhy )
         return FPATH_INVALID_HEXES;
@@ -1830,7 +1830,7 @@ int MapManager::FindPath( PathFindData& pfd )
             short yy = to_hy + *rsy;
             if( xx >= 0 && xx < maxhx && yy >= 0 && yy < maxhy )
             {
-                ushort flags = map->GetHexFlags( xx, yy );
+                uint16 flags = map->GetHexFlags( xx, yy );
                 if( FLAG( flags, HEX_FLAG_GAG_ITEM << 8 ) )
                     break;
                 if( !FLAG( flags, HEX_FLAG_NOWAY ) )
@@ -1843,11 +1843,11 @@ int MapManager::FindPath( PathFindData& pfd )
 
     // Parse previous move params
     /*UShortPairVec first_steps;
-       uchar first_dir=pfd.MoveParams&7;
+       uint8 first_dir=pfd.MoveParams&7;
        if(first_dir<DIRS_COUNT)
        {
-            ushort hx_=from_hx;
-            ushort hy_=from_hy;
+            uint16 hx_=from_hx;
+            uint16 hy_=from_hy;
             MoveHexByDir(hx_,hy_,first_dir);
             if(map->IsHexPassed(hx_,hy_))
             {
@@ -1876,7 +1876,7 @@ int MapManager::FindPath( PathFindData& pfd )
 
     // Begin search
     int    p = 0, p_togo = 1;
-    ushort cx, cy;
+    uint16 cx, cy;
     while( true )
     {
         for( int i = 0; i < p_togo; i++, p++ )
@@ -1906,7 +1906,7 @@ int MapManager::FindPath( PathFindData& pfd )
 
                 if( !multihex )
                 {
-                    ushort flags = map->GetHexFlags( nx, ny );
+                    uint16 flags = map->GetHexFlags( nx, ny );
                     if( !FLAG( flags, HEX_FLAG_NOWAY ) )
                     {
                         coords.push_back( PAIR( nx, ny ) );
@@ -1977,7 +1977,7 @@ int MapManager::FindPath( PathFindData& pfd )
         if( gag_coords.size() )
         {
             short       last_index = GRID( coords.back().first, coords.back().second );
-            UShortPair& xy = gag_coords.front();
+            UInt16Pair& xy = gag_coords.front();
             short       gag_index = GRID( xy.first, xy.second ) ^ 0x4000;
             if( gag_index + 10 < last_index )       // Todo: if path finding not be reworked than migrate magic number to scripts
             {
@@ -1993,7 +1993,7 @@ int MapManager::FindPath( PathFindData& pfd )
         {
             if( gag_coords.size() )
             {
-                UShortPair& xy = gag_coords.front();
+                UInt16Pair& xy = gag_coords.front();
                 GRID( xy.first, xy.second ) ^= 0x4000;
                 coords.push_back( xy );
                 gag_coords.erase( gag_coords.begin() );
@@ -2001,7 +2001,7 @@ int MapManager::FindPath( PathFindData& pfd )
             }
             else if( cr_coords.size() )
             {
-                UShortPair& xy = cr_coords.front();
+                UInt16Pair& xy = cr_coords.front();
                 GRID( xy.first, xy.second ) ^= 0x8000;
                 coords.push_back( xy );
                 cr_coords.erase( cr_coords.begin() );
@@ -2108,8 +2108,8 @@ label_FindOk:
     if( trace )
     {
         IntVec trace_seq;
-        ushort targ_hx = pfd.TraceCr->GetHexX();
-        ushort targ_hy = pfd.TraceCr->GetHexY();
+        uint16 targ_hx = pfd.TraceCr->GetHexX();
+        uint16 targ_hy = pfd.TraceCr->GetHexY();
         bool   trace_ok = false;
 
         trace_seq.resize( path.size() + 4 );
@@ -2182,7 +2182,7 @@ label_TraceOk:
     return FPATH_OK;
 }
 
-int MapManager::FindPathGrid( ushort& hx, ushort& hy, int index, bool smooth_switcher )
+int MapManager::FindPathGrid( uint16& hx, uint16& hy, int index, bool smooth_switcher )
 {
     // Hexagonal
     if( GameOpt.MapHexagonal )
@@ -2509,7 +2509,7 @@ void MapManager::PathSetMoveParams( PathStepVec& path, bool is_run )
     }
 }
 
-bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, bool force )
+bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, uint16 hx, uint16 hy, bool force )
 {
     if( cr->LockMapTransfers )
     {
@@ -2526,7 +2526,7 @@ bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, 
 
     Location* loc = map->GetLocation( true );
     uint      id_map = 0;
-    uchar     dir = 0;
+    uint8     dir = 0;
 
     if( !loc->GetTransit( map, id_map, hx, hy, dir ) )
         return false;
@@ -2556,7 +2556,7 @@ bool MapManager::TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, 
     return false;
 }
 
-bool MapManager::TransitToGlobal( Critter* cr, uint rule, uchar follow_type, bool force )
+bool MapManager::TransitToGlobal( Critter* cr, uint rule, uint8 follow_type, bool force )
 {
     if( cr->LockMapTransfers )
     {
@@ -2567,7 +2567,7 @@ bool MapManager::TransitToGlobal( Critter* cr, uint rule, uchar follow_type, boo
     return Transit( cr, NULL, rule >> 16, rule & 0xFFFF, follow_type, 0, force );
 }
 
-bool MapManager::Transit( Critter* cr, Map* map, ushort hx, ushort hy, uchar dir, uint radius, bool force )
+bool MapManager::Transit( Critter* cr, Map* map, uint16 hx, uint16 hy, uint8 dir, uint radius, bool force )
 {
     // Check location deletion
     Location* loc = (map ? map->GetLocation( true ) : NULL);
@@ -2600,8 +2600,8 @@ bool MapManager::Transit( Critter* cr, Map* map, ushort hx, ushort hy, uchar dir
     uint   map_id = (map ? map->GetId() : 0);
     uint   old_map_id = cr->GetMap();
     Map*   old_map = MapMngr.GetMap( old_map_id, true );
-    ushort old_hx = cr->GetHexX();
-    ushort old_hy = cr->GetHexY();
+    uint16 old_hx = cr->GetHexX();
+    uint16 old_hy = cr->GetHexY();
 
     // Recheck after synchronization
     if( cr->GetMap() != old_map_id )
@@ -2687,7 +2687,7 @@ bool MapManager::Transit( Critter* cr, Map* map, ushort hx, ushort hy, uchar dir
     return true;
 }
 
-bool MapManager::AddCrToMap( Critter* cr, Map* map, ushort tx, ushort ty, uint radius )
+bool MapManager::AddCrToMap( Critter* cr, Map* map, uint16 tx, uint16 ty, uint radius )
 {
     // Global map
     if( !map )
@@ -2731,7 +2731,7 @@ bool MapManager::AddCrToMap( Critter* cr, Map* map, ushort tx, ushort ty, uint r
     return true;
 }
 
-void MapManager::EraseCrFromMap( Critter* cr, Map* map, ushort hex_x, ushort hex_y )
+void MapManager::EraseCrFromMap( Critter* cr, Map* map, uint16 hex_x, uint16 hex_y )
 {
     // Global map
     if( !map )

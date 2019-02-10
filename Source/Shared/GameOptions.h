@@ -12,18 +12,18 @@
 
 struct GameOptions
 {
-    ushort       YearStart;
+    uint16       YearStart;
     uint         YearStartFTLo;
     uint         YearStartFTHi;
-    ushort       Year;
-    ushort       Month;
-    ushort       Day;
-    ushort       Hour;
-    ushort       Minute;
-    ushort       Second;
+    uint16       Year;
+    uint16       Month;
+    uint16       Day;
+    uint16       Hour;
+    uint16       Minute;
+    uint16       Second;
     uint         FullSecondStart;
     uint         FullSecond;
-    ushort       TimeMultiplier;
+    uint16       TimeMultiplier;
     uint         GameTimeTick;
 
     bool         DisableTcpNagle;
@@ -203,7 +203,7 @@ struct GameOptions
     uint         PingPeriod;
     uint         Ping;
     bool         MsgboxInvert;
-    uchar        DefaultCombatMode;
+    uint8        DefaultCombatMode;
     bool         MessNotify;
     bool         SoundNotify;
     bool         AlwaysOnTop;
@@ -215,7 +215,7 @@ struct GameOptions
     bool         MouseScroll;
     int          IndicatorType;
     uint         DoubleClickTime;
-    uchar        RoofAlpha;
+    uint8        RoofAlpha;
     bool         HideCursor;
     bool         DisableLMenu;
     bool         DisableMouseEvents;
@@ -258,7 +258,7 @@ struct GameOptions
     void*        CritterTypes;
 
     void*        ClientMap;
-    uchar*       ClientMapLight;
+    uint8*       ClientMapLight;
     uint         ClientMapWidth;
     uint         ClientMapHeight;
 
@@ -277,8 +277,8 @@ struct GameOptions
     void         ( * ScriptSetArgInt16 )( short );
     void         ( * ScriptSetArgInt )( int );
     void         ( * ScriptSetArgInt64 )( int64 );
-    void         ( * ScriptSetArgUInt8 )( uchar );
-    void         ( * ScriptSetArgUInt16 )( ushort );
+    void         ( * ScriptSetArgUInt8 )( uint8 );
+    void         ( * ScriptSetArgUInt16 )( uint16 );
     void         ( * ScriptSetArgUInt )( uint );
     void         ( * ScriptSetArgUInt64 )( uint64 );
     void         ( * ScriptSetArgBool )( bool );
@@ -291,8 +291,8 @@ struct GameOptions
     short        ( * ScriptGetReturnedInt16 )();
     int          ( * ScriptGetReturnedInt )();
     int64        ( * ScriptGetReturnedInt64 )();
-    uchar        ( * ScriptGetReturnedUInt8 )();
-    ushort       ( * ScriptGetReturnedUInt16 )();
+    uint8        ( * ScriptGetReturnedUInt8 )();
+    uint16       ( * ScriptGetReturnedUInt16 )();
     uint         ( * ScriptGetReturnedUInt )();
     uint64       ( * ScriptGetReturnedUInt64 )();
     bool         ( * ScriptGetReturnedBool )();
@@ -306,8 +306,8 @@ struct GameOptions
     void         ( * SetLogCallback )( void (*)( const char* str ), bool );
 
     // Callbacks
-    uint         ( * GetUseApCost )( void*, void*, uchar );
-    uint         ( * GetAttackDistantion )( void*, void*, uchar );
+    uint         ( * GetUseApCost )( void*, void*, uint8 );
+    uint         ( * GetAttackDistantion )( void*, void*, uint8 );
     void         ( * GetRainOffset )( short*, short* );
 
     GameOptions();
@@ -317,7 +317,7 @@ extern struct GameOptions GameOpt;
 
 struct GameOptionsExt
 {
-    uchar WallAlpha;
+    uint8 WallAlpha;
 
     void* CommandLine;
     void* ConfigFile;

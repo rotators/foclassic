@@ -74,13 +74,13 @@ bool VarManager::LoadVarsDataFile( void* f, int version )
     WriteLog( "Load vars...\n" );
     allQuestVars.reserve( 10000 );   // 40kb
 
-    UShortUIntMap failed_tvars;
+    UInt16UIntMap failed_tvars;
 
     uint          count = 0;
     FileRead( f, &count, sizeof(count) );
     for( uint i = 0; i < count; i++ )
     {
-        ushort temp_id;
+        uint16 temp_id;
         uint   master_id, slave_id;
         int    val;
         FileRead( f, &temp_id, sizeof(temp_id) );
@@ -197,7 +197,7 @@ bool VarManager::UpdateVarsTemplate()
 
 bool VarManager::LoadTemplateVars( const char* str, TempVarVec& vars )
 {
-    ushort var_id;
+    uint16 var_id;
     int    var_type;
     char   var_name[VAR_NAME_LEN];
     char   var_desc[VAR_DESC_LEN];
@@ -290,7 +290,7 @@ bool VarManager::AddTemplateVar( TemplateVar* var )
     return true;
 }
 
-void VarManager::EraseTemplateVar( ushort temp_id )
+void VarManager::EraseTemplateVar( uint16 temp_id )
 {
     TemplateVar* var = GetTemplateVar( temp_id );
     if( !var )
@@ -300,7 +300,7 @@ void VarManager::EraseTemplateVar( ushort temp_id )
     tempVars[temp_id] = NULL;
 }
 
-ushort VarManager::GetTemplateVarId( const char* var_name )
+uint16 VarManager::GetTemplateVarId( const char* var_name )
 {
     for( auto it = tempVars.begin(), end = tempVars.end(); it != end; ++it )
     {
@@ -311,7 +311,7 @@ ushort VarManager::GetTemplateVarId( const char* var_name )
     return false;
 }
 
-TemplateVar* VarManager::GetTemplateVar( ushort temp_id )
+TemplateVar* VarManager::GetTemplateVar( uint16 temp_id )
 {
     if( temp_id < tempVars.size() )
         return tempVars[temp_id];
@@ -416,7 +416,7 @@ void VarManager::SaveTemplateVars()
 
 bool VarManager::CheckVar( const char* var_name, uint master_id, uint slave_id, char oper, int val )
 {
-    ushort temp_id = GetTemplateVarId( var_name );
+    uint16 temp_id = GetTemplateVarId( var_name );
     if( !temp_id )
         return false;
     GameVar* uvar = GetVar( temp_id, master_id, slave_id, true );
@@ -425,7 +425,7 @@ bool VarManager::CheckVar( const char* var_name, uint master_id, uint slave_id, 
     return CheckVar( uvar, oper, val );
 }
 
-bool VarManager::CheckVar( ushort temp_id, uint master_id, uint slave_id, char oper, int val )
+bool VarManager::CheckVar( uint16 temp_id, uint master_id, uint slave_id, char oper, int val )
 {
     GameVar* var = GetVar( temp_id, master_id, slave_id, true );
     if( !var )
@@ -435,7 +435,7 @@ bool VarManager::CheckVar( ushort temp_id, uint master_id, uint slave_id, char o
 
 GameVar* VarManager::ChangeVar( const char* var_name, uint master_id, uint slave_id, char oper, int val )
 {
-    ushort temp_id = GetTemplateVarId( var_name );
+    uint16 temp_id = GetTemplateVarId( var_name );
     if( !temp_id )
         return NULL;
     GameVar* var = GetVar( temp_id, master_id, slave_id, true );
@@ -445,7 +445,7 @@ GameVar* VarManager::ChangeVar( const char* var_name, uint master_id, uint slave
     return var;
 }
 
-GameVar* VarManager::ChangeVar( ushort temp_id, uint master_id, uint slave_id, char oper, int val )
+GameVar* VarManager::ChangeVar( uint16 temp_id, uint master_id, uint slave_id, char oper, int val )
 {
     GameVar* var = GetVar( temp_id, master_id, slave_id, true );
     if( !var )
@@ -509,13 +509,13 @@ void VarManager::ChangeVar( GameVar* var, char oper, int val )
 
 GameVar* VarManager::GetVar( const char* name, uint master_id, uint slave_id,  bool create )
 {
-    ushort temp_id = GetTemplateVarId( name );
+    uint16 temp_id = GetTemplateVarId( name );
     if( !temp_id )
         return NULL;
     return GetVar( temp_id, master_id, slave_id, create );
 }
 
-GameVar* VarManager::GetVar( ushort temp_id, uint master_id, uint slave_id,  bool create )
+GameVar* VarManager::GetVar( uint16 temp_id, uint master_id, uint slave_id,  bool create )
 {
     TemplateVar* tvar = GetTemplateVar( temp_id );
     if( !tvar )

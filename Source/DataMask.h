@@ -65,7 +65,7 @@ public:
     void Set2Bit( uint x, uint y, int val )
     {
         if( x >= width || y >= height ) return;
-        uchar& b = data[y * width_b + x / 4];
+        uint8& b = data[y * width_b + x / 4];
         int    bit = (x % 4 * 2);
         UNSETFLAG( b, 3 << bit );
         SETFLAG( b, (val & 3) << bit );
@@ -82,7 +82,7 @@ public:
         memset( data, fill, width_b * height );
     }
 
-    void Create( uint width_2bit, uint height_2bit, uchar* ptr )
+    void Create( uint width_2bit, uint height_2bit, uint8* ptr )
     {
         if( !width_2bit ) width_2bit = 1;
         if( !height_2bit ) height_2bit = 1;
@@ -98,14 +98,14 @@ public:
         else
         {
             isAlloc = true;
-            data = new uchar[width_b * height];
+            data = new uint8[width_b * height];
             Fill( 0 );
         }
     }
 
-    uchar* GetData() { return data; }
+    uint8* GetData() { return data; }
     C2BitMask() { memset( this, 0, sizeof(C2BitMask) ); }
-    C2BitMask( uint width_2bit, uint height_2bit, uchar* ptr ) { Create( width_2bit, height_2bit, ptr ); }
+    C2BitMask( uint width_2bit, uint height_2bit, uint8* ptr ) { Create( width_2bit, height_2bit, ptr ); }
     ~C2BitMask()
     {
         if( isAlloc ) delete[] data;
@@ -114,7 +114,7 @@ public:
 
 private:
     bool   isAlloc;
-    uchar* data;
+    uint8* data;
     uint   width;
     uint   height;
     uint   width_b;
@@ -123,18 +123,18 @@ private:
 class C4BitMask
 {
 public:
-    void Set4Bit( uint x, uint y, uchar val )
+    void Set4Bit( uint x, uint y, uint8 val )
     {
         if( x >= width || y >= height ) return;
-        uchar& b = data[y * width_b + x / 2];
+        uint8& b = data[y * width_b + x / 2];
         if( x & 1 ) b = (b & 0xF0) | (val & 0xF);
         else b = (b & 0xF) | (val << 4);
     }
 
-    uchar Get4Bit( uint x, uint y )
+    uint8 Get4Bit( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
-        uchar& b = data[y * width_b + x / 2];
+        uint8& b = data[y * width_b + x / 2];
         if( x & 1 ) return b & 0xF;
         else return b >> 4;
     }
@@ -152,7 +152,7 @@ public:
         height = height_4bit;
         width_b = width / 2;
         if( width & 1 ) width_b++;
-        data = new uchar[width_b * height];
+        data = new uint8[width_b * height];
         Fill( fill );
     }
 
@@ -162,7 +162,7 @@ public:
     }
 
 private:
-    uchar* data;
+    uint8* data;
     uint   width;
     uint   height;
     uint   width_b;
@@ -171,13 +171,13 @@ private:
 class CByteMask
 {
 public:
-    void SetByte( uint x, uint y, uchar val )
+    void SetByte( uint x, uint y, uint8 val )
     {
         if( x >= width || y >= height ) return;
         data[y * width + x] = val;
     }
 
-    uchar GetByte( uint x, uint y )
+    uint8 GetByte( uint x, uint y )
     {
         if( x >= width || y >= height ) return 0;
         return data[y * width + x];
@@ -194,7 +194,7 @@ public:
         if( !_height ) _height = 1;
         width = _width;
         height = _height;
-        data = new uchar[width * height];
+        data = new uint8[width * height];
         Fill( fill );
     }
 
@@ -204,7 +204,7 @@ public:
     }
 
 private:
-    uchar* data;
+    uint8* data;
     uint   width;
     uint   height;
 };

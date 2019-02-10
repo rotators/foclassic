@@ -83,7 +83,7 @@
 # define STATIC_ASSERT_PRINTF( function, a )              function( "STATIC_ASSERT( sizeof(%s) == %u );\n", # a, sizeof(a) )
 
 # define memzero( ptr, size )                             memset( ptr, 0, size )
-# define MAKEUINT( ch0, ch1, ch2, ch3 )                   ( (uint)(uchar)(ch0) | ( (uint)(uchar)(ch1) << 8 ) | ( (uint)(uchar)(ch2) << 16 ) | ( (uint)(uchar)(ch3) << 24 ) )
+# define MAKEUINT( ch0, ch1, ch2, ch3 )                   ( (uint)(uint8)(ch0) | ( (uint)(uint8)(ch1) << 8 ) | ( (uint)(uint8)(ch2) << 16 ) | ( (uint)(uint8)(ch3) << 24 ) )
 # define OFFSETOF( type, member )                         ( (int)offsetof( type, member ) )
 # define PACKUINT64( u32hi, u32lo )                       ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
 

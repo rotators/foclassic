@@ -211,7 +211,7 @@ void ItemHex::SetEffect( float sx, float sy, uint dist )
     Alpha = maxAlpha;
 }
 
-UShortPair ItemHex::GetEffectStep()
+UInt16Pair ItemHex::GetEffectStep()
 {
     uint dist = DistSqrt( (int)effCurX, (int)effCurY, effStartX, effStartY );
     if( dist > effDist )
@@ -257,7 +257,7 @@ void ItemHex::RefreshAnim()
     }
 }
 
-void ItemHex::SetMaxAlpha( uchar alpha )
+void ItemHex::SetMaxAlpha( uint8 alpha )
 {
     maxAlpha = alpha;
     RestoreAlpha();

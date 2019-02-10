@@ -63,7 +63,7 @@ bool Map::Init( ProtoMap* proto, Location* location )
         return false;
 
     MEMORY_PROCESS( MEMORY_MAP_FIELD, proto->Header.MaxHexX * proto->Header.MaxHexY );
-    hexFlags = new uchar[proto->Header.MaxHexX * proto->Header.MaxHexY];
+    hexFlags = new uint8[proto->Header.MaxHexX * proto->Header.MaxHexY];
     if( !hexFlags )
         return false;
     memzero( hexFlags, proto->Header.MaxHexX * proto->Header.MaxHexY );
@@ -177,7 +177,7 @@ bool Map::Generate()
         }
 
         // Create npc
-        Npc* npc = CrMngr.CreateNpc( mobj.ProtoId, params_count, params, 0, NULL, script[0] ? script : NULL, this, mobj.MapX, mobj.MapY, (uchar)mobj.Dir, true );
+        Npc* npc = CrMngr.CreateNpc( mobj.ProtoId, params_count, params, 0, NULL, script[0] ? script : NULL, this, mobj.MapX, mobj.MapY, (uint8)mobj.Dir, true );
         if( !npc )
         {
             WriteLogF( _FUNC_, " - Create npc on map<%s> with pid<%u> failture - continue generate.\n", Proto->GetName(), mobj.ProtoId );
@@ -234,7 +234,7 @@ bool Map::Generate()
     for( auto it = Proto->ItemsVec.begin(), end = Proto->ItemsVec.end(); it != end; ++it )
     {
         MapObject& mobj = *(*it);
-        ushort     pid = mobj.ProtoId;
+        uint16     pid = mobj.ProtoId;
         ProtoItem* proto = ItemMngr.GetProtoItem( pid );
         if( !proto )
         {
@@ -465,7 +465,7 @@ Location* Map::GetLocation( bool lock )
     return mapLocation;
 }
 
-bool Map::GetStartCoord( ushort& hx, ushort& hy, uchar& dir, uint entire )
+bool Map::GetStartCoord( uint16& hx, uint16& hy, uint8& dir, uint entire )
 {
     ProtoMap::MapEntire* ent;
     ent = Proto->GetEntireRandom( entire );
@@ -484,7 +484,7 @@ bool Map::GetStartCoord( ushort& hx, ushort& hy, uchar& dir, uint entire )
     return true;
 }
 
-bool Map::GetStartCoordCar( ushort& hx, ushort& hy, ProtoItem* proto_item )
+bool Map::GetStartCoordCar( uint16& hx, uint16& hy, ProtoItem* proto_item )
 {
     if( !proto_item->IsCar() )
         return false;
@@ -506,7 +506,7 @@ bool Map::GetStartCoordCar( ushort& hx, ushort& hy, ProtoItem* proto_item )
     return false;
 }
 
-bool Map::FindStartHex( ushort& hx, ushort& hy, uint multihex, uint seek_radius, bool skip_unsafe )
+bool Map::FindStartHex( uint16& hx, uint16& hy, uint multihex, uint seek_radius, bool skip_unsafe )
 {
     if( IsHexesPassed( hx, hy, multihex ) && !(skip_unsafe && (IsHexTrigger( hx, hy ) || IsHexTrap( hx, hy ) ) ) )
         return true;
@@ -642,7 +642,7 @@ void Map::KickPlayersToGlobalMap()
     }
 }
 
-bool Map::AddItem( Item* item, ushort hx, ushort hy )
+bool Map::AddItem( Item* item, uint16 hx, uint16 hy )
 {
     if( !item )
         return false;
@@ -698,7 +698,7 @@ bool Map::AddItem( Item* item, ushort hx, ushort hy )
     return true;
 }
 
-void Map::SetItem( Item* item, ushort hx, ushort hy )
+void Map::SetItem( Item* item, uint16 hx, uint16 hy )
 {
     if( GetItem( item->GetId() ) )
     {
@@ -748,8 +748,8 @@ void Map::EraseItem( uint item_id )
     Item* item = *it;
     hexItems.erase( it );
 
-    ushort hx = item->AccHex.HexX;
-    ushort hy = item->AccHex.HexY;
+    uint16 hx = item->AccHex.HexX;
+    uint16 hy = item->AccHex.HexY;
 
     item->Accessory = 0xd1;
 
@@ -879,7 +879,7 @@ void Map::ChangeViewItem( Item* item )
     }
 }
 
-void Map::AnimateItem( Item* item, uchar from_frm, uchar to_frm )
+void Map::AnimateItem( Item* item, uint8 from_frm, uint8 to_frm )
 {
     SCOPE_LOCK( dataLocker );
 
@@ -906,7 +906,7 @@ Item* Map::GetItem( uint item_id )
     return NULL;
 }
 
-Item* Map::GetItemHex( ushort hx, ushort hy, ushort item_pid, Critter* picker )
+Item* Map::GetItemHex( uint16 hx, uint16 hy, uint16 item_pid, Critter* picker )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -921,7 +921,7 @@ Item* Map::GetItemHex( ushort hx, ushort hy, ushort item_pid, Critter* picker )
     return NULL;
 }
 
-Item* Map::GetItemDoor( ushort hx, ushort hy )
+Item* Map::GetItemDoor( uint16 hx, uint16 hy )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -935,7 +935,7 @@ Item* Map::GetItemDoor( ushort hx, ushort hy )
     return NULL;
 }
 
-Item* Map::GetItemCar( ushort hx, ushort hy )
+Item* Map::GetItemCar( uint16 hx, uint16 hy )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -949,7 +949,7 @@ Item* Map::GetItemCar( ushort hx, ushort hy )
     return NULL;
 }
 
-Item* Map::GetItemContainer( ushort hx, ushort hy )
+Item* Map::GetItemContainer( uint16 hx, uint16 hy )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -963,7 +963,7 @@ Item* Map::GetItemContainer( ushort hx, ushort hy )
     return NULL;
 }
 
-Item* Map::GetItemGag( ushort hx, ushort hy )
+Item* Map::GetItemGag( uint16 hx, uint16 hy )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -977,7 +977,7 @@ Item* Map::GetItemGag( ushort hx, ushort hy )
     return NULL;
 }
 
-void Map::GetItemsHex( ushort hx, ushort hy, ItemPtrVec& items, bool lock )
+void Map::GetItemsHex( uint16 hx, uint16 hy, ItemPtrVec& items, bool lock )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -991,7 +991,7 @@ void Map::GetItemsHex( ushort hx, ushort hy, ItemPtrVec& items, bool lock )
             SYNC_LOCK( *it );
 }
 
-void Map::GetItemsHexEx( ushort hx, ushort hy, uint radius, ushort pid, ItemPtrVec& items, bool lock )
+void Map::GetItemsHexEx( uint16 hx, uint16 hy, uint radius, uint16 pid, ItemPtrVec& items, bool lock )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -1005,7 +1005,7 @@ void Map::GetItemsHexEx( ushort hx, ushort hy, uint radius, ushort pid, ItemPtrV
             SYNC_LOCK( *it );
 }
 
-void Map::GetItemsPid( ushort pid, ItemPtrVec& items, bool lock )
+void Map::GetItemsPid( uint16 pid, ItemPtrVec& items, bool lock )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -1033,7 +1033,7 @@ void Map::GetItemsType( int type, ItemPtrVec& items, bool lock )
             SYNC_LOCK( *it );
 }
 
-void Map::GetItemsTrap( ushort hx, ushort hy, ItemPtrVec& traps, bool lock )
+void Map::GetItemsTrap( uint16 hx, uint16 hy, ItemPtrVec& traps, bool lock )
 {
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
@@ -1049,7 +1049,7 @@ void Map::GetItemsTrap( ushort hx, ushort hy, ItemPtrVec& traps, bool lock )
             SYNC_LOCK( *it );
 }
 
-void Map::RecacheHexBlock( ushort hx, ushort hy )
+void Map::RecacheHexBlock( uint16 hx, uint16 hy )
 {
     UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     UnsetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
@@ -1074,7 +1074,7 @@ void Map::RecacheHexBlock( ushort hx, ushort hy )
         SetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
 }
 
-void Map::RecacheHexShoot( ushort hx, ushort hy )
+void Map::RecacheHexShoot( uint16 hx, uint16 hy )
 {
     UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
@@ -1088,7 +1088,7 @@ void Map::RecacheHexShoot( ushort hx, ushort hy )
     }
 }
 
-void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
+void Map::RecacheHexBlockShoot( uint16 hx, uint16 hy )
 {
     UnsetHexFlag( hx, hy, HEX_FLAG_BLOCK_ITEM );
     UnsetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
@@ -1119,32 +1119,32 @@ void Map::RecacheHexBlockShoot( ushort hx, ushort hy )
         SetHexFlag( hx, hy, HEX_FLAG_GAG_ITEM );
 }
 
-ushort Map::GetHexFlags( ushort hx, ushort hy )
+uint16 Map::GetHexFlags( uint16 hx, uint16 hy )
 {
     return (hexFlags[hy * GetMaxHexX() + hx] << 8) | Proto->HexFlags[hy * GetMaxHexX() + hx];
 }
 
-void Map::SetHexFlag( ushort hx, ushort hy, uchar flag )
+void Map::SetHexFlag( uint16 hx, uint16 hy, uint8 flag )
 {
     SETFLAG( hexFlags[hy * GetMaxHexX() + hx], flag );
 }
 
-void Map::UnsetHexFlag( ushort hx, ushort hy, uchar flag )
+void Map::UnsetHexFlag( uint16 hx, uint16 hy, uint8 flag )
 {
     UNSETFLAG( hexFlags[hy * GetMaxHexX() + hx], flag );
 }
 
-bool Map::IsHexPassed( ushort hx, ushort hy )
+bool Map::IsHexPassed( uint16 hx, uint16 hy )
 {
     return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOWAY );
 }
 
-bool Map::IsHexRaked( ushort hx, ushort hy )
+bool Map::IsHexRaked( uint16 hx, uint16 hy )
 {
     return !FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOSHOOT );
 }
 
-bool Map::IsHexesPassed( ushort hx, ushort hy, uint radius )
+bool Map::IsHexesPassed( uint16 hx, uint16 hy, uint radius )
 {
     // Base
     if( FLAG( GetHexFlags( hx, hy ), HEX_FLAG_NOWAY ) )
@@ -1168,7 +1168,7 @@ bool Map::IsHexesPassed( ushort hx, ushort hy, uint radius )
     return true;
 }
 
-bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
+bool Map::IsMovePassed( uint16 hx, uint16 hy, uint8 dir, uint multihex )
 {
     // Single hex
     if( !multihex )
@@ -1212,7 +1212,7 @@ bool Map::IsMovePassed( ushort hx, ushort hy, uchar dir, uint multihex )
     return true;
 }
 
-bool Map::IsFlagCritter( ushort hx, ushort hy, bool dead )
+bool Map::IsFlagCritter( uint16 hx, uint16 hy, bool dead )
 {
     if( dead )
         return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_DEAD_CRITTER );
@@ -1220,7 +1220,7 @@ bool Map::IsFlagCritter( ushort hx, ushort hy, bool dead )
         return FLAG( hexFlags[hy * GetMaxHexX() + hx], HEX_FLAG_CRITTER );
 }
 
-void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
+void Map::SetFlagCritter( uint16 hx, uint16 hy, uint multihex, bool dead )
 {
     if( dead )
     {
@@ -1248,7 +1248,7 @@ void Map::SetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
     }
 }
 
-void Map::UnsetFlagCritter( ushort hx, ushort hy, uint multihex, bool dead )
+void Map::UnsetFlagCritter( uint16 hx, uint16 hy, uint multihex, bool dead )
 {
     if( dead )
     {
@@ -1366,7 +1366,7 @@ Critter* Map::GetNpc( int npc_role, int find_type, uint skip_count, bool sync_lo
     return npc;
 }
 
-Critter* Map::GetHexCritter( ushort hx, ushort hy, bool dead, bool sync_lock )
+Critter* Map::GetHexCritter( uint16 hx, uint16 hy, bool dead, bool sync_lock )
 {
     if( !IsFlagCritter( hx, hy, dead ) )
         return NULL;
@@ -1410,7 +1410,7 @@ Critter* Map::GetHexCritter( ushort hx, ushort hy, bool dead, bool sync_lock )
     return cr;
 }
 
-void Map::GetCrittersHex( ushort hx, ushort hy, uint radius, int find_type, CrVec& critters, bool sync_lock )
+void Map::GetCrittersHex( uint16 hx, uint16 hy, uint radius, int find_type, CrVec& critters, bool sync_lock )
 {
     dataLocker.Lock();
     CrVec find_critters;
@@ -1550,7 +1550,7 @@ uint Map::GetNpcsCount()
     return count;
 }
 
-void Map::SendEffect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
+void Map::SendEffect( uint16 eff_pid, uint16 hx, uint16 hy, uint16 radius )
 {
     SCOPE_LOCK( dataLocker );
 
@@ -1562,7 +1562,7 @@ void Map::SendEffect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
     }
 }
 
-void Map::SendFlyEffect( ushort eff_pid, uint from_crid, uint to_crid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+void Map::SendFlyEffect( uint16 eff_pid, uint from_crid, uint to_crid, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     SCOPE_LOCK( dataLocker );
 
@@ -1581,8 +1581,8 @@ void Map::GetCritterCar( Critter* cr, Item* car )
         return;
 
     // Car position
-    ushort hx = car->AccHex.HexX;
-    ushort hy = car->AccHex.HexY;
+    uint16 hx = car->AccHex.HexX;
+    uint16 hy = car->AccHex.HexY;
 
     // Move car from map to inventory
     EraseItem( car->GetId() );
@@ -1602,7 +1602,7 @@ void Map::GetCritterCar( Critter* cr, Item* car )
     }
 }
 
-void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
+void Map::SetCritterCar( uint16 hx, uint16 hy, Critter* cr, Item* car )
 {
     // Check
     if( hx >= GetMaxHexX() || hy >= GetMaxHexY() || !cr || !car || !car->IsCar() )
@@ -1619,7 +1619,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
     // Move car bags from inventory to map
     for( int i = 0; i < ITEM_MAX_CHILDS; i++ )
     {
-        ushort child_pid = car->Proto->ChildPid[i];
+        uint16 child_pid = car->Proto->ChildPid[i];
         if( !child_pid )
             continue;
 
@@ -1628,8 +1628,8 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
             continue;
 
         // Move to position
-        ushort child_hx = hx;
-        ushort child_hy = hy;
+        uint16 child_hx = hx;
+        uint16 child_hy = hy;
         FOREACH_PROTO_ITEM_LINES( car->Proto->ChildLines[i], child_hx, child_hy, GetMaxHexX(), GetMaxHexY(),;
                                   );
 
@@ -1639,7 +1639,7 @@ void Map::SetCritterCar( ushort hx, ushort hy, Critter* cr, Item* car )
     }
 }
 
-bool Map::IsPlaceForItem( ushort hx, ushort hy, ProtoItem* proto_item )
+bool Map::IsPlaceForItem( uint16 hx, uint16 hy, ProtoItem* proto_item )
 {
     if( !IsHexPassed( hx, hy ) )
         return false;
@@ -1653,7 +1653,7 @@ bool Map::IsPlaceForItem( ushort hx, ushort hy, ProtoItem* proto_item )
     return true;
 }
 
-void Map::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
+void Map::PlaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item )
 {
     bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
@@ -1663,7 +1663,7 @@ void Map::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
                               );
 }
 
-void Map::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
+void Map::ReplaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item )
 {
     bool raked = FLAG( proto_item->Flags, ITEM_FLAG_SHOOT_THRU );
     FOREACH_PROTO_ITEM_LINES( proto_item->BlockLines, hx, hy, GetMaxHexX(), GetMaxHexY(),
@@ -1682,10 +1682,10 @@ void Map::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
                               );
 }
 
-Item* Map::GetItemChild( ushort hx, ushort hy, ProtoItem* proto_item, uint child_index )
+Item* Map::GetItemChild( uint16 hx, uint16 hy, ProtoItem* proto_item, uint child_index )
 {
     // Get child pid
-    ushort child_pid = proto_item->ChildPid[child_index];
+    uint16 child_pid = proto_item->ChildPid[child_index];
     if( !child_pid )
         return NULL;
 
@@ -1812,12 +1812,12 @@ void Map::SetLoopTime( uint loop_num, uint ms )
     LoopWaitTick[loop_num] = ms;
 }
 
-uchar Map::GetRain()
+uint8 Map::GetRain()
 {
     return Data.MapRain;
 }
 
-void Map::SetRain( uchar capacity )
+void Map::SetRain( uint8 capacity )
 {
     if( Data.MapRain == capacity )
         return;
@@ -1884,7 +1884,7 @@ void Map::SetDayTime( uint day_part, uint time )
     }
 }
 
-void Map::GetDayColor( uint day_part, uchar& r, uchar& g, uchar& b )
+void Map::GetDayColor( uint day_part, uint8& r, uint8& g, uint8& b )
 {
     if( day_part < 4 )
     {
@@ -1896,7 +1896,7 @@ void Map::GetDayColor( uint day_part, uchar& r, uchar& g, uchar& b )
     }
 }
 
-void Map::SetDayColor( uint day_part, uchar r, uchar g, uchar b )
+void Map::SetDayColor( uint day_part, uint8 r, uint8 g, uint8 b )
 {
     if( day_part < 4 )
     {
@@ -1932,7 +1932,7 @@ void Map::SetData( uint index, int value )
     }
 }
 
-void Map::SetText( ushort hx, ushort hy, uint color, const char* text, ushort text_len, ushort intellect, bool unsafe_text )
+void Map::SetText( uint16 hx, uint16 hy, uint color, const char* text, uint16 text_len, uint16 intellect, bool unsafe_text )
 {
     if( hx >= GetMaxHexX() || hy >= GetMaxHexY() )
         return;
@@ -1947,7 +1947,7 @@ void Map::SetText( ushort hx, ushort hy, uint color, const char* text, ushort te
     }
 }
 
-void Map::SetTextMsg( ushort hx, ushort hy, uint color, ushort text_msg, uint num_str )
+void Map::SetTextMsg( uint16 hx, uint16 hy, uint color, uint16 text_msg, uint num_str )
 {
     if( hx >= GetMaxHexX() || hy >= GetMaxHexY() || !num_str )
         return;
@@ -1962,7 +1962,7 @@ void Map::SetTextMsg( ushort hx, ushort hy, uint color, ushort text_msg, uint nu
     }
 }
 
-void Map::SetTextMsgLex( ushort hx, ushort hy, uint color, ushort text_msg, uint num_str, const char* lexems, ushort lexems_len )
+void Map::SetTextMsgLex( uint16 hx, uint16 hy, uint color, uint16 text_msg, uint num_str, const char* lexems, uint16 lexems_len )
 {
     if( hx >= GetMaxHexX() || hy >= GetMaxHexY() || !num_str )
         return;
@@ -2268,7 +2268,7 @@ const char* LocationEventFuncName[LOCATION_EVENT_MAX] =
     "bool %s(Location&,Critter@[]&,uint8)",         // LOCATION_EVENT_ENTER
 };
 
-bool Location::Init( ProtoLocation* proto, ushort wx, ushort wy )
+bool Location::Init( ProtoLocation* proto, uint16 wx, uint16 wy )
 {
     if( !proto )
         return false;
@@ -2333,7 +2333,7 @@ Map* Location::GetMap( uint count )
     return map;
 }
 
-bool Location::GetTransit( Map* from_map, uint& id_map, ushort& hx, ushort& hy, uchar& dir )
+bool Location::GetTransit( Map* from_map, uint& id_map, uint16& hx, uint16& hy, uint8& dir )
 {
     if( !from_map || hx >= from_map->GetMaxHexX() || hy >= from_map->GetMaxHexY() )
         return false;
@@ -2475,7 +2475,7 @@ void Location::EventFinish( bool to_delete )
     }
 }
 
-bool Location::EventEnter( ScriptArray* group, uchar entrance )
+bool Location::EventEnter( ScriptArray* group, uint8 entrance )
 {
     if( PrepareScriptFunc( LOCATION_EVENT_ENTER ) )
     {

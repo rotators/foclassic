@@ -277,11 +277,11 @@ bool Script::Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callbac
         {
             Script::SetArgUInt64( value );
         }
-        static void ScriptSetArgUInt8( uchar value )
+        static void ScriptSetArgUInt8( uint8 value )
         {
             Script::SetArgUChar( value );
         }
-        static void ScriptSetArgUInt16( ushort value )
+        static void ScriptSetArgUInt16( uint16 value )
         {
             Script::SetArgUShort( value );
         }
@@ -333,13 +333,13 @@ bool Script::Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callbac
         {
             return *(int64*)Script::GetReturnedRawAddress();
         }
-        static uchar ScriptGetReturnedUInt8()
+        static uint8 ScriptGetReturnedUInt8()
         {
-            return *(uchar*)Script::GetReturnedRawAddress();
+            return *(uint8*)Script::GetReturnedRawAddress();
         }
-        static ushort ScriptGetReturnedUInt16()
+        static uint16 ScriptGetReturnedUInt16()
         {
-            return *(ushort*)Script::GetReturnedRawAddress();
+            return *(uint16*)Script::GetReturnedRawAddress();
         }
         static uint ScriptGetReturnedUInt()
         {
@@ -1162,7 +1162,7 @@ asIScriptModule* Script::CreateModule( const char* module_name )
 
 void Script::ScriptGarbager( bool collect_now /* = false */ )
 {
-    static uchar  garbager_state = 5;
+    static uint8  garbager_state = 5;
     static uint   last_nongarbage = 0;
     static uint   best_count = 0;
     static uint   last_garbager_tick = 0;
@@ -1513,7 +1513,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
         if( file_bin.IsLoaded() && file_bin.GetFsize() > sizeof(ScriptSaveSignature) )
         {
             // Check signature
-            uchar signature[sizeof(ScriptSaveSignature)];
+            uint8 signature[sizeof(ScriptSaveSignature)];
             bool  bin_signature = file_bin.CopyMem( signature, sizeof(signature) );
             bool  load = (bin_signature && memcmp( ScriptSaveSignature, signature, sizeof(ScriptSaveSignature) ) == 0);
 
@@ -1801,14 +1801,14 @@ public:
                 dependencies[d].erase( 0, Str::Length( scripts_path ) );
             }
 
-            file_bin.SetData( (uchar*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
+            file_bin.SetData( (uint8*)ScriptSaveSignature, sizeof(ScriptSaveSignature) );
             file_bin.SetBEUInt( (uint)ANGELSCRIPT_VERSION );
             file_bin.SetBEUInt( (uint)dependencies.size() );
             for( uint i = 0, j = (uint)dependencies.size(); i < j; i++ )
-                file_bin.SetData( (uchar*)dependencies[i].c_str(), (uint)dependencies[i].length() + 1 );
+                file_bin.SetData( (uint8*)dependencies[i].c_str(), (uint)dependencies[i].length() + 1 );
             file_bin.SetBEUInt( (uint)pragmas.size() );
             for( uint i = 0, j = (uint)pragmas.size(); i < j; i++ )
-                file_bin.SetData( (uchar*)pragmas[i].c_str(), (uint)pragmas[i].length() + 1 );
+                file_bin.SetData( (uint8*)pragmas[i].c_str(), (uint)pragmas[i].length() + 1 );
             file_bin.SetData( &data[0], (uint)data.size() );
 
             if( !file_bin.SaveOutBufToFile( Str::FormatBuf( "%sb", fname_script ), ScriptsPath ) )
@@ -1836,7 +1836,7 @@ public:
 }
 
 #if defined (FOCLASSIC_CLIENT)
-bool Script::LoadScript( const char* module_name, const uchar* bytecode, uint len )
+bool Script::LoadScript( const char* module_name, const uint8* bytecode, uint len )
 {
     if( !bytecode || !len )
     {
@@ -2389,7 +2389,7 @@ bool Script::PrepareContext( int bind_id, const char* call_func, const char* ctx
     return true;
 }
 
-void Script::SetArgUChar( uchar value )
+void Script::SetArgUChar( uint8 value )
 {
     if( ScriptCall )
         CurrentCtx->SetArgByte( (asUINT)CurrentArg, value );
@@ -2398,7 +2398,7 @@ void Script::SetArgUChar( uchar value )
     CurrentArg++;
 }
 
-void Script::SetArgUShort( ushort value )
+void Script::SetArgUShort( uint16 value )
 {
     if( ScriptCall )
         CurrentCtx->SetArgWord( (asUINT)CurrentArg, value );

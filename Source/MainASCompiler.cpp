@@ -46,7 +46,7 @@ const char*      ContextStatesStr[] =
     "Error",
 };
 
-uchar  ScriptTarget = SCRIPT_BIND_SERVER; // TODO no default
+uint8  ScriptTarget = SCRIPT_BIND_SERVER; // TODO no default
 string ScriptTargetName[4] =
 {
     "UNKNOWN",

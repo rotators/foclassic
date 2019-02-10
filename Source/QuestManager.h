@@ -8,12 +8,12 @@
 
 struct Quest
 {
-    ushort num;
+    uint16 num;
     string str;
     string info;
     bool   isInfo;
 
-    bool operator==( const ushort& _num ) { return _num == num; }
+    bool operator==( const uint16& _num ) { return _num == num; }
     Quest( uint _num, string _info ) : num( _num ), info( _info ), isInfo( false ) {}
 };
 typedef vector<Quest> QuestVec;
@@ -30,10 +30,10 @@ private:
 public:
     QuestTab( FOMsg* _msg ) : msg( _msg ) {}
     bool        IsEmpty();
-    Quest*      AddQuest( ushort num, string info );
-    void        RefreshQuest( ushort num, string str );
-    Quest*      GetQuest( ushort num );
-    void        EraseQuest( ushort num );
+    Quest*      AddQuest( uint16 num, string info );
+    void        RefreshQuest( uint16 num, string str );
+    Quest*      GetQuest( uint16 num );
+    void        EraseQuest( uint16 num );
     QuestVec*   GetQuests();
     const char* GetText();
 };
@@ -51,7 +51,7 @@ public:
     void         OnQuest( uint num );
     QuestTabMap* GetTabs();
     QuestTab*    GetTab( uint tab_num );
-    Quest*       GetQuest( uint tab_num, ushort quest_num );
+    Quest*       GetQuest( uint tab_num, uint16 quest_num );
     Quest*       GetQuest( uint num );
 };
 

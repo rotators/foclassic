@@ -162,11 +162,11 @@ void FOServer::SaveHoloInfoFile()
         HoloInfo* hi = (*it).second;
         AddWorldSaveData( &id, sizeof(id) );
         AddWorldSaveData( &hi->CanRewrite, sizeof(hi->CanRewrite) );
-        ushort title_len = (ushort)hi->Title.length();
+        uint16 title_len = (uint16)hi->Title.length();
         AddWorldSaveData( &title_len, sizeof(title_len) );
         if( title_len )
             AddWorldSaveData( (void*)hi->Title.c_str(), title_len );
-        ushort text_len = (ushort)hi->Text.length();
+        uint16 text_len = (uint16)hi->Text.length();
         AddWorldSaveData( &text_len, sizeof(text_len) );
         if( text_len )
             AddWorldSaveData( (void*)hi->Text.c_str(), text_len );
@@ -189,7 +189,7 @@ bool FOServer::LoadHoloInfoFile( void* f )
         if( !FileRead( f, &can_rw, sizeof(can_rw) ) )
             return false;
 
-        ushort title_len;
+        uint16 title_len;
         char   title[USER_HOLO_MAX_TITLE_LEN + 1] = { 0 };
         if( !FileRead( f, &title_len, sizeof(title_len) ) )
             return false;
@@ -199,7 +199,7 @@ bool FOServer::LoadHoloInfoFile( void* f )
             FileRead( f, title, title_len );
         title[title_len] = 0;
 
-        ushort text_len;
+        uint16 text_len;
         char   text[USER_HOLO_MAX_LEN + 1] = { 0 };
         if( !FileRead( f, &text_len, sizeof(text_len) ) )
             return false;
@@ -300,7 +300,7 @@ void FOServer::Send_PlayerHoloInfo( Critter* cr, uint holo_num, bool send_text )
 
         HolodiskLocker.Unlock();
 
-        cl->Send_UserHoloStr( send_text ? STR_HOLO_INFO_DESC_( holo_num ) : STR_HOLO_INFO_NAME_( holo_num ), str.c_str(), (ushort)str.length() );
+        cl->Send_UserHoloStr( send_text ? STR_HOLO_INFO_DESC_( holo_num ) : STR_HOLO_INFO_NAME_( holo_num ), str.c_str(), (uint16)str.length() );
     }
     else
     {
@@ -310,7 +310,7 @@ void FOServer::Send_PlayerHoloInfo( Critter* cr, uint holo_num, bool send_text )
     }
 }
 
-bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
+bool FOServer::Act_Move( Critter* cr, uint16 hx, uint16 hy, uint move_params )
 {
     uint map_id = cr->GetMap();
     if( !map_id )
@@ -393,9 +393,9 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
     }
 
     // Check passed
-    ushort fx = cr->GetHexX();
-    ushort fy = cr->GetHexY();
-    uchar  dir = GetNearDir( fx, fy, hx, hy );
+    uint16 fx = cr->GetHexX();
+    uint16 fy = cr->GetHexY();
+    uint8  dir = GetNearDir( fx, fy, hx, hy );
     uint   multihex = cr->GetMultihex();
 
     if( !map->IsMovePassed( hx, hy, dir, multihex ) )
@@ -474,7 +474,7 @@ bool FOServer::Act_Move( Critter* cr, ushort hx, ushort hy, uint move_params )
     return true;
 }
 
-bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
+bool FOServer::Act_Attack( Critter* cr, uint8 rate_weap, uint target_id )
 {
 /************************************************************************/
 /* Check & Prepare                                                      */
@@ -551,8 +551,8 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         return false;
     }
 
-    uchar aim = rate_weap >> 4;
-    uchar use = rate_weap & 0xF;
+    uint8 aim = rate_weap >> 4;
+    uint8 use = rate_weap & 0xF;
 
     if( use >= USE_MAX )
     {
@@ -664,7 +664,7 @@ bool FOServer::Act_Attack( Critter* cr, uchar rate_weap, uint target_id )
         }
     }
 
-    ushort ammo_round = weap->Proto->Weapon_Round[use];
+    uint16 ammo_round = weap->Proto->Weapon_Round[use];
     if( !ammo_round )
         ammo_round = 1;
 
@@ -773,7 +773,7 @@ bool FOServer::Act_Reload( Critter* cr, uint weap_id, uint ammo_id )
 }
 
 #pragma MESSAGE("Add using hands/legs.")
-bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, uint target_id, ushort target_pid, uint param )
+bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, uint target_id, uint16 target_pid, uint param )
 {
     cr->SetBreakTime( GameOpt.Breaktime );
 
@@ -919,8 +919,8 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
             return false;
         }
 
-        ushort hx = target_id >> 16;
-        ushort hy = target_id & 0xFFFF;
+        uint16 hx = target_id >> 16;
+        uint16 hy = target_id & 0xFFFF;
 
         if( !CheckDist( cr->GetHexX(), cr->GetHexY(), hx, hy, cr->GetUseDist() ) )
         {
@@ -1058,7 +1058,7 @@ bool FOServer::Act_Use( Critter* cr, uint item_id, int skill, int target_type, u
     return true;
 }
 
-bool FOServer::Act_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
+bool FOServer::Act_PickItem( Critter* cr, uint16 hx, uint16 hy, uint16 pid )
 {
     cr->SetBreakTime( GameOpt.Breaktime );
 
@@ -1247,8 +1247,8 @@ void FOServer::RespawnCritter( Critter* cr )
         return;
     }
 
-    ushort hx = cr->GetHexX();
-    ushort hy = cr->GetHexY();
+    uint16 hx = cr->GetHexX();
+    uint16 hy = cr->GetHexY();
     uint   multihex = cr->GetMultihex();
     if( !map->IsHexesPassed( hx, hy, multihex ) )
     {
@@ -1275,7 +1275,7 @@ void FOServer::RespawnCritter( Critter* cr )
     }
 }
 
-void FOServer::KnockoutCritter( Critter* cr, uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, ushort knock_hx, ushort knock_hy )
+void FOServer::KnockoutCritter( Critter* cr, uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, uint16 knock_hx, uint16 knock_hy )
 {
     // Close talk
     if( cr->IsPlayer() )
@@ -1327,7 +1327,7 @@ void FOServer::KnockoutCritter( Critter* cr, uint anim2begin, uint anim2idle, ui
 
 bool FOServer::MoveRandom( Critter* cr )
 {
-    UCharVec dirs( 6 );
+    UInt8Vec dirs( 6 );
     for( int i = 0; i < 6; i++ )
         dirs[i] = i;
     std::random_shuffle( dirs.begin(), dirs.end() );
@@ -1337,14 +1337,14 @@ bool FOServer::MoveRandom( Critter* cr )
         return false;
 
     uint   multihex = cr->GetMultihex();
-    ushort maxhx = map->GetMaxHexX();
-    ushort maxhy = map->GetMaxHexY();
+    uint16 maxhx = map->GetMaxHexX();
+    uint16 maxhy = map->GetMaxHexY();
 
     for( int i = 0; i < 6; i++ )
     {
-        uchar  dir = dirs[i];
-        ushort hx = cr->GetHexX();
-        ushort hy = cr->GetHexY();
+        uint8  dir = dirs[i];
+        uint16 hx = cr->GetHexX();
+        uint16 hy = cr->GetHexY();
         if( MoveHexByDir( hx, hy, dir, maxhx, maxhy ) && map->IsMovePassed( hx, hy, dir, multihex ) )
         {
             if( Act_Move( cr, hx, hy, 0 ) )
@@ -1362,7 +1362,7 @@ bool FOServer::RegenerateMap( Map* map )
 {
     // Copy need params
     uint      map_id = map->GetId();
-    ushort    map_pid = map->GetPid();
+    uint16    map_pid = map->GetPid();
     ProtoMap* map_proto = map->Proto;
     Location* map_loc = map->GetLocation( true );
 
@@ -1386,7 +1386,7 @@ bool FOServer::RegenerateMap( Map* map )
     return true;
 }
 
-bool FOServer::VerifyTrigger( Map* map, Critter* cr, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uchar dir )
+bool FOServer::VerifyTrigger( Map* map, Critter* cr, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint8 dir )
 {
     // Triggers
     bool result = false;
@@ -1481,7 +1481,7 @@ void FOServer::Process_UserRegister( Client* cl )
     cl->Bin >> msg_len;
 
     // Engine version
-    ushort engine_stage = 0, engine_version = 0;
+    uint16 engine_stage = 0, engine_version = 0;
 
     cl->Bin >> engine_stage;
     if( engine_stage != FOCLASSIC_STAGE )
@@ -1515,7 +1515,7 @@ void FOServer::Process_UserRegister( Client* cl )
     cl->Bin.Pop( cl->PassHash, PASS_HASH_SIZE );
 
     // Receive params
-    ushort params_count = 0;
+    uint16 params_count = 0;
     cl->Bin >> params_count;
 
     if( params_count > MAX_PARAMS )
@@ -1526,9 +1526,9 @@ void FOServer::Process_UserRegister( Client* cl )
     }
 
     memzero( cl->Data.Params, sizeof(cl->Data.Params) );
-    for( ushort i = 0; i < params_count; i++ )
+    for( uint16 i = 0; i < params_count; i++ )
     {
-        ushort index;
+        uint16 index;
         int    val;
         cl->Bin >> index;
         cl->Bin >> val;
@@ -1782,7 +1782,7 @@ void FOServer::Process_UserRegister( Client* cl )
 void FOServer::Process_UserLogin( ClientPtr& cl )
 {
     // Engine version
-    ushort engine_stage = 0, engine_version = 0;
+    uint16 engine_stage = 0, engine_version = 0;
 
     cl->Bin >> engine_stage;
     if( engine_stage != FOCLASSIC_STAGE )
@@ -1829,7 +1829,7 @@ void FOServer::Process_UserLogin( ClientPtr& cl )
     uint  msg_language;
     uint  textmsg_hash[TEXTMSG_MAX];
     uint  item_hash[ITEM_TYPE_MAX];
-    uchar default_combat_mode;
+    uint8 default_combat_mode;
 
     cl->Bin >> msg_language;
     for( int i = 0; i < TEXTMSG_MAX; i++ )
@@ -2318,8 +2318,8 @@ void FOServer::Process_UserLogin( ClientPtr& cl )
         {
             if( !map || map->IsNoLogOut() || map->GetPid() != cl->GetProtoMap() )
             {
-                ushort hx, hy;
-                uchar  dir;
+                uint16 hx, hy;
+                uint8  dir;
                 if( map && map->GetPid() == cl->GetProtoMap() && map->GetStartCoord( hx, hy, dir, ENTIRE_LOG_OUT ) )
                 {
                     cl->Data.HexX = hx;
@@ -2401,7 +2401,7 @@ void FOServer::Process_UserLogin( ClientPtr& cl )
     // Play ip
     CritDataExt* data_ext = cl->GetDataExt();
     uint         ip = cl->GetIp();
-    ushort       port = cl->GetPort();
+    uint16       port = cl->GetPort();
     bool         ip_stored = false;
     for( int i = 0; i < MAX_STORED_IP; i++ )
     {
@@ -2462,9 +2462,9 @@ void FOServer::Process_SingleplayerSaveLoad( Client* cl )
 
     uint     msg_len;
     bool     save;
-    ushort   fname_len;
+    uint16   fname_len;
     char     fname[MAX_FOTEXT];
-    UCharVec pic_data;
+    UInt8Vec pic_data;
     cl->Bin >> msg_len;
     cl->Bin >> save;
     cl->Bin >> fname_len;
@@ -2639,7 +2639,7 @@ void FOServer::Process_ParseToGame( Client* cl )
 void FOServer::Process_GiveMap( Client* cl )
 {
     bool   automap;
-    ushort map_pid;
+    uint16 map_pid;
     uint   loc_id;
     uint   hash_tiles;
     uint   hash_walls;
@@ -2693,7 +2693,7 @@ void FOServer::Process_GiveMap( Client* cl )
         }
     }
 
-    uchar send_info = 0;
+    uint8 send_info = 0;
     if( pmap->HashTiles != hash_tiles )
         SETFLAG( send_info, SENDMAP_TILES );
     if( pmap->HashWalls != hash_walls )
@@ -2730,12 +2730,12 @@ void FOServer::Send_Raw( Client* cl, uint data, bool fast /* = true */ )
     }
 }
 
-void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
+void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uint8 send_info )
 {
     uint   msg = NETMSG_MAP;
-    ushort map_pid = pmap->GetPid();
-    ushort maxhx = pmap->Header.MaxHexX;
-    ushort maxhy = pmap->Header.MaxHexY;
+    uint16 map_pid = pmap->GetPid();
+    uint16 maxhx = pmap->Header.MaxHexX;
+    uint16 maxhy = pmap->Header.MaxHexY;
     uint   msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(map_pid) + sizeof(maxhx) + sizeof(maxhy) + sizeof(send_info);
 
     if( FLAG( send_info, SENDMAP_TILES ) )
@@ -2783,8 +2783,8 @@ void FOServer::Send_MapData( Client* cl, ProtoMap* pmap, uchar send_info )
 void FOServer::Process_Move( Client* cl )
 {
     uint   move_params;
-    ushort hx;
-    ushort hy;
+    uint16 hx;
+    uint16 hy;
 
     cl->Bin >> move_params;
     cl->Bin >> hx;
@@ -2859,8 +2859,8 @@ void FOServer::Process_Move( Client* cl )
 void FOServer::Process_ChangeItem( Client* cl )
 {
     uint  item_id;
-    uchar from_slot;
-    uchar to_slot;
+    uint8 from_slot;
+    uint8 to_slot;
     uint  count;
 
     cl->Bin >> item_id;
@@ -2922,7 +2922,7 @@ void FOServer::Process_RateItem( Client* cl )
 void FOServer::Process_SortValueItem( Client* cl )
 {
     uint   item_id;
-    ushort sort_val;
+    uint16 sort_val;
 
     cl->Bin >> item_id;
     cl->Bin >> sort_val;
@@ -2941,11 +2941,11 @@ void FOServer::Process_SortValueItem( Client* cl )
 void FOServer::Process_UseItem( Client* cl )
 {
     uint   item_id;
-    ushort item_pid;
-    uchar  rate;
-    uchar  target_type;
+    uint16 item_pid;
+    uint8  rate;
+    uint8  target_type;
     uint   target_id;
-    ushort target_pid;
+    uint16 target_pid;
     uint   param;
 
     cl->Bin >> item_id;
@@ -2960,7 +2960,7 @@ void FOServer::Process_UseItem( Client* cl )
     if( !cl->IsLife() )
         return;
 
-    uchar use = rate & 0xF;
+    uint8 use = rate & 0xF;
     Item* item = (item_id ? cl->GetItem( item_id, true ) : cl->ItemSlotMain);
     if( !item )
     {
@@ -3025,9 +3025,9 @@ void FOServer::Process_UseItem( Client* cl )
 
 void FOServer::Process_PickItem( Client* cl )
 {
-    ushort targ_x;
-    ushort targ_y;
-    ushort pid;
+    uint16 targ_x;
+    uint16 targ_y;
+    uint16 pid;
 
     cl->Bin >> targ_x;
     cl->Bin >> targ_y;
@@ -3040,7 +3040,7 @@ void FOServer::Process_PickItem( Client* cl )
 void FOServer::Process_PickCritter( Client* cl )
 {
     uint  crid;
-    uchar pick_type;
+    uint8 pick_type;
 
     cl->Bin >> crid;
     cl->Bin >> pick_type;
@@ -3140,11 +3140,11 @@ void FOServer::Process_PickCritter( Client* cl )
 
 void FOServer::Process_ContainerItem( Client* cl )
 {
-    uchar transfer_type;
+    uint8 transfer_type;
     uint  cont_id;
     uint  item_id;
     uint  item_count;
-    uchar take_flags;
+    uint8 take_flags;
 
     cl->Bin >> transfer_type;
     cl->Bin >> cont_id;
@@ -3755,10 +3755,10 @@ void FOServer::Process_ContainerItem( Client* cl )
 
 void FOServer::Process_UseSkill( Client* cl )
 {
-    ushort skill;
-    uchar  targ_type;
+    uint16 skill;
+    uint8  targ_type;
     uint   target_id;
-    ushort target_pid;
+    uint16 target_pid;
 
     cl->Bin >> skill;
     cl->Bin >> targ_type;
@@ -3783,7 +3783,7 @@ void FOServer::Process_UseSkill( Client* cl )
 
 void FOServer::Process_Dir( Client* cl )
 {
-    uchar dir;
+    uint8 dir;
     cl->Bin >> dir;
     CHECK_IN_BUFF_ERROR( cl );
 
@@ -3802,8 +3802,8 @@ void FOServer::Process_SetUserHoloStr( Client* cl )
 {
     uint   msg_len;
     uint   holodisk_id;
-    ushort title_len;
-    ushort text_len;
+    uint16 title_len;
+    uint16 text_len;
     char   title[USER_HOLO_MAX_TITLE_LEN + 1];
     char   text[USER_HOLO_MAX_LEN + 1];
     cl->Bin >> msg_len;
@@ -3880,9 +3880,9 @@ void FOServer::Process_GetUserHoloStr( Client* cl )
 void FOServer::Process_LevelUp( Client* cl )
 {
     uint    msg_len;
-    ushort  count_skill_up;
+    uint16  count_skill_up;
     UIntVec skills;
-    ushort  perk_up;
+    uint16  perk_up;
 
     cl->Bin >> msg_len;
 
@@ -3892,7 +3892,7 @@ void FOServer::Process_LevelUp( Client* cl )
         count_skill_up = SKILL_COUNT;
     for( int i = 0; i < count_skill_up; i++ )
     {
-        ushort num, val;
+        uint16 num, val;
         cl->Bin >> num;
         cl->Bin >> val;
         skills.push_back( num );
@@ -3942,7 +3942,7 @@ void FOServer::Process_CraftAsk( Client* cl )
     cl->LastSendCraftTick = tick;
 
     uint   msg_len;
-    ushort count;
+    uint16 count;
     cl->Bin >> msg_len;
     cl->Bin >> count;
 
@@ -3958,7 +3958,7 @@ void FOServer::Process_CraftAsk( Client* cl )
     CHECK_IN_BUFF_ERROR( cl );
 
     uint msg = NETMSG_CRAFT_ASK;
-    count = (ushort)numbers.size();
+    count = (uint16)numbers.size();
     msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(count) + sizeof(uint) * count;
 
     BOUT_BEGIN( cl );
@@ -3977,7 +3977,7 @@ void FOServer::Process_Craft( Client* cl )
     cl->Bin >> craft_num;
     CHECK_IN_BUFF_ERROR( cl );
 
-    uchar res = MrFixit.ProcessCraft( cl, craft_num );
+    uint8 res = MrFixit.ProcessCraft( cl, craft_num );
 
     BOUT_BEGIN( cl );
     cl->Bout << NETMSG_CRAFT_RESULT;
@@ -3987,7 +3987,7 @@ void FOServer::Process_Craft( Client* cl )
 
 void FOServer::Process_Ping( Client* cl )
 {
-    uchar ping;
+    uint8 ping;
 
     cl->Bin >> ping;
     CHECK_IN_BUFF_ERROR( cl );
@@ -4032,7 +4032,7 @@ void FOServer::Process_Ping( Client* cl )
 
 void FOServer::Process_PlayersBarter( Client* cl )
 {
-    uchar barter;
+    uint8 barter;
     uint  param;
     uint  param_ext;
 
@@ -4288,7 +4288,7 @@ void FOServer::Process_ScreenAnswer( Client* cl )
 
 void FOServer::Process_Combat( Client* cl )
 {
-    uchar type;
+    uint8 type;
     int   val;
     cl->Bin >> type;
     cl->Bin >> val;
@@ -4326,13 +4326,13 @@ void FOServer::Process_RunServerScript( Client* cl )
 {
     uint          msg_len;
     bool          unsafe = false;
-    ushort        script_name_len;
+    uint16        script_name_len;
     char          script_name[MAX_SCRIPT_NAME * 2 + 2] = { 0 };
     int           p0, p1, p2;
-    ushort        p3len;
+    uint16        p3len;
     char          p3str[MAX_FOTEXT];
     ScriptString* p3 = NULL;
-    ushort        p4size;
+    uint16        p4size;
     ScriptArray*  p4 = NULL;
 
     cl->Bin >> msg_len;
@@ -4437,14 +4437,14 @@ void FOServer::Process_KarmaVoting( Client* cl )
 
 void FOServer::Process_GiveGlobalInfo( Client* cl )
 {
-    //	uchar info_flags;
+    //	uint8 info_flags;
     //	cl->Bin >> info_flags;
     //	cl->Send_GlobalInfo(info_flags);
 }
 
 void FOServer::Process_RuleGlobal( Client* cl )
 {
-    uchar command;
+    uint8 command;
     uint  param1;
     uint  param2;
     cl->Bin >> command;
@@ -4604,12 +4604,12 @@ void FOServer::Process_RuleGlobal( Client* cl )
 
             if( loc->Proto->ScriptBindId > 0 )
             {
-                uchar        count = 0;
-                uchar        show[0x100];
+                uint8        count = 0;
+                uint8        show[0x100];
                 ScriptArray* arr = MapMngr.GM_CreateGroupArray( cl->GroupMove );
                 if( !arr )
                     break;
-                for( uchar i = 0, j = (uchar)loc->Proto->Entrance.size(); i < j; i++ )
+                for( uint8 i = 0, j = (uint8)loc->Proto->Entrance.size(); i < j; i++ )
                 {
                     if( MapMngr.GM_CheckEntrance( loc, arr, i ) )
                     {
@@ -4620,29 +4620,29 @@ void FOServer::Process_RuleGlobal( Client* cl )
                 arr->Release();
 
                 uint msg = NETMSG_GLOBAL_ENTRANCES;
-                uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uchar) * count;
+                uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uint8) * count;
 
                 BOUT_BEGIN( cl );
                 cl->Bout << msg;
                 cl->Bout << msg_len;
                 cl->Bout << loc_id;
                 cl->Bout << count;
-                for( uchar i = 0; i < count; i++ )
+                for( uint8 i = 0; i < count; i++ )
                     cl->Bout << show[i];
                 BOUT_END( cl );
             }
             else
             {
                 uint  msg = NETMSG_GLOBAL_ENTRANCES;
-                uchar count = (uchar)loc->Proto->Entrance.size();
-                uint  msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uchar) * count;
+                uint8 count = (uint8)loc->Proto->Entrance.size();
+                uint  msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(loc_id) + sizeof(count) + sizeof(uint8) * count;
 
                 BOUT_BEGIN( cl );
                 cl->Bout << msg;
                 cl->Bout << msg_len;
                 cl->Bout << loc_id;
                 cl->Bout << count;
-                for( uchar i = 0; i < count; i++ )
+                for( uint8 i = 0; i < count; i++ )
                     cl->Bout << i;
                 BOUT_END( cl );
             }
@@ -4676,8 +4676,8 @@ void FOServer::Process_RuleGlobal( Client* cl )
             if( !map )
                 break;
 
-            uchar  dir;
-            ushort hx, hy;
+            uint8  dir;
+            uint16 hx, hy;
             if( !map->GetStartCoord( hx, hy, dir, loc->Proto->Entrance[entrance].second ) )
                 break;
 
@@ -4704,7 +4704,7 @@ void FOServer::Process_RuleGlobal( Client* cl )
 }
 
 
-void FOServer::Send_MsgData( Client* cl, uint lang, ushort num_msg, FOMsg& data_msg )
+void FOServer::Send_MsgData( Client* cl, uint lang, uint16 num_msg, FOMsg& data_msg )
 {
     if( cl->IsSendDisabled() || cl->IsOffline() )
         return;
@@ -4722,7 +4722,7 @@ void FOServer::Send_MsgData( Client* cl, uint lang, ushort num_msg, FOMsg& data_
     BOUT_END( cl );
 }
 
-void FOServer::Send_ProtoItemData( Client* cl, uchar type, ProtoItemVec& data, uint data_hash )
+void FOServer::Send_ProtoItemData( Client* cl, uint8 type, ProtoItemVec& data, uint data_hash )
 {
     if( cl->IsSendDisabled() || cl->IsOffline() )
         return;

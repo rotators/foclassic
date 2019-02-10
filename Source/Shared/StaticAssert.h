@@ -1,12 +1,14 @@
 STATIC_ASSERT( sizeof(bool) == 1 );
 STATIC_ASSERT( sizeof(char) == 1 );
-STATIC_ASSERT( sizeof(short) == 2 );
-STATIC_ASSERT( sizeof(int) == 4 );
+STATIC_ASSERT( sizeof(int8) == 1 );
+STATIC_ASSERT( sizeof(uint8) == 1 );
+STATIC_ASSERT( sizeof(int16) == 2 );
+STATIC_ASSERT( sizeof(uint16) == 2 );
+STATIC_ASSERT( sizeof(int32) == 4 );
+STATIC_ASSERT( sizeof(uint32) == 4 );
 STATIC_ASSERT( sizeof(int64) == 8 );
-STATIC_ASSERT( sizeof(uchar) == 1 );
-STATIC_ASSERT( sizeof(ushort) == 2 );
-STATIC_ASSERT( sizeof(uint) == 4 );
 STATIC_ASSERT( sizeof(uint64) == 8 );
+STATIC_ASSERT( sizeof(uint) == 4 );
 
 STATIC_ASSERT( sizeof(size_t) == sizeof(void*) );
 

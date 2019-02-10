@@ -36,13 +36,13 @@
 
 #define NETMSG_LOGIN                          CONST_NETMSG_HEADER( 1 )
 #define NETMSG_LOGIN_SIZE                                                         \
-    (sizeof(uint) + sizeof(ushort) + sizeof(ushort) + sizeof(uint) * 8 /*UIDs*/ + \
-     UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(uint) + sizeof(uint) * 10 /*MSG*/ + sizeof(uint) * 14 /*Proto*/ + sizeof(uchar) + 100)
+    (sizeof(uint) + sizeof(uint16) + sizeof(uint16) + sizeof(uint) * 8 /*UIDs*/ + \
+     UTF8_BUF_SIZE( MAX_NAME ) + PASS_HASH_SIZE + sizeof(uint) + sizeof(uint) * 10 /*MSG*/ + sizeof(uint) * 14 /*Proto*/ + sizeof(uint8) + 100)
 // ////////////////////////////////////////////////////////////////////////
 // Enter to game
 // Params:
-// ushort engine_stage
-// ushort engine_version
+// uint16 engine_stage
+// uint16 engine_version
 // !uint uid4
 // char name[MAX_NAME]
 // !uint uid1
@@ -55,7 +55,7 @@
 // !uint uidor
 // uint hash_proto[ITEM_TYPE_MAX]
 // !uint uidcalc
-// uchar default_combat_mode
+// uint8 default_combat_mode
 // !uint uid0
 // char[100] - reserved
 // ////////////////////////////////////////////////////////////////////////
@@ -65,12 +65,12 @@
 // Registration query
 // Params:
 // uint msg_len
-// ushort engine_stage
-// ushort engine_version
+// uint16 engine_stage
+// uint16 engine_version
 // MAX_NAME name
 // char pass_hash[PASS_HASH_SIZE]
-// ushort params_count
-//  ushort param_index
+// uint16 params_count
+//  uint16 param_index
 //  int param_val
 // ////////////////////////////////////////////////////////////////////////
 
@@ -89,10 +89,10 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_PING                           MAKE_NETMSG_HEADER( NETUID_PING )
-#define NETMSG_PING_SIZE                      (sizeof(uint) + sizeof(uchar) )
+#define NETMSG_PING_SIZE                      (sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 // Ping
-// uchar ping (see Ping in FOdefines.h)
+// uint8 ping (see Ping in FOdefines.h)
 // ////////////////////////////////////////////////////////////////////////
 
 /*#define NETMSG_UPDATE_FILES_LIST    MAKE_NETMSG_HEADER(?)
@@ -100,7 +100,7 @@
    // Prepared message
    // uint msg_len
    // uint files_count
-   //  ushort path_len - max MAX_FOPATH
+   //  uint16 path_len - max MAX_FOPATH
    //  char path[path_len]
    //  uint size
    //  uint hash
@@ -117,8 +117,8 @@
    //////////////////////////////////////////////////////////////////////////
    // Portion of data
    // uint msg_len
-   // ushort portion_len
-   // uchar portion[portion_len]
+   // uint16 portion_len
+   // uint8 portion[portion_len]
    //////////////////////////////////////////////////////////////////////////
 
    //#define NETMSG_HELLO                MAKE_NETMSG_HEADER(?)
@@ -133,11 +133,11 @@
 // Singleplayer
 // uint msg_len
 // bool save
-// ushort fname_len
+// uint16 fname_len
 // char fname[fname_len]
 // if save
 //  uint save_pic_len
-//  uchar save_pic[save_pic_len]
+//  uint8 save_pic[save_pic_len]
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CHECK_UID0                     MAKE_NETMSG_HEADER( NETUID_CHECK_UID0 )
@@ -150,14 +150,14 @@
 // uint msg_len
 // uint uid3
 // uint xor for uid0
-// uchar rnd_count, 1..21
+// uint8 rnd_count, 1..21
 // uint uid1
 // uint xor for uid2
 // char rnd_data[rnd_count] - random numbers
 // uint uid2
 // uint xor for uid1
 // uint uid4
-// uchar rnd_count2, 2..12
+// uint8 rnd_count2, 2..12
 // uint xor for uid3
 // uint xor for uid4
 // uint uid0
@@ -201,7 +201,7 @@
 //
 // Params:
 // uint msg_len
-// uchar cmd (see Commands in Access.h)
+// uint8 cmd (see Commands in Access.h)
 // Ext parameters
 // ////////////////////////////////////////////////////////////////////////
 
@@ -211,7 +211,7 @@
 // Params:
 // uint msg_len
 // uint critter_id
-// ushort lexems_length
+// uint16 lexems_length
 // char lexems[lexems_length]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -221,7 +221,7 @@
 // Params:
 // uint msg_len
 // uint item_id
-// ushort lexems_length
+// uint16 lexems_length
 // char lexems[lexems_length]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -234,8 +234,8 @@
 //
 // Params:
 // uint msg_len
-// uchar how_say (see Say types in FOdefines.h)
-// ushort len
+// uint8 how_say (see Say types in FOdefines.h)
+// uint16 len
 // char[len] str
 // ////////////////////////////////////////////////////////////////////////
 
@@ -245,23 +245,23 @@
 // Params:
 // uint msg_len
 // CrID crid
-// uchar how_say
-// ushort intellect
+// uint8 how_say
+// uint16 intellect
 // bool unsafe_text
-// ushort len
+// uint16 len
 // char[len] str
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_MSG                            MAKE_NETMSG_HEADER( NETUID_MSG )
 #define NETMSG_MSG_SIZE            \
     (sizeof(uint) + sizeof(uint) + \
-     sizeof(uchar) + sizeof(ushort) + sizeof(uint) )
+     sizeof(uint8) + sizeof(uint16) + sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // CrID crid
-// uchar how_say
-// ushort MSG_num
+// uint8 how_say
+// uint16 MSG_num
 // uint num_str
 // ////////////////////////////////////////////////////////////////////////
 
@@ -271,10 +271,10 @@
 // Params:
 // uint msg_len
 // CrID crid
-// uchar how_say
-// ushort MSG_num
+// uint8 how_say
+// uint16 MSG_num
 // uint num_str
-// ushort lex_len
+// uint16 lex_len
 // char lexems[lex_len]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -283,24 +283,24 @@
 //
 // Params:
 // uint msg_len
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // uint color
-// ushort len
+// uint16 len
 // char[len] str
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_MAP_TEXT_MSG                   MAKE_NETMSG_HEADER( NETUID_MAP_TEXT_MSG )
 #define NETMSG_MAP_TEXT_MSG_SIZE         \
-    (sizeof(uint) + sizeof(ushort) * 2 + \
-     sizeof(uint) + sizeof(ushort) + sizeof(uint) )
+    (sizeof(uint) + sizeof(uint16) * 2 + \
+     sizeof(uint) + sizeof(uint16) + sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // uint color
-// ushort MSG_num
+// uint16 MSG_num
 // uint num_str
 // ////////////////////////////////////////////////////////////////////////
 
@@ -309,12 +309,12 @@
 //
 // Params:
 // uint msg_len
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // uint color
-// ushort MSG_num
+// uint16 MSG_num
 // uint num_str
-// ushort lexems_len
+// uint16 lexems_len
 // char lexems[lexems_len]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -323,64 +323,64 @@
 // ************************************************************************
 
 #define NETMSG_DIR                            MAKE_NETMSG_HEADER( NETUID_DIR )
-#define NETMSG_DIR_SIZE                       (sizeof(uint) + sizeof(uchar) )
+#define NETMSG_DIR_SIZE                       (sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// uchar dir
+// uint8 dir
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRITTER_DIR                    MAKE_NETMSG_HEADER( NETUID_CRITTER_DIR )
-#define NETMSG_CRITTER_DIR_SIZE               (sizeof(uint) + sizeof(uint) + sizeof(uchar) )
+#define NETMSG_CRITTER_DIR_SIZE               (sizeof(uint) + sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // CrID id
-// uchar dir
+// uint8 dir
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_MOVE_WALK                 MAKE_NETMSG_HEADER( NETUID_SEND_MOVE_WALK )
-#define NETMSG_SEND_MOVE_WALK_SIZE            (sizeof(uint) + sizeof(uint) + sizeof(ushort) * 2)
+#define NETMSG_SEND_MOVE_WALK_SIZE            (sizeof(uint) + sizeof(uint) + sizeof(uint16) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint move_params
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_MOVE_RUN                  MAKE_NETMSG_HEADER( NETUID_SEND_MOVE_RUN )
-#define NETMSG_SEND_MOVE_RUN_SIZE             (sizeof(uint) + sizeof(uint) + sizeof(ushort) * 2)
+#define NETMSG_SEND_MOVE_RUN_SIZE             (sizeof(uint) + sizeof(uint) + sizeof(uint16) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint move_params
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRITTER_MOVE                   MAKE_NETMSG_HEADER( NETUID_CRITTER_MOVE )
-#define NETMSG_CRITTER_MOVE_SIZE              (sizeof(uint) + sizeof(uint) * 2 + sizeof(ushort) * 2)
+#define NETMSG_CRITTER_MOVE_SIZE              (sizeof(uint) + sizeof(uint) * 2 + sizeof(uint16) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint id
 // uint move_params
-// ushort hx
-// ushort hy
+// uint16 hx
+// uint16 hy
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRITTER_XY                     MAKE_NETMSG_HEADER( NETUID_CRITTER_XY )
 #define NETMSG_CRITTER_XY_SIZE     \
     (sizeof(uint) + sizeof(uint) + \
-     sizeof(ushort) * 2 + sizeof(uchar) )
+     sizeof(uint16) * 2 + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // CrID crid
-// ushort hex_x
-// ushort hex_y
-// uchar dir
+// uint16 hex_x
+// uint16 hex_y
+// uint8 dir
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -396,21 +396,21 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_PARAM                          MAKE_NETMSG_HEADER( NETUID_PARAM )
-#define NETMSG_PARAM_SIZE                     (sizeof(uint) + sizeof(ushort) + sizeof(int) )
+#define NETMSG_PARAM_SIZE                     (sizeof(uint) + sizeof(uint16) + sizeof(int) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// ushort num_param
+// uint16 num_param
 // int val
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRITTER_PARAM                  MAKE_NETMSG_HEADER( NETUID_CRITTER_PARAM )
-#define NETMSG_CRITTER_PARAM_SIZE             (sizeof(uint) + sizeof(uint) + sizeof(ushort) + sizeof(int) )
+#define NETMSG_CRITTER_PARAM_SIZE             (sizeof(uint) + sizeof(uint) + sizeof(uint16) + sizeof(int) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint crid
-// ushort num_param
+// uint16 num_param
 // int val
 // ////////////////////////////////////////////////////////////////////////
 
@@ -419,18 +419,18 @@
 //
 // Params:
 // uint msg_len
-// ushort count_skill_up
+// uint16 count_skill_up
 //	for count_skill_up
-//	ushort num_skill
-//	ushort val_up
-// ushort perk_up
+//	uint16 num_skill
+//	uint16 val_up
+// uint16 perk_up
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRAFT_ASK                      MAKE_NETMSG_HEADER( NETUID_CRAFT_ASK )
 // ////////////////////////////////////////////////////////////////////////
 //
 // uint msg_len
-// ushort count
+// uint16 count
 // uint crafts_nums[count]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -442,10 +442,10 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRAFT_RESULT                   MAKE_NETMSG_HEADER( NETUID_CRAFT_RESULT )
-#define NETMSG_CRAFT_RESULT_SIZE              (sizeof(uint) + sizeof(uchar) )
+#define NETMSG_CRAFT_RESULT_SIZE              (sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
-// uchar craft_result (see Craft results in FOdefines.h)
+// uint8 craft_result (see Craft results in FOdefines.h)
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -461,13 +461,13 @@
 #define NETMSG_ADD_ITEM                       MAKE_NETMSG_HEADER( NETUID_ADD_ITEM )
 #define NETMSG_ADD_ITEM_SIZE       \
     (sizeof(uint) + sizeof(uint) + \
-     sizeof(ushort) + sizeof(uchar) + 120 /*ItemData*/)
+     sizeof(uint16) + sizeof(uint8) + 120 /*ItemData*/)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint id
-// ushort pid
-// uchar slot
+// uint16 pid
+// uint8 slot
 // Item::ItemData Data
 // ////////////////////////////////////////////////////////////////////////
 
@@ -480,12 +480,12 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_SORT_VALUE_ITEM           MAKE_NETMSG_HEADER( NETUID_SEND_SORT_VALUE_ITEM )
-#define NETMSG_SEND_SORT_VALUE_ITEM_SIZE      (sizeof(uint) + sizeof(uint) + sizeof(ushort) )
+#define NETMSG_SEND_SORT_VALUE_ITEM_SIZE      (sizeof(uint) + sizeof(uint) + sizeof(uint16) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint item_id
-// ushort sort_val
+// uint16 sort_val
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -495,15 +495,15 @@
 #define NETMSG_ADD_ITEM_ON_MAP                MAKE_NETMSG_HEADER( NETUID_ADD_ITEM_ON_MAP )
 #define NETMSG_ADD_ITEM_ON_MAP_SIZE \
     (sizeof(uint) + sizeof(uint) +  \
-     sizeof(ushort) * 3 + sizeof(uchar) + 120 /*ItemData*/)
+     sizeof(uint16) * 3 + sizeof(uint8) + 120 /*ItemData*/)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint item_id
-// ushort item_pid
-// ushort item_x
-// ushort item_y
-// uchar is_added
+// uint16 item_pid
+// uint16 item_x
+// uint16 item_y
+// uint8 is_added
 // Item::ItemData data
 // ////////////////////////////////////////////////////////////////////////
 
@@ -525,22 +525,22 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_ERASE_ITEM_FROM_MAP            MAKE_NETMSG_HEADER( NETUID_ERASE_ITEM_FROM_MAP )
-#define NETMSG_ERASE_ITEM_FROM_MAP_SIZE       (sizeof(uint) + sizeof(uint) + sizeof(uchar) )
+#define NETMSG_ERASE_ITEM_FROM_MAP_SIZE       (sizeof(uint) + sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint item_id
-// uchar is_deleted
+// uint8 is_deleted
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_ANIMATE_ITEM                   MAKE_NETMSG_HEADER( NETUID_ANIMATE_ITEM )
-#define NETMSG_ANIMATE_ITEM_SIZE              (sizeof(uint) + sizeof(uint) + sizeof(uchar) * 2)
+#define NETMSG_ANIMATE_ITEM_SIZE              (sizeof(uint) + sizeof(uint) + sizeof(uint8) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint item_id
-// uchar from_frm
-// uchar to_frm
+// uint8 from_frm
+// uint8 to_frm
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -549,26 +549,26 @@
 
 #define NETMSG_SEND_CHANGE_ITEM               MAKE_NETMSG_HEADER( NETUID_SEND_CHANGE_ITEM )
 #define NETMSG_SEND_CHANGE_ITEM_SIZE                                   \
-    (sizeof(uint) + sizeof(uchar) + sizeof(uint) + sizeof(uchar) * 2 + \
+    (sizeof(uint) + sizeof(uint8) + sizeof(uint) + sizeof(uint8) * 2 + \
      sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// uchar ap
+// uint8 ap
 // uint item_id
-// uchar from_slot
-// uchar to_slot
+// uint8 from_slot
+// uint8 to_slot
 // uint count
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_PICK_ITEM                 MAKE_NETMSG_HEADER( NETUID_SEND_PICK_ITEM )
-#define NETMSG_SEND_PICK_ITEM_SIZE            (sizeof(uint) + sizeof(ushort) * 3)
+#define NETMSG_SEND_PICK_ITEM_SIZE            (sizeof(uint) + sizeof(uint16) * 3)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// ushort targ_x
-// ushort targ_y
-// ushort pid
+// uint16 targ_x
+// uint16 targ_y
+// uint16 pid
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CONTAINER_INFO                 MAKE_NETMSG_HEADER( NETUID_CONTAINER_INFO )
@@ -576,69 +576,69 @@
 //
 // Params:
 // uint msg_len
-// uchar transfer_type
+// uint8 transfer_type
 // uint talk_time
 // uint cont_id
-// ushort cont_pid or barter_k
+// uint16 cont_pid or barter_k
 // uint count_items
 //	while(cont_items)
 //	uint item_id
-//	ushort item_pid
+//	uint16 item_pid
 //	uint item_count
 //	Data
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_ITEM_CONT                 MAKE_NETMSG_HEADER( NETUID_SEND_ITEM_CONT )
 #define NETMSG_SEND_ITEM_CONT_SIZE                     \
-    (sizeof(uint) + sizeof(uchar) + sizeof(uint) * 2 + \
-     sizeof(uint) + sizeof(uchar) )
+    (sizeof(uint) + sizeof(uint8) + sizeof(uint) * 2 + \
+     sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
-// uchar transfer_type (see Transfer types in FOdefines.h)
+// uint8 transfer_type (see Transfer types in FOdefines.h)
 // uint cont_id
 // uint item_id
 // uint item_count
-// uchar take_flags (see Take flags in FOdefines.h)
+// uint8 take_flags (see Take flags in FOdefines.h)
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_USE_ITEM                  MAKE_NETMSG_HEADER( NETUID_SEND_USE_ITEM )
 #define NETMSG_SEND_USE_ITEM_SIZE                  \
-    (sizeof(uint) + sizeof(uchar) + sizeof(uint) + \
-     sizeof(ushort) + sizeof(uchar) + sizeof(uchar) + sizeof(uint) + sizeof(ushort) + sizeof(uint) )
+    (sizeof(uint) + sizeof(uint8) + sizeof(uint) + \
+     sizeof(uint16) + sizeof(uint8) + sizeof(uint8) + sizeof(uint) + sizeof(uint16) + sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 // Use some item.
 // Params:
-// uchar ap
+// uint8 ap
 // uint item_id
-// ushort item_pid
-// uchar rate
-// uchar target_type
+// uint16 item_pid
+// uint8 rate
+// uint8 target_type
 // uint target_id
-// ushort target_pid
+// uint16 target_pid
 // uint param
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_USE_SKILL                 MAKE_NETMSG_HEADER( NETUID_SEND_USE_SKILL )
 #define NETMSG_SEND_USE_SKILL_SIZE                   \
-    (sizeof(uint) + sizeof(ushort) + sizeof(uchar) + \
-     sizeof(uint) + sizeof(ushort) )
+    (sizeof(uint) + sizeof(uint16) + sizeof(uint8) + \
+     sizeof(uint) + sizeof(uint16) )
 // ////////////////////////////////////////////////////////////////////////
 // Use some skill.
 // Params:
-// ushort skill
-// uchar targ_type
+// uint16 skill
+// uint8 targ_type
 // uint target_id
-// ushort target_pid
+// uint16 target_pid
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_PICK_CRITTER              MAKE_NETMSG_HEADER( NETUID_SEND_PICK_CRITTER )
-#define NETMSG_SEND_PICK_CRITTER_SIZE         (sizeof(uint) + sizeof(uint) + sizeof(uchar) )
+#define NETMSG_SEND_PICK_CRITTER_SIZE         (sizeof(uint) + sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 // Critter picking.
 // Params:
 // uint crid
-// uchar pick_type (see Pick types in FOdefines.h)
+// uint8 pick_type (see Pick types in FOdefines.h)
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -647,14 +647,14 @@
 
 #define NETMSG_SOME_ITEM                      MAKE_NETMSG_HEADER( NETUID_SOME_ITEM )
 #define NETMSG_SOME_ITEM_SIZE                       \
-    (sizeof(uint) + sizeof(uint) + sizeof(ushort) + \
-     sizeof(uchar) + 120 /*ItemData*/)
+    (sizeof(uint) + sizeof(uint) + sizeof(uint16) + \
+     sizeof(uint8) + 120 /*ItemData*/)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint item_id
-// ushort item_pid
-// uchar slot
+// uint16 item_pid
+// uint8 slot
 // Item::ItemData data
 // ////////////////////////////////////////////////////////////////////////
 
@@ -674,15 +674,15 @@
 #define NETMSG_CRITTER_KNOCKOUT               MAKE_NETMSG_HEADER( NETUID_CRITTER_KNOCKOUT )
 #define NETMSG_CRITTER_KNOCKOUT_SIZE \
     (sizeof(uint) + sizeof(uint) +   \
-     sizeof(uint) * 2 + sizeof(ushort) + sizeof(ushort) )
+     sizeof(uint) * 2 + sizeof(uint16) + sizeof(uint16) )
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint crid
 // uint anim2begin
 // uint anim2idle
-// ushort knock_hx
-// ushort knock_hy
+// uint16 knock_hx
+// uint16 knock_hy
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_CRITTER_MOVE_ITEM              MAKE_NETMSG_HEADER( NETUID_CRITTER_MOVE_ITEM )
@@ -693,11 +693,11 @@
 #define NETMSG_CRITTER_ITEM_DATA              MAKE_NETMSG_HEADER( NETUID_CRITTER_ITEM_DATA )
 #define NETMSG_CRITTER_ITEM_DATA_SIZE \
     (sizeof(uint) + sizeof(uint) +    \
-     sizeof(uchar) + 120 /*ItemData*/)
+     sizeof(uint8) + 120 /*ItemData*/)
 // ////////////////////////////////////////////////////////////////////////
 // Item data changed
 // uint crid
-// uchar slot
+// uint8 slot
 // Item::ItemData data
 // ////////////////////////////////////////////////////////////////////////
 
@@ -733,30 +733,30 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_EFFECT                         MAKE_NETMSG_HEADER( NETUID_EFFECT )
-#define NETMSG_EFFECT_SIZE                    (sizeof(uint) + sizeof(ushort) * 4)
+#define NETMSG_EFFECT_SIZE                    (sizeof(uint) + sizeof(uint16) * 4)
 // ////////////////////////////////////////////////////////////////////////
 // explode
 // Params:
-// ushort eff_pid
-// ushort hex_x
-// ushort hex_y
-// ushort radius
+// uint16 eff_pid
+// uint16 hex_x
+// uint16 hex_y
+// uint16 radius
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_FLY_EFFECT                     MAKE_NETMSG_HEADER( NETUID_FLY_EFFECT )
 #define NETMSG_FLY_EFFECT_SIZE       \
-    (sizeof(uint) + sizeof(ushort) + \
-     sizeof(uint) * 2 + sizeof(ushort) * 4)
+    (sizeof(uint) + sizeof(uint16) + \
+     sizeof(uint) * 2 + sizeof(uint16) * 4)
 // ////////////////////////////////////////////////////////////////////////
 // shoot
 // Params:
-// ushort eff_pid
+// uint16 eff_pid
 // CrID eff_cr1_id
 // CrID eff_cr2_id
-// ushort eff_cr1_hx
-// ushort eff_cr1_hy
-// ushort eff_cr2_hx
-// ushort eff_cr2_hy
+// uint16 eff_cr1_hx
+// uint16 eff_cr1_hy
+// uint16 eff_cr2_hx
+// uint16 eff_cr2_hy
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_PLAY_SOUND                     MAKE_NETMSG_HEADER( NETUID_PLAY_SOUND )
@@ -769,15 +769,15 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_PLAY_SOUND_TYPE                MAKE_NETMSG_HEADER( NETUID_PLAY_SOUND_TYPE )
-#define NETMSG_PLAY_SOUND_TYPE_SIZE           (sizeof(uint) + sizeof(uint) + sizeof(uchar) * 4)
+#define NETMSG_PLAY_SOUND_TYPE_SIZE           (sizeof(uint) + sizeof(uint) + sizeof(uint8) * 4)
 // ////////////////////////////////////////////////////////////////////////
 //
 // Params:
 // uint crid_synchronize
-// uchar sound_type
-// uchar sound_type_ext
-// uchar sound_id
-// uchar sound_id_ext
+// uint8 sound_type
+// uint8 sound_type_ext
+// uint8 sound_id
+// uint8 sound_id_ext
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_KARMA_VOTING              MAKE_NETMSG_HEADER( NETUID_SEND_KARMA_VOTING )
@@ -795,22 +795,22 @@
 
 #define NETMSG_SEND_TALK_NPC                  MAKE_NETMSG_HEADER( NETUID_SEND_TALK_NPC )
 #define NETMSG_SEND_TALK_NPC_SIZE   \
-    (sizeof(uint) + sizeof(uchar) + \
-     sizeof(uint) + sizeof(uchar) )
+    (sizeof(uint) + sizeof(uint8) + \
+     sizeof(uint) + sizeof(uint8) )
 // ////////////////////////////////////////////////////////////////////////
 //
-// uchar is_npc
+// uint8 is_npc
 // uint id_talk
-// uchar answer - see Answer in FOdefines.h
+// uint8 answer - see Answer in FOdefines.h
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_SAY_NPC                   MAKE_NETMSG_HEADER( NETUID_SEND_SAY_NPC )
 #define NETMSG_SEND_SAY_NPC_SIZE    \
-    (sizeof(uint) + sizeof(uchar) + \
+    (sizeof(uint) + sizeof(uint8) + \
      sizeof(uint) + MAX_SAY_NPC_TEXT)
 // ////////////////////////////////////////////////////////////////////////
 // say about
-// uchar is_npc
+// uint8 is_npc
 // uint id_talk
 // char str[MAX_NET_TEXT] - see Answer in FOdefines.h
 // ////////////////////////////////////////////////////////////////////////
@@ -819,13 +819,13 @@
 // ////////////////////////////////////////////////////////////////////////
 //
 // uint msg_len
-// uchar is_npc
+// uint8 is_npc
 // uint crid
-// uchar all_answers
+// uint8 all_answers
 // uint main_text
 // uint answ_text
 // uint talk_time
-// ushort lexems_length
+// uint16 lexems_length
 // char[lexems_length] lexems
 // ////////////////////////////////////////////////////////////////////////
 
@@ -835,12 +835,12 @@
 // uint msg_len
 // CrID crid
 //
-// ushort count_sale
+// uint16 count_sale
 // for count_sale
 //	uint item_id
 //	uint item_count
 //
-// ushort count_buy
+// uint16 count_buy
 // for count_buy
 //	uint item_id
 //	uint item_count
@@ -848,11 +848,11 @@
 
 #define NETMSG_PLAYERS_BARTER                 MAKE_NETMSG_HEADER( NETUID_PLAYERS_BARTER )
 #define NETMSG_PLAYERS_BARTER_SIZE  \
-    (sizeof(uint) + sizeof(uchar) + \
+    (sizeof(uint) + sizeof(uint8) + \
      sizeof(uint) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
-// uchar barter
+// uint8 barter
 // uint param
 // uint param_ext
 // ////////////////////////////////////////////////////////////////////////
@@ -860,11 +860,11 @@
 #define NETMSG_PLAYERS_BARTER_SET_HIDE        MAKE_NETMSG_HEADER( NETUID_PLAYERS_BARTER_SET_HIDE )
 #define NETMSG_PLAYERS_BARTER_SET_HIDE_SIZE \
     (sizeof(uint) + sizeof(uint) +          \
-     sizeof(ushort) + sizeof(uint) + 120 /*ItemData*/)
+     sizeof(uint16) + sizeof(uint) + 120 /*ItemData*/)
 // ////////////////////////////////////////////////////////////////////////
 //
 // uint id
-// ushort pid
+// uint16 pid
 // uint count
 // Item::ItemData data
 // ////////////////////////////////////////////////////////////////////////
@@ -881,31 +881,31 @@
 
 #define NETMSG_GAME_INFO                      MAKE_NETMSG_HEADER( NETUID_GAME_INFO )
 #define NETMSG_GAME_INFO_SIZE            \
-    (sizeof(uint) + sizeof(ushort) * 8 + \
-     sizeof(int) + sizeof(uchar) + sizeof(bool) * 2 + sizeof(int) * 4 + sizeof(uchar) * 12)
+    (sizeof(uint) + sizeof(uint16) * 8 + \
+     sizeof(int) + sizeof(uint8) + sizeof(bool) * 2 + sizeof(int) * 4 + sizeof(uint8) * 12)
 // ////////////////////////////////////////////////////////////////////////
 // Generic game info
-// ushort GameOpt.YearStart;
-// ushort GameOpt.Year;
-// ushort GameOpt.Month;
-// ushort GameOpt.Day;
-// ushort GameOpt.Hour;
-// ushort GameOpt.Minute;
-// ushort GameOpt.Second;
-// ushort GameOpt.TimeMultiplier;
+// uint16 GameOpt.YearStart;
+// uint16 GameOpt.Year;
+// uint16 GameOpt.Month;
+// uint16 GameOpt.Day;
+// uint16 GameOpt.Hour;
+// uint16 GameOpt.Minute;
+// uint16 GameOpt.Second;
+// uint16 GameOpt.TimeMultiplier;
 // int time
-// uchar rain
+// uint8 rain
 // bool turn_based
 // bool no_log_out
 // int day_time[4]
-// uchar day_color[12]
+// uint8 day_color[12]
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_COMBAT                    MAKE_NETMSG_HEADER( NETUID_SEND_COMBAT )
-#define NETMSG_SEND_COMBAT_SIZE               (sizeof(uint) + sizeof(uchar) + sizeof(int) )
+#define NETMSG_SEND_COMBAT_SIZE               (sizeof(uint) + sizeof(uint8) + sizeof(int) )
 // ////////////////////////////////////////////////////////////////////////
 // Turn based
-// uchar type (see Combat in FOdefines.h)
+// uint8 type (see Combat in FOdefines.h)
 // int val
 // ////////////////////////////////////////////////////////////////////////
 
@@ -915,13 +915,13 @@
 
 #define NETMSG_LOADMAP                        MAKE_NETMSG_HEADER( NETUID_LOADMAP )
 #define NETMSG_LOADMAP_SIZE          \
-    (sizeof(uint) + sizeof(ushort) + \
-     sizeof(int) + sizeof(uchar) + sizeof(uint) * 3)
+    (sizeof(uint) + sizeof(uint16) + \
+     sizeof(int) + sizeof(uint8) + sizeof(uint) * 3)
 // ////////////////////////////////////////////////////////////////////////
 //
-// ushort num_pid
+// uint16 num_pid
 // int map_time
-// uchar map_rain
+// uint8 map_rain
 // uint ver_tiles
 // uint ver_walls
 // uint ver_scen
@@ -931,12 +931,12 @@
 // ////////////////////////////////////////////////////////////////////////
 // Map data
 // uint msg_len
-// ushort pid_map
-// uchar send_info (see Sendmap info in FOdefines.h)
+// uint16 pid_map
+// uint8 send_info (see Sendmap info in FOdefines.h)
 // uint ver_tiles
 //	for TILESX*TILESY
-//		ushort roof
-//		ushort floor
+//		uint16 roof
+//		uint16 floor
 // uint count_walls
 //	for count_walls
 //		WallToSend
@@ -947,12 +947,12 @@
 
 #define NETMSG_SEND_GIVE_MAP                  MAKE_NETMSG_HEADER( NETUID_SEND_GIVE_MAP )
 #define NETMSG_SEND_GIVE_MAP_SIZE                   \
-    (sizeof(uint) + sizeof(bool) + sizeof(ushort) + \
+    (sizeof(uint) + sizeof(bool) + sizeof(uint16) + \
      sizeof(uint) + sizeof(uint) * 3)
 // ////////////////////////////////////////////////////////////////////////
 // Request on map data, on map loading or for automap
 // bool automap
-// ushort map_pid
+// uint16 map_pid
 // uint loc_id
 // uint ver_tiles
 // uint ver_walls
@@ -1006,10 +1006,10 @@
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_VIEW_MAP                       MAKE_NETMSG_HEADER( NETUID_VIEW_MAP )
-#define NETMSG_VIEW_MAP_SIZE                  (sizeof(uint) + sizeof(ushort) * 2 + sizeof(uint) * 2)
+#define NETMSG_VIEW_MAP_SIZE                  (sizeof(uint) + sizeof(uint16) * 2 + sizeof(uint) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
-// ushort hx, hy
+// uint16 hx, hy
 // uint loc_id, loc_ent
 // ////////////////////////////////////////////////////////////////////////
 
@@ -1021,24 +1021,24 @@
 #define NETMSG_SEND_GIVE_GLOBAL_INFO_SIZE     (sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 //
-// uchar info_flag; (see GM Info in FOdefines.h)
+// uint8 info_flag; (see GM Info in FOdefines.h)
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_GLOBAL_INFO                    MAKE_NETMSG_HEADER( NETUID_GLOBAL_INFO )
 // ////////////////////////////////////////////////////////////////////////
 //
 // uint msg_len
-// uchar info_flag; (see GM info in FOdefines.h)
+// uint8 info_flag; (see GM info in FOdefines.h)
 // Data
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_RULE_GLOBAL               MAKE_NETMSG_HEADER( NETUID_SEND_RULE_GLOBAL )
 #define NETMSG_SEND_RULE_GLOBAL_SIZE \
-    (sizeof(uint) + sizeof(uchar) +  \
+    (sizeof(uint) + sizeof(uint8) +  \
      sizeof(uint) * 2)
 // ////////////////////////////////////////////////////////////////////////
 //
-// uchar command; (see GM Rule command in FOdefines.h)
+// uint8 command; (see GM Rule command in FOdefines.h)
 // uint param1;
 // uint param2;
 // ////////////////////////////////////////////////////////////////////////
@@ -1046,11 +1046,11 @@
 #define NETMSG_FOLLOW                         MAKE_NETMSG_HEADER( NETUID_FOLLOW )
 #define NETMSG_FOLLOW_SIZE         \
     (sizeof(uint) + sizeof(uint) + \
-     sizeof(uchar) + sizeof(ushort) + sizeof(uint) )
+     sizeof(uint8) + sizeof(uint16) + sizeof(uint) )
 // ////////////////////////////////////////////////////////////////////////
 // uint follow_rule
-// uchar follow_type (see Follow in FOdefines.h)
-// ushort map_pid
+// uint8 follow_type (see Follow in FOdefines.h)
+// uint16 map_pid
 // uint waiting_time
 // ////////////////////////////////////////////////////////////////////////
 
@@ -1059,8 +1059,8 @@
 //
 // uint msg_len
 // uint loc_id
-// uchar count
-//  uchar entrances[count]
+// uint8 count
+//  uint8 entrances[count]
 // ////////////////////////////////////////////////////////////////////////
 
 // ************************************************************************
@@ -1072,7 +1072,7 @@
 //
 // uint msg_len
 // uint MSG_language
-// ushort MSG_num
+// uint16 MSG_num
 // uint MSG_hash
 // char[msg_len-(sizeof(uint)-sizeof(msg_len)-sizeof(MSG_language)-
 //	sizeof(MSG_num)-sizeof(MSG_hash))] MSG_data
@@ -1085,7 +1085,7 @@
 // ////////////////////////////////////////////////////////////////////////
 //
 // uint msg_len
-// uchar item_type
+// uint8 item_type
 // uint item_hash
 // ProtoItem[(msg_len-sizeof(uint)-sizeof(msg_len)-sizeof(item_type)-
 //	sizeof(msg_hash))/sizeof(ProtoItem)]
@@ -1113,18 +1113,18 @@
 // ////////////////////////////////////////////////////////////////////////
 // uint msg_len
 // bool clear
-// ushort offset
-// ushort num_count
+// uint16 offset
+// uint16 num_count
 //	for num_count
-//	ushort holo_num
+//	uint16 holo_num
 // ////////////////////////////////////////////////////////////////////////
 
 #define NETMSG_SEND_SET_USER_HOLO_STR         MAKE_NETMSG_HEADER( NETUID_SEND_SET_USER_HOLO_STR )
 // ////////////////////////////////////////////////////////////////////////
 // uint msg_len
 // uint holodisk_id
-// ushort title_len
-// ushort text_len
+// uint16 title_len
+// uint16 text_len
 // char title[title_len]
 // char text[text_len]
 // ////////////////////////////////////////////////////////////////////////
@@ -1139,7 +1139,7 @@
 // ////////////////////////////////////////////////////////////////////////
 // uint msg_len
 // uint str_num
-// ushort text_len
+// uint16 text_len
 // char text[text_len]
 // ////////////////////////////////////////////////////////////////////////
 
@@ -1161,13 +1161,13 @@
 // Automaps information
 // uint msg_len
 // bool clear_list
-// ushort locations_count
+// uint16 locations_count
 //  for locations_count
 //  uint location_id
-//  ushort location_pid
-//  ushort maps_count
+//  uint16 location_pid
+//  uint16 maps_count
 //   for maps_count
-//   ushort map_pid
+//   uint16 map_pid
 // ////////////////////////////////////////////////////////////////////////
 
 #endif // __NET_PROTOCOL__ //

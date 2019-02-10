@@ -27,13 +27,13 @@ public:
     void SetMusicVolume( int volume );
 
     bool PlaySound( const char* name );
-    bool PlaySoundType( uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext );
+    bool PlaySoundType( uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext );
     bool PlayMusic( const char* fname, uint pos = 0, uint repeat = MUSIC_REPEAT_TIME );
     void StopMusic();
     void PlayAmbient( const char* str );
 
 private:
-    bool   ProcessSound( Sound* sound, uchar* output, uint outputSamples );
+    bool   ProcessSound( Sound* sound, uint8* output, uint outputSamples );
     Sound* Load( const char* fname, int path_type );
     bool   LoadWAV( Sound* sound, const char* fname, int path_type );
     bool   LoadACM( Sound* sound, const char* fname, int path_type );

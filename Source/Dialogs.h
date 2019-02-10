@@ -36,7 +36,7 @@ class DemandResult
 public:
     char   Type;                // Type of demand or result
     char   Who;                 // Direction ('p' - player, 'n' - npc)
-    ushort ParamId;             // Parameter Id
+    uint16 ParamId;             // Parameter Id
     bool   NoRecheck;           // Disable demand rechecking
     bool   RetValue;            // Reserved
     char   Op;                  // Operation
@@ -134,7 +134,7 @@ struct Talking
     #define TALK_WITH_HEX          (2)
     uint   TalkNpc;
     uint   TalkHexMap;
-    ushort TalkHexX, TalkHexY;
+    uint16 TalkHexX, TalkHexY;
 
     uint   DialogPackId;
     Dialog CurDialog;
@@ -184,7 +184,7 @@ public:
     void EraseDialogs( string name_pack );
 
     DialogPack* ParseDialog( const char* name, uint id, const char* data );
-    ushort      GetTempVarId( const char* str );
+    uint16      GetTempVarId( const char* str );
 
 private:
     DemandResult* LoadDemandResult( istrstream& input, bool is_demand );

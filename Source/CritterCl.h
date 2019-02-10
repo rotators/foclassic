@@ -15,14 +15,14 @@ class CritterCl
 {
 public:
     uint         Id;
-    ushort       Pid;
-    ushort       HexX, HexY;
-    uchar        CrDir;
+    uint16       Pid;
+    uint16       HexX, HexY;
+    uint8        CrDir;
     int          Params[MAX_PARAMS];
     uint         NameColor;
     uint         ContourColor;
-    UShortVec    LastHexX, LastHexY;
-    uchar        Cond;
+    UInt16Vec    LastHexX, LastHexY;
+    uint8        Cond;
     uint         Anim1Life;
     uint         Anim1Knockout;
     uint         Anim1Dead;
@@ -70,15 +70,15 @@ public:
 
     uint        GetId()   { return Id; }
     const char* GetInfo() { return Name.c_str(); }
-    ushort      GetHexX() { return HexX; }
-    ushort      GetHexY() { return HexY; }
+    uint16      GetHexX() { return HexX; }
+    uint16      GetHexY() { return HexY; }
     bool        IsLastHexes();
     void        FixLastHexes();
-    ushort      PopLastHexX();
-    ushort      PopLastHexY();
+    uint16      PopLastHexX();
+    uint16      PopLastHexY();
     void        SetBaseType( uint type );
-    void        SetDir( uchar dir );
-    uchar       GetDir() { return CrDir; }
+    void        SetDir( uint8 dir );
+    uint8       GetDir() { return CrDir; }
     uint        GetCrTypeAlias();
 
     void Animate( uint anim1, uint anim2, Item* item );
@@ -146,15 +146,15 @@ public:
     void        EraseItem( Item* item, bool animate );
     void        EraseAllItems();
     Item*       GetItem( uint item_id );
-    Item*       GetItemByPid( ushort item_pid );
-    Item*       GetItemByPidInvPriority( ushort item_pid );
-    Item*       GetItemByPidSlot( ushort item_pid, int slot );
+    Item*       GetItemByPid( uint16 item_pid );
+    Item*       GetItemByPidInvPriority( uint16 item_pid );
+    Item*       GetItemByPidSlot( uint16 item_pid, int slot );
     Item*       GetAmmo( uint caliber );
     Item*       GetItemSlot( int slot );
     void        GetItemsSlot( int slot, ItemPtrVec& items );
     void        GetItemsType( int slot, ItemPtrVec& items );
-    uint        CountItemPid( ushort item_pid );
-    uint        CountItemType( uchar type );
+    uint        CountItemPid( uint16 item_pid );
+    uint        CountItemType( uint8 type );
     bool        IsCanSortItems();
     Item*       GetItemHighSortValue();
     Item*       GetItemLowSortValue();
@@ -167,17 +167,17 @@ public:
     int         GetFreeWeight();
     int         GetFreeVolume();
     bool        IsHaveLightSources();
-    Item*       GetSlotUse( uchar num_slot, uchar& use );
-    uint        GetUsePicName( uchar num_slot );
-    bool        IsItemAim( uchar num_slot );
-    uchar       GetUse()      { return ItemSlotMain->Data.Mode & 0xF; }
-    uchar       GetFullRate() { return ItemSlotMain->Data.Mode; }
+    Item*       GetSlotUse( uint8 num_slot, uint8& use );
+    uint        GetUsePicName( uint8 num_slot );
+    bool        IsItemAim( uint8 num_slot );
+    uint8       GetUse()      { return ItemSlotMain->Data.Mode & 0xF; }
+    uint8       GetFullRate() { return ItemSlotMain->Data.Mode; }
     bool        NextRateItem( bool prev );
-    uchar       GetAim() { return (ItemSlotMain->Data.Mode >> 4) & 0xF; }
+    uint8       GetAim() { return (ItemSlotMain->Data.Mode >> 4) & 0xF; }
     bool        IsAim()  { return GetAim() > 0; }
-    void        SetAim( uchar hit_location );
-    uint        GetUseApCost( Item* item, uchar rate );
-    ProtoItem*  GetUnarmedItem( uchar tree, uchar priority );
+    void        SetAim( uint8 hit_location );
+    uint        GetUseApCost( Item* item, uint8 rate );
+    ProtoItem*  GetUnarmedItem( uint8 tree, uint8 priority );
     ProtoItem*  GetProtoMain() { return ItemSlotMain->Proto; }
     ProtoItem*  GetProtoExt()  { return ItemSlotExt->Proto; }
     ProtoItem*  GetProtoArm()  { return ItemSlotArmor->Proto; }
@@ -257,7 +257,7 @@ public:
     Animation3d* Anim3d;
     Animation3d* Anim3dStay;
     bool         Visible;
-    uchar        Alpha;
+    uint8        Alpha;
     Rect         DRect;
     bool         SprDrawValid;
     Sprite*      SprDraw;
@@ -303,7 +303,7 @@ private:
     bool fadeUp;
 
     void  SetFade( bool fade_up );
-    uchar GetFadeAlpha();
+    uint8 GetFadeAlpha();
 
 public:
     uint FadingTick;

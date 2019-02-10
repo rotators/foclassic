@@ -87,7 +87,7 @@ void Field::ProcessCache()
     for( auto it = Items.begin(), end = Items.end(); it != end; ++it )
     {
         ItemHex* item = *it;
-        ushort   pid = item->GetProtoId();
+        uint16   pid = item->GetProtoId();
         if( item->IsWall() )
         {
             IsWall = true;
@@ -115,7 +115,7 @@ void Field::ProcessCache()
     }
 }
 
-void Field::AddTile( AnyFrames* anim, short ox, short oy, uchar layer, bool is_roof )
+void Field::AddTile( AnyFrames* anim, short ox, short oy, uint8 layer, bool is_roof )
 {
     if( is_roof )
         Roofs.push_back( Tile() );
@@ -276,7 +276,7 @@ void HexManager::ReloadSprites()
     SetRainAnimation( NULL, NULL );
 }
 
-void HexManager::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
+void HexManager::PlaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item )
 {
     if( !proto_item )
         return;
@@ -289,7 +289,7 @@ void HexManager::PlaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
                               );
 }
 
-void HexManager::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item )
+void HexManager::ReplaceItemBlocks( uint16 hx, uint16 hy, ProtoItem* proto_item )
 {
     if( !proto_item )
         return;
@@ -300,7 +300,7 @@ void HexManager::ReplaceItemBlocks( ushort hx, ushort hy, ProtoItem* proto_item 
                               );
 }
 
-bool HexManager::AddItem( uint id, ushort pid, ushort hx, ushort hy, bool is_added, Item::ItemData* data )
+bool HexManager::AddItem( uint id, uint16 pid, uint16 hx, uint16 hy, bool is_added, Item::ItemData* data )
 {
     if( !id )
     {
@@ -386,8 +386,8 @@ void HexManager::ChangeItem( uint id, const Item::ItemData& data )
         item->RefreshAnim();
     if( proto->IsDoor() || proto->IsContainer() )
     {
-        ushort old_cond = old_data.LockerCondition;
-        ushort new_cond = data.LockerCondition;
+        uint16 old_cond = old_data.LockerCondition;
+        uint16 new_cond = data.LockerCondition;
         if( !FLAG( old_cond, LOCKER_ISOPEN ) && FLAG( new_cond, LOCKER_ISOPEN ) )
             item->SetAnimFromStart();
         if( FLAG( old_cond, LOCKER_ISOPEN ) && !FLAG( new_cond, LOCKER_ISOPEN ) )
@@ -432,9 +432,9 @@ void HexManager::FinishItem( uint id, bool is_deleted )
 
 auto HexManager::DeleteItem( ItemHex* item, bool with_delete /* = true */ )->ItemHexVec::iterator
 {
-    ushort pid = item->GetProtoId();
-    ushort hx = item->GetHexX();
-    ushort hy = item->GetHexY();
+    uint16 pid = item->GetProtoId();
+    uint16 hx = item->GetHexX();
+    uint16 hy = item->GetHexY();
 
     if( item->IsBlocks() )
         ReplaceItemBlocks( item->HexX, item->HexY, item->Proto );
@@ -463,11 +463,11 @@ void HexManager::ProcessItems()
 
         if( item->IsDynamicEffect() && !item->IsFinishing() )
         {
-            UShortPair step = item->GetEffectStep();
+            UInt16Pair step = item->GetEffectStep();
             if( item->GetHexX() != step.first || item->GetHexY() != step.second )
             {
-                ushort hx = item->GetHexX();
-                ushort hy = item->GetHexY();
+                uint16 hx = item->GetHexX();
+                uint16 hy = item->GetHexY();
                 int    x, y;
                 GetHexInterval( hx, hy, step.first, step.second, x, y );
                 item->EffOffsX -= x;
@@ -509,8 +509,8 @@ void HexManager::PushItem( ItemHex* item )
 {
     hexItems.push_back( item );
 
-    ushort hx = item->GetHexX();
-    ushort hy = item->GetHexY();
+    uint16 hx = item->GetHexX();
+    uint16 hy = item->GetHexY();
 
     Field& f = GetField( hx, hy );
     item->HexScrX = &f.ScrX;
@@ -526,7 +526,7 @@ void HexManager::PushItem( ItemHex* item )
     std::sort( f.Items.begin(), f.Items.end(), ItemCompWall );
 }
 
-ItemHex* HexManager::GetItem( ushort hx, ushort hy, ushort pid )
+ItemHex* HexManager::GetItem( uint16 hx, uint16 hy, uint16 pid )
 {
     if( !IsMapLoaded() || hx >= maxHexX || hy >= maxHexY )
         return NULL;
@@ -540,7 +540,7 @@ ItemHex* HexManager::GetItem( ushort hx, ushort hy, ushort pid )
     return NULL;
 }
 
-ItemHex* HexManager::GetItemById( ushort hx, ushort hy, uint id )
+ItemHex* HexManager::GetItemById( uint16 hx, uint16 hy, uint id )
 {
     if( !IsMapLoaded() || hx >= maxHexX || hy >= maxHexY )
         return NULL;
@@ -565,7 +565,7 @@ ItemHex* HexManager::GetItemById( uint id )
     return NULL;
 }
 
-void HexManager::GetItems( ushort hx, ushort hy, ItemHexVec& items )
+void HexManager::GetItems( uint16 hx, uint16 hy, ItemHexVec& items )
 {
     if( !IsMapLoaded() )
         return;
@@ -578,7 +578,7 @@ void HexManager::GetItems( ushort hx, ushort hy, ItemHexVec& items )
     }
 }
 
-Rect HexManager::GetRectForText( ushort hx, ushort hy )
+Rect HexManager::GetRectForText( uint16 hx, uint16 hy )
 {
     if( !IsMapLoaded() )
         return Rect();
@@ -608,7 +608,7 @@ Rect HexManager::GetRectForText( ushort hx, ushort hy )
     return r;
 }
 
-bool HexManager::RunEffect( ushort eff_pid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+bool HexManager::RunEffect( uint16 eff_pid, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     if( !IsMapLoaded() )
         return false;
@@ -729,7 +729,7 @@ void HexManager::SetRainAnimation( const char* fall_anim_name, const char* drop_
 
 void HexManager::SetCursorPos( int x, int y, bool show_steps, bool refresh )
 {
-    ushort hx, hy;
+    uint16 hx, hy;
     if( GetHexPixel( x, y, hx, hy ) )
     {
         Field& f = GetField( hx, hy );
@@ -754,13 +754,13 @@ void HexManager::SetCursorPos( int x, int y, bool show_steps, bool refresh )
         else
         {
             static int    last_cur_x = 0;
-            static ushort last_hx = 0, last_hy = 0;
+            static uint16 last_hx = 0, last_hy = 0;
             if( refresh || hx != last_hx || hy != last_hy )
             {
                 bool is_tb = chosen->IsTurnBased();
                 if( chosen->IsLife() && (!is_tb || chosen->GetAllAp() > 0) )
                 {
-                    UCharVec steps;
+                    UInt8Vec steps;
                     if( !FindPath( chosen, cx, cy, hx, hy, steps, -1 ) )
                         drawCursorX = -1;
                     else if( !is_tb )
@@ -1095,13 +1095,13 @@ int LightProcentR = 0;
 int LightProcentG = 0;
 int LightProcentB = 0;
 
-void HexManager::MarkLight( ushort hx, ushort hy, uint inten )
+void HexManager::MarkLight( uint16 hx, uint16 hy, uint inten )
 {
     int    light = inten * MAX_LIGHT_HEX / MAX_LIGHT_VALUE * LightCapacity / 100;
     int    lr = light * LightProcentR / 100;
     int    lg = light * LightProcentG / 100;
     int    lb = light * LightProcentB / 100;
-    uchar* p = GetLightHex( hx, hy );
+    uint8* p = GetLightHex( hx, hy );
     if( lr > *p )
         *p = lr;
     if( lg > *(p + 1) )
@@ -1110,7 +1110,7 @@ void HexManager::MarkLight( ushort hx, ushort hy, uint inten )
         *(p + 2) = lb;
 }
 
-void HexManager::MarkLightEndNeighbor( ushort hx, ushort hy, bool north_south, uint inten )
+void HexManager::MarkLightEndNeighbor( uint16 hx, uint16 hy, bool north_south, uint inten )
 {
     Field& f = GetField( hx, hy );
     if( f.IsWall )
@@ -1120,7 +1120,7 @@ void HexManager::MarkLightEndNeighbor( ushort hx, ushort hy, bool north_south, u
             (!north_south && (lt == CORNER_EAST_WEST || lt == CORNER_EAST) ) ||
             lt == CORNER_SOUTH )
         {
-            uchar* p = GetLightHex( hx, hy );
+            uint8* p = GetLightHex( hx, hy );
             int    light_full = inten * MAX_LIGHT_HEX / MAX_LIGHT_VALUE * LightCapacity / 100;
             int    light_self = (inten / 2) * MAX_LIGHT_HEX / MAX_LIGHT_VALUE * LightCapacity / 100;
             int    lr_full = light_full * LightProcentR / 100;
@@ -1145,7 +1145,7 @@ void HexManager::MarkLightEndNeighbor( ushort hx, ushort hy, bool north_south, u
     }
 }
 
-void HexManager::MarkLightEnd( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint inten )
+void HexManager::MarkLightEnd( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint inten )
 {
     bool   is_wall = false;
     bool   north_south = false;
@@ -1193,7 +1193,7 @@ void HexManager::MarkLightEnd( ushort from_hx, ushort from_hy, ushort to_hx, ush
     }
 }
 
-void HexManager::MarkLightStep( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint inten )
+void HexManager::MarkLightStep( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint inten )
 {
     Field& f = GetField( to_hx, to_hy );
     if( f.IsWallTransp )
@@ -1209,7 +1209,7 @@ void HexManager::MarkLightStep( ushort from_hx, ushort from_hy, ushort to_hx, us
     }
 }
 
-void HexManager::TraceLight( ushort from_hx, ushort from_hy, ushort& hx, ushort& hy, int dist, uint inten )
+void HexManager::TraceLight( uint16 from_hx, uint16 from_hy, uint16& hx, uint16& hy, int dist, uint inten )
 {
     float base_sx, base_sy;
     GetStepsXY( base_sx, base_sy, from_hx, from_hy, hx, hy );
@@ -1320,8 +1320,8 @@ void HexManager::TraceLight( ushort from_hx, ushort from_hy, ushort& hx, ushort&
 
 void HexManager::ParseLightTriangleFan( LightSource& ls )
 {
-    ushort hx = ls.HexX;
-    ushort hy = ls.HexY;
+    uint16 hx = ls.HexX;
+    uint16 hy = ls.HexY;
     // Distance
     int    dist = ls.Distance;
     if( dist < 1 )
@@ -1367,7 +1367,7 @@ void HexManager::ParseLightTriangleFan( LightSource& ls )
 
     int    hx_far = hx, hy_far = hy;
     bool   seek_start = true;
-    ushort last_hx = -1, last_hy = -1;
+    uint16 last_hx = -1, last_hy = -1;
 
     for( int i = 0, ii = (GameOpt.MapHexagonal ? 6 : 4); i < ii; i++ )
     {
@@ -1389,8 +1389,8 @@ void HexManager::ParseLightTriangleFan( LightSource& ls )
                 MoveHexByDirUnsafe( hx_far, hy_far, dir );
             }
 
-            ushort hx_ = CLAMP( hx_far, 0, maxHexX - 1 );
-            ushort hy_ = CLAMP( hy_far, 0, maxHexY - 1 );
+            uint16 hx_ = CLAMP( hx_far, 0, maxHexX - 1 );
+            uint16 hy_ = CLAMP( hy_far, 0, maxHexY - 1 );
             if( j >= 0 && FLAG( ls.Flags, LIGHT_DISABLE_DIR( i ) ) )
             {
                 hx_ = hx;
@@ -1576,7 +1576,7 @@ void HexManager::RebuildTiles()
                 #ifdef FOCLASSIC_MAPPER
                 {
                     ProtoMap::TileVec& tiles = CurProtoMap->GetTiles( hx, hy, false );
-                    tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, tiles[i].IsSelected ? (uchar*)&SELECT_ALPHA : NULL, &Effect::Tile, NULL );
+                    tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, tiles[i].IsSelected ? (uint8*)&SELECT_ALPHA : NULL, &Effect::Tile, NULL );
                 }
                 #else
                     tilesTree.AddSprite( DRAW_ORDER_TILE + tile.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, NULL, &Effect::Tile, NULL );
@@ -1628,7 +1628,7 @@ void HexManager::RebuildRoof()
                     #ifdef FOCLASSIC_MAPPER
                     {
                         ProtoMap::TileVec& roofs = CurProtoMap->GetTiles( hx, hy, true );
-                        roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, roofs[i].IsSelected ? (uchar*)&SELECT_ALPHA : &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
+                        roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, roofs[i].IsSelected ? (uint8*)&SELECT_ALPHA : &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
                     }
                     #else
                         roofTree.AddSprite( DRAW_ORDER_TILE + roof.Layer, hx, hy, 0, ox, oy, spr_id, NULL, NULL, NULL, &GameOpt.RoofAlpha, &Effect::Roof, NULL ).SetEgg( EGG_ALWAYS );
@@ -1742,13 +1742,13 @@ void HexManager::SwitchShowRain()
     RefreshMap();
 }
 
-void HexManager::SetWeather( int time, uchar rain )
+void HexManager::SetWeather( int time, uint8 rain )
 {
     curMapTime = time;
     rainCapacity = rain;
 }
 
-bool HexManager::ResizeField( ushort w, ushort h )
+bool HexManager::ResizeField( uint16 w, uint16 h )
 {
     GameOpt.ClientMap = NULL;
     GameOpt.ClientMapLight = NULL;
@@ -1775,10 +1775,10 @@ bool HexManager::ResizeField( ushort w, ushort h )
     if( !hexTrack )
         return false;
     memzero( hexTrack, w * h * sizeof(char) );
-    hexLight = new uchar[w * h * 3];
+    hexLight = new uint8[w * h * 3];
     if( !hexLight )
         return false;
-    memzero( hexLight, w * h * 3 * sizeof(uchar) );
+    memzero( hexLight, w * h * 3 * sizeof(uint8) );
 
     GameOpt.ClientMap = hexField;
     GameOpt.ClientMapLight = hexLight;
@@ -1962,7 +1962,7 @@ void HexManager::GetScreenHexes( int& sx, int& sy )
     sy = screenHexY;
 }
 
-void HexManager::GetHexCurrentPosition( ushort hx, ushort hy, int& x, int& y )
+void HexManager::GetHexCurrentPosition( uint16 hx, uint16 hy, int& x, int& y )
 {
     ViewField& center_hex = viewField[hVisible / 2 * wVisible + wVisible / 2];
     int        center_hx = center_hex.HexX;
@@ -2259,8 +2259,8 @@ bool HexManager::ScrollCheckPos( int(&positions)[4], int dir1, int dir2 )
         if( pos < 0 || pos >= max_pos )
             return true;
 
-        ushort hx = viewField[pos].HexX;
-        ushort hy = viewField[pos].HexY;
+        uint16 hx = viewField[pos].HexX;
+        uint16 hy = viewField[pos].HexY;
         if( hx >= maxHexX || hy >= maxHexY )
             return true;
 
@@ -2387,8 +2387,8 @@ void HexManager::SetCrit( CritterCl* cr )
     if( !IsMapLoaded() )
         return;
 
-    ushort hx = cr->GetHexX();
-    ushort hy = cr->GetHexY();
+    uint16 hx = cr->GetHexX();
+    uint16 hy = cr->GetHexY();
     Field& f = GetField( hx, hy );
 
     if( cr->IsDead() )
@@ -2434,8 +2434,8 @@ void HexManager::RemoveCrit( CritterCl* cr )
     if( !IsMapLoaded() )
         return;
 
-    ushort hx = cr->GetHexX();
-    ushort hy = cr->GetHexY();
+    uint16 hx = cr->GetHexX();
+    uint16 hy = cr->GetHexY();
 
     Field& f = GetField( hx, hy );
     if( f.Crit == cr )
@@ -2496,7 +2496,7 @@ void HexManager::ClearCritters()
     chosenId = 0;
 }
 
-void HexManager::GetCritters( ushort hx, ushort hy, CritVec& crits, int find_type )
+void HexManager::GetCritters( uint16 hx, uint16 hy, CritVec& crits, int find_type )
 {
     Field* f = &GetField( hx, hy );
     if( f->Crit && f->Crit->CheckFind( find_type ) )
@@ -2590,8 +2590,8 @@ bool HexManager::TransitCritter( CritterCl* cr, int hx, int hy, bool animate, bo
         cr->Move( dir );
         if( DistGame( old_hx, old_hy, hx, hy ) > 1 )
         {
-            ushort hx_ = hx;
-            ushort hy_ = hy;
+            uint16 hx_ = hx;
+            uint16 hy_ = hy;
             MoveHexByDir( hx_, hy_, ReverseDir( dir ), maxHexX, maxHexY );
             int    ox, oy;
             GetHexInterval( hx_, hy_, old_hx, old_hy, ox, oy );
@@ -2609,7 +2609,7 @@ bool HexManager::TransitCritter( CritterCl* cr, int hx, int hy, bool animate, bo
     return true;
 }
 
-void HexManager::SetMultihex( ushort hx, ushort hy, uint multihex, bool set )
+void HexManager::SetMultihex( uint16 hx, uint16 hy, uint multihex, bool set )
 {
     if( IsMapLoaded() && multihex )
     {
@@ -2629,7 +2629,7 @@ void HexManager::SetMultihex( ushort hx, ushort hy, uint multihex, bool set )
     }
 }
 
-bool HexManager::GetHexPixel( int x, int y, ushort& hx, ushort& hy )
+bool HexManager::GetHexPixel( int x, int y, uint16& hx, uint16& hy )
 {
     if( !IsMapLoaded() )
         return false;
@@ -2695,8 +2695,8 @@ ItemHex* HexManager::GetItemPixel( int x, int y, bool& item_egg )
     for( auto it = hexItems.begin(), end = hexItems.end(); it != end; ++it )
     {
         ItemHex* item = (*it);
-        ushort   hx = item->GetHexX();
-        ushort   hy = item->GetHexY();
+        uint16   hx = item->GetHexX();
+        uint16   hy = item->GetHexY();
 
         if( item->IsFinishing() || !item->SprDrawValid )
             continue;
@@ -2847,7 +2847,7 @@ void HexManager::GetSmthPixel( int pix_x, int pix_y, ItemHex*& item, CritterCl*&
     }
 }
 
-bool HexManager::FindPath( CritterCl* cr, ushort start_x, ushort start_y, ushort& end_x, ushort& end_y, UCharVec& steps, int cut )
+bool HexManager::FindPath( CritterCl* cr, uint16 start_x, uint16 start_y, uint16& end_x, uint16& end_y, UInt8Vec& steps, int cut )
 {
     // Static data
     #define GRID( x, y )    grid[( (MAX_FIND_PATH + 1) + (y) - grid_oy ) * (MAX_FIND_PATH * 2 + 2) + ( (MAX_FIND_PATH + 1) + (x) - grid_ox )]
@@ -3356,14 +3356,14 @@ label_FindOk:
     return true;
 }
 
-bool HexManager::CutPath( CritterCl* cr, ushort start_x, ushort start_y, ushort& end_x, ushort& end_y, int cut )
+bool HexManager::CutPath( CritterCl* cr, uint16 start_x, uint16 start_y, uint16& end_x, uint16& end_y, int cut )
 {
-    static UCharVec dummy;
+    static UInt8Vec dummy;
     return FindPath( cr, start_x, start_y, end_x, end_y, dummy, cut );
 }
 
-bool HexManager::TraceBullet( ushort hx, ushort hy, ushort tx, ushort ty, uint dist, float angle, CritterCl* find_cr, bool find_cr_safe,
-                              CritVec* critters, int find_type, UShortPair* pre_block, UShortPair* block, UShortPairVec* steps, bool check_passed )
+bool HexManager::TraceBullet( uint16 hx, uint16 hy, uint16 tx, uint16 ty, uint dist, float angle, CritterCl* find_cr, bool find_cr_safe,
+                              CritVec* critters, int find_type, UInt16Pair* pre_block, UInt16Pair* block, UShortPairVec* steps, bool check_passed )
 {
     if( IsShowTrack() )
         ClearHexTrack();
@@ -3371,11 +3371,11 @@ bool HexManager::TraceBullet( ushort hx, ushort hy, ushort tx, ushort ty, uint d
     if( !dist )
         dist = DistGame( hx, hy, tx, ty );
 
-    ushort     cx = hx;
-    ushort     cy = hy;
-    ushort     old_cx = cx;
-    ushort     old_cy = cy;
-    uchar      dir;
+    uint16     cx = hx;
+    uint16     cy = hy;
+    uint16     old_cx = cx;
+    uint16     old_cy = cy;
+    uint8      dir;
 
     LineTracer line_tracer( hx, hy, tx, ty, maxHexX, maxHexY, angle, !GameOpt.MapHexagonal );
 
@@ -3440,8 +3440,8 @@ void HexManager::FindSetCenter( int cx, int cy )
     #ifdef FOCLASSIC_CLIENT
     int    iw = VIEW_WIDTH / 2 + 2;
     int    ih = VIEW_HEIGHT / 2 + 2;
-    ushort hx = cx;
-    ushort hy = cy;
+    uint16 hx = cx;
+    uint16 hy = cy;
     int    dirs[2];
 
     // Up
@@ -3498,10 +3498,10 @@ void HexManager::FindSetCenter( int cx, int cy )
     #endif // FOCLASSIC_CLIENT
 }
 
-void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int steps )
+void HexManager::FindSetCenterDir( uint16& hx, uint16& hy, int dirs[2], int steps )
 {
-    ushort sx = hx;
-    ushort sy = hy;
+    uint16 sx = hx;
+    uint16 sy = hy;
     int    dirs_count = (dirs[1] == -1 ? 1 : 2);
 
     int    i;
@@ -3520,7 +3520,7 @@ void HexManager::FindSetCenterDir( ushort& hx, ushort& hy, int dirs[2], int step
         MoveHexByDir( hx, hy, ReverseDir( dirs[i % dirs_count] ), maxHexX, maxHexY );
 }
 
-bool HexManager::LoadMap( ushort map_pid )
+bool HexManager::LoadMap( uint16 map_pid )
 {
     WriteLog( "Load map..." );
 
@@ -3537,7 +3537,7 @@ bool HexManager::LoadMap( ushort map_pid )
 
     // Find in cache
     uint   cache_len;
-    uchar* cache = Crypt.GetCache( map_name, cache_len );
+    uint8* cache = Crypt.GetCache( map_name, cache_len );
     if( !cache )
     {
         WriteLog( "Load map<%s> from cache fail.\n", map_name );
@@ -3555,7 +3555,7 @@ bool HexManager::LoadMap( ushort map_pid )
 
     // Header
     uint   buf_len = fm.GetFsize();
-    uchar* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
+    uint8* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
     if( !buf )
     {
         WriteLog( "Uncompress map fail.\n" );
@@ -3579,10 +3579,10 @@ bool HexManager::LoadMap( ushort map_pid )
     }
 
     // Reserved
-    ushort maxhx = fm.GetBEUShort();
+    uint16 maxhx = fm.GetBEUShort();
     if( maxhx == 0xAABB )
         maxhx = 400;
-    ushort maxhy = fm.GetBEUShort();
+    uint16 maxhy = fm.GetBEUShort();
     if( maxhy == 0xCCDD )
         maxhy = 400;
     fm.GetBEUInt();
@@ -3721,7 +3721,7 @@ bool HexManager::LoadMap( ushort map_pid )
             {
                 for( int i = 0; i < 6; i++ )
                 {
-                    ushort hx_ = hx, hy_ = hy;
+                    uint16 hx_ = hx, hy_ = hy;
                     MoveHexByDir( hx_, hy_, i, maxHexX, maxHexY );
                     GetField( hx_, hy_ ).IsNotPassed = true;
                 }
@@ -3789,7 +3789,7 @@ void HexManager::UnloadMap()
     critterContour = 0;
 }
 
-void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls, uint& hash_scen )
+void HexManager::GetMapHash( uint16 map_pid, uint& hash_tiles, uint& hash_walls, uint& hash_scen )
 {
     WriteLog( "Get hash of map, pid<%u>...", map_pid );
 
@@ -3811,7 +3811,7 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
     Str::Format( map_name, "map%u", map_pid );
 
     uint   cache_len;
-    uchar* cache = Crypt.GetCache( map_name, cache_len );
+    uint8* cache = Crypt.GetCache( map_name, cache_len );
     if( !cache )
     {
         WriteLog( "Load map<%s> from cache fail.\n", map_name );
@@ -3828,7 +3828,7 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
     delete[] cache;
 
     uint   buf_len = fm.GetFsize();
-    uchar* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
+    uint8* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
     if( !buf )
     {
         WriteLog( "Uncompress map fail.\n" );
@@ -3851,10 +3851,10 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
     }
 
     // Reserved
-    ushort maxhx = fm.GetBEUShort();
+    uint16 maxhx = fm.GetBEUShort();
     if( maxhx == 0xAABB )
         maxhx = 400;
-    ushort maxhy = fm.GetBEUShort();
+    uint16 maxhy = fm.GetBEUShort();
     if( maxhy == 0xCCDD )
         maxhy = 400;
     fm.GetBEUInt();
@@ -3898,13 +3898,13 @@ void HexManager::GetMapHash( ushort map_pid, uint& hash_tiles, uint& hash_walls,
     WriteLog( "complete.\n" );
 }
 
-bool HexManager::GetMapData( ushort map_pid, ItemVec& items, ushort& maxhx, ushort& maxhy )
+bool HexManager::GetMapData( uint16 map_pid, ItemVec& items, uint16& maxhx, uint16& maxhy )
 {
     char map_name[256];
     Str::Format( map_name, "map%u", map_pid );
 
     uint   cache_len;
-    uchar* cache = Crypt.GetCache( map_name, cache_len );
+    uint8* cache = Crypt.GetCache( map_name, cache_len );
     if( !cache )
         return false;
 
@@ -3917,7 +3917,7 @@ bool HexManager::GetMapData( ushort map_pid, ItemVec& items, ushort& maxhx, usho
     delete[] cache;
 
     uint   buf_len = fm.GetFsize();
-    uchar* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
+    uint8* buf = Crypt.Uncompress( fm.GetBuf(), buf_len, 50 );
     if( !buf )
         return false;
 
@@ -3971,9 +3971,9 @@ bool HexManager::GetMapData( ushort map_pid, ItemVec& items, ushort& maxhx, usho
 
 bool HexManager::ParseScenery( SceneryCl& scen )
 {
-    ushort pid = scen.ProtoId;
-    ushort hx = scen.MapX;
-    ushort hy = scen.MapY;
+    uint16 pid = scen.ProtoId;
+    uint16 hx = scen.MapX;
+    uint16 hy = scen.MapY;
 
     if( hx >= maxHexX || hy >= maxHexY )
     {
@@ -4053,7 +4053,7 @@ int* HexManager::GetMapDayTime()
     return dayTime;
 }
 
-uchar* HexManager::GetMapDayColor()
+uint8* HexManager::GetMapDayColor()
 {
     return dayColor;
 }
@@ -4081,9 +4081,9 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
         dayColor[i] = pmap.Header.DayColor[i];
 
     // Tiles
-    for( ushort hy = 0; hy < pmap.Header.MaxHexY; hy++ )
+    for( uint16 hy = 0; hy < pmap.Header.MaxHexY; hy++ )
     {
-        for( ushort hx = 0; hx < pmap.Header.MaxHexX; hx++ )
+        for( uint16 hx = 0; hx < pmap.Header.MaxHexX; hx++ )
         {
             Field& f = GetField( hx, hy );
 
@@ -4203,7 +4203,7 @@ bool HexManager::SetProtoMap( ProtoMap& pmap )
             cr->HexX = o->MapX;
             cr->HexY = o->MapY;
             cr->Flags = o->ProtoId;
-            cr->SetDir( (uchar)o->Dir );
+            cr->SetDir( (uint8)o->Dir );
             cr->Id = ++cur_id;
             cr->Init();
             AffectCritter( o, cr );
@@ -4295,7 +4295,7 @@ void HexManager::ParseSelTiles()
     }
 }
 
-void HexManager::SetTile( uint name_hash, ushort hx, ushort hy, short ox, short oy, uchar layer, bool is_roof, bool select )
+void HexManager::SetTile( uint name_hash, uint16 hx, uint16 hy, short ox, short oy, uint8 layer, bool is_roof, bool select )
 {
     if( hx >= maxHexX || hy >= maxHexY )
         return;
@@ -4336,12 +4336,12 @@ void HexManager::SetTile( uint name_hash, ushort hx, ushort hy, short ox, short 
     }
 }
 
-void HexManager::AddFastPid( ushort pid )
+void HexManager::AddFastPid( uint16 pid )
 {
     fastPids.insert( pid );
 }
 
-bool HexManager::IsFastPid( ushort pid )
+bool HexManager::IsFastPid( uint16 pid )
 {
     return fastPids.count( pid ) != 0;
 }
@@ -4351,12 +4351,12 @@ void HexManager::ClearFastPids()
     fastPids.clear();
 }
 
-void HexManager::AddIgnorePid( ushort pid )
+void HexManager::AddIgnorePid( uint16 pid )
 {
     ignorePids.insert( pid );
 }
 
-void HexManager::SwitchIgnorePid( ushort pid )
+void HexManager::SwitchIgnorePid( uint16 pid )
 {
     if( ignorePids.count( pid ) )
         ignorePids.erase( pid );
@@ -4364,7 +4364,7 @@ void HexManager::SwitchIgnorePid( ushort pid )
         ignorePids.insert( pid );
 }
 
-bool HexManager::IsIgnorePid( ushort pid )
+bool HexManager::IsIgnorePid( uint16 pid )
 {
     return ignorePids.count( pid ) != 0;
 }

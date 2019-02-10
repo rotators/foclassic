@@ -269,7 +269,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
         return num - 40;
 
     // Parse out items
-    UCharVec tmp_vec;
+    UInt8Vec tmp_vec;
     res = SetStrItem( pstr_in, OutItems, OutItemsVal, tmp_vec );
     if( res < 0 )
         return num - 50;
@@ -290,7 +290,7 @@ int CraftItem::SetStr( uint num, const char* str_in )
 }
 
 #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
-int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
+int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec )
 {
     char  str[MAX_FOTEXT];
     char* pstr = str;
@@ -346,7 +346,7 @@ int CraftItem::SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_
     return 0;
 }
 
-int CraftItem::SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
+int CraftItem::SetStrItem( const char*& pstr_in, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec )
 {
     char  str[MAX_FOTEXT];
     char* pstr = str;
@@ -448,7 +448,7 @@ const char* CraftItem::GetStr( bool metadata )
     GetStrItem( str, NeedTools, NeedToolsVal, NeedToolsOr );
 
     // New items
-    UCharVec or_vec;     // Temp vector
+    UInt8Vec or_vec;     // Temp vector
     for( uint i = 0; i < OutItems.size(); i++ )
         or_vec.push_back( 0 );
     GetStrItem( str, OutItems, OutItemsVal, or_vec );
@@ -472,7 +472,7 @@ const char* CraftItem::GetStr( bool metadata )
 }
 
 #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
-void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
+void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec )
 {
     for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
@@ -497,7 +497,7 @@ void CraftItem::GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, 
     Str::Append( pstr_out, MAX_FOTEXT, MRFIXIT_NEXT_S );
 }
 
-void CraftItem::GetStrItem( char* pstr_out, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
+void CraftItem::GetStrItem( char* pstr_out, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec )
 {
     for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
@@ -847,13 +847,13 @@ void CraftManager::GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec )
 }
 # endif
 # ifdef FOCLASSIC_SERVER
-bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
+bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec )
 {
     for( int i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
         uint  param_num = num_vec[i];
         int   param_val = val_vec[i];
-        uchar param_or = or_vec[i];
+        uint8 param_or = or_vec[i];
 
         if( param_num >= MAX_PARAMS || cr->GetParam( param_num ) < param_val ) // Fail
         {
@@ -877,13 +877,13 @@ bool CraftManager::IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec,
 }
 # endif
 # ifdef FOCLASSIC_CLIENT
-bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec )
+bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec )
 {
     for( uint i = 0, j = (uint)num_vec.size(); i < j; i++ )
     {
         uint  param_num = num_vec[i];
         int   param_val = val_vec[i];
-        uchar param_or = or_vec[i];
+        uint8 param_or = or_vec[i];
 
         if( param_num >= MAX_PARAMS || cr->GetParam( param_num ) < param_val ) // Fail
         {
@@ -907,15 +907,15 @@ bool CraftManager::IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_ve
 }
 # endif
 # ifdef FOCLASSIC_SERVER
-bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
+bool CraftManager::IsTrueItems( Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec )
 {
     for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
         bool   next = true;
 
-        ushort item_pid = pid_vec[i];
+        uint16 item_pid = pid_vec[i];
         uint   item_count = count_vec[i];
-        uchar  item_or = or_vec[i];
+        uint8  item_or = or_vec[i];
 
         if( cr->CountItemPid( item_pid ) < item_count )
             next = false;
@@ -942,15 +942,15 @@ bool CraftManager::IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_
 }
 # endif
 # ifdef FOCLASSIC_CLIENT
-bool CraftManager::IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec )
+bool CraftManager::IsTrueItems( CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec )
 {
     for( uint i = 0, j = (uint)pid_vec.size(); i < j; i++ )
     {
         bool   next = true;
 
-        ushort item_pid = pid_vec[i];
+        uint16 item_pid = pid_vec[i];
         uint   item_count = count_vec[i];
-        uchar  item_or = or_vec[i];
+        uint8  item_or = or_vec[i];
 
         if( cr->CountItemPid( item_pid ) < item_count )
             next = false;
@@ -1017,9 +1017,9 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
     {
         for( uint i = 0, j = (uint)craft->NeedItems.size(); i < j; i++ )
         {
-            ushort pid = craft->NeedItems[i];
+            uint16 pid = craft->NeedItems[i];
             uint   count = craft->NeedItemsVal[i];
-            uchar  or_cmd = craft->NeedItemsOr[i];
+            uint8  or_cmd = craft->NeedItemsOr[i];
 
             if( cr->CountItemPid( pid ) < count )
                 continue;
@@ -1038,7 +1038,7 @@ int CraftManager::ProcessCraft( Critter* cr, uint num )
         UIntVec    crafted_count;
         for( uint i = 0, j = (uint)craft->OutItems.size(); i < j; i++ )
         {
-            ushort     pid = craft->OutItems[i];
+            uint16     pid = craft->OutItems[i];
             uint       count = craft->OutItemsVal[i];
             ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
             if( !proto_item )

@@ -758,9 +758,9 @@ DemandResult* DialogManager::LoadDemandResult( istrstream& input, bool is_demand
     return &result;
 }
 
-ushort DialogManager::GetTempVarId( const char* str )
+uint16 DialogManager::GetTempVarId( const char* str )
 {
-    ushort tid = VarMngr.GetTemplateVarId( str );
+    uint16 tid = VarMngr.GetTemplateVarId( str );
     if( !tid )
         WriteLogF( _FUNC_, " - Template var not found, name<%s>.\n", str );
     return tid;

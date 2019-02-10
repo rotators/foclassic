@@ -247,7 +247,7 @@ int GetFarDir( int x1, int y1, int x2, int y2, float offset )
     }
 }
 
-bool CheckDist( ushort x1, ushort y1, ushort x2, ushort y2, uint dist )
+bool CheckDist( uint16 x1, uint16 y1, uint16 x2, uint16 y2, uint dist )
 {
     return DistGame( x1, y1, x2, y2 ) <= dist;
 }
@@ -283,7 +283,7 @@ void ChangeStepsXY( float& sx, float& sy, float deq )
     sy = sx * sin( rad ) + sy * cos( rad );
 }
 
-bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy )
+bool MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint16 maxhx, uint16 maxhy )
 {
     int hx_ = hx;
     int hy_ = hy;
@@ -301,7 +301,7 @@ bool MoveHexByDir( ushort& hx, ushort& hy, uchar dir, ushort maxhx, ushort maxhy
     return false;
 }
 
-void MoveHexByDirUnsafe( int& hx, int& hy, uchar dir )
+void MoveHexByDirUnsafe( int& hx, int& hy, uint8 dir )
 {
     if( GameOpt.MapHexagonal )
     {

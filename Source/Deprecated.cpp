@@ -74,14 +74,14 @@ void LoadList( const char* lst_name, int path_type )
     }
 }
 
-string GetPicName( uint lst_num, ushort pic_num )
+string GetPicName( uint lst_num, uint16 pic_num )
 {
     if( pic_num >= LstNames[lst_num].size() || !LstNames[lst_num][pic_num] )
         return "";
     return string( LstNames[lst_num][pic_num] );
 }
 
-string Deprecated_GetPicName( int pid, int type, ushort pic_num )
+string Deprecated_GetPicName( int pid, int type, uint16 pic_num )
 {
     if( !ListsLoaded )
     {
@@ -117,7 +117,7 @@ string Deprecated_GetPicName( int pid, int type, ushort pic_num )
     return "";
 }
 
-uint Deprecated_GetPicHash( int pid, int type, ushort pic_num )
+uint Deprecated_GetPicHash( int pid, int type, uint16 pic_num )
 {
     string name = Deprecated_GetPicName( pid, type, pic_num );
     if( !name.length() )
@@ -125,7 +125,7 @@ uint Deprecated_GetPicHash( int pid, int type, ushort pic_num )
     return Str::GetHash( name.c_str() );
 }
 
-void Deprecated_CondExtToAnim2( uchar cond, uchar cond_ext, uint& anim2ko, uint& anim2dead )
+void Deprecated_CondExtToAnim2( uint8 cond, uint8 cond_ext, uint& anim2ko, uint& anim2dead )
 {
     if( cond == CRITTER_CONDITION_KNOCKOUT )
     {

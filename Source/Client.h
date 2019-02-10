@@ -30,14 +30,14 @@ public:
     void TryExit();
     bool IsScroll();
     void ProcessMouseScroll();
-    void ProcessKeybScroll( bool down, uchar dik );
+    void ProcessKeybScroll( bool down, uint8 dik );
     void DropScroll();
     bool IsCurInWindow();
     void FlashGameWindow();
     int  MainLoop();
     void NetDisconnect();
 
-    ushort     NetState;
+    uint16     NetState;
     bool       Active;
     uint*      UID1;
     string     Password;
@@ -87,7 +87,7 @@ public:
     int           InitNetReason;
 
     bool InitNet();
-    bool FillSockAddr( sockaddr_in& saddr, const char* host, ushort port );
+    bool FillSockAddr( sockaddr_in& saddr, const char* host, uint16 port );
     bool NetConnect();
     void ParseSocket();
     int  NetInput( bool unpack );
@@ -96,39 +96,39 @@ public:
 
     void Net_SendLogIn( const char* name, const char* pass );
     void Net_SendCreatePlayer( CritterCl* newcr );
-    void Net_SendSaveLoad( bool save, const char* fname, UCharVec* pic_data );
-    void Net_SendUseSkill( ushort skill, CritterCl* cr );
-    void Net_SendUseSkill( ushort skill, ItemHex* item );
-    void Net_SendUseSkill( ushort skill, Item* item );
-    void Net_SendUseItem( uchar ap, uint item_id, ushort item_pid, uchar rate, uchar target_type, uint target_id, ushort target_pid, uint param );
-    void Net_SendPickItem( ushort targ_x, ushort targ_y, ushort pid );
-    void Net_SendPickCritter( uint crid, uchar pick_type );
-    void Net_SendChangeItem( uchar ap, uint item_id, uchar from_slot, uchar to_slot, uint count );
-    void Net_SendItemCont( uchar transfer_type, uint cont_id, uint item_id, uint count, uchar take_flags );
+    void Net_SendSaveLoad( bool save, const char* fname, UInt8Vec* pic_data );
+    void Net_SendUseSkill( uint16 skill, CritterCl* cr );
+    void Net_SendUseSkill( uint16 skill, ItemHex* item );
+    void Net_SendUseSkill( uint16 skill, Item* item );
+    void Net_SendUseItem( uint8 ap, uint item_id, uint16 item_pid, uint8 rate, uint8 target_type, uint target_id, uint16 target_pid, uint param );
+    void Net_SendPickItem( uint16 targ_x, uint16 targ_y, uint16 pid );
+    void Net_SendPickCritter( uint crid, uint8 pick_type );
+    void Net_SendChangeItem( uint8 ap, uint item_id, uint8 from_slot, uint8 to_slot, uint count );
+    void Net_SendItemCont( uint8 transfer_type, uint cont_id, uint item_id, uint count, uint8 take_flags );
     void Net_SendRateItem();
     void Net_SendSortValueItem( Item* item );
-    void Net_SendTalk( uchar is_npc, uint id_to_talk, uchar answer );
-    void Net_SendSayNpc( uchar is_npc, uint id_to_talk, const char* str );
+    void Net_SendTalk( uint8 is_npc, uint id_to_talk, uint8 answer );
+    void Net_SendSayNpc( uint8 is_npc, uint id_to_talk, const char* str );
     void Net_SendBarter( uint npc_id, ItemVec& cont_sale, ItemVec& cont_buy );
     void Net_SendGetGameInfo();
-    void Net_SendGiveGlobalInfo( uchar info_flags );
-    void Net_SendRuleGlobal( uchar command, uint param1 = 0, uint param2 = 0 );
-    void Net_SendGiveMap( bool automap, ushort map_pid, uint loc_id, uint tiles_hash, uint walls_hash, uint scen_hash );
+    void Net_SendGiveGlobalInfo( uint8 info_flags );
+    void Net_SendRuleGlobal( uint8 command, uint param1 = 0, uint param2 = 0 );
+    void Net_SendGiveMap( bool automap, uint16 map_pid, uint loc_id, uint tiles_hash, uint walls_hash, uint scen_hash );
     void Net_SendLoadMapOk();
     void Net_SendCommand( char* str );
-    void Net_SendText( const char* send_str, uchar how_say );
+    void Net_SendText( const char* send_str, uint8 how_say );
     void Net_SendDir();
-    void Net_SendMove( UCharVec steps );
-    void Net_SendLevelUp( ushort perk_up );
+    void Net_SendMove( UInt8Vec steps );
+    void Net_SendLevelUp( uint16 perk_up );
     void Net_SendCraftAsk( UIntVec numbers );
     void Net_SendCraft( uint craft_num );
-    void Net_SendPing( uchar ping );
-    void Net_SendPlayersBarter( uchar barter, uint param, uint param_ext );
+    void Net_SendPing( uint8 ping );
+    void Net_SendPlayersBarter( uint8 barter, uint param, uint param_ext );
     void Net_SendScreenAnswer( uint answer_i, const char* answer_s );
     void Net_SendGetScores();
     void Net_SendSetUserHoloStr( Item* holodisk, const char* title, const char* text );
     void Net_SendGetUserHoloStr( uint str_num );
-    void Net_SendCombat( uchar type, int val );
+    void Net_SendCombat( uint8 type, int val );
     void Net_SendRunScript( bool unsafe, const char* func_name, int p0, int p1, int p2, const char* p3, UIntVec& p4 );
     void Net_SendKarmaVoting( uint crid, bool val_up );
     void Net_SendRefereshMe();
@@ -202,16 +202,16 @@ public:
     void Net_OnCheckUID4();
     void Net_OnViewMap();
 
-    void OnText( const char* str, uint crid, int how_say, ushort intellect );
-    void OnMapText( const char* str, ushort hx, ushort hy, uint color, ushort intellect );
+    void OnText( const char* str, uint crid, int how_say, uint16 intellect );
+    void OnMapText( const char* str, uint16 hx, uint16 hy, uint color, uint16 intellect );
 
     void WaitPing();
 
     bool SaveLogFile();
     bool SaveScreenshot();
 
-    UCharVec MoveDirs;
-    ushort   MoveLastHx, MoveLastHy;
+    UInt8Vec MoveDirs;
+    uint16   MoveLastHx, MoveLastHy;
 
     uint     PingTick, PingCallTick;
 
@@ -236,7 +236,7 @@ public:
 
     void ParseIntellectWords( char* words, PCharPairVec& text );
     auto FindIntellectWord( const char* word, PCharPairVec& text, Randomizer& rnd )->PCharPairVec::iterator;
-    void FmtTextIntellect( char* str, ushort intellect );
+    void FmtTextIntellect( char* str, uint16 intellect );
 
     #define SMTH_NONE         (0)
     #define SMTH_CRITTER      (1)
@@ -374,7 +374,7 @@ public:
     struct IfaceAnim
     {
         AnyFrames* Frames;
-        ushort     Flags;
+        uint16     Flags;
         uint       CurSpr;
         uint       LastTick;
         int        ResType;
@@ -387,11 +387,11 @@ public:
     #define ANIMRUN_FROM_END          (0x0002)
     #define ANIMRUN_CYCLE             (0x0004)
     #define ANIMRUN_STOP              (0x0008)
-    #define ANIMRUN_SET_FRM( frm )    ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
+    #define ANIMRUN_SET_FRM( frm )    ( (uint( uint8( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
 
-    uint       AnimLoad( uint name_hash, uchar dir, int res_type );
+    uint       AnimLoad( uint name_hash, uint8 dir, int res_type );
     uint       AnimLoad( const char* fname, int path_type, int res_type );
     uint       AnimGetCurSpr( uint anim_id );
     uint       AnimGetCurSprCnt( uint anim_id );
@@ -468,12 +468,12 @@ public:
         static uint       Crit_ItemsCount( CritterCl* cr );
         static uint       Crit_ItemsWeight( CritterCl* cr );
         static uint       Crit_ItemsVolume( CritterCl* cr );
-        static uint       Crit_CountItem( CritterCl* cr, ushort proto_id );
-        static uint       Crit_CountItemByType( CritterCl* cr, uchar type );
-        static Item*      Crit_GetItem( CritterCl* cr, ushort proto_id, int slot );
+        static uint       Crit_CountItem( CritterCl* cr, uint16 proto_id );
+        static uint       Crit_CountItemByType( CritterCl* cr, uint8 type );
+        static Item*      Crit_GetItem( CritterCl* cr, uint16 proto_id, int slot );
         static uint       Crit_GetItems( CritterCl* cr, int slot, ScriptArray* items );
         static uint       Crit_GetItemsByType( CritterCl* cr, int type, ScriptArray* items );
-        static ProtoItem* Crit_GetSlotProto( CritterCl* cr, int slot, uchar& mode );
+        static ProtoItem* Crit_GetSlotProto( CritterCl* cr, int slot, uint8& mode );
         static void       Crit_SetVisible( CritterCl* cr, bool visible );
         static bool       Crit_GetVisible( CritterCl* cr );
         static void       Crit_set_ContourColor( CritterCl* cr, uint value );
@@ -485,11 +485,11 @@ public:
         static bool   Item_IsStackable( Item* item );
         static bool   Item_IsDeteriorable( Item* item );
         static uint   Item_GetScriptId( Item* item );
-        static uchar  Item_GetType( Item* item );
-        static ushort Item_GetProtoId( Item* item );
+        static uint8  Item_GetType( Item* item );
+        static uint16 Item_GetProtoId( Item* item );
         static uint   Item_GetCount( Item* item );
-        static bool   Item_GetMapPosition( Item* item, ushort& hx, ushort& hy );
-        static void   Item_Animate( Item* item, uchar from_frame, uchar to_frame );
+        static bool   Item_GetMapPosition( Item* item, uint16& hx, uint16& hy );
+        static void   Item_Animate( Item* item, uint8 from_frame, uint8 to_frame );
         static Item*  Item_GetChild( Item* item, uint childIndex );
 
         static bool  Global_get___ConsoleActive();
@@ -510,29 +510,29 @@ public:
         static Item*         Global_GetItem( uint item_id );
         static uint          Global_GetCrittersDistantion( CritterCl* cr1, CritterCl* cr2 );
         static CritterCl*    Global_GetCritter( uint critter_id );
-        static uint          Global_GetCritters( ushort hx, ushort hy, uint radius, int find_type, ScriptArray* critters );
-        static uint          Global_GetCrittersByPids( ushort pid, int find_type, ScriptArray* critters );
-        static uint          Global_GetCrittersInPath( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters );
-        static uint          Global_GetCrittersInPathBlock( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters, ushort& pre_block_hx, ushort& pre_block_hy, ushort& block_hx, ushort& block_hy );
-        static void          Global_GetHexInPath( ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist );
-        static uint          Global_GetPathLengthHex( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint cut );
-        static uint          Global_GetPathLengthCr( CritterCl* cr, ushort to_hx, ushort to_hy, uint cut );
+        static uint          Global_GetCritters( uint16 hx, uint16 hy, uint radius, int find_type, ScriptArray* critters );
+        static uint          Global_GetCrittersByPids( uint16 pid, int find_type, ScriptArray* critters );
+        static uint          Global_GetCrittersInPath( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters );
+        static uint          Global_GetCrittersInPathBlock( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters, uint16& pre_block_hx, uint16& pre_block_hy, uint16& block_hx, uint16& block_hy );
+        static void          Global_GetHexInPath( uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist );
+        static uint          Global_GetPathLengthHex( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint cut );
+        static uint          Global_GetPathLengthCr( CritterCl* cr, uint16 to_hx, uint16 to_hy, uint cut );
         static void          Global_FlushScreen( uint from_color, uint to_color, uint ms );
         static void          Global_QuakeScreen( uint noise, uint ms );
         static bool          Global_PlaySound( ScriptString& sound_name );
-        static bool          Global_PlaySoundType( uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext );
+        static bool          Global_PlaySoundType( uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext );
         static bool          Global_PlayMusic( ScriptString& music_name, uint pos, uint repeat );
         static void          Global_PlayVideo( ScriptString& video_name, bool can_stop );
         static bool          Global_IsTurnBased();
         static uint          Global_GetTurnBasedTime();
-        static ushort        Global_GetCurrentMapPid();
+        static uint16        Global_GetCurrentMapPid();
         static uint          Global_GetMessageFilters( ScriptArray* filters );
         static void          Global_SetMessageFilters( ScriptArray* filters );
         static void          Global_Message( ScriptString& msg );
         static void          Global_MessageType( ScriptString& msg, int type );
         static void          Global_MessageMsg( int text_msg, uint str_num );
         static void          Global_MessageMsgType( int text_msg, uint str_num, int type );
-        static void          Global_MapMessage( ScriptString& text, ushort hx, ushort hy, uint ms, uint color, bool fade, int ox, int oy );
+        static void          Global_MapMessage( ScriptString& text, uint16 hx, uint16 hy, uint ms, uint color, bool fade, int ox, int oy );
         static ScriptString* Global_GetMsgStr( int text_msg, uint str_num );
         static ScriptString* Global_GetMsgStrSkip( int text_msg, uint str_num, uint skip_count );
         static uint          Global_GetMsgStrNumUpper( int text_msg, uint str_num );
@@ -543,30 +543,30 @@ public:
         static ScriptString* Global_ReplaceTextInt( ScriptString& text, ScriptString& replace, int i );
         static ScriptString* Global_FormatTags( ScriptString& text, ScriptString* lexems );
         static int           Global_GetSomeValue( int var );
-        static void          Global_MoveScreen( ushort hx, ushort hy, uint speed );
+        static void          Global_MoveScreen( uint16 hx, uint16 hy, uint speed );
         static void          Global_LockScreenScroll( CritterCl* cr );
-        static int           Global_GetFog( ushort zone_x, ushort zone_y );
+        static int           Global_GetFog( uint16 zone_x, uint16 zone_y );
         static void          Global_RefreshItemsCollection( int collection );
         static int           Global_GetScroll( int scroll_element );
         static void          Global_SetScroll( int scroll_element, int value );
         static uint          Global_GetDayTime( uint day_part );
-        static void          Global_GetDayColor( uint day_part, uchar& r, uchar& g, uchar& b );
+        static void          Global_GetDayColor( uint day_part, uint8& r, uint8& g, uint8& b );
 
         static ScriptString* Global_GetLastError();
         static void          Global_Log( ScriptString& text );
-        static ProtoItem*    Global_GetProtoItem( ushort proto_id );
-        static uint          Global_GetDistantion( ushort hex_x1, ushort hex_y1, ushort hex_x2, ushort hex_y2 );
-        static uchar         Global_GetDirection( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy );
-        static uchar         Global_GetOffsetDir( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset );
-        static uint          Global_GetFullSecond( ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second );
-        static void          Global_GetGameTime( uint full_second, ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second );
+        static ProtoItem*    Global_GetProtoItem( uint16 proto_id );
+        static uint          Global_GetDistantion( uint16 hex_x1, uint16 hex_y1, uint16 hex_x2, uint16 hex_y2 );
+        static uint8         Global_GetDirection( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy );
+        static uint8         Global_GetOffsetDir( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float offset );
+        static uint          Global_GetFullSecond( uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second );
+        static void          Global_GetGameTime( uint full_second, uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second );
         static bool          Global_StrToInt( ScriptString* text, int& result );
         static bool          Global_StrToFloat( ScriptString* text, float& result );
         static uint          Global_GetTick();
-        static void          Global_GetTime( ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second, ushort& milliseconds );
+        static void          Global_GetTime( uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds );
         static bool          Global_SetParameterGetBehaviour( uint index, ScriptString& func_name );
         static bool          Global_SetParameterChangeBehaviour( uint index, ScriptString& func_name );
-        static void          Global_AllowSlot( uchar index, ScriptString& ini_option );
+        static void          Global_AllowSlot( uint8 index, ScriptString& ini_option );
         static uint          Global_DecodeUTF8( ScriptString& text, uint& length );
         static ScriptString* Global_EncodeUTF8( uint ucs );
         static void          Global_SetRegistrationParam( uint index, bool enabled );
@@ -592,7 +592,7 @@ public:
         static void          Global_RunServerScriptUnsafe( ScriptString& func_name, int p0, int p1, int p2, ScriptString* p3, ScriptArray* p4 );
 
         static uint Global_LoadSprite( ScriptString& spr_name, int path_index );
-        static uint Global_LoadSpriteHash( uint name_hash, uchar dir );
+        static uint Global_LoadSpriteHash( uint name_hash, uint8 dir );
         static int  Global_GetSpriteWidth( uint spr_id, int spr_index );
         static int  Global_GetSpriteHeight( uint spr_id, int spr_index );
         static uint Global_GetSpriteCount( uint spr_id );
@@ -604,24 +604,24 @@ public:
         static void Global_DrawSpriteSizeOffs( uint spr_id, int spr_index, int x, int y, int w, int h, bool scratch, bool center, uint color, bool offs );
         static void Global_DrawText( ScriptString& text, int x, int y, int w, int h, uint color, int font, int flags );
         static void Global_DrawPrimitive( int primitive_type, ScriptArray& data );
-        static void Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy );
-        static void Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uchar dir, int l, int t, int r, int b, bool scratch, bool center, uint color );
+        static void Global_DrawMapSprite( uint16 hx, uint16 hy, uint16 proto_id, uint spr_id, int spr_index, int ox, int oy );
+        static void Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color );
         static void Global_DrawCritter3d( uint instance, uint crtype, uint anim1, uint anim2, ScriptArray* layers, ScriptArray* position, uint color );
 
         static void          Global_ShowScreen( int screen, int p0, int p1, int p2 );
         static void          Global_HideScreen( int screen, int p0, int p1, int p2 );
         static void          Global_GetHardcodedScreenPos( int screen, int& x, int& y );
         static void          Global_DrawHardcodedScreen( int screen );
-        static bool          Global_GetHexPos( ushort hx, ushort hy, int& x, int& y );
-        static bool          Global_GetMonitorHex( int x, int y, ushort& hx, ushort& hy, bool ignore_interface );
+        static bool          Global_GetHexPos( uint16 hx, uint16 hy, int& x, int& y );
+        static bool          Global_GetMonitorHex( int x, int y, uint16& hx, uint16& hy, bool ignore_interface );
         static Item*         Global_GetMonitorItem( int x, int y, bool ignore_interface );
         static CritterCl*    Global_GetMonitorCritter( int x, int y, bool ignore_interface );
-        static ushort        Global_GetMapWidth();
-        static ushort        Global_GetMapHeight();
+        static uint16        Global_GetMapWidth();
+        static uint16        Global_GetMapHeight();
         static int           Global_GetCurrentCursor();
         static int           Global_GetLastCursor();
         static void          Global_ChangeCursor( int cursor );
-        static void          Global_MoveHexByDir( ushort& hx, ushort& hy, uchar dir, uint steps );
+        static void          Global_MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint steps );
         static bool          Global_AppendIfaceIni( ScriptString& ini_name );
         static ScriptString* Global_GetIfaceIniStr( ScriptString& key );
         static bool          Global_Load3dFile( ScriptString& fname, int path_type );
@@ -631,7 +631,7 @@ public:
         static bool          Global_SetEffect( int effect_type, int effect_subtype, ScriptString* effect_name, ScriptString* effect_defines );
         static void          Global_RefreshMap( bool only_tiles, bool only_roof, bool only_light );
         static void          Global_MouseClick( int x, int y, int button, int cursor );
-        static void          Global_KeyboardPress( uchar key1, uchar key2, ScriptString* key1_text, ScriptString* key2_text );
+        static void          Global_KeyboardPress( uint8 key1, uint8 key2, ScriptString* key1_text, ScriptString* key2_text );
         static void          Global_SetRainAnimation( ScriptString* fall_anim_name, ScriptString* drop_anim_name );
         static void          Global_SetZoom( float zoom );
         static bool          Global_SaveScreenshot();
@@ -648,7 +648,7 @@ public:
     IniParser IfaceIni;
 
     bool AppendIfaceIni( const char* ini_name );
-    void AppendIfaceIni( uchar* data, uint len );
+    void AppendIfaceIni( uint8* data, uint len );
     int  InitIface();
     bool IfaceLoadRect( Rect& comp, const char* name );
     void IfaceLoadRect2( Rect& comp, const char* name, int ox, int oy );
@@ -661,7 +661,7 @@ public:
     bool IsCurInRect( const Rect& rect );
     bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay );
     bool IsCurInInterface();
-    bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
+    bool GetCurHex( uint16& hx, uint16& hy, bool ignore_interface );
 
     void DrawIndicator( Rect& rect, PointVec& points, uint color, int procent, uint& tick, bool is_vertical, bool from_top_or_left );
 
@@ -691,12 +691,12 @@ public:
     uint        ConsoleCur;
     StrVec      ConsoleHistory;
     int         ConsoleHistoryCur;
-    uchar       ConsoleLastKey;
+    uint8       ConsoleLastKey;
     string      ConsoleLastKeyText;
 
     void ConsoleDraw();
-    void ConsoleKeyDown( uchar dik, const char* dik_text );
-    void ConsoleKeyUp( uchar dik );
+    void ConsoleKeyDown( uint8 dik, const char* dik_text );
+    void ConsoleKeyUp( uint8 dik );
     void ConsoleProcess();
 
 /************************************************************************/
@@ -757,7 +757,7 @@ public:
 /************************************************************************/
     struct MapText
     {
-        ushort HexX, HexY;
+        uint16 HexX, HexY;
         uint   StartTick, Tick;
         string Text;
         uint   Color;
@@ -772,7 +772,7 @@ public:
     uint       GameMouseStay;
 
     void GameDraw();
-    void GameKeyDown( uchar dik, const char* dik_text );
+    void GameKeyDown( uint8 dik, const char* dik_text );
     void GameLMouseDown();
     void GameLMouseUp();
     void GameRMouseDown();
@@ -831,9 +831,9 @@ public:
     uint      LMenuStartTime;
     int       LMenuX, LMenuY, LMenuRestoreCurX, LMenuRestoreCurY;
     int       LMenuNodeHeight;
-    UCharVec* LMenuCurNodes;
+    UInt8Vec* LMenuCurNodes;
     int       LMenuCurNode;
-    UCharVec  LMenuCritNodes, LMenuScenNodes, LMenuNodes;
+    UInt8Vec  LMenuCritNodes, LMenuScenNodes, LMenuNodes;
     int       LMenuMode;
 
     bool IsLMenu();
@@ -841,7 +841,7 @@ public:
     void LMenuStayOff();
     void LMenuTryCreate();
     void LMenuCollect();
-    void LMenuSet( uchar set_lmenu );
+    void LMenuSet( uint8 set_lmenu );
     void LMenuDraw();
     void LMenuMouseMove();
     void LMenuMouseUp();
@@ -857,7 +857,7 @@ public:
                LogBReg, LogBRegText, LogBExit, LogBExitText, LogWChat, LogWVersion;
 
     void LogDraw();
-    void LogKeyDown( uchar dik, const char* dik_text );
+    void LogKeyDown( uint8 dik, const char* dik_text );
     void LogLMouseDown();
     void LogLMouseUp();
     void LogTryConnect();
@@ -870,7 +870,7 @@ public:
     int        DlgCurAnsw, DlgHoldAnsw;
     uint       DlgCurAnswPage, DlgMaxAnswPage;
     int        DlgVectX, DlgVectY;
-    uchar      DlgIsNpc;
+    uint8      DlgIsNpc;
     uint       DlgNpcId;
     uint       DlgEndTick;
 
@@ -906,7 +906,7 @@ public:
     int    BarterScroll1, BarterScroll2, BarterScroll1o, BarterScroll2o;
     uint   BarterHoldId;
     uint   BarterCount;
-    ushort BarterK;
+    uint16 BarterK;
     string BarterText;
     // Players barter extra
     uint   BarterOpponentId;
@@ -923,7 +923,7 @@ public:
     void DlgLMouseDown( bool is_dialog );
     void DlgLMouseUp( bool is_dialog );
     void DlgRMouseDown( bool is_dialog );
-    void DlgKeyDown( bool is_dialog, uchar dik, const char* dik_text );
+    void DlgKeyDown( bool is_dialog, uint8 dik, const char* dik_text );
     void DlgCollectAnswers( bool next );
 
 /************************************************************************/
@@ -990,10 +990,10 @@ public:
     struct GmapLocation
     {
         uint   LocId;
-        ushort LocPid;
-        ushort LocWx;
-        ushort LocWy;
-        ushort Radius;
+        uint16 LocPid;
+        uint16 LocWx;
+        uint16 LocWy;
+        uint16 Radius;
         uint   Color;
         bool operator==( const uint& _right ) { return this->LocId == _right;  }
     };
@@ -1032,7 +1032,7 @@ public:
     void  GmapRMouseDown();
     void  GmapRMouseUp();
     void  GmapMouseMove();
-    void  GmapKeyDown( uchar dik, const char* dik_text );
+    void  GmapKeyDown( uint8 dik, const char* dik_text );
     void  GmapChangeZoom( float offs, bool revert = false );
     Item* GmapGetCar();
     uint  GmapGetMouseTabLocId();
@@ -1062,7 +1062,7 @@ public:
     int          SboxX, SboxY;
     int          SboxVectX, SboxVectY;
 
-    ushort       CurSkill;
+    uint16       CurSkill;
     SmthSelected SboxUseOn;
 
     void SboxDraw();
@@ -1108,11 +1108,11 @@ public:
     {
         uint   NameStrNum;
         uint   DescStrNum;
-        ushort PictureId;
+        uint16 PictureId;
         uint   DrawFlags;
         char   Addon[64];
 
-        SwitchElement( uint name, uint desc, ushort pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof(Addon) ); }
+        SwitchElement( uint name, uint desc, uint16 pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof(Addon) ); }
         SwitchElement( const char* add, uint flags ) : NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof(Addon) ); }
     };
     typedef vector<SwitchElement> SwitchElementVec;
@@ -1135,7 +1135,7 @@ public:
     // Skills
     Rect   ChaWSkillText, ChaWSkillName, ChaWSkillValue;
     int    ChaWSkillNextX, ChaWSkillNextY;
-    ushort ChaSkillUp[MAX_PARAMS];
+    uint16 ChaSkillUp[MAX_PARAMS];
     Rect   ChaWUnspentSP, ChaWUnspentSPText;
     int    ChaUnspentSkillPoints;
 
@@ -1195,7 +1195,7 @@ public:
 
     void ChaNameDraw();
     void ChaNameLMouseDown();
-    void ChaNameKeyDown( uchar dik, const char* dik_text );
+    void ChaNameKeyDown( uint8 dik, const char* dik_text );
 
 /************************************************************************/
 /* Character age                                                        */
@@ -1229,7 +1229,7 @@ public:
     int        PerkNextX, PerkNextY;
     int        PerkScroll;
     int        PerkCurPerk;
-    UShortVec  PerkCollection;
+    UInt16Vec  PerkCollection;
 
     void PerkPrepare();
     void PerkDraw();
@@ -1285,7 +1285,7 @@ public:
     // Quests
     QuestManager QuestMngr;
     uint         QuestNumTab;
-    ushort       QuestNumQuest;
+    uint16       QuestNumQuest;
     // HoloInfo
     uint         HoloInfo[MAX_HOLO_INFO];
     uint         PipInfoNum;
@@ -1296,9 +1296,9 @@ public:
     struct Automap
     {
         uint      LocId;
-        ushort    LocPid;
+        uint16    LocPid;
         string    LocName;
-        UShortVec MapPids;
+        UInt16Vec MapPids;
         StrVec    MapNames;
         size_t    CurMap;
 
@@ -1308,10 +1308,10 @@ public:
     typedef vector<Automap> AutomapVec;
     AutomapVec Automaps;
     Automap    AutomapSelected;
-    UShortSet  AutomapWaitPids;
-    UShortSet  AutomapReceivedPids;
+    UInt16Set  AutomapWaitPids;
+    UInt16Set  AutomapReceivedPids;
     PointVec   AutomapPoints;
-    ushort     AutomapCurMapPid;
+    uint16     AutomapCurMapPid;
     float      AutomapScrX, AutomapScrY;
     float      AutomapZoom;
 
@@ -1349,11 +1349,11 @@ public:
     Rect   PupWMain, PupWInfo, PupWCont1, PupWCont2, PupBTakeAll, PupBOk,
            PupBScrUp1, PupBScrDw1, PupBScrUp2, PupBScrDw2, PupBNextCritLeft, PupBNextCritRight;
     int    PupHeightItem1, PupHeightItem2;
-    uchar  PupTransferType;
+    uint8  PupTransferType;
     uint   PupContId, PupClosedContId, PupLastPutId;
-    ushort PupContPid;
+    uint16 PupContPid;
     uint   PupCount;
-    ushort PupSize;
+    uint16 PupSize;
     uint   PupWeight;
 
     void       PupDraw();
@@ -1372,7 +1372,7 @@ public:
     Rect       DlgboxWTop, DlgboxWMiddle, DlgboxWBottom, DlgboxWText, DlgboxBButton, DlgboxBButtonText;
     int        DlgboxX, DlgboxY;
     int        DlgboxVectX, DlgboxVectY;
-    uchar      DlgboxType;
+    uint8      DlgboxType;
     #define DIALOGBOX_NONE             (0)
     #define DIALOGBOX_FOLLOW           (1)
     #define DIALOGBOX_BARTER           (2)
@@ -1386,9 +1386,9 @@ public:
     uint   DlgboxButtonsCount;
     uint   DlgboxSelectedButton;
     // For follow
-    uchar  FollowType;
+    uint8  FollowType;
     uint   FollowRuleId;
-    ushort FollowMap;
+    uint16 FollowMap;
     // For barter
     uint   PBarterPlayerId;
     bool   PBarterHide;
@@ -1427,7 +1427,7 @@ public:
     int        SayX, SayY;
     int        SayVectX, SayVectY;
     Rect       SayWMain, SayWMainText, SayWSay, SayBOk, SayBOkText, SayBCancel, SayBCancelText;
-    uchar      SayType;
+    uint8      SayType;
     bool       SayOnlyNumbers;
     #define DIALOGSAY_NONE             (0)
     #define DIALOGSAY_TEXT             (1)
@@ -1439,7 +1439,7 @@ public:
     void SayLMouseDown();
     void SayLMouseUp();
     void SayMouseMove();
-    void SayKeyDown( uchar dik, const char* dik_text );
+    void SayKeyDown( uint8 dik, const char* dik_text );
 
 /************************************************************************/
 /* Wait                                                                 */
@@ -1468,7 +1468,7 @@ public:
     void SplitStart( Item* item, int to_cont );
     void SplitClose( bool change );
     void SplitDraw();
-    void SplitKeyDown( uchar dik, const char* dik_text );
+    void SplitKeyDown( uint8 dik, const char* dik_text );
     void SplitLMouseDown();
     void SplitLMouseUp();
     void SplitMouseMove();
@@ -1492,7 +1492,7 @@ public:
     void TimerStart( uint item_id, AnyFrames* pic, uint pic_color );
     void TimerClose( bool done );
     void TimerDraw();
-    void TimerKeyDown( uchar dik, const char* dik_text );
+    void TimerKeyDown( uint8 dik, const char* dik_text );
     void TimerLMouseDown();
     void TimerLMouseUp();
     void TimerMouseMove();
@@ -1547,7 +1547,7 @@ public:
     int          FixScrollLst;
     SCraftVecVec FixCraftFix;
     int          FixScrollFix;
-    uchar        FixResult;
+    uint8        FixResult;
 
     struct FixDrawComponent
     {
@@ -1575,7 +1575,7 @@ public:
 
     void       FixGenerate( int fix_mode );
     void       FixGenerateStrLine( string& str, Rect& r );
-    void       FixGenerateItems( UShortVec& items_vec, UIntVec& val_vec, UCharVec& or_vec, string& str, Rect& r, int& x );
+    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x );
     int        GetMouseCraft();
     SCraftVec* GetCurSCrafts();
 
@@ -1596,7 +1596,7 @@ public:
     int        IboxX, IboxY, IboxVectX, IboxVectY;
     string     IboxTitle, IboxText;
     uint       IboxTitleCur, IboxTextCur;
-    uchar      IboxLastKey;
+    uint8      IboxLastKey;
     string     IboxLastKeyText;
 
     // Holodisk
@@ -1605,8 +1605,8 @@ public:
     void IboxDraw();
     void IboxLMouseDown();
     void IboxLMouseUp();
-    void IboxKeyDown( uchar dik, const char* dik_text );
-    void IboxKeyUp( uchar dik );
+    void IboxKeyDown( uint8 dik, const char* dik_text );
+    void IboxKeyUp( uint8 dik );
     void IboxProcess();
     void IboxMouseMove();
 
@@ -1637,7 +1637,7 @@ public:
         string   InfoExt;
         string   FileName;
         uint64   RealTime;
-        UCharVec PicData;
+        UInt8Vec PicData;
     };
     typedef vector<SaveLoadDataSlot> SaveLoadDataSlotVec;
     SaveLoadDataSlotVec SaveLoadDataSlots;

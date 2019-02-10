@@ -45,8 +45,8 @@ struct TraceData
 {
     // Input
     Map*        TraceMap;
-    ushort      BeginHx, BeginHy;
-    ushort      EndHx, EndHy;
+    uint16      BeginHx, BeginHy;
+    uint16      EndHx, EndHy;
     uint        Dist;
     float       Angle;
     Critter*    FindCr;
@@ -54,12 +54,12 @@ struct TraceData
     bool        IsCheckTeam;
     uint        BaseCrTeamId;
     bool        LastPassedSkipCritters;
-    bool        ( * HexCallback )( Map*, Critter*, ushort, ushort, ushort, ushort, uchar );
+    bool        ( * HexCallback )( Map*, Critter*, uint16, uint16, uint16, uint16, uint8 );
     // Output
     CrVec*      Critters;
-    UShortPair* PreBlock;
-    UShortPair* Block;
-    UShortPair* LastPassed;
+    UInt16Pair* PreBlock;
+    UInt16Pair* Block;
+    UInt16Pair* LastPassed;
     bool        IsFullTrace;
     bool        IsCritterFounded;
     bool        IsHaveLastPassed;
@@ -87,11 +87,11 @@ struct TraceData
 struct PathFindData
 {
     uint     MapId;
-    ushort   MoveParams;
+    uint16   MoveParams;
     Critter* FromCritter;
-    ushort   FromX, FromY;
-    ushort   ToX, ToY;
-    ushort   NewToX, NewToY;
+    uint16   FromX, FromY;
+    uint16   ToX, ToY;
+    uint16   NewToX, NewToY;
     uint     Multihex;
     uint     Cut;
     uint     PathNum;
@@ -112,10 +112,10 @@ struct PathFindData
 
 struct PathStep
 {
-    ushort HexX;
-    ushort HexY;
+    uint16 HexX;
+    uint16 HexY;
     uint   MoveParams;
-    uchar  Dir;
+    uint8  Dir;
 };
 typedef vector<PathStep> PathStepVec;
 
@@ -136,7 +136,7 @@ public:
     void Clear();
 
     bool   LoadLocationsProtos();
-    bool   LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, ushort pid );
+    bool   LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, uint16 pid );
     void   SaveAllLocationsAndMapsFile( void (*save_func)( void*, size_t ) );
     bool   LoadAllLocationsAndMapsFile( void* f );
     string GetLocationsMapsStatistics();
@@ -146,11 +146,11 @@ public:
 
     // Maps stuff
 public:
-    bool AddCrToMap( Critter* cr, Map* map, ushort tx, ushort ty, uint radius );
-    void EraseCrFromMap( Critter* cr, Map* map, ushort hex_x, ushort hex_y );
-    bool TryTransitCrGrid( Critter* cr, Map* map, ushort hx, ushort hy, bool force );
-    bool TransitToGlobal( Critter* cr, uint rule, uchar follow_type, bool force );
-    bool Transit( Critter* cr, Map* map, ushort hx, ushort hy, uchar dir, uint radius, bool force );
+    bool AddCrToMap( Critter* cr, Map* map, uint16 tx, uint16 ty, uint radius );
+    void EraseCrFromMap( Critter* cr, Map* map, uint16 hex_x, uint16 hex_y );
+    bool TryTransitCrGrid( Critter* cr, Map* map, uint16 hx, uint16 hy, bool force );
+    bool TransitToGlobal( Critter* cr, uint rule, uint8 follow_type, bool force );
+    bool Transit( Critter* cr, Map* map, uint16 hx, uint16 hy, uint8 dir, uint radius, bool force );
 
     // Global map
 public:
@@ -162,13 +162,13 @@ public:
     void         GM_LeaveGroup( Critter* cr );
     void         GM_GiveRule( Critter* cr, Critter* new_rule );
     void         GM_StopGroup( Critter* cr );
-    bool         GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, ushort mx, ushort my, uchar mdir );
-    bool         GM_GroupToLoc( Critter* rule, uint loc_id, uchar entrance, bool force = false );
+    bool         GM_GroupToMap( GlobalMapGroup* group, Map* map, uint entire, uint16 mx, uint16 my, uint8 mdir );
+    bool         GM_GroupToLoc( Critter* rule, uint loc_id, uint8 entrance, bool force = false );
     void         GM_GroupSetMove( GlobalMapGroup* group, float to_x, float to_y, float speed );
     void         GM_GroupMove( GlobalMapGroup* group );
     void         GM_GlobalProcess( Critter* cr, GlobalMapGroup* group, int type );
     void         GM_GlobalInvite( GlobalMapGroup* group, int combat_mode );
-    bool         GM_CheckEntrance( Location* loc, ScriptArray* arr, uchar entrance );
+    bool         GM_CheckEntrance( Location* loc, ScriptArray* arr, uint8 entrance );
     ScriptArray* GM_CreateGroupArray( GlobalMapGroup* group );
 
     // Locations
@@ -177,12 +177,12 @@ private:
     volatile bool runGarbager;
 
 public:
-    bool           IsInitProtoLocation( ushort pid_loc );
-    ProtoLocation* GetProtoLocation( ushort loc_pid );
-    Location*      CreateLocation( ushort pid_loc, ushort wx, ushort wy, uint loc_id );
+    bool           IsInitProtoLocation( uint16 pid_loc );
+    ProtoLocation* GetProtoLocation( uint16 loc_pid );
+    Location*      CreateLocation( uint16 pid_loc, uint16 wx, uint16 wy, uint loc_id );
     Location*      GetLocationByMap( uint map_id );
     Location*      GetLocation( uint loc_id );
-    Location*      GetLocationByPid( ushort loc_pid, uint skip_count );
+    Location*      GetLocationByPid( uint16 loc_pid, uint skip_count );
     void           GetLocations( LocVec& locs, bool lock );
     uint           GetLocationsCount();
     void           LocationGarbager();
@@ -195,17 +195,17 @@ private:
     uint        pathNumCur;
 
 public:
-    bool         IsInitProtoMap( ushort pid_map );
-    Map*         CreateMap( ushort pid_map, Location* loc_map, uint map_id );
+    bool         IsInitProtoMap( uint16 pid_map );
+    Map*         CreateMap( uint16 pid_map, Location* loc_map, uint map_id );
     Map*         GetMap( uint map_id, bool sync_lock = true );
-    Map*         GetMapByPid( ushort map_pid, uint skip_count );
+    Map*         GetMapByPid( uint16 map_pid, uint skip_count );
     void         GetMaps( MapVec& maps, bool lock );
     uint         GetMapsCount();
-    ProtoMap*    GetProtoMap( ushort pid_map );
-    bool         IsProtoMapNoLogOut( ushort pid_map );
+    ProtoMap*    GetProtoMap( uint16 pid_map );
+    bool         IsProtoMapNoLogOut( uint16 pid_map );
     void         TraceBullet( TraceData& trace );
     int          FindPath( PathFindData& pfd );
-    int          FindPathGrid( ushort& hx, ushort& hy, int index, bool smooth_switcher );
+    int          FindPathGrid( uint16& hx, uint16& hy, int index, bool smooth_switcher );
     PathStepVec& GetPath( uint num ) { return pathesPool[num]; }
     void         PathSetMoveParams( PathStepVec& path, bool is_run );
 };

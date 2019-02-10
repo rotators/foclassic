@@ -9,7 +9,7 @@
 #include "Types.h"
 
 #ifdef FO_D3D
-# define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
+# define SURF_POINT( lr, x, y )    (*( (uint*)( (uint8*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif
 
 #define FONT_BUF_LEN               (0x5000)
@@ -84,7 +84,7 @@ struct FontFormatInfo
     int       CurX, CurY, MaxCurX;
     uint      ColorDots[FONT_BUF_LEN];
     short     LineWidth[FONT_MAX_LINES];
-    ushort    LineSpaceWidth[FONT_MAX_LINES];
+    uint16    LineSpaceWidth[FONT_MAX_LINES];
     uint      OffsColDots;
     uint      DefColor;
     StrVec*   StrLines;
@@ -208,7 +208,7 @@ bool SpriteManager::BuildFont( int index, void* pfont, const char* image_name, b
         {
             for( uint x = 0; x < (uint)si->Width; x++ )
             {
-                uchar a = ( (uchar*)&si->Surf->TextureOwner->Pixel( normal_ox + x, normal_oy + y ) )[3];
+                uint8 a = ( (uint8*)&si->Surf->TextureOwner->Pixel( normal_ox + x, normal_oy + y ) )[3];
                 if( a )
                 {
                     si->Surf->TextureOwner->Pixel( normal_ox + x, normal_oy + y ) = COLOR_ARGB( a, 128, 128, 128 );
@@ -242,7 +242,7 @@ bool SpriteManager::BuildFont( int index, void* pfont, const char* image_name, b
     D3D_HR( font.FontTex->Instance->LockRect( 0, &lr, &to_lock1, 0 ) );
     D3D_HR( tex->LockRect( 0, &lrb, NULL, 0 ) );
     for( uint i = 0; i < bh; i++ )
-        memcpy( (uchar*)lrb.pBits + lrb.Pitch * i, (uchar*)lr.pBits + lr.Pitch * i, bw * 4 );
+        memcpy( (uint8*)lrb.pBits + lrb.Pitch * i, (uint8*)lr.pBits + lr.Pitch * i, bw * 4 );
     for( uint y = 0; y < bh; y++ )
         for( uint x = 0; x < bw; x++ )
             if( SURF_POINT( lr, x, y ) )
@@ -253,7 +253,7 @@ bool SpriteManager::BuildFont( int index, void* pfont, const char* image_name, b
     D3D_HR( font.FontTex->Instance->UnlockRect( 0 ) );
     D3D_HR( font.FontTexBordered->Instance->LockRect( 0, &lr, &to_lock2, 0 ) );
     for( uint i = 0; i < bh; i++ )
-        memcpy( (uchar*)lr.pBits + lr.Pitch * i, (uchar*)lrb.pBits + lrb.Pitch * i, bw * 4 );
+        memcpy( (uint8*)lr.pBits + lr.Pitch * i, (uint8*)lrb.pBits + lrb.Pitch * i, bw * 4 );
     D3D_HR( font.FontTexBordered->Instance->UnlockRect( 0 ) );
     D3D_HR( tex->UnlockRect( 0 ) );
     tex->Release();
@@ -324,8 +324,8 @@ bool SpriteManager::LoadFontFO( int index, const char* font_name )
     char     image_name[MAX_FOPATH] = { 0 };
 
     uint     font_cache_len;
-    uchar*   font_cache_init = Crypt.GetCache( fname, font_cache_len );
-    uchar*   font_cache = font_cache_init;
+    uint8*   font_cache_init = Crypt.GetCache( fname, font_cache_len );
+    uint8*   font_cache = font_cache_init;
     uint64   write_time;
     fm.GetTime( NULL, NULL, &write_time );
     if( !font_cache || write_time > *(uint64*)font_cache )
@@ -430,7 +430,7 @@ bool SpriteManager::LoadFontFO( int index, const char* font_name )
         uint image_name_len = Str::Length( image_name );
         uint font_cache_len = sizeof(uint64) + sizeof(uint) + image_name_len + sizeof(int) * 2 +
                               sizeof(uint) + (sizeof(uint) + sizeof(short) * 7) * font.Letters.size();
-        font_cache_init = new uchar[font_cache_len];
+        font_cache_init = new uint8[font_cache_len];
         font_cache = font_cache_init;
         *(uint64*)font_cache = write_time;
         font_cache += sizeof(uint64);

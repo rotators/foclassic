@@ -60,7 +60,7 @@ public:
     // Map text
     struct MapText
     {
-        ushort HexX, HexY;
+        uint16 HexX, HexY;
         uint   StartTick, Tick;
         string Text;
         uint   Color;
@@ -76,7 +76,7 @@ public:
     struct IfaceAnim
     {
         AnyFrames* Frames;
-        ushort     Flags;
+        uint16     Flags;
         uint       CurSpr;
         uint       LastTick;
         int        ResType;
@@ -89,11 +89,11 @@ public:
     #define ANIMRUN_FROM_END           (0x0002)
     #define ANIMRUN_CYCLE              (0x0004)
     #define ANIMRUN_STOP               (0x0008)
-    #define ANIMRUN_SET_FRM( frm )     ( (uint( uchar( (frm) + 1 ) ) ) << 16 )
+    #define ANIMRUN_SET_FRM( frm )     ( (uint( uint8( (frm) + 1 ) ) ) << 16 )
 
     IfaceAnimVec Animations;
 
-    uint       AnimLoad( uint name_hash, uchar dir, int res_type );
+    uint       AnimLoad( uint name_hash, uint8 dir, int res_type );
     uint       AnimLoad( const char* fname, int path_type, int res_type );
     uint       AnimGetCurSpr( uint anim_id );
     uint       AnimGetCurSprCnt( uint anim_id );
@@ -119,7 +119,7 @@ public:
     bool IsCurInRect( Rect& rect );
     bool IsCurInRectNoTransp( uint spr_id, Rect& rect, int ax, int ay );
     bool IsCurInInterface();
-    bool GetCurHex( ushort& hx, ushort& hy, bool ignore_interface );
+    bool GetCurHex( uint16& hx, uint16& hy, bool ignore_interface );
 
     int IntMode;
     #define INT_MODE_CUSTOM0           (0)
@@ -154,7 +154,7 @@ public:
     AnyFrames* IntMainPic, * IntPTab, * IntPSelect, * IntPShow;
     int        IntX, IntY;
     int        IntVectX, IntVectY;
-    ushort     SelectHX1, SelectHY1, SelectHX2, SelectHY2;
+    uint16     SelectHX1, SelectHY1, SelectHX2, SelectHY2;
     int        SelectX, SelectY;
 
     #define SELECT_TYPE_OLD            (0)
@@ -275,10 +275,10 @@ public:
     // Select Tile, Roof
     struct SelMapTile
     {
-        ushort HexX, HexY;
+        uint16 HexX, HexY;
         bool   IsRoof;
 
-        SelMapTile( ushort hx, ushort hy, bool is_roof ) : HexX( hx ), HexY( hy ), IsRoof( is_roof ) {}
+        SelMapTile( uint16 hx, uint16 hy, bool is_roof ) : HexX( hx ), HexY( hy ), IsRoof( is_roof ) {}
         SelMapTile( const SelMapTile& r ) { memcpy( this, &r, sizeof(SelMapTile) ); }
         SelMapTile& operator=( const SelMapTile& r )
         {
@@ -290,16 +290,16 @@ public:
     SelMapTileVec SelectedTile;
 
     // Select methods
-    MapObject* FindMapObject( ProtoMap& pmap, ushort hx, ushort hy, uchar mobj_type, ushort pid, uint skip );
-    void       FindMapObjects( ProtoMap& pmap, ushort hx, ushort hy, uint radius, uchar mobj_type, ushort pid, MapObjectPtrVec& objects );
-    MapObject* FindMapObject( ushort hx, ushort hy, uchar mobj_type, ushort pid, bool skip_selected );
+    MapObject* FindMapObject( ProtoMap& pmap, uint16 hx, uint16 hy, uint8 mobj_type, uint16 pid, uint skip );
+    void       FindMapObjects( ProtoMap& pmap, uint16 hx, uint16 hy, uint radius, uint8 mobj_type, uint16 pid, MapObjectPtrVec& objects );
+    MapObject* FindMapObject( uint16 hx, uint16 hy, uint8 mobj_type, uint16 pid, bool skip_selected );
     void       UpdateMapObject( MapObject* mobj );
-    void       MoveMapObject( MapObject* mobj, ushort hx, ushort hy );
+    void       MoveMapObject( MapObject* mobj, uint16 hx, uint16 hy );
     void       DeleteMapObject( MapObject* mobj );
     void       SelectClear();
     void       SelectAddItem( ItemHex* item );
     void       SelectAddCrit( CritterCl* npc );
-    void       SelectAddTile( ushort hx, ushort hy, bool is_roof );
+    void       SelectAddTile( uint16 hx, uint16 hy, bool is_roof );
     void       SelectAdd( MapObject* mobj, bool select_childs = true );
     void       SelectErase( MapObject* mobj );
     void       SelectAll();
@@ -310,18 +310,18 @@ public:
     uint AnyId;
     int  DefaultCritterParam[MAPOBJ_CRITTER_PARAMS];
 
-    MapObject* ParseProto( ushort pid, ushort hx, ushort hy, MapObject* owner, bool is_child = false );
-    void       ParseTile( uint name_hash, ushort hx, ushort hy, short ox, short oy, uchar layer, bool is_roof );
-    void       ParseNpc( ushort pid, ushort hx, ushort hy );
+    MapObject* ParseProto( uint16 pid, uint16 hx, uint16 hy, MapObject* owner, bool is_child = false );
+    void       ParseTile( uint name_hash, uint16 hx, uint16 hy, short ox, short oy, uint8 layer, bool is_roof );
+    void       ParseNpc( uint16 pid, uint16 hx, uint16 hy );
     MapObject* ParseMapObj( MapObject* mobj );
 
     // Buffer
     struct TileBuf
     {
         uint   NameHash;
-        ushort HexX, HexY;
+        uint16 HexX, HexY;
         short  OffsX, OffsY;
-        uchar  Layer;
+        uint8  Layer;
         bool   IsRoof;
     };
     typedef vector<TileBuf> TileBufVec;
@@ -345,8 +345,8 @@ public:
     bool       ObjToAll;
 
     void ObjDraw();
-    void ObjKeyDown( uchar dik, const char* dik_text );
-    void ObjKeyDownA( MapObject* o, uchar dik, const char* dik_text );
+    void ObjKeyDown( uint8 dik, const char* dik_text );
+    void ObjKeyDownA( MapObject* o, uint8 dik, const char* dik_text );
 
     // Console
     AnyFrames*     ConsolePic;
@@ -366,8 +366,8 @@ public:
     int    ConsoleAccelerate;
 
     void ConsoleDraw();
-    void ConsoleKeyDown( uchar dik, const char* dik_text );
-    void ConsoleKeyUp( uchar dik );
+    void ConsoleKeyDown( uint8 dik, const char* dik_text );
+    void ConsoleKeyUp( uint8 dik );
     void ConsoleProcess();
     void ParseCommand( const char* cmd );
 
@@ -408,7 +408,7 @@ public:
     // Extended slots
     struct SlotExt
     {
-        uchar Index;
+        uint8 Index;
         char* SlotName;
     };
     typedef map<int, SlotExt> SlotExtMap;
@@ -427,41 +427,41 @@ public:
         static void          MapperObject_set_ScriptName( MapObject& mobj, ScriptString* str );
         static ScriptString* MapperObject_get_FuncName( MapObject& mobj );
         static void          MapperObject_set_FuncName( MapObject& mobj, ScriptString* str );
-        static uchar         MapperObject_get_Critter_Cond( MapObject& mobj );
-        static void          MapperObject_set_Critter_Cond( MapObject& mobj, uchar value );
+        static uint8         MapperObject_get_Critter_Cond( MapObject& mobj );
+        static void          MapperObject_set_Critter_Cond( MapObject& mobj, uint8 value );
         static ScriptString* MapperObject_get_PicMap( MapObject& mobj );
         static void          MapperObject_set_PicMap( MapObject& mobj, ScriptString* str );
         static ScriptString* MapperObject_get_PicInv( MapObject& mobj );
         static void          MapperObject_set_PicInv( MapObject& mobj, ScriptString* str );
         static void          MapperObject_Update( MapObject& mobj );
-        static MapObject*    MapperObject_AddChild( MapObject& mobj, ushort pid );
+        static MapObject*    MapperObject_AddChild( MapObject& mobj, uint16 pid );
         static uint          MapperObject_GetChilds( MapObject& mobj, ScriptArray* objects );
-        static void          MapperObject_MoveToHex( MapObject& mobj, ushort hx, ushort hy );
+        static void          MapperObject_MoveToHex( MapObject& mobj, uint16 hx, uint16 hy );
         static void          MapperObject_MoveToHexOffset( MapObject& mobj, int x, int y );
-        static void          MapperObject_MoveToDir( MapObject& mobj, uchar dir );
+        static void          MapperObject_MoveToDir( MapObject& mobj, uint8 dir );
 
-        static MapObject*    MapperMap_AddObject( ProtoMap& pmap, ushort hx, ushort hy, int mobj_type, ushort pid );
-        static MapObject*    MapperMap_GetObject( ProtoMap& pmap, ushort hx, ushort hy, int mobj_type, ushort pid, uint skip );
-        static uint          MapperMap_GetObjects( ProtoMap& pmap, ushort hx, ushort hy, uint radius, int mobj_type, ushort pid, ScriptArray* objects );
+        static MapObject*    MapperMap_AddObject( ProtoMap& pmap, uint16 hx, uint16 hy, int mobj_type, uint16 pid );
+        static MapObject*    MapperMap_GetObject( ProtoMap& pmap, uint16 hx, uint16 hy, int mobj_type, uint16 pid, uint skip );
+        static uint          MapperMap_GetObjects( ProtoMap& pmap, uint16 hx, uint16 hy, uint radius, int mobj_type, uint16 pid, ScriptArray* objects );
         static void          MapperMap_UpdateObjects( ProtoMap& pmap );
-        static void          MapperMap_Resize( ProtoMap& pmap, ushort width, ushort height );
-        static uint          MapperMap_GetTilesCount( ProtoMap& pmap, ushort hx, ushort hy, bool roof );
-        static void          MapperMap_DeleteTile( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index );
-        static uint          MapperMap_GetTileHash( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index );
-        static void          MapperMap_AddTileHash( ProtoMap& pmap, ushort hx, ushort hy, int ox, int oy, int layer, bool roof, uint pic_hash );
-        static ScriptString* MapperMap_GetTileName( ProtoMap& pmap, ushort hx, ushort hy, bool roof, uint index );
-        static void          MapperMap_AddTileName( ProtoMap& pmap, ushort hx, ushort hy, int ox, int oy, int layer, bool roof, ScriptString* pic_name );
+        static void          MapperMap_Resize( ProtoMap& pmap, uint16 width, uint16 height );
+        static uint          MapperMap_GetTilesCount( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof );
+        static void          MapperMap_DeleteTile( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index );
+        static uint          MapperMap_GetTileHash( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index );
+        static void          MapperMap_AddTileHash( ProtoMap& pmap, uint16 hx, uint16 hy, int ox, int oy, int layer, bool roof, uint pic_hash );
+        static ScriptString* MapperMap_GetTileName( ProtoMap& pmap, uint16 hx, uint16 hy, bool roof, uint index );
+        static void          MapperMap_AddTileName( ProtoMap& pmap, uint16 hx, uint16 hy, int ox, int oy, int layer, bool roof, ScriptString* pic_name );
         static uint          MapperMap_GetDayTime( ProtoMap& pmap, uint day_part );
         static void          MapperMap_SetDayTime( ProtoMap& pmap, uint day_part, uint time );
-        static void          MapperMap_GetDayColor( ProtoMap& pmap, uint day_part, uchar& r, uchar& g, uchar& b );
-        static void          MapperMap_SetDayColor( ProtoMap& pmap, uint day_part, uchar r, uchar g, uchar b );
+        static void          MapperMap_GetDayColor( ProtoMap& pmap, uint day_part, uint8& r, uint8& g, uint8& b );
+        static void          MapperMap_SetDayColor( ProtoMap& pmap, uint day_part, uint8 r, uint8 g, uint8 b );
         static ScriptString* MapperMap_get_ScriptModule( ProtoMap& pmap );
         static void          MapperMap_set_ScriptModule( ProtoMap& pmap, ScriptString* str );
         static ScriptString* MapperMap_get_ScriptFunc( ProtoMap& pmap );
         static void          MapperMap_set_ScriptFunc( ProtoMap& pmap, ScriptString* str );
 
         static void          Global_SetDefaultCritterParam( uint index, int param );
-        static void          Global_AllowSlot( uchar index, ScriptString& slot_name );
+        static void          Global_AllowSlot( uint8 index, ScriptString& slot_name );
         static uint          Global_DecodeUTF8( ScriptString& text, uint& length );
         static ScriptString* Global_EncodeUTF8( uint ucs );
         static ProtoMap*     Global_LoadMap( ScriptString& file_name, int path_type );
@@ -487,9 +487,9 @@ public:
         static void Global_TabSelect( int tab, ScriptString* sub_tab, bool show );
         static void Global_TabSetName( int tab, ScriptString* tab_name );
 
-        static ProtoItem*    Global_GetProtoItem( ushort proto_id );
-        static void          Global_MoveScreen( ushort hx, ushort hy, uint speed );
-        static void          Global_MoveHexByDir( ushort& hx, ushort& hy, uchar dir, uint steps );
+        static ProtoItem*    Global_GetProtoItem( uint16 proto_id );
+        static void          Global_MoveScreen( uint16 hx, uint16 hy, uint speed );
+        static void          Global_MoveHexByDir( uint16& hx, uint16& hy, uint8 dir, uint steps );
         static ScriptString* Global_GetIfaceIniStr( ScriptString& key );
         static uint          Global_GetTick();
         static uint          Global_GetAngelScriptProperty( int property );
@@ -503,7 +503,7 @@ public:
         static bool          Global_LoadFont( int font, ScriptString& font_fname );
         static void          Global_SetDefaultFont( int font, uint color );
         static void          Global_MouseClick( int x, int y, int button, int cursor );
-        static void          Global_KeyboardPress( uchar key1, uchar key2, ScriptString* key1_text, ScriptString* key2_text );
+        static void          Global_KeyboardPress( uint8 key1, uint8 key2, ScriptString* key1_text, ScriptString* key2_text );
         static void          Global_SetRainAnimation( ScriptString* fall_anim_name, ScriptString* drop_anim_name );
         static void          Global_SetZoom( float zoom );
 
@@ -513,7 +513,7 @@ public:
         static bool          Global_StrToFloat( ScriptString* text, float& result );
         static void          Global_Message( ScriptString& msg );
         static void          Global_MessageMsg( int text_msg, uint str_num );
-        static void          Global_MapMessage( ScriptString& text, ushort hx, ushort hy, uint ms, uint color, bool fade, int ox, int oy );
+        static void          Global_MapMessage( ScriptString& text, uint16 hx, uint16 hy, uint ms, uint color, bool fade, int ox, int oy );
         static ScriptString* Global_GetMsgStr( int text_msg, uint str_num );
         static ScriptString* Global_GetMsgStrSkip( int text_msg, uint str_num, uint skip_count );
         static uint          Global_GetMsgStrNumUpper( int text_msg, uint str_num );
@@ -523,17 +523,17 @@ public:
         static ScriptString* Global_ReplaceTextStr( ScriptString& text, ScriptString& replace, ScriptString& str );
         static ScriptString* Global_ReplaceTextInt( ScriptString& text, ScriptString& replace, int i );
 
-        static uint       Global_GetDistantion( ushort hex_x1, ushort hex_y1, ushort hex_x2, ushort hex_y2 );
-        static uchar      Global_GetDirection( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy );
-        static uchar      Global_GetOffsetDir( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset );
-        static void       Global_GetHexInPath( ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist );
-        static uint       Global_GetPathLengthHex( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint cut );
-        static bool       Global_GetHexPos( ushort hx, ushort hy, int& x, int& y );
-        static bool       Global_GetMonitorHex( int x, int y, ushort& hx, ushort& hy, bool ignore_interface );
+        static uint       Global_GetDistantion( uint16 hex_x1, uint16 hex_y1, uint16 hex_x2, uint16 hex_y2 );
+        static uint8      Global_GetDirection( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy );
+        static uint8      Global_GetOffsetDir( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float offset );
+        static void       Global_GetHexInPath( uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist );
+        static uint       Global_GetPathLengthHex( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint cut );
+        static bool       Global_GetHexPos( uint16 hx, uint16 hy, int& x, int& y );
+        static bool       Global_GetMonitorHex( int x, int y, uint16& hx, uint16& hy, bool ignore_interface );
         static MapObject* Global_GetMonitorObject( int x, int y, bool ignore_interface );
 
         static uint Global_LoadSprite( ScriptString& spr_name, int path_index );
-        static uint Global_LoadSpriteHash( uint name_hash, uchar dir );
+        static uint Global_LoadSpriteHash( uint name_hash, uint8 dir );
         static int  Global_GetSpriteWidth( uint spr_id, int spr_index );
         static int  Global_GetSpriteHeight( uint spr_id, int spr_index );
         static uint Global_GetSpriteCount( uint spr_id );
@@ -545,8 +545,8 @@ public:
         static void Global_DrawSpriteSizeOffs( uint spr_id, int spr_index, int x, int y, int w, int h, bool scratch, bool center, uint color, bool offs );
         static void Global_DrawText( ScriptString& text, int x, int y, int w, int h, uint color, int font, int flags );
         static void Global_DrawPrimitive( int primitive_type, ScriptArray& data );
-        static void Global_DrawMapSprite( ushort hx, ushort hy, ushort proto_id, uint spr_id, int spr_index, int ox, int oy );
-        static void Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uchar dir, int l, int t, int r, int b, bool scratch, bool center, uint color );
+        static void Global_DrawMapSprite( uint16 hx, uint16 hy, uint16 proto_id, uint spr_id, int spr_index, int ox, int oy );
+        static void Global_DrawCritter2d( uint crtype, uint anim1, uint anim2, uint8 dir, int l, int t, int r, int b, bool scratch, bool center, uint color );
         static void Global_DrawCritter3d( uint instance, uint crtype, uint anim1, uint anim2, ScriptArray* layers, ScriptArray* position, uint color );
 
         static bool          Global_IsCritterCanWalk( uint cr_type );

@@ -36,7 +36,7 @@ AnyFrames*    SpriteManager::DummyAnimation = NULL;
 #define SURF_SPRITES_OFFS          (2)
 
 #ifdef FO_D3D
-# define SURF_POINT( lr, x, y )    (*( (uint*)( (uchar*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
+# define SURF_POINT( lr, x, y )    (*( (uint*)( (uint8*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif
 
 AnyFrames::AnyFrames() : Ind( NULL ), NextX( NULL ), NextY( NULL ), CntFrm( 0 ), Ticks( 0 ), Anim1( 0 ), Anim2( 0 )
@@ -386,9 +386,9 @@ bool SpriteManager::InitBuffers()
     D3D_HR( d3dDevice->CreateVertexBuffer( flushSprCnt * 4 * sizeof(Vertex), D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFVF_MYVERTEX, D3DPOOL_DEFAULT, &vbMain, NULL ) );
 
     // Index buffer
-    D3D_HR( d3dDevice->CreateIndexBuffer( flushSprCnt * 6 * sizeof(ushort), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &ibMain, NULL ) );
+    D3D_HR( d3dDevice->CreateIndexBuffer( flushSprCnt * 6 * sizeof(uint16), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &ibMain, NULL ) );
 
-    ushort* ind = new ushort[6 * flushSprCnt];
+    uint16* ind = new uint16[6 * flushSprCnt];
     if( !ind )
         return false;
     for( int i = 0; i < flushSprCnt; i++ )
@@ -403,7 +403,7 @@ bool SpriteManager::InitBuffers()
 
     void* buf;
     D3D_HR( ibMain->Lock( 0, 0, (void**)&buf, 0 ) );
-    memcpy( buf, ind, flushSprCnt * 6 * sizeof(ushort) );
+    memcpy( buf, ind, flushSprCnt * 6 * sizeof(uint16) );
     D3D_HR( ibMain->Unlock() );
     delete[] ind;
 
@@ -429,7 +429,7 @@ bool SpriteManager::InitBuffers()
     GL( glBufferData( GL_ARRAY_BUFFER, flushSprCnt * 4 * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW ) );
 
     // Index buffers
-    ushort* ind = new ushort[6 * flushSprCnt];
+    uint16* ind = new uint16[6 * flushSprCnt];
     for( int i = 0; i < flushSprCnt; i++ )
     {
         ind[6 * i + 0] = 4 * i + 0;
@@ -441,12 +441,12 @@ bool SpriteManager::InitBuffers()
     }
     GL( glGenBuffers( 1, &ibMain ) );
     GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibMain ) );
-    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 6 * sizeof(ushort), ind, GL_STATIC_DRAW ) );
+    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 6 * sizeof(uint16), ind, GL_STATIC_DRAW ) );
     for( int i = 0; i < flushSprCnt * 4; i++ )
         ind[i] = i;
     GL( glGenBuffers( 1, &ibDirect ) );
     GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibDirect ) );
-    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 4 * sizeof(ushort), ind, GL_STATIC_DRAW ) );
+    GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, flushSprCnt * 4 * sizeof(uint16), ind, GL_STATIC_DRAW ) );
     delete[] ind;
 
     // Vertex array
@@ -1274,7 +1274,7 @@ Surface* SpriteManager::CreateNewSurface( int w, int h )
     #ifdef FO_D3D
     D3D_HR( d3dDevice->CreateTexture( w, h, 1, 0, TEX_FRMT, D3DPOOL_MANAGED, &tex->Instance, NULL ) );
     #else
-    tex->Data = new uchar[w * h * 4];
+    tex->Data = new uint8[w * h * 4];
     tex->Size = w * h * 4;
     tex->Width = w;
     tex->Height = h;
@@ -1411,14 +1411,14 @@ void SpriteManager::SaveTexture( Texture* tex, const char* fname, bool flip )
     uint h = (tex ? tex->Height : MainWindow->h() );
 
     // Get data
-    uchar* data;
+    uint8* data;
     if( tex )
     {
-        data = (uchar*)tex->Data;
+        data = (uint8*)tex->Data;
     }
     else
     {
-        data = new uchar[w * h * 4];
+        data = new uint8[w * h * 4];
         GL( glReadPixels( 0, 0, MainWindow->w(), MainWindow->h(), GL_BGRA, GL_UNSIGNED_BYTE, data ) );
     }
 
@@ -1449,7 +1449,7 @@ void SpriteManager::SaveTexture( Texture* tex, const char* fname, bool flip )
 
         // Save to memory
         uint   size = ilSaveL( file_type, NULL, 0 );
-        uchar* buf = new uchar[size];
+        uint8* buf = new uint8[size];
         ilSaveL( file_type, buf, size );
 
         // Save to hard drive
@@ -1473,7 +1473,7 @@ void SpriteManager::SaveTexture( Texture* tex, const char* fname, bool flip )
 }
 #endif
 
-uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint size )
+uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uint8* data, uint size )
 {
     // Parameters
     uint w, h;
@@ -1503,9 +1503,9 @@ uint SpriteManager::FillSurfaceFromMemory( SpriteInfo* si, uchar* data, uint siz
     // Copy
     RECT   r = { x - 1, y - 1, x + w + 1, y + h + 1 };
     D3D_HR( dst_surf->LockRect( &rdst, &r, 0 ) );
-    uchar* ptr = (uchar*)( (uint*)data + 3 );
+    uint8* ptr = (uint8*)( (uint*)data + 3 );
     for( uint i = 0; i < h; i++ )
-        memcpy( (uchar*)rdst.pBits + rdst.Pitch * (i + 1) + 4, ptr + w * 4 * i, w * 4 );
+        memcpy( (uint8*)rdst.pBits + rdst.Pitch * (i + 1) + 4, ptr + w * 4 * i, w * 4 );
 
     if( GameOpt.DebugSprites )
     {
@@ -1750,11 +1750,11 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
         return NULL;
 
     fm.SetCurPos( 0x4 );
-    ushort frm_fps = fm.GetBEUShort();
+    uint16 frm_fps = fm.GetBEUShort();
     if( !frm_fps )
         frm_fps = 10;
     fm.SetCurPos( 0x8 );
-    ushort frm_num = fm.GetBEUShort();
+    uint16 frm_num = fm.GetBEUShort();
     fm.SetCurPos( 0xA + dir * 2 );
     short  offs_x = fm.GetBEUShort();
     fm.SetCurPos( 0x16 + dir * 2 );
@@ -1780,9 +1780,9 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
     {
         for( uint i = 0; i < 256; i++ )
         {
-            uchar r = fm_palette.GetUChar() * 4;
-            uchar g = fm_palette.GetUChar() * 4;
-            uchar b = fm_palette.GetUChar() * 4;
+            uint8 r = fm_palette.GetUChar() * 4;
+            uint8 g = fm_palette.GetUChar() * 4;
+            uint8 b = fm_palette.GetUChar() * 4;
             palette_entry[i] = COLOR_XRGB( r, g, b );
         }
         palette = palette_entry;
@@ -1797,7 +1797,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
     // 0x08 - FireFast, 243 - 247, 5
     // 0x10 - Shoreline, 248 - 253, 6
     // 0x20 - BlinkingRed, 254, parse on 15 frames
-    const uchar blinking_red_vals[10] = { 254, 210, 165, 120, 75, 45, 90, 135, 180, 225 };
+    const uint8 blinking_red_vals[10] = { 254, 210, 165, 120, 75, 45, 90, 135, 180, 225 };
 
     for( int frm = 0; frm < frm_num; frm++ )
     {
@@ -1805,8 +1805,8 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
         if( !si )
             return NULL;
         fm.SetCurPos( offset );
-        ushort w = fm.GetBEUShort();
-        ushort h = fm.GetBEUShort();
+        uint16 w = fm.GetBEUShort();
+        uint16 h = fm.GetBEUShort();
 
         fm.GoForward( 4 );       // Frame size
 
@@ -1818,7 +1818,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
 
         // Data for FillSurfaceFromMemory
         uint   size = 12 + h * w * 4;
-        uchar* data = new uchar[size];
+        uint8* data = new uint8[size];
         if( !data )
         {
             delete anim;
@@ -1838,7 +1838,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
         {
             for( int i = 0, j = w * h; i < j; i++ )
             {
-                uchar index = fm.GetUChar();
+                uint8 index = fm.GetUChar();
                 if( index >= 229 && index < 255 )
                 {
                     if( index >= 229 && index <= 232 )
@@ -1887,7 +1887,7 @@ AnyFrames* SpriteManager::LoadAnimationFrm( const char* fname, int path_type, in
             fm.SetCurPos( offset + 12 );
             for( int i = 0, j = w * h; i < j; i++ )
             {
-                uchar index = fm.GetUChar();
+                uint8 index = fm.GetUChar();
                 if( index < 229 || index == 255 )
                     continue;
                 if( index >= 229 && index <= 232 )
@@ -1990,19 +1990,19 @@ AnyFrames* SpriteManager::LoadAnimationRix( const char* fname, int path_type )
 
     SpriteInfo* si = new SpriteInfo();
     fm.SetCurPos( 0x4 );
-    ushort      w;
+    uint16      w;
     fm.CopyMem( &w, 2 );
-    ushort      h;
+    uint16      h;
     fm.CopyMem( &h, 2 );
 
     // Data for FillSurfaceFromMemory
     uint   size = 12 + h * w * 4;
-    uchar* data = new uchar[size];
+    uint8* data = new uint8[size];
     *( (uint*)data + 1 ) = w;
     *( (uint*)data + 2 ) = h;
     uint*  ptr = (uint*)data + 3;
     fm.SetCurPos( 0xA );
-    uchar* palette = fm.GetCurBuf();
+    uint8* palette = fm.GetCurBuf();
     fm.SetCurPos( 0xA + 256 * 3 );
     for( int i = 0, j = w * h; i < j; i++ )
     {
@@ -2030,11 +2030,11 @@ AnyFrames* SpriteManager::LoadAnimationFofrm( const char* fname, int path_type, 
     if( !fofrm.LoadFile( fname, path_type ) )
         return NULL;
 
-    ushort frm_fps = fofrm.GetInt( "fps", 0 );
+    uint16 frm_fps = fofrm.GetInt( "fps", 0 );
     if( !frm_fps )
         frm_fps = 10;
 
-    ushort frm_num = fofrm.GetInt( "count", 0 );
+    uint16 frm_num = fofrm.GetInt( "count", 0 );
     if( !frm_num )
         frm_num = 1;
 
@@ -2423,7 +2423,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         uint   w = frame_info.frameWidth;
         uint   h = frame_info.frameHeight;
         uint   size = 12 + h * w * 4;
-        uchar* data = new uchar[size];
+        uint8* data = new uint8[size];
         if( !data )
         {
             delete si;
@@ -2439,7 +2439,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         // Decode
 // =======================================================================
         #define ART_GET_COLOR                                                                          \
-            uchar index = fm.GetUChar();                                                               \
+            uint8 index = fm.GetUChar();                                                               \
             uint color = palette[palette_index][index];                                                \
             if( !index )                                                                               \
                 color = 0;                                                                             \
@@ -2478,7 +2478,7 @@ AnyFrames* SpriteManager::LoadAnimationArt( const char* fname, int path_type, in
         {
             for( uint i = 0; i < frame_info.frameSize; i++ )
             {
-                uchar cmd = fm.GetUChar();
+                uint8 cmd = fm.GetUChar();
                 if( cmd > 128 )
                 {
                     cmd -= 128;
@@ -2707,7 +2707,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     float dimension_right = (float)fm.GetUChar() * 6.7f;
     int   center_x = fm.GetLEUInt();
     int   center_y = fm.GetLEUInt();
-    fm.GoForward( 2 );                 // ushort unknown1  sometimes it is 0, and sometimes it is 3
+    fm.GoForward( 2 );                 // uint16 unknown1  sometimes it is 0, and sometimes it is 3
     fm.GoForward( 1 );                 // CHAR unknown2  0x64, other values were not observed
 
     float   ta = RAD( 127.0f / 2.0f ); // Tactics grid angle
@@ -2733,14 +2733,14 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
         fm.CopyMem( name, len );
         name[len] = 0;
 
-        ushort index = fm.GetLEUShort();
+        uint16 index = fm.GetLEUShort();
 
         if( !seq_name[0] || Str::CompareCase( name, seq_name ) )
         {
             anim_index = index;
 
             // Read frame numbers
-            fm.GoBack( sizeof(ushort) + len + sizeof(uint) +
+            fm.GoBack( sizeof(uint16) + len + sizeof(uint) +
                        sizeof(uint) * item_cnt + sizeof(short) * item_cnt );
 
             for( uint i = 0; i < item_cnt; i++ )
@@ -2767,7 +2767,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     fm.SetCurPos( 0 );
     for( uint i = 0; i <= anim_index; i++ )
     {
-        if( !fm.FindFragment( (uchar*)"<spranim>", 9, fm.GetCurPos() ) )
+        if( !fm.FindFragment( (uint8*)"<spranim>", 9, fm.GetCurPos() ) )
             return NULL;
         fm.GoForward( 12 );
     }
@@ -2798,19 +2798,19 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     // Get images file
     fm.SetCurPos( file_offset );
     fm.GoForward( 14 );  // <spranim_img>\0
-    uchar type = fm.GetUChar();
+    uint8 type = fm.GetUChar();
     fm.GoForward( 1 );   // \0
 
     uint data_len;
     uint cur_pos = fm.GetCurPos();
-    if( fm.FindFragment( (uchar*)"<spranim_img>", 13, cur_pos ) )
+    if( fm.FindFragment( (uint8*)"<spranim_img>", 13, cur_pos ) )
         data_len = fm.GetCurPos() - cur_pos;
     else
         data_len = fm.GetFsize() - cur_pos;
     fm.SetCurPos( cur_pos );
 
     bool   packed = (type == 0x32);
-    uchar* data = fm.GetCurBuf();
+    uint8* data = fm.GetCurBuf();
     if( packed )
     {
         // Unpack with zlib
@@ -2840,7 +2840,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
     image_indices.resize( frame_cnt * dir_cnt * 4 );
     for( uint cur = 0; !fm_images.IsEOF();)
     {
-        uchar tag = fm_images.GetUChar();
+        uint8 tag = fm_images.GetUChar();
         if( tag == 1 )
         {
             // Valid index
@@ -2912,7 +2912,7 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
 
         // Data for FillSurfaceFromMemory
         uint   img_size = 12 + whole_h * whole_w * 4;
-        uchar* img_data = new uchar[img_size];
+        uint8* img_data = new uint8[img_size];
         if( !img_data )
             return NULL;
         memzero( img_data, img_size );
@@ -2931,15 +2931,15 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
 
             char   zar[8] = { 0 };
             fm_images.CopyMem( zar, 8 );
-            uchar  subtype = zar[6];
+            uint8  subtype = zar[6];
 
             uint   w = fm_images.GetLEUInt();
             uint   h = fm_images.GetLEUInt();
-            uchar  palette_present = fm_images.GetUChar();
+            uint8  palette_present = fm_images.GetUChar();
             uint   rle_size = fm_images.GetLEUInt();
-            uchar* rle_buf = fm_images.GetCurBuf();
+            uint8* rle_buf = fm_images.GetCurBuf();
             fm_images.GoForward( rle_size );
-            uchar  def_color = 0;
+            uint8  def_color = 0;
 
             if( zar[5] || strcmp( zar, "<zar>" ) || (subtype != 0x34 && subtype != 0x35) || palette_present == 1 )
             {
@@ -2965,15 +2965,15 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                     {
                         case 1:
                             col = palette[part][rle_buf[i]];
-                            ( (uchar*)&col )[3] = 0xFF;
+                            ( (uint8*)&col )[3] = 0xFF;
                             break;
                         case 2:
                             col = palette[part][rle_buf[2 * i]];
-                            ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                            ( (uint8*)&col )[3] = rle_buf[2 * i + 1];
                             break;
                         case 3:
                             col = palette[part][def_color];
-                            ( (uchar*)&col )[3] = rle_buf[i];
+                            ( (uint8*)&col )[3] = rle_buf[i];
                             break;
                         default:
                             break;
@@ -2983,8 +2983,8 @@ AnyFrames* SpriteManager::LoadAnimationSpr( const char* fname, int path_type, in
                     {
                         if( rgb_offs[part][j] )
                         {
-                            int val = (int)( ( (uchar*)&col )[2 - j] ) + rgb_offs[part][j];
-                            ( (uchar*)&col )[2 - j] = CLAMP( val, 0, 255 );
+                            int val = (int)( ( (uint8*)&col )[2 - j] ) + rgb_offs[part][j];
+                            ( (uint8*)&col )[2 - j] = CLAMP( val, 0, 255 );
                         }
                     }
 
@@ -3041,15 +3041,15 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
     char head[6];
     if( !fm.CopyMem( head, 6 ) || head[5] || strcmp( head, "<zar>" ) )
         return NULL;
-    uchar type = fm.GetUChar();
+    uint8 type = fm.GetUChar();
     fm.GoForward( 1 );   // \0
     uint  w = fm.GetLEUInt();
     uint  h = fm.GetLEUInt();
-    uchar palette_present = fm.GetUChar();
+    uint8 palette_present = fm.GetUChar();
 
     // Read palette
     uint  palette[256] = { 0 };
-    uchar def_color = 0;
+    uint8 def_color = 0;
     if( palette_present )
     {
         uint palette_count = fm.GetLEUInt();
@@ -3062,12 +3062,12 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
 
     // Read image
     uint   rle_size = fm.GetLEUInt();
-    uchar* rle_buf = fm.GetCurBuf();
+    uint8* rle_buf = fm.GetCurBuf();
     fm.GoForward( rle_size );
 
     // Data for FillSurfaceFromMemory
     uint   img_size = 12 + h * w * 4;
-    uchar* img_data = new uchar[img_size];
+    uint8* img_data = new uint8[img_size];
     if( !img_data )
         return NULL;
     *( (uint*)img_data + 1 ) = w;
@@ -3091,15 +3091,15 @@ AnyFrames* SpriteManager::LoadAnimationZar( const char* fname, int path_type )
             {
                 case 1:
                     col = palette[rle_buf[i]];
-                    ( (uchar*)&col )[3] = 0xFF;
+                    ( (uint8*)&col )[3] = 0xFF;
                     break;
                 case 2:
                     col = palette[rle_buf[2 * i]];
-                    ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                    ( (uint8*)&col )[3] = rle_buf[2 * i + 1];
                     break;
                 case 3:
                     col = palette[def_color];
-                    ( (uchar*)&col )[3] = rle_buf[i];
+                    ( (uint8*)&col )[3] = rle_buf[i];
                     break;
                 default:
                     break;
@@ -3150,7 +3150,7 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
     uint w = fm.GetLEUInt();
     uint h = fm.GetLEUInt();
 
-    if( !fm.FindFragment( (uchar*)"<tiledata>", 10, fm.GetCurPos() ) )
+    if( !fm.FindFragment( (uint8*)"<tiledata>", 10, fm.GetCurPos() ) )
         return NULL;
     fm.GoForward( 10 + 3 ); // Signature
     uint frames_count = fm.GetLEUInt();
@@ -3166,15 +3166,15 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
         char head[6];
         if( !fm.CopyMem( head, 6 ) || head[5] || strcmp( head, "<zar>" ) )
             return NULL;
-        uchar type = fm.GetUChar();
+        uint8 type = fm.GetUChar();
         fm.GoForward( 1 );       // \0
         uint  w = fm.GetLEUInt();
         uint  h = fm.GetLEUInt();
-        uchar palette_present = fm.GetUChar();
+        uint8 palette_present = fm.GetUChar();
 
         // Read palette
         uint  palette[256] = { 0 };
-        uchar def_color = 0;
+        uint8 def_color = 0;
         if( palette_present )
         {
             uint palette_count = fm.GetLEUInt();
@@ -3187,12 +3187,12 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
 
         // Read image
         uint   rle_size = fm.GetLEUInt();
-        uchar* rle_buf = fm.GetCurBuf();
+        uint8* rle_buf = fm.GetCurBuf();
         fm.GoForward( rle_size );
 
         // Data for FillSurfaceFromMemory
         uint   img_size = 12 + h * w * 4;
-        uchar* img_data = new uchar[img_size];
+        uint8* img_data = new uint8[img_size];
         if( !img_data )
             return NULL;
         *( (uint*)img_data + 1 ) = w;
@@ -3216,15 +3216,15 @@ AnyFrames* SpriteManager::LoadAnimationTil( const char* fname, int path_type )
                 {
                     case 1:
                         col = palette[rle_buf[i]];
-                        ( (uchar*)&col )[3] = 0xFF;
+                        ( (uint8*)&col )[3] = 0xFF;
                         break;
                     case 2:
                         col = palette[rle_buf[2 * i]];
-                        ( (uchar*)&col )[3] = rle_buf[2 * i + 1];
+                        ( (uint8*)&col )[3] = rle_buf[2 * i + 1];
                         break;
                     case 3:
                         col = palette[def_color];
-                        ( (uchar*)&col )[3] = rle_buf[i];
+                        ( (uint8*)&col )[3] = rle_buf[i];
                         break;
                     default:
                         break;
@@ -3273,9 +3273,9 @@ AnyFrames* SpriteManager::LoadAnimationMos( const char* fname, int path_type )
     {
         uint   unpacked_len = fm.GetLEUInt();
         uint   data_len = fm.GetFsize() - 12;
-        uchar* buf = fm.GetCurBuf();
-        *(ushort*)buf = 0x9C78;
-        uchar* data = Crypt.Uncompress( buf, data_len, unpacked_len / fm.GetFsize() + 1 );
+        uint8* buf = fm.GetCurBuf();
+        *(uint16*)buf = 0x9C78;
+        uint8* data = Crypt.Uncompress( buf, data_len, unpacked_len / fm.GetFsize() + 1 );
         if( !data )
             return NULL;
 
@@ -3299,7 +3299,7 @@ AnyFrames* SpriteManager::LoadAnimationMos( const char* fname, int path_type )
 
     // Data for FillSurfaceFromMemory
     uint   img_size = 12 + h * w * 4;
-    uchar* img_data = new uchar[img_size];
+    uint8* img_data = new uint8[img_size];
     if( !img_data )
         return NULL;
     *( (uint*)img_data + 1 ) = w;
@@ -3414,9 +3414,9 @@ AnyFrames* SpriteManager::LoadAnimationBam( const char* fname, int path_type )
     {
         uint   unpacked_len = fm.GetLEUInt();
         uint   data_len = fm.GetFsize() - 12;
-        uchar* buf = fm.GetCurBuf();
-        *(ushort*)buf = 0x9C78;
-        uchar* data = Crypt.Uncompress( buf, data_len, unpacked_len / fm.GetFsize() + 1 );
+        uint8* buf = fm.GetCurBuf();
+        *(uint16*)buf = 0x9C78;
+        uint8* data = Crypt.Uncompress( buf, data_len, unpacked_len / fm.GetFsize() + 1 );
         if( !data )
             return NULL;
 
@@ -3431,7 +3431,7 @@ AnyFrames* SpriteManager::LoadAnimationBam( const char* fname, int path_type )
     // Read header
     uint  frames_count = fm.GetLEUShort();
     uint  cycles_count = fm.GetUChar();
-    uchar compr_color = fm.GetUChar();
+    uint8 compr_color = fm.GetUChar();
     uint  frames_offset = fm.GetLEUInt();
     uint  palette_offset = fm.GetLEUInt();
     uint  lookup_table_offset = fm.GetLEUInt();
@@ -3470,15 +3470,15 @@ AnyFrames* SpriteManager::LoadAnimationBam( const char* fname, int path_type )
         fm.SetCurPos( frames_offset + frame_index * 12 );
         uint w = fm.GetLEUShort();
         uint h = fm.GetLEUShort();
-        int  ox = (ushort)fm.GetLEUShort();
-        int  oy = (ushort)fm.GetLEUShort();
+        int  ox = (uint16)fm.GetLEUShort();
+        int  oy = (uint16)fm.GetLEUShort();
         uint data_offset = fm.GetLEUInt();
         bool rle = (data_offset & 0x80000000 ? false : true);
         data_offset &= 0x7FFFFFFF;
 
         // Data for FillSurfaceFromMemory
         uint   img_size = 12 + h * w * 4;
-        uchar* img_data = new uchar[img_size];
+        uint8* img_data = new uint8[img_size];
         if( !img_data )
             return NULL;
         *( (uint*)img_data + 1 ) = w;
@@ -3489,7 +3489,7 @@ AnyFrames* SpriteManager::LoadAnimationBam( const char* fname, int path_type )
         fm.SetCurPos( data_offset );
         for( uint k = 0, l = w * h; k < l;)
         {
-            uchar index = fm.GetUChar();
+            uint8 index = fm.GetUChar();
             uint  color = palette[index];
             if( color == 0xFF00 )
                 color = 0;
@@ -3572,7 +3572,7 @@ AnyFrames* SpriteManager::LoadAnimationOther( const char* fname, int path_type )
 
     // Data for FillSurfaceFromMemory
     uint   size = 12 + h * w * 4;
-    uchar* data = new uchar[size];
+    uint8* data = new uint8[size];
     *( (uint*)data + 1 ) = w;
     *( (uint*)data + 2 ) = h;
 
@@ -3682,11 +3682,11 @@ uint SpriteManager::Render3dSprite( Animation3d* anim3d, int dir, int time_proc 
     uint      w = fb.W();
     uint      h = fb.H();
     uint      size = 12 + h * w * 4;
-    uchar*    data = new uchar[size];
+    uint8*    data = new uint8[size];
     *( (uint*)data + 1 ) = w;
     *( (uint*)data + 2 ) = h;
     for( uint i = 0; i < h; i++ )
-        memcpy( data + 12 + w * 4 * i, (uchar*)lr.pBits + lr.Pitch * i, w * 4 );
+        memcpy( data + 12 + w * 4 * i, (uint8*)lr.pBits + lr.Pitch * i, w * 4 );
     D3D_HR( spr3dRTData->UnlockRect() );
 
     // Fill from memory
@@ -3788,7 +3788,7 @@ uint SpriteManager::Render3dSprite( Animation3d* anim3d, int dir, int time_proc 
     uint   w = fb.W();
     uint   h = fb.H();
     uint   size = 12 + h * w * 4;
-    uchar* data = new uchar[size];
+    uint8* data = new uint8[size];
     *( (uint*)data + 1 ) = w;
     *( (uint*)data + 2 ) = h;
     PushRenderTarget( rt3DSprite );
@@ -4287,7 +4287,7 @@ void SpriteManager::GetDrawRect( Sprite* prep, Rect& rect )
     }
 }
 
-bool SpriteManager::CompareHexEgg( ushort hx, ushort hy, int egg_type )
+bool SpriteManager::CompareHexEgg( uint16 hx, uint16 hy, int egg_type )
 {
     if( egg_type == EGG_ALWAYS )
         return true;
@@ -4317,7 +4317,7 @@ bool SpriteManager::CompareHexEgg( ushort hx, ushort hy, int egg_type )
     return false;
 }
 
-void SpriteManager::SetEgg( ushort hx, ushort hy, Sprite* spr )
+void SpriteManager::SetEgg( uint16 hx, uint16 hy, Sprite* spr )
 {
     if( !sprEgg )
         return;
@@ -4406,9 +4406,9 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
             int    lr = *spr->Light;
             int    lg = *(spr->Light + 1);
             int    lb = *(spr->Light + 2);
-            uchar& r = ( (uchar*)&cur_color )[2];
-            uchar& g = ( (uchar*)&cur_color )[1];
-            uchar& b = ( (uchar*)&cur_color )[0];
+            uint8& r = ( (uint8*)&cur_color )[2];
+            uint8& g = ( (uint8*)&cur_color )[1];
+            uint8& b = ( (uint8*)&cur_color )[0];
             int    ir = (int)r + lr;
             int    ig = (int)g + lg;
             int    ib = (int)b + lb;
@@ -4426,7 +4426,7 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
         // Alpha
         if( spr->Alpha )
         {
-            ( (uchar*)&cur_color )[3] = *spr->Alpha;
+            ( (uint8*)&cur_color )[3] = *spr->Alpha;
         }
 
         // Process flashing
@@ -4456,9 +4456,9 @@ bool SpriteManager::DrawSprites( Sprites& dtree, bool collect_contours, bool use
             r = CLAMP( r, 0, 0xFF );
             g = CLAMP( g, 0, 0xFF );
             b = CLAMP( b, 0, 0xFF );
-            ( (uchar*)&cur_color )[2] = r;
-            ( (uchar*)&cur_color )[1] = g;
-            ( (uchar*)&cur_color )[0] = b;
+            ( (uint8*)&cur_color )[2] = r;
+            ( (uint8*)&cur_color )[1] = g;
+            ( (uint8*)&cur_color )[0] = b;
             cur_color &= spr->FlashMask;
         }
 
@@ -4789,7 +4789,7 @@ uint SpriteManager::GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_
 
            D3DLOCKED_RECT desc;
            D3D_HR(zstencil->LockRect(&desc,NULL,D3DLOCK_READONLY));
-           uchar* ptr=(uchar*)desc.pBits;
+           uint8* ptr=(uint8*)desc.pBits;
            int pitch=desc.Pitch;
 
            int stencil_offset=offs_y*pitch+offs_x*4+3;
@@ -4826,7 +4826,7 @@ uint SpriteManager::GetPixColor( uint spr_id, int offs_x, int offs_y, bool with_
 
     LockRect_       desc;
     D3D_HR( si->Surf->TextureOwner->Instance->LockRect( 0, &desc, NULL, D3DLOCK_READONLY ) );
-    uchar*          ptr = (uchar*)desc.pBits;
+    uint8*          ptr = (uint8*)desc.pBits;
     int             pitch = desc.Pitch;
 
     offs_x += (int)(width * si->SprRect.L);
@@ -4874,7 +4874,7 @@ bool SpriteManager::IsEggTransp( int pix_x, int pix_y )
     LockRect_ lrDst;
     D3D_HR( sprEgg->Surf->TextureOwner->Instance->LockRect( 0, &lrDst, NULL, D3DLOCK_READONLY ) );
 
-    uchar* pDst = (uchar*)lrDst.pBits;
+    uint8* pDst = (uint8*)lrDst.pBits;
 
     if( pDst[oy * sHeight * 4 + ox * 4 + 3] < 170 )
     {
@@ -5102,11 +5102,11 @@ bool SpriteManager::DrawPoints( PointVec& points, int prim, float* zoom /* = NUL
         GL( glBufferData( GL_ARRAY_BUFFER, count * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW ) );
 
         // Index buffers
-        ushort* ind = new ushort[count];
+        uint16* ind = new uint16[count];
         for( uint i = 0; i < count; i++ )
             ind[i] = i;
         GL( glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ibDirect ) );
-        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, count * sizeof(ushort), ind, GL_STATIC_DRAW ) );
+        GL( glBufferData( GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint16), ind, GL_STATIC_DRAW ) );
         delete[] ind;
     }
 
@@ -5779,7 +5779,7 @@ uint SpriteManager::GetSpriteContour( SpriteInfo* si, Sprite* spr )
 
     // Data for FillSurfaceFromMemory
     uint   size = 12 + ih * iw * 4;
-    uchar* data = new uchar[size];
+    uint8* data = new uint8[size];
     memzero( data, size );
     *( (uint*)data + 1 ) = iw;
     *( (uint*)data + 2 ) = ih;

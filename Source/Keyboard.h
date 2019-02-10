@@ -18,16 +18,16 @@ namespace Keyb
     void   InitKeyb();
     void   Finish();
     void   Lost();
-    void   GetChar( uchar dik, const char* dik_text, string& str, uint* position, uint max, int flags );
-    void   GetChar( uchar dik, const char* dik_text, char* str, uint str_size, uint* position, uint max, int flags );
+    void   GetChar( uint8 dik, const char* dik_text, string& str, uint* position, uint max, int flags );
+    void   GetChar( uint8 dik, const char* dik_text, char* str, uint str_size, uint* position, uint max, int flags );
     void   EraseInvalidChars( char* str, int flags );
-    uchar  MapKey( ushort code );
-    ushort UnmapKey( uchar key );
+    uint8  MapKey( uint16 code );
+    uint16 UnmapKey( uint8 key );
 }
 
 // Key codes
 #ifndef MAKE_KEY_CODE
-# define MAKE_KEY_CODE( name, index, code )    const uchar name = index
+# define MAKE_KEY_CODE( name, index, code )    const uint8 name = index
 #endif
 MAKE_KEY_CODE( DIK_ESCAPE, 0x01, 0xFF1B );
 MAKE_KEY_CODE( DIK_1, 0x02, '1' );

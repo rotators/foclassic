@@ -12,11 +12,11 @@ uint GetDoubleClickTicks()
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
-const uchar SELECT_ALPHA = 100;
+const uint8 SELECT_ALPHA = 100;
 
-uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light )
+uint GetColorDay( int* day_time, uint8* colors, int game_time, int* light )
 {
-    uchar result[3];
+    uint8 result[3];
     int   color_r[4] = { colors[0], colors[1], colors[2], colors[3] };
     int   color_g[4] = { colors[4], colors[5], colors[6], colors[7] };
     int   color_b[4] = { colors[8], colors[9], colors[10], colors[11] };

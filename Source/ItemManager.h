@@ -40,13 +40,13 @@ public:
     #endif
 
     void        ParseProtos( ProtoItemVec& protos, const char* collection_name = NULL );
-    ProtoItem*  GetProtoItem( ushort pid );
+    ProtoItem*  GetProtoItem( uint16 pid );
     ProtoItem*  GetAllProtos();
     void        GetCopyAllProtos( ProtoItemVec& protos );
-    bool        IsInitProto( ushort pid );
-    const char* GetProtoScript( ushort pid );
+    bool        IsInitProto( uint16 pid );
+    const char* GetProtoScript( uint16 pid );
     void        ClearProtos( int type = 0xFF ); // 0xFF - All
-    void        ClearProto( ushort pid );
+    void        ClearProto( uint16 pid );
 
     #ifdef FOCLASSIC_SERVER
 private:
@@ -67,7 +67,7 @@ public:
     void SetCritterItems( Critter* cr );
     void GetItemIds( UIntSet& item_ids );
 
-    Item* CreateItem( ushort pid, uint count, uint item_id = 0 );
+    Item* CreateItem( uint16 pid, uint count, uint item_id = 0 );
     Item* SplitItem( Item* item, uint count );
     Item* GetItem( uint item_id, bool sync_lock );
 
@@ -78,13 +78,13 @@ public:
 
     void EraseItemHolder( Item* item );
     void MoveItem( Item* item, uint count, Critter* to_cr );
-    void MoveItem( Item* item, uint count, Map* to_map, ushort to_hx, ushort to_hy );
+    void MoveItem( Item* item, uint count, Map* to_map, uint16 to_hx, uint16 to_hy );
     void MoveItem( Item* item, uint count, Item* to_cont, uint stack_id );
 
-    Item* AddItemContainer( Item* cont, ushort pid, uint count, uint stack_id );
-    Item* AddItemCritter( Critter* cr, ushort pid, uint count );
-    bool  SubItemCritter( Critter* cr, ushort pid, uint count, ItemPtrVec* erased_items = NULL );
-    bool  SetItemCritter( Critter* cr, ushort pid, uint count );
+    Item* AddItemContainer( Item* cont, uint16 pid, uint count, uint stack_id );
+    Item* AddItemCritter( Critter* cr, uint16 pid, uint count );
+    bool  SubItemCritter( Critter* cr, uint16 pid, uint count, ItemPtrVec* erased_items = NULL );
+    bool  SetItemCritter( Critter* cr, uint16 pid, uint count );
     bool  MoveItemCritters( Critter* from_cr, Critter* to_cr, uint item_id, uint count );
     bool  MoveItemCritterToCont( Critter* from_cr, Item* to_cont, uint item_id, uint count, uint stack_id );
     bool  MoveItemCritterFromCont( Item* from_cont, Critter* to_cr, uint item_id, uint count );
@@ -98,8 +98,8 @@ private:
 
 public:
     void RadioRegister( Item* radio, bool add );
-    void RadioSendText( Critter* cr, const char* text, ushort text_len, bool unsafe_text, ushort text_msg, uint num_str, UShortVec& channels );
-    void RadioSendTextEx( ushort channel, int broadcast_type, uint from_map_id, ushort from_wx, ushort from_wy, const char* text, ushort text_len, ushort intellect, bool unsafe_text, ushort text_msg, uint num_str, const char* lexems );
+    void RadioSendText( Critter* cr, const char* text, uint16 text_len, bool unsafe_text, uint16 text_msg, uint num_str, UInt16Vec& channels );
+    void RadioSendTextEx( uint16 channel, int broadcast_type, uint from_map_id, uint16 from_wx, uint16 from_wy, const char* text, uint16 text_len, uint16 intellect, bool unsafe_text, uint16 text_msg, uint num_str, const char* lexems );
     #endif // FOCLASSIC_SERVER
 
     // Items statistics
@@ -110,9 +110,9 @@ private:
 public:
     ItemManager();
 
-    void   AddItemStatistics( ushort pid, uint val );
-    void   SubItemStatistics( ushort pid, uint val );
-    int64  GetItemStatistics( ushort pid );
+    void   AddItemStatistics( uint16 pid, uint val );
+    void   SubItemStatistics( uint16 pid, uint val );
+    int64  GetItemStatistics( uint16 pid );
     string GetItemsStatistics();
 };
 

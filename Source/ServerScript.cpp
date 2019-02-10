@@ -237,7 +237,7 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 // Client/Mapper script processing
 //
 
-bool FOServer::ReloadExternalScripts( const uchar& bind )
+bool FOServer::ReloadExternalScripts( const uint8& bind )
 {
     static const string targets[] =
     {
@@ -377,7 +377,7 @@ bool FOServer::ReloadExternalScripts( const uchar& bind )
                     for( int i = 0; i < 10; i++ )
                         msg_script.EraseStr( num + i );
                     msg_script.AddStr( num, value.c_str() );
-                    msg_script.AddBinary( num + 1, (uchar*)&buf[0], (uint)buf.size() );
+                    msg_script.AddBinary( num + 1, (uint8*)&buf[0], (uint)buf.size() );
                 }
             }
             num += 2;
@@ -684,7 +684,7 @@ bool FOServer::SScriptFunc::NpcPlane_Misc_SetScript( AIDataPlane* plane, ScriptS
     return true;
 }
 
-Item* FOServer::SScriptFunc::Container_AddItem( Item* cont, ushort pid, uint count, uint stack_id )
+Item* FOServer::SScriptFunc::Container_AddItem( Item* cont, uint16 pid, uint count, uint stack_id )
 {
     if( cont->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -713,7 +713,7 @@ uint FOServer::SScriptFunc::Container_GetItems( Item* cont, uint stack_id, Scrip
     return (uint)items_.size();
 }
 
-Item* FOServer::SScriptFunc::Container_GetItem( Item* cont, ushort pid, uint stack_id )
+Item* FOServer::SScriptFunc::Container_GetItem( Item* cont, uint16 pid, uint stack_id )
 {
     if( cont->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -783,14 +783,14 @@ bool FOServer::SScriptFunc::Item_SetEvent( Item* item, int event_type, ScriptStr
     return true;
 }
 
-uchar FOServer::SScriptFunc::Item_GetType( Item* item )
+uint8 FOServer::SScriptFunc::Item_GetType( Item* item )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return item->GetType();
 }
 
-ushort FOServer::SScriptFunc::Item_GetProtoId( Item* item )
+uint16 FOServer::SScriptFunc::Item_GetProtoId( Item* item )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -825,7 +825,7 @@ uint FOServer::SScriptFunc::Item_GetCost( Item* item )
     return item->GetCost();
 }
 
-Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort& hy )
+Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, uint16& hx, uint16& hy )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -876,7 +876,7 @@ Map* FOServer::SScriptFunc::Item_GetMapPosition( Item* item, ushort& hx, ushort&
     return map;
 }
 
-bool FOServer::SScriptFunc::Item_ChangeProto( Item* item, ushort pid )
+bool FOServer::SScriptFunc::Item_ChangeProto( Item* item, uint16 pid )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -905,8 +905,8 @@ bool FOServer::SScriptFunc::Item_ChangeProto( Item* item, ushort pid )
         Map* map = MapMngr.GetMap( item->AccHex.MapId, true );
         if( !map )
             return true;
-        ushort hx = item->AccHex.HexX;
-        ushort hy = item->AccHex.HexY;
+        uint16 hx = item->AccHex.HexX;
+        uint16 hy = item->AccHex.HexY;
         item->Proto = old_proto_item;
         map->EraseItem( item->GetId() );
         item->Proto = proto_item;
@@ -922,7 +922,7 @@ void FOServer::SScriptFunc::Item_Update( Item* item )
     ItemMngr.NotifyChangeItem( item );
 }
 
-void FOServer::SScriptFunc::Item_Animate( Item* item, uchar from_frm, uchar to_frm )
+void FOServer::SScriptFunc::Item_Animate( Item* item, uint8 from_frm, uint8 to_frm )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1172,7 +1172,7 @@ void FOServer::SScriptFunc::Item_EventDrop( Item* item, Critter* cr )
     item->EventDrop( cr );
 }
 
-void FOServer::SScriptFunc::Item_EventMove( Item* item, Critter* cr, uchar from_slot )
+void FOServer::SScriptFunc::Item_EventMove( Item* item, Critter* cr, uint8 from_slot )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1181,7 +1181,7 @@ void FOServer::SScriptFunc::Item_EventMove( Item* item, Critter* cr, uchar from_
     item->EventMove( cr, from_slot );
 }
 
-void FOServer::SScriptFunc::Item_EventWalk( Item* item, Critter* cr, bool entered, uchar dir )
+void FOServer::SScriptFunc::Item_EventWalk( Item* item, Critter* cr, bool entered, uint8 dir )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1416,7 +1416,7 @@ bool FOServer::SScriptFunc::Crit_IsAnim1( Critter* cr, uint index )
     return CritType::IsAnim1( cr->GetCrType(), index );
 }
 
-uchar FOServer::SScriptFunc::Cl_GetAccess( Critter* cl )
+uint8 FOServer::SScriptFunc::Cl_GetAccess( Critter* cl )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1425,7 +1425,7 @@ uchar FOServer::SScriptFunc::Cl_GetAccess( Critter* cl )
     return ( (Client*)cl )->Access;
 }
 
-void FOServer::SScriptFunc::Cl_SetAccess( Critter* cl, uchar access )
+void FOServer::SScriptFunc::Cl_SetAccess( Critter* cl, uint8 access )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1435,7 +1435,7 @@ void FOServer::SScriptFunc::Cl_SetAccess( Critter* cl, uchar access )
     ( (Client*)cl )->Access = access;
 }
 
-uint FOServer::SScriptFunc::Cl_GetUID( Critter* cl, uchar index )
+uint FOServer::SScriptFunc::Cl_GetUID( Critter* cl, uint8 index )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1539,14 +1539,14 @@ uint FOServer::SScriptFunc::Crit_GetMapId( Critter* cr )
     return cr->GetMap();
 }
 
-ushort FOServer::SScriptFunc::Crit_GetMapProtoId( Critter* cr )
+uint16 FOServer::SScriptFunc::Crit_GetMapProtoId( Critter* cr )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return cr->GetProtoMap();
 }
 
-void FOServer::SScriptFunc::Crit_SetHomePos( Critter* cr, ushort hx, ushort hy, uchar dir )
+void FOServer::SScriptFunc::Crit_SetHomePos( Critter* cr, uint16 hx, uint16 hy, uint8 dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1558,7 +1558,7 @@ void FOServer::SScriptFunc::Crit_SetHomePos( Critter* cr, ushort hx, ushort hy, 
     cr->SetHome( cr->GetMap(), hx, hy, dir );
 }
 
-void FOServer::SScriptFunc::Crit_GetHomePos( Critter* cr, uint& map_id, ushort& hx, ushort& hy, uchar& dir )
+void FOServer::SScriptFunc::Crit_GetHomePos( Critter* cr, uint& map_id, uint16& hx, uint16& hy, uint8& dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -1620,7 +1620,7 @@ bool FOServer::SScriptFunc::Crit_MoveRandom( Critter* cr )
     return MoveRandom( cr );
 }
 
-bool FOServer::SScriptFunc::Crit_MoveToDir( Critter* cr, uchar direction )
+bool FOServer::SScriptFunc::Crit_MoveToDir( Critter* cr, uint8 direction )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1630,10 +1630,10 @@ bool FOServer::SScriptFunc::Crit_MoveToDir( Critter* cr, uchar direction )
     if( direction >= DIRS_COUNT )
         SCRIPT_ERROR_R0( "Invalid direction arg." );
 
-    ushort hx = cr->GetHexX();
-    ushort hy = cr->GetHexY();
+    uint16 hx = cr->GetHexX();
+    uint16 hy = cr->GetHexY();
     MoveHexByDir( hx, hy, direction, map->GetMaxHexX(), map->GetMaxHexY() );
-    ushort move_flags = direction | BIN16( 00000000, 00111000 );
+    uint16 move_flags = direction | BIN16( 00000000, 00111000 );
     bool   move = Act_Move( cr, hx, hy, move_flags );
     if( !move )
         SCRIPT_ERROR_R0( "Move fail." );
@@ -1641,7 +1641,7 @@ bool FOServer::SScriptFunc::Crit_MoveToDir( Critter* cr, uchar direction )
     return true;
 }
 
-bool FOServer::SScriptFunc::Crit_TransitToHex( Critter* cr, ushort hx, ushort hy, uchar dir )
+bool FOServer::SScriptFunc::Crit_TransitToHex( Critter* cr, uint16 hx, uint16 hy, uint8 dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1668,7 +1668,7 @@ bool FOServer::SScriptFunc::Crit_TransitToHex( Critter* cr, ushort hx, ushort hy
     return true;
 }
 
-bool FOServer::SScriptFunc::Crit_TransitToMapHex( Critter* cr, uint map_id, ushort hx, ushort hy, uchar dir, bool with_group )
+bool FOServer::SScriptFunc::Crit_TransitToMapHex( Critter* cr, uint map_id, uint16 hx, uint16 hy, uint8 dir, bool with_group )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1735,8 +1735,8 @@ bool FOServer::SScriptFunc::Crit_TransitToMapEntire( Critter* cr, uint map_id, i
     if( !map )
         SCRIPT_ERROR_R0( "Map not found." );
 
-    ushort hx, hy;
-    uchar  dir;
+    uint16 hx, hy;
+    uint8  dir;
     if( !map->GetStartCoord( hx, hy, dir, entire ) )
         SCRIPT_ERROR_R0( "Entire not found." );
     if( !cr->GetMap() )
@@ -1923,7 +1923,7 @@ bool FOServer::SScriptFunc::Crit_ToLife( Critter* cr )
     return true;
 }
 
-bool FOServer::SScriptFunc::Crit_ToKnockout( Critter* cr, uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, ushort knock_hx, ushort knock_hy )
+bool FOServer::SScriptFunc::Crit_ToKnockout( Critter* cr, uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, uint16 knock_hx, uint16 knock_hy )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -1972,7 +1972,7 @@ void FOServer::SScriptFunc::Crit_RefreshVisible( Critter* cr )
     cr->ProcessVisibleItems();
 }
 
-void FOServer::SScriptFunc::Crit_ViewMap( Critter* cr, Map* map, uint look, ushort hx, ushort hy, uchar dir )
+void FOServer::SScriptFunc::Crit_ViewMap( Critter* cr, Map* map, uint look, uint16 hx, uint16 hy, uint8 dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2040,7 +2040,7 @@ bool FOServer::SScriptFunc::Crit_IsHolodiskInfo( Critter* cr, uint holodisk_num 
     return false;
 }
 
-void FOServer::SScriptFunc::Crit_Say( Critter* cr, uchar how_say, ScriptString& text )
+void FOServer::SScriptFunc::Crit_Say( Critter* cr, uint8 how_say, ScriptString& text )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2057,7 +2057,7 @@ void FOServer::SScriptFunc::Crit_Say( Critter* cr, uchar how_say, ScriptString& 
         cr->SendAA_Text( cr->VisCr, text.c_str(), how_say, false );
 }
 
-void FOServer::SScriptFunc::Crit_SayMsg( Critter* cr, uchar how_say, ushort text_msg, uint num_str )
+void FOServer::SScriptFunc::Crit_SayMsg( Critter* cr, uint8 how_say, uint16 text_msg, uint num_str )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2070,7 +2070,7 @@ void FOServer::SScriptFunc::Crit_SayMsg( Critter* cr, uchar how_say, ushort text
         cr->SendAA_Msg( cr->VisCr, num_str, how_say, text_msg );
 }
 
-void FOServer::SScriptFunc::Crit_SayMsgLex( Critter* cr, uchar how_say, ushort text_msg, uint num_str, ScriptString& lexems )
+void FOServer::SScriptFunc::Crit_SayMsgLex( Critter* cr, uint8 how_say, uint16 text_msg, uint num_str, ScriptString& lexems )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2084,7 +2084,7 @@ void FOServer::SScriptFunc::Crit_SayMsgLex( Critter* cr, uchar how_say, ushort t
         cr->SendAA_MsgLex( cr->VisCr, num_str, how_say, text_msg, lexems.c_str() );
 }
 
-void FOServer::SScriptFunc::Crit_SetDir( Critter* cr, uchar dir )
+void FOServer::SScriptFunc::Crit_SetDir( Critter* cr, uint8 dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2101,7 +2101,7 @@ void FOServer::SScriptFunc::Crit_SetDir( Critter* cr, uchar dir )
     }
 }
 
-bool FOServer::SScriptFunc::Crit_PickItem( Critter* cr, ushort hx, ushort hy, ushort pid )
+bool FOServer::SScriptFunc::Crit_PickItem( Critter* cr, uint16 hx, uint16 hy, uint16 pid )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2116,7 +2116,7 @@ bool FOServer::SScriptFunc::Crit_PickItem( Critter* cr, ushort hx, ushort hy, us
     return true;
 }
 
-void FOServer::SScriptFunc::Crit_SetFavoriteItem( Critter* cr, int slot, ushort pid )
+void FOServer::SScriptFunc::Crit_SetFavoriteItem( Critter* cr, int slot, uint16 pid )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2137,7 +2137,7 @@ void FOServer::SScriptFunc::Crit_SetFavoriteItem( Critter* cr, int slot, ushort 
     }
 }
 
-ushort FOServer::SScriptFunc::Crit_GetFavoriteItem( Critter* cr, int slot )
+uint16 FOServer::SScriptFunc::Crit_GetFavoriteItem( Critter* cr, int slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2316,7 +2316,7 @@ bool FOServer::SScriptFunc::Crit_IsSeeItem( Critter* cr, Item* item )
     return cr->CountIdVisItem( item->GetId() );
 }
 
-Item* FOServer::SScriptFunc::Crit_AddItem( Critter* cr, ushort pid, uint count )
+Item* FOServer::SScriptFunc::Crit_AddItem( Critter* cr, uint16 pid, uint count )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2329,7 +2329,7 @@ Item* FOServer::SScriptFunc::Crit_AddItem( Critter* cr, ushort pid, uint count )
     return ItemMngr.AddItemCritter( cr, pid, count );
 }
 
-bool FOServer::SScriptFunc::Crit_DeleteItem( Critter* cr, ushort pid, uint count )
+bool FOServer::SScriptFunc::Crit_DeleteItem( Critter* cr, uint16 pid, uint count )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2361,14 +2361,14 @@ uint FOServer::SScriptFunc::Crit_ItemsVolume( Critter* cr )
     return cr->GetItemsVolume();
 }
 
-uint FOServer::SScriptFunc::Crit_CountItem( Critter* cr, ushort proto_id )
+uint FOServer::SScriptFunc::Crit_CountItem( Critter* cr, uint16 proto_id )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return cr->CountItemPid( proto_id );
 }
 
-Item* FOServer::SScriptFunc::Crit_GetItem( Critter* cr, ushort proto_id, int slot )
+Item* FOServer::SScriptFunc::Crit_GetItem( Critter* cr, uint16 proto_id, int slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2410,7 +2410,7 @@ uint FOServer::SScriptFunc::Crit_GetItemsByType( Critter* cr, int type, ScriptAr
     return (uint)items_.size();
 }
 
-ProtoItem* FOServer::SScriptFunc::Crit_GetSlotProto( Critter* cr, int slot, uchar& mode )
+ProtoItem* FOServer::SScriptFunc::Crit_GetSlotProto( Critter* cr, int slot, uint8& mode )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2440,7 +2440,7 @@ ProtoItem* FOServer::SScriptFunc::Crit_GetSlotProto( Critter* cr, int slot, ucha
     return item->Proto;
 }
 
-bool FOServer::SScriptFunc::Crit_MoveItem( Critter* cr, uint item_id, uint count, uchar to_slot )
+bool FOServer::SScriptFunc::Crit_MoveItem( Critter* cr, uint item_id, uint count, uint8 to_slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2708,7 +2708,7 @@ void FOServer::SScriptFunc::Crit_PlaySound( Critter* cr, ScriptString& sound_nam
     }
 }
 
-void FOServer::SScriptFunc::Crit_PlaySoundType( Critter* cr, uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext, bool send_self )
+void FOServer::SScriptFunc::Crit_PlaySoundType( Critter* cr, uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext, bool send_self )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2732,7 +2732,7 @@ bool FOServer::SScriptFunc::Cl_IsKnownLoc( Critter* cl, bool by_id, uint loc_num
     Client* cl_ = (Client*)cl;
     if( by_id )
         return cl_->CheckKnownLocById( loc_num );
-    return cl_->CheckKnownLocByPid( (ushort)loc_num );
+    return cl_->CheckKnownLocByPid( (uint16)loc_num );
 }
 
 bool FOServer::SScriptFunc::Cl_SetKnownLoc( Critter* cl, bool by_id, uint loc_num )
@@ -2742,7 +2742,7 @@ bool FOServer::SScriptFunc::Cl_SetKnownLoc( Critter* cl, bool by_id, uint loc_nu
     if( !cl->IsPlayer() )
         SCRIPT_ERROR_R0( "Critter is not player." );
     Client*   cl_ = (Client*)cl;
-    Location* loc = (by_id ? MapMngr.GetLocation( loc_num ) : MapMngr.GetLocationByPid( (ushort)loc_num, 0 ) );
+    Location* loc = (by_id ? MapMngr.GetLocation( loc_num ) : MapMngr.GetLocationByPid( (uint16)loc_num, 0 ) );
     if( !loc )
         SCRIPT_ERROR_R0( "Location not found." );
 
@@ -2771,7 +2771,7 @@ bool FOServer::SScriptFunc::Cl_UnsetKnownLoc( Critter* cl, bool by_id, uint loc_
         SCRIPT_ERROR_R0( "Critter is not player." );
 
     Client*   cl_ = (Client*)cl;
-    Location* loc = (by_id ? MapMngr.GetLocation( loc_num ) : MapMngr.GetLocationByPid( (ushort)loc_num, 0 ) );
+    Location* loc = (by_id ? MapMngr.GetLocation( loc_num ) : MapMngr.GetLocationByPid( (uint16)loc_num, 0 ) );
     if( !loc )
         SCRIPT_ERROR_R0( "Location not found." );
     if( !cl_->CheckKnownLocById( loc->GetId() ) )
@@ -2783,7 +2783,7 @@ bool FOServer::SScriptFunc::Cl_UnsetKnownLoc( Critter* cl, bool by_id, uint loc_
     return true;
 }
 
-void FOServer::SScriptFunc::Cl_SetFog( Critter* cl, ushort zone_x, ushort zone_y, int fog )
+void FOServer::SScriptFunc::Cl_SetFog( Critter* cl, uint16 zone_x, uint16 zone_y, int fog )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2801,7 +2801,7 @@ void FOServer::SScriptFunc::Cl_SetFog( Critter* cl, ushort zone_x, ushort zone_y
         cl_->Send_GlobalMapFog( zone_x, zone_y, fog );
 }
 
-int FOServer::SScriptFunc::Cl_GetFog( Critter* cl, ushort zone_x, ushort zone_y )
+int FOServer::SScriptFunc::Cl_GetFog( Critter* cl, uint16 zone_x, uint16 zone_y )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -2815,7 +2815,7 @@ int FOServer::SScriptFunc::Cl_GetFog( Critter* cl, ushort zone_x, ushort zone_y 
     return cl_->GMapFog.Get2Bit( zone_x, zone_y );
 }
 
-void FOServer::SScriptFunc::Cl_ShowContainer( Critter* cl, Critter* cr_cont, Item* item_cont, uchar transfer_type )
+void FOServer::SScriptFunc::Cl_ShowContainer( Critter* cl, Critter* cr_cont, Item* item_cont, uint8 transfer_type )
 {
     if( cl->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -2908,7 +2908,7 @@ uint FOServer::SScriptFunc::Crit_GetScriptId( Critter* cr )
     return cr->Data.ScriptId;
 }
 
-ushort FOServer::SScriptFunc::Crit_GetProtoId( Critter* cr )
+uint16 FOServer::SScriptFunc::Crit_GetProtoId( Critter* cr )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -3243,7 +3243,7 @@ void FOServer::SScriptFunc::Crit_SetInternalBag( Critter* cr, ScriptArray& pids,
     uint end_count = 0;
     for( uint i = 0; i < count; i++ )
     {
-        ushort     pid = *(ushort*)pids.At( i );
+        uint16     pid = *(uint16*)pids.At( i );
         ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
         if( !proto_item )
         {
@@ -3291,7 +3291,7 @@ uint FOServer::SScriptFunc::Crit_GetInternalBag( Critter* cr, ScriptArray* pids,
         {
             NpcBagItem& item = cr->Data.Bag[i];
             if( pids )
-                *(ushort*)pids->At( pids->GetSize() - count + i ) = item.ItemPid;
+                *(uint16*)pids->At( pids->GetSize() - count + i ) = item.ItemPid;
             if( min_counts )
                 *(uint*)min_counts->At( min_counts->GetSize() - count + i ) = item.MinCnt;
             if( max_counts )
@@ -3525,7 +3525,7 @@ void FOServer::SScriptFunc::Crit_EventDropItem( Critter* cr, Item* item )
     cr->EventDropItem( item );
 }
 
-void FOServer::SScriptFunc::Crit_EventMoveItem( Critter* cr, Item* item, uchar from_slot )
+void FOServer::SScriptFunc::Crit_EventMoveItem( Critter* cr, Item* item, uint8 from_slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -3626,7 +3626,7 @@ void FOServer::SScriptFunc::Crit_EventSmthDropItem( Critter* cr, Critter* from_c
     cr->EventSmthDropItem( from_cr, item );
 }
 
-void FOServer::SScriptFunc::Crit_EventSmthMoveItem( Critter* cr, Critter* from_cr, Item* item, uchar from_slot )
+void FOServer::SScriptFunc::Crit_EventSmthMoveItem( Critter* cr, Critter* from_cr, Item* item, uint8 from_slot )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -3692,7 +3692,7 @@ bool FOServer::SScriptFunc::Crit_EventGlobalProcess( Critter* cr, int type, Item
     return cr->EventGlobalProcess( type, car, x, y, to_x, to_y, speed, encounter_descriptor, wait_for_answer );
 }
 
-bool FOServer::SScriptFunc::Crit_EventGlobalInvite( Critter* cr, Item* car, uint encounter_descriptor, int combat_mode, uint& map_id, ushort& hx, ushort& hy, uchar& dir )
+bool FOServer::SScriptFunc::Crit_EventGlobalInvite( Critter* cr, Item* car, uint encounter_descriptor, int combat_mode, uint& map_id, uint16& hx, uint16& hy, uint8& dir )
 {
     if( cr->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -3719,7 +3719,7 @@ void FOServer::SScriptFunc::Crit_EventSmthTurnBasedProcess( Critter* cr, Critter
     cr->EventSmthTurnBasedProcess( from_cr, map, begin_turn );
 }
 
-GameVar* FOServer::SScriptFunc::Global_GetGlobalVar( ushort tvar_id )
+GameVar* FOServer::SScriptFunc::Global_GetGlobalVar( uint16 tvar_id )
 {
     GameVar* gvar = VarMngr.GetVar( tvar_id, 0, 0, true );
     if( !gvar )
@@ -3727,7 +3727,7 @@ GameVar* FOServer::SScriptFunc::Global_GetGlobalVar( ushort tvar_id )
     return gvar;
 }
 
-GameVar* FOServer::SScriptFunc::Global_GetLocalVar( ushort tvar_id, uint master_id )
+GameVar* FOServer::SScriptFunc::Global_GetLocalVar( uint16 tvar_id, uint master_id )
 {
     if( !master_id )
         SCRIPT_ERROR_R0( "Master id is zero." );
@@ -3737,7 +3737,7 @@ GameVar* FOServer::SScriptFunc::Global_GetLocalVar( ushort tvar_id, uint master_
     return lvar;
 }
 
-GameVar* FOServer::SScriptFunc::Global_GetUnicumVar( ushort tvar_id, uint master_id, uint slave_id )
+GameVar* FOServer::SScriptFunc::Global_GetUnicumVar( uint16 tvar_id, uint master_id, uint slave_id )
 {
     if( !master_id )
         SCRIPT_ERROR_R0( "Master id is zero." );
@@ -3756,7 +3756,7 @@ uint FOServer::SScriptFunc::Map_GetId( Map* map )
     return map->GetId();
 }
 
-ushort FOServer::SScriptFunc::Map_GetProtoId( Map* map )
+uint16 FOServer::SScriptFunc::Map_GetProtoId( Map* map )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -3837,14 +3837,14 @@ void FOServer::SScriptFunc::Map_SetLoopTime( Map* map, uint loop_num, uint ms )
     map->SetLoopTime( loop_num, ms );
 }
 
-uchar FOServer::SScriptFunc::Map_GetRain( Map* map )
+uint8 FOServer::SScriptFunc::Map_GetRain( Map* map )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return map->GetRain();
 }
 
-void FOServer::SScriptFunc::Map_SetRain( Map* map, uchar capacity )
+void FOServer::SScriptFunc::Map_SetRain( Map* map, uint8 capacity )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -3885,7 +3885,7 @@ void FOServer::SScriptFunc::Map_SetDayTime( Map* map, uint day_part, uint time )
     map->SetDayTime( day_part, time );
 }
 
-void FOServer::SScriptFunc::Map_GetDayColor( Map* map, uint day_part, uchar& r, uchar& g, uchar& b )
+void FOServer::SScriptFunc::Map_GetDayColor( Map* map, uint day_part, uint8& r, uint8& g, uint8& b )
 {
     r = g = b = 0;
     if( map->IsNotValid )
@@ -3895,7 +3895,7 @@ void FOServer::SScriptFunc::Map_GetDayColor( Map* map, uint day_part, uchar& r, 
     map->GetDayColor( day_part, r, g, b );
 }
 
-void FOServer::SScriptFunc::Map_SetDayColor( Map* map, uint day_part, uchar r, uchar g, uchar b )
+void FOServer::SScriptFunc::Map_SetDayColor( Map* map, uint day_part, uint8 r, uint8 g, uint8 b )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -3969,7 +3969,7 @@ int FOServer::SScriptFunc::Map_GetData( Map* map, uint index )
     return map->GetData( index );
 }
 
-Item* FOServer::SScriptFunc::Map_AddItem( Map* map, ushort hx, ushort hy, ushort proto_id, uint count )
+Item* FOServer::SScriptFunc::Map_AddItem( Map* map, uint16 hx, uint16 hy, uint16 proto_id, uint count )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -3985,7 +3985,7 @@ Item* FOServer::SScriptFunc::Map_AddItem( Map* map, ushort hx, ushort hy, ushort
     return CreateItemOnHex( map, hx, hy, proto_id, count );
 }
 
-uint FOServer::SScriptFunc::Map_GetItemsHex( Map* map, ushort hx, ushort hy, ScriptArray* items )
+uint FOServer::SScriptFunc::Map_GetItemsHex( Map* map, uint16 hx, uint16 hy, ScriptArray* items )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -3998,7 +3998,7 @@ uint FOServer::SScriptFunc::Map_GetItemsHex( Map* map, ushort hx, ushort hy, Scr
     return (uint)items_.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetItemsHexEx( Map* map, ushort hx, ushort hy, uint radius, ushort pid, ScriptArray* items )
+uint FOServer::SScriptFunc::Map_GetItemsHexEx( Map* map, uint16 hx, uint16 hy, uint radius, uint16 pid, ScriptArray* items )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4011,7 +4011,7 @@ uint FOServer::SScriptFunc::Map_GetItemsHexEx( Map* map, ushort hx, ushort hy, u
     return (uint)items_.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetItemsByPid( Map* map, ushort pid, ScriptArray* items )
+uint FOServer::SScriptFunc::Map_GetItemsByPid( Map* map, uint16 pid, ScriptArray* items )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4042,7 +4042,7 @@ Item* FOServer::SScriptFunc::Map_GetItem( Map* map, uint item_id )
     return map->GetItem( item_id );
 }
 
-Item* FOServer::SScriptFunc::Map_GetItemHex( Map* map, ushort hx, ushort hy, ushort pid )
+Item* FOServer::SScriptFunc::Map_GetItemHex( Map* map, uint16 hx, uint16 hy, uint16 pid )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4051,7 +4051,7 @@ Item* FOServer::SScriptFunc::Map_GetItemHex( Map* map, ushort hx, ushort hy, ush
     return map->GetItemHex( hx, hy, pid, NULL );
 }
 
-Critter* FOServer::SScriptFunc::Map_GetCritterHex( Map* map, ushort hx, ushort hy )
+Critter* FOServer::SScriptFunc::Map_GetCritterHex( Map* map, uint16 hx, uint16 hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4063,7 +4063,7 @@ Critter* FOServer::SScriptFunc::Map_GetCritterHex( Map* map, ushort hx, ushort h
     return cr;
 }
 
-Item* FOServer::SScriptFunc::Map_GetDoor( Map* map, ushort hx, ushort hy )
+Item* FOServer::SScriptFunc::Map_GetDoor( Map* map, uint16 hx, uint16 hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4072,7 +4072,7 @@ Item* FOServer::SScriptFunc::Map_GetDoor( Map* map, ushort hx, ushort hy )
     return map->GetItemDoor( hx, hy );
 }
 
-Item* FOServer::SScriptFunc::Map_GetCar( Map* map, ushort hx, ushort hy )
+Item* FOServer::SScriptFunc::Map_GetCar( Map* map, uint16 hx, uint16 hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4081,7 +4081,7 @@ Item* FOServer::SScriptFunc::Map_GetCar( Map* map, ushort hx, ushort hy )
     return map->GetItemCar( hx, hy );
 }
 
-MapObject* FOServer::SScriptFunc::Map_GetSceneryHex( Map* map, ushort hx, ushort hy, ushort pid )
+MapObject* FOServer::SScriptFunc::Map_GetSceneryHex( Map* map, uint16 hx, uint16 hy, uint16 pid )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4090,7 +4090,7 @@ MapObject* FOServer::SScriptFunc::Map_GetSceneryHex( Map* map, ushort hx, ushort
     return map->Proto->GetMapScenery( hx, hy, pid );
 }
 
-uint FOServer::SScriptFunc::Map_GetSceneriesHex( Map* map, ushort hx, ushort hy, ScriptArray* sceneries )
+uint FOServer::SScriptFunc::Map_GetSceneriesHex( Map* map, uint16 hx, uint16 hy, ScriptArray* sceneries )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4105,7 +4105,7 @@ uint FOServer::SScriptFunc::Map_GetSceneriesHex( Map* map, ushort hx, ushort hy,
     return (uint)mobjs.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetSceneriesHexEx( Map* map, ushort hx, ushort hy, uint radius, ushort pid, ScriptArray* sceneries )
+uint FOServer::SScriptFunc::Map_GetSceneriesHexEx( Map* map, uint16 hx, uint16 hy, uint radius, uint16 pid, ScriptArray* sceneries )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4120,7 +4120,7 @@ uint FOServer::SScriptFunc::Map_GetSceneriesHexEx( Map* map, ushort hx, ushort h
     return (uint)mobjs.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetSceneriesByPid( Map* map, ushort pid, ScriptArray* sceneries )
+uint FOServer::SScriptFunc::Map_GetSceneriesByPid( Map* map, uint16 pid, ScriptArray* sceneries )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4142,7 +4142,7 @@ Critter* FOServer::SScriptFunc::Map_GetCritterById( Map* map, uint crid )
     return cr;
 }
 
-uint FOServer::SScriptFunc::Map_GetCritters( Map* map, ushort hx, ushort hy, uint radius, int find_type, ScriptArray* critters )
+uint FOServer::SScriptFunc::Map_GetCritters( Map* map, uint16 hx, uint16 hy, uint radius, int find_type, ScriptArray* critters )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4158,7 +4158,7 @@ uint FOServer::SScriptFunc::Map_GetCritters( Map* map, ushort hx, ushort hy, uin
     return (uint)cr_vec.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetCrittersByPids( Map* map, ushort pid, int find_type, ScriptArray* critters )
+uint FOServer::SScriptFunc::Map_GetCrittersByPids( Map* map, uint16 pid, int find_type, ScriptArray* critters )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4197,7 +4197,7 @@ uint FOServer::SScriptFunc::Map_GetCrittersByPids( Map* map, ushort pid, int fin
     return (uint)cr_vec.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetCrittersInPath( Map* map, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters )
+uint FOServer::SScriptFunc::Map_GetCrittersInPath( Map* map, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4222,12 +4222,12 @@ uint FOServer::SScriptFunc::Map_GetCrittersInPath( Map* map, ushort from_hx, ush
     return (uint)cr_vec.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetCrittersInPathBlock( Map* map, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float angle, uint dist, int find_type, ScriptArray* critters, ushort& pre_block_hx, ushort& pre_block_hy, ushort& block_hx, ushort& block_hy )
+uint FOServer::SScriptFunc::Map_GetCrittersInPathBlock( Map* map, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float angle, uint dist, int find_type, ScriptArray* critters, uint16& pre_block_hx, uint16& pre_block_hy, uint16& block_hx, uint16& block_hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     CrVec      cr_vec;
-    UShortPair block, pre_block;
+    UInt16Pair block, pre_block;
     TraceData  trace;
     trace.TraceMap = map;
     trace.BeginHx = from_hx;
@@ -4254,7 +4254,7 @@ uint FOServer::SScriptFunc::Map_GetCrittersInPathBlock( Map* map, ushort from_hx
     return (uint)cr_vec.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetCrittersWhoViewPath( Map* map, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, int find_type, ScriptArray* critters )
+uint FOServer::SScriptFunc::Map_GetCrittersWhoViewPath( Map* map, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, int find_type, ScriptArray* critters )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4301,11 +4301,11 @@ uint FOServer::SScriptFunc::Map_GetCrittersSeeing( Map* map, ScriptArray& critte
     return (uint)cr_vec.size();
 }
 
-void FOServer::SScriptFunc::Map_GetHexInPath( Map* map, ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist )
+void FOServer::SScriptFunc::Map_GetHexInPath( Map* map, uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
-    UShortPair pre_block, block;
+    UInt16Pair pre_block, block;
     TraceData  trace;
     trace.TraceMap = map;
     trace.BeginHx = from_hx;
@@ -4321,11 +4321,11 @@ void FOServer::SScriptFunc::Map_GetHexInPath( Map* map, ushort from_hx, ushort f
     to_hy = pre_block.second;
 }
 
-void FOServer::SScriptFunc::Map_GetHexInPathWall( Map* map, ushort from_hx, ushort from_hy, ushort& to_hx, ushort& to_hy, float angle, uint dist )
+void FOServer::SScriptFunc::Map_GetHexInPathWall( Map* map, uint16 from_hx, uint16 from_hy, uint16& to_hx, uint16& to_hy, float angle, uint dist )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
-    UShortPair last_passed;
+    UInt16Pair last_passed;
     TraceData  trace;
     trace.TraceMap = map;
     trace.BeginHx = from_hx;
@@ -4348,7 +4348,7 @@ void FOServer::SScriptFunc::Map_GetHexInPathWall( Map* map, ushort from_hx, usho
     }
 }
 
-uint FOServer::SScriptFunc::Map_GetPathLengthHex( Map* map, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, uint cut )
+uint FOServer::SScriptFunc::Map_GetPathLengthHex( Map* map, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, uint cut )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4372,7 +4372,7 @@ uint FOServer::SScriptFunc::Map_GetPathLengthHex( Map* map, ushort from_hx, usho
     return (uint)path.size();
 }
 
-uint FOServer::SScriptFunc::Map_GetPathLengthCr( Map* map, Critter* cr, ushort to_hx, ushort to_hy, uint cut )
+uint FOServer::SScriptFunc::Map_GetPathLengthCr( Map* map, Critter* cr, uint16 to_hx, uint16 to_hy, uint cut )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4398,7 +4398,7 @@ uint FOServer::SScriptFunc::Map_GetPathLengthCr( Map* map, Critter* cr, ushort t
     return (uint)path.size();
 }
 
-Critter* FOServer::SScriptFunc::Map_AddNpc( Map* map, ushort proto_id, ushort hx, ushort hy, uchar dir, ScriptArray* params, ScriptArray* items, ScriptString* script )
+Critter* FOServer::SScriptFunc::Map_AddNpc( Map* map, uint16 proto_id, uint16 hx, uint16 hy, uint8 dir, ScriptArray* params, ScriptArray* items, ScriptString* script )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4490,19 +4490,19 @@ uint FOServer::SScriptFunc::Map_GetEntires( Map* map, int entire, ScriptArray* e
         uint size = hx->GetSize();
         hx->Resize( size + (uint)entires_.size() );
         for( uint i = 0, j = (uint)entires_.size(); i < j; i++ )
-            *(ushort*)hx->At( size + i ) = entires_[i].HexX;
+            *(uint16*)hx->At( size + i ) = entires_[i].HexX;
     }
     if( hy )
     {
         uint size = hy->GetSize();
         hy->Resize( size + (uint)entires_.size() );
         for( uint i = 0, j = (uint)entires_.size(); i < j; i++ )
-            *(ushort*)hy->At( size + i ) = entires_[i].HexY;
+            *(uint16*)hy->At( size + i ) = entires_[i].HexY;
     }
     return (uint)entires_.size();
 }
 
-bool FOServer::SScriptFunc::Map_GetEntireCoords( Map* map, int entire, uint skip, ushort& hx, ushort& hy )
+bool FOServer::SScriptFunc::Map_GetEntireCoords( Map* map, int entire, uint skip, uint16& hx, uint16& hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4514,7 +4514,7 @@ bool FOServer::SScriptFunc::Map_GetEntireCoords( Map* map, int entire, uint skip
     return true;
 }
 
-bool FOServer::SScriptFunc::Map_GetEntireCoordsDir( Map* map, int entire, uint skip, ushort& hx, ushort& hy, uchar& dir )
+bool FOServer::SScriptFunc::Map_GetEntireCoordsDir( Map* map, int entire, uint skip, uint16& hx, uint16& hy, uint8& dir )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4527,7 +4527,7 @@ bool FOServer::SScriptFunc::Map_GetEntireCoordsDir( Map* map, int entire, uint s
     return true;
 }
 
-bool FOServer::SScriptFunc::Map_GetNearEntireCoords( Map* map, int& entire, ushort& hx, ushort& hy )
+bool FOServer::SScriptFunc::Map_GetNearEntireCoords( Map* map, int& entire, uint16& hx, uint16& hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4542,7 +4542,7 @@ bool FOServer::SScriptFunc::Map_GetNearEntireCoords( Map* map, int& entire, usho
     return false;
 }
 
-bool FOServer::SScriptFunc::Map_GetNearEntireCoordsDir( Map* map, int& entire, ushort& hx, ushort& hy, uchar& dir )
+bool FOServer::SScriptFunc::Map_GetNearEntireCoordsDir( Map* map, int& entire, uint16& hx, uint16& hy, uint8& dir )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4558,7 +4558,7 @@ bool FOServer::SScriptFunc::Map_GetNearEntireCoordsDir( Map* map, int& entire, u
     return false;
 }
 
-bool FOServer::SScriptFunc::Map_IsHexPassed( Map* map, ushort hex_x, ushort hex_y )
+bool FOServer::SScriptFunc::Map_IsHexPassed( Map* map, uint16 hex_x, uint16 hex_y )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4567,7 +4567,7 @@ bool FOServer::SScriptFunc::Map_IsHexPassed( Map* map, ushort hex_x, ushort hex_
     return map->IsHexPassed( hex_x, hex_y );
 }
 
-bool FOServer::SScriptFunc::Map_IsHexRaked( Map* map, ushort hex_x, ushort hex_y )
+bool FOServer::SScriptFunc::Map_IsHexRaked( Map* map, uint16 hex_x, uint16 hex_y )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4576,7 +4576,7 @@ bool FOServer::SScriptFunc::Map_IsHexRaked( Map* map, ushort hex_x, ushort hex_y
     return map->IsHexRaked( hex_x, hex_y );
 }
 
-void FOServer::SScriptFunc::Map_SetText( Map* map, ushort hex_x, ushort hex_y, uint color, ScriptString& text )
+void FOServer::SScriptFunc::Map_SetText( Map* map, uint16 hex_x, uint16 hex_y, uint color, ScriptString& text )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4585,7 +4585,7 @@ void FOServer::SScriptFunc::Map_SetText( Map* map, ushort hex_x, ushort hex_y, u
     map->SetText( hex_x, hex_y, color, text.c_str(), (uint)text.c_std_str().length(), 0, false );
 }
 
-void FOServer::SScriptFunc::Map_SetTextMsg( Map* map, ushort hex_x, ushort hex_y, uint color, ushort text_msg, uint str_num )
+void FOServer::SScriptFunc::Map_SetTextMsg( Map* map, uint16 hex_x, uint16 hex_y, uint color, uint16 text_msg, uint str_num )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4594,7 +4594,7 @@ void FOServer::SScriptFunc::Map_SetTextMsg( Map* map, ushort hex_x, ushort hex_y
     map->SetTextMsg( hex_x, hex_y, color, text_msg, str_num );
 }
 
-void FOServer::SScriptFunc::Map_SetTextMsgLex( Map* map, ushort hex_x, ushort hex_y, uint color, ushort text_msg, uint str_num, ScriptString& lexems )
+void FOServer::SScriptFunc::Map_SetTextMsgLex( Map* map, uint16 hex_x, uint16 hex_y, uint color, uint16 text_msg, uint str_num, ScriptString& lexems )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4603,7 +4603,7 @@ void FOServer::SScriptFunc::Map_SetTextMsgLex( Map* map, ushort hex_x, ushort he
     map->SetTextMsgLex( hex_x, hex_y, color, text_msg, str_num, lexems.c_str(), (uint)lexems.length() );
 }
 
-void FOServer::SScriptFunc::Map_RunEffect( Map* map, ushort eff_pid, ushort hx, ushort hy, uint radius )
+void FOServer::SScriptFunc::Map_RunEffect( Map* map, uint16 eff_pid, uint16 hx, uint16 hy, uint radius )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4614,7 +4614,7 @@ void FOServer::SScriptFunc::Map_RunEffect( Map* map, ushort eff_pid, ushort hx, 
     map->SendEffect( eff_pid, hx, hy, radius );
 }
 
-void FOServer::SScriptFunc::Map_RunFlyEffect( Map* map, ushort eff_pid, Critter* from_cr, Critter* to_cr, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+void FOServer::SScriptFunc::Map_RunFlyEffect( Map* map, uint16 eff_pid, Critter* from_cr, Critter* to_cr, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4633,7 +4633,7 @@ void FOServer::SScriptFunc::Map_RunFlyEffect( Map* map, ushort eff_pid, Critter*
     map->SendFlyEffect( eff_pid, from_crid, to_crid, from_hx, from_hy, to_hx, to_hy );
 }
 
-bool FOServer::SScriptFunc::Map_CheckPlaceForItem( Map* map, ushort hx, ushort hy, ushort pid )
+bool FOServer::SScriptFunc::Map_CheckPlaceForItem( Map* map, uint16 hx, uint16 hy, uint16 pid )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4643,7 +4643,7 @@ bool FOServer::SScriptFunc::Map_CheckPlaceForItem( Map* map, ushort hx, ushort h
     return map->IsPlaceForItem( hx, hy, proto_item );
 }
 
-void FOServer::SScriptFunc::Map_BlockHex( Map* map, ushort hx, ushort hy, bool full )
+void FOServer::SScriptFunc::Map_BlockHex( Map* map, uint16 hx, uint16 hy, bool full )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4654,7 +4654,7 @@ void FOServer::SScriptFunc::Map_BlockHex( Map* map, ushort hx, ushort hy, bool f
         map->SetHexFlag( hx, hy, HEX_FLAG_NRAKE_ITEM );
 }
 
-void FOServer::SScriptFunc::Map_UnblockHex( Map* map, ushort hx, ushort hy )
+void FOServer::SScriptFunc::Map_UnblockHex( Map* map, uint16 hx, uint16 hy )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4681,7 +4681,7 @@ void FOServer::SScriptFunc::Map_PlaySound( Map* map, ScriptString& sound_name )
     }
 }
 
-void FOServer::SScriptFunc::Map_PlaySoundRadius( Map* map, ScriptString& sound_name, ushort hx, ushort hy, uint radius )
+void FOServer::SScriptFunc::Map_PlaySoundRadius( Map* map, ScriptString& sound_name, uint16 hx, uint16 hy, uint radius )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4710,21 +4710,21 @@ bool FOServer::SScriptFunc::Map_Reload( Map* map )
     return true;
 }
 
-ushort FOServer::SScriptFunc::Map_GetWidth( Map* map )
+uint16 FOServer::SScriptFunc::Map_GetWidth( Map* map )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return map->GetMaxHexX();
 }
 
-ushort FOServer::SScriptFunc::Map_GetHeight( Map* map )
+uint16 FOServer::SScriptFunc::Map_GetHeight( Map* map )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
     return map->GetMaxHexY();
 }
 
-void FOServer::SScriptFunc::Map_MoveHexByDir( Map* map, ushort& hx, ushort& hy, uchar dir, uint steps )
+void FOServer::SScriptFunc::Map_MoveHexByDir( Map* map, uint16& hx, uint16& hy, uint8 dir, uint steps )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R( "This nullptr." );
@@ -4732,8 +4732,8 @@ void FOServer::SScriptFunc::Map_MoveHexByDir( Map* map, ushort& hx, ushort& hy, 
         SCRIPT_ERROR_R( "Invalid dir arg." );
     if( !steps )
         SCRIPT_ERROR_R( "Steps arg is zero." );
-    ushort maxhx = map->GetMaxHexX();
-    ushort maxhy = map->GetMaxHexY();
+    uint16 maxhx = map->GetMaxHexX();
+    uint16 maxhy = map->GetMaxHexY();
     if( steps > 1 )
     {
         for( uint i = 0; i < steps; i++ )
@@ -4745,7 +4745,7 @@ void FOServer::SScriptFunc::Map_MoveHexByDir( Map* map, ushort& hx, ushort& hy, 
     }
 }
 
-bool FOServer::SScriptFunc::Map_VerifyTrigger( Map* map, Critter* cr, ushort hx, ushort hy, uchar dir )
+bool FOServer::SScriptFunc::Map_VerifyTrigger( Map* map, Critter* cr, uint16 hx, uint16 hy, uint8 dir )
 {
     if( map->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4755,7 +4755,7 @@ bool FOServer::SScriptFunc::Map_VerifyTrigger( Map* map, Critter* cr, ushort hx,
         SCRIPT_ERROR_R0( "Invalid hexes args." );
     if( dir >= DIRS_COUNT )
         SCRIPT_ERROR_R0( "Invalid dir arg." );
-    ushort from_hx = hx, from_hy = hy;
+    uint16 from_hx = hx, from_hy = hy;
     MoveHexByDir( from_hx, from_hy, ReverseDir( dir ), map->GetMaxHexX(), map->GetMaxHexY() );
     return VerifyTrigger( map, cr, from_hx, from_hy, hx, hy, dir );
 }
@@ -4861,7 +4861,7 @@ uint FOServer::SScriptFunc::Location_GetId( Location* loc )
     return loc->GetId();
 }
 
-ushort FOServer::SScriptFunc::Location_GetProtoId( Location* loc )
+uint16 FOServer::SScriptFunc::Location_GetProtoId( Location* loc )
 {
     if( loc->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4891,7 +4891,7 @@ uint FOServer::SScriptFunc::Location_GetMapCount( Location* loc )
     return loc->GetMapsCount();
 }
 
-Map* FOServer::SScriptFunc::Location_GetMap( Location* loc, ushort map_pid )
+Map* FOServer::SScriptFunc::Location_GetMap( Location* loc, uint16 map_pid )
 {
     if( loc->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4960,7 +4960,7 @@ void FOServer::SScriptFunc::Location_EventFinish( Location* loc, bool deleted )
     loc->EventFinish( deleted );
 }
 
-bool FOServer::SScriptFunc::Location_EventEnter( Location* loc, ScriptArray& group, uchar entrance )
+bool FOServer::SScriptFunc::Location_EventEnter( Location* loc, ScriptArray& group, uint8 entrance )
 {
     if( loc->IsNotValid )
         SCRIPT_ERROR_R0( "This nullptr." );
@@ -4978,17 +4978,17 @@ uint FOServer::SScriptFunc::Global_GetCrittersDistantion( Critter* cr1, Critter*
     return DistGame( cr1->GetHexX(), cr1->GetHexY(), cr2->GetHexX(), cr2->GetHexY() );
 }
 
-uint FOServer::SScriptFunc::Global_GetDistantion( ushort hx1, ushort hy1, ushort hx2, ushort hy2 )
+uint FOServer::SScriptFunc::Global_GetDistantion( uint16 hx1, uint16 hy1, uint16 hx2, uint16 hy2 )
 {
     return DistGame( hx1, hy1, hx2, hy2 );
 }
 
-uchar FOServer::SScriptFunc::Global_GetDirection( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+uint8 FOServer::SScriptFunc::Global_GetDirection( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy );
 }
 
-uchar FOServer::SScriptFunc::Global_GetOffsetDir( ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy, float offset )
+uint8 FOServer::SScriptFunc::Global_GetOffsetDir( uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy, float offset )
 {
     return GetFarDir( from_hx, from_hy, to_hx, to_hy, offset );
 }
@@ -4998,7 +4998,7 @@ void FOServer::SScriptFunc::Global_Log( ScriptString& text )
     Script::Log( text.c_str() );
 }
 
-ProtoItem* FOServer::SScriptFunc::Global_GetProtoItem( ushort pid )
+ProtoItem* FOServer::SScriptFunc::Global_GetProtoItem( uint16 pid )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
     // if(!proto_item) SCRIPT_ERROR_R0("Proto item not found.");
@@ -5028,7 +5028,7 @@ void FOServer::SScriptFunc::Global_MoveItemCr( Item* item, uint count, Critter* 
     ItemMngr.MoveItem( item, count, to_cr );
 }
 
-void FOServer::SScriptFunc::Global_MoveItemMap( Item* item, uint count, Map* to_map, ushort to_hx, ushort to_hy )
+void FOServer::SScriptFunc::Global_MoveItemMap( Item* item, uint count, Map* to_map, uint16 to_hx, uint16 to_hy )
 {
     if( item->IsNotValid )
         SCRIPT_ERROR_R( "Item arg nullptr." );
@@ -5071,7 +5071,7 @@ void FOServer::SScriptFunc::Global_MoveItemsCr( ScriptArray& items, Critter* to_
     }
 }
 
-void FOServer::SScriptFunc::Global_MoveItemsMap( ScriptArray& items, Map* to_map, ushort to_hx, ushort to_hy )
+void FOServer::SScriptFunc::Global_MoveItemsMap( ScriptArray& items, Map* to_map, uint16 to_hx, uint16 to_hy )
 {
     if( to_map->IsNotValid )
         SCRIPT_ERROR_R( "Container arg nullptr." );
@@ -5137,22 +5137,22 @@ void FOServer::SScriptFunc::Global_DeleteNpc( Critter* npc )
     CrMngr.CritterToGarbage( npc );
 }
 
-void FOServer::SScriptFunc::Global_RadioMessage( ushort channel, ScriptString& text )
+void FOServer::SScriptFunc::Global_RadioMessage( uint16 channel, ScriptString& text )
 {
     ItemMngr.RadioSendTextEx( channel, RADIO_BROADCAST_FORCE_ALL, 0, 0, 0, text.c_str(), (uint)text.length(), 0, false, 0, 0, NULL );
 }
 
-void FOServer::SScriptFunc::Global_RadioMessageMsg( ushort channel, ushort text_msg, uint num_str )
+void FOServer::SScriptFunc::Global_RadioMessageMsg( uint16 channel, uint16 text_msg, uint num_str )
 {
     ItemMngr.RadioSendTextEx( channel, RADIO_BROADCAST_FORCE_ALL, 0, 0, 0, NULL, 0, 0, false, text_msg, num_str, NULL );
 }
 
-void FOServer::SScriptFunc::Global_RadioMessageMsgLex( ushort channel, ushort text_msg, uint num_str, ScriptString* lexems )
+void FOServer::SScriptFunc::Global_RadioMessageMsgLex( uint16 channel, uint16 text_msg, uint num_str, ScriptString* lexems )
 {
     ItemMngr.RadioSendTextEx( channel, RADIO_BROADCAST_FORCE_ALL, 0, 0, 0, NULL, 0, 0, false, text_msg, num_str, lexems && lexems->length() ? lexems->c_str() : NULL );
 }
 
-uint FOServer::SScriptFunc::Global_GetFullSecond( ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second )
+uint FOServer::SScriptFunc::Global_GetFullSecond( uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second )
 {
     if( !year )
         year = GameOpt.Year;
@@ -5178,7 +5178,7 @@ uint FOServer::SScriptFunc::Global_GetFullSecond( ushort year, ushort month, ush
     return Timer::GetFullSecond( year, month, day, hour, minute, second );
 }
 
-void FOServer::SScriptFunc::Global_GetGameTime( uint full_second, ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second )
+void FOServer::SScriptFunc::Global_GetGameTime( uint full_second, uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second )
 {
     DateTime dt = Timer::GetGameTime( full_second );
     year = dt.Year;
@@ -5190,7 +5190,7 @@ void FOServer::SScriptFunc::Global_GetGameTime( uint full_second, ushort& year, 
     second = dt.Second;
 }
 
-uint FOServer::SScriptFunc::Global_CreateLocation( ushort loc_pid, ushort wx, ushort wy, ScriptArray* critters )
+uint FOServer::SScriptFunc::Global_CreateLocation( uint16 loc_pid, uint16 wx, uint16 wy, ScriptArray* critters )
 {
     if( !MapMngr.IsInitProtoLocation( loc_pid ) )
         SCRIPT_ERROR_R0( "Proto location is not init." );
@@ -5218,8 +5218,8 @@ uint FOServer::SScriptFunc::Global_CreateLocation( ushort loc_pid, ushort wx, us
             if( loc->IsAutomaps() )
                 cl->Send_AutomapsInfo( NULL, loc );
 
-            ushort zx = GM_ZONE( loc->Data.WX );
-            ushort zy = GM_ZONE( loc->Data.WY );
+            uint16 zx = GM_ZONE( loc->Data.WX );
+            uint16 zy = GM_ZONE( loc->Data.WY );
             if( cl->GMapFog.Get2Bit( zx, zy ) == WORLDMAP_FOG_FULL )
             {
                 cl->GMapFog.Set2Bit( zx, zy, WORLDMAP_FOG_HALF );
@@ -5239,7 +5239,7 @@ void FOServer::SScriptFunc::Global_DeleteLocation( uint loc_id )
     MapMngr.RunGarbager();
 }
 
-void FOServer::SScriptFunc::Global_GetProtoCritter( ushort proto_id, ScriptArray& data )
+void FOServer::SScriptFunc::Global_GetProtoCritter( uint16 proto_id, ScriptArray& data )
 {
     CritData* data_ = CrMngr.GetProto( proto_id );
     if( !data_ )
@@ -5314,7 +5314,7 @@ ScriptString* FOServer::SScriptFunc::Global_GetPlayerName( uint id )
     return new ScriptString( data->ClientName );
 }
 
-uint FOServer::SScriptFunc::Global_GetGlobalMapCritters( ushort wx, ushort wy, uint radius, int find_type, ScriptArray* critters )
+uint FOServer::SScriptFunc::Global_GetGlobalMapCritters( uint16 wx, uint16 wy, uint radius, int find_type, ScriptArray* critters )
 {
     CrVec critters_;
     CrMngr.GetGlobalMapCritters( wx, wy, radius, find_type, critters_, true );
@@ -5358,7 +5358,7 @@ bool FOServer::SScriptFunc::Global_SetAnyData( ScriptString& name, ScriptArray& 
     if( !name.length() )
         SCRIPT_ERROR_R0( "Name arg length is zero." );
     uint data_size_bytes = data.GetSize() * data.GetElementSize();
-    return SetAnyData( name.c_std_str(), data_size_bytes ? (uchar*)data.At( 0 ) : NULL, data_size_bytes );
+    return SetAnyData( name.c_std_str(), data_size_bytes ? (uint8*)data.At( 0 ) : NULL, data_size_bytes );
 }
 
 bool FOServer::SScriptFunc::Global_SetAnyDataSize( ScriptString& name, ScriptArray& data, uint data_size )
@@ -5370,7 +5370,7 @@ bool FOServer::SScriptFunc::Global_SetAnyDataSize( ScriptString& name, ScriptArr
     uint real_data_size_bytes = data.GetSize() * element_size;
     if( real_data_size_bytes < data_size_bytes )
         SCRIPT_ERROR_R0( "Array length is less than data size in bytes arg." );
-    return SetAnyData( name.c_std_str(), data_size_bytes ? (uchar*)data.At( 0 ) : NULL, data_size_bytes );
+    return SetAnyData( name.c_std_str(), data_size_bytes ? (uint8*)data.At( 0 ) : NULL, data_size_bytes );
 }
 
 bool FOServer::SScriptFunc::Global_GetAnyData( ScriptString& name, ScriptArray& data )
@@ -5401,7 +5401,7 @@ Map* FOServer::SScriptFunc::Global_GetMap( uint map_id )
     return MapMngr.GetMap( map_id );
 }
 
-Map* FOServer::SScriptFunc::Global_GetMapByPid( ushort map_pid, uint skip_count )
+Map* FOServer::SScriptFunc::Global_GetMapByPid( uint16 map_pid, uint skip_count )
 {
     if( !map_pid || map_pid >= MAX_PROTO_MAPS )
         SCRIPT_ERROR_R0( "Invalid map proto id arg." );
@@ -5415,14 +5415,14 @@ Location* FOServer::SScriptFunc::Global_GetLocation( uint loc_id )
     return MapMngr.GetLocation( loc_id );
 }
 
-Location* FOServer::SScriptFunc::Global_GetLocationByPid( ushort loc_pid, uint skip_count )
+Location* FOServer::SScriptFunc::Global_GetLocationByPid( uint16 loc_pid, uint skip_count )
 {
     if( !loc_pid || loc_pid >= MAX_PROTO_LOCATIONS )
         SCRIPT_ERROR_R0( "Invalid location proto id arg." );
     return MapMngr.GetLocationByPid( loc_pid, skip_count );
 }
 
-uint FOServer::SScriptFunc::Global_GetLocations( ushort wx, ushort wy, uint radius, ScriptArray* locations )
+uint FOServer::SScriptFunc::Global_GetLocations( uint16 wx, uint16 wy, uint radius, ScriptArray* locations )
 {
     LocVec locs;
     MapMngr.GetLocations( locs, false );
@@ -5444,7 +5444,7 @@ uint FOServer::SScriptFunc::Global_GetLocations( ushort wx, ushort wy, uint radi
     return (uint)locs_.size();
 }
 
-uint FOServer::SScriptFunc::Global_GetVisibleLocations( ushort wx, ushort wy, uint radius, Critter* cr, ScriptArray* locations )
+uint FOServer::SScriptFunc::Global_GetVisibleLocations( uint16 wx, uint16 wy, uint radius, Critter* cr, ScriptArray* locations )
 {
     LocVec locs;
     MapMngr.GetLocations( locs, false );
@@ -5467,7 +5467,7 @@ uint FOServer::SScriptFunc::Global_GetVisibleLocations( ushort wx, ushort wy, ui
     return (uint)locs_.size();
 }
 
-uint FOServer::SScriptFunc::Global_GetZoneLocationIds( ushort zx, ushort zy, uint zone_radius, ScriptArray* locations )
+uint FOServer::SScriptFunc::Global_GetZoneLocationIds( uint16 zx, uint16 zy, uint zone_radius, ScriptArray* locations )
 {
     UIntVec loc_ids;
     MapMngr.GetZoneLocations( zx, zy, zone_radius, loc_ids );
@@ -5527,7 +5527,7 @@ bool FOServer::SScriptFunc::Global_RunDialogNpcDlgPack( Critter* player, Critter
     return cl->Talk.TalkType == TALK_WITH_NPC && cl->Talk.TalkNpc == npc->GetId();
 }
 
-bool FOServer::SScriptFunc::Global_RunDialogHex( Critter* player, uint dlg_pack, ushort hx, ushort hy, bool ignore_distance )
+bool FOServer::SScriptFunc::Global_RunDialogHex( Critter* player, uint dlg_pack, uint16 hx, uint16 hy, bool ignore_distance )
 {
     if( player->IsNotValid )
         SCRIPT_ERROR_R0( "Player arg nullptr." );
@@ -5542,7 +5542,7 @@ bool FOServer::SScriptFunc::Global_RunDialogHex( Critter* player, uint dlg_pack,
     return cl->Talk.TalkType == TALK_WITH_HEX && cl->Talk.TalkHexX == hx && cl->Talk.TalkHexY == hy;
 }
 
-int64 FOServer::SScriptFunc::Global_WorldItemCount( ushort pid )
+int64 FOServer::SScriptFunc::Global_WorldItemCount( uint16 pid )
 {
     if( !ItemMngr.IsInitProto( pid ) )
         SCRIPT_ERROR_R0( "Invalid protoId arg." );
@@ -5566,7 +5566,7 @@ void FOServer::SScriptFunc::Global_SetBestScore( int score, Critter* cl, ScriptS
     SetScore( score, name.c_str() );
 }
 
-bool FOServer::SScriptFunc::Global_AddTextListener( int say_type, ScriptString& first_str, ushort parameter, ScriptString& script_name )
+bool FOServer::SScriptFunc::Global_AddTextListener( int say_type, ScriptString& first_str, uint16 parameter, ScriptString& script_name )
 {
     if( first_str.length() < TEXT_LISTEN_FIRST_STR_MIN_LEN )
         SCRIPT_ERROR_R0( "First string arg length less than minimum." );
@@ -5590,7 +5590,7 @@ bool FOServer::SScriptFunc::Global_AddTextListener( int say_type, ScriptString& 
     return true;
 }
 
-void FOServer::SScriptFunc::Global_EraseTextListener( int say_type, ScriptString& first_str, ushort parameter )
+void FOServer::SScriptFunc::Global_EraseTextListener( int say_type, ScriptString& first_str, uint16 parameter )
 {
     SCOPE_LOCK( TextListenersLocker );
 
@@ -5649,7 +5649,7 @@ uint FOServer::SScriptFunc::Global_GetBagItems( uint bag_id, ScriptArray* pids, 
         for( uint i = 0; i < count; i++ )
         {
             if( pids )
-                *(ushort*)pids->At( pids->GetSize() - count + i ) = bag_data[i * 4];
+                *(uint16*)pids->At( pids->GetSize() - count + i ) = bag_data[i * 4];
             if( min_counts )
                 *(uint*)min_counts->At( min_counts->GetSize() - count + i ) = bag_data[i * 4 + 1];
             if( max_counts )
@@ -5713,8 +5713,8 @@ void FOServer::SScriptFunc::Global_SetSendParameterFunc( int index, bool enabled
         Critter::ParamsSendScript[index] = 0;
     }
 
-    UShortVec& vec = Critter::ParamsSend;
-    ushort&    count = Critter::ParamsSendCount;
+    UInt16Vec& vec = Critter::ParamsSend;
+    uint16&    count = Critter::ParamsSendCount;
     auto       it = std::find( vec.begin(), vec.end(), index );
 
     if( enabled )
@@ -5723,21 +5723,21 @@ void FOServer::SScriptFunc::Global_SetSendParameterFunc( int index, bool enabled
             SCRIPT_ERROR_R( "Index already enabled." );
         vec.push_back( index );
         std::sort( vec.begin(), vec.end() );
-        Critter::ParamsSendMsgLen += sizeof(ushort) + sizeof(int);
+        Critter::ParamsSendMsgLen += sizeof(uint16) + sizeof(int);
     }
     else
     {
         if( it == vec.end() )
             SCRIPT_ERROR_R( "Index already disabled." );
         vec.erase( it );
-        Critter::ParamsSendMsgLen -= sizeof(ushort) + sizeof(int);
+        Critter::ParamsSendMsgLen -= sizeof(uint16) + sizeof(int);
     }
 
     count = (uint)vec.size();
     Critter::ParamsSendEnabled[index] = enabled;
 }
 
-uint FOServer::SScriptFunc::Global_GetAllItems( ushort pid, ScriptArray* items )
+uint FOServer::SScriptFunc::Global_GetAllItems( uint16 pid, ScriptArray* items )
 {
     ItemPtrVec game_items;
     ItemMngr.GetGameItems( game_items );
@@ -5803,7 +5803,7 @@ uint FOServer::SScriptFunc::Global_GetRegisteredPlayers( ScriptArray* ids, Scrip
     return ClientsData.size();
 }
 
-uint FOServer::SScriptFunc::Global_GetAllNpc( ushort pid, ScriptArray* npc )
+uint FOServer::SScriptFunc::Global_GetAllNpc( uint16 pid, ScriptArray* npc )
 {
     PcVec npcs;
     CrVec npcs_;
@@ -5822,7 +5822,7 @@ uint FOServer::SScriptFunc::Global_GetAllNpc( ushort pid, ScriptArray* npc )
     return (uint)npcs_.size();
 }
 
-uint FOServer::SScriptFunc::Global_GetAllMaps( ushort pid, ScriptArray* maps )
+uint FOServer::SScriptFunc::Global_GetAllMaps( uint16 pid, ScriptArray* maps )
 {
     MapVec maps_;
     MapMngr.GetMaps( maps_, false );
@@ -5844,7 +5844,7 @@ uint FOServer::SScriptFunc::Global_GetAllMaps( ushort pid, ScriptArray* maps )
     return (uint)maps__.size();
 }
 
-uint FOServer::SScriptFunc::Global_GetAllLocations( ushort pid, ScriptArray* locations )
+uint FOServer::SScriptFunc::Global_GetAllLocations( uint16 pid, ScriptArray* locations )
 {
     LocVec locs;
     MapMngr.GetLocations( locs, false );
@@ -5896,7 +5896,7 @@ bool FOServer::SScriptFunc::Global_SetItemDataMask( int mask_type, ScriptArray& 
     return true;
 }
 
-void FOServer::SScriptFunc::Global_GetTime( ushort& year, ushort& month, ushort& day, ushort& day_of_week, ushort& hour, ushort& minute, ushort& second, ushort& milliseconds )
+void FOServer::SScriptFunc::Global_GetTime( uint16& year, uint16& month, uint16& day, uint16& day_of_week, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds )
 {
     DateTime cur_time;
     Timer::GetCurrentDateTime( cur_time );
@@ -5955,7 +5955,7 @@ bool FOServer::SScriptFunc::Global_SetParameterDialogGetBehaviour( uint index, S
     return true;
 }
 
-void FOServer::SScriptFunc::Global_AllowSlot( uchar index, ScriptString& ini_option )
+void FOServer::SScriptFunc::Global_AllowSlot( uint8 index, ScriptString& ini_option )
 {
     if( index <= SLOT_ARMOR || index == SLOT_GROUND )
         SCRIPT_ERROR_R( "Invalid index arg." );
@@ -6126,7 +6126,7 @@ ScriptString* FOServer::SScriptFunc::Global_GetCritterSoundName( uint cr_type )
 
 struct ServerImage
 {
-    UCharVec Data;
+    UInt8Vec Data;
     uint     Width;
     uint     Height;
     uint     Depth;
@@ -6232,7 +6232,7 @@ bool FOServer::SScriptFunc::Global_LoadImage( uint index, ScriptString* image_na
     if( png_get_valid( pp, info, PNG_INFO_tRNS ) )
         png_set_tRNS_to_alpha( pp );
 
-    uchar*     data = new uchar[w * h * d];
+    uint8*     data = new uint8[w * h * d];
     png_bytep* rows = new png_bytep[h];
 
     for( int i = 0; i < h; i++ )

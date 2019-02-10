@@ -11,7 +11,7 @@
 struct CmdDef
 {
     char  cmd[20];
-    uchar id;
+    uint8 id;
 };
 
 const CmdDef cmdlist[] =
@@ -77,7 +77,7 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         Str::EraseInterval( args, Str::Length( cmd_str ) );
     }
 
-    uchar cmd = 0;
+    uint8 cmd = 0;
     for( uint cur_cmd = 0; cur_cmd < sizeof(cmdlist) / sizeof(CmdDef); cur_cmd++ )
         if( Str::CompareCase( cmd_str, cmdlist[cur_cmd].cmd ) )
             cmd = cmdlist[cur_cmd].id;
@@ -140,8 +140,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         case COMMAND_MOVECRIT:
         {
             uint   crid;
-            ushort hex_x;
-            ushort hex_y;
+            uint16 hex_x;
+            uint16 hex_y;
             if( sscanf( args, "%u%hu%hu", &crid, &hex_x, &hex_y ) != 3 )
             {
                 logcb( "Invalid arguments. Example: <~move crid hx hy>." );
@@ -215,14 +215,14 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         case COMMAND_PARAM:
         {
             uint   crid;
-            ushort param_num;
+            uint16 param_num;
             int    param_val;
             if( sscanf( args, "%u%hu%d", &crid, &param_num, &param_val ) != 3 )
             {
                 logcb( "Invalid arguments. Example: <~param crid index value>." );
                 break;
             }
-            msg_len += sizeof(uint) + sizeof(ushort) + sizeof(int);
+            msg_len += sizeof(uint) + sizeof(uint16) + sizeof(int);
 
             buf << msg;
             buf << msg_len;
@@ -257,9 +257,9 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_ADDITEM:
         {
-            ushort hex_x;
-            ushort hex_y;
-            ushort pid;
+            uint16 hex_x;
+            uint16 hex_y;
+            uint16 pid;
             uint   count;
             if( sscanf( args, "%hu%hu%hu%u", &hex_x, &hex_y, &pid, &count ) != 4 )
             {
@@ -279,7 +279,7 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_ADDITEM_SELF:
         {
-            ushort pid;
+            uint16 pid;
             uint   count;
             if( sscanf( args, "%hu%u", &pid, &count ) != 2 )
             {
@@ -297,10 +297,10 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_ADDNPC:
         {
-            ushort hex_x;
-            ushort hex_y;
-            uchar  dir;
-            ushort pid;
+            uint16 hex_x;
+            uint16 hex_y;
+            uint8  dir;
+            uint16 pid;
             if( sscanf( args, "%hu%hu%hhu%hu", &hex_x, &hex_y, &dir, &pid ) != 4 )
             {
                 logcb( "Invalid arguments. Example: <~addnpc hx hy dir pid>." );
@@ -319,9 +319,9 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_ADDLOCATION:
         {
-            ushort wx;
-            ushort wy;
-            ushort pid;
+            uint16 wx;
+            uint16 wy;
+            uint16 pid;
             if( sscanf( args, "%hu%hu%hu", &wx, &wy, &pid ) != 3 )
             {
                 logcb( "Invalid arguments. Example: <~addloc wx wy pid>." );
@@ -401,7 +401,7 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_LOADLOCATION:
         {
-            ushort loc_pid;
+            uint16 loc_pid;
             if( sscanf( args, "%hu", &loc_pid ) != 1 )
             {
                 logcb( "Invalid arguments. Example: <~loadlocation pid>." );
@@ -424,7 +424,7 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_LOADMAP:
         {
-            ushort map_pid;
+            uint16 map_pid;
             if( sscanf( args, "%hu", &map_pid ) != 1 )
             {
                 logcb( "Invalid arguments. Example: <~loadmap pid>." );
@@ -487,11 +487,11 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_CHECKVAR:
         {
-            ushort tid_var;
-            uchar  master_is_npc;
+            uint16 tid_var;
+            uint8  master_is_npc;
             uint   master_id;
             uint   slave_id;
-            uchar  full_info;
+            uint8  full_info;
             if( sscanf( args, "%hu%hhu%u%u%hhu", &tid_var, &master_is_npc, &master_id, &slave_id, &full_info ) != 5 )
             {
                 logcb( "Invalid arguments. Example: <~checkvar tid_var master_is_npc master_id slave_id full_info>." );
@@ -511,8 +511,8 @@ void PackCommand( const char* str, BufferManager& buf, void (*logcb)( const char
         }
         case COMMAND_SETVAR:
         {
-            ushort tid_var;
-            uchar  master_is_npc;
+            uint16 tid_var;
+            uint8  master_is_npc;
             uint   master_id;
             uint   slave_id;
             int    value;

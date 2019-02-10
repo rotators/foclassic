@@ -53,22 +53,22 @@ BINARY_SIGNATURE( MapSaveSignature, BINARY_TYPE_MAPSAVE, FOCLASSIC_VERSION );
 class MapObjectV5
 {
 public:
-    uchar  MapObjType;
+    uint8  MapObjType;
     bool   InContainer;
-    ushort ProtoId;
+    uint16 ProtoId;
 
-    ushort MapX;
-    ushort MapY;
+    uint16 MapX;
+    uint16 MapY;
 
-    uchar  FrameNum;
-    uchar  Dir;
+    uint8  FrameNum;
+    uint8  Dir;
 
-    uchar  Reserved0;
-    uchar  Reserved1;
+    uint8  Reserved0;
+    uint8  Reserved1;
 
-    uchar  ItemSlot;
-    uchar  Reserved2;
-    ushort Reserved3;
+    uint8  ItemSlot;
+    uint8  Reserved2;
+    uint16 Reserved3;
     uint   Reserved4;
 
     short  OffsetX;
@@ -78,10 +78,10 @@ public:
     char   FuncName[25 + 1];
 
     uint   LightRGB;
-    uchar  Reserved5;
-    uchar  LightDay;
-    uchar  LightDirOff;
-    uchar  LightDistance;
+    uint8  Reserved5;
+    uint8  LightDay;
+    uint8  LightDirOff;
+    uint8  LightDistance;
     int    LightIntensity;
 
     int    BindScriptId;  // For script bind in runtime
@@ -93,34 +93,34 @@ public:
         {
             uint   DialogId;
             uint   AiPack;
-            ushort Reserved0;
-            ushort Reserved1;
-            uchar  Cond;
-            uchar  CondExt;
-            uchar  Reserved2;            // Level
-            uchar  Reserved3;
-            ushort BagId;
-            ushort TeamId;
+            uint16 Reserved0;
+            uint16 Reserved1;
+            uint8  Cond;
+            uint8  CondExt;
+            uint8  Reserved2;            // Level
+            uint8  Reserved3;
+            uint16 BagId;
+            uint16 TeamId;
             int    NpcRole;
             short  RespawnTime;
-            ushort Reserved11;
+            uint16 Reserved11;
         } CRITTER;
 
         // Item
         struct
         {
             uint   Val1;
-            uchar  BrokenFlags;
-            uchar  BrokenCount;
-            ushort Deterioration;
+            uint8  BrokenFlags;
+            uint8  BrokenCount;
+            uint16 Deterioration;
         } ARMOR;
 
         struct
         {
             uint   DoorId;
-            ushort Condition;
-            ushort Complexity;
-            uchar  IsOpen;
+            uint16 Condition;
+            uint16 Complexity;
+            uint8  IsOpen;
             uint   Reserved;
         } CONTAINER;
 
@@ -132,10 +132,10 @@ public:
         struct
         {
             uint   Reserved;
-            uchar  BrokenFlags;
-            uchar  BrokenCount;
-            ushort Deterioration;
-            ushort AmmoPid;
+            uint8  BrokenFlags;
+            uint8  BrokenCount;
+            uint16 Deterioration;
+            uint16 AmmoPid;
             uint   AmmoCount;
         } WEAPON;
 
@@ -168,9 +168,9 @@ public:
         struct
         {
             uint   DoorId;
-            ushort Condition;
-            ushort Complexity;
-            uchar  IsOpen;
+            uint16 Condition;
+            uint16 Complexity;
+            uint8  IsOpen;
         } DOOR;
 
         // Scenery
@@ -178,21 +178,21 @@ public:
         {
             uint   ElevatorType;
             uint   ToMapPid;
-            ushort ToMapX;
-            ushort ToMapY;
-            uchar  ToDir;
-            uchar  ToEntire;
+            uint16 ToMapX;
+            uint16 ToMapY;
+            uint8  ToDir;
+            uint8  ToEntire;
         } GRID;
 
         struct
         {
-            uchar  CanUse;
-            uchar  TriggerNum;
-            ushort Reserved0;
+            uint8  CanUse;
+            uint8  TriggerNum;
+            uint16 Reserved0;
             uint   Reserved1[3];           // Trash
-            ushort Reserved2;
-            uchar  Reserved3;
-            uchar  ParamsCount;
+            uint16 Reserved2;
+            uint8  Reserved3;
+            uint8  ParamsCount;
             int    Param[5];
         } GENERIC;
 
@@ -208,32 +208,32 @@ struct HeaderV9
     uint   Version;
     bool   Packed;
     bool   NoLogOut;
-    ushort HeaderSize;
+    uint16 HeaderSize;
     int    PlayersLimit;
     uint   UnpackedDataLen;
-    ushort MaxHexX;
-    ushort MaxHexY;
+    uint16 MaxHexX;
+    uint16 MaxHexY;
     int    Time;
     int    CenterX;
     int    CenterY;
     char   ScriptModule[64 + 1];
     char   ScriptFunc[64 + 1];
     int    DayTime[4];
-    uchar  DayColor[12];
+    uint8  DayColor[12];
 };
 
 class MapObjectV9
 {
 public:
-    uchar  MapObjType;
-    ushort ProtoId;
-    ushort MapX;
-    ushort MapY;
+    uint8  MapObjType;
+    uint16 ProtoId;
+    uint16 MapX;
+    uint16 MapY;
     short  Dir;
     uint   LightColor;
-    uchar  LightDay;
-    uchar  LightDirOff;
-    uchar  LightDistance;
+    uint8  LightDay;
+    uint8  LightDirOff;
+    uint8  LightDistance;
     char   LightIntensity;
     char   ScriptName[25 + 1];
     char   FuncName[25 + 1];
@@ -244,8 +244,8 @@ public:
     {
         struct
         {
-            uchar Cond;
-            uchar CondExt;
+            uint8 Cond;
+            uint8 CondExt;
             short ParamIndex[15];
             int   ParamValue[15];
         } MCritter;
@@ -254,26 +254,26 @@ public:
         {
             short  OffsetX;
             short  OffsetY;
-            uchar  AnimStayBegin;
-            uchar  AnimStayEnd;
-            ushort AnimWait;
-            ushort PicMapDeprecated;
-            ushort PicInvDeprecated;
-            uchar  InfoOffset;
-            uchar  Reserved[3];
+            uint8  AnimStayBegin;
+            uint8  AnimStayEnd;
+            uint16 AnimWait;
+            uint16 PicMapDeprecated;
+            uint16 PicInvDeprecated;
+            uint8  InfoOffset;
+            uint8  Reserved[3];
             uint   PicMapHash;
             uint   PicInvHash;
             uint   Count;
-            uchar  BrokenFlags;
-            uchar  BrokenCount;
-            ushort Deterioration;
+            uint8  BrokenFlags;
+            uint8  BrokenCount;
+            uint16 Deterioration;
             bool   InContainer;
-            uchar  ItemSlot;
-            ushort AmmoPid;
+            uint8  ItemSlot;
+            uint16 AmmoPid;
             uint   AmmoCount;
             uint   LockerDoorId;
-            ushort LockerCondition;
-            ushort LockerComplexity;
+            uint16 LockerCondition;
+            uint16 LockerComplexity;
             short  TrapValue;
             int    Val[10];
         } MItem;
@@ -282,26 +282,26 @@ public:
         {
             short  OffsetX;
             short  OffsetY;
-            uchar  AnimStayBegin;
-            uchar  AnimStayEnd;
-            ushort AnimWait;
-            ushort PicMapDeprecated;
-            ushort PicInvDeprecated;
-            uchar  InfoOffset;
-            uchar  Reserved[3];
+            uint8  AnimStayBegin;
+            uint8  AnimStayEnd;
+            uint16 AnimWait;
+            uint16 PicMapDeprecated;
+            uint16 PicInvDeprecated;
+            uint8  InfoOffset;
+            uint8  Reserved[3];
             uint   PicMapHash;
             uint   PicInvHash;
             bool   CanUse;
             bool   CanTalk;
             uint   TriggerNum;
-            uchar  ParamsCount;
+            uint8  ParamsCount;
             int    Param[5];
-            ushort ToMapPid;
+            uint16 ToMapPid;
             uint   ToEntire;
-            ushort ToMapX;
-            ushort ToMapY;
-            uchar  ToDir;
-            uchar  SpriteCut;
+            uint16 ToMapX;
+            uint16 ToMapY;
+            uint8  ToDir;
+            uint8  SpriteCut;
         } MScenery;
 
         struct
@@ -343,7 +343,7 @@ ProtoMap::~ProtoMap()
 }
 #endif
 
-bool ProtoMap::Init( ushort pid, const char* name, int path_type )
+bool ProtoMap::Init( uint16 pid, const char* name, int path_type )
 {
     Clear();
     if( !name || !name[0] )
@@ -495,8 +495,8 @@ bool ProtoMap::ReadTiles( FileManager& fm, int version )
         {
             for( int y = 0; y < Header.MaxHexY / 2; y++ )
             {
-                ushort tile = (ptr[y * (Header.MaxHexX / 2) + x] >> 16);
-                ushort roof = (ptr[y * (Header.MaxHexX / 2) + x] & 0xFFFF);
+                uint16 tile = (ptr[y * (Header.MaxHexX / 2) + x] >> 16);
+                uint16 roof = (ptr[y * (Header.MaxHexX / 2) + x] & 0xFFFF);
                 if( tile > 1 && (tile = Deprecated_GetPicHash( -2, 0, tile ) ) )
                     Tiles.push_back( Tile( tile, x * 2, y * 2, 0, 0, 0, false ) );
                 if( roof > 1 && (roof = Deprecated_GetPicHash( -2, 0, roof ) ) )
@@ -1460,7 +1460,7 @@ void ProtoMap::SaveTextFormat( FileManager& fm )
 #ifdef FOCLASSIC_SERVER
 bool ProtoMap::LoadCache( FileManager& fm )
 {
-    uchar signature[sizeof(MapSaveSignature)];
+    uint8 signature[sizeof(MapSaveSignature)];
     if( !fm.CopyMem( signature, sizeof(signature) ) )
         return false;
 
@@ -1547,7 +1547,7 @@ bool ProtoMap::LoadCache( FileManager& fm )
     HashScen = fm.GetBEUInt();
 
     // Hex flags
-    HexFlags = new uchar[Header.MaxHexX * Header.MaxHexY];
+    HexFlags = new uint8[Header.MaxHexX * Header.MaxHexY];
     if( !HexFlags )
         return false;
     if( !fm.CopyMem( HexFlags, Header.MaxHexX * Header.MaxHexY ) )
@@ -1576,8 +1576,8 @@ bool ProtoMap::LoadCache( FileManager& fm )
 
 void ProtoMap::SaveCache( FileManager& fm )
 {
-    ushort version = BINARY_SIGNATURE_VERSION( MapSaveSignature );
-    fm.SetData( (uchar*)MapSaveSignature, sizeof(MapSaveSignature) );
+    uint16 version = BINARY_SIGNATURE_VERSION( MapSaveSignature );
+    fm.SetData( (uint8*)MapSaveSignature, sizeof(MapSaveSignature) );
 
     // Header
     fm.SetData( &Header, sizeof(Header) );
@@ -1817,7 +1817,7 @@ bool ProtoMap::Refresh()
             fm.SetCurPos( Header.HeaderSize );
             uint   pack_len = fm.GetFsize() - Header.HeaderSize;
             uint   unpack_len = Header.UnpackedDataLen;
-            uchar* data = Crypt.Uncompress( fm.GetCurBuf(), pack_len, unpack_len / pack_len + 1 );
+            uint8* data = Crypt.Uncompress( fm.GetCurBuf(), pack_len, unpack_len / pack_len + 1 );
             if( !data )
             {
                 WriteLogF( _FUNC_, " - Map<%s>. Unable unpack data.\n", map_info );
@@ -1901,7 +1901,7 @@ bool ProtoMap::Refresh()
             if( !proto_parent || !proto_parent->ChildPid[mobj_child->ParentChildIndex] )
                 break;
 
-            ushort child_hx = mobj_parent->MapX, child_hy = mobj_parent->MapY;
+            uint16 child_hx = mobj_parent->MapX, child_hy = mobj_parent->MapY;
             FOREACH_PROTO_ITEM_LINES( proto_parent->ChildLines[mobj_child->ParentChildIndex], child_hx, child_hy, Header.MaxHexX, Header.MaxHexY,;
                                       );
 
@@ -1928,10 +1928,10 @@ bool ProtoMap::Refresh()
     // Parse objects
     WallsToSend.clear();
     SceneriesToSend.clear();
-    ushort maxhx = Header.MaxHexX;
-    ushort maxhy = Header.MaxHexY;
+    uint16 maxhx = Header.MaxHexX;
+    uint16 maxhy = Header.MaxHexY;
 
-    HexFlags = new uchar[Header.MaxHexX * Header.MaxHexY];
+    HexFlags = new uint8[Header.MaxHexX * Header.MaxHexY];
     if( !HexFlags )
         return false;
     memzero( HexFlags, Header.MaxHexX * Header.MaxHexY );
@@ -1953,9 +1953,9 @@ bool ProtoMap::Refresh()
             continue;
         }
 
-        ushort     pid = mobj.ProtoId;
-        ushort     hx = mobj.MapX;
-        ushort     hy = mobj.MapY;
+        uint16     pid = mobj.ProtoId;
+        uint16     hx = mobj.MapX;
+        uint16     hy = mobj.MapY;
 
         ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
         if( !proto_item )
@@ -2035,7 +2035,7 @@ bool ProtoMap::Refresh()
                     // Block around
                     for( int k = 0; k < 6; k++ )
                     {
-                        ushort hx_ = hx, hy_ = hy;
+                        uint16 hx_ = hx, hy_ = hy;
                         MoveHexByDir( hx_, hy_, k, Header.MaxHexX, Header.MaxHexY );
                         SETFLAG( HexFlags[hy_ * maxhx + hx_], HEX_FLAG_BLOCK );
                     }
@@ -2121,13 +2121,13 @@ bool ProtoMap::Refresh()
     // Generate hashes
     HashTiles = maxhx * maxhy;
     if( Tiles.size() )
-        Crypt.Crc32( (uchar*)&Tiles[0], (uint)Tiles.size() * sizeof(Tile), HashTiles );
+        Crypt.Crc32( (uint8*)&Tiles[0], (uint)Tiles.size() * sizeof(Tile), HashTiles );
     HashWalls = maxhx * maxhy;
     if( WallsToSend.size() )
-        Crypt.Crc32( (uchar*)&WallsToSend[0], (uint)WallsToSend.size() * sizeof(SceneryCl), HashWalls );
+        Crypt.Crc32( (uint8*)&WallsToSend[0], (uint)WallsToSend.size() * sizeof(SceneryCl), HashWalls );
     HashScen = maxhx * maxhy;
     if( SceneriesToSend.size() )
-        Crypt.Crc32( (uchar*)&SceneriesToSend[0], (uint)SceneriesToSend.size() * sizeof(SceneryCl), HashScen );
+        Crypt.Crc32( (uint8*)&SceneriesToSend[0], (uint)SceneriesToSend.size() * sizeof(SceneryCl), HashScen );
 
     // Shrink the vector capacities to fit their contents and reduce memory use
     SceneryClVec( SceneriesToSend ).swap( SceneriesToSend );
@@ -2245,9 +2245,9 @@ bool ProtoMap::Save( const char* fname, int path_type )
     // Fill tiles from cached fields
     TilesField.resize( Header.MaxHexX * Header.MaxHexY );
     RoofsField.resize( Header.MaxHexX * Header.MaxHexY );
-    for( ushort hy = 0; hy < Header.MaxHexY; hy++ )
+    for( uint16 hy = 0; hy < Header.MaxHexY; hy++ )
     {
-        for( ushort hx = 0; hx < Header.MaxHexX; hx++ )
+        for( uint16 hx = 0; hx < Header.MaxHexX; hx++ )
         {
             TileVec& tiles = TilesField[hy * Header.MaxHexX + hx];
             for( uint i = 0, j = (uint)tiles.size(); i < j; i++ )
@@ -2373,7 +2373,7 @@ ProtoMap::MapEntire* ProtoMap::GetEntireRandom( uint num )
     return entires[Random( 0, (uint)entires.size() - 1 )];
 }
 
-ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, ushort hx, ushort hy )
+ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, uint16 hx, uint16 hy )
 {
     MapEntire* near_entire = NULL;
     uint       last_dist = 0;
@@ -2393,7 +2393,7 @@ ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, ushort hx, ushort hy )
     return near_entire;
 }
 
-ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, uint num_ext, ushort hx, ushort hy )
+ProtoMap::MapEntire* ProtoMap::GetEntireNear( uint num, uint num_ext, uint16 hx, uint16 hy )
 {
     MapEntire* near_entire = NULL;
     uint       last_dist = 0;
@@ -2423,7 +2423,7 @@ void ProtoMap::GetEntires( uint num, EntiresVec& entires )
     }
 }
 
-MapObject* ProtoMap::GetMapScenery( ushort hx, ushort hy, ushort pid )
+MapObject* ProtoMap::GetMapScenery( uint16 hx, uint16 hy, uint16 pid )
 {
     for( auto it = SceneryVec.begin(), end = SceneryVec.end(); it != end; ++it )
     {
@@ -2434,7 +2434,7 @@ MapObject* ProtoMap::GetMapScenery( ushort hx, ushort hy, ushort pid )
     return NULL;
 }
 
-void ProtoMap::GetMapSceneriesHex( ushort hx, ushort hy, MapObjectPtrVec& mobjs )
+void ProtoMap::GetMapSceneriesHex( uint16 hx, uint16 hy, MapObjectPtrVec& mobjs )
 {
     for( auto it = SceneryVec.begin(), end = SceneryVec.end(); it != end; ++it )
     {
@@ -2444,7 +2444,7 @@ void ProtoMap::GetMapSceneriesHex( ushort hx, ushort hy, MapObjectPtrVec& mobjs 
     }
 }
 
-void ProtoMap::GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort pid, MapObjectPtrVec& mobjs )
+void ProtoMap::GetMapSceneriesHexEx( uint16 hx, uint16 hy, uint radius, uint16 pid, MapObjectPtrVec& mobjs )
 {
     for( auto it = SceneryVec.begin(), end = SceneryVec.end(); it != end; ++it )
     {
@@ -2454,7 +2454,7 @@ void ProtoMap::GetMapSceneriesHexEx( ushort hx, ushort hy, uint radius, ushort p
     }
 }
 
-void ProtoMap::GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs )
+void ProtoMap::GetMapSceneriesByPid( uint16 pid, MapObjectPtrVec& mobjs )
 {
     for( auto it = SceneryVec.begin(), end = SceneryVec.end(); it != end; ++it )
     {
@@ -2464,7 +2464,7 @@ void ProtoMap::GetMapSceneriesByPid( ushort pid, MapObjectPtrVec& mobjs )
     }
 }
 
-MapObject* ProtoMap::GetMapGrid( ushort hx, ushort hy )
+MapObject* ProtoMap::GetMapGrid( uint16 hx, uint16 hy )
 {
     for( auto it = GridsVec.begin(), end = GridsVec.end(); it != end; ++it )
     {

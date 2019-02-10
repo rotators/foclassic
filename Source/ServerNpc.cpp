@@ -110,7 +110,7 @@ void FOServer::ProcessAI( Npc* npc )
         }
         else if( !npc->IsRawParam( MODE_NO_FAVORITE_ITEM ) )
         {
-            ushort favor_item_pid;
+            uint16 favor_item_pid;
             Item*  favor_item;
             // Set favorite item to slot1
             favor_item_pid = npc->Data.FavoriteItemPid[SLOT_HAND1];
@@ -205,8 +205,8 @@ void FOServer::ProcessAI( Npc* npc )
         // Find path if not exist
         if( !plane->Move.PathNum )
         {
-            ushort   hx;
-            ushort   hy;
+            uint16   hx;
+            uint16   hy;
             uint     cut;
             uint     trace;
             Critter* trace_cr;
@@ -571,12 +571,12 @@ void FOServer::ProcessAI( Npc* npc )
                     min_dist = max_dist;
                 best_dist = CLAMP( best_dist, min_dist, max_dist );
 
-                ushort    hx = npc->GetHexX();
-                ushort    hy = npc->GetHexY();
-                ushort    t_hx = targ->GetHexX();
-                ushort    t_hy = targ->GetHexY();
-                ushort    res_hx = t_hx;
-                ushort    res_hy = t_hy;
+                uint16    hx = npc->GetHexX();
+                uint16    hy = npc->GetHexY();
+                uint16    t_hx = targ->GetHexX();
+                uint16    t_hy = targ->GetHexY();
+                uint16    res_hx = t_hx;
+                uint16    res_hy = t_hy;
                 bool      is_run = plane->Attack.IsRun;
                 bool      is_range = (weap->Proto->Weapon_MaxDist[use] > 2);
 
@@ -614,7 +614,7 @@ void FOServer::ProcessAI( Npc* npc )
                     MapMngr.TraceBullet( trace );
                     if( !trace.IsCritterFounded )
                     {
-                        UShortPair last_passed;
+                        UInt16Pair last_passed;
                         trace.LastPassed = &last_passed;
                         trace.LastPassedSkipCritters = true;
                         trace.FindCr = NULL;
@@ -777,9 +777,9 @@ void FOServer::ProcessAI( Npc* npc )
 /************************************************************************/
         case AI_PLANE_PICK:
         {
-            ushort hx = plane->Pick.HexX;
-            ushort hy = plane->Pick.HexY;
-            ushort pid = plane->Pick.Pid;
+            uint16 hx = plane->Pick.HexX;
+            uint16 hy = plane->Pick.HexY;
+            uint16 pid = plane->Pick.Pid;
             uint   use_item_id = plane->Pick.UseItemId;
             bool   to_open = plane->Pick.ToOpen;
             bool   is_run = plane->Pick.IsRun;
@@ -842,7 +842,7 @@ bool FOServer::AI_Stay( Npc* npc, uint ms )
     return true;
 }
 
-bool FOServer::AI_Move( Npc* npc, ushort hx, ushort hy, bool is_run, uint cut, uint trace )
+bool FOServer::AI_Move( Npc* npc, uint16 hx, uint16 hy, bool is_run, uint cut, uint trace )
 {
     AIDataPlane* plane = npc->GetCurPlane();
     if( !plane )
@@ -876,7 +876,7 @@ bool FOServer::AI_MoveToCrit( Npc* npc, uint targ_id, uint cut, uint trace, bool
     return true;
 }
 
-bool FOServer::AI_MoveItem( Npc* npc, Map* map, uchar from_slot, uchar to_slot, uint item_id, uint count )
+bool FOServer::AI_MoveItem( Npc* npc, Map* map, uint8 from_slot, uint8 to_slot, uint item_id, uint count )
 {
     bool is_castling = ( (from_slot == SLOT_HAND1 && to_slot == SLOT_HAND2) || (from_slot == SLOT_HAND2 && to_slot == SLOT_HAND1) );
     uint ap_cost = (is_castling ? 0 : npc->GetApCostMoveItemInventory() );
@@ -888,7 +888,7 @@ bool FOServer::AI_MoveItem( Npc* npc, Map* map, uchar from_slot, uchar to_slot, 
     return npc->MoveItem( from_slot, to_slot, item_id, count );
 }
 
-bool FOServer::AI_Attack( Npc* npc, Map* map, uchar mode, uint targ_id )
+bool FOServer::AI_Attack( Npc* npc, Map* map, uint8 mode, uint targ_id )
 {
     int ap_cost = (GameOpt.GetUseApCost ? GameOpt.GetUseApCost( npc, npc->ItemSlotMain, mode ) : 1);
 
@@ -901,7 +901,7 @@ bool FOServer::AI_Attack( Npc* npc, Map* map, uchar mode, uint targ_id )
     return true;
 }
 
-bool FOServer::AI_PickItem( Npc* npc, Map* map, ushort hx, ushort hy, ushort pid, uint use_item_id )
+bool FOServer::AI_PickItem( Npc* npc, Map* map, uint16 hx, uint16 hy, uint16 pid, uint use_item_id )
 {
     CHECK_NPC_AP_R0( npc, map, npc->GetApCostPickItem() );
     return Act_PickItem( npc, hx, hy, pid );
@@ -1036,7 +1036,7 @@ bool FOServer::Dialog_CheckDemand( Npc* npc, Client* cl, DialogAnswer& answer, b
         if( !master )
             continue;
 
-        ushort index = demand.ParamId;
+        uint16 index = demand.ParamId;
         switch( demand.Type )
         {
             case DR_PARAM:
@@ -1195,7 +1195,7 @@ uint FOServer::Dialog_UseResult( Npc* npc, Client* cl, DialogAnswer& answer )
         if( !master )
             continue;
 
-        ushort index = result.ParamId;
+        uint16 index = result.ParamId;
         switch( result.Type )
         {
             case DR_PARAM:
@@ -1297,7 +1297,7 @@ uint FOServer::Dialog_UseResult( Npc* npc, Client* cl, DialogAnswer& answer )
     return force_dialog;
 }
 
-void FOServer::Dialog_Begin( Client* cl, Npc* npc, uint dlg_pack_id, ushort hx, ushort hy, bool ignore_distance )
+void FOServer::Dialog_Begin( Client* cl, Npc* npc, uint dlg_pack_id, uint16 hx, uint16 hy, bool ignore_distance )
 {
     if( cl->Talk.Locked )
     {
@@ -1553,9 +1553,9 @@ void FOServer::Dialog_Begin( Client* cl, Npc* npc, uint dlg_pack_id, ushort hx, 
 
 void FOServer::Process_Dialog( Client* cl, bool is_say )
 {
-    uchar is_npc;
+    uint8 is_npc;
     uint  id_npc_talk;
-    uchar num_answer;
+    uint8 num_answer;
     char  str[MAX_SAY_NPC_TEXT + 1];
 
     cl->Bin >> is_npc;
@@ -1868,10 +1868,10 @@ void FOServer::Process_Barter( Client* cl )
 {
     uint    msg_len;
     uint    id_npc_talk;
-    ushort  sale_count;
+    uint16  sale_count;
     UIntVec sale_item_id;
     UIntVec sale_item_count;
-    ushort  buy_count;
+    uint16  buy_count;
     UIntVec buy_item_id;
     UIntVec buy_item_count;
     uint    item_id;

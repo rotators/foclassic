@@ -908,7 +908,7 @@ Texture* GraphicLoader::LoadTexture( Device_ device, const char* texture_name, c
 
     // Copy data
     uint   size = ilGetInteger( IL_IMAGE_SIZE_OF_DATA );
-    uchar* data = new uchar[size];
+    uint8* data = new uint8[size];
     memcpy( data, ilGetData(), size );
 
     // Delete image
@@ -1450,7 +1450,7 @@ Effect* GraphicLoader::LoadEffect( Device_ device, const char* effect_name, bool
             GL( glGetProgramiv( program, GL_PROGRAM_BINARY_LENGTH, &buf_size ) );
             GLsizei  length;
             GLenum   format;
-            UCharVec buf;
+            UInt8Vec buf;
             buf.resize( buf_size );
             GL( glGetProgramBinary( program, buf_size, &length, &format, &buf[0] ) );
             Str::Append( fname, "b" );

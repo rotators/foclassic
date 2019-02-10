@@ -222,7 +222,7 @@ bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, const string& ob
     return BindSuccess;
 }
 
-bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uchar& bind )
+bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
 {
     if( !BindChecks( engine ) )
         return false;

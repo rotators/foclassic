@@ -73,8 +73,8 @@ const char* CritterEventFuncName[CRITTER_EVENT_MAX] =
 
 bool      Critter::ParamsRegEnabled[MAX_PARAMS] = { 0 };
 uint      Critter::ParamsSendMsgLen = sizeof(Critter::ParamsSendCount);
-ushort    Critter::ParamsSendCount = 0;
-UShortVec Critter::ParamsSend;
+uint16    Critter::ParamsSendCount = 0;
+UInt16Vec Critter::ParamsSend;
 bool      Critter::ParamsSendEnabled[MAX_PARAMS] = { 0 };
 int       Critter::ParamsSendScript[MAX_PARAMS] = { 0 };
 int       Critter::ParamsChangeScript[MAX_PARAMS] = { 0 };
@@ -285,7 +285,7 @@ int Critter::RunParamsSendScript( int bind_id, uint param_index, Critter* from_c
     return 0;
 }
 
-bool Critter::RunSlotDataSendScript( int bind_id, uchar slot, Item* item, Critter* from_cr, Critter* to_cr )
+bool Critter::RunSlotDataSendScript( int bind_id, uint8 slot, Item* item, Critter* from_cr, Critter* to_cr )
 {
     if( Script::PrepareContext( bind_id, _FUNC_, from_cr->GetInfo() ) )
     {
@@ -821,7 +821,7 @@ void Critter::ProcessVisibleItems()
     }
 }
 
-void Critter::ViewMap( Map* map, int look, ushort hx, ushort hy, int dir )
+void Critter::ViewMap( Map* map, int look, uint16 hx, uint16 hy, int dir )
 {
     if( IsNotValid )
         return;
@@ -1285,7 +1285,7 @@ void Critter::EraseItem( Item* item, bool send )
     if( item->AccCritter.Slot != SLOT_INV )
         SendAA_MoveItem( item, CRITTER_ACTION_REFRESH, 0 );
 
-    uchar from_slot = item->AccCritter.Slot;
+    uint8 from_slot = item->AccCritter.Slot;
     item->AccCritter.Slot = SLOT_GROUND;
     if( Script::PrepareContext( ServerFunctions.CritterMoveItem, _FUNC_, GetInfo() ) )
     {
@@ -1352,7 +1352,7 @@ void Critter::GetInvItems( ItemPtrVec& items, int transfer_type, bool lock )
 }
 
 #pragma MESSAGE("Add explicit sync lock.")
-Item* Critter::GetItemByPid( ushort item_pid )
+Item* Critter::GetItemByPid( uint16 item_pid )
 {
     for( auto it = invItems.begin(), end = invItems.end(); it != end; ++it )
     {
@@ -1366,7 +1366,7 @@ Item* Critter::GetItemByPid( ushort item_pid )
     return NULL;
 }
 
-Item* Critter::GetItemByPidSlot( ushort item_pid, int slot )
+Item* Critter::GetItemByPidSlot( uint16 item_pid, int slot )
 {
     for( auto it = invItems.begin(), end = invItems.end(); it != end; ++it )
     {
@@ -1380,7 +1380,7 @@ Item* Critter::GetItemByPidSlot( ushort item_pid, int slot )
     return NULL;
 }
 
-Item* Critter::GetItemByPidInvPriority( ushort item_pid )
+Item* Critter::GetItemByPidInvPriority( uint16 item_pid )
 {
     ProtoItem* proto_item = ItemMngr.GetProtoItem( item_pid );
     if( !proto_item )
@@ -1508,7 +1508,7 @@ void Critter::GetItemsType( int type, ItemPtrVec& items, bool lock )
             SYNC_LOCK( *it );
 }
 
-uint Critter::CountItemPid( ushort pid )
+uint Critter::CountItemPid( uint16 pid )
 {
     uint res = 0;
     for( auto it = invItems.begin(), end = invItems.end(); it != end; ++it )
@@ -1520,7 +1520,7 @@ uint Critter::CountItemPid( ushort pid )
     return res;
 }
 
-bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count )
+bool Critter::MoveItem( uint8 from_slot, uint8 to_slot, uint item_id, uint count )
 {
     if( !item_id )
     {
@@ -1680,7 +1680,7 @@ bool Critter::MoveItem( uchar from_slot, uchar to_slot, uint item_id, uint count
     return true;
 }
 
-void Critter::TakeDefaultItem( uchar slot )
+void Critter::TakeDefaultItem( uint8 slot )
 {
     switch( slot )
     {
@@ -1717,7 +1717,7 @@ bool Critter::IsHaveGeckItem()
     return false;
 }
 
-void Critter::ToKnockout( uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, ushort knock_hx, ushort knock_hy )
+void Critter::ToKnockout( uint anim2begin, uint anim2idle, uint anim2end, uint lost_ap, uint16 knock_hx, uint16 knock_hy )
 {
     Data.Cond = CRITTER_CONDITION_KNOCKOUT;
     Data.Anim2Knockout = anim2idle;
@@ -2169,7 +2169,7 @@ void Critter::EventDropItem( Item* item )
     }
 }
 
-void Critter::EventMoveItem( Item* item, uchar from_slot )
+void Critter::EventMoveItem( Item* item, uint8 from_slot )
 {
     if( Script::PrepareContext( ServerFunctions.CritterMoveItem, _FUNC_, GetInfo() ) )
     {
@@ -2299,7 +2299,7 @@ void Critter::EventSmthDropItem( Critter* from_cr, Item* item )
     Script::RunPrepared();
 }
 
-void Critter::EventSmthMoveItem( Critter* from_cr, Item* item, uchar from_slot )
+void Critter::EventSmthMoveItem( Critter* from_cr, Item* item, uint8 from_slot )
 {
     if( !PrepareScriptFunc( CRITTER_EVENT_SMTH_MOVE_ITEM ) )
         return;
@@ -2421,7 +2421,7 @@ bool Critter::EventGlobalProcess( int type, Item* car, float& x, float& y, float
     return result;
 }
 
-bool Critter::EventGlobalInvite( Item* car, uint encounter_descriptor, int combat_mode, uint& map_id, ushort& hx, ushort& hy, uchar& dir )
+bool Critter::EventGlobalInvite( Item* car, uint encounter_descriptor, int combat_mode, uint& map_id, uint16& hx, uint16& hy, uint8& dir )
 {
     bool result = false;
     if( PrepareScriptFunc( CRITTER_EVENT_GLOBAL_INVITE ) )
@@ -2517,7 +2517,7 @@ void Critter::Send_EraseItemFromMap( Item* item )
     if( IsPlayer() )
         ( (Client*)this )->Send_EraseItemFromMap( item );
 }
-void Critter::Send_AnimateItem( Item* item, uchar from_frm, uchar to_frm )
+void Critter::Send_AnimateItem( Item* item, uint8 from_frm, uint8 to_frm )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_AnimateItem( item, from_frm, to_frm );
@@ -2537,17 +2537,17 @@ void Critter::Send_ContainerInfo()
     if( IsPlayer() )
         ( (Client*)this )->Send_ContainerInfo();
 }
-void Critter::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open_screen )
+void Critter::Send_ContainerInfo( Item* item_cont, uint8 transfer_type, bool open_screen )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_ContainerInfo( item_cont, transfer_type, open_screen );
 }
-void Critter::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool open_screen )
+void Critter::Send_ContainerInfo( Critter* cr_cont, uint8 transfer_type, bool open_screen )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_ContainerInfo( cr_cont, transfer_type, open_screen );
 }
-void Critter::Send_GlobalInfo( uchar flags )
+void Critter::Send_GlobalInfo( uint8 flags )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_GlobalInfo( flags );
@@ -2557,7 +2557,7 @@ void Critter::Send_GlobalLocation( Location* loc, bool add )
     if( IsPlayer() )
         ( (Client*)this )->Send_GlobalLocation( loc, add );
 }
-void Critter::Send_GlobalMapFog( ushort zx, ushort zy, uchar fog )
+void Critter::Send_GlobalMapFog( uint16 zx, uint16 zy, uint8 fog )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_GlobalMapFog( zx, zy, fog );
@@ -2567,17 +2567,17 @@ void Critter::Send_AllParams()
     if( IsPlayer() )
         ( (Client*)this )->Send_AllParams();
 }
-void Critter::Send_Param( ushort num_param )
+void Critter::Send_Param( uint16 num_param )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_Param( num_param );
 }
-void Critter::Send_ParamOther( ushort num_param, int val )
+void Critter::Send_ParamOther( uint16 num_param, int val )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_ParamOther( num_param, val );
 }
-void Critter::Send_CritterParam( Critter* cr, ushort num_param, int val )
+void Critter::Send_CritterParam( Critter* cr, uint16 num_param, int val )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_CritterParam( cr, num_param, val );
@@ -2592,32 +2592,32 @@ void Critter::Send_GameInfo( Map* map )
     if( IsPlayer() )
         ( (Client*)this )->Send_GameInfo( map );
 }
-void Critter::Send_Text( Critter* from_cr, const char* s_str, uchar how_say )
+void Critter::Send_Text( Critter* from_cr, const char* s_str, uint8 how_say )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_Text( from_cr, s_str, how_say );
 }
-void Critter::Send_TextEx( uint from_id, const char* s_str, ushort str_len, uchar how_say, ushort intellect, bool unsafe_text )
+void Critter::Send_TextEx( uint from_id, const char* s_str, uint16 str_len, uint8 how_say, uint16 intellect, bool unsafe_text )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_TextEx( from_id, s_str, str_len, how_say, intellect, unsafe_text );
 }
-void Critter::Send_TextMsg( Critter* from_cr, uint str_num, uchar how_say, ushort num_msg )
+void Critter::Send_TextMsg( Critter* from_cr, uint str_num, uint8 how_say, uint16 num_msg )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_TextMsg( from_cr, str_num, how_say, num_msg );
 }
-void Critter::Send_TextMsg( uint from_id, uint str_num, uchar how_say, ushort num_msg )
+void Critter::Send_TextMsg( uint from_id, uint str_num, uint8 how_say, uint16 num_msg )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_TextMsg( from_id, str_num, how_say, num_msg );
 }
-void Critter::Send_TextMsgLex( Critter* from_cr, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
+void Critter::Send_TextMsgLex( Critter* from_cr, uint num_str, uint8 how_say, uint16 num_msg, const char* lexems )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_TextMsgLex( from_cr, num_str, how_say, num_msg, lexems );
 }
-void Critter::Send_TextMsgLex( uint from_id, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
+void Critter::Send_TextMsgLex( uint from_id, uint num_str, uint8 how_say, uint16 num_msg, const char* lexems )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_TextMsgLex( from_id, num_str, how_say, num_msg, lexems );
@@ -2627,17 +2627,17 @@ void Critter::Send_Action( Critter* from_cr, int action, int action_ext, Item* i
     if( IsPlayer() )
         ( (Client*)this )->Send_Action( from_cr, action, action_ext, item );
 }
-void Critter::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, ushort knock_hx, ushort knock_hy )
+void Critter::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, uint16 knock_hx, uint16 knock_hy )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_Knockout( from_cr, anim2begin, anim2idle, knock_hx, knock_hy );
 }
-void Critter::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar prev_slot )
+void Critter::Send_MoveItem( Critter* from_cr, Item* item, uint8 action, uint8 prev_slot )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_MoveItem( from_cr, item, action, prev_slot );
 }
-void Critter::Send_ItemData( Critter* from_cr, uchar slot, Item* item, bool ext_data )
+void Critter::Send_ItemData( Critter* from_cr, uint8 slot, Item* item, bool ext_data )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_ItemData( from_cr, slot, item, ext_data );
@@ -2667,7 +2667,7 @@ void Critter::Send_Quests( UIntVec& nums )
     if( IsPlayer() )
         ( (Client*)this )->Send_Quests( nums );
 }
-void Critter::Send_HoloInfo( bool clear, ushort offset, ushort count )
+void Critter::Send_HoloInfo( bool clear, uint16 offset, uint16 count )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_HoloInfo( clear, offset, count );
@@ -2677,17 +2677,17 @@ void Critter::Send_AutomapsInfo( void* locs_vec, Location* loc )
     if( IsPlayer() )
         ( (Client*)this )->Send_AutomapsInfo( locs_vec, loc );
 }
-void Critter::Send_Follow( uint rule, uchar follow_type, ushort map_pid, uint follow_wait )
+void Critter::Send_Follow( uint rule, uint8 follow_type, uint16 map_pid, uint follow_wait )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_Follow( rule, follow_type, map_pid, follow_wait );
 }
-void Critter::Send_Effect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
+void Critter::Send_Effect( uint16 eff_pid, uint16 hx, uint16 hy, uint16 radius )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_Effect( eff_pid, hx, hy, radius );
 }
-void Critter::Send_FlyEffect( ushort eff_pid, uint from_crid, uint to_crid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+void Critter::Send_FlyEffect( uint16 eff_pid, uint from_crid, uint to_crid, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_FlyEffect( eff_pid, from_crid, to_crid, from_hx, from_hy, to_hx, to_hy );
@@ -2697,7 +2697,7 @@ void Critter::Send_PlaySound( uint crid_synchronize, const char* sound_name )
     if( IsPlayer() )
         ( (Client*)this )->Send_PlaySound( crid_synchronize, sound_name );
 }
-void Critter::Send_PlaySoundType( uint crid_synchronize, uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext )
+void Critter::Send_PlaySoundType( uint crid_synchronize, uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext )
 {
     if( IsPlayer() )
         ( (Client*)this )->Send_PlaySoundType( crid_synchronize, sound_type, sound_type_ext, sound_id, sound_id_ext );
@@ -2767,7 +2767,7 @@ void Critter::SendAA_Action( int action, int action_ext, Item* item )
     }
 }
 
-void Critter::SendA_Knockout( uint anim2begin, uint anim2idle, ushort knock_hx, ushort knock_hy )
+void Critter::SendA_Knockout( uint anim2begin, uint anim2idle, uint16 knock_hx, uint16 knock_hy )
 {
     if( VisCr.empty() )
         return;
@@ -2781,7 +2781,7 @@ void Critter::SendA_Knockout( uint anim2begin, uint anim2idle, ushort knock_hx, 
     }
 }
 
-void Critter::SendAA_MoveItem( Item* item, uchar action, uchar prev_slot )
+void Critter::SendAA_MoveItem( Item* item, uint8 action, uint8 prev_slot )
 {
     if( IsPlayer() )
         Send_MoveItem( this, item, action, prev_slot );
@@ -2803,7 +2803,7 @@ void Critter::SendAA_ItemData( Item* item )
     if( IsPlayer() )
         Send_AddItem( item );
 
-    uchar slot = item->AccCritter.Slot;
+    uint8 slot = item->AccCritter.Slot;
     if( !VisCr.empty() && slot != SLOT_INV && SlotEnabled[slot] )
     {
         if( SlotDataSendEnabled[slot] )
@@ -2884,7 +2884,7 @@ void Critter::SendAA_SetAnims( int cond, uint anim1, uint anim2 )
     }
 }
 
-void Critter::SendA_GlobalInfo( GlobalMapGroup* group, uchar info_flags )
+void Critter::SendA_GlobalInfo( GlobalMapGroup* group, uint8 info_flags )
 {
     if( !group )
         return;
@@ -2901,14 +2901,14 @@ void Critter::SendA_GlobalInfo( GlobalMapGroup* group, uchar info_flags )
     }
 }
 
-void Critter::SendAA_Text( CrVec& to_cr, const char* str, uchar how_say, bool unsafe_text )
+void Critter::SendAA_Text( CrVec& to_cr, const char* str, uint8 how_say, bool unsafe_text )
 {
     if( !str || !str[0] )
         return;
 
-    ushort str_len = Str::Length( str );
+    uint16 str_len = Str::Length( str );
     uint   from_id = GetId();
-    ushort intellect = (how_say >= SAY_NORM && how_say <= SAY_RADIO ? IntellectCacheValue : 0);
+    uint16 intellect = (how_say >= SAY_NORM && how_say <= SAY_RADIO ? IntellectCacheValue : 0);
 
     if( IsPlayer() )
         Send_TextEx( from_id, str, str_len, how_say, intellect, unsafe_text );
@@ -2937,7 +2937,7 @@ void Critter::SendAA_Text( CrVec& to_cr, const char* str, uchar how_say, bool un
     }
 }
 
-void Critter::SendAA_Msg( CrVec& to_cr, uint num_str, uchar how_say, ushort num_msg )
+void Critter::SendAA_Msg( CrVec& to_cr, uint num_str, uint8 how_say, uint16 num_msg )
 {
     if( IsPlayer() )
         Send_TextMsg( this, num_str, how_say, num_msg );
@@ -2968,7 +2968,7 @@ void Critter::SendAA_Msg( CrVec& to_cr, uint num_str, uchar how_say, ushort num_
     }
 }
 
-void Critter::SendAA_MsgLex( CrVec& to_cr, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
+void Critter::SendAA_MsgLex( CrVec& to_cr, uint num_str, uint8 how_say, uint16 num_msg, const char* lexems )
 {
     if( IsPlayer() )
         Send_TextMsgLex( this, num_str, how_say, num_msg, lexems );
@@ -3013,7 +3013,7 @@ void Critter::SendA_Dir()
     }
 }
 
-void Critter::SendA_Follow( uchar follow_type, ushort map_pid, uint follow_wait )
+void Critter::SendA_Follow( uint8 follow_type, uint16 map_pid, uint follow_wait )
 {
     if( VisCr.empty() )
         return;
@@ -3035,7 +3035,7 @@ void Critter::SendA_Follow( uchar follow_type, ushort map_pid, uint follow_wait 
     }
 }
 
-void Critter::SendA_ParamOther( ushort num_param, int val )
+void Critter::SendA_ParamOther( uint16 num_param, int val )
 {
     if( VisCr.empty() )
         return;
@@ -3049,7 +3049,7 @@ void Critter::SendA_ParamOther( ushort num_param, int val )
     }
 }
 
-void Critter::SendA_ParamCheck( ushort num_param )
+void Critter::SendA_ParamCheck( uint16 num_param )
 {
     if( VisCr.empty() )
         return;
@@ -3114,7 +3114,7 @@ void Critter::Send_AllAutomapsInfo()
         return;
 
     LocVec locs;
-    for( ushort i = 0; i < data_ext->LocationsCount; i++ )
+    for( uint16 i = 0; i < data_ext->LocationsCount; i++ )
     {
         uint      loc_id = data_ext->LocationsId[i];
         Location* loc = MapMngr.GetLocation( loc_id );
@@ -3685,7 +3685,7 @@ const char* Client::GetIpStr()
     return inet_ntoa( From.sin_addr );
 }
 
-ushort Client::GetPort()
+uint16 Client::GetPort()
 {
     return From.sin_port;
 }
@@ -3733,7 +3733,7 @@ void Client::PingClient()
 
     BOUT_BEGIN( this );
     Bout << NETMSG_PING;
-    Bout << (uchar)PING_CLIENT;
+    Bout << (uint8)PING_CLIENT;
     BOUT_END( this );
 
     pingNextTick = Timer::FastTick() + PING_CLIENT_LIFE_TIME;
@@ -3753,9 +3753,9 @@ void Client::Send_AddCritter( Critter* cr )
 
     bool is_npc = cr->IsNpc();
     uint msg = (is_npc ? NETMSG_ADD_NPC : NETMSG_ADD_PLAYER);
-    uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(uint) + sizeof(uint) + sizeof(ushort) * 2 +
-                   sizeof(uchar) + sizeof(uchar) + sizeof(uint) * 6 + sizeof(uint) + sizeof(short) +
-                   (is_npc ? sizeof(ushort) + sizeof(uint) : UTF8_BUF_SIZE( MAX_NAME ) ) + ParamsSendMsgLen;
+    uint msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(uint) + sizeof(uint) + sizeof(uint16) * 2 +
+                   sizeof(uint8) + sizeof(uint8) + sizeof(uint) * 6 + sizeof(uint) + sizeof(short) +
+                   (is_npc ? sizeof(uint16) + sizeof(uint) : UTF8_BUF_SIZE( MAX_NAME ) ) + ParamsSendMsgLen;
     int dialog_id = (is_npc ? cr->Data.Params[ST_DIALOG_ID] : 0);
 
     BOUT_BEGIN( this );
@@ -3791,7 +3791,7 @@ void Client::Send_AddCritter( Critter* cr )
     Bout << ParamsSendCount;
     for( auto it = ParamsSend.begin(), end = ParamsSend.end(); it != end; ++it )
     {
-        ushort index = *it;
+        uint16 index = *it;
         Bout << index;
 
         int script = ParamsSendScript[index];
@@ -3825,9 +3825,9 @@ void Client::Send_LoadMap( Map* map )
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    ushort pid_map = 0;
+    uint16 pid_map = 0;
     int    map_time = -1;
-    uchar  map_rain = 0;
+    uint8  map_rain = 0;
     uint   hash_tiles = 0;
     uint   hash_walls = 0;
     uint   hash_scen = 0;
@@ -3900,7 +3900,7 @@ void Client::Send_Action( Critter* from_cr, int action, int action_ext, Item* it
     BOUT_END( this );
 }
 
-void Client::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, ushort knock_hx, ushort knock_hy )
+void Client::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, uint16 knock_hx, uint16 knock_hy )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -3916,7 +3916,7 @@ void Client::Send_Knockout( Critter* from_cr, uint anim2begin, uint anim2idle, u
     BOUT_END( this );
 }
 
-void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar prev_slot )
+void Client::Send_MoveItem( Critter* from_cr, Item* item, uint8 action, uint8 prev_slot )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -3927,13 +3927,13 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
     uint        msg = NETMSG_CRITTER_MOVE_ITEM;
     uint        msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(uint) + sizeof(action) + sizeof(prev_slot) + sizeof(bool);
 
-    uchar       slots_data_count = 0;
-    uchar       slots_data_ext_count = 0;
+    uint8       slots_data_count = 0;
+    uint8       slots_data_ext_count = 0;
     ItemPtrVec& inv = from_cr->GetInventory();
     for( auto it = inv.begin(), end = inv.end(); it != end; ++it )
     {
         Item* item_ = *it;
-        uchar slot = item_->AccCritter.Slot;
+        uint8 slot = item_->AccCritter.Slot;
         if( slot != SLOT_INV && SlotEnabled[slot] )
         {
             int script = SlotDataSendScript[slot];
@@ -3949,7 +3949,7 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
             }
         }
     }
-    msg_len += sizeof(uchar) + (sizeof(uchar) + sizeof(uint) + sizeof(ushort) + sizeof(Item::ItemData) ) * (slots_data_count + slots_data_ext_count);
+    msg_len += sizeof(uint8) + (sizeof(uint8) + sizeof(uint) + sizeof(uint16) + sizeof(Item::ItemData) ) * (slots_data_count + slots_data_ext_count);
 
     BOUT_BEGIN( this );
     Bout << NETMSG_CRITTER_MOVE_ITEM;
@@ -3960,8 +3960,8 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
     Bout << (bool)(item ? true : false);
 
     // Slots
-    Bout << (uchar)(slots_data_count + slots_data_ext_count);
-    for( uchar i = 0; i < slots_data_count; i++ )
+    Bout << (uint8)(slots_data_count + slots_data_ext_count);
+    for( uint8 i = 0; i < slots_data_count; i++ )
     {
         Item* item_ = SlotEnabledCacheData[i];
         Bout << item_->AccCritter.Slot;
@@ -3969,7 +3969,7 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
         Bout << item_->GetProtoId();
         Bout.Push( (char*)&item_->Data, Item::ItemData::SendMask[ITEM_DATA_MASK_CRITTER], sizeof(item_->Data) );
     }
-    for( uchar i = 0; i < slots_data_ext_count; i++ )
+    for( uint8 i = 0; i < slots_data_ext_count; i++ )
     {
         Item* item_ = SlotEnabledCacheDataExt[i];
         Bout << item_->AccCritter.Slot;
@@ -3980,15 +3980,15 @@ void Client::Send_MoveItem( Critter* from_cr, Item* item, uchar action, uchar pr
     BOUT_END( this );
 
     // Lexems
-    for( uchar i = 0; i < slots_data_count; i++ )
+    for( uint8 i = 0; i < slots_data_count; i++ )
         if( SlotEnabledCacheData[i]->PLexems )
             Send_ItemLexems( SlotEnabledCacheData[i] );
-    for( uchar i = 0; i < slots_data_ext_count; i++ )
+    for( uint8 i = 0; i < slots_data_ext_count; i++ )
         if( SlotEnabledCacheDataExt[i]->PLexems )
             Send_ItemLexems( SlotEnabledCacheDataExt[i] );
 }
 
-void Client::Send_ItemData( Critter* from_cr, uchar slot, Item* item, bool ext_data )
+void Client::Send_ItemData( Critter* from_cr, uint8 slot, Item* item, bool ext_data )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4040,7 +4040,7 @@ void Client::Send_AddItemOnMap( Item* item )
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uchar is_added = item->ViewPlaceOnMap;
+    uint8 is_added = item->ViewPlaceOnMap;
 
     BOUT_BEGIN( this );
     Bout << NETMSG_ADD_ITEM_ON_MAP;
@@ -4083,7 +4083,7 @@ void Client::Send_EraseItemFromMap( Item* item )
     BOUT_END( this );
 }
 
-void Client::Send_AnimateItem( Item* item, uchar from_frm, uchar to_frm )
+void Client::Send_AnimateItem( Item* item, uint8 from_frm, uint8 to_frm )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4131,7 +4131,7 @@ void Client::Send_ContainerInfo()
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uchar transfer_type = TRANSFER_CLOSE;
+    uint8 transfer_type = TRANSFER_CLOSE;
     uint  msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(transfer_type);
 
     BOUT_BEGIN( this );
@@ -4143,18 +4143,18 @@ void Client::Send_ContainerInfo()
     AccessContainerId = 0;
 }
 
-void Client::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open_screen )
+void Client::Send_ContainerInfo( Item* item_cont, uint8 transfer_type, bool open_screen )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
     if( item_cont->GetType() != ITEM_TYPE_CONTAINER )
         return;
 
-    uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uchar) + sizeof(uint) + sizeof(uint) + sizeof(ushort) + sizeof(uint);
+    uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uint8) + sizeof(uint) + sizeof(uint) + sizeof(uint16) + sizeof(uint);
     ItemPtrVec items;
     item_cont->ContGetAllItems( items, true, true );
     if( items.size() )
-        msg_len += (uint)items.size() * (sizeof(uint) + sizeof(ushort) + sizeof(Item::ItemData) );
+        msg_len += (uint)items.size() * (sizeof(uint) + sizeof(uint16) + sizeof(Item::ItemData) );
     if( open_screen )
         SETFLAG( transfer_type, 0x80 );
 
@@ -4186,15 +4186,15 @@ void Client::Send_ContainerInfo( Item* item_cont, uchar transfer_type, bool open
     AccessContainerId = item_cont->GetId();
 }
 
-void Client::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool open_screen )
+void Client::Send_ContainerInfo( Critter* cr_cont, uint8 transfer_type, bool open_screen )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uchar) + sizeof(uint) + sizeof(uint) + sizeof(ushort) + sizeof(uint);
+    uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uint8) + sizeof(uint) + sizeof(uint) + sizeof(uint16) + sizeof(uint);
     ItemPtrVec items;
     cr_cont->GetInvItems( items, transfer_type, true );
-    ushort     barter_k = 0;
+    uint16     barter_k = 0;
     if( transfer_type == TRANSFER_CRIT_BARTER )
     {
         if( cr_cont->GetRawParam( SK_BARTER ) > GetRawParam( SK_BARTER ) )
@@ -4206,7 +4206,7 @@ void Client::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool ope
 
     if( open_screen )
         SETFLAG( transfer_type, 0x80 );
-    msg_len += (uint)items.size() * (sizeof(uint) + sizeof(ushort) + sizeof(Item::ItemData) );
+    msg_len += (uint)items.size() * (sizeof(uint) + sizeof(uint16) + sizeof(Item::ItemData) );
 
     BOUT_BEGIN( this );
     Bout << NETMSG_CONTAINER_INFO;
@@ -4237,7 +4237,7 @@ void Client::Send_ContainerInfo( Critter* cr_cont, uchar transfer_type, bool ope
 }
 
 #define SEND_LOCATION_SIZE    (16)
-void Client::Send_GlobalInfo( uchar info_flags )
+void Client::Send_GlobalInfo( uint8 info_flags )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4253,12 +4253,12 @@ void Client::Send_GlobalInfo( uchar info_flags )
     // Calculate length of message
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(info_flags);
 
-    ushort loc_count = data_ext->LocationsCount;
+    uint16 loc_count = data_ext->LocationsCount;
     if( FLAG( info_flags, GM_INFO_LOCATIONS ) )
         msg_len += sizeof(loc_count) + SEND_LOCATION_SIZE * loc_count;
 
     if( FLAG( info_flags, GM_INFO_GROUP_PARAM ) )
-        msg_len += sizeof(ushort) * 4 + sizeof(uint) + sizeof(bool) + sizeof(uint);
+        msg_len += sizeof(uint16) * 4 + sizeof(uint) + sizeof(bool) + sizeof(uint);
 
     if( FLAG( info_flags, GM_INFO_ZONES_FOG ) )
         msg_len += GM_ZONES_FOG_SIZE;
@@ -4298,10 +4298,10 @@ void Client::Send_GlobalInfo( uchar info_flags )
 
     if( FLAG( info_flags, GM_INFO_GROUP_PARAM ) )
     {
-        ushort cur_x = (ushort)GroupMove->CurX;
-        ushort cur_y = (ushort)GroupMove->CurY;
-        ushort to_x = (ushort)GroupMove->ToX;
-        ushort to_y = (ushort)GroupMove->ToY;
+        uint16 cur_x = (uint16)GroupMove->CurX;
+        uint16 cur_y = (uint16)GroupMove->CurY;
+        uint16 to_x = (uint16)GroupMove->ToX;
+        uint16 to_y = (uint16)GroupMove->ToY;
         uint   speed = (uint)(GroupMove->Speed * 1000000.0f);
         bool   wait = (GroupMove->EncounterDescriptor ? true : false);
 
@@ -4335,7 +4335,7 @@ void Client::Send_GlobalLocation( Location* loc, bool add )
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uchar info_flags = GM_INFO_LOCATION;
+    uint8 info_flags = GM_INFO_LOCATION;
     uint  msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(info_flags) + sizeof(add) + SEND_LOCATION_SIZE;
 
     BOUT_BEGIN( this );
@@ -4352,12 +4352,12 @@ void Client::Send_GlobalLocation( Location* loc, bool add )
     BOUT_END( this );
 }
 
-void Client::Send_GlobalMapFog( ushort zx, ushort zy, uchar fog )
+void Client::Send_GlobalMapFog( uint16 zx, uint16 zy, uint8 fog )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uchar info_flags = GM_INFO_FOG;
+    uint8 info_flags = GM_INFO_FOG;
     uint  msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(info_flags) + sizeof(zx) + sizeof(zy) + sizeof(fog);
 
     BOUT_BEGIN( this );
@@ -4395,7 +4395,7 @@ void Client::Send_AllParams()
     BOUT_END( this );
 }
 
-void Client::Send_Param( ushort num_param )
+void Client::Send_Param( uint16 num_param )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4409,7 +4409,7 @@ void Client::Send_Param( ushort num_param )
     BOUT_END( this );
 }
 
-void Client::Send_ParamOther( ushort num_param, int val )
+void Client::Send_ParamOther( uint16 num_param, int val )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4421,7 +4421,7 @@ void Client::Send_ParamOther( ushort num_param, int val )
     BOUT_END( this );
 }
 
-void Client::Send_CritterParam( Critter* cr, ushort num_param, int val )
+void Client::Send_CritterParam( Critter* cr, uint16 num_param, int val )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4440,9 +4440,9 @@ void Client::Send_Talk()
         return;
 
     bool  close = (Talk.TalkType == TALK_NONE);
-    uchar is_npc = (Talk.TalkType == TALK_WITH_NPC);
+    uint8 is_npc = (Talk.TalkType == TALK_WITH_NPC);
     uint  talk_id = (is_npc ? Talk.TalkNpc : Talk.DialogPackId);
-    uint  msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(is_npc) + sizeof(talk_id) + sizeof(uchar);
+    uint  msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(is_npc) + sizeof(talk_id) + sizeof(uint8);
 
     BOUT_BEGIN( this );
     Bout << NETMSG_TALK_NPC;
@@ -4452,18 +4452,18 @@ void Client::Send_Talk()
         Bout << msg_len;
         Bout << is_npc;
         Bout << talk_id;
-        Bout << uchar( 0 );
+        Bout << uint8( 0 );
     }
     else
     {
-        uchar all_answers = (uchar)Talk.CurDialog.Answers.size();
-        msg_len += sizeof(uint) + sizeof(uint) * all_answers + sizeof(uint) + sizeof(ushort) + (uint)Talk.Lexems.length();
+        uint8 all_answers = (uint8)Talk.CurDialog.Answers.size();
+        msg_len += sizeof(uint) + sizeof(uint) * all_answers + sizeof(uint) + sizeof(uint16) + (uint)Talk.Lexems.length();
 
         Bout << msg_len;
         Bout << is_npc;
         Bout << talk_id;
         Bout << all_answers;
-        Bout << (ushort)Talk.Lexems.length();                                   // Lexems length
+        Bout << (uint16)Talk.Lexems.length();                                   // Lexems length
         if( Talk.Lexems.length() )
             Bout.Push( Talk.Lexems.c_str(), (uint)Talk.Lexems.length() );       // Lexems string
         Bout << Talk.CurDialog.TextId;                                          // Main text_id
@@ -4482,13 +4482,13 @@ void Client::Send_GameInfo( Map* map )
     if( map )
         map->Lock();
     int                time = (map ? map->GetTime() : -1);
-    uchar              rain = (map ? map->GetRain() : 0);
+    uint8              rain = (map ? map->GetRain() : 0);
     bool               turn_based = (map ? map->IsTurnBasedOn : false);
     bool               no_log_out = (map ? map->IsNoLogOut() : true);
     static const int   day_time_dummy[4] = { 0 };
-    static const uchar day_color_dummy[12] = { 0 };
+    static const uint8 day_color_dummy[12] = { 0 };
     const int*         day_time = (map ? map->Data.MapDayTime : day_time_dummy);
-    const uchar*       day_color = (map ? map->Data.MapDayColor : day_color_dummy);
+    const uint8*       day_color = (map ? map->Data.MapDayColor : day_color_dummy);
     if( map )
         map->Unlock();
 
@@ -4511,19 +4511,19 @@ void Client::Send_GameInfo( Map* map )
     BOUT_END( this );
 }
 
-void Client::Send_Text( Critter* from_cr, const char* s_str, uchar how_say )
+void Client::Send_Text( Critter* from_cr, const char* s_str, uint8 how_say )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
     if( !s_str || !s_str[0] )
         return;
-    ushort s_len = Str::Length( s_str );
+    uint16 s_len = Str::Length( s_str );
     uint   from_id = (from_cr ? from_cr->GetId() : 0);
-    ushort intellect = (from_cr && how_say >= SAY_NORM && how_say <= SAY_RADIO ? from_cr->IntellectCacheValue : 0);
+    uint16 intellect = (from_cr && how_say >= SAY_NORM && how_say <= SAY_RADIO ? from_cr->IntellectCacheValue : 0);
     Send_TextEx( from_id, s_str, s_len, how_say, intellect, false );
 }
 
-void Client::Send_TextEx( uint from_id, const char* s_str, ushort str_len, uchar how_say, ushort intellect, bool unsafe_text )
+void Client::Send_TextEx( uint from_id, const char* s_str, uint16 str_len, uint8 how_say, uint16 intellect, bool unsafe_text )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4543,7 +4543,7 @@ void Client::Send_TextEx( uint from_id, const char* s_str, ushort str_len, uchar
     BOUT_END( this );
 }
 
-void Client::Send_TextMsg( Critter* from_cr, uint num_str, uchar how_say, ushort num_msg )
+void Client::Send_TextMsg( Critter* from_cr, uint num_str, uint8 how_say, uint16 num_msg )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4560,7 +4560,7 @@ void Client::Send_TextMsg( Critter* from_cr, uint num_str, uchar how_say, ushort
     BOUT_END( this );
 }
 
-void Client::Send_TextMsg( uint from_id, uint num_str, uchar how_say, ushort num_msg )
+void Client::Send_TextMsg( uint from_id, uint num_str, uint8 how_say, uint16 num_msg )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4576,14 +4576,14 @@ void Client::Send_TextMsg( uint from_id, uint num_str, uchar how_say, ushort num
     BOUT_END( this );
 }
 
-void Client::Send_TextMsgLex( Critter* from_cr, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
+void Client::Send_TextMsgLex( Critter* from_cr, uint num_str, uint8 how_say, uint16 num_msg, const char* lexems )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
     if( !num_str )
         return;
 
-    ushort lex_len = Str::Length( lexems );
+    uint16 lex_len = Str::Length( lexems );
     if( !lex_len || lex_len > MAX_DLG_LEXEMS_TEXT )
     {
         Send_TextMsg( from_cr, num_str, how_say, num_msg );
@@ -4605,14 +4605,14 @@ void Client::Send_TextMsgLex( Critter* from_cr, uint num_str, uchar how_say, ush
     BOUT_END( this );
 }
 
-void Client::Send_TextMsgLex( uint from_id, uint num_str, uchar how_say, ushort num_msg, const char* lexems )
+void Client::Send_TextMsgLex( uint from_id, uint num_str, uint8 how_say, uint16 num_msg, const char* lexems )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
     if( !num_str )
         return;
 
-    ushort lex_len = Str::Length( lexems );
+    uint16 lex_len = Str::Length( lexems );
     if( !lex_len || lex_len > MAX_DLG_LEXEMS_TEXT )
     {
         Send_TextMsg( from_id, num_str, how_say, num_msg );
@@ -4633,7 +4633,7 @@ void Client::Send_TextMsgLex( uint from_id, uint num_str, uchar how_say, ushort 
     BOUT_END( this );
 }
 
-void Client::Send_MapText( ushort hx, ushort hy, uint color, const char* text, ushort text_len, ushort intellect, bool unsafe_text )
+void Client::Send_MapText( uint16 hx, uint16 hy, uint color, const char* text, uint16 text_len, uint16 intellect, bool unsafe_text )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4654,7 +4654,7 @@ void Client::Send_MapText( ushort hx, ushort hy, uint color, const char* text, u
     BOUT_END( this );
 }
 
-void Client::Send_MapTextMsg( ushort hx, ushort hy, uint color, ushort num_msg, uint num_str )
+void Client::Send_MapTextMsg( uint16 hx, uint16 hy, uint color, uint16 num_msg, uint num_str )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4669,12 +4669,12 @@ void Client::Send_MapTextMsg( ushort hx, ushort hy, uint color, ushort num_msg, 
     BOUT_END( this );
 }
 
-void Client::Send_MapTextMsgLex( ushort hx, ushort hy, uint color, ushort num_msg, uint num_str, const char* lexems, ushort lexems_len )
+void Client::Send_MapTextMsgLex( uint16 hx, uint16 hy, uint color, uint16 num_msg, uint num_str, const char* lexems, uint16 lexems_len )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(ushort) * 2 + sizeof(uint) + sizeof(ushort) + sizeof(uint) + sizeof(lexems_len) + lexems_len;
+    uint msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(uint16) * 2 + sizeof(uint) + sizeof(uint16) + sizeof(uint) + sizeof(lexems_len) + lexems_len;
 
     BOUT_BEGIN( this );
     Bout << NETMSG_MAP_TEXT_MSG_LEX;
@@ -4735,7 +4735,7 @@ void Client::Send_Quests( UIntVec& nums )
     BOUT_END( this );
 }
 
-void Client::Send_HoloInfo( bool clear, ushort offset, ushort count )
+void Client::Send_HoloInfo( bool clear, uint16 offset, uint16 count )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4755,7 +4755,7 @@ void Client::Send_HoloInfo( bool clear, ushort offset, ushort count )
     BOUT_END( this );
 }
 
-void Client::Send_UserHoloStr( uint str_num, const char* text, ushort text_len )
+void Client::Send_UserHoloStr( uint str_num, const char* text, uint16 text_len )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4779,25 +4779,25 @@ void Client::Send_AutomapsInfo( void* locs_vec, Location* loc )
     if( locs_vec )
     {
         LocVec* locs = (LocVec*)locs_vec;
-        uint    msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(bool) + sizeof(ushort);
+        uint    msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(bool) + sizeof(uint16);
         for( uint i = 0, j = (uint)locs->size(); i < j; i++ )
         {
             Location* loc_ = (*locs)[i];
-            msg_len += sizeof(uint) + sizeof(ushort) + sizeof(ushort) + sizeof(ushort) * (uint)loc_->GetAutomaps().size();
+            msg_len += sizeof(uint) + sizeof(uint16) + sizeof(uint16) + sizeof(uint16) * (uint)loc_->GetAutomaps().size();
         }
 
         BOUT_BEGIN( this );
         Bout << NETMSG_AUTOMAPS_INFO;
         Bout << msg_len;
         Bout << (bool)true;         // Clear list
-        Bout << (ushort)locs->size();
+        Bout << (uint16)locs->size();
         for( uint i = 0, j = (uint)locs->size(); i < j; i++ )
         {
             Location*  loc_ = (*locs)[i];
-            UShortVec& automaps = loc_->GetAutomaps();
+            UInt16Vec& automaps = loc_->GetAutomaps();
             Bout << loc_->GetId();
             Bout << loc_->GetPid();
-            Bout << (ushort)automaps.size();
+            Bout << (uint16)automaps.size();
             for( uint k = 0, l = (uint)automaps.size(); k < l; k++ )
                 Bout << automaps[k];
         }
@@ -4806,25 +4806,25 @@ void Client::Send_AutomapsInfo( void* locs_vec, Location* loc )
 
     if( loc )
     {
-        UShortVec& automaps = loc->GetAutomaps();
-        uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(bool) + sizeof(ushort) +
-                             sizeof(uint) + sizeof(ushort) + sizeof(ushort) + sizeof(ushort) * (uint)automaps.size();
+        UInt16Vec& automaps = loc->GetAutomaps();
+        uint       msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(bool) + sizeof(uint16) +
+                             sizeof(uint) + sizeof(uint16) + sizeof(uint16) + sizeof(uint16) * (uint)automaps.size();
 
         BOUT_BEGIN( this );
         Bout << NETMSG_AUTOMAPS_INFO;
         Bout << msg_len;
         Bout << (bool)false;         // Append this information
-        Bout << (ushort)1;
+        Bout << (uint16)1;
         Bout << loc->GetId();
         Bout << loc->GetPid();
-        Bout << (ushort)automaps.size();
+        Bout << (uint16)automaps.size();
         for( uint i = 0, j = (uint)automaps.size(); i < j; i++ )
             Bout << automaps[i];
         BOUT_END( this );
     }
 }
 
-void Client::Send_Follow( uint rule, uchar follow_type, ushort map_pid, uint follow_wait )
+void Client::Send_Follow( uint rule, uint8 follow_type, uint16 map_pid, uint follow_wait )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4838,7 +4838,7 @@ void Client::Send_Follow( uint rule, uchar follow_type, ushort map_pid, uint fol
     BOUT_END( this );
 }
 
-void Client::Send_Effect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
+void Client::Send_Effect( uint16 eff_pid, uint16 hx, uint16 hy, uint16 radius )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4852,7 +4852,7 @@ void Client::Send_Effect( ushort eff_pid, ushort hx, ushort hy, ushort radius )
     BOUT_END( this );
 }
 
-void Client::Send_FlyEffect( ushort eff_pid, uint from_crid, uint to_crid, ushort from_hx, ushort from_hy, ushort to_hx, ushort to_hy )
+void Client::Send_FlyEffect( uint16 eff_pid, uint from_crid, uint to_crid, uint16 from_hx, uint16 from_hy, uint16 to_hx, uint16 to_hy )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4881,7 +4881,7 @@ void Client::Send_PlaySound( uint crid_synchronize, const char* sound_name )
     BOUT_END( this );
 }
 
-void Client::Send_PlaySoundType( uint crid_synchronize, uchar sound_type, uchar sound_type_ext, uchar sound_id, uchar sound_id_ext )
+void Client::Send_PlaySoundType( uint crid_synchronize, uint8 sound_type, uint8 sound_type_ext, uint8 sound_id, uint8 sound_id_ext )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4902,7 +4902,7 @@ void Client::Send_CritterLexems( Critter* cr )
         return;
 
     uint   critter_id = cr->GetId();
-    ushort lexems_len = Str::Length( cr->Data.Lexems );
+    uint16 lexems_len = Str::Length( cr->Data.Lexems );
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(critter_id) + sizeof(lexems_len) + lexems_len;
 
     BOUT_BEGIN( this );
@@ -4914,7 +4914,7 @@ void Client::Send_CritterLexems( Critter* cr )
     BOUT_END( this );
 }
 
-void Client::Send_PlayersBarter( uchar barter, uint param, uint param_ext )
+void Client::Send_PlayersBarter( uint8 barter, uint param, uint param_ext )
 {
     if( IsSendDisabled() || IsOffline() )
         return;
@@ -4962,9 +4962,9 @@ void Client::Send_RunClientScript( const char* func_name, int p0, int p1, int p2
     if( IsSendDisabled() || IsOffline() )
         return;
 
-    ushort func_name_len = Str::Length( func_name );
-    ushort p3len = (p3 ? Str::Length( p3 ) : 0);
-    ushort p4size = (uint)p4.size();
+    uint16 func_name_len = Str::Length( func_name );
+    uint16 p3len = (p3 ? Str::Length( p3 ) : 0);
+    uint16 p4size = (uint)p4.size();
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(func_name_len) + func_name_len + sizeof(p0) + sizeof(p1) + sizeof(p2) + sizeof(p3len) + p3len + sizeof(p4size) + p4size * sizeof(uint);
 
     BOUT_BEGIN( this );
@@ -5014,7 +5014,7 @@ void Client::Send_ItemLexems( Item* item ) // Already checks for client offline 
         return;
 
     uint   item_id = item->GetId();
-    ushort lexems_len = Str::Length( item->PLexems );
+    uint16 lexems_len = Str::Length( item->PLexems );
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(item_id) + sizeof(lexems_len) + lexems_len;
 
     BOUT_BEGIN( this );
@@ -5032,7 +5032,7 @@ void Client::Send_ItemLexemsNull( Item* item ) // Already checks for client offl
         return;
 
     uint   item_id = item->GetId();
-    ushort lexems_len = 0;
+    uint16 lexems_len = 0;
     uint   msg_len = sizeof(uint) + sizeof(msg_len) + sizeof(item_id) + sizeof(lexems_len);
 
     BOUT_BEGIN( this );
@@ -5050,8 +5050,8 @@ void Client::Send_CheckUIDS()
 
     const uint uid_msg[5] = { NETMSG_CHECK_UID0, NETMSG_CHECK_UID1, NETMSG_CHECK_UID2, NETMSG_CHECK_UID3, NETMSG_CHECK_UID4 };
     uint       msg = uid_msg[Random( 0, 4 )];
-    uchar      rnd_count = Random( 1, 21 );
-    uchar      rnd_count2 = Random( 2, 12 );
+    uint8      rnd_count = Random( 1, 21 );
+    uint8      rnd_count2 = Random( 2, 12 );
     uint       uidxor[5] = { (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ), (uint)Random( 1, 0x6FFFFFFF ) };
     uint       uid[5] = { UID[0] ^ uidxor[0], UID[1] ^ uidxor[1], UID[2] ^ uidxor[2], UID[3] ^ uidxor[3], UID[4] ^ uidxor[4] };
     uint       msg_len = sizeof(msg) + sizeof(msg_len) + sizeof(uid) + sizeof(uidxor) + sizeof(rnd_count) * 2 + rnd_count + rnd_count2;
@@ -5065,7 +5065,7 @@ void Client::Send_CheckUIDS()
     Bout << uid[1];
     Bout << uidxor[2];
     for( int i = 0; i < rnd_count; i++ )
-        Bout << (uchar)Random( 0, 255 );
+        Bout << (uint8)Random( 0, 255 );
     Bout << uid[2];
     Bout << uidxor[1];
     Bout << uid[4];
@@ -5074,7 +5074,7 @@ void Client::Send_CheckUIDS()
     Bout << uidxor[4];
     Bout << uid[0];
     for( int i = 0; i < rnd_count2; i++ )
-        Bout << (uchar)Random( 0, 255 );
+        Bout << (uint8)Random( 0, 255 );
     BOUT_END( this );
 }
 
@@ -5107,7 +5107,7 @@ bool Client::CheckKnownLocById( uint loc_id )
     return false;
 }
 
-bool Client::CheckKnownLocByPid( ushort loc_pid )
+bool Client::CheckKnownLocByPid( uint16 loc_pid )
 {
     if( !loc_pid )
         return false;
@@ -5318,7 +5318,7 @@ void Client::ProcessTalk( bool force )
     if( !Talk.IgnoreDistance )
     {
         uint   map_id = 0;
-        ushort hx = 0, hy = 0;
+        uint16 hx = 0, hy = 0;
         uint   talk_distance = 0;
         if( Talk.TalkType == TALK_WITH_NPC )
         {
@@ -5869,7 +5869,7 @@ bool Npc::IsPlaneNoTalk()
     return false;
 }
 
-void Npc::MoveToHex( int reason, ushort hx, ushort hy, uchar ori, bool is_run, uchar cut )
+void Npc::MoveToHex( int reason, uint16 hx, uint16 hy, uint8 ori, bool is_run, uint8 cut )
 {
     AIDataPlane* plane = new AIDataPlane( AI_PLANE_WALK, AI_PLANE_WALK_PRIORITY );
     if( !plane )

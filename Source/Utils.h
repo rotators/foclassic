@@ -7,12 +7,12 @@ extern uint GetDoubleClickTicks();
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
-extern uint GetColorDay( int* day_time, uchar* colors, int game_time, int* light );
+extern uint GetColorDay( int* day_time, uint8* colors, int game_time, int* light );
 
 #endif // FOCLASSIC_CLIENT || FOCLASSIC_MAPPER
 
 #ifdef FOCLASSIC_MAPPER
-const uchar SELECT_ALPHA = 100;
+const uint8 SELECT_ALPHA = 100;
 #endif
 
 template<class T>

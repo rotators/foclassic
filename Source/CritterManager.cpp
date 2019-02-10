@@ -193,7 +193,7 @@ bool CritterManager::LoadProtos()
     return errors == 0;
 }
 
-CritData* CritterManager::GetProto( ushort proto_id )
+CritData* CritterManager::GetProto( uint16 proto_id )
 {
     if( !proto_id || proto_id >= MAX_PROTO_CRITTERS || !allProtos[proto_id].ProtoId )
         return NULL;
@@ -408,7 +408,7 @@ void CritterManager::CritterGarbager()
     }
 }
 
-Npc* CritterManager::CreateNpc( ushort proto_id, uint params_count, int* params, uint items_count, int* items, const char* script, Map* map, ushort hx, ushort hy, uchar dir, bool accuracy )
+Npc* CritterManager::CreateNpc( uint16 proto_id, uint params_count, int* params, uint items_count, int* items, const char* script, Map* map, uint16 hx, uint16 hy, uint8 dir, bool accuracy )
 {
     if( !map || hx >= map->GetMaxHexX() || hy >= map->GetMaxHexY() )
     {
@@ -522,7 +522,7 @@ Npc* CritterManager::CreateNpc( ushort proto_id, uint params_count, int* params,
     return npc;
 }
 
-Npc* CritterManager::CreateNpc( ushort proto_id, bool copy_data )
+Npc* CritterManager::CreateNpc( uint16 proto_id, bool copy_data )
 {
     if( !IsInit() )
     {
@@ -704,7 +704,7 @@ void CritterManager::GetCopyPlayers( ClVec& players, bool sync_lock )
     players = find_players;
 }
 
-void CritterManager::GetGlobalMapCritters( ushort wx, ushort wy, uint radius, int find_type, CrVec& critters, bool sync_lock )
+void CritterManager::GetGlobalMapCritters( uint16 wx, uint16 wy, uint radius, int find_type, CrVec& critters, bool sync_lock )
 {
     crLocker.Lock();
     CrMap all_critters = allCritters;

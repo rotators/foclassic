@@ -193,8 +193,8 @@ int main( int argc, char** argv )
     STATIC_ASSERT_PRINTF( WriteLog, short );
     STATIC_ASSERT_PRINTF( WriteLog, int );
     STATIC_ASSERT_PRINTF( WriteLog, int64 );
-    STATIC_ASSERT_PRINTF( WriteLog, uchar );
-    STATIC_ASSERT_PRINTF( WriteLog, ushort );
+    STATIC_ASSERT_PRINTF( WriteLog, uint8 );
+    STATIC_ASSERT_PRINTF( WriteLog, uint16 );
     STATIC_ASSERT_PRINTF( WriteLog, uint );
     STATIC_ASSERT_PRINTF( WriteLog, uint64 );
     STATIC_ASSERT_PRINTF( WriteLog, bool );
@@ -1101,7 +1101,7 @@ void AdminManager( void* port_ )
     setsockopt( listen_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt) );
     sockaddr_in sin;
     sin.sin_family = AF_INET;
-    sin.sin_port = htons( (ushort)(size_t)port_ );
+    sin.sin_port = htons( (uint16)(size_t)port_ );
     sin.sin_addr.s_addr = INADDR_ANY;
     if( bind( listen_sock, (sockaddr*)&sin, sizeof(sin) ) == SOCKET_ERROR )
     {

@@ -157,7 +157,7 @@ int ConstantsManager::GetItemPid( const char* str )
     return GetValue( CONSTANTS_ITEM, str );
 }
 
-const char* ConstantsManager::GetItemName( ushort pid )
+const char* ConstantsManager::GetItemName( uint16 pid )
 {
     return GetName( CONSTANTS_ITEM, pid );
 }

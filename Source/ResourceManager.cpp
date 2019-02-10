@@ -194,7 +194,7 @@ AnyFrames* ResourceManager::GetAnim( uint name_hash, int dir, int res_type )
 uint AnimMapId( uint crtype, uint anim1, uint anim2, int dir, bool is_fallout )
 {
     uint dw[5] = { crtype, anim1, anim2, (uint)dir, is_fallout ? uint( -1 ) : 1 };
-    return Crypt.Crc32( (uchar*)&dw[0], sizeof(dw) );
+    return Crypt.Crc32( (uint8*)&dw[0], sizeof(dw) );
 }
 
 AnyFrames* ResourceManager::GetCrit2dAnim( uint crtype, uint anim1, uint anim2, int dir )
@@ -669,7 +669,7 @@ AnyFrames* ResourceManager::LoadFalloutAnimSpr( uint crtype, uint anim1, uint an
     // Ko rise offsets
     if( anim1 == ANIM1_FALLOUT_KNOCKOUT )
     {
-        uchar anim2_ = ANIM2_FALLOUT_KNOCK_FRONT;
+        uint8 anim2_ = ANIM2_FALLOUT_KNOCK_FRONT;
         if( anim2 == ANIM2_FALLOUT_STANDUP_BACK )
             anim2_ = ANIM2_FALLOUT_KNOCK_BACK;
         LOADSPR_ADDOFFS( ANIM1_FALLOUT_DEAD, anim2_ );

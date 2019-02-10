@@ -52,7 +52,7 @@ typedef vector<Matrix*>    MatrixPtrVec;
 #  include <GL/glxew.h>
 # endif
 
-# define COLOR_FIX( c )           COLOR_ARGB( ( (uchar*)&(c) )[3], ( (uchar*)&(c) )[0], ( (uchar*)&(c) )[1], ( (uchar*)&(c) )[2] )
+# define COLOR_FIX( c )           COLOR_ARGB( ( (uint8*)&(c) )[3], ( (uint8*)&(c) )[0], ( (uint8*)&(c) )[1], ( (uint8*)&(c) )[2] )
 # define Device_                  GLuint
 # define Surface_                 GLuint
 # define EffectValue_             GLint
@@ -81,7 +81,7 @@ struct Texture
     ~Texture() { SAFEREL( Instance ); }
     #else
     GLuint             Id;
-    uchar*             Data;
+    uint8*             Data;
     uint               Size;
     uint               Width;
     uint               Height;
@@ -103,7 +103,7 @@ struct EffectDefault
     enum EType { String, Floats, Dword };
     char*  Name;
     EType  Type;
-    uchar* Data;
+    uint8* Data;
     uint   Size;
 };
 
@@ -292,7 +292,7 @@ struct MeshSubset
     Vertex3DVec    VerticesTransformed;
     bool           VerticesTransformedValid;
     uint           FacesCount;
-    UShortVec      Indicies;
+    UInt16Vec      Indicies;
     string         DiffuseTexture;
     float          DiffuseColor[4];
     float          AmbientColor[4];

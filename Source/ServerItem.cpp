@@ -6,7 +6,7 @@
 #include "MapManager.h"
 #include "Server.h"
 
-Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uint count, bool check_blocks /* = true */ )
+Item* FOServer::CreateItemOnHex( Map* map, uint16 hx, uint16 hy, uint16 pid, uint count, bool check_blocks /* = true */ )
 {
     // Checks
     ProtoItem* proto_item = ItemMngr.GetProtoItem( pid );
@@ -32,7 +32,7 @@ Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uin
     // Create childs
     for( int i = 0; i < ITEM_MAX_CHILDS; i++ )
     {
-        ushort child_pid = item->Proto->ChildPid[i];
+        uint16 child_pid = item->Proto->ChildPid[i];
         if( !child_pid )
             continue;
 
@@ -40,7 +40,7 @@ Item* FOServer::CreateItemOnHex( Map* map, ushort hx, ushort hy, ushort pid, uin
         if( !child )
             continue;
 
-        ushort child_hx = hx, child_hy = hy;
+        uint16 child_hx = hx, child_hy = hy;
         FOREACH_PROTO_ITEM_LINES( item->Proto->ChildLines[i], child_hx, child_hy, map->GetMaxHexX(), map->GetMaxHexY(),;
                                   );
 

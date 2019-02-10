@@ -226,7 +226,7 @@ void Timer::FullTimeToDateTime( uint64 ft, DateTime& dt )
     }
 
     // Day
-    dt.Day = (ushort)ft + 1;
+    dt.Day = (uint16)ft + 1;
 
     // Day of week
     int a = (14 - dt.Month) / 12;
@@ -251,7 +251,7 @@ void Timer::ContinueTime( DateTime& td, int seconds )
     FullTimeToDateTime( ft, td );
 }
 
-uint Timer::GetFullSecond( ushort year, ushort month, ushort day, ushort hour, ushort minute, ushort second )
+uint Timer::GetFullSecond( uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second )
 {
     DateTime dt = { year, month, 0, day, hour, minute, second, 0 };
     uint64   ft = 0;
@@ -268,7 +268,7 @@ DateTime Timer::GetGameTime( uint full_second )
     return dt;
 }
 
-uint Timer::GameTimeMonthDay( ushort year, ushort month )
+uint Timer::GameTimeMonthDay( uint16 year, uint16 month )
 {
     switch( month )
     {

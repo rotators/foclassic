@@ -14,13 +14,13 @@ public:
     CryptManager();
 
     // Returns Crc32 of data
-    uint Crc32( uchar* data, uint len );
+    uint Crc32( uint8* data, uint len );
 
     // Continue calculate of Crc32
-    void Crc32( uchar* data, uint len, uint& crc );
+    void Crc32( uint8* data, uint len, uint& crc );
 
     // Returns CheckSum of data
-    uint CheckSum( uchar* data, uint len );
+    uint CheckSum( uint8* data, uint len );
 
     // Xor the data
     void XOR( char* data, uint len, char* xor_key, uint xor_len );
@@ -35,10 +35,10 @@ public:
     void TextXOR( char* data, uint len, char* xor_key, uint xor_len );
 
     // Compress zlib
-    uchar* Compress( const uchar* data, uint& data_len );
+    uint8* Compress( const uint8* data, uint& data_len );
 
     // Uncompress zlib
-    uchar* Uncompress( const uchar* data, uint& data_len, uint mul_approx );
+    uint8* Uncompress( const uint8* data, uint& data_len, uint mul_approx );
 
     // Crypt text
 //	void CryptText(char* text);
@@ -49,8 +49,8 @@ public:
     bool   IsCacheTable( const char* cache_fname );
     bool   CreateCacheTable( const char* cache_fname );
     bool   SetCacheTable( const char* cache_fname );
-    void   SetCache( const char* data_name, const uchar* data, uint data_len );
-    uchar* GetCache( const char* data_name, uint& data_len );
+    void   SetCache( const char* data_name, const uint8* data, uint data_len );
+    uint8* GetCache( const char* data_name, uint& data_len );
 };
 
 extern CryptManager Crypt;

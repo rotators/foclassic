@@ -18,21 +18,21 @@ public:
     static void EndOfWork();
 
     bool   LoadFile( const char* fname, int path_type );
-    bool   LoadStream( const uchar* stream, uint length );
+    bool   LoadStream( const uint8* stream, uint length );
     void   UnloadFile();
-    uchar* ReleaseBuffer();
+    uint8* ReleaseBuffer();
 
     void SetCurPos( uint pos );
     void GoForward( uint offs );
     void GoBack( uint offs );
-    bool FindFragment( const uchar* fragment, uint fragment_len, uint begin_offs );
+    bool FindFragment( const uint8* fragment, uint fragment_len, uint begin_offs );
 
     bool   GetLine( char* str, uint len );
     bool   CopyMem( void* ptr, uint size );
     void   GetStr( char* str );
-    uchar  GetUChar();
-    ushort GetBEUShort();
-    ushort GetLEUShort();
+    uint8  GetUChar();
+    uint16 GetBEUShort();
+    uint16 GetLEUShort();
     uint   GetBEUInt();
     uint   GetLEUInt();
     uint   GetLE3UChar();
@@ -45,14 +45,14 @@ public:
     bool   ResizeOutBuf();
     void   SetPosOutBuf( uint pos );
     bool   SaveOutBufToFile( const char* fname, int path_type );
-    uchar* GetOutBuf()    { return dataOutBuf; }
+    uint8* GetOutBuf()    { return dataOutBuf; }
     uint   GetOutBufLen() { return endOutBuf; }
 
     void SetData( void* data, uint len );
     void SetStr( const char* fmt, ... );
-    void SetUChar( uchar data );
-    void SetBEUShort( ushort data );
-    void SetLEUShort( ushort data );
+    void SetUChar( uint8 data );
+    void SetBEUShort( uint16 data );
+    void SetLEUShort( uint16 data );
     void SetBEUInt( uint data );
     void SetLEUInt( uint data );
 
@@ -69,8 +69,8 @@ public:
     static char*       EraseExtension( char* fname );     // Erase EXT with dot
 
     bool   IsLoaded()  { return fileBuf != NULL; }
-    uchar* GetBuf()    { return fileBuf; }
-    uchar* GetCurBuf() { return fileBuf + curPos; }
+    uint8* GetBuf()    { return fileBuf; }
+    uint8* GetCurBuf() { return fileBuf + curPos; }
     uint   GetCurPos() { return curPos; }
     uint   GetFsize()  { return fileSize; }
     bool   IsEOF()     { return curPos >= fileSize; }
@@ -93,10 +93,10 @@ private:
     static DataFileVec dataFiles;
 
     uint               fileSize;
-    uchar*             fileBuf;
+    uint8*             fileBuf;
     uint               curPos;
 
-    uchar*             dataOutBuf;
+    uint8*             dataOutBuf;
     uint               posOutBuf;
     uint               endOutBuf;
     uint               lenOutBuf;

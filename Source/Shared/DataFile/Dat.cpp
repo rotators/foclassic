@@ -68,14 +68,14 @@ bool DataFileDat::ReadTree()
         if( !FileRead( datHandle, &files_total, 4 ) )
             return false;
         tree_size -= 28 + 4;     // Subtract information block and files total
-        memTree = new uchar[tree_size];
+        memTree = new uint8[tree_size];
         memzero( memTree, tree_size );
         if( !FileRead( datHandle, memTree, tree_size ) )
             return false;
 
         // Indexing tree
-        uchar* ptr = memTree;
-        uchar* end_ptr = memTree + tree_size;
+        uint8* ptr = memTree;
+        uint8* end_ptr = memTree + tree_size;
         while( true )
         {
             uint fnsz, type;                             // Include zero
@@ -132,14 +132,14 @@ bool DataFileDat::ReadTree()
     if( !FileRead( datHandle, &files_total, 4 ) )
         return false;
     tree_size -= 4;
-    memTree = new uchar[tree_size];
+    memTree = new uint8[tree_size];
     memzero( memTree, tree_size );
     if( !FileRead( datHandle, memTree, tree_size ) )
         return false;
 
     // Indexing tree
-    uchar* ptr = memTree;
-    uchar* end_ptr = memTree + tree_size;
+    uint8* ptr = memTree;
+    uint8* end_ptr = memTree + tree_size;
     while( true )
     {
         uint fnsz;
@@ -162,7 +162,7 @@ bool DataFileDat::ReadTree()
     return true;
 }
 
-uchar* DataFileDat::OpenFile( const char* fname, uint& len )
+uint8* DataFileDat::OpenFile( const char* fname, uint& len )
 {
     if( !datHandle )
         return NULL;
@@ -171,8 +171,8 @@ uchar* DataFileDat::OpenFile( const char* fname, uint& len )
     if( it == filesTree.end() )
         return NULL;
 
-    uchar* ptr = it->second;
-    uchar  type;
+    uint8* ptr = it->second;
+    uint8  type;
     uint   real_size, packed_size, offset;
 
     memcpy( &type, ptr, sizeof(type) );
@@ -184,7 +184,7 @@ uchar* DataFileDat::OpenFile( const char* fname, uint& len )
         return NULL;
 
     len = real_size;
-    uchar* buf = new uchar[len + 1];
+    uint8* buf = new uint8[len + 1];
 
     if( !type )
     {

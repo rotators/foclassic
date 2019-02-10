@@ -27,25 +27,25 @@ public:
     // Need parameters to show craft
     UIntVec   ShowPNum;
     IntVec    ShowPVal;
-    UCharVec  ShowPOr;
+    UInt8Vec  ShowPOr;
 
     // Need parameters to craft
     UIntVec   NeedPNum;
     IntVec    NeedPVal;
-    UCharVec  NeedPOr;
+    UInt8Vec  NeedPOr;
 
     // Need items to craft
-    UShortVec NeedItems;
+    UInt16Vec NeedItems;
     UIntVec   NeedItemsVal;
-    UCharVec  NeedItemsOr;
+    UInt8Vec  NeedItemsOr;
 
     // Need tools to craft
-    UShortVec NeedTools;
+    UInt16Vec NeedTools;
     UIntVec   NeedToolsVal;
-    UCharVec  NeedToolsOr;
+    UInt8Vec  NeedToolsOr;
 
     // New items
-    UShortVec OutItems;
+    UInt16Vec OutItems;
     UIntVec   OutItemsVal;
 
     // Other
@@ -71,10 +71,10 @@ public:
 
     #if defined (FOCLASSIC_SERVER) || defined (FONLINE_MRFIXIT)
 private:
-    int  SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
-    int  SetStrItem( const char*& pstr_in, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
-    void GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
-    void GetStrItem( char* pstr_out, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
+    int  SetStrParam( const char*& pstr_in, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
+    int  SetStrItem( const char*& pstr_in, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
+    void GetStrParam( char* pstr_out, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
+    void GetStrItem( char* pstr_out, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
     #endif
 };
 
@@ -128,8 +128,8 @@ public:
     bool IsTrueCraft( Critter* cr, uint num );
     void GetTrueCrafts( Critter* cr, CraftItemVec& craft_vec );
 private:
-    bool IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
-    bool IsTrueItems( Critter* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
+    bool IsTrueParams( Critter* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
+    bool IsTrueItems( Critter* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
     #endif
     #ifdef FOCLASSIC_CLIENT
 public:
@@ -138,8 +138,8 @@ public:
     bool IsTrueCraft( CritterCl* cr, uint num );
     void GetTrueCrafts( CritterCl* cr, CraftItemVec& craft_vec );
 private:
-    bool IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UCharVec& or_vec );
-    bool IsTrueItems( CritterCl* cr, UShortVec& pid_vec, UIntVec& count_vec, UCharVec& or_vec );
+    bool IsTrueParams( CritterCl* cr, UIntVec& num_vec, IntVec& val_vec, UInt8Vec& or_vec );
+    bool IsTrueItems( CritterCl* cr, UInt16Vec& pid_vec, UIntVec& count_vec, UInt8Vec& or_vec );
     #endif
 
     #ifdef FOCLASSIC_SERVER

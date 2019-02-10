@@ -30,13 +30,13 @@ bool QuestTab::IsEmpty()
     return quests.empty();
 }
 
-Quest* QuestTab::AddQuest( ushort num, string info )
+Quest* QuestTab::AddQuest( uint16 num, string info )
 {
     quests.push_back( Quest( num, info ) );
     return &quests[quests.size() - 1];
     ReparseText();
 }
-void QuestTab::RefreshQuest( ushort num, string str )
+void QuestTab::RefreshQuest( uint16 num, string str )
 {
     Quest* quest = GetQuest( num );
     if( !quest )
@@ -44,12 +44,12 @@ void QuestTab::RefreshQuest( ushort num, string str )
     quest->str = str;
     ReparseText();
 }
-Quest* QuestTab::GetQuest( ushort num )
+Quest* QuestTab::GetQuest( uint16 num )
 {
     auto it = std::find( quests.begin(), quests.end(), num );
     return it != quests.end() ? &(*it) : NULL;
 }
-void QuestTab::EraseQuest( ushort num )
+void QuestTab::EraseQuest( uint16 num )
 {
     auto it = std::find( quests.begin(), quests.end(), num );
     if( it != quests.end() )
@@ -73,8 +73,8 @@ void QuestManager::Finish()
 void QuestManager::OnQuest( uint num )
 {
     // Split
-    ushort q_num = num / QUEST_MUL;
-    ushort val = num % QUEST_MUL;
+    uint16 q_num = num / QUEST_MUL;
+    uint16 val = num % QUEST_MUL;
 
     // Check valid Name of Tab
     if( !msg->Count( STR_QUEST_MAP_( q_num ) ) )
@@ -140,7 +140,7 @@ QuestTab* QuestManager::GetTab( uint tab_num )
     return &(*it).second;
 }
 
-Quest* QuestManager::GetQuest( uint tab_num, ushort quest_num )
+Quest* QuestManager::GetQuest( uint tab_num, uint16 quest_num )
 {
     QuestTab* tab = GetTab( tab_num );
     return tab ? tab->GetQuest( quest_num ) : NULL;

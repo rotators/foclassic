@@ -66,10 +66,10 @@ SPRITE_SETTER( SetEgg, int, EggType );
 SPRITE_SETTER( SetContour, int, ContourType );
 SPRITE_SETTER2( SetContour, int, ContourType, uint, ContourColor );
 SPRITE_SETTER( SetColor, uint, Color );
-SPRITE_SETTER( SetAlpha, uchar*, Alpha );
+SPRITE_SETTER( SetAlpha, uint8*, Alpha );
 SPRITE_SETTER( SetFlash, uint, FlashMask );
 
-void Sprite::SetLight( uchar* light, int maxhx, int maxhy )
+void Sprite::SetLight( uint8* light, int maxhx, int maxhy )
 {
     if( !Valid )
         return;
@@ -106,7 +106,7 @@ void Sprites::ClearPool()
     spritesPool.clear();
 }
 
-Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback )
+Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback )
 {
     if( index >= spritesTreeSize )
     {
@@ -216,12 +216,12 @@ Sprite& Sprites::PutSprite( uint index, int draw_order, int hx, int hy, int cut,
     return *spr;
 }
 
-Sprite& Sprites::AddSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback )
+Sprite& Sprites::AddSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback )
 {
     return PutSprite( spritesTreeSize, draw_order, hx, hy, cut, x, y, id, id_ptr, ox, oy, alpha, effect, callback );
 }
 
-Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uchar* alpha, Effect** effect, bool* callback )
+Sprite& Sprites::InsertSprite( int draw_order, int hx, int hy, int cut, int x, int y, uint id, uint* id_ptr, short* ox, short* oy, uint8* alpha, Effect** effect, bool* callback )
 {
     // For cutted sprites need resort all tree
     if( cut == SPRITE_CUT_HORIZONTAL || cut == SPRITE_CUT_VERTICAL )

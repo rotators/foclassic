@@ -22,7 +22,7 @@ namespace Script
     bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
     bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 
-    bool RegisterAll( asIScriptEngine* engine, const uchar& bind );
+    bool RegisterAll( asIScriptEngine* engine, const uint8& bind );
     #endif
 
     #if defined (FOCLASSIC_SCRIPT_COMPILER) || defined (FOCLASSIC_SERVER)
@@ -38,7 +38,7 @@ namespace Script
         bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
         bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 
-        bool RegisterAll( asIScriptEngine* engine, const uchar& bind );
+        bool RegisterAll( asIScriptEngine* engine, const uint8& bind );
     }
     #endif
 }

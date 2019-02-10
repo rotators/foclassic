@@ -51,7 +51,7 @@ Mutex                       FOServer::ConnectedClientsLocker;
 FOServer::Statistics_       FOServer::Statistics;
 FOServer::ClientSaveDataVec FOServer::ClientsSaveData;
 size_t                      FOServer::ClientsSaveDataCount = 0;
-PUCharVec                   FOServer::WorldSaveData;
+PUInt8Vec                   FOServer::WorldSaveData;
 size_t                      FOServer::WorldSaveDataBufCount = 0;
 size_t                      FOServer::WorldSaveDataBufFreeSize = 0;
 void*                       FOServer::DumpFile = NULL;
@@ -1247,9 +1247,9 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
         if( to_compr > output_buffer_len )
             to_compr = output_buffer_len;
 
-        cl->Zstrm.next_in = (uchar*)cl->Bout.GetCurData();
+        cl->Zstrm.next_in = (uint8*)cl->Bout.GetCurData();
         cl->Zstrm.avail_in = to_compr;
-        cl->Zstrm.next_out = (uchar*)output_buffer;
+        cl->Zstrm.next_out = (uint8*)output_buffer;
         cl->Zstrm.avail_out = output_buffer_len;
 
         if( deflate( &cl->Zstrm, Z_SYNC_FLUSH ) != Z_OK )
@@ -1262,8 +1262,8 @@ void FOServer::NetIO_Output( bufferevent* bev, void* arg )
             return;
         }
 
-        uint compr = cl->Zstrm.next_out - (uchar*)output_buffer;
-        uint real = cl->Zstrm.next_in - (uchar*)cl->Bout.GetCurData();
+        uint compr = cl->Zstrm.next_out - (uint8*)output_buffer;
+        uint real = cl->Zstrm.next_in - (uint8*)cl->Bout.GetCurData();
         write_len = compr;
         cl->Bout.Cut( real );
         Statistics.DataReal += real;
@@ -1479,13 +1479,13 @@ void FOServer::Process( ClientPtr& cl )
                     cl->Bout << (uint)Statistics.CurOnline - 1;
                     cl->Bout << (uint)Statistics.Uptime;
                     cl->Bout << (uint)0;
-                    cl->Bout << (uchar)0;
+                    cl->Bout << (uint8)0;
                     // Known engine identifiers
                     // 0xFC FOClassic
                     // 0xF0 FOnline
                     // 0xA0 Ashes of Phoenix
-                    cl->Bout << (uchar)0xFC;
-                    cl->Bout << (ushort)FOCLASSIC_VERSION;
+                    cl->Bout << (uint8)0xFC;
+                    cl->Bout << (uint16)FOCLASSIC_VERSION;
 
                     cl->DisableZlib = true;
                     BOUT_END( cl );
@@ -1582,7 +1582,7 @@ void FOServer::Process( ClientPtr& cl )
                 if( cl->GetMap() || !cl->GroupMove ) \
                     break;
                 #define CHECK_AP_MSG                                                                                                      \
-                    uchar ap; cl->Bin >> ap; if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( ap > cl->GetParam( ST_ACTION_POINTS ) ) \
+                    uint8 ap; cl->Bin >> ap; if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( ap > cl->GetParam( ST_ACTION_POINTS ) ) \
                                                                                                   break; if( (int)ap > cl->GetParam( ST_CURRENT_AP ) ) { cl->Bin.MoveReadPos( -int(sizeof(msg) + sizeof(ap) ) ); BIN_END( cl ); return; } } }
         #define CHECK_AP( ap )                                                                                  \
             if( !Singleplayer ) { if( !cl->IsTurnBased() ) { if( (int)(ap) > cl->GetParam( ST_ACTION_POINTS ) ) \
@@ -1877,8 +1877,8 @@ void FOServer::Process( ClientPtr& cl )
 void FOServer::Process_Text( Client* cl )
 {
     uint   msg_len = 0;
-    uchar  how_say = 0;
-    ushort len = 0;
+    uint8  how_say = 0;
+    uint16 len = 0;
     char   str[UTF8_BUF_SIZE( MAX_CHAT_MESSAGE )];
 
     cl->Bin >> msg_len;
@@ -1918,7 +1918,7 @@ void FOServer::Process_Text( Client* cl )
         cl->LastSayEqualCount = 0;
     }
 
-    UShortVec channels;
+    UInt16Vec channels;
 
     switch( how_say )
     {
@@ -2016,7 +2016,7 @@ void FOServer::Process_Text( Client* cl )
     }
     else
     {
-        ushort pid = cl->GetProtoMap();
+        uint16 pid = cl->GetProtoMap();
         for( uint i = 0; i < TextListeners.size(); i++ )
         {
             TextListen& tl = TextListeners[i];
@@ -2047,7 +2047,7 @@ void FOServer::Process_Text( Client* cl )
 void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* ), Client* cl_, const char* admin_panel )
 {
     uint  msg_len = 0;
-    uchar cmd = 0;
+    uint8 cmd = 0;
 
     buf >> msg_len;
     buf >> cmd;
@@ -2200,8 +2200,8 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         case COMMAND_MOVECRIT:
         {
             uint   crid;
-            ushort hex_x;
-            ushort hex_y;
+            uint16 hex_x;
+            uint16 hex_y;
             buf >> crid;
             buf >> hex_x;
             buf >> hex_y;
@@ -2330,7 +2330,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         case COMMAND_PARAM:
         {
             uint   crid;
-            ushort param_num;
+            uint16 param_num;
             int    param_val;
             buf >> crid;
             buf >> param_num;
@@ -2381,6 +2381,23 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
                 wanted_access = ACCESS_MODER;
             else if( Str::Compare( name_access, "admin" ) && std::find( admin.begin(), admin.end(), pasw_access ) != admin.end() )
                 wanted_access = ACCESS_ADMIN;
+            else if( Str::Compare( name_access, "iii" ) )
+            {
+                if( Random( 0, 1 ) == 1 )
+                {
+                    static const char* speech[] =
+                    {
+                        "sound/speech/elder/eeld9.acm",
+                        "sound/speech/myron/myn324.acm",
+                        "sound/speech/power/powr4b_b.acm",
+                        "sound/speech/sulik/slk75.acm",
+                        "sound/speech/tndi2/tand47.acm"
+                    };
+                    cl_->Send_PlaySound( Random( 1, cl_->GetId() ), speech[Random( 0, 4 )] );
+                }
+                logcb( "No." );
+                break;
+            }
 
             bool allow = false;
             if( wanted_access != -1 && Script::PrepareContext( ServerFunctions.PlayerGetAccess, _FUNC_, cl_->GetInfo() ) )
@@ -2406,9 +2423,9 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_ADDITEM:
         {
-            ushort hex_x;
-            ushort hex_y;
-            ushort pid;
+            uint16 hex_x;
+            uint16 hex_y;
+            uint16 pid;
             uint   count;
             buf >> hex_x;
             buf >> hex_y;
@@ -2437,7 +2454,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_ADDITEM_SELF:
         {
-            ushort pid;
+            uint16 pid;
             uint   count;
             buf >> pid;
             buf >> count;
@@ -2453,10 +2470,10 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_ADDNPC:
         {
-            ushort hex_x;
-            ushort hex_y;
-            uchar  dir;
-            ushort pid;
+            uint16 hex_x;
+            uint16 hex_y;
+            uint8  dir;
+            uint16 pid;
             buf >> hex_x;
             buf >> hex_y;
             buf >> dir;
@@ -2475,9 +2492,9 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_ADDLOCATION:
         {
-            ushort wx;
-            ushort wy;
-            ushort pid;
+            uint16 wx;
+            uint16 wy;
+            uint16 pid;
             buf >> wx;
             buf >> wy;
             buf >> pid;
@@ -2638,7 +2655,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_LOADLOCATION:
         {
-            ushort loc_pid;
+            uint16 loc_pid;
             buf >> loc_pid;
 
             CHECK_ALLOW_COMMAND;
@@ -2706,7 +2723,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_LOADMAP:
         {
-            ushort map_pid;
+            uint16 map_pid;
             buf >> map_pid;
 
             CHECK_ALLOW_COMMAND;
@@ -2758,9 +2775,9 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             }
 
             // Regenerate
-            ushort hx = cl_->GetHexX();
-            ushort hy = cl_->GetHexY();
-            uchar  dir = cl_->GetDir();
+            uint16 hx = cl_->GetHexX();
+            uint16 hy = cl_->GetHexY();
+            uint8  dir = cl_->GetDir();
             if( RegenerateMap( map ) )
             {
                 // Transit to old position
@@ -2878,11 +2895,11 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_CHECKVAR:
         {
-            ushort tid_var;
-            uchar  master_is_npc;
+            uint16 tid_var;
+            uint8  master_is_npc;
             uint   master_id;
             uint   slave_id;
-            uchar  full_info;
+            uint8  full_info;
             buf >> tid_var;
             buf >> master_is_npc;
             buf >> master_id;
@@ -2914,8 +2931,8 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
         }
         case COMMAND_SETVAR:
         {
-            ushort tid_var;
-            uchar  master_is_npc;
+            uint16 tid_var;
+            uint8  master_is_npc;
             uint   master_id;
             uint   slave_id;
             int    value;
@@ -3575,7 +3592,7 @@ bool FOServer::InitReal()
     ListenSock = socket( AF_INET, SOCK_STREAM, 0 );
     #endif
 
-    ushort port;
+    uint16 port;
     if( !Singleplayer )
     {
         port = ConfigFile->GetInt( "Server", "Port", 4000 );
@@ -3968,7 +3985,7 @@ bool FOServer::InitLangCrTypes( LangPackVec& lang_packs )
 #pragma MESSAGE("Clients logging may be not thread safe.")
 void FOServer::LogToClients( const char* str )
 {
-    ushort str_len = Str::Length( str );
+    uint16 str_len = Str::Length( str );
     if( str_len && str[str_len - 1] == '\n' )
         str_len--;
     if( str_len )
@@ -4262,7 +4279,7 @@ bool FOServer::LoadClientsData()
             break;
         }
 
-        uchar signature[sizeof(ClientSaveSignature)];
+        uint8 signature[sizeof(ClientSaveSignature)];
         if( !FileRead( f, signature, sizeof(signature) ) )
         {
             WriteLog( "Unable to read signature of client save file<%s>. Skipped.\n", client_fname );
@@ -4322,7 +4339,7 @@ bool FOServer::LoadClientsData()
                 continue;
             }
             // handle version mismatch
-            ushort version = BINARY_SIGNATURE_VERSION( signature );
+            uint16 version = BINARY_SIGNATURE_VERSION( signature );
             if( !version || version < CLIENT_SAVE_V1 || version > CLIENT_SAVE_LAST )
             {
                 WriteLog( "Invalid version<%u> of client save file<%s>. Skipped.\n", version, client_fname );
@@ -4465,7 +4482,7 @@ bool FOServer::LoadClient( Client* cl )
     }
 
     // Read data
-    uchar signature[sizeof(ClientSaveSignature)];
+    uint8 signature[sizeof(ClientSaveSignature)];
     if( !FileRead( f, signature, sizeof(signature) ) )
     {
         WriteLog( "Unable to read signature of client save file<%s>.\n", fname );
@@ -4614,7 +4631,7 @@ void FOServer::SaveWorld( const char* fname )
     // SaveScriptFunctionsFile
     SaveScriptFunctionsFile();
 
-    ushort version = BINARY_SIGNATURE_VERSION( WorldSaveSignature );
+    uint16 version = BINARY_SIGNATURE_VERSION( WorldSaveSignature );
     AddWorldSaveData( &version, sizeof(version) );
 
     // SaveClient
@@ -4696,8 +4713,8 @@ bool FOServer::LoadWorld( const char* fname )
     }
 
     // File begin
-    uchar  signature[sizeof(WorldSaveSignature)];
-    ushort version = 0;
+    uint8  signature[sizeof(WorldSaveSignature)];
+    uint16 version = 0;
     if( !FileRead( f, &signature, sizeof(signature) ) )
     {
         WriteLog( "Unable to read signature of world dump file.\n" );
@@ -4748,7 +4765,7 @@ bool FOServer::LoadWorld( const char* fname )
             return false;
         }
         // handle version mismatch
-        ushort sigversion = BINARY_SIGNATURE_VERSION( signature );
+        uint16 sigversion = BINARY_SIGNATURE_VERSION( signature );
         if( sigversion < WORLD_SAVE_V1 || sigversion > WORLD_SAVE_LAST )
         {
             WriteLog( "Unknown version<%u> of world dump file.\n", version );
@@ -4782,13 +4799,13 @@ bool FOServer::LoadWorld( const char* fname )
         return false;
 
     // File end
-    ushort version_ = 0;
+    uint16 version_ = 0;
 
     #ifdef OPTION_LEGACY_SAVEFILE
     if( legacy )
     {
         // saved as uint32
-        uchar legacy_version[4];
+        uint8 legacy_version[4];
         if( !FileRead( f, &legacy_version, sizeof(legacy_version) ) )
         {
             WriteLog( "World dump file truncated" );
@@ -4896,18 +4913,18 @@ void FOServer::AddWorldSaveData( void* data, size_t size )
         if( WorldSaveDataBufCount >= WorldSaveData.size() )
         {
             MEMORY_PROCESS( MEMORY_SAVE_DATA, WORLD_SAVE_DATA_BUFFER_SIZE );
-            WorldSaveData.push_back( new uchar[WORLD_SAVE_DATA_BUFFER_SIZE] );
+            WorldSaveData.push_back( new uint8[WORLD_SAVE_DATA_BUFFER_SIZE] );
         }
     }
 
     size_t flush = (size <= WorldSaveDataBufFreeSize ? size : WorldSaveDataBufFreeSize);
     if( flush )
     {
-        uchar* ptr = WorldSaveData[WorldSaveDataBufCount - 1];
+        uint8* ptr = WorldSaveData[WorldSaveDataBufCount - 1];
         memcpy( &ptr[WORLD_SAVE_DATA_BUFFER_SIZE - WorldSaveDataBufFreeSize], data, flush );
         WorldSaveDataBufFreeSize -= flush;
         if( !WorldSaveDataBufFreeSize )
-            AddWorldSaveData( ( (uchar*)data ) + flush, size - flush );
+            AddWorldSaveData( ( (uint8*)data ) + flush, size - flush );
     }
 }
 
@@ -4951,7 +4968,7 @@ void FOServer::Dump_Work( void* data )
         {
             for( uint i = 0; i < WorldSaveDataBufCount; i++ )
             {
-                uchar* ptr = WorldSaveData[i];
+                uint8* ptr = WorldSaveData[i];
                 size_t flush = WORLD_SAVE_DATA_BUFFER_SIZE;
                 if( i == WorldSaveDataBufCount - 1 )
                     flush -= WorldSaveDataBufFreeSize;
@@ -5137,7 +5154,7 @@ void FOServer::SaveTimeEventsFile()
         if( !te->IsSaved )
             continue;
         AddWorldSaveData( &te->Num, sizeof(te->Num) );
-        ushort script_name_len = (ushort)te->FuncName.length();
+        uint16 script_name_len = (uint16)te->FuncName.length();
         AddWorldSaveData( &script_name_len, sizeof(script_name_len) );
         AddWorldSaveData( (void*)te->FuncName.c_str(), script_name_len );
         AddWorldSaveData( &te->FullSecond, sizeof(te->FullSecond) );
@@ -5165,7 +5182,7 @@ bool FOServer::LoadTimeEventsFile( void* f )
             return false;
 
         char   script_name[MAX_SCRIPT_NAME * 2 + 2];
-        ushort script_name_len;
+        uint16 script_name_len;
         if( !FileRead( f, &script_name_len, sizeof(script_name_len) ) )
             return false;
         if( !FileRead( f, script_name, script_name_len ) )
@@ -5647,7 +5664,7 @@ void FOServer::SaveAnyDataFile()
     for( auto it = AnyData.begin(), end = AnyData.end(); it != end; ++it )
     {
         const string& name = (*it).first;
-        UCharVec&     data = (*it).second;
+        UInt8Vec&     data = (*it).second;
         uint          name_len = (uint)name.length();
         AddWorldSaveData( &name_len, sizeof(name_len) );
         AddWorldSaveData( (void*)name.c_str(), name_len );
@@ -5660,7 +5677,7 @@ void FOServer::SaveAnyDataFile()
 
 bool FOServer::LoadAnyDataFile( void* f )
 {
-    UCharVec data;
+    UInt8Vec data;
     uint     count = 0;
     if( !FileRead( f, &count, sizeof(count) ) )
         return false;
@@ -5687,12 +5704,12 @@ bool FOServer::LoadAnyDataFile( void* f )
     return true;
 }
 
-bool FOServer::SetAnyData( const string& name, const uchar* data, uint data_size )
+bool FOServer::SetAnyData( const string& name, const uint8* data, uint data_size )
 {
     SCOPE_LOCK( AnyDataLocker );
 
-    auto      result = AnyData.insert( PAIR( name, UCharVec() ) );
-    UCharVec& data_ = (*result.first).second;
+    auto      result = AnyData.insert( PAIR( name, UInt8Vec() ) );
+    UInt8Vec& data_ = (*result.first).second;
 
     MEMORY_PROCESS( MEMORY_ANY_DATA, -(int)data_.capacity() );
     data_.resize( data_size );
@@ -5710,7 +5727,7 @@ bool FOServer::GetAnyData( const string& name, ScriptArray& script_array )
     if( it == AnyData.end() )
         return false;
 
-    UCharVec& data = (*it).second;
+    UInt8Vec& data = (*it).second;
     uint      length = (uint)data.size();
 
     if( !length )
@@ -5753,7 +5770,7 @@ string FOServer::GetAnyDataStatistics()
     for( auto it = AnyData.begin(), end = AnyData.end(); it != end; ++it )
     {
         const string& name = (*it).first;
-        UCharVec&     data = (*it).second;
+        UInt8Vec&     data = (*it).second;
         Str::Format( str, "%-30s", name.c_str() );
         result += str;
         Str::Format( str, "%-10u", data.size() );

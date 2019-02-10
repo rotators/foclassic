@@ -82,7 +82,7 @@ namespace Script
     void Undef( const char* def );
     void CallPragmas( const StrVec& pragmas );
     bool LoadScript( const char* module_name, const char* source, bool skip_binary, const char* file_prefix = NULL );
-    bool LoadScript( const char* module_name, const uchar* bytecode, uint len );
+    bool LoadScript( const char* module_name, const uint8* bytecode, uint len );
 
     int    BindImportedFunctions();
     int    Bind( const char* module_name, const char* func_name, const char* decl, bool is_temp, bool disable_log = false );
@@ -103,8 +103,8 @@ namespace Script
     void AddEndExecutionCallback( EndExecutionCallback func );
 
     bool   PrepareContext( int bind_id, const char* call_func, const char* ctx_info );
-    void   SetArgUChar( uchar value );
-    void   SetArgUShort( ushort value );
+    void   SetArgUChar( uint8 value );
+    void   SetArgUShort( uint16 value );
     void   SetArgUInt( uint value );
     void   SetArgUInt64( uint64 value );
     void   SetArgBool( bool value );

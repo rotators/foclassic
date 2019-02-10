@@ -29,7 +29,7 @@ public:
     ~DataFileZip();
 
     const string& GetPackName() { return fileName; }
-    uchar*        OpenFile( const char* fname, uint& len );
+    uint8*        OpenFile( const char* fname, uint& len );
     void          GetFileNames( const char* path, bool include_subdirs, const char* ext, StrVec& result );
     void          GetTime( uint64* create, uint64* access, uint64* write );
 };

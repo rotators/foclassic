@@ -256,18 +256,18 @@ BufferManager& BufferManager::operator>>( int& i )
     return *this;
 }
 
-BufferManager& BufferManager::operator<<( ushort i )
+BufferManager& BufferManager::operator<<( uint16 i )
 {
     if( isError )
         return *this;
     if( bufEndPos + 2 >= bufLen )
         GrowBuf( 2 );
-    *(ushort*)(bufData + bufEndPos) = i ^ EncryptKey( 2 );
+    *(uint16*)(bufData + bufEndPos) = i ^ EncryptKey( 2 );
     bufEndPos += 2;
     return *this;
 }
 
-BufferManager& BufferManager::operator>>( ushort& i )
+BufferManager& BufferManager::operator>>( uint16& i )
 {
     if( isError )
         return *this;
@@ -277,7 +277,7 @@ BufferManager& BufferManager::operator>>( ushort& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(ushort*)(bufData + bufReadPos) ^ EncryptKey( 2 );
+    i = *(uint16*)(bufData + bufReadPos) ^ EncryptKey( 2 );
     bufReadPos += 2;
     return *this;
 }
@@ -308,18 +308,18 @@ BufferManager& BufferManager::operator>>( short& i )
     return *this;
 }
 
-BufferManager& BufferManager::operator<<( uchar i )
+BufferManager& BufferManager::operator<<( uint8 i )
 {
     if( isError )
         return *this;
     if( bufEndPos + 1 >= bufLen )
         GrowBuf( 1 );
-    *(uchar*)(bufData + bufEndPos) = i ^ EncryptKey( 1 );
+    *(uint8*)(bufData + bufEndPos) = i ^ EncryptKey( 1 );
     bufEndPos += 1;
     return *this;
 }
 
-BufferManager& BufferManager::operator>>( uchar& i )
+BufferManager& BufferManager::operator>>( uint8& i )
 {
     if( isError )
         return *this;
@@ -329,7 +329,7 @@ BufferManager& BufferManager::operator>>( uchar& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = *(uchar*)(bufData + bufReadPos) ^ EncryptKey( 1 );
+    i = *(uint8*)(bufData + bufReadPos) ^ EncryptKey( 1 );
     bufReadPos += 1;
     return *this;
 }
@@ -366,7 +366,7 @@ BufferManager& BufferManager::operator<<( bool i )
         return *this;
     if( bufEndPos + 1 >= bufLen )
         GrowBuf( 1 );
-    *(uchar*)(bufData + bufEndPos) = (i ? 1 : 0) ^ (EncryptKey( 1 ) & 0xFF);
+    *(uint8*)(bufData + bufEndPos) = (i ? 1 : 0) ^ (EncryptKey( 1 ) & 0xFF);
     bufEndPos += 1;
     return *this;
 }
@@ -381,7 +381,7 @@ BufferManager& BufferManager::operator>>( bool& i )
         WriteLogF( _FUNC_, " - Error!\n" );
         return *this;
     }
-    i = ( (*(uchar*)(bufData + bufReadPos) ^ (EncryptKey( 1 ) & 0xFF) ) ? true : false );
+    i = ( (*(uint8*)(bufData + bufReadPos) ^ (EncryptKey( 1 ) & 0xFF) ) ? true : false );
     bufReadPos += 1;
     return *this;
 }

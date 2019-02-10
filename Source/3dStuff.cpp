@@ -601,7 +601,7 @@ bool Animation3d::SetupBordersFrame( Frame* frame, RectF& borders )
             bordersResult.resize( count );
 
         VertexBuffer_ v;
-        uchar*        data;
+        uint8*        data;
         D3D_HR( mesh->GetVertexBuffer( &v ) );
         D3D_HR( v->Lock( 0, 0, (void**)&data, D3DLOCK_READONLY ) );
         Matrix mworld = (mesh_container->Skin ? MatrixEmpty : frame->CombinedTransformationMatrix);
@@ -2433,12 +2433,12 @@ bool Animation3dEntity::Load( const char* name )
                     continue;
 
                 EffectDefault::EType type;
-                uchar*               data = NULL;
+                uint8*               data = NULL;
                 uint                 data_len = 0;
                 if( Str::CompareCase( buf, "String" ) )
                 {
                     type = EffectDefault::String;
-                    data = (uchar*)Str::Duplicate( def_value );
+                    data = (uint8*)Str::Duplicate( def_value );
                     data_len = Str::Length( (char*)data );
                 }
                 else if( Str::CompareCase( buf, "Floats" ) )
@@ -2449,7 +2449,7 @@ bool Animation3dEntity::Load( const char* name )
                     if( floats.empty() )
                         continue;
                     data_len = (uint)floats.size() * sizeof(float);
-                    data = new uchar[data_len];
+                    data = new uint8[data_len];
                     for( uint i = 0, j = (uint)floats.size(); i < j; i++ )
                         ( (float*)data )[i] = (float)atof( floats[i].c_str() );
                 }
@@ -2457,7 +2457,7 @@ bool Animation3dEntity::Load( const char* name )
                 {
                     type = EffectDefault::Dword;
                     data_len = sizeof(uint);
-                    data = new uchar[data_len];
+                    data = new uint8[data_len];
                     *( (uint*)data ) = ConstantsManager::GetDefineValue( def_value );
                 }
                 else
