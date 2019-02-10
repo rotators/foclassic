@@ -22,7 +22,7 @@ add_subdirectory( distorm.bin )
 add_subdirectory( dx9.bin )
 add_subdirectory( event2.bin )
 
-set( OPTION_BUILD_EXAMPLES OFF )
+option( OPTION_BUILD_EXAMPLES "" OFF )
 add_subdirectory( fltk )
 
 #add_subdirectory( fltk.bin )
