@@ -13,7 +13,7 @@
   When working on Windows, use _Git for Windows Portable_ if possible - bundled tools might be used in future.  
   https://git-scm.com/download/
 
-* cmake v3.12.4 (minimum required)  
+* cmake v3.13.4 (minimum required)  
   https://cmake.org/download/
 
 * Visual Studio 2010 (required)  

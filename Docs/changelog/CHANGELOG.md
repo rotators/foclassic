@@ -8,6 +8,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 
 ## [v7]() (WIP)
 
+- fixed `FONT_TYPE_DIALOG` handling when it's using different size than `FONT_TYPE_DEFAULT`
 - _dialogs.lst_ renamed to _dialogs.cfg_
 - _dialogs.cfg_ changed to INI format
     - all dialogs must be defined in `Dialogs` section; any other sections, if present, are ignored and can be used for game-specific settings

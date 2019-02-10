@@ -35,8 +35,8 @@ before_install:
  - export CC=gcc-${GXX} CXX=g++-${GXX}
  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sudo apt-get update
- - sudo apt-get install -qq ${CC}-multilib ${CXX}-multilib
- - sudo apt-get install     libx11-dev:i386 libxft-dev:i386 libxi-dev:i386 libxinerama-dev:i386 libgl1-mesa-dev:i386 libglu1-mesa-dev:i386 freeglut3-dev:i386 libfreetype6-dev:i386 libfontconfig-dev:i386 libpng-dev:i386
+ - sudo apt-get install -y ${CC}-multilib ${CXX}-multilib
+ - sudo apt-get install -y libx11-dev:i386 libxft-dev:i386 libxi-dev:i386 libxinerama-dev:i386 libgl1-mesa-dev:i386 libglu1-mesa-dev:i386 freeglut3-dev:i386 libfreetype6-dev:i386 libfontconfig-dev:i386 libpng-dev:i386
 
 install:
  - export PATH=SDK.Cache/cmake/bin:$PATH

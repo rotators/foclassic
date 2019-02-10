@@ -4239,7 +4239,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
                 BarterText += FmtGameText( fstr_mb, crit_name.c_str(), fstr );
             BarterText += "\n";
             BarterText += Str::FormatBuf( "|%u ", COLOR_TEXT );
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
         }
     }
 
@@ -4257,7 +4257,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
                 DlgMainText += fstr;
             else
                 DlgMainText = fstr;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str() );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), FONT_TYPE_DIALOG );
         }
         else if( is_barter )
         {
@@ -4265,7 +4265,7 @@ void FOClient::OnText( const char* str, uint crid, int how_say, ushort intellect
                 BarterText += fstr;
             else
                 BarterText = fstr;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
         }
         if( how_say != SAY_APPEND )
             DlgMainTextCur = 0;
@@ -5557,7 +5557,7 @@ void FOClient::Net_OnChosenTalk()
     FormatTags( str, MAX_FOTEXT, Chosen, npc, lexems );
     DlgMainText = str;
     DlgMainTextCur = 0;
-    DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, str );
+    DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, str, FONT_TYPE_DIALOG );
 
     // Answers
     UIntVec answers_texts;
@@ -5569,9 +5569,9 @@ void FOClient::Net_OnChosenTalk()
 
     const char answ_beg[] = { ' ', ' ', (char)TEXT_SYMBOL_DOT, ' ', 0 };
     const char page_up[] = { (char)TEXT_SYMBOL_UP, (char)TEXT_SYMBOL_UP, (char)TEXT_SYMBOL_UP, 0 };
-    const int  page_up_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_up );
+    const int  page_up_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_up, FONT_TYPE_DIALOG );
     const char page_down[] = { (char)TEXT_SYMBOL_DOWN, (char)TEXT_SYMBOL_DOWN, (char)TEXT_SYMBOL_DOWN, 0 };
-    const int  page_down_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_down );
+    const int  page_down_height = SprMngr.GetLinesHeight( DlgAnswText.W(), 0, page_down, FONT_TYPE_DIALOG );
 
     int        line = 0, height = 0, page = 0, answ = 0;
     while( true )
@@ -5596,7 +5596,7 @@ void FOClient::Net_OnChosenTalk()
         FormatTags( str, MAX_FOTEXT, Chosen, npc, lexems );
         Str::Insert( str, answ_beg );      // TODO: GetStr
 
-        height += SprMngr.GetLinesHeight( DlgAnswText.W(), 0, str );
+        height += SprMngr.GetLinesHeight( DlgAnswText.W(), 0, str, FONT_TYPE_DIALOG );
         pos.B = DlgAnswText.T + DlgNextAnswY * line + height;
 
         if( pos.B >= DlgAnswText.B && line > 1 )
@@ -6230,7 +6230,7 @@ void FOClient::Net_OnContainerInfo()
             BarterScroll2 = 0;
             BarterText = "";
             DlgMainTextCur = 0;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
         }
     }
     else
@@ -6334,7 +6334,7 @@ void FOClient::Net_OnPlayersBarter()
                                       !FLAG( param_ext, 2 ) ? MsgGame->GetStr( STR_BARTER_OPEN_MODE ) : MsgGame->GetStr( STR_BARTER_HIDE_MODE ) );
             BarterText += "\n";
             DlgMainTextCur = 0;
-            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
             param_ext = (FLAG( param_ext, 2 ) ? true : false);
         }
         case BARTER_REFRESH:
@@ -6502,7 +6502,7 @@ void FOClient::Net_OnPlayersBarter()
                     break;
                 BarterText += FmtGameText( STR_BARTER_READY_OFFER, cr->GetName() );
                 BarterText += "\n";
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
             }
             break;
         }

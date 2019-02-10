@@ -3808,7 +3808,7 @@ void FOClient::DlgLMouseUp( bool is_dialog )
             {
                 DlgMainText = MsgGame->GetStr( STR_BARTER_NO_BARTER_MODE );
                 DlgMainTextCur = 0;
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str() );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, DlgMainText.c_str(), FONT_TYPE_DIALOG );
             }
             else
             {
@@ -3822,7 +3822,7 @@ void FOClient::DlgLMouseUp( bool is_dialog )
                 BarterCont2o.clear();
                 BarterText = "";
                 DlgMainTextCur = 0;
-                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
             }
         }
         else if( IfaceHold == IFACE_DLG_SAY && IsCurInRect( DlgBSay, DlgX, DlgY ) )
@@ -4135,7 +4135,7 @@ void FOClient::BarterTryOffer()
             return;
         }
         DlgMainTextCur = 0;
-        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+        DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
     }
 }
 
@@ -4507,7 +4507,7 @@ void FOClient::LMenuTryCreate()
                         {
                             BarterText += str;
                             BarterText += "\n";
-                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
                         }
                     }
                     else
@@ -4517,7 +4517,7 @@ void FOClient::LMenuTryCreate()
                         {
                             BarterText = FmtItemLook( cont_item, ITEM_LOOK_BARTER );
                             DlgMainTextCur = 0;
-                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                            DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
                         }
                     }
                 }
@@ -5158,7 +5158,7 @@ void FOClient::LMenuMouseUp()
                             {
                                 BarterText += str;
                                 BarterText += "\n";
-                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
                             }
                         }
                         else
@@ -5168,7 +5168,7 @@ void FOClient::LMenuMouseUp()
                             {
                                 BarterText = str;
                                 DlgMainTextCur = 0;
-                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str() );
+                                DlgMainTextLinesReal = SprMngr.GetLinesCount( DlgWText.W(), 0, BarterText.c_str(), FONT_TYPE_DIALOG );
                             }
                         }
                     }
