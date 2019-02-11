@@ -44,17 +44,19 @@
 typedef std::map<std::string, std::string>              IniSection;
 typedef std::map<std::string, IniSection>               IniSections;
 
-typedef std::map<std::string, std::vector<std::string>> IniSectionsRaw;
+typedef std::map<std::string, std::vector<std::string>> IniSectionsData;
 
 class Ini
 {
 protected:
-    IniSections    Sections;
-    IniSectionsRaw SectionsRaw;
+    IniSections     Sections;
+    IniSectionsData SectionsRaw;
+    IniSectionsData SectionsOrder;
 
 public:
     bool KeepComments;
     bool KeepSectionsRaw;
+    bool KeepKeysOrder;
 
     #if !defined (FOCLASSIC_EXTENSION)
     Ini();
@@ -62,27 +64,37 @@ public:
     #endif
 
     virtual bool LoadFile( const std::string& fname, bool unload = true );
-    virtual bool LoadString( const std::string& str, bool unload = true );
+    virtual bool LoadStdString( const std::string& str, bool unload = true );
     virtual void Unload();
 
+protected:
     virtual void Parse( std::basic_istream<char>& is );
     virtual void ParseString( const std::string& str );
 
+public:
     virtual bool         IsSection( const std::string& section );
     virtual bool         IsSectionKey( const std::string& section, const std::string& key );
     virtual bool         IsSectionKeyEmpty( const std::string& section, const std::string& key );
     virtual unsigned int GetSections( std::vector<std::string>& sections );
-    virtual unsigned int GetSectionKeys( const std::string& section, std::vector<std::string>& keys );
+    virtual unsigned int GetSectionKeys( const std::string& section, std::vector<std::string>& keys, bool ordered = false );
 
     virtual bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
     virtual bool RemoveSection( const std::string& section );
 
-    //
+    // KeepSectionsRaw handling
+public:
     virtual bool                     IsSectionRaw( const std::string& section );
     virtual std::vector<std::string> GetSectionRaw( const std::string& section );
     virtual std::string              GetSectionRawString( const std::string& section, const std::string& separator );
 protected:
     virtual void AddSectionRaw( const std::string& section, const std::string& line );
+    virtual bool RemoveSectionRaw( const std::string& section );
+
+    // KeepKeysOrder handling
+protected:
+    virtual bool IsSectionOrder( const std::string& section );
+    virtual void AddSectionOrder( const std::string& section, const std::string& key );
+    virtual bool RemoveSectionOrder( const std::string& section );
 
 public:
     virtual bool                     GetBool( const std::string& section, const std::string& key, const bool& default_value );

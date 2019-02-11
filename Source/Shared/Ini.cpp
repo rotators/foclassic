@@ -72,7 +72,7 @@ inline void Cleanup( string& str )
 
 //
 
-Ini::Ini() : KeepComments( false ), KeepSectionsRaw( false )
+Ini::Ini() : KeepComments( false ), KeepSectionsRaw( false ), KeepKeysOrder( false )
 {
     #if defined (FO_WINDOWS) && defined (FO_MSVC) && _MSC_VER >= 1910 && !defined (__INTELLISENSE__)
     # pragma TODO("Use initializer list for CommentChars")
@@ -107,7 +107,7 @@ bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
     return false;
 }
 
-bool Ini::LoadString( const string& str, bool unload /* = true */ )
+bool Ini::LoadStdString( const string& str, bool unload /* = true */ )
 {
     if( unload )
         Unload();
@@ -119,6 +119,8 @@ bool Ini::LoadString( const string& str, bool unload /* = true */ )
 void Ini::Unload()
 {
     Sections.clear();
+    SectionsRaw.clear();
+    SectionsOrder.clear();
 }
 
 //
@@ -220,16 +222,27 @@ unsigned int Ini::GetSections( vector<string>& sections )
     return count;
 }
 
-unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys )
+unsigned int Ini::GetSectionKeys( const string& section, vector<string>& keys, bool ordered /* = false */ )
 {
     unsigned int count = 0;
 
     if( IsSection( section ) )
     {
-        for( IniSection::iterator it = Sections[section].begin(); it != Sections[section].end(); ++it )
+        if( ordered )
         {
-            keys.push_back( it->first );
-            count++;
+            for( vector<string>::iterator it = SectionsOrder[section].begin(); it != SectionsOrder[section].end(); ++it )
+            {
+                keys.push_back( *it );
+                count++;
+            }
+        }
+        else
+        {
+            for( IniSection::iterator it = Sections[section].begin(); it != Sections[section].end(); ++it )
+            {
+                keys.push_back( it->first );
+                count++;
+            }
         }
     }
 
@@ -263,6 +276,10 @@ bool Ini::RemoveSection( const string& section )
         return false;
 
     Sections.erase( section );
+
+    RemoveSectionRaw( section );
+    RemoveSectionOrder( section );
+
     return true;
 }
 
@@ -314,6 +331,42 @@ void Ini::AddSectionRaw( const string& section, const string& line )
     }
     else
         SectionsRaw[section].push_back( line );
+}
+
+bool Ini::RemoveSectionRaw( const string& section )
+{
+    if( !IsSectionRaw( section ) )
+        return false;
+
+    SectionsRaw.erase( section );
+
+    return true;
+}
+
+//
+
+bool Ini::IsSectionOrder( const string& section )
+{
+    return SectionsOrder.find( section ) != SectionsOrder.end();
+}
+
+void Ini::AddSectionOrder( const string& section, const string& key )
+{
+    if( !IsSectionOrder( section ) )
+    {
+        vector<string>& ini_section = SectionsOrder[section];
+        ini_section.push_back( key );
+    }
+}
+
+bool Ini::RemoveSectionOrder( const string& section )
+{
+    if( !IsSectionOrder( section ) )
+        return false;
+
+    SectionsOrder.erase( section );
+
+    return true;
 }
 
 //
@@ -420,4 +473,7 @@ void Ini::SetStr( const string& section, const string& key, string value )
         IniSection& ini_section = Sections[section];
         ini_section.insert( make_pair( key, value ) );
     }
+
+    if( KeepKeysOrder )
+        AddSectionOrder( section, key );
 }

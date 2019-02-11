@@ -65,6 +65,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
     }
 
     Ini dialogs_cfg;
+    dialogs_cfg.KeepKeysOrder = true;
     if( !dialogs_cfg.LoadFile( FileManager::GetFullPath( list_name, PATH_SERVER_DIALOGS ) ) )
     {
         WriteLog( "Load dialogs.. skipped : cannot load file<%s>\n", list_name );
@@ -72,7 +73,7 @@ bool DialogManager::LoadDialogs( const char* list_name )
     }
 
     StrVec dialogs;
-    if( !dialogs_cfg.IsSection( SECTION_SERVER_DIALOGS ) || dialogs_cfg.GetSectionKeys( SECTION_SERVER_DIALOGS, dialogs ) == 0 )
+    if( !dialogs_cfg.IsSection( SECTION_SERVER_DIALOGS ) || dialogs_cfg.GetSectionKeys( SECTION_SERVER_DIALOGS, dialogs, true ) == 0 )
     {
         WriteLog( "Load dialogs... skipped : no dialogs found\n" );
         return true;
@@ -234,7 +235,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
 
     Ini fodlg;
     fodlg.KeepComments = fodlg.KeepSectionsRaw = true;
-    if( !fodlg.LoadString( string( data ) ) )
+    if( !fodlg.LoadStdString( string( data ) ) )
     {
         AddError( "Internal error." );
         return NULL;
