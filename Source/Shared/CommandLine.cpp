@@ -60,6 +60,16 @@ string CmdLine::Get()
     }
 }
 
+string CmdLine::GetArg( unsigned int arg )
+{
+    static const string empty;
+
+    if( Cache.size() > arg )
+        return Cache[arg];
+
+    return empty;
+}
+
 int CmdLine::GetInt( const string& option, const int& default_value, const unsigned char& base /* = 10 */ )
 {
     int    result = default_value;
@@ -85,7 +95,7 @@ int CmdLine::GetInt( const string& option, const int& default_value, const unsig
 
 string CmdLine::GetStr( const string& option )
 {
-    static const std::string empty;
+    static const string empty;
 
     return GetStr( option, empty );
 }

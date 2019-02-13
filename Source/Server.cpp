@@ -4568,7 +4568,7 @@ void FOServer::SaveWorld( const char* fname )
     double tick;
     if( WorldSaveManager )
     {
-        // Be sure what Dump_Work thread in wait state
+        // Make sure Dump_Work thread in wait state
         DumpEndEvent.Wait();
         DumpEndEvent.Disallow();
         tick = Timer::AccurateTick();

@@ -178,7 +178,7 @@ bool ResolvePath( char* path )
     return true;
 }
 
-#else
+#else // !FO_WINDOWS
 
 # include <sys/stat.h>
 # include <dirent.h>

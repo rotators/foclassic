@@ -48,7 +48,7 @@ int main( int argc, char** argv )
     // Logging
     Timer::Init();
     LogToFile( "Client.log" );
-    WriteLog( "Starting FOClassic (%s)...\n", FOCLASSIC_VERSION_LOGSTRING );
+    WriteLog( "Starting Client (%s)...\n", FOCLASSIC_VERSION_LOGSTRING );
 
     // Command line
     CommandLine = new CmdLine( argc, argv );

@@ -26,6 +26,7 @@ public:
     #endif
 
     virtual std::string Get();
+    virtual std::string GetArg( unsigned int arg );
 
     virtual bool IsOption( const std::string& option );
     virtual bool IsOptionEmpty( const std::string& option );
