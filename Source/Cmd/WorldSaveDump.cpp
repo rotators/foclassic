@@ -233,7 +233,7 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
     {
         if( version == 1 )
         {
-            // TODO
+            ReadVar( (WorldSave::Object::VarV1*)object );
             delete (WorldSave::Object::VarV1*)object;
         }
         else
@@ -263,7 +263,7 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
     {
         if( version == 1 )
         {
-            // TODO
+            ReadTimeEvent( (WorldSave::Object::TimeEventV1*)object );
             delete (WorldSave::Object::TimeEventV1*)object;
         }
         else
@@ -273,7 +273,7 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
     {
         if( version == 1 )
         {
-            // TODO
+            ReadScriptFunction( (WorldSave::Object::ScriptFunctionV1*)object );
             delete (WorldSave::Object::ScriptFunctionV1*)object;
         }
         else
@@ -285,7 +285,7 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
         throw runtime_error( "Received unknown object from WorldSave" );
     }
 
-    // known objects should be already deleted at this point, unknown object has to be kept intact
+    // known objects should be already deleted at this point, object with unsupported version has to be kept intact
     if( unknown_version )
         App.WriteLog( "WARNING : unsupported version : object<%s> version<%u>", name.c_str(), version );
     else
@@ -377,6 +377,16 @@ void WorldSaveDump::ReadItem( WorldSave::Object::ItemV1* item )
     object["Lexems"].Value = Str::FormatBuf( "\"%s\"", item->Lexems );
 }
 
+void WorldSaveDump::ReadVar( WorldSave::Object::VarV1* var )
+{
+    WorldSaveObject& object = DumpCache["Var"][var->Index][MAX_UINT];
+
+    object["TempId"].Value = to_string( (long long)var->TempId );
+    object["MasterId"].Value = to_string( (long long)var->MasterId );
+    object["SlaveId"].Value = to_string( (long long)var->SlaveId );
+    object["Value"].Value = to_string( (long long)var->Value );
+}
+
 void WorldSaveDump::ReadHolo( WorldSave::Object::HoloV1* holo )
 {
     WorldSaveObject& object = DumpCache["Holo"][holo->Index][MAX_UINT];
@@ -395,4 +405,25 @@ void WorldSaveDump::ReadAnyData( WorldSave::Object::AnyDataV1* anydata )
     object["Name"].Value = anydata->Name;
     object["DataLength"].Value = to_string( (long long)anydata->DataLength );
     object["Data"].Value = "\n"; // TODO?
+}
+
+void WorldSaveDump::ReadTimeEvent( WorldSave::Object::TimeEventV1* timevent )
+{
+    WorldSaveObject& object = DumpCache["TimeEvent"][timevent->Index][MAX_UINT];
+
+    object["Num"].Value = to_string( (long long)timevent->Num );
+    object["ScriptNameLength"].Value = to_string( (long long)timevent->ScriptNameLength );
+    object["ScriptName"].Value = timevent->ScriptName;
+    object["BeginSecond"].Value = to_string( (long long)timevent->BeginSecond );
+    object["Rate"].Value = to_string( (long long)timevent->Rate );
+    object["ValuesLength"].Value = to_string( (long long)timevent->ValuesLength );
+    object["Values"].Value = "\n";     // TODO?
+}
+
+void WorldSaveDump::ReadScriptFunction( WorldSave::Object::ScriptFunctionV1* function )
+{
+    WorldSaveObject& object = DumpCache["ScriptFunction"][function->Index][MAX_UINT];
+
+    object["NameLength"].Value = to_string( (long long)function->NameLength );
+    object["Name"].Value = function->Name;
 }

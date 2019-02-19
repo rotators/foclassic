@@ -13,10 +13,6 @@ public:
     virtual std::string UsageDescription() override;
 
     virtual int Run() override;
-
-protected:
-    int Stop( int code = EXIT_FAILURE );
-
 };
 
 #endif // __SHOW_WORLD__ //

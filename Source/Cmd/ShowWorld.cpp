@@ -5,8 +5,6 @@
 #include "CommandLine.h"
 #include "FileSystem.h"
 #include "ShowWorld.h"
-#include "Text.h"
-#include "WorldSaveDump.h"
 #include "WorldSaveDump.h"
 
 ShowWorld::ShowWorld()
@@ -29,7 +27,7 @@ int ShowWorld::Run()
     if( name.empty() )
     {
         App.WriteLog( "ERROR: Missing filename\n" );
-        return Stop();
+        return EXIT_FAILURE;
     }
     else
     {
@@ -42,146 +40,35 @@ int ShowWorld::Run()
     if( !FileExist( name.c_str() ) )
     {
         App.WriteLog( "ERROR: file<%s> does not exists\n", name.c_str() );
-        return Stop();
+        return EXIT_FAILURE;
     }
 
     void* file = FileOpen( name.c_str(), false );
     if( !file )
     {
         App.WriteLog( "ERROR: file<%s> cannot be opened\n", name.c_str() );
-        return Stop();
+        return EXIT_FAILURE;
     }
 
     WorldSave::Object::Signature signature;
     if( !signature.LoadSignature( file, name ) )
-        return Stop();
+        return EXIT_FAILURE;
 
     WorldSave* world = WorldSaveDump::NewWorld( signature, file, name_short );
 
     if( !world )
     {
         App.WriteLog( "ERROR: unknown version<%u>\n", signature.Version );
-        return Stop();
+        return EXIT_FAILURE;
     }
 
     bool success = world->LoadWorld();
 
-    return Stop( success ? EXIT_SUCCESS : EXIT_FAILURE );
-}
-
-int ShowWorld::Stop( int code /* = EXIT_FAILURE */ )
-{
-    return code;
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 // Old system, left for reference
 /*
-   template<class T>
-   void InitVectorDump(WorldDump& dump, const char* name, const uint& offset, const uint& count, const T& vec)
-   {
-        dump[offset] = Str::FormatBuf("Count::%s:%u", name, count);
-
-        if (count != vec.size())
-                App.WriteLog("Dump world... WARNING Count::%s != %s::size() : %u != %u\n", name, name, count, vec.size());
-   }
-
-   void WorldSaveDump::DumpSignature(WorldDump& dump, const WorldSave::SignatureData& signature )
-   {
-        dump[0] = Str::FormatBuf("Signature Version:%u Legacy:%s Size:%u", signature.Version, signature.Legacy ? "true" : "false", signature.SizeBegin);
-
-        if (signature.OffsetEnd)
-        {
-                if (!signature.Legacy)
-                        dump[signature.OffsetEnd] = Str::FormatBuf("Version %u", signature.Version);
-                else
-                        dump[signature.OffsetEnd] = Str::FormatBuf("Signature Version:%u Legacy:true Size:%u", signature.Version, signature.SizeEnd);
-        }
-   }
-
-   void WorldSaveDump::DumpWorld(WorldDump & dump, const WorldSave* world)
-   {
-        if (!world)
-                return;
-
-        DumpSignature(dump, world->Signature);
-
-        uint16 version = world->Signature.Version;
-        if (world->Signature.Legacy && world->Signature.Version == 0x13)
-                version = 1;
-
-        switch (version)
-        {
-                case 1:
-                {
-                        DumpWorld(dump, *(WorldSave::V1*)world );
-                        break;
-                }
-                default:
-                        break;
-        }
-   }
-
-   void WorldSaveDump::DumpWorld(WorldDump& dump, const WorldSave::V1& world)
-   {
-        /*
-        if (world.Offset.SinglePlayer)
-        {
-                dump[world.Offset.SinglePlayer] = Str::FormatBuf("SinglePlayer %s", world.SinglePlayer.Marker ? "true" : "false");
-        }
-
-        if (world.Offset.Time)
-                DumpTime(dump, world.Offset.Time, world.Time);
-
-        if (world.Offset.Scores)
-        {
-                const uint count = sizeof(world.Scores) / sizeof(world.Scores[0]);
-
-                for (uint8 idx = 0; idx < count; idx++)
-                {
-                        uint offsetScore = world.Offset.Scores + (sizeof(WorldSave::ScoreV1) * idx);
-                        DumpScore(dump, offsetScore, idx, world.Scores[idx]);
-                }
-        }
-
-        if (world.Offset.LocationsCount)
-        {
-                InitVectorDump(dump, "Locations", world.Offset.LocationsCount, world.Count.Locations, world.Locations);
-                for (auto it = world.Locations.begin(), end=world.Locations.end();it!=end;++it)
-                {
-                        DumpLocation(dump, *it);
-                }
-        }
-
-        if (world.Offset.CrittersCount)
-        {
-                InitVectorDump(dump, "Critters", world.Offset.CrittersCount, world.Count.Critters, world.Critters);
-                for (auto it = world.Critters.begin(), end = world.Critters.end(); it != end; ++it)
-                {
-                        DumpCritter(dump, *it);
-                }
-        }
-
-        if (world.Offset.ItemsCount)
-        {
-                InitVectorDump(dump, "Items", world.Offset.ItemsCount, world.Count.Items, world.Items);
-        }
-
-        if (world.Offset.VarsCount)
-        {
-                InitVectorDump(dump, "Vars", world.Offset.VarsCount, world.Count.Vars, world.Vars);
-        }
-
-        if (world.Offset.HolosCount)
-        {
-                InitVectorDump(dump, "Holos", world.Offset.HolosCount, world.Count.Holos, world.Holos);
-        }
-
-        if (world.Offset.AnyDataCount)
-        {
-                InitVectorDump(dump, "AnyData", world.Offset.AnyDataCount, world.Count.AnyData, world.AnyData);
-        }
-   }
-
    void WorldSaveDump::DumpTime(WorldDump & dump, const uint& offsetTime, const WorldSave::TimeV1 & time)
    {
         if (!offsetTime)
@@ -207,30 +94,6 @@ int ShowWorld::Stop( int code /* = EXIT_FAILURE */ )
         dump[offsetScore + offsetof(WorldSave::ScoreV1, Value)] = Str::FormatBuf("Score[%u] Value:%d", index, score.Value);
    }
 
-   void WorldSaveDump::DumpLocation(WorldDump & dump, const WorldSave::LocationV1* location)
-   {
-        if (!location)
-                return;
-        if (location && location->OffsetData)
-                DumpLocationData(dump, location->OffsetData, location->Index, location->Data);
-
-        if (location && location->OffsetMapsCount)
-        {
-                dump[location->OffsetMapsCount] = Str::FormatBuf("Location[%u] MapsCount:%u", location->Index, location->MapsCount);
-                if (location->MapsCount != location->Maps.size())
-                {
-                        App.WriteLog("Dump world... WARNING Locations[%u]::MapsCount != Locations[%u]::Maps::size() : %u != %u\n",
-                                location->Index, location->Index, location->MapsCount, location->Maps.size()
-                        );
-                }
-
-                for (auto it=location->Maps.begin(),end=location->Maps.end();it!=end;++it)
-                {
-                        DumpMap(dump, *it);
-                }
-        }
-   }
-
    void WorldSaveDump::DumpLocationData(WorldDump & dump, const uint & offset, const uint & index, const WorldSave::LocationDataV1* location_data)
    {
         if (!offset || !location_data)
@@ -246,12 +109,6 @@ int ShowWorld::Stop( int code /* = EXIT_FAILURE */ )
         dump[offset + offsetof(WorldSave::LocationDataV1, AutoGarbage)] = Str::FormatBuf("Location[%u] AutoGarbage:%s", index, location_data->AutoGarbage ? "true" : "false");
         dump[offset + offsetof(WorldSave::LocationDataV1, ToGarbage)] = Str::FormatBuf("Location[%u] ToGarbage:%s", index, location_data->ToGarbage ? "true" : "false");
         dump[offset + offsetof(WorldSave::LocationDataV1, Color)] = Str::FormatBuf("Location[%u] Color:%u", index, location_data->Color);
-   }
-
-   void WorldSaveDump::DumpMap(WorldDump & dump, const WorldSave::MapV1* map)
-   {
-        if (map && map->OffsetData)
-                DumpMapData(dump, map->OffsetData, map->LocationIndex, map->MapIndex, map->Data);
    }
 
    void WorldSaveDump::DumpMapData(WorldDump & dump, const uint & offset, const uint & location_index, const uint & map_index, const WorldSave::MapDataV1* map_data)
@@ -280,12 +137,6 @@ int ShowWorld::Stop( int code /* = EXIT_FAILURE */ )
         {
                 dump[offset + offsetof(WorldSave::MapDataV1, UserData)] += Str::FormatBuf(",%d", map_data->UserData[x]);
         }
-   }
-
-   void WorldSaveDump::DumpCritter(WorldDump & dump, const WorldSave::CritterV1* critter)
-   {
-        if( critter && critter->OffsetData )
-                DumpCritterData( dump, critter->OffsetData, critter->Index, critter->Data );
    }
 
    void WorldSaveDump::DumpCritterData(WorldDump & dump, const uint& offset, const uint & index, const WorldSave::CritterDataV1* critter_data)
@@ -341,5 +192,4 @@ int ShowWorld::Stop( int code /* = EXIT_FAILURE */ )
         dump[offset + offsetof(WorldSave::CritterDataV1, BagSize)] = Str::FormatBuf("Critter[%u]", index);
         dump[offset + offsetof(WorldSave::CritterDataV1, Bag)] = Str::FormatBuf("Critter[%u]", index);
    }
-
  */

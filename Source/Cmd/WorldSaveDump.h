@@ -68,8 +68,11 @@ public:
     void ReadMap( WorldSave::Object::MapV1* map );
     void ReadCritter( WorldSave::Object::CritterV1* critter );
     void ReadItem( WorldSave::Object::ItemV1* item );
+    void ReadVar( WorldSave::Object::VarV1* var );
     void ReadHolo( WorldSave::Object::HoloV1* holo );
     void ReadAnyData( WorldSave::Object::AnyDataV1* anydata );
+    void ReadTimeEvent( WorldSave::Object::TimeEventV1* timevent );
+    void ReadScriptFunction( WorldSave::Object::ScriptFunctionV1* function );
 };
 
 #define WORLD_SAVE( version )                                                                                                                                                                 \
