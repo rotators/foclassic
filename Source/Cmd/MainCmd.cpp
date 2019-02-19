@@ -107,7 +107,7 @@ int main( int argc, char** argv )
 {
     setvbuf( stdout, NULL, _IONBF, 0 );
 
-    WriteLog( "FOCmd %s.%u\n", FOCMD_VERSION, FOCLASSIC_VERSION );
+    WriteLog( "FOCmd %s-%u\n", FOCMD_VERSION, FOCLASSIC_VERSION );
 
     Commands["ShowWorld"] = new ShowWorld();
 

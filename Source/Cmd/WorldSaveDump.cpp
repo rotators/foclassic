@@ -187,37 +187,109 @@ void WorldSaveDump::DumpPrint()
     }
 }
 
+// called after WorldSave::Object is fully loaded
 void WorldSaveDump::NewObject( void*& object, const string& name, const uint& version )
 {
+    bool unknown_version = false;
+
     if( !object )
         throw runtime_error( "Received null object from WorldSave" );
     else if( name.empty() )
         throw runtime_error( "Received unnamed object from WorldSave" );
     else if( !version )
         throw runtime_error( "Received unversioned object from WorldSave" );
+    //
     else if( name == "Location" )
     {
         if( version == 1 )
+        {
             ReadLocation( (WorldSave::Object::LocationV1*)object );
+            delete (WorldSave::Object::LocationV1*)object;
+        }
+        else
+            unknown_version = true;
     }
     else if( name == "Critter" )
     {
         if( version == 1 )
+        {
             ReadCritter( (WorldSave::Object::CritterV1*)object );
-    }
-    else if( name == "Holo" )
-    {
-        if( version == 1 )
-            ReadHolo( (WorldSave::Object::HoloV1*)object );
+            delete (WorldSave::Object::CritterV1*)object;
+        }
+        else
+            unknown_version = true;
     }
     else if( name == "Item" )
     {
         if( version == 1 )
+        {
             ReadItem( (WorldSave::Object::ItemV1*)object );
+            delete (WorldSave::Object::ItemV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "Var" )
+    {
+        if( version == 1 )
+        {
+            // TODO
+            delete (WorldSave::Object::VarV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "Holo" )
+    {
+        if( version == 1 )
+        {
+            ReadHolo( (WorldSave::Object::HoloV1*)object );
+            delete (WorldSave::Object::HoloV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "AnyData" )
+    {
+        if( version == 1 )
+        {
+            ReadAnyData( (WorldSave::Object::AnyDataV1*)object );
+            delete(WorldSave::Object::AnyDataV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "TimeEvent" )
+    {
+        if( version == 1 )
+        {
+            // TODO
+            delete (WorldSave::Object::TimeEventV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "ScriptFunction" )
+    {
+        if( version == 1 )
+        {
+            // TODO
+            delete (WorldSave::Object::ScriptFunctionV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else
+    {
+        App.WriteLog( "ERROR : unknown object : object<%s> version<%u>", name.c_str(), version );
+        throw runtime_error( "Received unknown object from WorldSave" );
     }
 
-    delete object;
-    object = nullptr;
+    // known objects should be already deleted at this point, unknown object has to be kept intact
+    if( unknown_version )
+        App.WriteLog( "WARNING : unsupported version : object<%s> version<%u>", name.c_str(), version );
+    else
+        object = nullptr;
 }
 
 void WorldSaveDump::NewGroup( std::vector<void*>& group, const std::string& name, const uint& version )

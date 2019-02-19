@@ -9,8 +9,8 @@
 #include "../AI.h"
 #include "../Item.h"
 
-typedef std::function<void (void*& object, const std::string& name, const uint& version)>            WorldSaveCallbackObject;
-typedef std::function<void (std::vector<void*> group, const std::string& name, const uint& version)> WorldSaveCallbackGroup;
+typedef std::function<void (void*& object, const std::string& name, const uint& version)>             WorldSaveCallbackObject;
+typedef std::function<void (std::vector<void*>& group, const std::string& name, const uint& version)> WorldSaveCallbackGroup;
 
 class WorldSave
 {
