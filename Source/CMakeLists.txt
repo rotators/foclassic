@@ -49,12 +49,10 @@ add_library( PlatformServer INTERFACE )
 target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 
 ##
-## TODO
+## Cmd tool
 ##
 
-foreach( subdir IN LISTS FOCLASSIC_SOURCE_SUBDIRS )
-	add_subdirectory( ${subdir} )
-endforeach()
+add_subdirectory( Cmd )
 
 ##
 ## configure applications libraries
