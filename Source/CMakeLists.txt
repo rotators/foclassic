@@ -49,6 +49,14 @@ add_library( PlatformServer INTERFACE )
 target_link_libraries( PlatformServer INTERFACE ${PLATFORM_SERVER_LIBS} )
 
 ##
+## TODO
+##
+
+foreach( subdir IN LISTS FOCLASSIC_SOURCE_SUBDIRS )
+	add_subdirectory( ${subdir} )
+endforeach()
+
+##
 ## configure applications libraries
 ##
 
@@ -135,16 +143,13 @@ set( MAPPER_SERVER_SOURCES
 )
 
 set( CLIENT_MAPPER_SERVER_SOURCES
+	App.cpp
 	ConfigFile.cpp
 	ConfigFile.h
 	ConstantsManager.cpp
 	ConstantsManager.h
 	CritterType.cpp
 	CritterType.h
-	Exception.cpp
-	Exception.h
-	FileManager.cpp
-	FileManager.h
 	IniParser.cpp
 	IniParser.h
 	LineTracer.h
@@ -355,11 +360,8 @@ endif()
 add_executable( ASCompiler "" )
 target_sources( ASCompiler
 	PRIVATE
+		App.cpp
 		ASCompiler.h
-		Exception.cpp
-		Exception.h
-		FileManager.cpp
-		FileManager.h
 		IniParser.cpp
 		IniParser.h
 		Log.cpp
@@ -467,7 +469,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 		add_custom_command( TARGET ${target}
 			POST_BUILD
 			COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${copy_dir}/$<TARGET_FILE_NAME:${target}>>"
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target}> ${copy_dir}/$<TARGET_FILE_NAME:${target}>
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${target}> ${copy_dir}/$<TARGET_FILE_NAME:${target}>
 		)
 
 		if( MSVC )
@@ -475,7 +477,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 			add_custom_command( TARGET ${target}
 				POST_BUILD
 					COMMAND ${CMAKE_COMMAND} -E echo "${target} ${arrow} $<SHELL_PATH:${copy_dir}/$<TARGET_PDB_FILE_NAME:${target}>>"
-					COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${copy_dir}/$<TARGET_PDB_FILE_NAME:${target}>
+					COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_PDB_FILE_DIR:${target}>/$<TARGET_PDB_FILE_NAME:${target}>.PUBLIC ${copy_dir}/$<TARGET_PDB_FILE_NAME:${target}>
 			)
 		endif()
 	endforeach()

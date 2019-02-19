@@ -1,5 +1,7 @@
 #include "Core.h"
 
+#include "App.h"
+
 #include "Exception.h"
 #include "FileManager.h"
 #include "Text.h"
@@ -73,11 +75,12 @@ LONG WINAPI TopLevelFilterReadableDump( EXCEPTION_POINTERS* except )
     DateTime    dt;
     Timer::GetCurrentDateTime( dt );
     const char* dump_str = except ? "CrashDump" : ManualDumpAppendix;
-    # ifdef FOCLASSIC_SERVER
-    FileManager::GetFullPath( NULL, PATH_SERVER_DUMPS, dump_path_dir );
-    # else
-    FileManager::GetFullPath( NULL, PATH_ROOT, dump_path_dir );
-    # endif
+
+    if( App.Type == APP_TYPE_SERVER )
+        FileManager::GetFullPath( NULL, PATH_SERVER_DUMPS, dump_path_dir );
+    else
+        FileManager::GetFullPath( NULL, PATH_ROOT, dump_path_dir );
+
     Str::Format( dump_path, "%s%s_%s_%u_%04d.%02d.%02d_%02d-%02d-%02d.txt",
                  dump_path_dir, dump_str, AppName, FOCLASSIC_VERSION, dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 

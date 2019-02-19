@@ -74,6 +74,12 @@ bool FileSetPointer( void* file, int offset, int origin )
     return SetFilePointer( (HANDLE)file, offset, NULL, origin ) != INVALID_SET_FILE_POINTER;
 }
 
+uint FileGetPointer( void* file )
+{
+    return (uint)SetFilePointer( (HANDLE)file, 0, nullptr, FILE_CURRENT );
+}
+
+
 void FileGetTime( void* file, uint64& tc, uint64& ta, uint64& tw )
 {
     union
@@ -242,6 +248,11 @@ bool FileWrite( void* file, const void* buf, uint len )
 bool FileSetPointer( void* file, int offset, int origin )
 {
     return fseek( ( (FileDesc*)file )->f, offset, origin ) == 0;
+}
+
+uint FileGetPointer( void* file )
+{
+    return ftell( ( (FileDesc*)file )->f );
 }
 
 void FileGetTime( void* file, uint64& tc, uint64& ta, uint64& tw )

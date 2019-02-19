@@ -2,9 +2,10 @@
 
 #include <unzip.h>
 
+#include "../App.h"
+
 #include "Dat.h"
 #include "FileSystem.h"
-#include "Log.Shared.h"
 #include "Text.h"
 
 bool DataFileDat::Init( const char* fname )
@@ -17,7 +18,7 @@ bool DataFileDat::Init( const char* fname )
     datHandle = FileOpen( fname, false );
     if( !datHandle )
     {
-        WriteLogF( _FUNC_, " - Cannot open file.\n" );
+        App.WriteLogF( _FUNC_, " - Cannot open file.\n" );
         return false;
     }
 
@@ -25,7 +26,7 @@ bool DataFileDat::Init( const char* fname )
 
     if( !ReadTree() )
     {
-        WriteLogF( _FUNC_, " - Read file tree fail.\n" );
+        App.WriteLogF( _FUNC_, " - Read file tree fail.\n" );
         return false;
     }
 

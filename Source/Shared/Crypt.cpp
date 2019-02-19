@@ -1,11 +1,12 @@
 #include "Core.h"
 
-#include "zlib.h"
-#include "sha2.h"
+#include <zlib.h>
+#include <sha2.h>
+
+#include "App.h"
 
 #include "AutoPointers.h"
 #include "Crypt.h"
-#include "Log.Shared.h"
 #include "Random.h"
 #include "Text.h"
 
@@ -177,21 +178,21 @@ uint8* CryptManager::Uncompress( const uint8* data, uint& data_len, uint mul_app
     uLongf buf_len = data_len * mul_approx;
     if( buf_len > 100000000 ) // 100mb
     {
-        WriteLogF( _FUNC_, "Unpack - Buffer length is too large, data length<%u>, multiplier<%u>.\n", data_len, mul_approx );
+        App.WriteLogF( _FUNC_, "Unpack - Buffer length is too large, data length<%u>, multiplier<%u>.\n", data_len, mul_approx );
         return NULL;
     }
 
     AutoPtrArr<uint8> buf( new uint8[buf_len] );
     if( !buf.IsValid() )
     {
-        WriteLog( "Unpack - Bad alloc, size<%u>.\n", buf_len );
+        App.WriteLog( "Unpack - Bad alloc, size<%u>.\n", buf_len );
         return NULL;
     }
 
     AutoPtrArr<uint8> data_( new uint8[data_len] );
     if( !data_.IsValid() )
     {
-        WriteLog( "Unpack - Bad alloc, size<%u>.\n", data_len );
+        App.WriteLog( "Unpack - Bad alloc, size<%u>.\n", data_len );
         return NULL;
     }
 
@@ -204,7 +205,7 @@ uint8* CryptManager::Uncompress( const uint8* data, uint& data_len, uint mul_app
 
     if( *(uint16*)data_.Get() != 0x9C78 )
     {
-        WriteLog( "Unpack - Signature not found.\n" );
+        App.WriteLog( "Unpack - Signature not found.\n" );
         return NULL;
     }
 
@@ -217,13 +218,13 @@ uint8* CryptManager::Uncompress( const uint8* data, uint& data_len, uint mul_app
             buf.Reset( new uint8[buf_len] );
             if( !buf.IsValid() )
             {
-                WriteLog( "Unpack - Bad alloc, size<%u>.\n", buf_len );
+                App.WriteLog( "Unpack - Bad alloc, size<%u>.\n", buf_len );
                 return NULL;
             }
         }
         else if( result != Z_OK )
         {
-            WriteLog( "Unpack error<%d>.\n", result );
+            App.WriteLog( "Unpack error<%d>.\n", result );
             return NULL;
         }
         else

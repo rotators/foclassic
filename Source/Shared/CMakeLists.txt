@@ -9,6 +9,7 @@ target_sources( Shared
 	PUBLIC
 		${ENGINE_GLOBAL_HEADER_FILE}
 
+		${CMAKE_CURRENT_LIST_DIR}/App.h
 		${CMAKE_CURRENT_LIST_DIR}/AutoPointers.h
 		${CMAKE_CURRENT_LIST_DIR}/CommandLine.h
 		${CMAKE_CURRENT_LIST_DIR}/Core.h
@@ -17,6 +18,8 @@ target_sources( Shared
 		${CMAKE_CURRENT_LIST_DIR}/Defines.h
 		${CMAKE_CURRENT_LIST_DIR}/Defines.Public.h
 		${CMAKE_CURRENT_LIST_DIR}/DynamicLibrary.h
+		${CMAKE_CURRENT_LIST_DIR}/Exception.h
+		${CMAKE_CURRENT_LIST_DIR}/FileManager.h
 		${CMAKE_CURRENT_LIST_DIR}/GameOptions.h
 		${CMAKE_CURRENT_LIST_DIR}/FileSystem.h
 		${CMAKE_CURRENT_LIST_DIR}/Ini.h
@@ -39,6 +42,8 @@ target_sources( Shared
 		Core.cpp
 		Crypt.cpp
 		DataFile.cpp
+		Exception.cpp
+		FileManager.cpp
 		FileSystem.cpp
 		GameOptions.cpp
 		Ini.cpp
@@ -60,13 +65,12 @@ target_sources( Shared
 		${AS_ADDONS_DIR}/scriptfile.cpp
 		${AS_ADDONS_DIR}/scriptmath.cpp
 		${AS_ADDONS_DIR}/scriptstring.cpp
-
-		# sic!
-		Log.Shared.h
 )
 target_compile_definitions( Shared
 	PUBLIC
 		FOCLASSIC_ENGINE
+	PRIVATE
+		FOCLASSIC_LIB_SHARED
 )
 if( WIN32 )
 	target_compile_definitions( Shared PRIVATE WINVER=0x0501 ) # Windows XP

@@ -3,11 +3,12 @@
 #include "CommandLine.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
-#include "Log.Shared.h"
 #include "Random.h"
 #include "Timer.h"
 
 #pragma TODO("Better solution for LogToFunc")
+typedef void (* LogFuncPtr)( const char* str );
+extern void LogToFunc( LogFuncPtr func_ptr, bool enable );
 
 GameOptions    GameOpt;
 GameOptionsExt GameOptExt;

@@ -2,8 +2,9 @@
 
 #include <FL/case.h>
 
+#include "App.h"
+
 #include "Crypt.h"
-#include "Log.Shared.h"
 #include "Text.h"
 
 void Str::Copy( char* to, uint size, const char* from )
@@ -805,7 +806,7 @@ void Str::AddNameHash( const char* name )
         Copy( name__, (*it).second.c_str() );
         FormatForHash( name__ );
         if( !Compare( name_, name__ ) )
-            WriteLogF( _FUNC_, " - Found equal hash for different names, name1<%s>, name2<%s>, hash<%u>.\n", name, (*it).second.c_str(), hash );
+            App.WriteLogF( _FUNC_, " - Found equal hash for different names, name1<%s>, name2<%s>, hash<%u>.\n", name, (*it).second.c_str(), hash );
     }
 }
 

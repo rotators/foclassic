@@ -8,21 +8,21 @@
 typedef void ( * LogFuncPtr )( const char* str );
 
 // Write formatted text
-void WriteLog( const char* frmt, ... );
-void WriteLogF( const char* func, const char* frmt, ... );
-void WriteLogX( const char* frmt, ... );
+extern void WriteLog( const char* frmt, ... );
+extern void WriteLogF( const char* func, const char* frmt, ... );
+extern void WriteLogX( const char* frmt, ... );
 
 // Append logging to
-void LogToFile( const char* fname );                // File
-void LogToFunc( LogFuncPtr func_ptr, bool enable ); // Extern function
-void LogToTextBox( void* text_box );                // Text box (Fl_Text_Display)
-void LogToBuffer( bool enable );                    // Buffer, to get value use LogGetBuffer
-void LogToDebugOutput( bool enable );               // OutputDebugString / printf
+extern void LogToFile( const char* fname );                // File
+extern void LogToFunc( LogFuncPtr func_ptr, bool enable ); // Extern function
+extern void LogToTextBox( void* text_box );                // Text box (Fl_Text_Display)
+extern void LogToBuffer( bool enable );                    // Buffer, to get value use LogGetBuffer
+extern void LogToDebugOutput( bool enable );               // OutputDebugString / printf
 
 // Other stuff
-void LogFinish();                                   // Finish all logging
-void LogWithTime( bool enable );                    // Logging with time
-void LogWithThread( bool enable );                  // Logging with thread name
-void LogGetBuffer( std::string& buf );              // Get buffer, if used LogBuffer
+extern void LogFinish();                                   // Finish all logging
+extern void LogWithTime( bool enable );                    // Logging with time
+extern void LogWithThread( bool enable );                  // Logging with thread name
+extern void LogGetBuffer( std::string& buf );              // Get buffer, if used LogBuffer
 
 #endif // __LOG__

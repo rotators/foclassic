@@ -2,9 +2,10 @@
 
 #include <unzip.h>
 
+#include "App.h"
+
 #include "DataFile.h"
 #include "FileSystem.h"
-#include "Log.Shared.h"
 #include "Text.h"
 
 #include "DataFile/Dat.h"
@@ -14,14 +15,14 @@ DataFile* DataFile::Open( const char* fname )
 {
     if( !fname || !fname[0] )
     {
-        WriteLogF( _FUNC_, " - Invalid file name, empty or nullptr.\n" );
+        App.WriteLogF( _FUNC_, " - Invalid file name, empty or nullptr.\n" );
         return NULL;
     }
 
     const char* ext = Str::Substring( fname, "." );
     if( !ext )
     {
-        WriteLogF( _FUNC_, " - File<%s> extension not found.\n", fname );
+        App.WriteLogF( _FUNC_, " - File<%s> extension not found.\n", fname );
         return NULL;
     }
 
@@ -34,7 +35,7 @@ DataFile* DataFile::Open( const char* fname )
         DataFileDat* dat = new DataFileDat();
         if( !dat || !dat->Init( fname ) )
         {
-            WriteLogF( _FUNC_, " - Unable to open DAT file<%s>.\n", fname );
+            App.WriteLogF( _FUNC_, " - Unable to open DAT file<%s>.\n", fname );
             if( dat )
                 delete dat;
             return NULL;
@@ -47,7 +48,7 @@ DataFile* DataFile::Open( const char* fname )
         DataFileZip* zip = new DataFileZip();
         if( !zip || !zip->Init( fname ) )
         {
-            WriteLogF( _FUNC_, " - Unable to open ZIP file<%s>.\n", fname );
+            App.WriteLogF( _FUNC_, " - Unable to open ZIP file<%s>.\n", fname );
             if( zip )
                 delete zip;
             return NULL;
@@ -57,7 +58,7 @@ DataFile* DataFile::Open( const char* fname )
     }
     else     // Bad file format
     {
-        WriteLogF( _FUNC_, " - Invalid file<%s> format; only DAT, ZIP are supported.\n", fname );
+        App.WriteLogF( _FUNC_, " - Invalid file<%s> format; only DAT, ZIP are supported.\n", fname );
     }
 
     return NULL;

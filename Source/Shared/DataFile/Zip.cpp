@@ -2,8 +2,9 @@
 
 #include <unzip.h>
 
+#include "../App.h"
+
 #include "FileSystem.h"
-#include "Log.Shared.h"
 #include "Text.h"
 #include "Zip.h"
 
@@ -16,14 +17,14 @@ bool DataFileZip::Init( const char* fname )
     Str::Copy( path, fname );
     if( !ResolvePath( path ) )
     {
-        WriteLogF( _FUNC_, " - Can't retrieve file full path.\n" );
+        App.WriteLogF( _FUNC_, " - Can't retrieve file full path.\n" );
         return false;
     }
 
     void* file = FileOpen( fname, false );
     if( !file )
     {
-        WriteLogF( _FUNC_, " - Cannot open file.\n" );
+        App.WriteLogF( _FUNC_, " - Cannot open file.\n" );
         return false;
     }
 
@@ -36,7 +37,7 @@ bool DataFileZip::Init( const char* fname )
     if( MultiByteToWideChar( CP_UTF8, 0, path, -1, path_wc, MAX_FOPATH ) == 0 ||
         WideCharToMultiByte( GetACP(), 0, path_wc, -1, path, MAX_FOPATH, NULL, NULL ) == 0 )
     {
-        WriteLogF( _FUNC_, " - Code page conversion fail.\n" );
+        App.WriteLogF( _FUNC_, " - Code page conversion fail.\n" );
         return false;
     }
     #endif
@@ -44,13 +45,13 @@ bool DataFileZip::Init( const char* fname )
     zipHandle = unzOpen( path );
     if( !zipHandle )
     {
-        WriteLogF( _FUNC_, " - Cannot open ZIP file.\n" );
+        App.WriteLogF( _FUNC_, " - Cannot open ZIP file.\n" );
         return false;
     }
 
     if( !ReadTree() )
     {
-        WriteLogF( _FUNC_, " - Read file tree fail.\n" );
+        App.WriteLogF( _FUNC_, " - Read file tree fail.\n" );
         return false;
     }
 

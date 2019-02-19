@@ -1,8 +1,9 @@
 #include "Core.h"
 
+#include "App.h"
+
 #include "FileManager.h"
 #include "FileSystem.h"
-#include "Log.h"
 #include "Text.h"
 
 #define OUT_BUF_START_SIZE    (0x100)
@@ -88,6 +89,8 @@ void FileManager::SetCacheName( const char* name )
 
 void FileManager::InitDataFiles( const char* path )
 {
+    App.WriteLogF( _FUNC_, " - Type:%u Render:%u OS:%u %ubit\n", App.Type, App.Render, App.OS, App.Bits );
+
     char list_path[MAX_FOPATH];
     Str::Format( list_path, "%sDataFiles.cfg", path );
 
@@ -136,7 +139,7 @@ void FileManager::InitDataFiles( const char* path )
                     char errmsg[MAX_FOTEXT];
                     Str::Format( errmsg, "Data file '%s' not found. Run Updater.exe.", fpath );
                     ShowMessage( errmsg );
-                    WriteLogF( _FUNC_, " - %s\n", errmsg );
+                    App.WriteLogF( _FUNC_, " - %s\n", errmsg );
                     delete mgr;
                     continue;
                 }
@@ -157,7 +160,7 @@ void FileManager::InitDataFiles( const char* path )
                 char errmsg[MAX_FOTEXT];
                 Str::Format( errmsg, "Data file '%s' not found. Run Updater.exe.", fpath );
                 ShowMessage( errmsg );
-                WriteLogF( _FUNC_, " - %s\n", errmsg );
+                App.WriteLogF( _FUNC_, " - %s\n", errmsg );
             }
         }
     }
@@ -171,7 +174,7 @@ bool FileManager::LoadDataFile( const char* path )
 {
     if( !path )
     {
-        WriteLogF( _FUNC_, " - Path empty or nullptr.\n" );
+        App.WriteLogF( _FUNC_, " - Path empty or nullptr.\n" );
         return false;
     }
 
@@ -181,7 +184,7 @@ bool FileManager::LoadDataFile( const char* path )
     FormatPath( path_ );
     if( !ResolvePath( path_ ) )
     {
-        WriteLogF( _FUNC_, " - Extract full path file<%s> fail.\n", path );
+        App.WriteLogF( _FUNC_, " - Extract full path file<%s> fail.\n", path );
         return false;
     }
 
@@ -197,7 +200,7 @@ bool FileManager::LoadDataFile( const char* path )
     DataFile* pfile = DataFile::Open( path_ );
     if( !pfile )
     {
-        WriteLogF( _FUNC_, " - Load packed file<%s> fail.\n", path_ );
+        App.WriteLogF( _FUNC_, " - Load packed file<%s> fail.\n", path_ );
         return false;
     }
 
@@ -278,7 +281,7 @@ bool FileManager::LoadFile( const char* fname, int path_type )
     }
     else
     {
-        WriteLogF( _FUNC_, " - Invalid path<%d>.\n", path_type );
+        App.WriteLogF( _FUNC_, " - Invalid path<%d>.\n", path_type );
         return false;
     }
 
@@ -609,7 +612,7 @@ bool FileManager::SaveOutBufToFile( const char* fname, int path_type )
     }
     else
     {
-        WriteLogF( _FUNC_, " - Invalid path<%d>.\n", path_type );
+        App.WriteLogF( _FUNC_, " - Invalid path<%d>.\n", path_type );
         return false;
     }
     FormatPath( fpath );
@@ -752,16 +755,14 @@ const char* FileManager::GetDataPath( int path_type )
 {
     static const char root_path[] = DIR_SLASH_SD;
 
-    #if defined (FOCLASSIC_SERVER)
-    if( path_type == PATH_SERVER_ROOT )
+    if( App.Type == APP_TYPE_SERVER && path_type == PATH_SERVER_ROOT )
         return root_path;
-    #elif defined (FOCLASSIC_CLIENT)
-    if( path_type == PATH_ROOT )
+
+    if( App.Type == APP_TYPE_CLIENT && path_type == PATH_ROOT )
         return root_path;
-    #elif defined (FOCLASSIC_MAPPER)
-    if( path_type == PATH_MAPPER_ROOT || path_type == PATH_MAPPER_DATA )
+
+    if( App.Type == APP_TYPE_MAPPER && (path_type == PATH_MAPPER_ROOT || path_type == PATH_MAPPER_DATA) )
         return root_path;
-    #endif
 
     return dataPath;
 }
