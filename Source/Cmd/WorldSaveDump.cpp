@@ -23,10 +23,24 @@ inline uint GetVersion( WorldSave* world )
     return GetVersion( world->Signature );
 }
 
+void WorldSaveObject::Insert( const string& base, string name1, string value, uint16 length, uint offset_of )
+{
+    auto it = Data.find( base );
+    if( it == Data.end() )
+        return;
+
+    string        name = base + string( "::" ) + name1;
+    WorldSaveData data = WorldSaveData( it->second.Name0, name, it->second.Index0, it->second.Index1, length, it->second.Offset + offset_of );
+    data.Value = value;
+    data.Inserted = true;
+
+    Data[name] = data;
+}
+
 WorldSaveDump::WorldSaveDump( uint version ) : DumpVersion( version )
 {}
 
-WorldSaveData& WorldSaveObject::operator[]( std::string key )
+WorldSaveData& WorldSaveObject::operator[]( string key )
 {
     auto it = Data.find( key );
     if( it != Data.end() )
@@ -39,7 +53,7 @@ WorldSaveData& WorldSaveObject::operator[]( std::string key )
 }
 
 template<typename W>
-WorldSave* NewWorldSetup( const WorldSave::Object::Signature& signature, void* file, std::string filename )
+WorldSave* NewWorldSetup( const WorldSave::Object::Signature& signature, void* file, string filename )
 {
     W* world = new W( signature, file, filename );
 
@@ -83,7 +97,7 @@ WorldSave* WorldSaveDump::NewWorld( const WorldSave::Object::Signature& signatur
     return world;
 }
 
-void WorldSaveDump::CacheData( void* world, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1 )
+void WorldSaveDump::CacheData( void* world, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1 )
 {
     WorldSaveObject& obj = DumpCache[name0][index0][index1];
 
@@ -121,15 +135,16 @@ void WorldSaveDump::DumpObject( WorldSaveObject& object )
         else
             value = Str::FormatBuf( " = %s", data.Value.c_str() );
 
-        Dump[data.Offset] = Str::FormatBuf( "%5u  %s%s", data.Length, WorldSave::GetDataName( data.Name0, data.Name1, data.Index0, data.Index1 ).c_str(), value.c_str() );
+        Dump[data.Offset] = Str::FormatBuf( "%5u %s%s%s", data.Length, data.Inserted ? "*" : " ", WorldSave::GetDataName( data.Name0, data.Name1, data.Index0, data.Index1 ).c_str(), value.c_str() );
     }
 }
 
 void WorldSaveDump::DumpObjectSimple( const string& name, const uint& value )
 {
-    if( DumpCache.find( name ) != DumpCache.end() )
+    auto it = DumpCache.find( name );
+    if( it != DumpCache.end() )
     {
-        WorldSaveObject& obj = DumpCache[name][MAX_UINT][MAX_UINT];
+        WorldSaveObject& obj = it->second[MAX_UINT][MAX_UINT];
 
         obj[""].Value = to_string( (long long)value );
 
@@ -292,7 +307,7 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
         object = nullptr;
 }
 
-void WorldSaveDump::NewGroup( std::vector<void*>& group, const std::string& name, const uint& version )
+void WorldSaveDump::NewGroup( vector<void*>& group, const string& name, const uint& version )
 {
     // Selective unloading from previous system, left for reference
     /*
@@ -328,13 +343,28 @@ void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )
 {
     WorldSaveObject& object = DumpCache["Location"][location->Index][MAX_UINT];
 
-    object["Data"].Value = "\n";     // TODO
-    object["MapsCount"].Value = to_string( (long long)location->MapsCount );
+    ReadLocationData( "Data", location->Data, object );
 
+    object["MapsCount"].Value = to_string( (long long)location->MapsCount );
     for( auto it = location->Maps.begin(), end = location->Maps.end(); it != end; ++it )
     {
         ReadMap( *it );
     }
+}
+
+void WorldSaveDump::ReadLocationData( const string& base, WorldSave::Object::LocationDataV1* data, WorldSaveObject& object )
+{
+    object.Insert( base, "Id", to_string( (long long)data->LocId ), sizeof(data->LocId), offsetof( WorldSave::Object::LocationDataV1, LocId ) );
+    object.Insert( base, "Pid", to_string( (long long)data->LocPid ), sizeof(data->LocPid), offsetof( WorldSave::Object::LocationDataV1, LocPid ) );
+    object.Insert( base, "WorldX", to_string( (long long)data->WorldX ), sizeof(data->WorldX), offsetof( WorldSave::Object::LocationDataV1, WorldX ) );
+    object.Insert( base, "WorldY", to_string( (long long)data->WorldY ), sizeof(data->WorldY), offsetof( WorldSave::Object::LocationDataV1, WorldY ) );
+    object.Insert( base, "Radius", to_string( (long long)data->Radius ), sizeof(data->Radius), offsetof( WorldSave::Object::LocationDataV1, Radius ) );
+    object.Insert( base, "Visible", data->Visible ? "true" : "false", sizeof(data->Visible), offsetof( WorldSave::Object::LocationDataV1, Visible ) );
+    object.Insert( base, "GeckVisible", data->GeckVisible ? "true" : "false", sizeof(data->GeckVisible), offsetof( WorldSave::Object::LocationDataV1, GeckVisible ) );
+    object.Insert( base, "AutoGarbage", data->AutoGarbage ? "true" : "false", sizeof(data->AutoGarbage), offsetof( WorldSave::Object::LocationDataV1, AutoGarbage ) );
+    object.Insert( base, "ToGarbage", data->ToGarbage ? "true" : "false", sizeof(data->ToGarbage), offsetof( WorldSave::Object::LocationDataV1, ToGarbage ) );
+    object.Insert( base, "Color", to_string( (long long)data->Color ), sizeof(data->Color), offsetof( WorldSave::Object::LocationDataV1, Color ) );
+    object.Insert( base, "Reserved3", "\n", sizeof(data->Reserved3), offsetof( WorldSave::Object::LocationDataV1, Reserved3 ) );
 }
 
 void WorldSaveDump::ReadMap( WorldSave::Object::MapV1* map )

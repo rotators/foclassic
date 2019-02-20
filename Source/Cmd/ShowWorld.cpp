@@ -94,23 +94,6 @@ int ShowWorld::Run()
         dump[offsetScore + offsetof(WorldSave::ScoreV1, Value)] = Str::FormatBuf("Score[%u] Value:%d", index, score.Value);
    }
 
-   void WorldSaveDump::DumpLocationData(WorldDump & dump, const uint & offset, const uint & index, const WorldSave::LocationDataV1* location_data)
-   {
-        if (!offset || !location_data)
-                return;
-
-        dump[offset + offsetof(WorldSave::LocationDataV1, LocId)] = Str::FormatBuf("Location[%u] Id:%u", index, location_data->LocId);
-        dump[offset + offsetof(WorldSave::LocationDataV1, LocPid)] = Str::FormatBuf("Location[%u] Pid:%u", index, location_data->LocPid);
-        dump[offset + offsetof(WorldSave::LocationDataV1, WorldX)] = Str::FormatBuf("Location[%u] WorldX:%u", index, location_data->WorldX);
-        dump[offset + offsetof(WorldSave::LocationDataV1, WorldY)] = Str::FormatBuf("Location[%u] WorldY:%u", index, location_data->WorldY);
-        dump[offset + offsetof(WorldSave::LocationDataV1, Radius)] = Str::FormatBuf("Location[%u] Radius:%u", index, location_data->Radius);
-        dump[offset + offsetof(WorldSave::LocationDataV1, Visible)] = Str::FormatBuf("Location[%u] Visible:%s", index, location_data->Visible ? "true" : "false");
-        dump[offset + offsetof(WorldSave::LocationDataV1, GeckVisible)] = Str::FormatBuf("Location[%u] GeckVisible:%s", index, location_data->GeckVisible ? "true" : "false");
-        dump[offset + offsetof(WorldSave::LocationDataV1, AutoGarbage)] = Str::FormatBuf("Location[%u] AutoGarbage:%s", index, location_data->AutoGarbage ? "true" : "false");
-        dump[offset + offsetof(WorldSave::LocationDataV1, ToGarbage)] = Str::FormatBuf("Location[%u] ToGarbage:%s", index, location_data->ToGarbage ? "true" : "false");
-        dump[offset + offsetof(WorldSave::LocationDataV1, Color)] = Str::FormatBuf("Location[%u] Color:%u", index, location_data->Color);
-   }
-
    void WorldSaveDump::DumpMapData(WorldDump & dump, const uint & offset, const uint & location_index, const uint & map_index, const WorldSave::MapDataV1* map_data)
    {
         if (!offset || !map_data)

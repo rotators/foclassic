@@ -14,9 +14,10 @@ struct WorldSaveData
 
     uint        Offset;
     uint16      Length;
+    bool        Inserted;
 
-    WorldSaveData() : Value( "" ), Name0( "" ), Name1( "" ), Index0( MAX_UINT ), Index1( MAX_UINT ), Length( 0 ), Offset( 0 ) {}
-    WorldSaveData( std::string name0, std::string name1, uint index0, uint index1, uint length, uint offset ) : Value( "" ), Name0( name0 ), Name1( name1 ), Index0( index0 ), Index1( index1 ), Length( length ), Offset( offset ) {}
+    WorldSaveData() : Value( "" ), Name0( "" ), Name1( "" ), Index0( MAX_UINT ), Index1( MAX_UINT ), Offset( 0 ), Length( 0 ), Inserted( false ) {}
+    WorldSaveData( std::string name0, std::string name1, uint index0, uint index1, uint length, uint offset ) : Value( "" ), Name0( name0 ), Name1( name1 ), Index0( index0 ), Index1( index1 ), Offset( offset ), Length( length ), Inserted( false ) {}
 };
 
 struct WorldSaveObject
@@ -30,6 +31,9 @@ struct WorldSaveObject
     std::map<string, WorldSaveData> Data;
 
     WorldSaveData& operator[]( std::string key );
+
+    // Insert new WorldSaveData, based on already existing entry; if <base> wasn't added previously, function does nothing
+    void Insert( const std::string& base, std::string name1, std::string value, uint16 length, uint offset_of );
 };
 
 class WorldSaveDump
@@ -65,6 +69,7 @@ public:
     void NewGroup( std::vector<void*>& group, const std::string& name, const uint& version );
 
     void ReadLocation( WorldSave::Object::LocationV1* location );
+    void ReadLocationData( const std::string& base, WorldSave::Object::LocationDataV1* data, WorldSaveObject& object );
     void ReadMap( WorldSave::Object::MapV1* map );
     void ReadCritter( WorldSave::Object::CritterV1* critter );
     void ReadItem( WorldSave::Object::ItemV1* item );
