@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include <cstddef>
+
 #include "FileSystem.h"
 #include "Text.h"
 #include "WorldSave.h"
