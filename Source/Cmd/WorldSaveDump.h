@@ -51,21 +51,29 @@ public:
     // [signature] must be already loaded, and [file] opened
     static WorldSave* NewWorld( const WorldSave::Object::Signature& signature, void* file, const string& filename );
 
-    // called before each WorldSave::ReadData
-    // stores each
-    void CacheData( void* world, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1 );
+    // called before WorldSave::V*::LoadWord()
+    void DumpWorldBegin();
+
+    // called after WorldSave::V*::LoadWorld()
+    void DumpWorldEnd( bool result );
+
+    // called before WorldSave::ReadData()
+    void DumpDataBegin( void* file, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1 );
+
+    // called after WorldSave::ReadData()
+    void DumpDataEnd( void* file, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1, bool result );
 
     void DumpObject( WorldSaveObject& object );
     void DumpObjectSimple( const string& name, const uint& value );
     void DumpProcess();
     void DumpPrint();
+    void DumpAll();
 
     // WorldSave callback; called after single object has been fully loaded
     // calls matching Read*() function, filling values of previously cached data
     void NewObject( void*& object, const std::string& name, const uint& version );
 
     // WorldSave callback; called after object group has been fully loaded
-    // used to unload already processed parts of worldsave
     void NewGroup( std::vector<void*>& group, const std::string& name, const uint& version );
 
     void ReadLocation( WorldSave::Object::LocationV1* location );
@@ -88,8 +96,20 @@ public:                                                                         
                                                                                                                                                                                               \
         virtual bool ReadData( void* buf, uint len, const std::string& name0, const std::string& name1 = string(), const uint &index0 = MAX_UINT, const uint &index1 = MAX_UINT ) override    \
         {                                                                                                                                                                                     \
-            WorldSaveDump::CacheData( World, len, name0, name1, index0, index1 );                                                                                                             \
-            return WorldSave::ReadData( buf, len, name0, name1, index0, index1 );                                                                                                             \
+            WorldSaveDump::DumpDataBegin( World, len, name0, name1, index0, index1 );                                                                                                         \
+            bool result = WorldSave::ReadData( buf, len, name0, name1, index0, index1 );                                                                                                      \
+            WorldSaveDump::DumpDataEnd( World, len, name0, name1, index0, index1, result );                                                                                                   \
+                                                                                                                                                                                              \
+            return result;                                                                                                                                                                    \
+        }                                                                                                                                                                                     \
+                                                                                                                                                                                              \
+        virtual bool LoadWorld() override                                                                                                                                                     \
+        {                                                                                                                                                                                     \
+            WorldSaveDump::DumpWorldBegin();                                                                                                                                                  \
+            bool result = WorldSave::V ## version::LoadWorld();                                                                                                                               \
+            WorldSaveDump::DumpWorldEnd( result );                                                                                                                                            \
+                                                                                                                                                                                              \
+            return result;                                                                                                                                                                    \
         }                                                                                                                                                                                     \
     }
 

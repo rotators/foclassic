@@ -15,12 +15,15 @@ inline uint GetVersion( const WorldSave::Object::Signature& signature )
     return version;
 }
 
-inline uint GetVersion( WorldSave* world )
+inline WorldSave::Object::Signature GetSignature( WorldSaveDump* world )
 {
-    if( !world )
-        return 0;
+    switch( world->DumpVersion )
+    {
+        case 1:
+            return ( (WorldSaveV1*)world )->Signature;
+    }
 
-    return GetVersion( world->Signature );
+    throw runtime_error( "unknown version" );
 }
 
 void WorldSaveObject::Insert( const string& base, string name1, string value, uint16 length, uint offset_of )
@@ -68,18 +71,6 @@ WorldSave* NewWorldSetup( const WorldSave::Object::Signature& signature, void* f
     if( world->DumpOffsetLength % 2 != 0 )
         world->DumpOffsetLength++;
 
-    // always add signature info
-    world->Dump[0] = Str::FormatBuf( "%5u  Signature Version:%u Legacy:%s", signature.SizeBegin, signature.Version, signature.Legacy ? "true" : "false" );
-
-    // TODO added too early
-    if( signature.OffsetEnd )
-    {
-        if( !signature.Legacy )
-            world->Dump[signature.OffsetEnd] = Str::FormatBuf( "%5u  Version %u", sizeof(signature.Version), signature.Version );
-        else
-            world->Dump[signature.OffsetEnd] = Str::FormatBuf( "%5u  Signature Version:%u Legacy:true", signature.Version, signature.SizeEnd );
-    }
-
     return world;
 }
 
@@ -97,23 +88,77 @@ WorldSave* WorldSaveDump::NewWorld( const WorldSave::Object::Signature& signatur
     return world;
 }
 
-void WorldSaveDump::CacheData( void* world, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1 )
+void WorldSaveDump::DumpWorldBegin()
 {
-    WorldSaveObject& obj = DumpCache[name0][index0][index1];
+    WorldSave::Object::Signature signature = GetSignature( this );
 
+    Dump[0] = Str::FormatBuf( "%5u  Signature = Version:%u Legacy:%s", signature.SizeBegin, signature.Version, signature.Legacy ? "true" : "false" );
+
+    DumpAll();
+}
+
+void WorldSaveDump::DumpWorldEnd( bool result )
+{
+    WorldSave::Object::Signature signature = GetSignature( this );
+
+    if( signature.OffsetEnd )
+    {
+        if( !signature.Legacy )
+            Dump[signature.OffsetEnd] = Str::FormatBuf( "%5u  Version = %u", sizeof(signature.Version), signature.Version );
+        else
+            Dump[signature.OffsetEnd] = Str::FormatBuf( "%5u  Signature = Version:%u Legacy:true", signature.SizeEnd, signature.Version );
+
+        DumpAll();
+    }
+}
+
+void WorldSaveDump::DumpDataBegin( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1 )
+{
     if( len >= MAX_UINT16 )
     {
-        //
+        // WorldSaveDump stores data length as uint16, unlike WorldSave which uses uint32
         App.WriteLog( "ERROR : object<%s> size<%u>\n", WorldSave::GetDataName( name0, name1, index0, index1 ).c_str(), len );
         throw runtime_error( "data too big" );
     }
 
-    if( name1.empty() )
+    WorldSaveObject& obj = DumpCache[name0][index0][index1];
+    obj.Data[name1] = WorldSaveData( name0, name1, index0, index1, len, FileGetPointer( file ) );
+}
+
+void WorldSaveDump::DumpDataEnd( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1, bool result )
+{
+    if( !result || !name1.empty() )
+        return;
+
+    if( DumpVersion == 1 )
     {
-        obj.Data[""] = WorldSaveData( name0, name1, index0, index1, len, FileGetPointer( world ) );
+        WorldSaveV1* world = (WorldSaveV1*)this;
+
+        // TODO SinglePlayerV1
+        // TODO TimeV1
+        // TODO ScoreV1[]
+
+        if( name0 == "LocationsCount" )
+            DumpObjectSimple( name0, world->Count.Locations );
+        else if( name0 == "CrittersCount" )
+            DumpObjectSimple( name0, world->Count.Critters );
+        else if( name0 == "ItemsCount" )
+            DumpObjectSimple( name0, world->Count.Items );
+        else if( name0 == "VarsCount" )
+            DumpObjectSimple( name0, world->Count.Vars );
+        else if( name0 == "HolosCount" )
+            DumpObjectSimple( name0, world->Count.Holos );
+        else if( name0 == "AnyDataCount" )
+            DumpObjectSimple( name0, world->Count.AnyData );
+        else if( name0 == "TimeEventsCount" )
+            DumpObjectSimple( name0, world->Count.TimeEvents );
+        else if( name0 == "ScriptFunctionsCount" )
+            DumpObjectSimple( name0, world->Count.ScriptFunctions );
+        else
+            App.WriteLog( "WARNING : unknown object<%s>\n", name0.c_str() );
+
+        DumpAll();
     }
-    else
-        obj.Data[name1] = WorldSaveData( name0, name1, index0, index1, len, FileGetPointer( world ) );
 }
 
 void WorldSaveDump::DumpObject( WorldSaveObject& object )
@@ -154,24 +199,6 @@ void WorldSaveDump::DumpObjectSimple( const string& name, const uint& value )
 
 void WorldSaveDump::DumpProcess()
 {
-    // TODO needs better place for it
-    if( DumpVersion == 1 )
-    {
-        WorldSaveV1* world = (WorldSaveV1*)this;
-
-        // TODO SinglePlayerV1
-        // TODO TimeV1
-        // TODO ScoreV1[]
-        DumpObjectSimple( "LocationsCount", world->Count.Locations );
-        DumpObjectSimple( "CrittersCount", world->Count.Critters );
-        DumpObjectSimple( "ItemsCount", world->Count.Items );
-        DumpObjectSimple( "VarsCount", world->Count.Vars );
-        DumpObjectSimple( "HolosCount", world->Count.Holos );
-        DumpObjectSimple( "AnyDataCount", world->Count.AnyData );
-        DumpObjectSimple( "TimeEventsCount", world->Count.TimeEvents );
-        DumpObjectSimple( "ScriptFunctionsCount", world->Count.ScriptFunctions );
-    }
-
     for( auto name0 = DumpCache.begin(), name0end = DumpCache.end(); name0 != name0end; ++name0 )
     {
         for( auto index0 = name0->second.begin(), index0end = name0->second.end(); index0 != index0end; ++index0 )
@@ -200,6 +227,13 @@ void WorldSaveDump::DumpPrint()
     {
         App.WriteLog( format, it->first, it->second.c_str() );
     }
+}
+
+void WorldSaveDump::DumpAll()
+{
+    DumpProcess();
+    DumpPrint();
+    Dump.clear();
 }
 
 // called after WorldSave::Object is fully loaded
@@ -334,9 +368,7 @@ void WorldSaveDump::NewGroup( vector<void*>& group, const string& name, const ui
        }
      */
 
-    DumpProcess();
-    DumpPrint();
-    Dump.clear();
+    DumpAll();
 }
 
 void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )
