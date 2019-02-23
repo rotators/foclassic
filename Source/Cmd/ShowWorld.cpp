@@ -69,31 +69,6 @@ int ShowWorld::Run()
 
 // Old system, left for reference
 /*
-   void WorldSaveDump::DumpTime(WorldDump & dump, const uint& offsetTime, const WorldSave::TimeV1 & time)
-   {
-        if (!offsetTime)
-                return;
-
-        dump[offsetTime + offsetof(WorldSave::TimeV1, YearStart)] = Str::FormatBuf("YearStart %u", time.YearStart);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Year)] = Str::FormatBuf("Year %u", time.Year);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Month)] = Str::FormatBuf("Month %u", time.Month);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Day)] = Str::FormatBuf("Day %u", time.Day);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Hour)] = Str::FormatBuf("Hour %u", time.Hour);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Minute)] = Str::FormatBuf("Minute %u", time.Minute);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Second)] = Str::FormatBuf("Second %u", time.Second);
-        dump[offsetTime + offsetof(WorldSave::TimeV1, Multiplier)] = Str::FormatBuf("Multiplier %u", time.Multiplier);
-   }
-
-   void WorldSaveDump::DumpScore(WorldDump& dump, const uint& offsetScore, const uint& index, const WorldSave::ScoreV1& score)
-   {
-        if (!offsetScore)
-                return;
-
-        dump[offsetScore + offsetof(WorldSave::ScoreV1, ClientId)] = Str::FormatBuf("Score[%u] ClientId:%u", index, score.ClientId);
-        dump[offsetScore + offsetof(WorldSave::ScoreV1, ClientName)] = Str::FormatBuf("Score[%u] ClientName:%s", index, score.ClientName);
-        dump[offsetScore + offsetof(WorldSave::ScoreV1, Value)] = Str::FormatBuf("Score[%u] Value:%d", index, score.Value);
-   }
-
    void WorldSaveDump::DumpMapData(WorldDump & dump, const uint & offset, const uint & location_index, const uint & map_index, const WorldSave::MapDataV1* map_data)
    {
         if (!offset || !map_data)

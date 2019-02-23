@@ -34,7 +34,8 @@ void WorldSaveObject::Insert( const string& base, string name1, string value, ui
     if( it == Data.end() )
         return;
 
-    string        name = base + string( "::" ) + name1;
+    string        name = (!base.empty() ? base + string( "::" ) : string() ) + name1;
+
     WorldSaveData data = WorldSaveData( it->second.Name0, name, it->second.Index0, it->second.Index1, length, it->second.Offset + offset_of );
     data.Value = value;
     data.Inserted = true;
@@ -129,7 +130,11 @@ void WorldSaveDump::DumpDataBegin( void* file, const uint& len, const string& na
 
 void WorldSaveDump::DumpDataEnd( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1, bool result )
 {
-    if( !result || !name1.empty() )
+    if( !result )
+        return;
+    else if( name0 == "Time" )
+        return;
+    else if( !name1.empty() )
         return;
 
     if( DumpVersion == 1 )
@@ -137,8 +142,6 @@ void WorldSaveDump::DumpDataEnd( void* file, const uint& len, const string& name
         WorldSaveV1* world = (WorldSaveV1*)this;
 
         // TODO SinglePlayerV1
-        // TODO TimeV1
-        // TODO ScoreV1[]
 
         if( name0 == "LocationsCount" )
             DumpObjectSimple( name0, world->Count.Locations );
@@ -171,7 +174,7 @@ void WorldSaveDump::DumpObject( WorldSaveObject& object )
 
         if( !data.Offset )
         {
-            App.WriteLog( "WARNING : NO OFFSET <%s>", it->first.c_str() );
+            App.WriteLog( "WARNING : NO OFFSET <%s>\n", it->first.c_str() );
         }
 
         string value;
@@ -250,6 +253,36 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
     else if( !version )
         throw runtime_error( "Received unversioned object from WorldSave" );
     //
+    else if( name == "SinglePlayer" )
+    {
+        if( version == 1 )
+        {
+            ReadSinglePlayer( (WorldSave::Object::SinglePlayerV1*)object );
+            delete (WorldSave::Object::SinglePlayerV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "Time" )
+    {
+        if( version == 1 )
+        {
+            ReadTime( (WorldSave::Object::TimeV1*)object );
+            delete (WorldSave::Object::TimeV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
+    else if( name == "Score" )
+    {
+        if( version == 1 )
+        {
+            ReadScore( (WorldSave::Object::ScoreV1*)object );
+            delete (WorldSave::Object::ScoreV1*)object;
+        }
+        else
+            unknown_version = true;
+    }
     else if( name == "Location" )
     {
         if( version == 1 )
@@ -371,6 +404,41 @@ void WorldSaveDump::NewGroup( vector<void*>& group, const string& name, const ui
      */
 
     DumpAll();
+}
+
+void WorldSaveDump::ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singleplayer )
+{
+    WorldSaveObject& object = DumpCache["SinglePlayer"][MAX_UINT][MAX_UINT];
+
+    object["Version"].Value = to_string( (long long)singleplayer->Version );
+
+    if( !singleplayer->Version )
+        return;
+
+    // TODO
+}
+
+void WorldSaveDump::ReadTime( WorldSave::Object::TimeV1* time )
+{
+    WorldSaveObject& object = DumpCache["Time"][MAX_UINT][MAX_UINT];
+
+    object.Insert( "", "YearStart", to_string( (long long)time->YearStart ), sizeof(time->YearStart), offsetof( WorldSave::Object::TimeV1, YearStart ) );
+    object.Insert( "", "Year", to_string( (long long)time->Year ), sizeof(time->Year), offsetof( WorldSave::Object::TimeV1, Year ) );
+    object.Insert( "", "Month", to_string( (long long)time->Month ), sizeof(time->Month), offsetof( WorldSave::Object::TimeV1, Month ) );
+    object.Insert( "", "Day", to_string( (long long)time->Day ), sizeof(time->Day), offsetof( WorldSave::Object::TimeV1, Day ) );
+    object.Insert( "", "Hour", to_string( (long long)time->Hour ), sizeof(time->Hour), offsetof( WorldSave::Object::TimeV1, Hour ) );
+    object.Insert( "", "Minute", to_string( (long long)time->Minute ), sizeof(time->Minute), offsetof( WorldSave::Object::TimeV1, Minute ) );
+    object.Insert( "", "Second", to_string( (long long)time->Second ), sizeof(time->Second), offsetof( WorldSave::Object::TimeV1, Second ) );
+    object.Insert( "", "Multiplier", to_string( (long long)time->Multiplier ), sizeof(time->Multiplier), offsetof( WorldSave::Object::TimeV1, Multiplier ) );
+}
+
+void WorldSaveDump::ReadScore( WorldSave::Object::ScoreV1* score )
+{
+    WorldSaveObject& object = DumpCache["Score"][score->Index][MAX_UINT];
+
+    object["ClientId"].Value = to_string( (long long)score->ClientId );
+    object["ClientName"].Value = score->ClientName;
+    object["Value"].Value = to_string( (long long)score->Value );
 }
 
 void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )

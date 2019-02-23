@@ -76,6 +76,9 @@ public:
     // WorldSave callback; called after object group has been fully loaded
     void NewGroup( std::vector<void*>& group, const std::string& name, const uint& version );
 
+    void ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singleplayer );
+    void ReadTime( WorldSave::Object::TimeV1* time );
+    void ReadScore( WorldSave::Object::ScoreV1* score );
     void ReadLocation( WorldSave::Object::LocationV1* location );
     void ReadLocationData( const std::string& base, WorldSave::Object::LocationDataV1* data, WorldSaveObject& object );
     void ReadMap( WorldSave::Object::MapV1* map );

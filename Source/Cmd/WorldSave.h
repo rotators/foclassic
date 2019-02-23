@@ -50,11 +50,21 @@ public:
             bool   LoadSignature( void* file, std::string Name );
         };
 
-        // saved
+        // constructed
         struct SinglePlayerV1
         {
-            uint Marker;
-            // TODO
+            uint                             Version;
+            char                             Name[UTF8_BUF_SIZE( MAX_NAME )];
+            char                             PasswordHash[PASS_HASH_SIZE];
+            CritterDataV1*                   Data;
+            CritterDataExtV1*                DataExt;
+            uint                             TimeEventsCount;
+            std::vector<CritterTimeEventV1*> TimeEvents;
+            uint                             PicSize;
+            std::vector<uint8>               PicData;
+
+            SinglePlayerV1();
+            ~SinglePlayerV1();
         };
 
         struct TimeV1         // saved
@@ -69,12 +79,16 @@ public:
             uint16 Multiplier;
         };
 
-        // saved
+        // constructed
         struct ScoreV1
         {
+            uint Index;
+
             uint ClientId;
             char ClientName[SCORE_NAME_LEN];
             int  Value;
+
+            ScoreV1( uint index = 0 );
         };
 
         // constructed
@@ -427,9 +441,9 @@ public:
     void LogLoadWarning( const char* frmt, ... );
     void LogLoadError( const char* frmt, ... );
 
-    bool LoadSinglePlayer( Object::SinglePlayerV1& singleplayer );
-    bool LoadTime( WorldSave::Object::TimeV1& time );
-    bool LoadScores( WorldSave::Object::ScoreV1( &scores )[SCORES_MAX] );
+    bool LoadSinglePlayer( Object::SinglePlayerV1*& singleplayer );
+    bool LoadTime( WorldSave::Object::TimeV1*& time );
+    bool LoadScores( std::vector<WorldSave::Object::ScoreV1*>& scores );
     bool LoadLocations( uint& count, std::vector<WorldSave::Object::LocationV1*>& locations );
     bool LoadCritters( uint& count, std::vector<WorldSave::Object::CritterV1*>& critters );
     bool LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>& items );
@@ -457,10 +471,10 @@ public:
 
     CountData                                         Count;
 
-    WorldSave::Object::SinglePlayerV1                 SinglePlayer;
-    WorldSave::Object::TimeV1                         Time;
-    WorldSave::Object::ScoreV1                        Scores[SCORES_MAX];
+    WorldSave::Object::SinglePlayerV1*                SinglePlayer;
+    WorldSave::Object::TimeV1*                        Time;
 
+    std::vector<WorldSave::Object::ScoreV1*>          Scores;
     std::vector<WorldSave::Object::LocationV1*>       Locations;
     std::vector<WorldSave::Object::CritterV1*>        Critters;
     std::vector<WorldSave::Object::ItemV1*>           Items;
@@ -476,6 +490,9 @@ public:
     virtual bool LoadWorld() override;
     virtual void UnloadWorld() override;
 
+    void UnloadSinglePlayer();
+    void UnloadTime();
+    void UnloadScores();
     void UnloadLocations();
     void UnloadCritters();
     void UnloadItems();
