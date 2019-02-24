@@ -72,6 +72,7 @@ WorldSave* NewWorldSetup( const WorldSave::Object::Signature& signature, void* f
     world->Dump = new WorldSaveDump( signature );
 
     world->LogLevel = 0;
+    world->OnCounterLoaded.push_back( bind( &WorldSaveDump::OnNewCounter, world->Dump, placeholders::_1, placeholders::_2 ) );
     world->OnObjectLoaded.push_back( bind( &WorldSaveDump::OnNewObject, world->Dump, placeholders::_1, placeholders::_2, placeholders::_3 ) );
     world->OnGroupLoaded.push_back( bind( &WorldSaveDump::OnNewGroup, world->Dump, placeholders::_1, placeholders::_2, placeholders::_3 ) );
 
@@ -128,38 +129,7 @@ void WorldSaveDump::ReadDataBegin( void* file, const uint& len, const string& na
 
 void WorldSaveDump::ReadDataEnd( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1, bool success )
 {
-    if( !success )
-        return;
-    else if( name0 == "Time" )
-        return;
-    else if( !name1.empty() )
-        return;
-
-    if( WorldVersion == 1 )
-    {
-        WorldSaveV1* world = (WorldSaveV1*)this;
-
-        if( name0 == "LocationsCount" )
-            DumpObjectSimple( name0, world->Count.Locations );
-        else if( name0 == "CrittersCount" )
-            DumpObjectSimple( name0, world->Count.Critters );
-        else if( name0 == "ItemsCount" )
-            DumpObjectSimple( name0, world->Count.Items );
-        else if( name0 == "VarsCount" )
-            DumpObjectSimple( name0, world->Count.Vars );
-        else if( name0 == "HolosCount" )
-            DumpObjectSimple( name0, world->Count.Holos );
-        else if( name0 == "AnyDataCount" )
-            DumpObjectSimple( name0, world->Count.AnyData );
-        else if( name0 == "TimeEventsCount" )
-            DumpObjectSimple( name0, world->Count.TimeEvents );
-        else if( name0 == "ScriptFunctionsCount" )
-            DumpObjectSimple( name0, world->Count.ScriptFunctions );
-        else
-            App.WriteLog( "WARNING : unknown object<%s>\n", name0.c_str() );
-
-        DumpCacheAndPrint();
-    }
+    // NOP
 }
 
 void WorldSaveDump::DumpObject( WorldSaveObject& object )
@@ -185,7 +155,7 @@ void WorldSaveDump::DumpObject( WorldSaveObject& object )
     }
 }
 
-void WorldSaveDump::DumpObjectSimple( const string& name, const uint& value )
+void WorldSaveDump::DumpCounter( const string& name, const uint& value )
 {
     auto it = Cache.find( name );
     if( it != Cache.end() )
@@ -237,6 +207,11 @@ void WorldSaveDump::DumpCacheAndPrint()
     Dump.clear();
 }
 
+void WorldSaveDump::OnNewCounter( uint count, const string& name )
+{
+    DumpCounter( name, count );
+}
+
 // called after WorldSave::Object is fully loaded
 void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& version )
 {
@@ -249,7 +224,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
     else if( !version )
         throw runtime_error( "Received unversioned object from WorldSave" );
     //
-    else if( name == "SinglePlayer" )
+    else if( name == WorldSave::ID::SinglePlayer )
     {
         if( version == 1 )
         {
@@ -259,7 +234,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Time" )
+    else if( name == WorldSave::ID::Time )
     {
         if( version == 1 )
         {
@@ -269,7 +244,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Score" )
+    else if( name == WorldSave::ID::Score )
     {
         if( version == 1 )
         {
@@ -279,7 +254,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Location" )
+    else if( name == WorldSave::ID::Location )
     {
         if( version == 1 )
         {
@@ -289,7 +264,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Critter" )
+    else if( name == WorldSave::ID::Critter )
     {
         if( version == 1 )
         {
@@ -299,7 +274,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Item" )
+    else if( name == WorldSave::ID::Item )
     {
         if( version == 1 )
         {
@@ -309,7 +284,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Var" )
+    else if( name == WorldSave::ID::Var )
     {
         if( version == 1 )
         {
@@ -319,7 +294,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "Holo" )
+    else if( name == WorldSave::ID::Holo )
     {
         if( version == 1 )
         {
@@ -329,7 +304,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "AnyData" )
+    else if( name == WorldSave::ID::AnyData )
     {
         if( version == 1 )
         {
@@ -339,7 +314,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "TimeEvent" )
+    else if( name == WorldSave::ID::TimeEvent )
     {
         if( version == 1 )
         {
@@ -349,7 +324,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
         else
             unknown_version = true;
     }
-    else if( name == "ScriptFunction" )
+    else if( name == WorldSave::ID::ScriptFunction )
     {
         if( version == 1 )
         {
@@ -361,7 +336,7 @@ void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& 
     }
     else
     {
-        App.WriteLog( "ERROR : unknown object : object<%s> version<%u>", name.c_str(), version );
+        App.WriteLog( "ERROR : unknown new object : object<%s> version<%u>", name.c_str(), version );
         throw runtime_error( "Received unknown object from WorldSave" );
     }
 
@@ -404,7 +379,7 @@ void WorldSaveDump::OnNewGroup( vector<void*>& group, const string& name, const 
 
 void WorldSaveDump::ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singleplayer )
 {
-    WorldSaveObject& object = Cache["SinglePlayer"][MAX_UINT][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::SinglePlayer][MAX_UINT][MAX_UINT];
 
     object["Version"].Value = to_string( (long long)singleplayer->Version );
 
@@ -419,7 +394,7 @@ void WorldSaveDump::ReadTime( WorldSave::Object::TimeV1* time )
     if( !time )
         return;
 
-    WorldSaveObject& object = Cache["Time"][MAX_UINT][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Time][MAX_UINT][MAX_UINT];
 
     object.Insert( "", "YearStart", to_string( (long long)time->YearStart ), sizeof(time->YearStart), offsetof( WorldSave::Object::TimeV1, YearStart ) );
     object.Insert( "", "Year", to_string( (long long)time->Year ), sizeof(time->Year), offsetof( WorldSave::Object::TimeV1, Year ) );
@@ -436,7 +411,7 @@ void WorldSaveDump::ReadScore( WorldSave::Object::ScoreV1* score )
     if( !score )
         return;
 
-    WorldSaveObject& object = Cache["Score"][score->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Score][score->Index][MAX_UINT];
 
     object["ClientId"].Value = to_string( (long long)score->ClientId );
     object["ClientName"].Value = score->ClientName;
@@ -448,7 +423,7 @@ void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )
     if( !location )
         return;
 
-    WorldSaveObject& object = Cache["Location"][location->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Location][location->Index][MAX_UINT];
 
     ReadLocationData( "Data", location->Data, object );
 
@@ -482,7 +457,7 @@ void WorldSaveDump::ReadMap( WorldSave::Object::MapV1* map )
     if( !map )
         return;
 
-    WorldSaveObject& object = Cache["Map"][map->LocationIndex][map->MapIndex];
+    WorldSaveObject& object = Cache[WorldSave::ID::Map][map->LocationIndex][map->MapIndex];
 
     object["Data"].Value = "\n";
     ReadMapData( "Data", map->Data, object );
@@ -517,7 +492,7 @@ void WorldSaveDump::ReadCritter( WorldSave::Object::CritterV1* critter )
     if( !critter )
         return;
 
-    WorldSaveObject& object = Cache["Critter"][critter->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Critter][critter->Index][MAX_UINT];
 
     object["Data"].Value = "\n";
     ReadCritterData( "Data", critter->Data, object );
@@ -624,7 +599,7 @@ void WorldSaveDump::ReadItem( WorldSave::Object::ItemV1* item )
     if( !item )
         return;
 
-    WorldSaveObject& object = Cache["Item"][item->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Item][item->Index][MAX_UINT];
 
     object["Id"].Value = to_string( (long long)item->Id );
     object["Pid"].Value = to_string( (long long)item->Pid );
@@ -640,7 +615,7 @@ void WorldSaveDump::ReadVar( WorldSave::Object::VarV1* var )
     if( !var )
         return;
 
-    WorldSaveObject& object = Cache["Var"][var->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Var][var->Index][MAX_UINT];
 
     object["TempId"].Value = to_string( (long long)var->TempId );
     object["MasterId"].Value = to_string( (long long)var->MasterId );
@@ -653,7 +628,7 @@ void WorldSaveDump::ReadHolo( WorldSave::Object::HoloV1* holo )
     if( !holo )
         return;
 
-    WorldSaveObject& object = Cache["Holo"][holo->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::Holo][holo->Index][MAX_UINT];
 
     object["TitleLength"].Value = to_string( (long long)holo->TitleLength );
     object["Title"].Value = Str::FormatBuf( "\"%s\"", holo->Title );
@@ -666,7 +641,7 @@ void WorldSaveDump::ReadAnyData( WorldSave::Object::AnyDataV1* anydata )
     if( !anydata )
         return;
 
-    WorldSaveObject& object = Cache["AnyData"][anydata->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::AnyData][anydata->Index][MAX_UINT];
 
     object["NameLength"].Value = to_string( (long long)anydata->NameLength );
     object["Name"].Value = anydata->Name;
@@ -679,7 +654,7 @@ void WorldSaveDump::ReadTimeEvent( WorldSave::Object::TimeEventV1* timevent )
     if( !timevent )
         return;
 
-    WorldSaveObject& object = Cache["TimeEvent"][timevent->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::TimeEvent][timevent->Index][MAX_UINT];
 
     object["Num"].Value = to_string( (long long)timevent->Num );
     object["ScriptNameLength"].Value = to_string( (long long)timevent->ScriptNameLength );
@@ -695,7 +670,7 @@ void WorldSaveDump::ReadScriptFunction( WorldSave::Object::ScriptFunctionV1* fun
     if( !function )
         return;
 
-    WorldSaveObject& object = Cache["ScriptFunction"][function->Index][MAX_UINT];
+    WorldSaveObject& object = Cache[WorldSave::ID::ScriptFunction][function->Index][MAX_UINT];
 
     object["NameLength"].Value = to_string( (long long)function->NameLength );
     object["Name"].Value = function->Name;

@@ -9,6 +9,7 @@
 #include "../AI.h"
 #include "../Item.h"
 
+typedef std::function<void (uint value, const std::string& name)>                                     WorldSaveCallbackCounter;
 typedef std::function<void (void*& object, const std::string& name, const uint& version)>             WorldSaveCallbackObject;
 typedef std::function<void (std::vector<void*>& group, const std::string& name, const uint& version)> WorldSaveCallbackGroup;
 
@@ -16,6 +17,31 @@ class WorldSave
 {
 public:
     class V1;
+
+    struct ID
+    {
+        static const std::string AnyData;
+        static const std::string AnyDataCounter;
+        static const std::string Critter;
+        static const std::string CritterCounter;
+        static const std::string CritterTimeEvent;
+        static const std::string Holo;
+        static const std::string HoloCounter;
+        static const std::string Item;
+        static const std::string ItemCounter;
+        static const std::string Location;
+        static const std::string LocationCounter;
+        static const std::string Map;
+        static const std::string Score;
+        static const std::string ScriptFunction;
+        static const std::string ScriptFunctionCounter;
+        static const std::string SinglePlayer;
+        static const std::string Time;
+        static const std::string TimeEvent;
+        static const std::string TimeEventCounter;
+        static const std::string Var;
+        static const std::string VarCounter;
+    };
 
     struct Object
     {
@@ -427,6 +453,9 @@ public:
     uint8       LogLevel;
     std::string FileName;
 
+    // called after objects counter is loaded
+    std::vector<WorldSaveCallbackCounter> OnCounterLoaded;
+
     // called after object is fully loaded
     // if object is changed to null during callback, it is *not* added to group
     std::vector<WorldSaveCallbackObject> OnObjectLoaded;
@@ -441,10 +470,9 @@ public:
     static std::string GetDataName( const std::string& name0, const std::string& name1, const uint& index0, const uint& index1 );
     virtual bool       ReadData( void* buf, uint len, const std::string& name0, const std::string& name1 = std::string(), const uint& index0 = MAX_UINT, const uint& index1 = MAX_UINT );
 
-    virtual bool LoadWorld() = 0;
-    virtual void UnloadWorld() = 0;
-
 private:
+    bool ReadCounter( uint& counter, const std::string& name );
+    void RunCounterLoaded( uint& count, const std::string& name );
     void RunObjectLoaded( void*& object, const std::string& name, const uint& version );
     void RunGroupLoaded( std::vector<void*>& group, const std::string& name, const uint& version );
 
@@ -455,39 +483,27 @@ public:
 
     WorldSave::Object::Signature GetSignature();
 
+    virtual bool LoadWorld() = 0;
+    virtual void UnloadWorld() = 0;
+
     bool LoadSinglePlayer( Object::SinglePlayerV1*& singleplayer );
     bool LoadTime( WorldSave::Object::TimeV1*& time );
     bool LoadScores( std::vector<WorldSave::Object::ScoreV1*>& scores );
-    bool LoadLocations( uint& count, std::vector<WorldSave::Object::LocationV1*>& locations );
-    bool LoadCritters( uint& count, std::vector<WorldSave::Object::CritterV1*>& critters );
-    bool LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>& items );
-    bool LoadVars( uint& count, std::vector<WorldSave::Object::VarV1*>& vars );
-    bool LoadHolo( uint& count, std::vector<WorldSave::Object::HoloV1*>& holo );
-    bool LoadAnyData( uint& count, std::vector<WorldSave::Object::AnyDataV1*>& anydata );
-    bool LoadTimeEvents( uint& count, std::vector<WorldSave::Object::TimeEventV1*>& events );
-    bool LoadScriptFunctions( uint& count, std::vector<WorldSave::Object::ScriptFunctionV1*>& functions );
+    bool LoadLocations( std::vector<WorldSave::Object::LocationV1*>& locations );
+    bool LoadCritters( std::vector<WorldSave::Object::CritterV1*>& critters );
+    bool LoadItems( std::vector<WorldSave::Object::ItemV1*>& items );
+    bool LoadVars( std::vector<WorldSave::Object::VarV1*>& vars );
+    bool LoadHolo( std::vector<WorldSave::Object::HoloV1*>& holo );
+    bool LoadAnyData( std::vector<WorldSave::Object::AnyDataV1*>& anydata );
+    bool LoadTimeEvents( std::vector<WorldSave::Object::TimeEventV1*>& events );
+    bool LoadScriptFunctions( std::vector<WorldSave::Object::ScriptFunctionV1*>& functions );
 };
 
 class WorldSave::V1 : public WorldSave
 {
 public:
-    struct CountData
-    {
-        uint Locations;
-        uint Critters;
-        uint Items;
-        uint Vars;
-        uint Holos;
-        uint AnyData;
-        uint TimeEvents;
-        uint ScriptFunctions;
-    };
-
-    CountData                                         Count;
-
-    WorldSave::Object::SinglePlayerV1*                SinglePlayer;
+    WorldSave::Object::SinglePlayerV1*                SinglePlayer; // null if loading multiplayer worldsave
     WorldSave::Object::TimeV1*                        Time;
-
     std::vector<WorldSave::Object::ScoreV1*>          Scores;
     std::vector<WorldSave::Object::LocationV1*>       Locations;
     std::vector<WorldSave::Object::CritterV1*>        Critters;

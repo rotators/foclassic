@@ -59,23 +59,29 @@ public:
     // called after WorldSave::V*::LoadWorld()
     void LoadWorldEnd( WorldSave* world, bool success );
 
+    void DumpObject( WorldSaveObject& object );
+    void DumpCounter( const string& name, const uint& value );
+    void DumpCache();
+    void DumpPrint();
+    void DumpCacheAndPrint();
+
     // called before WorldSave::ReadData()
     void ReadDataBegin( void* file, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1 );
 
     // called after WorldSave::ReadData()
     void ReadDataEnd( void* file, const uint& len, const std::string& name0, const std::string& name1, const uint& index0, const uint& index1, bool success );
 
-    void DumpObject( WorldSaveObject& object );
-    void DumpObjectSimple( const string& name, const uint& value );
-    void DumpCache();
-    void DumpPrint();
-    void DumpCacheAndPrint();
+    // WorldSave callback
+    // called after object counter has been loaded
+    void OnNewCounter( uint count, const std::string& name );
 
-    // WorldSave callback; called after single object has been fully loaded
+    // WorldSave callback
+    // called after single object has been fully loaded
     // calls matching Read*() function, filling values of previously cached data
     void OnNewObject( void*& object, const std::string& name, const uint& version );
 
-    // WorldSave callback; called after object group has been fully loaded
+    // WorldSave callback
+    // called after object group has been fully loaded
     void OnNewGroup( std::vector<void*>& group, const std::string& name, const uint& version );
 
     void ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singleplayer );
