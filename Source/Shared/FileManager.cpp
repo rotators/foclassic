@@ -89,8 +89,6 @@ void FileManager::SetCacheName( const char* name )
 
 void FileManager::InitDataFiles( const char* path )
 {
-    App.WriteLogF( _FUNC_, " - Type:%u Render:%u OS:%u %ubit\n", App.Type, App.Render, App.OS, App.Bits );
-
     char list_path[MAX_FOPATH];
     Str::Format( list_path, "%sDataFiles.cfg", path );
 

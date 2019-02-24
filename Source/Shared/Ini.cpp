@@ -357,6 +357,8 @@ void Ini::AddSectionOrder( const string& section, const string& key )
         vector<string>& ini_section = SectionsOrder[section];
         ini_section.push_back( key );
     }
+    else
+        SectionsOrder[section].push_back( key );
 }
 
 bool Ini::RemoveSectionOrder( const string& section )

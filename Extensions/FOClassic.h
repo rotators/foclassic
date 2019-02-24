@@ -316,7 +316,7 @@ struct GameOptions
     const uint           TurnBasedTick;
     const int            DeadHitPoints;
     const uint           Breaktime;
-    const uint           TimeoutTransfer;
+    foconst uint         TimeoutTransfer;
     const uint           TimeoutBattle;
     const uint           ApRegeneration;
     const uint           RtApCostCritterWalk;

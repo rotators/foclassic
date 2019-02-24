@@ -51,7 +51,7 @@ int ShowWorld::Run()
     }
 
     WorldSave::Object::Signature signature;
-    if( !signature.LoadSignature( file, name ) )
+    if( !signature.Load( file, name ) )
         return EXIT_FAILURE;
 
     WorldSave* world = WorldSaveDump::NewWorld( signature, file, name_short );
@@ -63,6 +63,8 @@ int ShowWorld::Run()
     }
 
     bool success = world->LoadWorld();
+
+    delete world;
 
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

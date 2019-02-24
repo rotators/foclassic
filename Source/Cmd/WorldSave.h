@@ -19,6 +19,9 @@ public:
 
     struct Object
     {
+        // "saved"        structure is loaded as single read call; members cannot be added/reordered
+        // "constructed"  structure is loaded as multiple read calls; members can be added/reordered
+
         struct LocationV1;
         struct LocationDataV1;
         struct MapV1;
@@ -37,17 +40,25 @@ public:
         // constructed
         struct Signature
         {
+            // position of version/signature appended at EOF
             uint   OffsetEnd;
+
+            // worldsave versionset to 1 in case of compatibile legacy version
             uint16 Version;
 
+            // size of signature in bytes (start of file)
             uint8  SizeBegin;
+
+            // size of version/signature in bytes (EOF)
             uint8  SizeEnd;
 
+            // true if worldsave has been created by FOnline
             bool   Legacy;
 
             Signature();
 
-            bool   LoadSignature( void* file, std::string Name );
+            // Loads signature from already opened <file>
+            bool Load( void* file, std::string Name );
         };
 
         // constructed
@@ -67,7 +78,8 @@ public:
             ~SinglePlayerV1();
         };
 
-        struct TimeV1         // saved
+        // saved
+        struct TimeV1
         {
             uint16 YearStart;
             uint16 Year;
@@ -290,7 +302,7 @@ public:
             ~ItemV1();
         };
 
-        // saved; sizeof() == 120, used in NetProtocol.h
+        // saved, used in NetProtocol.h (sic!)
         struct ItemDataV1
         {
             uint16 SortValue;

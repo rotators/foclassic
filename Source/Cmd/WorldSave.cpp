@@ -48,21 +48,40 @@ static void StaticAsserts()
 
     STATIC_ASSERT( sizeof(WorldSignature) == 6 );
 
+    static const uint sizeof_str = sizeof(string);
+    static const uint sizeof_ptr = sizeof(void*);
+    static const uint sizeof_vec = sizeof(vector<void*>);
+
+    STATIC_ASSERT( sizeof_vec == sizeof(vector<uint>) );
+    STATIC_ASSERT( sizeof_vec == sizeof(vector<uint8>) );
+
+    // saved
     STATIC_ASSERT( sizeof(WorldSave::Object::TimeV1) == 16 );
-    STATIC_ASSERT( sizeof(WorldSave::Object::ScoreV1) == 76 );
     STATIC_ASSERT( sizeof(WorldSave::Object::LocationDataV1) == 256 );
     STATIC_ASSERT( sizeof(WorldSave::Object::MapDataV1) == 524 );
     STATIC_ASSERT( sizeof(WorldSave::Object::CritterDataV1) == 7404 );
-    STATIC_ASSERT( sizeof(WorldSave::Object::CritterDataExtV1) == 6944 );
     STATIC_ASSERT( sizeof(WorldSave::Object::CritterBagV1) == 16 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::CritterDataExtV1) == 6944 );
     STATIC_ASSERT( sizeof(WorldSave::Object::CritterTimeEventV1) == 16 );
-    STATIC_ASSERT( sizeof(WorldSave::Object::ItemDataV1) == 120 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::ItemDataV1) == 120 ); // used in NetProtocol.h (sic!)
+
+    // constructed
+    STATIC_ASSERT( sizeof(WorldSave::Object::ScoreV1) == 76 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::LocationV1) == 8 + sizeof_ptr + sizeof_vec );
+    STATIC_ASSERT( sizeof(WorldSave::Object::MapV1) == 8 + sizeof_ptr );
+    STATIC_ASSERT( sizeof(WorldSave::Object::CritterV1) == 8 + (sizeof_ptr * 2) + sizeof_vec );
+    STATIC_ASSERT( sizeof(WorldSave::Object::ItemV1) == 20 + (sizeof_ptr * 2) );
+    STATIC_ASSERT( sizeof(WorldSave::Object::VarV1) == 18 + /*padding*/ 2 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::HoloV1) == 13 + (sizeof_ptr * 2) + /*padding*/ 3 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::AnyDataV1) == 12 + sizeof_ptr + sizeof_vec );
+    STATIC_ASSERT( sizeof(WorldSave::Object::TimeEventV1) == 22 + sizeof_ptr + sizeof_vec + /*padding*/ 2 );
+    STATIC_ASSERT( sizeof(WorldSave::Object::ScriptFunctionV1) == 8 + sizeof_ptr );
 }
 
-WorldSave::Object::Signature::Signature() : SizeBegin( 0 ), SizeEnd( 0 ), OffsetEnd( 0 ), Version( 0 ), Legacy( false )
+WorldSave::Object::Signature::Signature() : OffsetEnd( 0 ), Version( 0 ), SizeBegin( 0 ), SizeEnd( 0 ), Legacy( false )
 {}
 
-bool WorldSave::Object::Signature::LoadSignature( void* world, string Name )
+bool WorldSave::Object::Signature::Load( void* world, string Name )
 {
     FileSetPointer( world, 0, SEEK_SET );
 
@@ -120,7 +139,7 @@ bool WorldSave::Object::Signature::LoadSignature( void* world, string Name )
             uint8 signature_end[4];
             if( !FileRead( world, &signature_end, sizeof(signature_end) ) )
             {
-                App.WriteLog( "World file<%s> corrupted : cannot read signature_end\n", Name.c_str() );
+                App.WriteLog( "WorldSave file<%s> corrupted : cannot read signature_end\n", Name.c_str() );
                 return false;
             }
 
@@ -128,19 +147,19 @@ bool WorldSave::Object::Signature::LoadSignature( void* world, string Name )
                 version_end = signature_end[0];
             else
             {
-                App.WriteLog( "World file<%s> corrupted : signature_end mismatch\n", Name.c_str() );
+                App.WriteLog( "WorldSave file<%s> corrupted : signature_end mismatch\n", Name.c_str() );
                 return false;
             }
         }
         else if( !FileRead( world, &version_end, sizeof(version_end) ) )
         {
-            App.WriteLog( "World file<%s> corrupted : cannot read version_end\n", Name.c_str() );
+            App.WriteLog( "WorldSave file<%s> corrupted : cannot read version_end\n", Name.c_str() );
             return false;
         }
 
         if( Version != version_end )
         {
-            App.WriteLog( "World file<%s> corrupted : version mismatch\n", Name.c_str() );
+            App.WriteLog( "WorldSave file<%s> corrupted : version mismatch\n", Name.c_str() );
             return false;
         }
     }
@@ -175,10 +194,12 @@ WorldSave::Object::SinglePlayerV1::~SinglePlayerV1()
     PicData.clear();
 }
 
-WorldSave::Object::ScoreV1::ScoreV1( uint index /* = 0 */ ) : Index( index )
-{}
+WorldSave::Object::ScoreV1::ScoreV1( uint index /* = 0 */ ) : Index( index ), ClientId( 0 ), Value( 0 )
+{
+    memzero( ClientName, sizeof(ClientName) );
+}
 
-WorldSave::Object::LocationV1::LocationV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr )
+WorldSave::Object::LocationV1::LocationV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr ), MapsCount( 0 )
 {}
 
 WorldSave::Object::LocationV1::~LocationV1()
@@ -204,7 +225,7 @@ WorldSave::Object::MapV1::~MapV1()
     }
 }
 
-WorldSave::Object::CritterV1::CritterV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr ), DataExt( nullptr )
+WorldSave::Object::CritterV1::CritterV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr ), DataExt( nullptr ), TimeEventsCount( 0 )
 {}
 
 WorldSave::Object::CritterV1::~CritterV1()
@@ -226,8 +247,10 @@ WorldSave::Object::CritterV1::~CritterV1()
     TimeEvents.clear();
 }
 
-WorldSave::Object::ItemV1::ItemV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr ), Lexems( nullptr )
-{}
+WorldSave::Object::ItemV1::ItemV1( uint index /* = 0 */ ) : Index( index ), Data( nullptr ), Lexems( nullptr ), Id( 0 ), Pid( 0 ), LexemsLength( 0 ), Accessory( 0 )
+{
+    memzero( AccBuffer, sizeof(AccBuffer) );
+}
 
 WorldSave::Object::ItemV1::~ItemV1()
 {
@@ -241,13 +264,13 @@ WorldSave::Object::ItemV1::~ItemV1()
         delete[] Lexems;
 }
 
-WorldSave::Object::VarV1::VarV1( uint index /* = 0 */ ) : Index( index )
+WorldSave::Object::VarV1::VarV1( uint index /* = 0 */ ) : Index( index ), TempId( 0 ), MasterId( 0 ), SlaveId( 0 ), Value( 0 )
 {}
 
-WorldSave::Object::HoloV1::HoloV1( uint index /* = 0 */ ) : Index( index )
+WorldSave::Object::HoloV1::HoloV1( uint index /* = 0 */ ) : Index( index ), Id( 0 ), Title( nullptr ), Text( nullptr ), TitleLength( 0 ), TextLength( 0 ), CanRW( false )
 {}
 
-WorldSave::Object::AnyDataV1::AnyDataV1( uint index /* = 0 */ ) : Index( index )
+WorldSave::Object::AnyDataV1::AnyDataV1( uint index /* = 0 */ ) : Index( index ), NameLength( 0 ), Name( nullptr ), DataLength( 0 )
 {}
 
 WorldSave::Object::AnyDataV1::~AnyDataV1()
@@ -255,10 +278,10 @@ WorldSave::Object::AnyDataV1::~AnyDataV1()
     Data.clear();
 }
 
-WorldSave::Object::TimeEventV1::TimeEventV1( uint index /* = 0 */ ) : Index( index )
+WorldSave::Object::TimeEventV1::TimeEventV1( uint index /* = 0 */ ) : Index( index ), Num( 0 ), ScriptNameLength( 0 ), ScriptName( nullptr ), BeginSecond( 0 ), Rate( 0 ), ValuesLength( 0 )
 {}
 
-WorldSave::Object::ScriptFunctionV1::ScriptFunctionV1( uint index /* = 0 */ ) : Index( index )
+WorldSave::Object::ScriptFunctionV1::ScriptFunctionV1( uint index /* = 0 */ ) : Index( index ), NameLength( 0 ), Name( nullptr )
 {}
 
 WorldSave::WorldSave( WorldSave::Object::Signature signature, void* world, string filename /* = string() */ ) : Signature( signature ), World( world ), LogLevel( 1 ), FileName( filename )
@@ -351,12 +374,12 @@ void WorldSave::LogLoadWarning( const char* frmt, ... )
 
 void WorldSave::LogLoadError( const char* frmt, ... )
 {
-    static const char* filename = Str::FormatBuf( "%s%s%s", !FileName.empty() ? "<" : "", !FileName.empty() ? FileName.c_str() : "", !FileName.empty() ? ">" : "" );
+    const char* filename = Str::FormatBuf( "%s%s%s", !FileName.empty() ? "<" : "", !FileName.empty() ? FileName.c_str() : "", !FileName.empty() ? ">" : "" );
 
-    va_list            list;
+    va_list     list;
     va_start( list, frmt );
-    char               str[MAX_LOGTEXT] = { 0 };
-    size_t             len = Str::Length( str );
+    char        str[MAX_LOGTEXT] = { 0 };
+    size_t      len = Str::Length( str );
 
     vsnprintf( &str[len], MAX_LOGTEXT - len, frmt, list );
     App.WriteLog( "Load world%s... ERROR : cannot load data<%s>\n", filename, str );
@@ -375,7 +398,7 @@ bool WorldSave::LoadSinglePlayer( WorldSave::Object::SinglePlayerV1*& singleplay
         return false;
     }
 
-    WorldSave::Object::SinglePlayerV1* tmp = new WorldSave::Object::SinglePlayerV1();
+    Object::SinglePlayerV1* tmp = new Object::SinglePlayerV1();
 
     if( !ReadData( &tmp->Version, sizeof(tmp->Version), _SinglePlayer, "Version" ) )
     {
@@ -400,15 +423,15 @@ bool WorldSave::LoadSinglePlayer( WorldSave::Object::SinglePlayerV1*& singleplay
         return false;
     }
 
-    tmp->Data = new WorldSave::Object::CritterDataV1();
-    if( !ReadData( tmp->Data, sizeof(WorldSave::Object::CritterDataV1), _SinglePlayer, "Data" ) )
+    tmp->Data = new Object::CritterDataV1();
+    if( !ReadData( tmp->Data, sizeof(Object::CritterDataV1), _SinglePlayer, "Data" ) )
     {
         delete tmp;
         return false;
     }
 
-    tmp->DataExt = new WorldSave::Object::CritterDataExtV1();
-    if( !ReadData( tmp->DataExt, sizeof(WorldSave::Object::CritterDataExtV1), _SinglePlayer, "DataExt" ) )
+    tmp->DataExt = new Object::CritterDataExtV1();
+    if( !ReadData( tmp->DataExt, sizeof(Object::CritterDataExtV1), _SinglePlayer, "DataExt" ) )
     {
         delete tmp;
         return false;
@@ -422,9 +445,9 @@ bool WorldSave::LoadSinglePlayer( WorldSave::Object::SinglePlayerV1*& singleplay
 
     for( uint timevent_idx = 0; timevent_idx < tmp->TimeEventsCount; timevent_idx++ )
     {
-        WorldSave::Object::CritterTimeEventV1* timevent = new WorldSave::Object::CritterTimeEventV1();
+        Object::CritterTimeEventV1* timevent = new Object::CritterTimeEventV1();
 
-        if( !ReadData( timevent, sizeof(WorldSave::Object::CritterTimeEventV1), _SinglePlayer, "TimeEvent", timevent_idx ) )
+        if( !ReadData( timevent, sizeof(Object::CritterTimeEventV1), _SinglePlayer, "TimeEvent", timevent_idx ) )
         {
             delete timevent;
             delete tmp;
@@ -470,9 +493,9 @@ bool WorldSave::LoadTime( WorldSave::Object::TimeV1*& time )
         return false;
     }
 
-    WorldSave::Object::TimeV1* tmp = new WorldSave::Object::TimeV1();
+    Object::TimeV1* tmp = new Object::TimeV1();
 
-    if( !ReadData( tmp, sizeof(WorldSave::Object::TimeV1), _Time ) )
+    if( !ReadData( tmp, sizeof(Object::TimeV1), _Time ) )
         return false;
 
     const char* load = Str::FormatBuf( "date<%u.%u.%u> time<%02u:%02u:%02u> multiplier<x%u>", tmp->Day, tmp->Month, tmp->Year, tmp->Hour, tmp->Minute, tmp->Second, tmp->Multiplier );
@@ -491,11 +514,9 @@ bool WorldSave::LoadScores( vector<WorldSave::Object::ScoreV1*>& scores )
     static const string _Score = "Score";
     static const uint   _Version = 1;
 
-    scores.clear();
-
     for( uint idx = 0; idx < SCORES_MAX; idx++ )
     {
-        WorldSave::Object::ScoreV1* score = new WorldSave::Object::ScoreV1( idx );
+        Object::ScoreV1* score = new Object::ScoreV1( idx );
 
         if( !ReadData( &score->ClientId, sizeof(score->ClientId), _Score, "ClientId", score->Index ) )
         {
@@ -520,7 +541,7 @@ bool WorldSave::LoadScores( vector<WorldSave::Object::ScoreV1*>& scores )
             scores.push_back( score );
     }
 
-    LogLoad( "scores<%u>", scores.size() );
+    LogLoad( "scores<%u>", SCORES_MAX );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(scores), _Score, _Version );
 
     return true;
@@ -532,9 +553,6 @@ bool WorldSave::LoadLocations( uint& count, vector<WorldSave::Object::LocationV1
     static const string _Map = "Map";
     static const uint   _Version = 1;
 
-    count = 0;
-    locations.clear();
-
     if( !ReadData( &count, sizeof(count), "LocationsCount" ) )
         return false;
 
@@ -542,10 +560,10 @@ bool WorldSave::LoadLocations( uint& count, vector<WorldSave::Object::LocationV1
 
     for( uint loc_idx = 0; loc_idx < count; loc_idx++ )
     {
-        WorldSave::Object::LocationV1* location = new WorldSave::Object::LocationV1( loc_idx );
+        Object::LocationV1* location = new Object::LocationV1( loc_idx );
 
-        location->Data = new WorldSave::Object::LocationDataV1();
-        if( !ReadData( location->Data, sizeof(WorldSave::Object::LocationDataV1), _Location, "Data", location->Index ) )
+        location->Data = new Object::LocationDataV1();
+        if( !ReadData( location->Data, sizeof(Object::LocationDataV1), _Location, "Data", location->Index ) )
         {
             delete location;
             return false;
@@ -559,10 +577,10 @@ bool WorldSave::LoadLocations( uint& count, vector<WorldSave::Object::LocationV1
 
         for( uint map_idx = 0; map_idx < location->MapsCount; map_idx++ )
         {
-            WorldSave::Object::MapV1* map = new WorldSave::Object::MapV1( location->Index, map_idx );
+            Object::MapV1* map = new Object::MapV1( location->Index, map_idx );
 
-            map->Data = new WorldSave::Object::MapDataV1();
-            if( !ReadData( map->Data, sizeof(WorldSave::Object::MapDataV1), _Map, "Data", map->LocationIndex, map->MapIndex ) )
+            map->Data = new Object::MapDataV1();
+            if( !ReadData( map->Data, sizeof(Object::MapDataV1), _Map, "Data", map->LocationIndex, map->MapIndex ) )
             {
                 delete map;
                 delete location;
@@ -578,7 +596,7 @@ bool WorldSave::LoadLocations( uint& count, vector<WorldSave::Object::LocationV1
             locations.push_back( location );
     }
 
-    LogLoad( "locations<%u> maps<%u>", locations.size(), all_maps );
+    LogLoad( "locations<%u> maps<%u>", count, all_maps );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(locations), _Location, _Version );
 
     return true;
@@ -590,9 +608,6 @@ bool WorldSave::LoadCritters( uint& count, vector<WorldSave::Object::CritterV1*>
     static const string _CritterTimeEvent = "CritterTimeEvent";
     static const uint   _Version = 1;
 
-    count = 0;
-    critters.clear();
-
     if( !ReadData( &count, sizeof(count), "CrittersCount" ) )
         return false;
 
@@ -600,10 +615,10 @@ bool WorldSave::LoadCritters( uint& count, vector<WorldSave::Object::CritterV1*>
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::CritterV1* critter = new WorldSave::Object::CritterV1( idx );
+        Object::CritterV1* critter = new Object::CritterV1( idx );
 
-        critter->Data = new WorldSave::Object::CritterDataV1();
-        if( !ReadData( critter->Data, sizeof(WorldSave::Object::CritterDataV1), _Critter, "Data", critter->Index ) )
+        critter->Data = new Object::CritterDataV1();
+        if( !ReadData( critter->Data, sizeof(Object::CritterDataV1), _Critter, "Data", critter->Index ) )
         {
             delete critter;
             return false;
@@ -611,8 +626,8 @@ bool WorldSave::LoadCritters( uint& count, vector<WorldSave::Object::CritterV1*>
 
         if( critter->Data->IsDataExt )
         {
-            critter->DataExt = new WorldSave::Object::CritterDataExtV1();
-            if( !ReadData( critter->DataExt, sizeof(WorldSave::Object::CritterDataExtV1), _Critter, "DataExt", critter->Index ) )
+            critter->DataExt = new Object::CritterDataExtV1();
+            if( !ReadData( critter->DataExt, sizeof(Object::CritterDataExtV1), _Critter, "DataExt", critter->Index ) )
             {
                 delete critter;
                 return false;
@@ -627,9 +642,9 @@ bool WorldSave::LoadCritters( uint& count, vector<WorldSave::Object::CritterV1*>
 
         for( uint timevent_idx = 0; timevent_idx < critter->TimeEventsCount; timevent_idx++ )
         {
-            WorldSave::Object::CritterTimeEventV1* timevent = new WorldSave::Object::CritterTimeEventV1();
+            Object::CritterTimeEventV1* timevent = new Object::CritterTimeEventV1();
 
-            if( !ReadData( timevent, sizeof(WorldSave::Object::CritterTimeEventV1), _CritterTimeEvent, string(), critter->Index, timevent_idx ) )
+            if( !ReadData( timevent, sizeof(Object::CritterTimeEventV1), _CritterTimeEvent, string(), critter->Index, timevent_idx ) )
             {
                 delete timevent;
                 delete critter;
@@ -645,7 +660,7 @@ bool WorldSave::LoadCritters( uint& count, vector<WorldSave::Object::CritterV1*>
             critters.push_back( critter );
     }
 
-    LogLoad( "critters<%u> time events<%u>", critters.size(), all_timevents );
+    LogLoad( "critters<%u> time events<%u>", count, all_timevents );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(critters), _Critter, _Version );
 
     return true;
@@ -656,9 +671,6 @@ bool WorldSave::LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>&
     static const string _Item = "Item";
     static const uint   _Version = 1;
 
-    count = 0;
-    items.clear();
-
     if( !ReadData( &count, sizeof(count), "ItemsCount" ) )
         return false;
 
@@ -666,7 +678,7 @@ bool WorldSave::LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>&
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::ItemV1* item = new WorldSave::Object::ItemV1( idx );
+        Object::ItemV1* item = new Object::ItemV1( idx );
 
         if( !ReadData( &item->Id, sizeof(item->Id), _Item, "Id", item->Index ) )
         {
@@ -692,8 +704,8 @@ bool WorldSave::LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>&
             return false;
         }
 
-        item->Data = new WorldSave::Object::ItemDataV1();
-        if( !ReadData( item->Data, sizeof(WorldSave::Object::ItemDataV1), _Item, "Data", item->Index ) )
+        item->Data = new Object::ItemDataV1();
+        if( !ReadData( item->Data, sizeof(Object::ItemDataV1), _Item, "Data", item->Index ) )
         {
             delete item;
             return false;
@@ -746,7 +758,7 @@ bool WorldSave::LoadItems( uint& count, std::vector<WorldSave::Object::ItemV1*>&
             items.push_back( item );
     }
 
-    LogLoad( "items<%u> lexems<%u>", items.size(), all_lexems );
+    LogLoad( "items<%u> lexems<%u>", count, all_lexems );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(items), _Item, _Version );
 
     return true;
@@ -757,15 +769,12 @@ bool WorldSave::LoadVars( uint& count, std::vector<WorldSave::Object::VarV1*>& v
     static const string _Var = "Var";
     static const uint   _Version = 1;
 
-    count = 0;
-    vars.clear();
-
     if( !ReadData( &count, sizeof(count), "VarsCount" ) )
         return false;
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::VarV1* var = new WorldSave::Object::VarV1( idx );
+        Object::VarV1* var = new Object::VarV1( idx );
 
         if( !ReadData( &var->TempId, sizeof(var->TempId), _Var, "TempId", var->Index ) )
         {
@@ -796,7 +805,7 @@ bool WorldSave::LoadVars( uint& count, std::vector<WorldSave::Object::VarV1*>& v
             vars.push_back( var );
     }
 
-    LogLoad( "vars<%u>", vars.size() );
+    LogLoad( "vars<%u>", count );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(vars), _Var, _Version );
 
     return true;
@@ -807,15 +816,12 @@ bool WorldSave::LoadHolo( uint& count, std::vector<WorldSave::Object::HoloV1*>& 
     static const string _Holo = "Holo";
     static const uint   _Version = 1;
 
-    count = 0;
-    holos.clear();
-
     if( !ReadData( &count, sizeof(count), "HolosCount" ) )
         return false;
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::HoloV1* holo = new WorldSave::Object::HoloV1( idx );
+        Object::HoloV1* holo = new Object::HoloV1( idx );
 
         if( !ReadData( &holo->Id, sizeof(holo->Id), _Holo, "Id", holo->Index ) )
         {
@@ -878,7 +884,7 @@ bool WorldSave::LoadHolo( uint& count, std::vector<WorldSave::Object::HoloV1*>& 
             holos.push_back( holo );
     }
 
-    LogLoad( "holos<%u>", holos.size() );
+    LogLoad( "holos<%u>", count );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(holos), _Holo, _Version );
 
     return true;
@@ -889,15 +895,12 @@ bool WorldSave::LoadAnyData( uint& count, vector<WorldSave::Object::AnyDataV1*>&
     static const string _AnyData = "AnyData";
     static const uint   _Version = 1;
 
-    count = 0;
-    anydata.clear();
-
     if( !ReadData( &count, sizeof(count), "AnyDataCount" ) )
         return false;
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::AnyDataV1* any = new WorldSave::Object::AnyDataV1( idx );
+        Object::AnyDataV1* any = new Object::AnyDataV1( idx );
 
         if( !ReadData( &any->NameLength, sizeof(any->NameLength), _AnyData, "NameLength", any->Index ) )
         {
@@ -936,7 +939,7 @@ bool WorldSave::LoadAnyData( uint& count, vector<WorldSave::Object::AnyDataV1*>&
             anydata.push_back( any );
     }
 
-    LogLoad( "anydata<%u>", anydata.size() );
+    LogLoad( "anydata<%u>", count );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(anydata), _AnyData, _Version );
 
     return true;
@@ -947,15 +950,12 @@ bool WorldSave::LoadTimeEvents( uint& count, std::vector<WorldSave::Object::Time
     static const string _TimeEvent = "TimeEvent";
     static const uint   _Version = 1;
 
-    count = 0;
-    events.clear();
-
     if( !ReadData( &count, sizeof(count), "TimeEventsCount" ) )
         return false;
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::TimeEventV1* timevent = new WorldSave::Object::TimeEventV1( idx );
+        Object::TimeEventV1* timevent = new Object::TimeEventV1( idx );
 
         if( !ReadData( &timevent->Num, sizeof(timevent->Num), _TimeEvent, "Num", timevent->Index ) )
         {
@@ -1012,7 +1012,7 @@ bool WorldSave::LoadTimeEvents( uint& count, std::vector<WorldSave::Object::Time
             events.push_back( timevent );
     }
 
-    LogLoad( "time events<%u>", events.size() );
+    LogLoad( "time events<%u>", count );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(events), _TimeEvent, _Version );
 
     return true;
@@ -1023,15 +1023,12 @@ bool WorldSave::LoadScriptFunctions( uint& count, std::vector<WorldSave::Object:
     static const string _ScriptFunction = "ScriptFunction";
     static const uint   _Version = 1;
 
-    count = 0;
-    functions.clear();
-
     if( !ReadData( &count, sizeof(count), "ScriptFunctionsCount" ) )
         return false;
 
     for( uint idx = 0; idx < count; idx++ )
     {
-        WorldSave::Object::ScriptFunctionV1* func = new WorldSave::Object::ScriptFunctionV1( idx );
+        Object::ScriptFunctionV1* func = new Object::ScriptFunctionV1( idx );
 
         if( !ReadData( &func->NameLength, sizeof(func->NameLength), _ScriptFunction, "NameLength", func->Index ) )
         {
@@ -1057,7 +1054,7 @@ bool WorldSave::LoadScriptFunctions( uint& count, std::vector<WorldSave::Object:
             functions.push_back( func );
     }
 
-    LogLoad( "script functions<%u>", functions.size() );
+    LogLoad( "script functions<%u>", count );
     RunGroupLoaded( reinterpret_cast<vector<void*>&>(functions), _ScriptFunction, _Version );
 
     return true;
@@ -1113,21 +1110,32 @@ bool WorldSave::V1::LoadWorld()
         return false;
 
     LogLoad( "OK" );
+
     return true;
 }
 
 void WorldSave::V1::UnloadWorld()
 {
+    UnloadSinglePlayer();
     UnloadTime();
     UnloadScores();
     UnloadLocations();
     UnloadCritters();
     UnloadItems();
-    DestroyPtrVec( Vars );
-    DestroyPtrVec( Holos );
-    DestroyPtrVec( AnyData );
-    DestroyPtrVec( TimeEvents );
-    DestroyPtrVec( ScriptFunctions );
+    UnloadVars();
+    UnloadHolos();
+    UnloadAnyData();
+    UnloadTimeEvents();
+    UnloadScriptFunctions();
+}
+
+void WorldSave::V1::UnloadSinglePlayer()
+{
+    if( SinglePlayer )
+    {
+        delete SinglePlayer;
+        SinglePlayer = nullptr;
+    }
 }
 
 void WorldSave::V1::UnloadTime()

@@ -91,6 +91,7 @@ WorldSave* WorldSaveDump::NewWorld( const WorldSave::Object::Signature& signatur
     return world;
 }
 
+
 void WorldSaveDump::DumpWorldBegin()
 {
     WorldSave::Object::Signature signature = GetSignature( this );
