@@ -417,15 +417,15 @@ public:
     };
 
 private:
-    char ReadBuffer[MAX_FOTEXT];
+    char                         ReadBuffer[MAX_FOTEXT];
+    WorldSave::Object::Signature Signature;
 
 protected:
     void* World;
 
 public:
-    const WorldSave::Object::Signature Signature;
-    uint8                              LogLevel;
-    std::string                        FileName;
+    uint8       LogLevel;
+    std::string FileName;
 
     // called after object is fully loaded
     // if object is changed to null during callback, it is *not* added to group
@@ -452,6 +452,8 @@ public:
     void LogLoad( const char* frmt, ... );
     void LogLoadWarning( const char* frmt, ... );
     void LogLoadError( const char* frmt, ... );
+
+    WorldSave::Object::Signature GetSignature();
 
     bool LoadSinglePlayer( Object::SinglePlayerV1*& singleplayer );
     bool LoadTime( WorldSave::Object::TimeV1*& time );

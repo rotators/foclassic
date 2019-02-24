@@ -387,6 +387,13 @@ void WorldSave::LogLoadError( const char* frmt, ... )
     va_end( list );
 }
 
+WorldSave::Object::Signature WorldSave::GetSignature()
+{
+    Object::Signature signature = Signature;
+
+    return signature;
+}
+
 bool WorldSave::LoadSinglePlayer( WorldSave::Object::SinglePlayerV1*& singleplayer )
 {
     static const string _SinglePlayer = "SinglePlayer";

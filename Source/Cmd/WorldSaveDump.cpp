@@ -1,13 +1,24 @@
 #include "App.h"
 
 #include <cstddef>
+#include <stdexcept>
 
 #include "FileSystem.h"
 #include "Text.h"
 #include "WorldSave.h"
 #include "WorldSaveDump.h"
 
-inline uint GetVersion( const WorldSave::Object::Signature& signature )
+#define DUMP_ARRAY_TO_STRING( name, str )                      \
+    str = "[";                                                 \
+    for( uint x = 0; x < sizeof(name) / sizeof(name[0]); x++ ) \
+    {                                                          \
+        if( x )                                                \
+            str += ",";                                        \
+        str += to_string( (long long)name[x] );                \
+    }                                                          \
+    str += "]"
+
+inline uint GetRealWorldVersion( const WorldSave::Object::Signature& signature )
 {
     uint16 version = signature.Version;
 
@@ -15,17 +26,6 @@ inline uint GetVersion( const WorldSave::Object::Signature& signature )
         version = 1;
 
     return version;
-}
-
-inline WorldSave::Object::Signature GetSignature( WorldSaveDump* world )
-{
-    switch( world->DumpVersion )
-    {
-        case 1:
-            return ( (WorldSaveV1*)world )->Signature;
-    }
-
-    throw runtime_error( "unknown version" );
 }
 
 void WorldSaveObject::Insert( const string& base, string name1, string value, uint16 length, uint offset_of )
@@ -43,8 +43,15 @@ void WorldSaveObject::Insert( const string& base, string name1, string value, ui
     Data[name] = data;
 }
 
-WorldSaveDump::WorldSaveDump( uint version ) : DumpVersion( version )
-{}
+WorldSaveDump::WorldSaveDump( const WorldSave::Object::Signature& signature )
+{
+    WorldVersion = GetRealWorldVersion( signature );
+
+    const char* fmt = Str::FormatBuf( "%X", signature.OffsetEnd );
+    OffsetLength = Str::Length( fmt );
+    if( OffsetLength % 2 != 0 )
+        OffsetLength++;
+}
 
 WorldSaveData& WorldSaveObject::operator[]( string key )
 {
@@ -62,48 +69,38 @@ template<typename W>
 WorldSave* NewWorldSetup( const WorldSave::Object::Signature& signature, void* file, string filename )
 {
     W* world = new W( signature, file, filename );
+    world->Dump = new WorldSaveDump( signature );
 
-    // WorldSave
     world->LogLevel = 0;
-    world->OnObjectLoaded.push_back( bind( &W::NewObject, world, placeholders::_1, placeholders::_2, placeholders::_3 ) );
-    world->OnGroupLoaded.push_back( bind( &W::NewGroup, world, placeholders::_1, placeholders::_2, placeholders::_3 ) );
-
-    // WorldSaveDump
-    const char* fmt = Str::FormatBuf( "%X", signature.OffsetEnd );
-    world->DumpOffsetLength = Str::Length( fmt );
-    if( world->DumpOffsetLength % 2 != 0 )
-        world->DumpOffsetLength++;
+    world->OnObjectLoaded.push_back( bind( &WorldSaveDump::OnNewObject, world->Dump, placeholders::_1, placeholders::_2, placeholders::_3 ) );
+    world->OnGroupLoaded.push_back( bind( &WorldSaveDump::OnNewGroup, world->Dump, placeholders::_1, placeholders::_2, placeholders::_3 ) );
 
     return world;
 }
 
 WorldSave* WorldSaveDump::NewWorld( const WorldSave::Object::Signature& signature, void* file, const string& filename )
 {
-    WorldSave* world = nullptr;
-
-    switch( GetVersion( signature ) )
+    switch( GetRealWorldVersion( signature ) )
     {
         case 1:
-            world = NewWorldSetup<WorldSaveV1>( signature, file, filename );
-            break;
+            return NewWorldSetup<WorldSaveV1>( signature, file, filename );
     }
 
-    return world;
+    return nullptr;
 }
 
-
-void WorldSaveDump::DumpWorldBegin()
+void WorldSaveDump::LoadWorldBegin( WorldSave* world )
 {
-    WorldSave::Object::Signature signature = GetSignature( this );
+    WorldSave::Object::Signature signature = world->GetSignature();
 
     Dump[0] = Str::FormatBuf( "%5u  Signature = Version:%u Legacy:%s", signature.SizeBegin, signature.Version, signature.Legacy ? "true" : "false" );
 
-    DumpAll();
+    DumpCacheAndPrint();
 }
 
-void WorldSaveDump::DumpWorldEnd( bool result )
+void WorldSaveDump::LoadWorldEnd( WorldSave* world, bool success )
 {
-    WorldSave::Object::Signature signature = GetSignature( this );
+    WorldSave::Object::Signature signature = world->GetSignature();
 
     if( signature.OffsetEnd )
     {
@@ -112,37 +109,35 @@ void WorldSaveDump::DumpWorldEnd( bool result )
         else
             Dump[signature.OffsetEnd] = Str::FormatBuf( "%5u  Signature = Version:%u Legacy:true", signature.SizeEnd, signature.Version );
 
-        DumpAll();
+        DumpCacheAndPrint();
     }
 }
 
-void WorldSaveDump::DumpDataBegin( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1 )
+void WorldSaveDump::ReadDataBegin( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1 )
 {
     if( len >= MAX_UINT16 )
     {
         // WorldSaveDump stores data length as uint16, unlike WorldSave which uses uint32
         App.WriteLog( "ERROR : object<%s> size<%u>\n", WorldSave::GetDataName( name0, name1, index0, index1 ).c_str(), len );
-        throw runtime_error( "data too big" );
+        throw length_error( "WorldSave data" );
     }
 
-    WorldSaveObject& obj = DumpCache[name0][index0][index1];
+    WorldSaveObject& obj = Cache[name0][index0][index1];
     obj.Data[name1] = WorldSaveData( name0, name1, index0, index1, len, FileGetPointer( file ) );
 }
 
-void WorldSaveDump::DumpDataEnd( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1, bool result )
+void WorldSaveDump::ReadDataEnd( void* file, const uint& len, const string& name0, const string& name1, const uint& index0, const uint& index1, bool success )
 {
-    if( !result )
+    if( !success )
         return;
     else if( name0 == "Time" )
         return;
     else if( !name1.empty() )
         return;
 
-    if( DumpVersion == 1 )
+    if( WorldVersion == 1 )
     {
         WorldSaveV1* world = (WorldSaveV1*)this;
-
-        // TODO SinglePlayerV1
 
         if( name0 == "LocationsCount" )
             DumpObjectSimple( name0, world->Count.Locations );
@@ -163,7 +158,7 @@ void WorldSaveDump::DumpDataEnd( void* file, const uint& len, const string& name
         else
             App.WriteLog( "WARNING : unknown object<%s>\n", name0.c_str() );
 
-        DumpAll();
+        DumpCacheAndPrint();
     }
 }
 
@@ -192,8 +187,8 @@ void WorldSaveDump::DumpObject( WorldSaveObject& object )
 
 void WorldSaveDump::DumpObjectSimple( const string& name, const uint& value )
 {
-    auto it = DumpCache.find( name );
-    if( it != DumpCache.end() )
+    auto it = Cache.find( name );
+    if( it != Cache.end() )
     {
         WorldSaveObject& obj = it->second[MAX_UINT][MAX_UINT];
 
@@ -203,9 +198,9 @@ void WorldSaveDump::DumpObjectSimple( const string& name, const uint& value )
     }
 }
 
-void WorldSaveDump::DumpProcess()
+void WorldSaveDump::DumpCache()
 {
-    for( auto name0 = DumpCache.begin(), name0end = DumpCache.end(); name0 != name0end; ++name0 )
+    for( auto name0 = Cache.begin(), name0end = Cache.end(); name0 != name0end; ++name0 )
     {
         for( auto index0 = name0->second.begin(), index0end = name0->second.end(); index0 != index0end; ++index0 )
         {
@@ -222,12 +217,12 @@ void WorldSaveDump::DumpProcess()
         name0->second.clear();
     }
 
-    DumpCache.clear();
+    Cache.clear();
 }
 
 void WorldSaveDump::DumpPrint()
 {
-    const char* format = Str::FormatBuf( "0x%%0%uX  %%s\n", DumpOffsetLength );
+    const char* format = Str::FormatBuf( "0x%%0%uX  %%s\n", OffsetLength );
 
     for( auto it = Dump.begin(), end = Dump.end(); it != end; ++it )
     {
@@ -235,15 +230,15 @@ void WorldSaveDump::DumpPrint()
     }
 }
 
-void WorldSaveDump::DumpAll()
+void WorldSaveDump::DumpCacheAndPrint()
 {
-    DumpProcess();
+    DumpCache();
     DumpPrint();
     Dump.clear();
 }
 
 // called after WorldSave::Object is fully loaded
-void WorldSaveDump::NewObject( void*& object, const string& name, const uint& version )
+void WorldSaveDump::OnNewObject( void*& object, const string& name, const uint& version )
 {
     bool unknown_version = false;
 
@@ -377,11 +372,11 @@ void WorldSaveDump::NewObject( void*& object, const string& name, const uint& ve
         object = nullptr;
 }
 
-void WorldSaveDump::NewGroup( vector<void*>& group, const string& name, const uint& version )
+void WorldSaveDump::OnNewGroup( vector<void*>& group, const string& name, const uint& version )
 {
     // Selective unloading from previous system, left for reference
     /*
-       if (DumpVersion == 1)
+       if (WorldVersion == 1)
        {
             WorldSaveV1* world = (WorldSaveV1*)this;
 
@@ -404,12 +399,12 @@ void WorldSaveDump::NewGroup( vector<void*>& group, const string& name, const ui
        }
      */
 
-    DumpAll();
+    DumpCacheAndPrint();
 }
 
 void WorldSaveDump::ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singleplayer )
 {
-    WorldSaveObject& object = DumpCache["SinglePlayer"][MAX_UINT][MAX_UINT];
+    WorldSaveObject& object = Cache["SinglePlayer"][MAX_UINT][MAX_UINT];
 
     object["Version"].Value = to_string( (long long)singleplayer->Version );
 
@@ -421,7 +416,10 @@ void WorldSaveDump::ReadSinglePlayer( WorldSave::Object::SinglePlayerV1* singlep
 
 void WorldSaveDump::ReadTime( WorldSave::Object::TimeV1* time )
 {
-    WorldSaveObject& object = DumpCache["Time"][MAX_UINT][MAX_UINT];
+    if( !time )
+        return;
+
+    WorldSaveObject& object = Cache["Time"][MAX_UINT][MAX_UINT];
 
     object.Insert( "", "YearStart", to_string( (long long)time->YearStart ), sizeof(time->YearStart), offsetof( WorldSave::Object::TimeV1, YearStart ) );
     object.Insert( "", "Year", to_string( (long long)time->Year ), sizeof(time->Year), offsetof( WorldSave::Object::TimeV1, Year ) );
@@ -435,7 +433,10 @@ void WorldSaveDump::ReadTime( WorldSave::Object::TimeV1* time )
 
 void WorldSaveDump::ReadScore( WorldSave::Object::ScoreV1* score )
 {
-    WorldSaveObject& object = DumpCache["Score"][score->Index][MAX_UINT];
+    if( !score )
+        return;
+
+    WorldSaveObject& object = Cache["Score"][score->Index][MAX_UINT];
 
     object["ClientId"].Value = to_string( (long long)score->ClientId );
     object["ClientName"].Value = score->ClientName;
@@ -444,7 +445,10 @@ void WorldSaveDump::ReadScore( WorldSave::Object::ScoreV1* score )
 
 void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )
 {
-    WorldSaveObject& object = DumpCache["Location"][location->Index][MAX_UINT];
+    if( !location )
+        return;
+
+    WorldSaveObject& object = Cache["Location"][location->Index][MAX_UINT];
 
     ReadLocationData( "Data", location->Data, object );
 
@@ -457,6 +461,9 @@ void WorldSaveDump::ReadLocation( WorldSave::Object::LocationV1* location )
 
 void WorldSaveDump::ReadLocationData( const string& base, WorldSave::Object::LocationDataV1* data, WorldSaveObject& object )
 {
+    if( !data )
+        return;
+
     object.Insert( base, "Id", to_string( (long long)data->LocId ), sizeof(data->LocId), offsetof( WorldSave::Object::LocationDataV1, LocId ) );
     object.Insert( base, "Pid", to_string( (long long)data->LocPid ), sizeof(data->LocPid), offsetof( WorldSave::Object::LocationDataV1, LocPid ) );
     object.Insert( base, "WorldX", to_string( (long long)data->WorldX ), sizeof(data->WorldX), offsetof( WorldSave::Object::LocationDataV1, WorldX ) );
@@ -472,39 +479,157 @@ void WorldSaveDump::ReadLocationData( const string& base, WorldSave::Object::Loc
 
 void WorldSaveDump::ReadMap( WorldSave::Object::MapV1* map )
 {
-    WorldSaveObject& object = DumpCache["Map"][map->LocationIndex][map->MapIndex];
+    if( !map )
+        return;
 
-    object["Data"].Value = "\n";     // TODO
+    WorldSaveObject& object = Cache["Map"][map->LocationIndex][map->MapIndex];
+
+    object["Data"].Value = "\n";
+    ReadMapData( "Data", map->Data, object );
+}
+
+void WorldSaveDump::ReadMapData( const string& base, WorldSave::Object::MapDataV1* data, WorldSaveObject& object )
+{
+    if( !data )
+        return;
+
+    string tmp;
+
+    object.Insert( base, "MapId", to_string( (long long)data->MapId ), sizeof(data->MapId), offsetof( WorldSave::Object::MapDataV1, MapId ) );
+    object.Insert( base, "MapPid", to_string( (long long)data->MapPid ), sizeof(data->MapPid), offsetof( WorldSave::Object::MapDataV1, MapPid ) );
+    object.Insert( base, "MapRain", to_string( (long long)data->MapRain ), sizeof(data->MapRain), offsetof( WorldSave::Object::MapDataV1, MapRain ) );
+    object.Insert( base, "IsTurnbasedAviable", data->IsTurnBasedAviable ? "true" : "false", sizeof(data->IsTurnBasedAviable), offsetof( WorldSave::Object::MapDataV1, IsTurnBasedAviable ) );
+    object.Insert( base, "MapTime", to_string( (long long)data->MapTime ), sizeof(data->MapTime), offsetof( WorldSave::Object::MapDataV1, MapTime ) );
+    object.Insert( base, "ScriptId", to_string( (long long)data->ScriptId ), sizeof(data->ScriptId), offsetof( WorldSave::Object::MapDataV1, ScriptId ) );
+
+    DUMP_ARRAY_TO_STRING( data->MapDayTime, tmp );
+    object.Insert( base, "MapDayTime", tmp, sizeof(data->MapDayTime), offsetof( WorldSave::Object::MapDataV1, MapDayTime ) );
+
+    DUMP_ARRAY_TO_STRING( data->MapDayColor, tmp );
+    object.Insert( base, "MapDayColor", tmp, sizeof(data->MapDayColor), offsetof( WorldSave::Object::MapDataV1, MapDayColor ) );
+
+    DUMP_ARRAY_TO_STRING( data->UserData, tmp );
+    object.Insert( base, "UserData", tmp, sizeof(data->UserData), offsetof( WorldSave::Object::MapDataV1, UserData ) );
 }
 
 void WorldSaveDump::ReadCritter( WorldSave::Object::CritterV1* critter )
 {
-    WorldSaveObject& object = DumpCache["Critter"][critter->Index][MAX_UINT];
+    if( !critter )
+        return;
 
-    object["Data"].Value = "\n";     // TODO
+    WorldSaveObject& object = Cache["Critter"][critter->Index][MAX_UINT];
+
+    object["Data"].Value = "\n";
+    ReadCritterData( "Data", critter->Data, object );
+
     object["DataExt"].Value = "\n";  // TODO
-    object["TimeEventsCount"].Value = to_string( (long long)critter->TimeEventsCount );
+    ReadCritterDataExt( "DataExt", critter->DataExt, object );
 
+    object["TimeEventsCount"].Value = to_string( (long long)critter->TimeEventsCount );
     // TODO CritterTimeEvent
+}
+
+void WorldSaveDump::ReadCritterData( const std::string& base, WorldSave::Object::CritterDataV1* data, WorldSaveObject& object )
+{
+    if( !data )
+        return;
+
+    string tmp;
+
+    object.Insert( base, "Id", to_string( (long long)data->Id ), sizeof(data->Id), offsetof( WorldSave::Object::CritterDataV1, Id ) );
+    object.Insert( base, "HexX", to_string( (long long)data->HexX ), sizeof(data->HexX), offsetof( WorldSave::Object::CritterDataV1, HexX ) );
+    object.Insert( base, "Hexy", to_string( (long long)data->HexY ), sizeof(data->HexY), offsetof( WorldSave::Object::CritterDataV1, HexY ) );
+    object.Insert( base, "WorldX", to_string( (long long)data->WorldX ), sizeof(data->WorldX), offsetof( WorldSave::Object::CritterDataV1, WorldX ) );
+    object.Insert( base, "WorldY", to_string( (long long)data->WorldY ), sizeof(data->WorldY), offsetof( WorldSave::Object::CritterDataV1, WorldY ) );
+    object.Insert( base, "BaseType", to_string( (long long)data->BaseType ), sizeof(data->BaseType), offsetof( WorldSave::Object::CritterDataV1, BaseType ) );
+    object.Insert( base, "Dir", to_string( (long long)data->Dir ), sizeof(data->Dir), offsetof( WorldSave::Object::CritterDataV1, Dir ) );
+    object.Insert( base, "Cond", to_string( (long long)data->Cond ), sizeof(data->Cond), offsetof( WorldSave::Object::CritterDataV1, Cond ) );
+    object.Insert( base, "ScriptId", to_string( (long long)data->ScriptId ), sizeof(data->ScriptId), offsetof( WorldSave::Object::CritterDataV1, ScriptId ) );
+    object.Insert( base, "ShowCritterDist1", to_string( (long long)data->ShowCritterDist1 ), sizeof(data->ShowCritterDist1), offsetof( WorldSave::Object::CritterDataV1, ShowCritterDist1 ) );
+    object.Insert( base, "ShowCritterDist2", to_string( (long long)data->ShowCritterDist2 ), sizeof(data->ShowCritterDist2), offsetof( WorldSave::Object::CritterDataV1, ShowCritterDist2 ) );
+    object.Insert( base, "ShowCritterDist3", to_string( (long long)data->ShowCritterDist3 ), sizeof(data->ShowCritterDist3), offsetof( WorldSave::Object::CritterDataV1, ShowCritterDist3 ) );
+    object.Insert( base, "Multihex", to_string( (long long)data->Multihex ), sizeof(data->Multihex), offsetof( WorldSave::Object::CritterDataV1, Multihex ) );
+    object.Insert( base, "GlobalGroupUid", to_string( (long long)data->GlobalGroupUid ), sizeof(data->GlobalGroupUid), offsetof( WorldSave::Object::CritterDataV1, GlobalGroupUid ) );
+    object.Insert( base, "LastHexX", to_string( (long long)data->LastHexX ), sizeof(data->LastHexX), offsetof( WorldSave::Object::CritterDataV1, LastHexX ) );
+    object.Insert( base, "LastHexY", to_string( (long long)data->LastHexY ), sizeof(data->LastHexY), offsetof( WorldSave::Object::CritterDataV1, LastHexY ) );
+    object.Insert( base, "MapId", to_string( (long long)data->MapId ), sizeof(data->MapId), offsetof( WorldSave::Object::CritterDataV1, MapId ) );
+    object.Insert( base, "MapPid", to_string( (long long)data->MapPid ), sizeof(data->MapPid), offsetof( WorldSave::Object::CritterDataV1, MapPid ) );
+
+    DUMP_ARRAY_TO_STRING( data->Params, tmp );
+    object.Insert( base, "Params", tmp, sizeof(data->Params), offsetof( WorldSave::Object::CritterDataV1, Params ) );
+
+    object.Insert( base, "Anim1Life", to_string( (long long)data->Anim1Life ), sizeof(data->Anim1Life), offsetof( WorldSave::Object::CritterDataV1, Anim1Life ) );
+    object.Insert( base, "Anim1Knockout", to_string( (long long)data->Anim1Knockout ), sizeof(data->Anim1Knockout), offsetof( WorldSave::Object::CritterDataV1, Anim1Knockout ) );
+    object.Insert( base, "Anim1Dead", to_string( (long long)data->Anim1Dead ), sizeof(data->Anim1Dead), offsetof( WorldSave::Object::CritterDataV1, Anim1Dead ) );
+    object.Insert( base, "Anim2Life", to_string( (long long)data->Anim2Life ), sizeof(data->Anim2Life), offsetof( WorldSave::Object::CritterDataV1, Anim2Life ) );
+    object.Insert( base, "Anim2Knockout", to_string( (long long)data->Anim2Knockout ), sizeof(data->Anim2Knockout), offsetof( WorldSave::Object::CritterDataV1, Anim2Knockout ) );
+    object.Insert( base, "Anim2Dead", to_string( (long long)data->Anim2Dead ), sizeof(data->Anim2Dead), offsetof( WorldSave::Object::CritterDataV1, Anim2Dead ) );
+    object.Insert( base, "Anim2KnockoutEnd", to_string( (long long)data->Anim2KnockoutEnd ), sizeof(data->Anim2KnockoutEnd), offsetof( WorldSave::Object::CritterDataV1, Anim2KnockoutEnd ) );
+    object.Insert( base, "Lexems", Str::Length( data->Lexems ) ? data->Lexems : "\n", sizeof(data->Lexems), offsetof( WorldSave::Object::CritterDataV1, Lexems ) );
+    object.Insert( base, "ClientToDelete", data->ClientToDelete ? "true" : "false", sizeof(data->ClientToDelete), offsetof( WorldSave::Object::CritterDataV1, ClientToDelete ) );
+    object.Insert( base, "Temp", to_string( (long long)data->Temp ), sizeof(data->Temp), offsetof( WorldSave::Object::CritterDataV1, Temp ) );
+    object.Insert( base, "HoloInfoCount", to_string( (long long)data->HoloInfoCount ), sizeof(data->HoloInfoCount), offsetof( WorldSave::Object::CritterDataV1, HoloInfoCount ) );
+
+    DUMP_ARRAY_TO_STRING( data->HoloInfo, tmp );
+    object.Insert( base, "HoloInfo", tmp, sizeof(data->HoloInfo), offsetof( WorldSave::Object::CritterDataV1, HoloInfo ) );
+
+    DUMP_ARRAY_TO_STRING( data->Scores, tmp );
+    object.Insert( base, "Scores", tmp, sizeof(data->Scores), offsetof( WorldSave::Object::CritterDataV1, Scores ) );
+
+    DUMP_ARRAY_TO_STRING( data->UserData, tmp );
+    object.Insert( base, "UserData", tmp, sizeof(data->UserData), offsetof( WorldSave::Object::CritterDataV1, UserData ) );
+
+    // Npc
+
+    object.Insert( base, "HomeMap", to_string( (long long)data->HomeMap ), sizeof(data->HomeMap), offsetof( WorldSave::Object::CritterDataV1, HomeMap ) );
+    object.Insert( base, "HomeX", to_string( (long long)data->HomeX ), sizeof(data->HomeX), offsetof( WorldSave::Object::CritterDataV1, HomeX ) );
+    object.Insert( base, "HomeY", to_string( (long long)data->HomeY ), sizeof(data->HomeY), offsetof( WorldSave::Object::CritterDataV1, HomeY ) );
+    object.Insert( base, "HomeOri", to_string( (long long)data->HomeOri ), sizeof(data->HomeOri), offsetof( WorldSave::Object::CritterDataV1, HomeOri ) );
+    object.Insert( base, "ProtoId", to_string( (long long)data->ProtoId ), sizeof(data->ProtoId), offsetof( WorldSave::Object::CritterDataV1, ProtoId ) );
+    object.Insert( base, "IsDataExt", data->IsDataExt ? "true" : "false", sizeof(data->IsDataExt), offsetof( WorldSave::Object::CritterDataV1, IsDataExt ) );
+
+    DUMP_ARRAY_TO_STRING( data->FavoriteItemPid, tmp );
+    object.Insert( base, "FavoriteItemPid", tmp, sizeof(data->FavoriteItemPid), offsetof( WorldSave::Object::CritterDataV1, FavoriteItemPid ) );
+    object.Insert( base, "EnemyStackCount", to_string( (long long)data->EnemyStackCount ), sizeof(data->EnemyStackCount), offsetof( WorldSave::Object::CritterDataV1, EnemyStackCount ) );
+
+    DUMP_ARRAY_TO_STRING( data->EnemyStack, tmp );
+    object.Insert( base, "EnemyStack", tmp, sizeof(data->EnemyStack), offsetof( WorldSave::Object::CritterDataV1, EnemyStack ) );
+
+    DUMP_ARRAY_TO_STRING( data->BagCurrentSet, tmp );
+    object.Insert( base, "BagCurrentSet", tmp, sizeof(data->BagCurrentSet), offsetof( WorldSave::Object::CritterDataV1, BagCurrentSet ) );
+
+    object.Insert( base, "BagRefreshTime", to_string( (long long)data->BagRefreshTime ), sizeof(data->BagRefreshTime), offsetof( WorldSave::Object::CritterDataV1, BagRefreshTime ) );
+    object.Insert( base, "BagSize", to_string( (long long)data->BagSize ), sizeof(data->BagSize), offsetof( WorldSave::Object::CritterDataV1, BagSize ) );
+
+    for( uint x = 0; x < sizeof(data->Bag) / sizeof(data->Bag[0]); x++ )
+    {
+        uint                             offset = sizeof(data->Bag) * x;
+        WorldSave::Object::CritterBagV1& bag = data->Bag[x];
+
+        object.Insert( base, Str::FormatBuf( "Bag[%u]::ItemPid", x ), to_string( (long long)bag.ItemPid ), sizeof(bag.ItemPid), offset + offsetof( WorldSave::Object::CritterBagV1, ItemPid ) );
+        object.Insert( base, Str::FormatBuf( "Bag[%u]::MinCnt", x ), to_string( (long long)bag.MinCnt ), sizeof(bag.MinCnt), offset + offsetof( WorldSave::Object::CritterBagV1, MinCnt ) );
+        object.Insert( base, Str::FormatBuf( "Bag[%u]::MaxCnt", x ), to_string( (long long)bag.MaxCnt ), sizeof(bag.MaxCnt), offset + offsetof( WorldSave::Object::CritterBagV1, MaxCnt ) );
+        object.Insert( base, Str::FormatBuf( "Bag[%u]::ItemSlot", x ), to_string( (long long)bag.ItemSlot ), sizeof(bag.ItemPid), offset + offsetof( WorldSave::Object::CritterBagV1, ItemSlot ) );
+    }
+}
+
+void WorldSaveDump::ReadCritterDataExt( const std::string& base, WorldSave::Object::CritterDataExtV1* data, WorldSaveObject& object )
+{
+    if( !data )
+        return;
 }
 
 void WorldSaveDump::ReadItem( WorldSave::Object::ItemV1* item )
 {
-    WorldSaveObject& object = DumpCache["Item"][item->Index][MAX_UINT];
+    if( !item )
+        return;
+
+    WorldSaveObject& object = Cache["Item"][item->Index][MAX_UINT];
 
     object["Id"].Value = to_string( (long long)item->Id );
     object["Pid"].Value = to_string( (long long)item->Pid );
     object["Accessory"].Value = to_string( (long long)item->Accessory );
-
-    object["AccBuffer"].Value = "[";
-    for( uint idx = 0; idx < sizeof(item->AccBuffer) / sizeof(item->AccBuffer[0]); idx++ )
-    {
-        if( idx )
-            object["AccBuffer"].Value += ",";
-        object["AccBuffer"].Value += to_string( (long long)item->AccBuffer[idx] );
-    }
-    object["AccBuffer"].Value += "]";
-
+    DUMP_ARRAY_TO_STRING( item->AccBuffer, object["AccBuffer"].Value );
     object["Data"].Value = "\n";     // TODO
     object["LexemsLength"].Value = to_string( (long long)item->LexemsLength );
     object["Lexems"].Value = Str::FormatBuf( "\"%s\"", item->Lexems );
@@ -512,7 +637,10 @@ void WorldSaveDump::ReadItem( WorldSave::Object::ItemV1* item )
 
 void WorldSaveDump::ReadVar( WorldSave::Object::VarV1* var )
 {
-    WorldSaveObject& object = DumpCache["Var"][var->Index][MAX_UINT];
+    if( !var )
+        return;
+
+    WorldSaveObject& object = Cache["Var"][var->Index][MAX_UINT];
 
     object["TempId"].Value = to_string( (long long)var->TempId );
     object["MasterId"].Value = to_string( (long long)var->MasterId );
@@ -522,7 +650,10 @@ void WorldSaveDump::ReadVar( WorldSave::Object::VarV1* var )
 
 void WorldSaveDump::ReadHolo( WorldSave::Object::HoloV1* holo )
 {
-    WorldSaveObject& object = DumpCache["Holo"][holo->Index][MAX_UINT];
+    if( !holo )
+        return;
+
+    WorldSaveObject& object = Cache["Holo"][holo->Index][MAX_UINT];
 
     object["TitleLength"].Value = to_string( (long long)holo->TitleLength );
     object["Title"].Value = Str::FormatBuf( "\"%s\"", holo->Title );
@@ -532,7 +663,10 @@ void WorldSaveDump::ReadHolo( WorldSave::Object::HoloV1* holo )
 
 void WorldSaveDump::ReadAnyData( WorldSave::Object::AnyDataV1* anydata )
 {
-    WorldSaveObject& object = DumpCache["AnyData"][anydata->Index][MAX_UINT];
+    if( !anydata )
+        return;
+
+    WorldSaveObject& object = Cache["AnyData"][anydata->Index][MAX_UINT];
 
     object["NameLength"].Value = to_string( (long long)anydata->NameLength );
     object["Name"].Value = anydata->Name;
@@ -542,7 +676,10 @@ void WorldSaveDump::ReadAnyData( WorldSave::Object::AnyDataV1* anydata )
 
 void WorldSaveDump::ReadTimeEvent( WorldSave::Object::TimeEventV1* timevent )
 {
-    WorldSaveObject& object = DumpCache["TimeEvent"][timevent->Index][MAX_UINT];
+    if( !timevent )
+        return;
+
+    WorldSaveObject& object = Cache["TimeEvent"][timevent->Index][MAX_UINT];
 
     object["Num"].Value = to_string( (long long)timevent->Num );
     object["ScriptNameLength"].Value = to_string( (long long)timevent->ScriptNameLength );
@@ -555,7 +692,10 @@ void WorldSaveDump::ReadTimeEvent( WorldSave::Object::TimeEventV1* timevent )
 
 void WorldSaveDump::ReadScriptFunction( WorldSave::Object::ScriptFunctionV1* function )
 {
-    WorldSaveObject& object = DumpCache["ScriptFunction"][function->Index][MAX_UINT];
+    if( !function )
+        return;
+
+    WorldSaveObject& object = Cache["ScriptFunction"][function->Index][MAX_UINT];
 
     object["NameLength"].Value = to_string( (long long)function->NameLength );
     object["Name"].Value = function->Name;
