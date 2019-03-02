@@ -1,12 +1,30 @@
-#ifndef __SCRIPT_FUNCTIONS__
-#define __SCRIPT_FUNCTIONS__
+#ifndef __SCRIPT_RESERVED_FUNCTIONS__
+#define __SCRIPT_RESERVED_FUNCTIONS__
 
-struct ReservedScriptFunction
+#include <map>
+#include <string>
+
+enum ReservedFunctionType : unsigned char
 {
-    int* BindId;
-    char FuncName[256];
-    char FuncDecl[256];
+    RESERVED_FUNCTION_UNKNOWN = 0,
+
+    RESERVED_FUNCTION_SCRIPT,
+    RESERVED_FUNCTION_EXTENSION
 };
+
+struct ReservedFunction
+{
+    int*                 BindId;
+    std::string          FuncDecl;
+
+    std::string          Target;
+    ReservedFunctionType Type;
+
+    ReservedFunction() : BindId( nullptr ), Type( RESERVED_FUNCTION_UNKNOWN ) {}
+    ReservedFunction( int* bind, const std::string& decl ) : BindId( bind ), FuncDecl( decl ), Type( RESERVED_FUNCTION_UNKNOWN ) {}
+};
+
+typedef std::map<std::string, ReservedFunction> ReservedFunctionsMap;
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_SERVER)
 
@@ -58,8 +76,8 @@ struct ClientScriptFunctions
     int CritterCheckMoveItem;
 };
 
-extern ClientScriptFunctions  ClientFunctions;
-extern ReservedScriptFunction ClientReservedFunctions[];
+extern ClientScriptFunctions ClientFunctions;
+extern ReservedFunctionsMap GetClientFunctionsMap();
 
 #endif // FOCLASSIC_CLIENT || FOCLASSIC_SERVER
 
@@ -84,8 +102,8 @@ struct MapperScriptFunctions
     int CritterAnimationFallout;
 };
 
-extern MapperScriptFunctions  MapperFunctions;
-extern ReservedScriptFunction MapperReservedFunctions[];
+extern MapperScriptFunctions MapperFunctions;
+extern ReservedFunctionsMap GetMapperFunctionsMap();
 
 #endif // FOCLASSIC_MAPPER || FOCLASSIC_SERVER
 
@@ -137,9 +155,9 @@ struct ServerScriptFunctions
     int CheckTrapLook;
 };
 
-extern ServerScriptFunctions  ServerFunctions;
-extern ReservedScriptFunction ServerReservedFunctions[];
+extern ServerScriptFunctions ServerFunctions;
+extern ReservedFunctionsMap GetServerFunctionsMap();
 
 #endif // FOCLASSIC_SERVER
 
-#endif // __SCRIPT_FUNCTIONS__ //
+#endif // __SCRIPT_RESERVED_FUNCTIONS__ //

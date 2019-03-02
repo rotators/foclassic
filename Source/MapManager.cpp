@@ -12,7 +12,7 @@
 #include "MapManager.h"
 #include "MsgStr.h"
 #include "Script.h"
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "Text.h"
 #include "Timer.h"
 

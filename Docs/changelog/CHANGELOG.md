@@ -9,12 +9,57 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 ## [v7]() (WIP)
 
 - fixed `FONT_TYPE_DIALOG` handling when it's using different size than `FONT_TYPE_DEFAULT`
+- _script.cfg_ changed to INI format
+    - all configuration in closed within `[APP scripts]` and `[APP binds]` sections, where `APP` is one of following: `Client`, `Mapper`, `Server`
+        - `[APP scripts]` section is optional, `[APP binds]` section is required
+        - any other sections added to _scripts.cfg_ are ignored
+    - script modules are now defined in `path/to/script = [option(s)]` format
+        - currently only two options are available: `load` and `skip` (both can be lowercase or uppercase for better visibility)
+        - `load` adds module to list of game scripts
+        - `skip` forces engine to ignore given module, even if `load` option is present
+    - module options can be defined in any order
+    - reserved functions are now defined in `bind_name = [target] <type>` format
+        - `bind_name` : name of reserved function
+            - special name, `all`, can be used to bind all reserved functions to single target; skips binds which are already configured by previous entries
+        - `target` : name of script/extension which will handle reserved function; cannot contain whitespace(s)
+        - `type` : defines how given bind will be handled
+            - `script` : reserved function is handled by script function; default if `<type>` is not set
+            - `extension` : reserved function is handled by extension
+    - all configuration sections mentioned ignores empty entries
+    - see bottom of changelog for examples
 - _dialogs.lst_ renamed to _dialogs.cfg_
 - _dialogs.cfg_ changed to INI format
     - all dialogs must be defined in `Dialogs` section; any other sections, if present, are ignored and can be used for game-specific settings
     - key name should be a path to dialog file (without extension), key value defines dialog id; examples: `all_alco = 1`, `hub/keri = 1000`
     - dialogs defined without/with invalid id (not a number, value less or equal 0) are silently ignored
 - Server will continue initialization even if _dialogs.cfg_ is missing
+
+Example of scripts configuration
+```ini
+[Server scripts]
+events       =           # ignored - empty key
+npc_planes   = load      # loaded  - option 'load' present
+cheats       = skip      # ignored - option 'skip' present
+events_utils = skip load # ignored - option 'skip' have higher priority than option 'load'
+```
+
+Example of using bind 'all'; all reserved functions will point to _client/main_, except `init` and `finish`
+```ini
+[Client scripts]
+client/main = load
+client/run  = load
+
+[Client binds]
+all    = client/main
+init   = client/run
+finish = client/run
+```
+
+Example of using reserved function with dynamic library (previously: `@ server bind check_look CheckLook.dll`)
+```ini
+[Server binds]
+check_look = CheckLook extension
+```
 
 
 ## [v6](https://github.com/rotators/foclassic/releases/tag/v6/)

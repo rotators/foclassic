@@ -3,6 +3,9 @@
 
 #include <stdlib.h>
 
+#include "ConfigFile.h"
+#include "Ini.h"
+#include "Log.h"
 #include "ScriptUtils.h"
 #include "Text.h"
 

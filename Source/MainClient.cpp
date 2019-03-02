@@ -16,7 +16,7 @@
 #include "Keyboard.h"
 #include "Log.h"
 #include "Script.h"
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "SinglePlayer.h"
 #include "Timer.h"
 #include "Thread.h"

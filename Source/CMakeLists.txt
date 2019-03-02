@@ -160,8 +160,8 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	Script.h
 	ScriptBind.cpp
 	ScriptBind.h
-	ScriptFunctions.cpp
-	ScriptFunctions.h
+	ScriptReservedFunctions.cpp
+	ScriptReservedFunctions.h
 	ScriptPragmas.cpp
 	ScriptPragmas.h
 	ScriptUtils.cpp

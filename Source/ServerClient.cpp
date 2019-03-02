@@ -10,7 +10,7 @@
 #include "NetProtocol.h"
 #include "Random.h"
 #include "Script.h"
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "Server.h"
 #include "SinglePlayer.h"
 #include "Text.h"

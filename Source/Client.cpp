@@ -26,6 +26,7 @@
 #include "ResourceManager.h"
 #include "Script.h"
 #include "ScriptBind.h"
+#include "ScriptUtils.h"
 #include "SinglePlayer.h"
 #include "SoundManager.h"
 #include "Thread.h"
@@ -9857,9 +9858,18 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     errors = Script::RebindFunctions();
 
+    // Copy partial scripts.cfg from FOINTERNAL.MSG into ConfigFile
+    // TODO only ConfigFile should be used
+    Ini* scripts_cfg = new Ini();
+    scripts_cfg->KeepKeysOrder = true;
+    scripts_cfg->LoadStdString( string( msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG ) ) );
+    ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_MODULES );
+    ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_BINDS );
+    Script::LoadConfigFile( scripts_cfg, SECTION_CLIENT_SCRIPTS_MODULES, SECTION_CLIENT_SCRIPTS_BINDS );
+    delete scripts_cfg;
+
     // Bind reserved functions
-    const char* config = msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG );
-    if( !Script::BindReservedFunctions( config, "client", ClientReservedFunctions, sizeof(ClientScriptFunctions) / sizeof(int) ) )
+    if( !Script::BindReservedFunctions( SECTION_CLIENT_SCRIPTS_BINDS, "client", GetClientFunctionsMap() ) )
         errors++;
 
     if( errors )

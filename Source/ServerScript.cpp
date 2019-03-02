@@ -4,6 +4,7 @@
 
 #include <preprocessor.h>
 
+#include "App.h"
 #include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "Critter.h"
@@ -21,6 +22,8 @@
 #include "Script.h"
 #include "ScriptBind.h"
 #include "ScriptPragmas.h"
+#include "ScriptReservedFunctions.h"
+#include "ScriptUtils.h"
 #include "SinglePlayer.h"
 #include "Text.h"
 #include "Vars.h"
@@ -140,20 +143,41 @@ bool FOServer::InitScriptSystem()
     }
 
     // Get config file
-    FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
-    if( !scripts_cfg.IsLoaded() )
+    /*
+       FileManager scripts_cfg;
+       scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
+       if( !scripts_cfg.IsLoaded() )
+       {
+       WriteLog( "Config file<%s> not found.\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+       return false;
+       }
+     */
+
+    Ini* scripts_cfg = new Ini();
+    scripts_cfg->KeepKeysOrder = true;
+
+    if( !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
     {
-        WriteLog( "Config file<%s> not found.\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        delete scripts_cfg;
         return false;
     }
+
+    if( !Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
+    {
+        WriteLog( "Script system initialization... failed\n" );
+        delete scripts_cfg;
+        return false;
+    }
+
+    delete scripts_cfg;
 
     Script::Undef( NULL );     // undef all
     Script::DefineVersion();
     Script::Define( "__SERVER" );
 
     // Load script modules
-    if( !Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
+    if( !Script::ReloadScripts( SECTION_SERVER_SCRIPTS_MODULES, "server", false ) )
     {
         Script::Finish();
         WriteLog( "Reload scripts fail.\n" );
@@ -161,7 +185,7 @@ bool FOServer::InitScriptSystem()
     }
 
     // Bind game functions
-    if( !Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "server", ServerReservedFunctions, sizeof(ServerScriptFunctions) / sizeof(int) ) )
+    if( !Script::BindReservedFunctions( SECTION_SERVER_SCRIPTS_BINDS, "server", GetServerFunctionsMap() ) )
     {
         Script::Finish();
         WriteLog( "Bind game functions fail.\n" );
@@ -252,6 +276,8 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         return false;
     }
 
+    bool   success = false;
+
     string target_prefix = targets[bind] + "_";
     string target_define = "__" + targets[bind];
     string target_lower = targets[bind];
@@ -259,14 +285,29 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
 
     WriteLog( "Reload %s scripts...\n", target_lower.c_str() );
 
-    // Get config file
-    FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
-    if( !scripts_cfg.IsLoaded() )
+    string section_modules = (bind == SCRIPT_BIND_CLIENT ? SECTION_CLIENT_SCRIPTS_MODULES : SECTION_MAPPER_SCRIPTS_MODULES);
+    string section_binds = (bind == SCRIPT_BIND_CLIENT ? SECTION_CLIENT_SCRIPTS_BINDS : SECTION_MAPPER_SCRIPTS_BINDS);
+
+    // Remove previous configuration
+    ConfigFile->RemoveSection( section_modules );
+    ConfigFile->RemoveSection( section_binds );
+
+    // Load current configuration
+    Ini* scripts_cfg = new Ini();
+    scripts_cfg->KeepKeysOrder = true;
+    if( !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
     {
-        WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
+        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        delete scripts_cfg;
         return false;
     }
+    if( !Script::LoadConfigFile( scripts_cfg, section_modules, section_binds ) )
+    {
+        WriteLog( "Scripts config file<%s> invalid\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        delete scripts_cfg;
+        return false;
+    }
+    delete scripts_cfg;
 
     // Disable debug allocators
     #ifdef MEMORY_DEBUG
@@ -296,6 +337,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
     }
 
     // Load script modules
+
     Script::Undef( "__SERVER" );
     Script::Define( target_define.c_str() );
 
@@ -304,98 +346,70 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
     Script::SetLoadLibraryCompiler( true );
 
     int    num = STR_INTERNAL_SCRIPT_MODULES;
-    bool   success = true;
-    char   buf[MAX_FOTEXT];
-    string value, config;
-    StrVec pragmas;
-    while( scripts_cfg.GetLine( buf, MAX_FOTEXT ) )
+    StrVec modules, pragmas;
+    ConfigFile->GetSectionKeys( section_modules, modules, true );
+    success = true;
+    for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
     {
-        if( buf[0] != '@' )
-            continue;
-        istrstream str( &buf[1] );
-        str >> value;
-        if( str.fail() || value != target_lower )
-            continue;
-        str >> value;
-        if( str.fail() || (value != "module" && value != "bind") )
-            continue;
+        const string& module_name = *it;
 
-        if( value == "module" )
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load %s module<%s>\n", target_lower.c_str(), module_name.c_str() );
+
+        if( !Script::LoadScript( module_name.c_str(), NULL, false, target_prefix.c_str() ) )
         {
-            str >> value;
-            if( str.fail() )
-                continue;
-
-            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-                WriteLog( "Load %s module<%s>\n", target_lower.c_str(), value.c_str() );
-
-            if( !Script::LoadScript( value.c_str(), NULL, false, target_prefix.c_str() ) )
-            {
-                WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", target_lower.c_str(), value.c_str() );
-                success = false;
-                break;
-            }
-
-            asIScriptModule* module = target_engine->GetModule( value.c_str(), asGM_ONLY_IF_EXISTS );
-            CBytecodeStream  binary;
-            if( !module || module->SaveByteCode( &binary ) < 0 )
-            {
-                WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", target_lower.c_str(), value.c_str() );
-                success = false;
-                break;
-            }
-            std::vector<asBYTE>& buf = binary.GetBuf();
-
-            // Pragmas
-            const StrVec& pr = ScriptPreprocessor->GetParsedPragmas();
-            for( size_t i = 0, j = pr.size(); i < j; i += 2 )
-            {
-                bool found = false;
-                for( size_t k = 0, l = pragmas.size(); k < l; k += 2 )
-                {
-                    if( pragmas[k] == pr[i] && pragmas[k + 1] == pr[i + 1] )
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if( !found )
-                {
-                    pragmas.push_back( pr[i] );
-                    pragmas.push_back( pr[i + 1] );
-                }
-            }
-
-            if( bind == SCRIPT_BIND_CLIENT )
-            {
-                // Add module name and bytecode
-                for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
-                {
-                    LanguagePack& lang = *it;
-                    FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
-
-                    for( int i = 0; i < 10; i++ )
-                        msg_script.EraseStr( num + i );
-                    msg_script.AddStr( num, value.c_str() );
-                    msg_script.AddBinary( num + 1, (uint8*)&buf[0], (uint)buf.size() );
-                }
-            }
-            num += 2;
+            WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", target_lower.c_str(), module_name.c_str() );
+            success = false;
+            break;
         }
-        else
+
+        asIScriptModule* module = target_engine->GetModule( module_name.c_str(), asGM_ONLY_IF_EXISTS );
+        CBytecodeStream  binary;
+        if( !module || module->SaveByteCode( &binary ) < 0 )
         {
-            // Make bind line
-            string config_ = "@ " + target_lower + " bind ";
-            str >> value;
-            if( str.fail() )
-                continue;
-            config_ += value + " ";
-            str >> value;
-            if( str.fail() )
-                continue;
-            config_ += value;
-            config += config_ + "\n";
+            WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", target_lower.c_str(), module_name.c_str() );
+            success = false;
+            break;
         }
+        std::vector<asBYTE>& buf = binary.GetBuf();
+
+        // #pragma
+
+        const StrVec& pr = ScriptPreprocessor->GetParsedPragmas();
+        for( size_t i = 0, j = pr.size(); i < j; i += 2 )
+        {
+            bool found = false;
+            for( size_t k = 0, l = pragmas.size(); k < l; k += 2 )
+            {
+                if( pragmas[k] == pr[i] && pragmas[k + 1] == pr[i + 1] )
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if( !found )
+            {
+                pragmas.push_back( pr[i] );
+                pragmas.push_back( pr[i + 1] );
+            }
+        }
+
+        if( bind == SCRIPT_BIND_CLIENT )
+        {
+            // Add module name and bytecode
+
+            for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
+            {
+                LanguagePack& lang = *it;
+                FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
+
+                for( int i = 0; i < 10; i++ )
+                    msg_script.EraseStr( num + i );
+                msg_script.AddStr( num, module_name.c_str() );
+                msg_script.AddBinary( num + 1, (uint8*)&buf[0], (uint)buf.size() );
+            }
+        }
+        num += 2;
     }
 
     if( !success )
@@ -473,11 +487,8 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         }
     }
 
-    ReservedScriptFunction* functions = (bind == SCRIPT_BIND_CLIENT ? ClientReservedFunctions : MapperReservedFunctions);
-    int                     count = (bind == SCRIPT_BIND_CLIENT ? sizeof(ClientScriptFunctions) : sizeof(MapperScriptFunctions) );
-    count /= sizeof(int);
-
-    success = Script::BindReservedFunctions( config.c_str(), target_lower.c_str(), functions, count, true );
+    ReservedFunctionsMap functions = (bind == SCRIPT_BIND_CLIENT ? GetClientFunctionsMap() : GetMapperFunctionsMap() );
+    success = Script::BindReservedFunctions( section_binds, target_lower.c_str(), functions, true );
 
     // Finish
     ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
@@ -491,6 +502,16 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
 
     if( bind == SCRIPT_BIND_CLIENT )
     {
+        string bind_config = "[Client binds]\n";
+        StrVec binds;
+        ConfigFile->GetSectionKeys( section_binds, binds, true );
+        for( auto it = binds.begin(), end = binds.end(); it != end; ++it )
+        {
+            const string& bind_name = *it;
+
+            bind_config += bind_name + string( "=" ) + ConfigFile->GetStr( section_binds, bind_name ) + string( "\n" );
+        }
+
         // Add config text and pragmas, calculate hash
         for( auto it = LangPacks.begin(), end = LangPacks.end(); it != end; ++it )
         {
@@ -498,7 +519,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
             FOMsg&        msg_script = lang.Msg[TEXTMSG_INTERNAL];
 
             msg_script.EraseStr( STR_INTERNAL_SCRIPT_CONFIG );
-            msg_script.AddStr( STR_INTERNAL_SCRIPT_CONFIG, config.c_str() );
+            msg_script.AddStr( STR_INTERNAL_SCRIPT_CONFIG, bind_config.c_str() );
 
             msg_script.EraseStr( STR_INTERNAL_GAME_ENGINE_STAGE );
             msg_script.AddStr( STR_INTERNAL_GAME_ENGINE_STAGE, Str::FormatBuf( "%d", FOCLASSIC_STAGE ) );

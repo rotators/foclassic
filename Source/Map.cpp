@@ -11,7 +11,7 @@
 #include "MapManager.h"
 #include "Random.h"
 #include "Script.h"
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "Text.h"
 #include "Timer.h"
 #include "Utils.h"

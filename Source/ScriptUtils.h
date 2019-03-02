@@ -3,6 +3,8 @@
 
 #include "Types.h"
 
+class Ini;
+
 namespace Script
 {
     // Get asERetCodes (from angelscript.h) as text

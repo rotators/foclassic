@@ -18,6 +18,7 @@
 #include "Ini.h"
 #include "Log.h"
 #include "Script.h"
+#include "ScriptReservedFunctions.h"
 #include "ScriptUtils.h"
 #include "Text.h"
 #include "Thread.h"
@@ -464,6 +465,86 @@ void Script::FinishThread()
     asThreadCleanup();
 }
 
+bool Script::LoadConfigFile( Ini* scripts_cfg, const string& section_modules, const string& section_binds )
+{
+    // <scripts_cfg> must be loaded with KeepKeysOrder=true
+
+    if( !scripts_cfg )
+        return false;
+
+    // Cache keys order settings
+    bool keep_keys_order = ConfigFile->KeepKeysOrder;
+    ConfigFile->KeepKeysOrder = true;
+
+    // [APP_TYPE scripts] -- optional
+    // module_name = load [options]
+    // module_name = skip [options]
+    //
+    // can be empty
+
+    StrVec cfg_modules;
+    scripts_cfg->GetSectionKeys( section_modules, cfg_modules, true );
+
+    for( auto it = cfg_modules.begin(), end = cfg_modules.end(); it != end; it++ )
+    {
+        const string& module_name = *it;
+
+        // Ignore empty keys
+
+        if( scripts_cfg->IsSectionKeyEmpty( section_modules, module_name ) )
+            continue;
+
+        StrVec module_options = scripts_cfg->GetStrVec( section_modules, module_name );
+        if( !module_options.size() )
+            continue;
+
+        // Ignore modules with 'skip'/'SKIP' option
+
+        if( find( module_options.begin(), module_options.end(), "skip" ) != module_options.end() ||
+            find( module_options.begin(), module_options.end(), "SKIP" ) != module_options.end() )
+            continue;
+
+        // Ignore modules without 'load'/'LOAD' option
+
+        if( find( module_options.begin(), module_options.end(), "load" ) == module_options.end() &&
+            find( module_options.begin(), module_options.end(), "LOAD" ) == module_options.end() )
+            continue;
+
+        // TODO remove unknown options
+
+        ConfigFile->SetStr( section_modules, module_name, scripts_cfg->GetStr( section_modules, module_name ) );
+    }
+
+    // [APP_TYPE binds] -- required
+    // reserved_function_name = [target] [type]
+    // all                    = [target] [type]
+
+    StrVec cfg_binds;
+    if( !scripts_cfg->IsSection( section_binds ) || !scripts_cfg->GetSectionKeys( section_binds, cfg_binds, true ) )
+    {
+        WriteLogF( _FUNC_, " - Scripts config section<%s> is missing or empty\n", section_binds.c_str() );
+        ConfigFile->KeepKeysOrder = keep_keys_order;
+
+        return false;
+    }
+
+    for( auto it = cfg_binds.begin(), end = cfg_binds.end(); it != end; it++ )
+    {
+        const string& bind_name = *it;
+
+        // Ignore empty keys
+        if( scripts_cfg->IsSectionKeyEmpty( section_binds, bind_name ) )
+            continue;
+
+        ConfigFile->SetStr( section_binds, bind_name, scripts_cfg->GetStr( section_binds, bind_name ) );
+    }
+
+    // Restore keys order settings
+    ConfigFile->KeepKeysOrder = keep_keys_order;
+
+    return true;
+}
+
 void* Script::LoadDynamicLibrary( const char* dll_name )
 {
     // Find in already loaded
@@ -599,52 +680,40 @@ void Script::UnloadScripts()
     CollectGarbage( asGC_FULL_CYCLE );
 }
 
-bool Script::ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix /* = NULL */ )
+bool Script::ReloadScripts( const string& section_modules, const char* app, bool skip_binaries, const char* file_pefix /* = NULL */ )
 {
-    WriteLog( "Reload %s scripts...\n", key );
+    WriteLog( "Reload %s scripts...\n", app );
 
     Script::UnloadScripts();
 
-    int        loaded = 0, errors = 0;
-    char       buf[1024];
-    string     value;
+    int    loaded = 0, errors = 0;
 
-    istrstream config_( config );
-    while( !config_.eof() )
+    StrVec modules;
+    ConfigFile->GetSectionKeys( section_modules, modules, true );
+
+    for( auto it = modules.begin(), end = modules.end(); it != end; ++it )
     {
-        config_.getline( buf, 1024 );
-        if( buf[0] != '@' )
-            continue;
+        string module_name = *it;
 
-        istrstream str( &buf[1] );
-        str >> value;
-        if( str.fail() || value != key )
-            continue;
-        str >> value;
-        if( str.fail() || value != "module" )
-            continue;
+        #ifdef FOCLASSIC_SERVER
+        if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
+            WriteLog( "Load %s module<%s>\n", app, module_name.c_str() );
+        #endif
 
-        str >> value;
-        bool fail = str.fail();
-        if( !fail )
+        if( !LoadScript( module_name.c_str(), NULL, skip_binaries, file_pefix ) )
         {
-            #ifdef FOCLASSIC_SERVER
-            if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-                WriteLog( "Load %s module<%s>\n", key, value.c_str() );
-            #endif
-            fail = !LoadScript( value.c_str(), NULL, skip_binaries, file_pefix );
-        }
-        if( fail )
-        {
-            WriteLog( "Load %s module fail, name<%s>.\n", key, value.c_str() );
+            WriteLog( "Load %s module fail, name<%s>.\n", app, module_name.c_str() );
             errors++;
             continue;
         }
+
         #ifdef FOCLASSIC_SERVER
-        Script::Profiler::AddModule( value.c_str() );
+        Script::Profiler::AddModule( module_name.c_str() );
         #endif
+
         loaded++;
     }
+
     #ifdef FOCLASSIC_SERVER
     Script::Profiler::EndModules();
     Script::Profiler::SaveFunctionsData();
@@ -653,7 +722,7 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     errors += BindImportedFunctions();
     errors += RebindFunctions();
 
-    WriteLog( "Reload %s scripts... ", key );
+    WriteLog( "Reload %s scripts... ", app );
     if( errors )
         WriteLogX( "failed" );
     else
@@ -663,56 +732,127 @@ bool Script::ReloadScripts( const char* config, const char* key, bool skip_binar
     return errors == 0;
 }
 
-#if defined (FOCLASSIC_SERVER) || defined (DEV_VERSION)
-# define VERBOSE_BIND
-#endif
-
-bool Script::BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp /* = false */ )
+bool Script::BindReservedFunctions( const string& section_binds, const char* app, ReservedFunctionsMap& bind_map, bool use_temp /* = false */ )
 {
-    WriteLog( "Bind reserved %s functions...\n", key );
+    WriteLog( "Bind reserved %s functions...\n", app );
 
-    int    errors = 0;
-    char   buf[1024];
-    string value;
-    for( uint i = 0; i < bind_func_count; i++ )
+    int errors = 0;
+
+    // Stage #0
+    // Initial validation
+
+    if( bind_map.find( "all" ) != bind_map.end() )
     {
-        ReservedScriptFunction* bf = &bind_func[i];
-        int                     bind_id = 0;
-        istrstream              config_( config );
+        WriteLog( "Bind reserved %s functions... INTERNAL ERROR: bind_map[\"all\"] found\n", app );
+        return false;
+    }
+
+    // Stage #1
+    // Fill ReservedFunctionsMap with values from <ConfigFile>
+
+    StrVec cfg_binds;
+    ConfigFile->GetSectionKeys( section_binds, cfg_binds, true );
+    for( auto it = cfg_binds.begin(), end = cfg_binds.end(); it != end; ++it )
+    {
+        const string& bind_name = *it;
+
+        // First word : target (required)
+        // No checks here; empty entries should never be added to ConfigFile
+
+        StrVec bind_options = ConfigFile->GetStrVec( section_binds, bind_name );
+
+        string bind_target = bind_options.front();
+        bind_options.erase( bind_options.begin() );
+
+        // Second word : type (optional; default: "script")
+
+        ReservedFunctionType bind_type = RESERVED_FUNCTION_UNKNOWN;
+
+        if( bind_options.empty() )
+            bind_type = RESERVED_FUNCTION_SCRIPT;
+        else
+        {
+            string tmp = bind_options.front();
+            bind_options.erase( bind_options.begin() );
+
+            if( tmp == "script" )
+                bind_type = RESERVED_FUNCTION_SCRIPT;
+            else if( tmp == "extension" )
+                bind_type = RESERVED_FUNCTION_EXTENSION;
+        }
+
+        // Configure "all" bind; set single target for all not yet configured entries
+
+        if( bind_name == "all" )
+        {
+            for( auto map_it = bind_map.begin(), map_end = bind_map.end(); map_it != map_end; ++map_it )
+            {
+                ReservedFunction& bind_func = map_it->second;
+
+                if( bind_func.Target.empty() )
+                {
+                    bind_func.Target = bind_target;
+                    bind_func.Type = bind_type;
+                }
+            }
+
+            continue;
+        }
+
+        // Ignore unknown binds
+
+        auto bind_map_it = bind_map.find( bind_name );
+        if( bind_map_it == bind_map.end() )
+            continue;
+
+        // Configure regular bind
+
+        ReservedFunction& bind_func = bind_map_it->second;
+
+        bind_func.Target = bind_target;
+        bind_func.Type = bind_type;
+    }
+
+    // Stage #2
+    // Validate ReservedFunctionsMap
+
+    for( auto it = bind_map.begin(), end = bind_map.end(); it != end; ++it )
+    {
+        const ReservedFunction& bind_func = it->second;
+
+        if( bind_func.Target.empty() )
+        {
+            WriteLog( "Bind %s function %s -> ERROR: missing entry\n", app, it->first.c_str() );
+            errors++;
+        }
+        else if( bind_func.Type == RESERVED_FUNCTION_UNKNOWN )
+        {
+            WriteLog( "Bind %s function %s -> ERROR: unknown type<%u>\n", app, it->first.c_str(), bind_func.Type );
+            errors++;
+        }
+    }
+
+    if( errors )
+    {
+        WriteLog( "Bind reserved %s functions... failed\n", app );
+        return false;
+    }
+
+    // Stage #3
+    // Bind functions
+
+    for( auto it = bind_map.begin(), end = bind_map.end(); it != end; ++it )
+    {
+        const string&     bind_name = it->first;
+        ReservedFunction& bind_func = it->second;
+        int               bind_id = 0;
 
         #if defined (FOCLASSIC_SERVER)
         if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-            WriteLog( "Bind %s function %s -> ", key, bf->FuncName );
+            WriteLog( "Bind %s function %s -> %s -> ", app, bind_name.c_str(), bind_func.Target.c_str() );
         #endif
 
-        while( !config_.eof() )
-        {
-            config_.getline( buf, 1024 );
-            if( buf[0] != '@' )
-                continue;
-
-            istrstream str( &buf[1] );
-            str >> value;
-            if( str.fail() || key != value )
-                continue;
-            str >> value;
-            if( str.fail() || value != "bind" )
-                continue;
-            str >> value;
-            if( str.fail() || value != bf->FuncName )
-                continue;
-
-            str >> value;
-            if( !str.fail() )
-            {
-                #if defined (FOCLASSIC_SERVER)
-                if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-                    WriteLogX( "%s -> ", value.c_str() );
-                #endif
-                bind_id = Bind( value.c_str(), bf->FuncName, bf->FuncDecl, use_temp );
-            }
-            break;
-        }
+        bind_id = Bind( bind_name, bind_func, use_temp );
 
         if( bind_id > 0 )
         {
@@ -720,7 +860,8 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
             if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
                 WriteLogX( "OK [%d]\n", bind_id );
             #endif
-            *bf->BindId = bind_id;
+
+            *(bind_func.BindId) = bind_id;
         }
         else
         {
@@ -728,12 +869,13 @@ bool Script::BindReservedFunctions( const char* config, const char* key, Reserve
             if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
                 WriteLogX( "ERROR\n" );
             #endif
-            WriteLog( "Bind reserved %s function fail, name<%s>.\n", key, bf->FuncName );
+
+            WriteLog( "Bind reserved %s function fail, name<%s>.\n", app, bind_name.c_str() );
             errors++;
         }
     }
 
-    WriteLog( "Bind reserved %s functions... %s\n", key, errors == 0 ? "complete" : "failed" );
+    WriteLog( "Bind reserved %s functions... %s\n", app, errors == 0 ? "complete" : "failed" );
     return errors == 0;
 }
 
@@ -1940,6 +2082,17 @@ int Script::BindImportedFunctions()
     WriteLog( "Import scripts functions... %s\n", !errors ? "OK" : "failed" );
 
     return errors;
+}
+
+int Script::Bind( const string& func_name, const ReservedFunction& bind_func, bool is_temp, bool disable_log /* = false */ )
+{
+    // wrapper
+
+    string module_name = bind_func.Target;
+    if( bind_func.Type == RESERVED_FUNCTION_EXTENSION )
+        module_name += ".dll";
+
+    return Bind( module_name.c_str(), func_name.c_str(), bind_func.FuncDecl.c_str(), is_temp, disable_log );
 }
 
 int Script::Bind( const char* module_name, const char* func_name, const char* decl, bool is_temp, bool disable_log /* = false */ )

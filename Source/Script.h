@@ -6,7 +6,7 @@
 #include <scriptstring.h>
 #include <preprocessor.h>
 
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "Types.h"
 
 #define GLOBAL_CONTEXT_STACK_SIZE    (10)
@@ -14,6 +14,8 @@
 
 typedef void ( * EndExecutionCallback )();
 typedef std::vector<asIScriptModule*> ScriptModuleVec;
+
+class Ini;
 
 struct EngineData
 {
@@ -30,15 +32,17 @@ namespace Script
     bool InitThread();
     void FinishThread();
 
+    bool LoadConfigFile( Ini* scripts_cfg, const std::string& section_modules, const std::string& section_binds );
+
     void* LoadDynamicLibrary( const char* dll_name );
     void  SetWrongGlobalObjects( StrVec& names );
     void  SetConcurrentExecution( bool enabled );
     void  SetLoadLibraryCompiler( bool enabled );
 
     void UnloadScripts();
-    bool ReloadScripts( const char* config, const char* key, bool skip_binaries, const char* file_pefix = NULL );
+    bool ReloadScripts( const std::string& section_modules, const char* app, bool skip_binaries, const char* file_pefix = NULL );
 
-    bool BindReservedFunctions( const char* config, const char* key, ReservedScriptFunction* bind_func, uint bind_func_count, bool use_temp = false );
+    bool BindReservedFunctions( const std::string& section_binds, const char* app, ReservedFunctionsMap& bind_map, bool use_temp = false );
 
     #ifdef FOCLASSIC_SERVER
     namespace Profiler
@@ -85,6 +89,7 @@ namespace Script
     bool LoadScript( const char* module_name, const uint8* bytecode, uint len );
 
     int    BindImportedFunctions();
+    int    Bind( const std::string& func_name, const ReservedFunction& bind_func, bool is_temp, bool disable_log = false );
     int    Bind( const char* module_name, const char* func_name, const char* decl, bool is_temp, bool disable_log = false );
     int    Bind( const char* script_name, const char* decl, bool is_temp, bool disable_log = false );
     int    RebindFunctions();

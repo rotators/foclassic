@@ -18,7 +18,7 @@
 
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 # include "Script.h"
-# include "ScriptFunctions.h"
+# include "ScriptReservedFunctions.h"
 #endif
 
 #define MAX_FIND_PATH    (600)

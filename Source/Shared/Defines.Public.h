@@ -158,13 +158,10 @@
 
 // main sections, available at runtime
 
-#define SECTION_NONE                                      ""             // for settings which doesn't belong to any section
-#define SECTION_CLIENT                                    "Game Options" // main section
-#define SECTION_MAPPER                                    "Mapper"       // main section
-#define SECTION_SERVER                                    "Server"       // main section
-
-// merged sections, available at runtime
-#define SECTION_SERVER_DIALOGS                            "Dialogs"      // from dialogs.cfg
+#define SECTION_NONE                                      ""               // for settings which doesn't belong to any section
+#define SECTION_CLIENT                                    "Game Options"   // main section
+#define SECTION_MAPPER                                    "Mapper"         // main section
+#define SECTION_SERVER                                    "Server"         // main section
 
 // detail sections, available only when reading configuration from disk
 
@@ -172,6 +169,17 @@
 #define SECTION_CLIENT_GL                                 "ClientGL" // detail section
 #define SECTION_MAPPER_DX                                 "MapperDX" // detail section
 #define SECTION_MAPPER_GL                                 "MapperGL" // detail section
+
+// sections merged into ConfigFile, available at runtime
+
+#define SECTION_SERVER_DIALOGS                            "Dialogs"        // from dialogs.cfg, Server only
+#define SECTION_SERVER_SCRIPTS                            "Scripts"        // from scripts.cfg, Server only
+#define SECTION_CLIENT_SCRIPTS_MODULES                    "Client scripts" // from scripts.cfg, Server only
+#define SECTION_CLIENT_SCRIPTS_BINDS                      "Client binds"   // from scripts.cfg, Client/Server
+#define SECTION_MAPPER_SCRIPTS_MODULES                    "Mapper scripts" // from scripts.cfg, Mapper/Server
+#define SECTION_MAPPER_SCRIPTS_BINDS                      "Mapper binds"   // from scripts.cfg, Mapper/Server
+#define SECTION_SERVER_SCRIPTS_MODULES                    "Server scripts" // from scripts.cfg, Server only
+#define SECTION_SERVER_SCRIPTS_BINDS                      "Server binds"   // from scripts.cfg, Server only
 
 /////
 //

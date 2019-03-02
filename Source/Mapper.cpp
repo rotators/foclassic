@@ -20,7 +20,7 @@
 #include "ResourceManager.h"
 #include "Script.h"
 #include "ScriptBind.h"
-#include "ScriptFunctions.h"
+#include "ScriptReservedFunctions.h"
 #include "ScriptPragmas.h"
 #include "SinglePlayer.h"
 #include "Thread.h"
@@ -5299,21 +5299,23 @@ void FOMapper::InitScriptSystem()
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
     Script::SetScriptsPath( PATH_SERVER_SCRIPTS );
 
-    // Get config file
-    FileManager scripts_cfg;
-    scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
-    if( !scripts_cfg.IsLoaded() )
-        WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
-    else
+    /*
+       // Get config file
+       FileManager scripts_cfg;
+       scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
+       if( !scripts_cfg.IsLoaded() )
+       WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
+       else
+     */
     {
         // Load script modules
         Script::Undef( NULL );
         Script::DefineVersion();
         Script::Define( "__MAPPER" );
-        Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "mapper", false, "MAPPER_" );
+        Script::ReloadScripts( SECTION_MAPPER_SCRIPTS_MODULES, "mapper", false, "MAPPER_" );
 
         // Bind game functions
-        Script::BindReservedFunctions( (char*)scripts_cfg.GetBuf(), "mapper", MapperReservedFunctions, sizeof(MapperScriptFunctions) / sizeof(int) );
+        Script::BindReservedFunctions( SECTION_MAPPER_SCRIPTS_BINDS, "mapper", GetMapperFunctionsMap() );
 
         WriteLog( "Script system initialization complete.\n" );
     }
