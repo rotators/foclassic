@@ -43,7 +43,7 @@ cheats       = skip      # ignored - option 'skip' present
 events_utils = skip load # ignored - option 'skip' have higher priority than option 'load'
 ```
 
-Example of using bind 'all'; all reserved functions will point to _client/main_, except `init` and `finish`
+Example of using bind 'all'; all reserved functions will point to _client/main_, except `start` and `finish`
 ```ini
 [Client scripts]
 client/main = load
@@ -51,7 +51,7 @@ client/run  = load
 
 [Client binds]
 all    = client/main
-init   = client/run
+start  = client/run
 finish = client/run
 ```
 

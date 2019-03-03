@@ -9859,7 +9859,6 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
     errors = Script::RebindFunctions();
 
     // Copy partial scripts.cfg from FOINTERNAL.MSG into ConfigFile
-    // TODO only ConfigFile should be used
     Ini* scripts_cfg = new Ini();
     scripts_cfg->KeepKeysOrder = true;
     scripts_cfg->LoadStdString( string( msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG ) ) );
@@ -9869,7 +9868,8 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
     delete scripts_cfg;
 
     // Bind reserved functions
-    if( !Script::BindReservedFunctions( SECTION_CLIENT_SCRIPTS_BINDS, "client", GetClientFunctionsMap() ) )
+    ReservedFunctionsMap reserved_functions = GetClientFunctionsMap();
+    if( !Script::BindReservedFunctions( SECTION_CLIENT_SCRIPTS_BINDS, "client", reserved_functions ) )
         errors++;
 
     if( errors )

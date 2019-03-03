@@ -5299,14 +5299,9 @@ void FOMapper::InitScriptSystem()
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );
     Script::SetScriptsPath( PATH_SERVER_SCRIPTS );
 
-    /*
-       // Get config file
-       FileManager scripts_cfg;
-       scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
-       if( !scripts_cfg.IsLoaded() )
-       WriteLog( "Config file<%s> not found.\n", SCRIPTS_LST );
-       else
-     */
+    Ini* scripts_cfg = new Ini();
+    if( scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) &&
+        Script::LoadConfigFile( scripts_cfg, SECTION_MAPPER_SCRIPTS_MODULES, SECTION_MAPPER_SCRIPTS_BINDS ) )
     {
         // Load script modules
         Script::Undef( NULL );
@@ -5315,10 +5310,12 @@ void FOMapper::InitScriptSystem()
         Script::ReloadScripts( SECTION_MAPPER_SCRIPTS_MODULES, "mapper", false, "MAPPER_" );
 
         // Bind game functions
-        Script::BindReservedFunctions( SECTION_MAPPER_SCRIPTS_BINDS, "mapper", GetMapperFunctionsMap() );
+        ReservedFunctionsMap reserved_functions = GetMapperFunctionsMap();
+        Script::BindReservedFunctions( SECTION_MAPPER_SCRIPTS_BINDS, "mapper", reserved_functions );
 
         WriteLog( "Script system initialization complete.\n" );
     }
+    delete scripts_cfg;
     FileManager::SetDataPath( (GameOpt.ClientPath.c_std_str() + GameOpt.DataPath.c_std_str() ).c_str() );
 }
 

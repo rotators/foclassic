@@ -2517,22 +2517,27 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             SynchronizeLogicThreads();
 
             // Get config file
-            FileManager scripts_cfg;
-            if( scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) )
+            Ini* scripts_cfg = new Ini();
+            ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_MODULES );
+            ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_BINDS );
+            if( scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) &&
+                Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
             {
                 // Reload script modules
                 Script::Undef( NULL );
+                Script::DefineVersion();
                 Script::Define( "__SERVER" );
-                if( Script::ReloadScripts( (char*)scripts_cfg.GetBuf(), "server", false ) )
+                if( Script::ReloadScripts( SECTION_SERVER_SCRIPTS_MODULES, "server", false ) )
                     logcb( "Success." );
                 else
                     logcb( "Fail." );
             }
             else
             {
-                logcb( "Scripts config file not found." );
+                logcb( "Scripts config file cannot be loaded" );
             }
 
+            delete scripts_cfg;
             ResynchronizeLogicThreads();
             break;
         }

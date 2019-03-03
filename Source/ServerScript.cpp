@@ -98,6 +98,8 @@ void ASDeepDebugFree( void* ptr )
 
 bool FOServer::InitScriptSystem()
 {
+    bool success = true;
+
     WriteLog( "Script system initialization...\n" );
 
     // Memory debugging
@@ -142,35 +144,27 @@ bool FOServer::InitScriptSystem()
         return false;
     }
 
-    // Get config file
-    /*
-       FileManager scripts_cfg;
-       scripts_cfg.LoadFile( SCRIPTS_LST, PATH_SERVER_SCRIPTS );
-       if( !scripts_cfg.IsLoaded() )
-       {
-       WriteLog( "Config file<%s> not found.\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
-       return false;
-       }
-     */
-
+    // Load scripts configuration
     Ini* scripts_cfg = new Ini();
     scripts_cfg->KeepKeysOrder = true;
 
-    if( !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
+    success = true;
+
+    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
     {
         WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
-        delete scripts_cfg;
-        return false;
+        success = false;
     }
 
-    if( !Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
+    if( success && !Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
     {
         WriteLog( "Script system initialization... failed\n" );
-        delete scripts_cfg;
-        return false;
+        success = false;
     }
 
     delete scripts_cfg;
+    if( !success )
+        return false;
 
     Script::Undef( NULL );     // undef all
     Script::DefineVersion();
@@ -185,7 +179,8 @@ bool FOServer::InitScriptSystem()
     }
 
     // Bind game functions
-    if( !Script::BindReservedFunctions( SECTION_SERVER_SCRIPTS_BINDS, "server", GetServerFunctionsMap() ) )
+    ReservedFunctionsMap reserved_functions = GetServerFunctionsMap();
+    if( !Script::BindReservedFunctions( SECTION_SERVER_SCRIPTS_BINDS, "server", reserved_functions ) )
     {
         Script::Finish();
         WriteLog( "Bind game functions fail.\n" );
@@ -487,8 +482,8 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         }
     }
 
-    ReservedFunctionsMap functions = (bind == SCRIPT_BIND_CLIENT ? GetClientFunctionsMap() : GetMapperFunctionsMap() );
-    success = Script::BindReservedFunctions( section_binds, target_lower.c_str(), functions, true );
+    ReservedFunctionsMap reserved_functions = (bind == SCRIPT_BIND_CLIENT ? GetClientFunctionsMap() : GetMapperFunctionsMap() );
+    success = Script::BindReservedFunctions( section_binds, target_lower.c_str(), reserved_functions, true );
 
     // Finish
     ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
@@ -541,18 +536,11 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
             msg_script.CalculateHash();
         }
 
-        // Send to all connected clients
+        // Disconnect all clients
         ConnectedClientsLocker.Lock();
         for( auto it = ConnectedClients.begin(), end = ConnectedClients.end(); it != end; ++it )
         {
-            Client* cl = *it;
-            cl->Disconnect();
-            /*
-               auto    it_l = std::find( LangPacks.begin(), LangPacks.end(), cl->LanguageMsg );
-               if( it_l != LangPacks.end() )
-               Send_MsgData( cl, cl->LanguageMsg, TEXTMSG_INTERNAL, (*it_l).Msg[TEXTMSG_INTERNAL] );
-               cl->Send_LoadMap( NULL );
-             */
+            (*it)->Disconnect();
         }
         ConnectedClientsLocker.Unlock();
     }
