@@ -5,10 +5,6 @@
 
 #include "Types.h"
 
-#define SCRIPT_BIND_CLIENT    (1)
-#define SCRIPT_BIND_MAPPER    (2)
-#define SCRIPT_BIND_SERVER    (3)
-
 namespace Script
 {
     #if !defined (FOCLASSIC_SCRIPT_COMPILER)
@@ -22,7 +18,7 @@ namespace Script
     bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
     bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 
-    bool RegisterAll( asIScriptEngine* engine, const uint8& bind );
+    bool RegisterAll( asIScriptEngine* engine, const uint8& app );
     #endif
 
     #if defined (FOCLASSIC_SCRIPT_COMPILER) || defined (FOCLASSIC_SERVER)
@@ -38,7 +34,7 @@ namespace Script
         bool RegisterObjectProperty( asIScriptEngine* engine, const string& object, const string& declaration, int byteOffset );
         bool RegisterObjectMethod( asIScriptEngine* engine, const string& object, const string& declaration, const asSFuncPtr& function, asDWORD callConv );
 
-        bool RegisterAll( asIScriptEngine* engine, const uint8& bind );
+        bool RegisterAll( asIScriptEngine* engine, const uint8& app );
     }
     #endif
 }

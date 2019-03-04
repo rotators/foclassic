@@ -2,6 +2,7 @@
 
 #include "FL/Fl.H"
 
+#include "App.h"
 #include "CommandLine.h"
 #include "ConfigFile.h"
 #include "ConstantsManager.h"
@@ -5285,7 +5286,7 @@ void FOMapper::InitScriptSystem()
     WriteLog( "Script system initialization...\n" );
 
     // Init
-    if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_MAPPER ), "MAPPER" ) )
+    if( !Script::Init( false, new ScriptPragmaCallback( APP_TYPE_MAPPER ), "MAPPER" ) )
     {
         WriteLog( "Script system initialization fail.\n" );
         return;
@@ -5293,7 +5294,7 @@ void FOMapper::InitScriptSystem()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    Script::RegisterAll( engine, SCRIPT_BIND_MAPPER );
+    Script::RegisterAll( engine, APP_TYPE_MAPPER );
 
     // Load scripts
     FileManager::SetDataPath( GameOpt.ServerPath.c_str() );

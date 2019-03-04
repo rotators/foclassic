@@ -5,11 +5,6 @@
 
 #include "Types.h"
 
-#define PRAGMA_UNKNOWN    (0)
-#define PRAGMA_CLIENT     (1)
-#define PRAGMA_MAPPER     (2)
-#define PRAGMA_SERVER     (3)
-
 class IgnorePragma;
 class GlobalVarPragma;
 class CrDataPragma;
@@ -19,7 +14,7 @@ class BindFieldPragma;
 class ScriptPragmaCallback : public Preprocessor::Pragma::Callback
 {
 private:
-    int              pragmaType;
+    uint8            appType;
     set<string>      alreadyProcessed;
     IgnorePragma*    ignorePragma;
     GlobalVarPragma* globalVarPragma;
@@ -28,7 +23,7 @@ private:
     BindFieldPragma* bindFieldPragma;
 
 public:
-    ScriptPragmaCallback( int pragma_type );
+    ScriptPragmaCallback( uint8 app );
     void CallPragma( const string& name, const Preprocessor::Pragma::Instance& instance );
 };
 

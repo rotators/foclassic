@@ -2,6 +2,7 @@
 
 #include "FL/Fl.H"
 
+#include "App.h"
 #include "CommandLine.h"
 #include "ConfigFile.h"
 #include "ConstantsManager.h"
@@ -572,7 +573,7 @@ void FOServer::MainLoop()
         if( RequestReloadClientScripts )
         {
             SynchronizeLogicThreads();
-            ReloadExternalScripts( SCRIPT_BIND_CLIENT );
+            ReloadExternalScripts( APP_TYPE_CLIENT );
             RequestReloadClientScripts = false;
             ResynchronizeLogicThreads();
         }
@@ -2581,7 +2582,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
 
             SynchronizeLogicThreads();
 
-            if( ReloadExternalScripts( SCRIPT_BIND_CLIENT ) )
+            if( ReloadExternalScripts( APP_TYPE_CLIENT ) )
                 logcb( "Reload client scripts success." );
             else
                 logcb( "Reload client scripts fail." );
@@ -3515,9 +3516,9 @@ bool FOServer::InitReal()
         return false;                                 // Language packs
     if( !InitScriptSystem() )
         return false;                                 // Script system
-    if( !ReloadExternalScripts( SCRIPT_BIND_MAPPER ) )
+    if( !ReloadExternalScripts( APP_TYPE_MAPPER ) )
     {}                                                // Mapper scripts
-    if( !ReloadExternalScripts( SCRIPT_BIND_CLIENT ) )
+    if( !ReloadExternalScripts( APP_TYPE_CLIENT ) )
         return false;                                 // Client scripts, after language packs initialization
     if( !Singleplayer && !LoadClientsData() )
         return false;

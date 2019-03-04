@@ -113,7 +113,7 @@ bool FOServer::InitScriptSystem()
     #endif
 
     // Init
-    if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_SERVER ), "SERVER" ) )
+    if( !Script::Init( false, new ScriptPragmaCallback( APP_TYPE_SERVER ), "SERVER" ) )
     {
         WriteLog( "Script system initialization... failed\n" );
         return false;
@@ -138,7 +138,7 @@ bool FOServer::InitScriptSystem()
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    if( !Script::RegisterAll( engine, SCRIPT_BIND_SERVER ) )
+    if( !Script::RegisterAll( engine, APP_TYPE_SERVER ) )
     {
         WriteLog( "Script system initialization... failed\n" );
         return false;
@@ -256,32 +256,26 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 // Client/Mapper script processing
 //
 
-bool FOServer::ReloadExternalScripts( const uint8& bind )
+bool FOServer::ReloadExternalScripts( const uint8& app )
 {
-    static const string targets[] =
+    if( app != APP_TYPE_CLIENT && app != APP_TYPE_MAPPER )
     {
-        "",
-        "CLIENT",
-        "MAPPER"
-    };
-
-    if( bind != SCRIPT_BIND_CLIENT && bind != SCRIPT_BIND_MAPPER )
-    {
-        WriteLog( "Invalid script target<%u>\n", bind );
+        WriteLogF( _FUNC_, "Invalid application type<%u>\n", app );
         return false;
     }
 
     bool   success = false;
 
-    string target_prefix = targets[bind] + "_";
-    string target_define = "__" + targets[bind];
-    string target_lower = targets[bind];
-    transform( target_lower.begin(), target_lower.end(), target_lower.begin(), ::tolower );
+    string app_prefix = App.TypeToName( app ) + string( "_" );
+    string app_define = string( "__" ) + App.TypeToName( app );
+    string app_name_lower = App.TypeToName( app );
+    transform( app_name_lower.begin(), app_name_lower.end(), app_name_lower.begin(), ::tolower );
 
-    WriteLog( "Reload %s scripts...\n", target_lower.c_str() );
+    WriteLog( "Reload %s scripts...\n", app_name_lower.c_str() );
 
-    string section_modules = (bind == SCRIPT_BIND_CLIENT ? SECTION_CLIENT_SCRIPTS_MODULES : SECTION_MAPPER_SCRIPTS_MODULES);
-    string section_binds = (bind == SCRIPT_BIND_CLIENT ? SECTION_CLIENT_SCRIPTS_BINDS : SECTION_MAPPER_SCRIPTS_BINDS);
+    string               section_modules = (app == APP_TYPE_CLIENT ? SECTION_CLIENT_SCRIPTS_MODULES : SECTION_MAPPER_SCRIPTS_MODULES);
+    string               section_binds = (app == APP_TYPE_CLIENT ? SECTION_CLIENT_SCRIPTS_BINDS : SECTION_MAPPER_SCRIPTS_BINDS);
+    ReservedFunctionsMap reserved_functions = (app == APP_TYPE_CLIENT ? GetClientFunctionsMap() : GetMapperFunctionsMap() );
 
     // Remove previous configuration
     ConfigFile->RemoveSection( section_modules );
@@ -290,19 +284,21 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
     // Load current configuration
     Ini* scripts_cfg = new Ini();
     scripts_cfg->KeepKeysOrder = true;
-    if( !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
+    success = true;
+    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
     {
         WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
-        delete scripts_cfg;
-        return false;
+        success = false;
     }
-    if( !Script::LoadConfigFile( scripts_cfg, section_modules, section_binds ) )
+    if( success && !Script::LoadConfigFile( scripts_cfg, section_modules, section_binds ) )
     {
         WriteLog( "Scripts config file<%s> invalid\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
-        delete scripts_cfg;
-        return false;
+        success = false;
     }
+
     delete scripts_cfg;
+    if( !success )
+        return false;
 
     // Disable debug allocators
     #ifdef MEMORY_DEBUG
@@ -311,7 +307,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
 
     // Create engine
     asIScriptEngine* server_engine = Script::GetEngine();
-    asIScriptEngine* target_engine = Script::CreateEngine( new ScriptPragmaCallback( bind ), targets[bind].c_str() );
+    asIScriptEngine* target_engine = Script::CreateEngine( new ScriptPragmaCallback( app ), App.TypeToName( app ).c_str() );
     if( !target_engine )
     {
         WriteLogF( _FUNC_, " - Script::CreateEngine fail\n" );
@@ -323,7 +319,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
     Script::SetEngine( target_engine );
 
     // Bind vars and functions
-    if( !Script::BindDummy::RegisterAll( target_engine, bind ) )
+    if( !Script::BindDummy::RegisterAll( target_engine, app ) )
     {
         WriteLog( "Bind fail\n" );
         ReloadExternalScriptsCleanup( server_engine, target_engine, "" );
@@ -334,7 +330,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
     // Load script modules
 
     Script::Undef( "__SERVER" );
-    Script::Define( target_define.c_str() );
+    Script::Define( app_define.c_str() );
 
     StrVec empty;
     Script::SetWrongGlobalObjects( empty );
@@ -349,11 +345,11 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         const string& module_name = *it;
 
         if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-            WriteLog( "Load %s module<%s>\n", target_lower.c_str(), module_name.c_str() );
+            WriteLog( "Load %s module<%s>\n", app_name_lower.c_str(), module_name.c_str() );
 
-        if( !Script::LoadScript( module_name.c_str(), NULL, false, target_prefix.c_str() ) )
+        if( !Script::LoadScript( module_name.c_str(), NULL, false, app_prefix.c_str() ) )
         {
-            WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", target_lower.c_str(), module_name.c_str() );
+            WriteLogF( _FUNC_, " - Unable to load %s script<%s>.\n", app_name_lower.c_str(), module_name.c_str() );
             success = false;
             break;
         }
@@ -362,7 +358,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         CBytecodeStream  binary;
         if( !module || module->SaveByteCode( &binary ) < 0 )
         {
-            WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", target_lower.c_str(), module_name.c_str() );
+            WriteLogF( _FUNC_, " - Unable to save bytecode of %s script<%s>.\n", app_name_lower.c_str(), module_name.c_str() );
             success = false;
             break;
         }
@@ -389,7 +385,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
             }
         }
 
-        if( bind == SCRIPT_BIND_CLIENT )
+        if( app == APP_TYPE_CLIENT )
         {
             // Add module name and bytecode
 
@@ -409,19 +405,19 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
 
     if( !success )
     {
-        WriteLog( "Load %s modules fail\n", target_lower.c_str() );
-        ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+        WriteLog( "Load %s modules fail\n", app_name_lower.c_str() );
+        ReloadExternalScriptsCleanup( server_engine, target_engine, app_define );
         return false;
     }
 
     // Imported functions
     if( Script::BindImportedFunctions() )            // returns number of errors
     {
-        ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+        ReloadExternalScriptsCleanup( server_engine, target_engine, app_define );
         return false;
     }
 
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         // Add native dlls to MSG
         int         dll_num = STR_INTERNAL_SCRIPT_DLLS;
@@ -476,26 +472,25 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
 
         if( !success )
         {
-            WriteLog( "Load %s extensions fail\n", target_lower.c_str() );
-            ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+            WriteLog( "Load %s extensions fail\n", app_name_lower.c_str() );
+            ReloadExternalScriptsCleanup( server_engine, target_engine, app_define );
             return false;
         }
     }
 
-    ReservedFunctionsMap reserved_functions = (bind == SCRIPT_BIND_CLIENT ? GetClientFunctionsMap() : GetMapperFunctionsMap() );
-    success = Script::BindReservedFunctions( section_binds, target_lower.c_str(), reserved_functions, true );
+    success = Script::BindReservedFunctions( section_binds, app_name_lower.c_str(), reserved_functions, true );
 
     // Finish
-    ReloadExternalScriptsCleanup( server_engine, target_engine, target_define );
+    ReloadExternalScriptsCleanup( server_engine, target_engine, app_define );
 
     if( !success )
     {
-        WriteLog( "Bind %s functions fail.\n", target_lower.c_str() );
+        WriteLog( "Bind %s functions fail.\n", app_name_lower.c_str() );
 
         return false;
     }
 
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         string bind_config = "[Client binds]\n";
         StrVec binds;
@@ -545,7 +540,7 @@ bool FOServer::ReloadExternalScripts( const uint8& bind )
         ConnectedClientsLocker.Unlock();
     }
 
-    WriteLog( "Reload %s scripts complete.\n", target_lower.c_str() );
+    WriteLog( "Reload %s scripts complete.\n", app_name_lower.c_str() );
 
     return true;
 }

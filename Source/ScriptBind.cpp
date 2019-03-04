@@ -2,6 +2,7 @@
 
 #include <angelscript.h>
 
+#include "App.h"
 #include "DynamicLibrary.h"
 #include "GameOptions.h"
 #include "Log.h"
@@ -222,7 +223,7 @@ bool ScriptBind::RegisterObjectMethod( asIScriptEngine* engine, const string& ob
     return BindSuccess;
 }
 
-bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
+bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& app )
 {
     if( !BindChecks( engine ) )
         return false;
@@ -232,7 +233,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //   #ifdef - filters real registration
     //   if()   - filters dummy registration
     //
-    // - for real registration, 'bind' argument is always related to current application
+    // - for real registration, 'app' argument is always related to current application
     //   for dummy registration, it defines which application is being simulated
     //
     // - keep each type inside its own #ifdef+if() block
@@ -289,7 +290,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "CraftItem", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "CraftItem", asBEHAVE_ADDREF, "void f()", focMETHOD( CraftItem, AddRef ), asCALL_THISCALL );
@@ -298,7 +299,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Critter", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "Critter", asBEHAVE_ADDREF, "void f()", focMETHOD( Critter, AddRef ), asCALL_THISCALL );
@@ -307,7 +308,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterObjectType( engine, "CritterCl", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "CritterCl", asBEHAVE_ADDREF, "void f()", focMETHOD( CritterCl, AddRef ), asCALL_THISCALL );
@@ -316,21 +317,21 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "DataRef", 0, asOBJ_REF | asOBJ_NOHANDLE );
     }
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "DataVal", 0, asOBJ_REF | asOBJ_NOHANDLE );
     }
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "GameVar", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "GameVar", asBEHAVE_ADDREF, "void f()", focMETHOD( GameVar, AddRef ), asCALL_THISCALL );
@@ -339,7 +340,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Item", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "Item", asBEHAVE_ADDREF, "void f()", focMETHOD( Item, AddRef ), asCALL_THISCALL );
@@ -348,7 +349,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterObjectType( engine, "ItemCl", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "ItemCl", asBEHAVE_ADDREF, "void f()", focMETHOD( Item, AddRef ), asCALL_THISCALL );
@@ -357,7 +358,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Location", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "Location", asBEHAVE_ADDREF, "void f()", focMETHOD( Location, AddRef ), asCALL_THISCALL );
@@ -366,7 +367,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Map", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "Map", asBEHAVE_ADDREF, "void f()", focMETHOD( Map, AddRef ), asCALL_THISCALL );
@@ -375,7 +376,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterObjectType( engine, "MapperMap", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "MapperMap", asBEHAVE_ADDREF, "void f()", focMETHOD( ProtoMap, AddRef ), asCALL_THISCALL );
@@ -384,7 +385,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterObjectType( engine, "MapperObject", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "MapperObject", asBEHAVE_ADDREF, "void f()", focMETHOD( MapObject, AddRef ), asCALL_THISCALL );
@@ -393,7 +394,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "NpcPlane", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "NpcPlane", asBEHAVE_ADDREF, "void f()", focMETHOD( AIDataPlane, AddRef ), asCALL_THISCALL );
@@ -406,7 +407,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     RegisterObjectBehaviour( engine, "ProtoItem", asBEHAVE_RELEASE, "void f()", focMETHOD( ProtoItem, Release ), asCALL_THISCALL );
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Scenery", 0, asOBJ_REF );
         RegisterObjectBehaviour( engine, "Scenery", asBEHAVE_ADDREF, "void f()", focMETHOD( MapObject, AddRef ), asCALL_THISCALL );
@@ -415,7 +416,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectType( engine, "Synchronizer", focSIZEOF( SyncObject ), asOBJ_VALUE );
         RegisterObjectBehaviour( engine, "Synchronizer", asBEHAVE_CONSTRUCT, "void f()", focFUNCTION( BIND_CLASS Synchronizer_Constructor ), asCALL_CDECL_OBJFIRST );
@@ -441,7 +442,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     RegisterGlobalProperty( engine, "string __MapDataPrefix", &GameOpt.MapDataPrefix );
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterGlobalFunction( engine, "bool get___ConsoleActive()", focFUNCTION( BIND_CLASS Global_get___ConsoleActive ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "bool get___WorldmapActive()", focFUNCTION( BIND_CLASS Global_get___WorldmapActive ), asCALL_CDECL );
@@ -458,7 +459,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterGlobalProperty( engine, "string __ClientPath", &GameOpt.ClientPath );
         RegisterGlobalProperty( engine, "string __ServerPath", &GameOpt.ServerPath );
@@ -470,7 +471,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_MAPPER )
     {
         RegisterGlobalProperty( engine, "bool __Quit", &GameOpt.Quit );
         RegisterGlobalProperty( engine, "bool __OpenGLRendering", &GameOpt.OpenGLRendering );
@@ -571,7 +572,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterGlobalProperty( engine, "const uint16 __Year", &GameOpt.Year );
         RegisterGlobalProperty( engine, "const uint16 __Month", &GameOpt.Month );
@@ -730,7 +731,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     RegisterGlobalFunction( engine, "string@ EncodeUTF8(uint ucs)", focFUNCTION( BIND_CLASS Global_EncodeUTF8 ), asCALL_CDECL );
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterGlobalFunction( engine, "uint GetPathLength(CritterCl& cr, uint16 toHx, uint16 toHy, uint cut)", focFUNCTION( BIND_CLASS Global_GetPathLengthCr ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void FlushScreen(uint fromColor, uint toColor, uint timeMs)", focFUNCTION( BIND_CLASS Global_FlushScreen ), asCALL_CDECL );
@@ -810,7 +811,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterGlobalFunction( engine, "void SetDefaultCritterParam(uint index, int param)", focFUNCTION( BIND_CLASS Global_SetDefaultCritterParam ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetMapFileNames(string@+ dir, string@[]@+ names)", focFUNCTION( BIND_CLASS Global_GetMapFileNames ), asCALL_CDECL );
@@ -876,7 +877,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         // AnyData
         RegisterGlobalFunction( engine, "bool SetAnyData(string& name, int64[]& data)", focFUNCTION( BIND_CLASS Global_SetAnyData ), asCALL_CDECL );
@@ -946,7 +947,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_MAPPER )
     {
         RegisterGlobalFunction( engine, "void Message(string& text)", focFUNCTION( BIND_CLASS Global_Message ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void Message(int textMsg, uint strNum)", focFUNCTION( BIND_CLASS Global_MessageMsg ), asCALL_CDECL );
@@ -961,7 +962,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "uint GetFullSecond(uint16 year, uint16 month, uint16 day, uint16 hour, uint16 minute, uint16 second)", focFUNCTION( BIND_CLASS Global_GetFullSecond ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void GetTime(uint16& year, uint16& month, uint16& day, uint16& dayOfWeek, uint16& hour, uint16& minute, uint16& second, uint16& milliseconds)", focFUNCTION( BIND_CLASS Global_GetTime ), asCALL_CDECL );
@@ -994,7 +995,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "CraftItem@ GetCraftItem(uint num)", focFUNCTION( BIND_CLASS Global_GetCraftItem ), asCALL_CDECL );
 
@@ -1018,7 +1019,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         // Critter (any)
         RegisterGlobalFunction( engine, "uint GetCrittersDistantion(Critter& cr1, Critter& cr2)", focFUNCTION( BIND_CLASS Global_GetCrittersDistantion ), asCALL_CDECL );
@@ -1259,7 +1260,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterGlobalFunction( engine, "CritterCl@+ GetChosen()", focFUNCTION( BIND_CLASS Global_GetChosen ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "uint GetChosenActions(uint[]@+ actions)", focFUNCTION( BIND_CLASS Global_GetChosenActions ), asCALL_CDECL );
@@ -1340,14 +1341,14 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterObjectMethod( engine, "DataRef", "const int& opIndex(uint) const", focFUNCTION( BIND_CLASS DataRef_Index ), asCALL_CDECL_OBJFIRST );
     }
     #endif
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectMethod( engine, "DataRef", "int& opIndex(uint)", focFUNCTION( BIND_CLASS DataRef_Index ), asCALL_CDECL_OBJFIRST );
     }
@@ -1358,7 +1359,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     // Computed value
     //
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_CLIENT || bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_CLIENT || app == APP_TYPE_SERVER )
     {
         RegisterObjectMethod( engine, "DataVal", "const int opIndex(uint) const", focFUNCTION( BIND_CLASS DataVal_Index ), asCALL_CDECL_OBJFIRST );
     }
@@ -1369,7 +1370,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "GameVar@+ GetGlobalVar(uint16 varId)", focFUNCTION( BIND_CLASS Global_GetGlobalVar ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "GameVar@+ GetLocalVar(uint16 varId, uint masterId)", focFUNCTION( BIND_CLASS Global_GetLocalVar ), asCALL_CDECL );
@@ -1410,7 +1411,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "uint GetAllItems(uint16 pid, Item@[]@+ items)", focFUNCTION( BIND_CLASS Global_GetAllItems ), asCALL_CDECL );
 
@@ -1526,7 +1527,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_CLIENT)
-    if( bind == SCRIPT_BIND_CLIENT )
+    if( app == APP_TYPE_CLIENT )
     {
         RegisterGlobalFunction( engine, "ItemCl@+ GetItem(uint itemId)", focFUNCTION( BIND_CLASS Global_GetItem ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "ItemCl@+ GetMonitorItem(int x, int y, bool ignoreInterface = false)", focFUNCTION( BIND_CLASS Global_GetMonitorItem ), asCALL_CDECL );
@@ -1605,7 +1606,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "Location@+ GetLocation(uint locId)", focFUNCTION( BIND_CLASS Global_GetLocation ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "Location@+ GetLocationByPid(uint16 locPid, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetLocationByPid ), asCALL_CDECL );
@@ -1646,7 +1647,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "Map@+ GetMap(uint mapId)", focFUNCTION( BIND_CLASS Global_GetMap ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "Map@+ GetMapByPid(uint16 mapPid, uint skipCount)", focFUNCTION( BIND_CLASS Global_GetMapByPid ), asCALL_CDECL );
@@ -1754,7 +1755,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterGlobalFunction( engine, "MapperMap@+ LoadMap(string& fileName, int pathType)", focFUNCTION( BIND_CLASS Global_LoadMap ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void UnloadMap(MapperMap@+ map)", focFUNCTION( BIND_CLASS Global_UnloadMap ), asCALL_CDECL );
@@ -1796,7 +1797,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_MAPPER)
-    if( bind == SCRIPT_BIND_MAPPER )
+    if( app == APP_TYPE_MAPPER )
     {
         RegisterGlobalFunction( engine, "void DeleteObject(MapperObject@+ obj)", focFUNCTION( BIND_CLASS Global_DeleteObject ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void DeleteObjects(MapperObject@[]& objects)", focFUNCTION( BIND_CLASS Global_DeleteObjects ), asCALL_CDECL );
@@ -1918,7 +1919,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "NpcPlane@ CreatePlane()", focFUNCTION( BIND_CLASS Global_CreatePlane ), asCALL_CDECL );
 
@@ -2078,7 +2079,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     RegisterObjectProperty( engine, "ProtoItem", "const uint Car_MovementType", focOFFSET( ProtoItem, Car_MovementType ) );
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectMethod( engine, "ProtoItem", "string@ GetScriptName() const", focFUNCTION( BIND_CLASS ProtoItem_GetScriptName ), asCALL_CDECL_OBJFIRST );
     }
@@ -2089,7 +2090,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterObjectProperty( engine, "Scenery", "const uint16 ProtoId", focOFFSET( MapObject, ProtoId ) );
         RegisterObjectProperty( engine, "Scenery", "const uint16 HexX", focOFFSET( MapObject, MapX ) );
@@ -2104,7 +2105,7 @@ bool ScriptBind::RegisterAll( asIScriptEngine* engine, const uint8& bind )
     //
 
     #if defined (BIND_DUMMY) || defined (BIND_SERVER)
-    if( bind == SCRIPT_BIND_SERVER )
+    if( app == APP_TYPE_SERVER )
     {
         RegisterGlobalFunction( engine, "void Synchronize()", focFUNCTION( BIND_CLASS Global_Synchronize ), asCALL_CDECL );
         RegisterGlobalFunction( engine, "void Resynchronize()", focFUNCTION( BIND_CLASS Global_Resynchronize ), asCALL_CDECL );

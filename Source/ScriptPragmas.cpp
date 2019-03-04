@@ -2,6 +2,7 @@
 
 #include "AngelScript/angelscript.h"
 
+#include "App.h"
 #include "DynamicLibrary.h"
 #include "Log.h"
 #include "ScriptPragmas.h"
@@ -229,18 +230,18 @@ public:
 class CrDataPragma
 {
 private:
-    int         pragmaType;
+    uint8       appType;
     set<string> parametersAlready;
     uint        parametersIndex;
 
 public:
-    CrDataPragma( int pragma_type ) : pragmaType( pragma_type ), parametersIndex( 1 /*0 is ParamBase*/ ) {}
+    CrDataPragma( int pragma_type ) : appType( pragma_type ), parametersIndex( 1 /*0 is ParamBase*/ ) {}
 
     void Call( const string& text )
     {
-        if( pragmaType == PRAGMA_SERVER )
+        if( appType == APP_TYPE_SERVER )
             RegisterCrData( text.c_str() );
-        else if( pragmaType == PRAGMA_CLIENT )
+        else if( appType == APP_TYPE_CLIENT )
             RegisterCrClData( text.c_str() );
     }
 
@@ -517,17 +518,17 @@ public:
     }
 };
 
-ScriptPragmaCallback::ScriptPragmaCallback( int pragma_type )
+ScriptPragmaCallback::ScriptPragmaCallback( uint8 app )
 {
-    pragmaType = pragma_type;
-    if( pragmaType != PRAGMA_SERVER && pragmaType != PRAGMA_CLIENT && pragmaType != PRAGMA_MAPPER )
-        pragmaType = PRAGMA_UNKNOWN;
+    appType = app;
+    if( appType != APP_TYPE_SERVER && appType != APP_TYPE_CLIENT && appType != APP_TYPE_MAPPER )
+        appType = APP_TYPE_UNKNOWN;
 
-    if( pragmaType != PRAGMA_UNKNOWN )
+    if( appType != APP_TYPE_UNKNOWN )
     {
         ignorePragma = new IgnorePragma();
         globalVarPragma = new GlobalVarPragma();
-        crDataPragma = new CrDataPragma( pragmaType );
+        crDataPragma = new CrDataPragma( appType );
         bindFuncPragma = new BindFuncPragma();
         bindFieldPragma = new BindFieldPragma();
 

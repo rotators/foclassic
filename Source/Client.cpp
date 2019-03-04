@@ -4,6 +4,7 @@
 #include "FL/x.H"
 
 #include "Access.h"
+#include "App.h"
 #include "Client.h"
 #include "CommandLine.h"
 #include "ConfigFile.h"
@@ -9762,7 +9763,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     // Reinitialize engine
     Script::Finish();
-    if( !Script::Init( false, new ScriptPragmaCallback( PRAGMA_CLIENT ), "CLIENT" ) )
+    if( !Script::Init( false, new ScriptPragmaCallback( APP_TYPE_CLIENT ), "CLIENT" ) )
     {
         WriteLog( "Unable to start script engine.\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
@@ -9771,7 +9772,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     // Bind vars and functions, see ScriptBind.cpp
     asIScriptEngine* engine = Script::GetEngine();
-    if( !Script::RegisterAll( engine, SCRIPT_BIND_CLIENT ) )
+    if( !Script::RegisterAll( engine, APP_TYPE_CLIENT ) )
     {
         WriteLog( "Bind fail\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );

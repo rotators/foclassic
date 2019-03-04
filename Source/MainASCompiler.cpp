@@ -12,6 +12,7 @@
 #include <scriptstring.h>
 #include <scriptarray.h>
 
+#include "App.h"
 #include "ASCompiler.h"
 #include "Debugger.h"
 #include "Exception.h"
@@ -28,9 +29,6 @@
 #endif
 
 asIScriptEngine* Engine = NULL;
-bool             IsClient = false;
-bool             IsMapper = false;
-bool             IsServer = true;
 char*            Buf = NULL;
 bool             CollectGarbage = false;
 
@@ -46,14 +44,7 @@ const char*      ContextStatesStr[] =
     "Error",
 };
 
-uint8  ScriptTarget = SCRIPT_BIND_SERVER; // TODO no default
-string ScriptTargetName[4] =
-{
-    "UNKNOWN",
-    "CLIENT",
-    "MAPPER",
-    "SERVER"
-};
+uint8         AppType = APP_TYPE_SERVER; // TODO no default
 
 Preprocessor* ScriptPreprocessor;
 
@@ -159,7 +150,7 @@ void* GetScriptEngine()
 
 const char* GetDllTarget()
 {
-    return ScriptTargetName[ScriptTarget].c_str();
+    return App.TypeToName( AppType ).c_str();
 }
 
 void CallBack( const asSMessageInfo* msg, void* param )
@@ -218,9 +209,9 @@ int main( int argc, char* argv[] )
     {
         // Client / Mapper / Server
         if( !_stricmp( argv[i], "-client" ) )
-            ScriptTarget = SCRIPT_BIND_CLIENT;
+            AppType = APP_TYPE_CLIENT;
         else if( !_stricmp( argv[i], "-mapper" ) )
-            ScriptTarget = SCRIPT_BIND_MAPPER;
+            AppType = APP_TYPE_MAPPER;
         // Preprocessor output
         else if( !_stricmp( argv[i], "-p" ) && i + 1 < argc )
             str_prep = argv[++i];
@@ -265,7 +256,7 @@ int main( int argc, char* argv[] )
     }
 
     // Bind
-    if( !Script::BindDummy::RegisterAll( Engine, ScriptTarget ) )
+    if( !Script::BindDummy::RegisterAll( Engine, AppType ) )
     {
         printf( "Bind error.\n" );
         Exit( -1 );
@@ -277,7 +268,7 @@ int main( int argc, char* argv[] )
 
     // Preprocessor
     ScriptPreprocessor = new Preprocessor();
-    ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( ScriptTarget ) );
+    ScriptPreprocessor->SetPragmaCallback( new ScriptPragmaCallback( AppType ) );
 
     #pragma TODO("Script::DefineVersion()")
     ScriptPreprocessor->Define( "__VERSION", FOCLASSIC_VERSION_STRING );
@@ -286,7 +277,7 @@ int main( int argc, char* argv[] )
     ScriptPreprocessor->Define( "ANGELSCRIPT_VERSION", std::to_string( (long long)(ANGELSCRIPT_VERSION) ) ); // make VS2010 happy
 
     ScriptPreprocessor->Define( "__ASCOMPILER" );
-    ScriptPreprocessor->Define( "__" + ScriptTargetName[ScriptTarget] );
+    ScriptPreprocessor->Define( string( "__" ) + App.TypeToName( AppType ) );
 
     for( size_t i = 0; i < defines.size(); i++ )
         ScriptPreprocessor->Define( string( defines[i] ) );
@@ -352,7 +343,7 @@ int main( int argc, char* argv[] )
     }
 
     // Check global not allowed types, only for server
-    if( ScriptTarget == SCRIPT_BIND_SERVER )
+    if( AppType == APP_TYPE_SERVER )
     {
         int bad_typeids[] =
         {
