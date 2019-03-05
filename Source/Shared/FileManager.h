@@ -6,11 +6,12 @@
 #include "Types.h"
 
 #define PATH_LIST_COUNT    (50)
-extern const char* PathList[PATH_LIST_COUNT];
 
 class FileManager
 {
 public:
+    static bool SetPathType( int path_type, const char* path );
+
     static void SetDataPath( const char* path );
     static void SetCacheName( const char* name );
     static void InitDataFiles( const char* path );

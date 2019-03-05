@@ -5301,6 +5301,8 @@ void FOMapper::InitScriptSystem()
     Script::SetScriptsPath( PATH_SERVER_SCRIPTS );
 
     Ini* scripts_cfg = new Ini();
+    scripts_cfg->KeepKeysOrder = true;
+
     if( scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) &&
         Script::LoadConfigFile( scripts_cfg, SECTION_MAPPER_SCRIPTS_MODULES, SECTION_MAPPER_SCRIPTS_BINDS ) )
     {

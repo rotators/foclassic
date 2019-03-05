@@ -33,6 +33,12 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - key name should be a path to dialog file (without extension), key value defines dialog id; examples: `all_alco = 1`, `hub/keri = 1000`
     - dialogs defined without/with invalid id (not a number, value less or equal 0) are silently ignored
 - Server will continue initialization even if _dialogs.cfg_ is missing
+- Server option `GameSleep` can be set from command line
+- added Server option `ScriptsDir`; default: `scripts`
+    - allows to change directory containing game scripts
+    - directory name cannot start with `.`, `/`, or `\\` characters
+    - can be set from command line
+
 
 Example of scripts configuration
 ```ini

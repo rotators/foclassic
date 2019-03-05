@@ -107,8 +107,6 @@ void UnloadConfigFile()
 
 //
 
-#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
-
 bool GetBool( const string& section, const string& key )
 {
     bool result = false;
@@ -173,6 +171,8 @@ string GetStrPath( const string& section, const string& key, const string& defau
 
     return result;
 }
+
+#if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_MAPPER)
 
 void GetClientOptions()
 {
@@ -286,9 +286,12 @@ void GetServerOptions()
     # endif
 
     # if defined (FOCLASSIC_SERVER)
-    ServerGameSleep = ConfigFile->GetInt( SECTION_SERVER, "GameSleep", 10 );
+    ServerGameSleep = GetInt( SECTION_SERVER, "GameSleep", 0, 10000, 10 );
     Script::SetConcurrentExecution( ConfigFile->GetBool( SECTION_SERVER, "ScriptConcurrentExecution", false ) );
     WorldSaveManager = ConfigFile->GetInt( SECTION_SERVER, "WorldSaveManager", 1 ) == 1;
     # endif
+
+    string scripts_dir = GetStrPath( SECTION_SERVER, "ScriptsDir", "scripts" );
+    FileManager::SetPathType( PATH_SERVER_SCRIPTS, scripts_dir.c_str() );
 }
 #endif

@@ -70,6 +70,46 @@ const char* PathList[PATH_LIST_COUNT] =
 DataFileVec FileManager::dataFiles;
 char        FileManager::dataPath[MAX_FOPATH] = { DIR_SLASH_SD };
 
+bool FileManager::SetPathType( int path_type, const char* path )
+{
+    #pragma TODO("assert")
+
+    if( path_type < 0 || path_type >= PATH_LIST_COUNT )
+    {
+        App.WriteLogF( _FUNC_, " - Type<%d> out of bounds\n", path_type );
+        return false;
+    }
+    else if( path_type == PATH_ROOT || path_type == PATH_MAPPER_ROOT || path_type == PATH_SERVER_ROOT )
+    {
+        App.WriteLogF( _FUNC_, " - Type<%d> cannot be changed\n", path_type );
+        return false;
+    }
+    else if( !path )
+    {
+        App.WriteLogF( _FUNC_, " - Path not set", path_type );
+        return false;
+    }
+    else if( !Str::Length( path ) )
+    {
+        App.WriteLogF( _FUNC_, " - Path is empty" );
+        return false;
+    }
+    else if( path[0] == '.' || path[0] == '/' || path[0] == '\\' )
+    {
+        App.WriteLogF( _FUNC_ " - Invalid path<%s>\n", path );
+        return false;
+    }
+
+    char new_path[MAX_FOPATH];
+    Str::Copy( new_path, path );
+    if( new_path[Str::Length( new_path ) - 1] != DIR_SLASH_C )
+        Str::Append( new_path, DIR_SLASH_S );
+    FormatPath( new_path );
+
+    PathList[path_type] = Str::Duplicate( new_path );
+    return true;
+}
+
 void FileManager::SetDataPath( const char* path )
 {
     Str::Copy( dataPath, path );
