@@ -96,7 +96,7 @@ bool FileManager::SetPathType( int path_type, const char* path )
     }
     else if( path[0] == '.' || path[0] == '/' || path[0] == '\\' )
     {
-        App.WriteLogF( _FUNC_ " - Invalid path<%s>\n", path );
+        App.WriteLogF( _FUNC_, " - Invalid path<%s>\n", path );
         return false;
     }
 
