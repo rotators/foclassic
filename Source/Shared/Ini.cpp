@@ -96,9 +96,16 @@ bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
     if( unload )
         Unload();
 
-    ifstream fstream( fname );
+    ifstream fstream;
+    fstream.open( fname, ios_base::in | ios_base::binary );
+
     if( fstream.is_open() )
     {
+        char bom[3] = { 0, 0, 0 };
+        fstream.read( bom, sizeof(bom) );
+        if( bom[0] != (char)0xEF || bom[1] != (char)0xBB || bom[2] != (char)0xBF )
+            fstream.seekg( 0, fstream.beg );
+
         Parse( fstream );
 
         return true;
