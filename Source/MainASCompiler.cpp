@@ -150,7 +150,7 @@ void* GetScriptEngine()
 
 const char* GetDllTarget()
 {
-    return App.TypeToName( AppType ).c_str();
+    return Str::Duplicate( App.TypeToName( AppType ).c_str() );
 }
 
 void CallBack( const asSMessageInfo* msg, void* param )
