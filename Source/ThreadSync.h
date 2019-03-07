@@ -7,8 +7,8 @@
 
 class SyncObject;
 class SyncManager;
-typedef vector<SyncObject*>  SyncObjectVec;
-typedef vector<SyncManager*> SyncManagerVec;
+typedef std::vector<SyncObject*>  SyncObjectVec;
+typedef std::vector<SyncManager*> SyncManagerVec;
 
 class SyncObject
 {

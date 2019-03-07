@@ -16,6 +16,8 @@
 #include "Text.h"
 #include "Timer.h"
 
+using namespace std;
+
 MapManager MapMngr;
 
 /************************************************************************/

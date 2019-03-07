@@ -19,15 +19,15 @@ class Ini;
 
 struct EngineData
 {
-    ScriptModuleVec                  Modules;
-    Preprocessor::Pragma::Callback*  PragmaCB;
-    string                           DllTarget;
-    map<string, pair<string, void*>> LoadedDlls;
+    ScriptModuleVec                                      Modules;
+    Preprocessor::Pragma::Callback*                      PragmaCallback;
+    std::string                                          DllTarget;
+    std::map<std::string, std::pair<std::string, void*>> LoadedDlls;
 };
 
 namespace Script
 {
-    bool Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target );
+    bool Init( bool with_log, uint8 app );
     void Finish();
     bool InitThread();
     void FinishThread();
@@ -47,14 +47,14 @@ namespace Script
     #ifdef FOCLASSIC_SERVER
     namespace Profiler
     {
-        void   SetData( uint sample_time, uint save_time, bool dynamic_display );
-        void   Init();
-        void   AddModule( const char* module_name );
-        void   EndModules();
-        void   SaveFunctionsData();
-        void   Finish();
-        string GetStatistics();
-        bool   IsActive();
+        void        SetData( uint sample_time, uint save_time, bool dynamic_display );
+        void        Init();
+        void        AddModule( const char* module_name );
+        void        EndModules();
+        void        SaveFunctionsData();
+        void        Finish();
+        std::string GetStatistics();
+        bool        IsActive();
     }
     #endif
 
@@ -63,7 +63,7 @@ namespace Script
 
     asIScriptEngine* GetEngine();
     void             SetEngine( asIScriptEngine* engine );
-    asIScriptEngine* CreateEngine( Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target );
+    asIScriptEngine* CreateEngine( Preprocessor::Pragma::Callback* pragma_callback, std::string dll_target );
     void             FinishEngine( asIScriptEngine*& engine );
 
     asIScriptContext* CreateContext();
@@ -88,19 +88,19 @@ namespace Script
     bool LoadScript( const char* module_name, const char* source, bool skip_binary, const char* file_prefix = NULL );
     bool LoadScript( const char* module_name, const uint8* bytecode, uint len );
 
-    int    BindImportedFunctions();
-    int    Bind( const std::string& func_name, const ReservedFunction& bind_func, bool is_temp, bool disable_log = false );
-    int    Bind( const char* module_name, const char* func_name, const char* decl, bool is_temp, bool disable_log = false );
-    int    Bind( const char* script_name, const char* decl, bool is_temp, bool disable_log = false );
-    int    RebindFunctions();
-    bool   ReparseScriptName( const char* script_name, char* module_name, char* func_name, bool disable_log = false );
-    string GetBindFuncName( int bind_id );
+    int         BindImportedFunctions();
+    int         Bind( const std::string& func_name, const ReservedFunction& bind_func, bool is_temp, bool disable_log = false );
+    int         Bind( const char* module_name, const char* func_name, const char* decl, bool is_temp, bool disable_log = false );
+    int         Bind( const char* script_name, const char* decl, bool is_temp, bool disable_log = false );
+    int         RebindFunctions();
+    bool        ReparseScriptName( const char* script_name, char* module_name, char* func_name, bool disable_log = false );
+    std::string GetBindFuncName( int bind_id );
 
     const StrVec& GetScriptFuncCache();
     void          ResizeCache( uint count );
     uint          GetScriptFuncNum( const char* script_name, const char* decl );
     int           GetScriptFuncBindId( uint func_num );
-    string        GetScriptFuncName( uint func_num );
+    std::string   GetScriptFuncName( uint func_num );
 
     // Script execution
     void BeginExecution();
@@ -142,8 +142,8 @@ namespace Script
     // Arrays stuff
     ScriptArray* CreateArray( const char* type );
 
-    template<typename Type>
-    void AppendVectorToArray( vector<Type>& vec, ScriptArray* arr )
+    template<typename T>
+    void AppendVectorToArray( std::vector<T>& vec, ScriptArray* arr )
     {
         if( !vec.empty() && arr )
         {
@@ -151,13 +151,13 @@ namespace Script
             arr->Resize( (asUINT)(i + (uint)vec.size() ) );
             for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
-                Type* p = (Type*)arr->At( i );
+                T* p = (T*)arr->At( i );
                 *p = vec[k];
             }
         }
     }
-    template<typename Type>
-    void AppendVectorToArrayRef( vector<Type>& vec, ScriptArray* arr )
+    template<typename T>
+    void AppendVectorToArrayRef( std::vector<T>& vec, ScriptArray* arr )
     {
         if( !vec.empty() && arr )
         {
@@ -165,14 +165,14 @@ namespace Script
             arr->Resize( (asUINT)(i + (uint)vec.size() ) );
             for( uint k = 0, l = (uint)vec.size(); k < l; k++, i++ )
             {
-                Type* p = (Type*)arr->At( i );
+                T* p = (T*)arr->At( i );
                 *p = vec[k];
                 (*p)->AddRef();
             }
         }
     }
-    template<typename Type>
-    void AssignScriptArrayInVector( vector<Type>& vec, ScriptArray* arr )
+    template<typename T>
+    void AssignScriptArrayInVector( std::vector<T>& vec, ScriptArray* arr )
     {
         if( arr )
         {
@@ -182,7 +182,7 @@ namespace Script
                 vec.resize( count );
                 for( uint i = 0; i < count; i++ )
                 {
-                    Type* p = (Type*)arr->At( i );
+                    T* p = (T*)arr->At( i );
                     vec[i] = *p;
                 }
             }

@@ -19,6 +19,8 @@
 #include "Utils.h"
 #include "Vars.h"
 
+using namespace std;
+
 const char* CritterEventFuncName[CRITTER_EVENT_MAX] =
 {
     "void %s(Critter&)",                                                          // CRITTER_EVENT_IDLE

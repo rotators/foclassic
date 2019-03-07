@@ -35,6 +35,8 @@
 # include "FL/Fl_File_Icon.H"
 #endif
 
+using namespace std;
+
 void InitAdminManager();
 
 /************************************************************************/

@@ -15,6 +15,8 @@
 # include "CritterManager.h"
 #endif
 
+using namespace std;
+
 VarManager  VarMngr;
 FileLogger* DbgLog = NULL;
 

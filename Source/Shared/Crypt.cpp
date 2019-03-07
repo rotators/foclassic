@@ -1,14 +1,15 @@
 #include "Core.h"
+#include "App.h"
 
 #include <zlib.h>
 #include <sha2.h>
-
-#include "App.h"
 
 #include "AutoPointers.h"
 #include "Crypt.h"
 #include "Random.h"
 #include "Text.h"
+
+using namespace std;
 
 CryptManager Crypt;
 

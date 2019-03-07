@@ -16,6 +16,8 @@
 #include "Timer.h"
 #include "Utils.h"
 
+using namespace std;
+
 const char* MapEventFuncName[MAP_EVENT_MAX] =
 {
     "void %s(Map&,bool)",              // MAP_EVENT_FINISH

@@ -2,6 +2,7 @@
    MIT License
 
    Copyright (c) 2017-2018 Matthias C. M. Troffaes
+   Copyright (c) 2018-2019 Rotators
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -114,7 +115,7 @@ bool Ini::LoadFile( const string& fname, bool unload /* = true */ )
     return false;
 }
 
-bool Ini::LoadStdString( const string& str, bool unload /* = true */ )
+bool Ini::LoadStr( const string& str, bool unload /* = true */ )
 {
     if( unload )
         Unload();

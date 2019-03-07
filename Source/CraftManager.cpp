@@ -18,6 +18,8 @@
 # include "CritterCl.h"
 #endif
 
+using namespace std;
+
 #define FIXBOY_TIME_OUT    (GameOpt.TimeMultiplier * 60)      // 1 minute
 
 #define CRAFT_RETURN_FAIL                           \
@@ -31,7 +33,6 @@
           return CRAFT_RESULT_TIMEOUT; return CRAFT_RESULT_NONE; }
 
 CraftManager MrFixit;
-
 
 CraftItem::CraftItem()
 {

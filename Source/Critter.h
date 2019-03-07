@@ -40,17 +40,17 @@ class Location;
 class MapObject;
 class GlobalMapGroup;
 
-typedef Critter*            CritterPtr;
-typedef Client*             ClientPtr;
-typedef Npc*                NpcPtr;
+typedef Critter*                 CritterPtr;
+typedef Client*                  ClientPtr;
+typedef Npc*                     NpcPtr;
 
-typedef map<uint, Critter*> CrMap;
-typedef map<uint, Client*>  ClMap;
-typedef map<uint, Npc*>     PcMap;
+typedef std::map<uint, Critter*> CrMap;
+typedef std::map<uint, Client*>  ClMap;
+typedef std::map<uint, Npc*>     PcMap;
 
-typedef vector<Critter*>    CrVec;
-typedef vector<Client*>     ClVec;
-typedef vector<Npc*>        PcVec;
+typedef std::vector<Critter*>    CrVec;
+typedef std::vector<Client*>     ClVec;
+typedef std::vector<Npc*>        PcVec;
 
 class Critter
 {
@@ -474,7 +474,7 @@ public:
             Identifier = r.Identifier;
         }
     };
-    typedef vector<CrTimeEvent> CrTimeEventVec;
+    typedef std::vector<CrTimeEvent> CrTimeEventVec;
     CrTimeEventVec CrTimeEvents;
 
     void AddCrTimeEvent( uint func_num, uint rate, uint duration, int identifier );
@@ -680,7 +680,7 @@ public:
         bool operator==( uint id ) { return Id == id; }
         BarterItem( uint id, uint pid, uint count ) : Id( id ), Pid( pid ), Count( count ) {}
     };
-    typedef vector<BarterItem> BarterItemVec;
+    typedef std::vector<BarterItem> BarterItemVec;
     BarterItemVec BarterItems;
 
     Client*     BarterGetOpponent( uint opponent_id );

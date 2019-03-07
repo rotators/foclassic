@@ -1,8 +1,8 @@
 #include "Core.h"
+#include "App.h"
 
 #include "FL/Fl.H"
 
-#include "App.h"
 #include "CommandLine.h"
 #include "ConfigFile.h"
 #include "ConstantsManager.h"
@@ -25,6 +25,8 @@
 #include "SinglePlayer.h"
 #include "Text.h"
 #include "Vars.h"
+
+using namespace std;
 
 void* zlib_alloc( void* opaque, unsigned int items, unsigned int size ) { return calloc( items, size ); }
 void  zlib_free( void* opaque, void* address )                          { free( address ); }
@@ -2521,7 +2523,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             Ini* scripts_cfg = new Ini();
             ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_MODULES );
             ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_BINDS );
-            if( scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) &&
+            if( scripts_cfg->LoadFile( FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) ) &&
                 Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
             {
                 // Reload script modules
@@ -2804,7 +2806,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
 
             DlgMngr.DialogsPacks.clear();
             DlgMngr.DlgPacksNames.clear();
-            int errors = DlgMngr.LoadDialogs( DIALOGS_LST_NAME );
+            int errors = DlgMngr.LoadDialogs( FILENAME_DIALOGS_CONFIG );
 
             InitLangPacks( LangPacks );
             InitLangPacksDialogs( LangPacks );
@@ -3536,7 +3538,7 @@ bool FOServer::InitReal()
         return false;                    // Map manager
     if( !VarMngr.Init( FileManager::GetFullPath( "", PATH_SERVER_SCRIPTS ) ) )
         return false;                    // Var Manager (only before dialog manager!)
-    if( !DlgMngr.LoadDialogs( DIALOGS_LST_NAME ) )
+    if( !DlgMngr.LoadDialogs( FILENAME_DIALOGS_CONFIG ) )
         return false;                    // Dialog manager
     if( !InitLangPacksDialogs( LangPacks ) )
         return false;                    // Create FONPC.MSG, FODLG.MSG, need call after InitLangPacks and DlgMngr.LoadDialogs

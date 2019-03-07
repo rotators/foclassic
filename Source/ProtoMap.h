@@ -137,8 +137,8 @@ public:
     void AddRef()  { ++RunTime.RefCounter; }
     void Release() { if( !--RunTime.RefCounter ) delete this; }
 };
-typedef vector<MapObject*> MapObjectPtrVec;
-typedef vector<MapObject>  MapObjectVec;
+typedef std::vector<MapObject*> MapObjectPtrVec;
+typedef std::vector<MapObject>  MapObjectVec;
 
 struct SceneryCl
 {
@@ -161,7 +161,7 @@ struct SceneryCl
     short  Dir;
     uint16 Reserved1;
 };
-typedef vector<SceneryCl> SceneryClVec;
+typedef std::vector<SceneryCl> SceneryClVec;
 
 class ProtoMap
 {
@@ -204,11 +204,11 @@ public:
         Tile() { memzero( this, sizeof(Tile) ); }
         Tile( uint name, uint16 hx, uint16 hy, char ox, char oy, uint8 layer, bool is_roof ) : NameHash( name ), HexX( hx ), HexY( hy ), OffsX( ox ), OffsY( oy ), Layer( layer ), IsRoof( is_roof ) {}
     };
-    typedef vector<Tile>    TileVec;
+    typedef std::vector<Tile>    TileVec;
     TileVec Tiles;
     #ifdef FOCLASSIC_MAPPER
     // For fast access
-    typedef vector<TileVec> TileVecVec;
+    typedef std::vector<TileVec> TileVecVec;
     TileVecVec TilesField;
     TileVecVec RoofsField;
     TileVec&   GetTiles( uint16 hx, uint16 hy, bool is_roof ) { return is_roof ? RoofsField[hy * Header.MaxHexX + hx] : TilesField[hy * Header.MaxHexX + hx]; }
@@ -256,7 +256,7 @@ public:
         MapEntire() { memzero( this, sizeof(MapEntire) ); }
         MapEntire( uint16 hx, uint16 hy, uint8 dir, uint type ) : HexX( hx ), HexY( hy ), Dir( dir ), Number( type ) {}
     };
-    typedef vector<MapEntire> EntiresVec;
+    typedef std::vector<MapEntire> EntiresVec;
 
 private:
     EntiresVec mapEntires;
@@ -270,10 +270,10 @@ public:
     void       GetEntires( uint num, EntiresVec& entires );
 
 private:
-    int    pathType;
-    string pmapName;
-    uint16 pmapPid;
-    bool   isInit;
+    int         pathType;
+    std::string pmapName;
+    uint16      pmapPid;
+    bool        isInit;
 
 public:
     ProtoMap();
@@ -308,7 +308,7 @@ public:
     MapObject* GetMapGrid( uint16 hx, uint16 hy );
     #endif
 };
-typedef vector<ProtoMap>  ProtoMapVec;
-typedef vector<ProtoMap*> ProtoMapPtrVec;
+typedef std::vector<ProtoMap>  ProtoMapVec;
+typedef std::vector<ProtoMap*> ProtoMapPtrVec;
 
 #endif // __PROTO_MAP__

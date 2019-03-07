@@ -18,7 +18,7 @@ namespace Keyb
     void   InitKeyb();
     void   Finish();
     void   Lost();
-    void   GetChar( uint8 dik, const char* dik_text, string& str, uint* position, uint max, int flags );
+    void   GetChar( uint8 dik, const char* dik_text, std::string& str, uint* position, uint max, int flags );
     void   GetChar( uint8 dik, const char* dik_text, char* str, uint str_size, uint* position, uint max, int flags );
     void   EraseInvalidChars( char* str, int flags );
     uint8  MapKey( uint16 code );

@@ -15,26 +15,26 @@
 // Typedefs
 class TemplateVar;
 class GameVar;
-typedef vector<TemplateVar*>  TempVarVec;
-typedef map<uint, GameVar*>   VarsMap32;
-typedef map<uint64, GameVar*> VarsMap64;
-typedef vector<GameVar*>      VarsVec;
+typedef std::vector<TemplateVar*>  TempVarVec;
+typedef std::map<uint, GameVar*>   VarsMap32;
+typedef std::map<uint64, GameVar*> VarsMap64;
+typedef std::vector<GameVar*>      VarsVec;
 
 
 class TemplateVar
 {
 public:
-    int       Type;
-    uint16    TempId;
-    string    Name;
-    string    Desc;
-    int       StartVal;
-    int       MinVal;
-    int       MaxVal;
-    uint      Flags;
+    int         Type;
+    uint16      TempId;
+    std::string Name;
+    std::string Desc;
+    int         StartVal;
+    int         MinVal;
+    int         MaxVal;
+    uint        Flags;
 
-    VarsMap32 Vars;
-    VarsMap64 VarsUnicum;
+    VarsMap32   Vars;
+    VarsMap64   VarsUnicum;
 
     bool IsNotUnicum() { return Type != VAR_TYPE_UNICUM; }
     bool IsError()     { return !TempId || !Name.size() || (IsNoBorders() && (MinVal > MaxVal || StartVal < MinVal || StartVal > MaxVal) ) || (IsQuest() && Type != VAR_TYPE_LOCAL);  }
@@ -128,7 +128,7 @@ class VarManager
 {
 private:
     bool         isInit;
-    string       varsPath;
+    std::string  varsPath;
     TempVarVec   tempVars;
     StrUInt16Map varsNames;
     Mutex        varsLocker;

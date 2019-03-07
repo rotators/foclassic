@@ -9,6 +9,7 @@
 #include <scriptstring.h>
 #include <preprocessor.h>
 
+#include "App.h"
 #include "ConfigFile.h" // LogicMT
 #include "DynamicLibrary.h"
 #include "Exception.h"
@@ -18,6 +19,7 @@
 #include "Ini.h"
 #include "Log.h"
 #include "Script.h"
+#include "ScriptPragmas.h"
 #include "ScriptReservedFunctions.h"
 #include "ScriptUtils.h"
 #include "Text.h"
@@ -30,6 +32,8 @@
 # include "Mutex.h"
 # include "ThreadSync.h"
 #endif
+
+using namespace std;
 
 const char* ContextStatesStr[] =
 {
@@ -64,8 +68,8 @@ public:
     }
 };
 typedef vector<BindFunction> BindFunctionVec;
-asIScriptEngine* Engine = NULL;
-void*            EngineLogFile = NULL;
+asIScriptEngine* Engine = nullptr;
+void*            EngineLogFile = nullptr;
 int              ScriptsPath = PATH_SCRIPTS;
 bool             LogDebugInfo = true;
 StrVec           WrongGlobalObjects;
@@ -221,7 +225,7 @@ void RunTimeout( void* );
 
 Preprocessor* ScriptPreprocessor;
 
-bool Script::Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target )
+bool Script::Init( bool with_log, uint8 app )
 {
     if( with_log && !StartLog() )
     {
@@ -230,10 +234,12 @@ bool Script::Init( bool with_log, Preprocessor::Pragma::Callback* pragma_callbac
     }
 
     // Create default engine
-    Engine = CreateEngine( pragma_callback, dll_target );
+    ScriptPragmaCallback* pragma_callback = new ScriptPragmaCallback( app );
+    Engine = CreateEngine( pragma_callback, App.TypeToName( app ) );
     if( !Engine )
     {
         WriteLogF( _FUNC_, " - Can't create AS engine.\n" );
+        delete pragma_callback;
         return false;
     }
 
@@ -1127,7 +1133,7 @@ void Script::SetEngine( asIScriptEngine* engine )
     Engine = engine;
 }
 
-asIScriptEngine* Script::CreateEngine( Preprocessor::Pragma::Callback* pragma_callback, const char* dll_target )
+asIScriptEngine* Script::CreateEngine( Preprocessor::Pragma::Callback* pragma_callback, string dll_target )
 {
     asIScriptEngine* engine = asCreateScriptEngine( ANGELSCRIPT_VERSION );
     if( !engine )
@@ -1145,9 +1151,10 @@ asIScriptEngine* Script::CreateEngine( Preprocessor::Pragma::Callback* pragma_ca
     RegisterScriptMath( engine );
 
     EngineData* edata = new EngineData();
-    edata->PragmaCB = pragma_callback;
+    edata->PragmaCallback = pragma_callback;
     edata->DllTarget = dll_target;
     engine->SetUserData( edata );
+
     return engine;
 }
 
@@ -1155,13 +1162,13 @@ void Script::FinishEngine( asIScriptEngine*& engine )
 {
     if( engine )
     {
-        EngineData* edata = (EngineData*)engine->SetUserData( NULL );
-        delete edata->PragmaCB;
+        EngineData* edata = (EngineData*)engine->SetUserData( nullptr );
+        delete edata->PragmaCallback;
         for( auto it = edata->LoadedDlls.begin(), end = edata->LoadedDlls.end(); it != end; ++it )
             DLL_Free( (*it).second.second );
         delete edata;
         engine->Release();
-        engine = NULL;
+        engine = nullptr;
     }
 }
 
@@ -1596,7 +1603,7 @@ void Script::CallPragmas( const StrVec& pragmas )
     EngineData* edata = (EngineData*)Engine->GetUserData();
 
     // Set current pragmas
-    ScriptPreprocessor->SetPragmaCallback( edata->PragmaCB );
+    ScriptPreprocessor->SetPragmaCallback( edata->PragmaCallback );
 
     // Call pragmas
     for( uint i = 0, j = (uint)pragmas.size() / 2; i < j; i++ )
@@ -1642,7 +1649,7 @@ bool Script::LoadScript( const char* module_name, const char* source, bool skip_
     #endif
 
     // Set current pragmas
-    ScriptPreprocessor->SetPragmaCallback( edata->PragmaCB );
+    ScriptPreprocessor->SetPragmaCallback( edata->PragmaCallback );
 
     // Try load precompiled script
     FileManager file_bin;

@@ -229,15 +229,15 @@ public:
         if( RefCounter <= 0 ) delete this;
     }
 };
-typedef map<uint, Map*> MapMap;
-typedef vector<Map*>    MapVec;
+typedef std::map<uint, Map*> MapMap;
+typedef std::vector<Map*>    MapVec;
 
 class ProtoLocation
 {
 public:
     bool        IsInit;
     uint16      LocPid;
-    string      Name;
+    std::string Name;
 
     uint        MaxPlayers;
     UInt16Vec   ProtoMapPids;
@@ -252,7 +252,7 @@ public:
 
     ProtoLocation() : IsInit( false ) {};
 };
-typedef vector<ProtoLocation> ProtoLocVec;
+typedef std::vector<ProtoLocation> ProtoLocVec;
 
 
 extern const char* LocationEventFuncName[LOCATION_EVENT_MAX];
@@ -327,7 +327,7 @@ public:
     }
     Location() : RefCounter( 1 ), Proto( NULL ), IsNotValid( false ) { memzero( (void*)&Data, sizeof(Data) ); }
 };
-typedef map<uint, Location*> LocMap;
-typedef vector<Location*>    LocVec;
+typedef std::map<uint, Location*> LocMap;
+typedef std::vector<Location*>    LocVec;
 
 #endif // __MAP__

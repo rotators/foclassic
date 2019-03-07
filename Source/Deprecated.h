@@ -9,9 +9,9 @@
 // pid == -1 - interface
 // pid == -2 - tiles
 // pid == -3 - inventory
-extern string Deprecated_GetPicName( int pid, int type, uint16 pic_num );
-extern uint   Deprecated_GetPicHash( int pid, int type, uint16 pic_num );
-extern void   Deprecated_CondExtToAnim2( uint8 cond, uint8 cond_ext, uint& anim2ko, uint& anim2dead );
+extern std::string Deprecated_GetPicName( int pid, int type, uint16 pic_num );
+extern uint        Deprecated_GetPicHash( int pid, int type, uint16 pic_num );
+extern void        Deprecated_CondExtToAnim2( uint8 cond, uint8 cond_ext, uint& anim2ko, uint& anim2dead );
 #endif
 
 #endif // __DEPRECATED__ //

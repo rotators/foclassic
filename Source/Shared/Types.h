@@ -19,8 +19,6 @@
 # include <windows.h>
 #endif
 
-using namespace std;
-
 #if defined (FO_MSVC)
 typedef signed char      int8;
 typedef unsigned char    uint8;

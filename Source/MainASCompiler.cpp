@@ -1,7 +1,12 @@
 #include "Core.h"
+#include "App.h"
 
 #include <stdio.h>
 #include <locale.h>
+
+#ifdef FO_LINUX
+# include <unistd.h>
+#endif
 
 #include <angelscript.h>
 #include <preprocessor.h>
@@ -12,7 +17,6 @@
 #include <scriptstring.h>
 #include <scriptarray.h>
 
-#include "App.h"
 #include "ASCompiler.h"
 #include "Debugger.h"
 #include "Exception.h"
@@ -23,8 +27,9 @@
 #include "Text.h"
 #include "Timer.h"
 
+using namespace std;
+
 #ifdef FO_LINUX
-# include <unistd.h>
 # define _stricmp    strcasecmp
 #endif
 

@@ -10,6 +10,8 @@
 #include "ScriptBind.h"
 #include "ScriptUtils.h"
 
+using namespace std;
+
 // "copy" macros related to registration
 // redefined during dummy registration
 

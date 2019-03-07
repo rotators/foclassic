@@ -8,6 +8,8 @@
 #include "FileSystem.h"
 #include "Text.h"
 
+using namespace std;
+
 bool DataFileDat::Init( const char* fname )
 {
     datHandle = NULL;

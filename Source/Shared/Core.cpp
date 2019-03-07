@@ -10,6 +10,8 @@
 #include "FileSystem.h"
 #include "GameOptions.h"
 
+using namespace std;
+
 /////
 //
 // Math stuff

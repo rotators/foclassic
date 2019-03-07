@@ -23,6 +23,8 @@
 #include "Version.h"
 #include "Window.h"
 
+using namespace std;
+
 FOWindow* MainWindow = NULL;
 FOClient* FOEngine = NULL;
 

@@ -37,17 +37,17 @@ public:
     int  MainLoop();
     void NetDisconnect();
 
-    uint16     NetState;
-    bool       Active;
-    uint*      UID1;
-    string     Password;
-    HexManager HexMngr;
+    uint16      NetState;
+    bool        Active;
+    uint*       UID1;
+    std::string Password;
+    HexManager  HexMngr;
 
-    int        ShowScreenType;
-    uint       ShowScreenParam;
-    bool       ShowScreenNeedAnswer;
+    int         ShowScreenType;
+    uint        ShowScreenParam;
+    bool        ShowScreenNeedAnswer;
 
-    int        ScreenModeMain;
+    int         ScreenModeMain;
     void ShowMainScreen( int new_screen );
     int  GetMainScreen()                  { return ScreenModeMain; }
     bool IsMainScreen( int check_screen ) { return check_screen == ScreenModeMain; }
@@ -302,7 +302,7 @@ public:
         }
         ActionEvent( const ActionEvent& r ) { memcpy( this, &r, sizeof(ActionEvent) ); }
     };
-    typedef vector<ActionEvent> ActionEventVec;
+    typedef std::vector<ActionEvent> ActionEventVec;
 
     ActionEventVec ChosenAction;
     void AddAction( bool to_front, ActionEvent act );
@@ -324,11 +324,11 @@ public:
     #ifndef FO_D3D
     struct ShowVideo
     {
-        string FileName;
-        string SoundName;
-        bool   CanStop;
+        std::string FileName;
+        std::string SoundName;
+        bool        CanStop;
     };
-    typedef vector<ShowVideo> ShowVideoVec;
+    typedef std::vector<ShowVideo> ShowVideoVec;
 
     struct VideoContext
     {
@@ -354,7 +354,7 @@ public:
     };
 
     ShowVideoVec  ShowVideos;
-    string        MusicAfterVideo;
+    std::string   MusicAfterVideo;
     int           MusicVolumeRestore;
     VideoContext* CurVideo;
 
@@ -381,7 +381,7 @@ public:
 
         IfaceAnim( AnyFrames* frm, int res_type );
     };
-    typedef vector<IfaceAnim*> IfaceAnimVec;
+    typedef std::vector<IfaceAnim*> IfaceAnimVec;
 
     #define ANIMRUN_TO_END            (0x0001)
     #define ANIMRUN_FROM_END          (0x0002)
@@ -412,7 +412,7 @@ public:
         uint EndColor;
         ScreenEffect( uint begin_tick, uint time, uint col, uint end_col ) : BeginTick( begin_tick ), Time( time ), StartColor( col ), EndColor( end_col ) {}
     };
-    typedef vector<ScreenEffect> ScreenEffectVec;
+    typedef std::vector<ScreenEffect> ScreenEffectVec;
 
     // Fading
     ScreenEffectVec ScreenEffects;
@@ -687,12 +687,12 @@ public:
     AnyFrames*  ConsolePic;
     int         ConsolePicX, ConsolePicY, ConsoleTextX, ConsoleTextY;
     static bool ConsoleActive;
-    string      ConsoleStr;
+    std::string ConsoleStr;
     uint        ConsoleCur;
     StrVec      ConsoleHistory;
     int         ConsoleHistoryCur;
     uint8       ConsoleLastKey;
-    string      ConsoleLastKeyText;
+    std::string ConsoleLastKeyText;
 
     void ConsoleDraw();
     void ConsoleKeyDown( uint8 dik, const char* dik_text );
@@ -706,19 +706,19 @@ public:
     #define INVF_NONE           (0)
     #define INVF_RAD_CHANNEL    (1)
 
-    AnyFrames* InvPWMain, * InvPBOkDw, * InvPBOkUp, * InvPBScrUpDw, * InvPBScrUpUp,
+    AnyFrames*  InvPWMain, * InvPBOkDw, * InvPBOkUp, * InvPBScrUpDw, * InvPBScrUpUp,
              * InvPBScrUpOff, * InvPBScrDwDw, * InvPBScrDwUp, * InvPBScrDwOff;
-    uint       InvHoldId;
-    string     InvItemInfo;
-    int        InvItemInfoScroll, InvItemInfoMaxScroll;
-    int        InvScroll;
-    int        InvX, InvY;
-    Rect       InvWMain, InvWChosen;
-    int        InvHeightItem;
-    Rect       InvWInv, InvWSlot1, InvWSlot2, InvWArmor;
-    Rect       InvBScrUp, InvBScrDn, InvBOk;
-    Rect       InvWText;
-    int        InvVectX, InvVectY;
+    uint        InvHoldId;
+    std::string InvItemInfo;
+    int         InvItemInfoScroll, InvItemInfoMaxScroll;
+    int         InvScroll;
+    int         InvX, InvY;
+    Rect        InvWMain, InvWChosen;
+    int         InvHeightItem;
+    Rect        InvWInv, InvWSlot1, InvWSlot2, InvWArmor;
+    Rect        InvBScrUp, InvBScrDn, InvBOk;
+    Rect        InvWText;
+    int         InvVectX, InvVectY;
     // Extended slots
     struct SlotExt
     {
@@ -726,7 +726,7 @@ public:
         char* IniName;
         Rect  Region;
     };
-    typedef vector<SlotExt> SlotExtVec;
+    typedef std::vector<SlotExt> SlotExtVec;
     SlotExtVec SlotsExt;
 
     void InvDraw();
@@ -757,16 +757,16 @@ public:
 /************************************************************************/
     struct MapText
     {
-        uint16 HexX, HexY;
-        uint   StartTick, Tick;
-        string Text;
-        uint   Color;
-        bool   Fade;
-        Rect   Pos;
-        Rect   EndPos;
+        uint16      HexX, HexY;
+        uint        StartTick, Tick;
+        std::string Text;
+        uint        Color;
+        bool        Fade;
+        Rect        Pos;
+        Rect        EndPos;
         bool operator==( const MapText& r ) { return HexX == r.HexX && HexY == r.HexY; }
     };
-    typedef vector<MapText> MapTextVec;
+    typedef std::vector<MapText> MapTextVec;
 
     MapTextVec GameMapTexts;
     uint       GameMouseStay;
@@ -876,20 +876,20 @@ public:
 
     struct Answer
     {
-        uint   Page;
-        Rect   Position;
-        string Text;
-        int    AnswerNum;      // -1 prev page, -2 next page
+        uint        Page;
+        Rect        Position;
+        std::string Text;
+        int         AnswerNum; // -1 prev page, -2 next page
 
-        Answer( uint page, Rect pos, string text, uint answer_num ) : Page( page ), Position( pos ), Text( text ), AnswerNum( answer_num ) {}
+        Answer( uint page, Rect pos, std::string text, uint answer_num ) : Page( page ), Position( pos ), Text( text ), AnswerNum( answer_num ) {}
     };
-    vector<Answer> DlgAllAnswers, DlgAnswers;
+    std::vector<Answer> DlgAllAnswers, DlgAnswers;
 
-    string         DlgMainText;
-    int            DlgMainTextCur, DlgMainTextLinesReal, DlgMainTextLinesRect;
-    int            DlgX, DlgY;
-    Rect           DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
-                   DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
+    std::string         DlgMainText;
+    int                 DlgMainTextCur, DlgMainTextLinesReal, DlgMainTextLinesRect;
+    int                 DlgX, DlgY;
+    Rect                DlgWMain, DlgWText, DlgBScrUp, DlgBScrDn, DlgAnsw, DlgAnswText, DlgWMoney, DlgBBarter,
+                        DlgBBarterText, DlgBSay, DlgBSayText, DlgWAvatar, DlgWTimer;
 
     // Barter
     AnyFrames* BarterPMain, * BarterPBOfferDn, * BarterPBTalkDn,
@@ -900,17 +900,17 @@ public:
          BarterBCont1ScrUp, BarterBCont2ScrUp, BarterBCont1oScrUp, BarterBCont2oScrUp,
          BarterBCont1ScrDn, BarterBCont2ScrDn, BarterBCont1oScrDn, BarterBCont2oScrDn,
          BarterWCost1, BarterWCost2, BarterWChosen, BarterWCritter;
-    uint   BarterPlayerId;
-    int    BarterCont1HeightItem, BarterCont2HeightItem,
-           BarterCont1oHeightItem, BarterCont2oHeightItem;
-    int    BarterScroll1, BarterScroll2, BarterScroll1o, BarterScroll2o;
-    uint   BarterHoldId;
-    uint   BarterCount;
-    uint16 BarterK;
-    string BarterText;
+    uint        BarterPlayerId;
+    int         BarterCont1HeightItem, BarterCont2HeightItem,
+                BarterCont1oHeightItem, BarterCont2oHeightItem;
+    int         BarterScroll1, BarterScroll2, BarterScroll1o, BarterScroll2o;
+    uint        BarterHoldId;
+    uint        BarterCount;
+    uint16      BarterK;
+    std::string BarterText;
     // Players barter extra
-    uint   BarterOpponentId;
-    bool   BarterIsPlayers, BarterHide, BarterOpponentHide, BarterOffer, BarterOpponentOffer;
+    uint        BarterOpponentId;
+    bool        BarterIsPlayers, BarterHide, BarterOpponentHide, BarterOffer, BarterOpponentOffer;
 
     bool IsScreenPlayersBarter();
     void BarterTryOffer();
@@ -997,7 +997,7 @@ public:
         uint   Color;
         bool operator==( const uint& _right ) { return this->LocId == _right;  }
     };
-    typedef vector<GmapLocation> GmapLocationVec;
+    typedef std::vector<GmapLocation> GmapLocationVec;
     GmapLocationVec GmapLoc;
     GmapLocation    GmapTownLoc;
 
@@ -1115,7 +1115,7 @@ public:
         SwitchElement( uint name, uint desc, uint16 pic, uint flags ) : NameStrNum( name ), DescStrNum( desc ), DrawFlags( flags ), PictureId( pic ) { memzero( Addon, sizeof(Addon) ); }
         SwitchElement( const char* add, uint flags ) : NameStrNum( 0 ), DescStrNum( 0 ), PictureId( 0 ), DrawFlags( flags ) { memcpy( Addon, add, sizeof(Addon) ); }
     };
-    typedef vector<SwitchElement> SwitchElementVec;
+    typedef std::vector<SwitchElement> SwitchElementVec;
 
     SwitchElementVec ChaSwitchText[3];
     int              ChaSwitchScroll[3];
@@ -1295,17 +1295,17 @@ public:
     // Automaps
     struct Automap
     {
-        uint      LocId;
-        uint16    LocPid;
-        string    LocName;
-        UInt16Vec MapPids;
-        StrVec    MapNames;
-        size_t    CurMap;
+        uint        LocId;
+        uint16      LocPid;
+        std::string LocName;
+        UInt16Vec   MapPids;
+        StrVec      MapNames;
+        size_t      CurMap;
 
         Automap() : LocId( 0 ), LocPid( 0 ), CurMap( 0 ) {}
         bool operator==( const uint id ) const { return LocId == id; }
     };
-    typedef vector<Automap> AutomapVec;
+    typedef std::vector<Automap> AutomapVec;
     AutomapVec Automaps;
     Automap    AutomapSelected;
     UInt16Set  AutomapWaitPids;
@@ -1380,18 +1380,18 @@ public:
     #define DIALOGBOX_ENCOUNTER_RT     (4)
     #define DIALOGBOX_ENCOUNTER_TB     (5)
     #define DIALOGBOX_MANUAL           (6)
-    uint   DlgboxWait;
-    char   DlgboxText[MAX_FOTEXT];
-    string DlgboxButtonText[MAX_DLGBOX_BUTTONS];
-    uint   DlgboxButtonsCount;
-    uint   DlgboxSelectedButton;
+    uint        DlgboxWait;
+    char        DlgboxText[MAX_FOTEXT];
+    std::string DlgboxButtonText[MAX_DLGBOX_BUTTONS];
+    uint        DlgboxButtonsCount;
+    uint        DlgboxSelectedButton;
     // For follow
-    uint8  FollowType;
-    uint   FollowRuleId;
-    uint16 FollowMap;
+    uint8       FollowType;
+    uint        FollowRuleId;
+    uint16      FollowMap;
     // For barter
-    uint   PBarterPlayerId;
-    bool   PBarterHide;
+    uint        PBarterPlayerId;
+    bool        PBarterHide;
 
     void DlgboxDraw();
     void DlgboxLMouseDown();
@@ -1432,8 +1432,8 @@ public:
     #define DIALOGSAY_NONE             (0)
     #define DIALOGSAY_TEXT             (1)
     #define DIALOGSAY_SAVE             (2)
-    string SayTitle;
-    string SayText;
+    std::string SayTitle;
+    std::string SayText;
 
     void SayDraw();
     void SayLMouseDown();
@@ -1512,12 +1512,12 @@ public:
 
     struct SCraft
     {
-        Rect   Pos;
-        string Name;
-        uint   Num;
-        bool   IsTrue;
+        Rect        Pos;
+        std::string Name;
+        uint        Num;
+        bool        IsTrue;
 
-        SCraft( Rect& pos, string& name, uint num, bool is_true )
+        SCraft( Rect& pos, std::string& name, uint num, bool is_true )
         {
             Pos = pos;
             Name = name;
@@ -1540,8 +1540,8 @@ public:
             return *this;
         }
     };
-    typedef vector<SCraft>    SCraftVec;
-    typedef vector<SCraftVec> SCraftVecVec;
+    typedef std::vector<SCraft>    SCraftVec;
+    typedef std::vector<SCraftVec> SCraftVecVec;
 
     SCraftVecVec FixCraftLst;
     int          FixScrollLst;
@@ -1551,31 +1551,31 @@ public:
 
     struct FixDrawComponent
     {
-        bool       IsText;
-        Rect       Place;
+        bool        IsText;
+        Rect        Place;
 
-        string     Text;
-        AnyFrames* Anim;
+        std::string Text;
+        AnyFrames*  Anim;
 
-        FixDrawComponent( Rect& r, string& text ) : IsText( true ), Anim( NULL )
+        FixDrawComponent( Rect& r, std::string& text ) : IsText( true ), Anim( NULL )
         {
             Place = r;
             Text = text;
         }
         FixDrawComponent( Rect& r, AnyFrames* anim ) : IsText( false ), Anim( anim ) { Place = r; }
     };
-    typedef vector<FixDrawComponent*> FixDrawComponentVec;
+    typedef std::vector<FixDrawComponent*> FixDrawComponentVec;
     #define FIX_DRAW_PIC_WIDTH         (40)
     #define FIX_DRAW_PIC_HEIGHT        (40)
 
     FixDrawComponentVec FixDrawComp;
-    string              FixResultStr;
+    std::string         FixResultStr;
     UIntSet             FixShowCraft;
     uint                FixNextShowCraftTick;
 
     void       FixGenerate( int fix_mode );
-    void       FixGenerateStrLine( string& str, Rect& r );
-    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, string& str, Rect& r, int& x );
+    void       FixGenerateStrLine( std::string& str, Rect& r );
+    void       FixGenerateItems( UInt16Vec& items_vec, UIntVec& val_vec, UInt8Vec& or_vec, std::string& str, Rect& r, int& x );
     int        GetMouseCraft();
     SCraftVec* GetCurSCrafts();
 
@@ -1591,13 +1591,13 @@ public:
     #define IBOX_MODE_NONE             (0)
     #define IBOX_MODE_HOLO             (1)
 
-    AnyFrames* IboxWMainPicNone, * IboxBDonePicDown, * IboxBCancelPicDown;
-    Rect       IboxWMain, IboxWTitle, IboxWText, IboxBDone, IboxBDoneText, IboxBCancel, IboxBCancelText;
-    int        IboxX, IboxY, IboxVectX, IboxVectY;
-    string     IboxTitle, IboxText;
-    uint       IboxTitleCur, IboxTextCur;
-    uint8      IboxLastKey;
-    string     IboxLastKeyText;
+    AnyFrames*  IboxWMainPicNone, * IboxBDonePicDown, * IboxBCancelPicDown;
+    Rect        IboxWMain, IboxWTitle, IboxWText, IboxBDone, IboxBDoneText, IboxBCancel, IboxBCancelText;
+    int         IboxX, IboxY, IboxVectX, IboxVectY;
+    std::string IboxTitle, IboxText;
+    uint        IboxTitleCur, IboxTextCur;
+    uint8       IboxLastKey;
+    std::string IboxLastKeyText;
 
     // Holodisk
     uint IboxHolodiskId;
@@ -1632,19 +1632,19 @@ public:
 
     struct SaveLoadDataSlot
     {
-        string   Name;
-        string   Info;
-        string   InfoExt;
-        string   FileName;
-        uint64   RealTime;
-        UInt8Vec PicData;
+        std::string Name;
+        std::string Info;
+        std::string InfoExt;
+        std::string FileName;
+        uint64      RealTime;
+        UInt8Vec    PicData;
     };
-    typedef vector<SaveLoadDataSlot> SaveLoadDataSlotVec;
+    typedef std::vector<SaveLoadDataSlot> SaveLoadDataSlotVec;
     SaveLoadDataSlotVec SaveLoadDataSlots;
     uint                SaveLoadClickSlotTick;
     int                 SaveLoadSlotIndex, SaveLoadClickSlotIndex;
     int                 SaveLoadSlotScroll, SaveLoadSlotsMax;
-    string              SaveLoadFileName;
+    std::string         SaveLoadFileName;
 
     void SaveLoadCollect();
     void SaveLoadSaveGame( const char* name );
@@ -1702,9 +1702,9 @@ public:
 /************************************************************************/
     struct MessBoxMessage
     {
-        int    Type;
-        string Mess;
-        string Time;
+        int         Type;
+        std::string Mess;
+        std::string Time;
 
         MessBoxMessage( int type, const char* mess, const char* time ) : Type( type ), Mess( mess ), Time( time ) {}
         MessBoxMessage( const MessBoxMessage& r )
@@ -1721,10 +1721,10 @@ public:
             return *this;
         }
     };
-    typedef vector<MessBoxMessage> MessBoxMessageVec;
+    typedef std::vector<MessBoxMessage> MessBoxMessageVec;
 
     MessBoxMessageVec MessBox;
-    string            MessBoxCurText;
+    std::string       MessBoxCurText;
     int               MessBoxScroll, MessBoxMaxScroll, MessBoxScrollLines;
     IntVec            MessBoxFilters;
 

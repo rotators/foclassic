@@ -1,10 +1,10 @@
 #include "Core.h"
+#include "App.h"
 
 #include <png.h> // Global_LoadImage
 
 #include <preprocessor.h>
 
-#include "App.h"
 #include "ConfigFile.h"
 #include "ConstantsManager.h"
 #include "Critter.h"
@@ -28,6 +28,8 @@
 #include "Text.h"
 #include "Vars.h"
 #include "Version.h"
+
+using namespace std;
 
 extern Preprocessor* ScriptPreprocessor;
 
@@ -113,7 +115,7 @@ bool FOServer::InitScriptSystem()
     #endif
 
     // Init
-    if( !Script::Init( false, new ScriptPragmaCallback( APP_TYPE_SERVER ), "SERVER" ) )
+    if( !Script::Init( false, APP_TYPE_SERVER ) )
     {
         WriteLog( "Script system initialization... failed\n" );
         return false;
@@ -150,9 +152,9 @@ bool FOServer::InitScriptSystem()
 
     success = true;
 
-    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
+    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) ) )
     {
-        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) );
         success = false;
     }
 
@@ -285,14 +287,14 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
     Ini* scripts_cfg = new Ini();
     scripts_cfg->KeepKeysOrder = true;
     success = true;
-    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) ) )
+    if( success && !scripts_cfg->LoadFile( FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) ) )
     {
-        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) );
         success = false;
     }
     if( success && !Script::LoadConfigFile( scripts_cfg, section_modules, section_binds ) )
     {
-        WriteLog( "Scripts config file<%s> invalid\n", FileManager::GetFullPath( SCRIPTS_LST, PATH_SERVER_SCRIPTS ) );
+        WriteLog( "Scripts config file<%s> invalid\n", FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) );
         success = false;
     }
 
@@ -306,8 +308,9 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
     #endif
 
     // Create engine
-    asIScriptEngine* server_engine = Script::GetEngine();
-    asIScriptEngine* target_engine = Script::CreateEngine( new ScriptPragmaCallback( app ), App.TypeToName( app ).c_str() );
+    asIScriptEngine*      server_engine = Script::GetEngine();
+    ScriptPragmaCallback* pragma_callback = new ScriptPragmaCallback( app );
+    asIScriptEngine*      target_engine = Script::CreateEngine( pragma_callback, App.TypeToName( app ) );
     if( !target_engine )
     {
         WriteLogF( _FUNC_, " - Script::CreateEngine fail\n" );
@@ -493,13 +496,14 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
     if( app == APP_TYPE_CLIENT )
     {
         string bind_config = "[Client binds]\n";
-        StrVec binds;
-        ConfigFile->GetSectionKeys( section_binds, binds, true );
-        for( auto it = binds.begin(), end = binds.end(); it != end; ++it )
+        for( auto it = reserved_functions.begin(), end = reserved_functions.end(); it != end; ++it )
         {
-            const string& bind_name = *it;
+            bind_config += it->first + string( "=" ) + it->second.Target;
 
-            bind_config += bind_name + string( "=" ) + ConfigFile->GetStr( section_binds, bind_name ) + string( "\n" );
+            if( it->second.Type == RESERVED_FUNCTION_EXTENSION )
+                bind_config += " extension";
+
+            bind_config += "\n";
         }
 
         // Add config text and pragmas, calculate hash

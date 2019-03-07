@@ -9,14 +9,14 @@
 #include "FlexRect.h"
 #include "Text.h" // TODO remove
 
-typedef aiMatrix4x4        Matrix;
-typedef aiVector3D         Vector;
-typedef aiQuaternion       Quaternion;
-typedef aiColor4D          Color;
-typedef vector<Vector>     VectorVec;
-typedef vector<Quaternion> QuaternionVec;
-typedef vector<Matrix>     MatrixVec;
-typedef vector<Matrix*>    MatrixPtrVec;
+typedef aiMatrix4x4             Matrix;
+typedef aiVector3D              Vector;
+typedef aiQuaternion            Quaternion;
+typedef aiColor4D               Color;
+typedef std::vector<Vector>     VectorVec;
+typedef std::vector<Quaternion> QuaternionVec;
+typedef std::vector<Matrix>     MatrixVec;
+typedef std::vector<Matrix*>    MatrixPtrVec;
 
 #ifdef FO_D3D
 # include <dxerr.h>
@@ -236,7 +236,7 @@ struct MeshContainer
     uint            NumPaletteEntries;
     uint            NumInfluences;
 };
-typedef vector<MeshContainer*> MeshContainerVec;
+typedef std::vector<MeshContainer*> MeshContainerVec;
 
 struct Frame
 {
@@ -264,8 +264,8 @@ struct Frame
         return frame;
     }
 };
-typedef vector<Frame*> FrameVec;
-typedef ID3DXMesh      MeshSubset;
+typedef std::vector<Frame*> FrameVec;
+typedef ID3DXMesh           MeshSubset;
 #else
 struct Vertex3D
 {
@@ -283,8 +283,8 @@ struct Vertex3D
     float  Padding[1];
 };
 static_assert( sizeof(Vertex3D) == 128, "Wrong Vertex3D size." );
-typedef vector<Vertex3D>    Vertex3DVec;
-typedef vector<Vertex3DVec> Vertex3DVecVec;
+typedef std::vector<Vertex3D>    Vertex3DVec;
+typedef std::vector<Vertex3DVec> Vertex3DVecVec;
 
 struct MeshSubset
 {
@@ -293,7 +293,7 @@ struct MeshSubset
     bool           VerticesTransformedValid;
     uint           FacesCount;
     UInt16Vec      Indicies;
-    string         DiffuseTexture;
+    std::string    DiffuseTexture;
     float          DiffuseColor[4];
     float          AmbientColor[4];
     float          SpecularColor[4];
@@ -304,13 +304,13 @@ struct MeshSubset
     EffectInstance DrawEffect;
     GLuint         VAO, VBO, IBO;
 };
-typedef vector<MeshSubset> MeshSubsetVec;
+typedef std::vector<MeshSubset> MeshSubsetVec;
 
 struct Frame;
-typedef vector<Frame*>     FrameVec;
+typedef std::vector<Frame*>     FrameVec;
 struct Frame
 {
-    string        Name;
+    std::string   Name;
     Matrix        TransformationMatrix;
     Matrix        CombinedTransformationMatrix;
     MeshSubsetVec Mesh;
@@ -337,7 +337,7 @@ struct Frame
 };
 #endif
 
-typedef vector<Texture*> TextureVec;
-typedef vector<Effect*>  EffectVec;
+typedef std::vector<Texture*> TextureVec;
+typedef std::vector<Effect*>  EffectVec;
 
 #endif // __GRAPHIC_STRUCTURES__

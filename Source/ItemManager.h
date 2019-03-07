@@ -110,10 +110,10 @@ private:
 public:
     ItemManager();
 
-    void   AddItemStatistics( uint16 pid, uint val );
-    void   SubItemStatistics( uint16 pid, uint val );
-    int64  GetItemStatistics( uint16 pid );
-    string GetItemsStatistics();
+    void        AddItemStatistics( uint16 pid, uint val );
+    void        SubItemStatistics( uint16 pid, uint val );
+    int64       GetItemStatistics( uint16 pid );
+    std::string GetItemsStatistics();
 };
 
 extern ItemManager ItemMngr;

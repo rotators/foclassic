@@ -8,6 +8,8 @@
 #include "Thread.h"
 #include "Vars.h"
 
+using namespace std;
+
 static Mutex JobLocker; // Defense code from simultaneously execution
 
 typedef deque<Job> JobDeque;

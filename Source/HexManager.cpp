@@ -21,6 +21,8 @@
 # include "ScriptReservedFunctions.h"
 #endif
 
+using namespace std;
+
 #define MAX_FIND_PATH    (600)
 #define TILE_ALPHA       (0xFF)
 #define VIEW_WIDTH       ( (int)( (MODE_WIDTH / GameOpt.MapHexWidth + ( (MODE_WIDTH % GameOpt.MapHexWidth) ? 1 : 0 ) ) * GameOpt.SpritesZoom ) )

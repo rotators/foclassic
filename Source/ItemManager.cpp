@@ -19,12 +19,13 @@
 # include "Jobs.h"
 # include "Map.h"
 # include "MapManager.h"
+#endif
+
+#if defined (FOCLASSIC_MAPPER) || defined (FOCLASSIC_SERVER)
 # include "Script.h"
 #endif
 
-#ifdef FOCLASSIC_MAPPER
-# include "Script.h"
-#endif
+using namespace std;
 
 ItemManager ItemMngr;
 

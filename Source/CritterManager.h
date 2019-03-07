@@ -68,7 +68,7 @@ public:
 
 
     #ifdef FOCLASSIC_MAPPER
-    string ProtosCollectionName[MAX_PROTO_CRITTERS];
+    std::string ProtosCollectionName[MAX_PROTO_CRITTERS];
     #endif
 };
 

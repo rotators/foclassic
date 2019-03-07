@@ -92,12 +92,12 @@ public:
     // Holodisks
     struct HoloInfo
     {
-        bool   CanRewrite;
-        string Title;
-        string Text;
+        bool        CanRewrite;
+        std::string Title;
+        std::string Text;
         HoloInfo( bool can_rw, const char* title, const char* text ) : CanRewrite( can_rw ), Title( title ), Text( text ) {}
     };
-    typedef map<uint, HoloInfo*> HoloInfoMap;
+    typedef std::map<uint, HoloInfo*> HoloInfoMap;
     static HoloInfoMap HolodiskInfo;
     static Mutex       HolodiskLocker;
     static uint        LastHoloId;
@@ -131,50 +131,50 @@ public:
     #define TIME_EVENTS_PER_CYCLE            (10)
     struct TimeEvent
     {
-        uint    Num;
-        uint    FullSecond;
-        string  FuncName;
-        int     BindId;
-        uint    Rate;
-        UIntVec Values;
-        bool    SignedValues;
-        bool    IsSaved;
-        uint    InProcess;
-        bool    EraseMe;
+        uint        Num;
+        uint        FullSecond;
+        std::string FuncName;
+        int         BindId;
+        uint        Rate;
+        UIntVec     Values;
+        bool        SignedValues;
+        bool        IsSaved;
+        uint        InProcess;
+        bool        EraseMe;
     };
-    typedef vector<TimeEvent*> TimeEventVec;
+    typedef std::vector<TimeEvent*> TimeEventVec;
     static TimeEventVec TimeEvents;
     static TimeEventVec TimeEventsInProcess;
     static uint         TimeEventsLastNum;
     static Mutex        TimeEventsLocker;
 
-    static void   SaveTimeEventsFile();
-    static bool   LoadTimeEventsFile( void* f );
-    static void   AddTimeEvent( TimeEvent* te );
-    static uint   CreateTimeEvent( uint begin_second, const char* script_name, int values, uint val1, ScriptArray* val2, bool save );
-    static void   TimeEventEndScriptCallback();
-    static bool   GetTimeEvent( uint num, uint& duration, ScriptArray* values );
-    static bool   SetTimeEvent( uint num, uint duration, ScriptArray* values );
-    static bool   EraseTimeEvent( uint num );
-    static void   ProcessTimeEvents();
-    static uint   GetTimeEventsCount();
-    static string GetTimeEventsStatistics();
+    static void        SaveTimeEventsFile();
+    static bool        LoadTimeEventsFile( void* f );
+    static void        AddTimeEvent( TimeEvent* te );
+    static uint        CreateTimeEvent( uint begin_second, const char* script_name, int values, uint val1, ScriptArray* val2, bool save );
+    static void        TimeEventEndScriptCallback();
+    static bool        GetTimeEvent( uint num, uint& duration, ScriptArray* values );
+    static bool        SetTimeEvent( uint num, uint duration, ScriptArray* values );
+    static bool        EraseTimeEvent( uint num );
+    static void        ProcessTimeEvents();
+    static uint        GetTimeEventsCount();
+    static std::string GetTimeEventsStatistics();
 
     static void SaveScriptFunctionsFile();
     static bool LoadScriptFunctionsFile( void* f );
 
     // Any data
-    typedef map<string, UInt8Vec> AnyDataMap;
+    typedef std::map<std::string, UInt8Vec> AnyDataMap;
     static AnyDataMap AnyData;
     static Mutex      AnyDataLocker;
 
-    static void   SaveAnyDataFile();
-    static bool   LoadAnyDataFile( void* f );
-    static bool   SetAnyData( const string& name, const uint8* data, uint data_size );
-    static bool   GetAnyData( const string& name, ScriptArray& script_array );
-    static bool   IsAnyData( const string& name );
-    static void   EraseAnyData( const string& name );
-    static string GetAnyDataStatistics();
+    static void        SaveAnyDataFile();
+    static bool        LoadAnyDataFile( void* f );
+    static bool        SetAnyData( const std::string& name, const uint8* data, uint data_size );
+    static bool        GetAnyData( const std::string& name, ScriptArray& script_array );
+    static bool        IsAnyData( const std::string& name );
+    static void        EraseAnyData( const std::string& name );
+    static std::string GetAnyDataStatistics();
 
     // Scripting
     static StrVec ServerWrongGlobalObjects;
@@ -192,7 +192,7 @@ public:
     // Client/Mapper script
     static bool RequestReloadClientScripts;
     static bool ReloadExternalScripts( const uint8& bind );
-    static void ReloadExternalScriptsCleanup( void* server_engine, void* target_engine, const string& old_define );
+    static void ReloadExternalScriptsCleanup( void* server_engine, void* target_engine, const std::string& old_define );
 
     // Pragma callbacks
     static bool PragmaCallbackCrData( const char* text );
@@ -209,7 +209,7 @@ public:
         uint   FirstStrLen;
         uint16 Parameter;
     };
-    typedef vector<TextListen> TextListenVec;
+    typedef std::vector<TextListen> TextListenVec;
     static TextListenVec TextListeners;
     static Mutex         TextListenersLocker;
 
@@ -341,7 +341,7 @@ public:
             TimeEvents.clear();
         }
     };
-    typedef vector<ClientSaveData> ClientSaveDataVec;
+    typedef std::vector<ClientSaveData> ClientSaveDataVec;
     static ClientSaveDataVec ClientsSaveData;
     static size_t            ClientsSaveDataCount;
 
@@ -386,7 +386,7 @@ public:
 
         const char* GetBanLexems();
     };
-    typedef vector<ClientBanned> ClientBannedVec;
+    typedef std::vector<ClientBanned> ClientBannedVec;
     static ClientBannedVec Banned;
     static Mutex           BannedLocker;
 
@@ -420,7 +420,7 @@ public:
         bool operator==( const uint id );
         void Clear();
     };
-    typedef vector<ClientData> ClientDataVec;
+    typedef std::vector<ClientData> ClientDataVec;
     static ClientDataVec ClientsData;
     static Mutex         ClientsDataLocker;
     static volatile uint LastClientId;
@@ -459,9 +459,9 @@ public:
         uint  LagsCount;
     } static Statistics;
 
-    static uint   PlayersInGame() { return CrMngr.PlayersInGame(); }
-    static uint   NpcInGame()     { return CrMngr.NpcInGame(); }
-    static string GetIngamePlayersStatistics();
+    static uint        PlayersInGame() { return CrMngr.PlayersInGame(); }
+    static uint        NpcInGame()     { return CrMngr.NpcInGame(); }
+    static std::string GetIngamePlayersStatistics();
 
     // Scores
     static ScoreType BestScores[SCORES_MAX];
@@ -487,7 +487,7 @@ public:
     #define SCRIPT_ERROR_R0( error )       do { SScriptFunc::ScriptLastError = error; Script::LogError( _FUNC_, error ); return 0; } while( 0 )
     struct SScriptFunc
     {
-        static string        ScriptLastError;
+        static std::string   ScriptLastError;
         static ScriptString* Global_GetLastError();
 
         static int* DataRef_Index( CritterPtr& cr, uint index );
@@ -897,7 +897,6 @@ public:
         static void          Global_SetChosenSendParameter( int index, bool enabled );
         static void          Global_SetSendParameter( int index, bool enabled );
         static void          Global_SetSendParameterFunc( int index, bool enabled, ScriptString* allow_func );
-        static bool          Global_SwapCritters( Critter* cr1, Critter* cr2, bool with_inventory, bool with_vars );
         static uint          Global_GetAllItems( uint16 pid, ScriptArray* items );
         static uint          Global_GetAllPlayers( ScriptArray* players );
         static uint          Global_GetRegisteredPlayers( ScriptArray* ids, ScriptArray* names );

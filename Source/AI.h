@@ -74,58 +74,28 @@ struct AIDataPlane
         uint   Trace;
     } Move;
 
-    AIDataPlane* GetCurPlane()           { return ChildPlane ? ChildPlane->GetCurPlane() : this; }
-    bool         IsSelfOrHas( int type ) { return Type == type || (ChildPlane ? ChildPlane->IsSelfOrHas( type ) : false); }
-    void         DeleteLast()
-    {
-        if( ChildPlane )
-        {
-            if( ChildPlane->ChildPlane ) ChildPlane->DeleteLast();
-            else SAFEREL( ChildPlane );
-        }
-    }
+    AIDataPlane( uint type, uint priority );
+    ~AIDataPlane();
 
-    AIDataPlane* GetCopy()
-    {
-        AIDataPlane* copy = new AIDataPlane( Type, Priority );
-        if( !copy ) return NULL;
-        memcpy( copy->Buffer.Buffer, Buffer.Buffer, sizeof(Buffer.Buffer) );
-        AIDataPlane* result = copy;
-        AIDataPlane* plane_child = ChildPlane;
-        while( plane_child )
-        {
-            copy->ChildPlane = new AIDataPlane( plane_child->Type, plane_child->Priority );
-            if( !copy->ChildPlane ) return NULL;
-            copy->ChildPlane->Assigned = true;
-            memcpy( copy->ChildPlane->Buffer.Buffer, plane_child->Buffer.Buffer, sizeof(plane_child->Buffer.Buffer) );
-            plane_child = plane_child->ChildPlane;
-            copy = copy->ChildPlane;
-        }
-        return result;
-    }
+    AIDataPlane* GetCurPlane();
+    bool         IsSelfOrHas( int type );
+    void         DeleteLast();
 
-    bool Assigned;
-    int  RefCounter;
+    AIDataPlane* GetCopy();
+
+    bool         Assigned;
+    int          RefCounter;
     void AddRef() { RefCounter++; }
     void Release()
     {
         RefCounter--;
         if( !RefCounter ) delete this;
     }
-    AIDataPlane( uint type, uint priority ) : Type( type ), Priority( priority ), Identifier( 0 ), IdentifierExt( 0 ), ChildPlane( NULL ), IsMove( false ), Assigned( false ), RefCounter( 1 )
-    {
-        memzero( &Buffer, sizeof(Buffer) );
-        memzero( &Move, sizeof(Move) );
-        MEMORY_PROCESS( MEMORY_NPC_PLANE, sizeof(AIDataPlane) );
-    }
-    ~AIDataPlane()
-    {
-        SAFEREL( ChildPlane );
-        MEMORY_PROCESS( MEMORY_NPC_PLANE, -(int)sizeof(AIDataPlane) );
-    }
-private: AIDataPlane() {}        // Disable default constructor
+
+private:
+    AIDataPlane() {}            // Disable default constructor
 };
-typedef vector<AIDataPlane*> AIDataPlaneVec;
+typedef std::vector<AIDataPlane*> AIDataPlaneVec;
 
 class NpcBagItem
 {
@@ -138,11 +108,11 @@ public:
     NpcBagItem() : ItemPid( 0 ), MinCnt( 0 ), MaxCnt( 0 ), ItemSlot( SLOT_INV ) {}
     NpcBagItem( const NpcBagItem& r ) : ItemPid( r.ItemPid ), MinCnt( r.MinCnt ), MaxCnt( r.MaxCnt ), ItemSlot( r.ItemSlot ) {}
 };
-typedef vector<NpcBagItem>             NpcBagItems;
-typedef vector<NpcBagItems>            NpcBagCombination;
-typedef vector<NpcBagCombination>      NpcBag;
-typedef vector<NpcBag>                 NpcBagVec;
-typedef map<string, NpcBagCombination> StringNpcBagCombMap;
+typedef std::vector<NpcBagItem>                  NpcBagItems;
+typedef std::vector<NpcBagItems>                 NpcBagCombination;
+typedef std::vector<NpcBagCombination>           NpcBag;
+typedef std::vector<NpcBag>                      NpcBagVec;
+typedef std::map<std::string, NpcBagCombination> StringNpcBagCombMap;
 
 /************************************************************************/
 /*                                                                      */
@@ -161,8 +131,5 @@ private:
     bool LoadNpcBags();
 };
 extern NpcAIMngr AIMngr;
-
-
-
 
 #endif // __AI__

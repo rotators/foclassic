@@ -10,6 +10,9 @@
 #include "Text.h"
 #include "Window.h"
 
+using namespace std;
+
+#pragma TODO("Move to Text.cpp")
 void ReplaceString( string& str, const string& from,     const string& to )
 {
     size_t pos = 0;

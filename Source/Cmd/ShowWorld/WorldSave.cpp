@@ -1,10 +1,10 @@
 #include "Core.h"
+#include "App.h"
 
 #include <vector>
 #include <map>
 #include <cstdarg>
 
-#include "App.h"
 
 #include "FileSystem.h"
 #include "Text.h"
@@ -12,6 +12,8 @@
 
 #include "../AI.h"
 #include "../Item.h"
+
+using namespace std;
 
 BINARY_SIGNATURE( WorldSignature, BINARY_TYPE_WORLDSAVE, 0 );
 

@@ -2,6 +2,10 @@
 
 #include <stdarg.h>
 
+#if defined (FOCLASSIC_SERVER) && !defined (SERVER_DAEMON)
+# include <FL/Fl_Text_Display.H>
+#endif
+
 #include "FileSystem.h"
 #include "Log.h"
 #include "Mutex.h"
@@ -9,9 +13,7 @@
 #include "Thread.h"
 #include "Timer.h"
 
-#if defined (FOCLASSIC_SERVER) && !defined (SERVER_DAEMON)
-# include "FL/Fl_Text_Display.H"
-#endif
+using namespace std;
 
 Mutex              LogLocker;
 void*              LogFileHandle = NULL;

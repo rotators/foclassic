@@ -1,6 +1,6 @@
 #include "Core.h"
-
 #include "App.h"
+
 #include "Log.h"
 
 AppData App;

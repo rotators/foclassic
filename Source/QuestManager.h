@@ -8,36 +8,36 @@
 
 struct Quest
 {
-    uint16 num;
-    string str;
-    string info;
-    bool   isInfo;
+    uint16      num;
+    std::string str;
+    std::string info;
+    bool        isInfo;
 
     bool operator==( const uint16& _num ) { return _num == num; }
-    Quest( uint _num, string _info ) : num( _num ), info( _info ), isInfo( false ) {}
+    Quest( uint _num, std::string _info ) : num( _num ), info( _info ), isInfo( false ) {}
 };
-typedef vector<Quest> QuestVec;
+typedef std::vector<Quest> QuestVec;
 
 class QuestTab
 {
 private:
-    QuestVec quests;
-    string   text;
-    FOMsg*   msg;
+    QuestVec    quests;
+    std::string text;
+    FOMsg*      msg;
 
     void ReparseText();
 
 public:
     QuestTab( FOMsg* _msg ) : msg( _msg ) {}
     bool        IsEmpty();
-    Quest*      AddQuest( uint16 num, string info );
-    void        RefreshQuest( uint16 num, string str );
+    Quest*      AddQuest( uint16 num, std::string info );
+    void        RefreshQuest( uint16 num, std::string str );
     Quest*      GetQuest( uint16 num );
     void        EraseQuest( uint16 num );
     QuestVec*   GetQuests();
     const char* GetText();
 };
-typedef map<string, QuestTab, less<string>> QuestTabMap;
+typedef std::map<std::string, QuestTab, std::less<std::string>> QuestTabMap;
 
 class QuestManager
 {

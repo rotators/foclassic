@@ -10,6 +10,8 @@
 #include "Script.h"
 #include "Text.h"
 
+using namespace std;
+
 Ini* ConfigFile = NULL;
 
 const char* GetConfigFileName()

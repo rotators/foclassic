@@ -8,6 +8,8 @@
 #include "Text.h"
 #include "Types.h"
 
+using namespace std;
+
 struct CmdDef
 {
     char  cmd[20];

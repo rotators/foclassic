@@ -6,6 +6,8 @@
 #include "QuestManager.h"
 #include "Text.h"
 
+using namespace std;
+
 /// QuestTab
 void QuestTab::ReparseText()
 {

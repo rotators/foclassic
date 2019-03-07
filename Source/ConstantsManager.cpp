@@ -7,6 +7,8 @@
 #include "Text.h"
 #include "Types.h"
 
+using namespace std;
+
 const char* CollectionFiles[] =
 {
     "ParamNames.lst",

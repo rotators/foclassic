@@ -91,6 +91,7 @@ endif()
 ##
 
 set( CLIENT_MAPPER_SOURCES
+	3dAnimation.cpp
 	3dAnimation.h
 	3dStuff.cpp
 	3dStuff.h
@@ -127,6 +128,8 @@ set( CLIENT_SERVER_SOURCES
 	BufferManager.h
 	CraftManager.cpp
 	CraftManager.h
+	DataMask.cpp
+	DataMask.h
 	NetProtocol.h
 	Network.cpp
 	Network.h
@@ -199,7 +202,6 @@ set( CLIENT_SOURCES
 	Client.cpp
 	Client.h
 	ClientInterface.cpp
-	DataMask.h
 	Defence.h
 	MainClient.cpp
 	QuestManager.cpp
@@ -312,7 +314,6 @@ target_sources( Server
 		CritterData.h
 		CritterManager.cpp
 		CritterManager.h
-		DataMask.h
 		Debugger.cpp
 		Debugger.h
 		Dialogs.cpp
@@ -487,7 +488,7 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	if( "${target}" STREQUAL "ASCompiler")
 		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Tools" )
 	elseif( "${target}" STREQUAL "ScriptBindDummy")
-		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs" )
+		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Libs.Internal" )
 	else()
 		set_property( TARGET ${target} PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}" )
 	endif()

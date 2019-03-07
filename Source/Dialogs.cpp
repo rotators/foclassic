@@ -11,6 +11,8 @@
 #include "Text.h"
 #include "Vars.h"
 
+using namespace std;
+
 DialogManager DlgMngr;
 
 DemandResult::DemandResult() : Type( DR_NONE ), Who( 'p' ), ParamId( 0 ), NoRecheck( false ), RetValue( false ), Op( 0 ), Value( 0 ), ValuesCount( 0 )
@@ -235,7 +237,7 @@ DialogPack* DialogManager::ParseDialog( const char* name, uint id, const char* d
 
     Ini fodlg;
     fodlg.KeepComments = fodlg.KeepSectionsRaw = true;
-    if( !fodlg.LoadStdString( string( data ) ) )
+    if( !fodlg.LoadStr( string( data ) ) )
     {
         AddError( "Internal error." );
         return NULL;

@@ -6,6 +6,8 @@
 #include "FileSystem.h"
 #include "Text.h"
 
+using namespace std;
+
 #define OUT_BUF_START_SIZE    (0x100)
 
 const char* PathList[PATH_LIST_COUNT] =

@@ -50,7 +50,7 @@ struct LightSource
 
     LightSource( uint16 hx, uint16 hy, uint color, uint8 distance, int inten, uint8 flags ) : HexX( hx ), HexY( hy ), ColorRGB( color ), Intensity( inten ), Distance( distance ), Flags( flags ) {}
 };
-typedef vector<LightSource> LightSourceVec;
+typedef std::vector<LightSource> LightSourceVec;
 
 /************************************************************************/
 /* Field                                                                */
@@ -65,7 +65,7 @@ struct Field
         short      OffsY;
         uint8      Layer;
     };
-    typedef vector<Tile> TileVec;
+    typedef std::vector<Tile> TileVec;
 
     CritterCl* Crit;
     CritVec    DeadCrits;
@@ -111,7 +111,7 @@ struct Drop
     Drop() : CurSprId( 0 ), OffsX( 0 ), OffsY( 0 ), DropCnt( 0 ), GroundOffsY( 0 ) {};
     Drop( uint16 id, short x, short y, short ground_y ) : CurSprId( id ), OffsX( x ), OffsY( y ), DropCnt( -1 ), GroundOffsY( ground_y ) {};
 };
-typedef vector<Drop*> DropVec;
+typedef std::vector<Drop*> DropVec;
 
 /************************************************************************/
 /* HexField                                                             */
@@ -121,16 +121,16 @@ class HexManager
 {
     // Hexes
 private:
-    uint16     maxHexX, maxHexY;
-    Field*     hexField;
-    bool*      hexToDraw;
-    char*      hexTrack;
-    AnyFrames* picTrack1, * picTrack2;
-    AnyFrames* picHexMask;
-    bool       isShowTrack;
-    bool       isShowHex;
-    AnyFrames* picHex[3];
-    string     curDataPrefix;
+    uint16      maxHexX, maxHexY;
+    Field*      hexField;
+    bool*       hexToDraw;
+    char*       hexTrack;
+    AnyFrames*  picTrack1, * picTrack2;
+    AnyFrames*  picHexMask;
+    bool        isShowTrack;
+    bool        isShowHex;
+    AnyFrames*  picHex[3];
+    std::string curDataPrefix;
 
 public:
     bool   ResizeField( uint16 w, uint16 h );
@@ -345,13 +345,13 @@ public:
 
     // Rain
 private:
-    DropVec    rainData;
-    int        rainCapacity;
-    string     picRainFallName;
-    string     picRainDropName;
-    AnyFrames* picRainFall;
-    AnyFrames* picRainDrop;
-    Sprites    roofRainTree;
+    DropVec     rainData;
+    int         rainCapacity;
+    std::string picRainFallName;
+    std::string picRainDropName;
+    AnyFrames*  picRainFall;
+    AnyFrames*  picRainDrop;
+    Sprites     roofRainTree;
 
 public:
     void ProcessRain();

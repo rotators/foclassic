@@ -24,7 +24,7 @@ struct LoadedAnim
     AnyFrames* Anim;
     LoadedAnim( int res_type, AnyFrames* anim ) : ResType( res_type ), Anim( anim ) {}
 };
-typedef map<uint, LoadedAnim, less<uint>> LoadedAnimMap;
+typedef std::map<uint, LoadedAnim, std::less<uint>> LoadedAnimMap;
 
 class ResourceManager
 {

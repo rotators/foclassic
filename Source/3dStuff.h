@@ -16,11 +16,12 @@
 class AnimController;
 class AnimSet;
 class Animation3d;
-typedef vector<Animation3d*>       Animation3dVec;
 class Animation3dEntity;
-typedef vector<Animation3dEntity*> Animation3dEntityVec;
 class Animation3dXFile;
-typedef vector<Animation3dXFile*>  Animation3dXFileVec;
+
+typedef std::vector<Animation3d*>       Animation3dVec;
+typedef std::vector<Animation3dEntity*> Animation3dEntityVec;
+typedef std::vector<Animation3dXFile*>  Animation3dXFileVec;
 
 struct AnimParams
 {
@@ -48,7 +49,7 @@ struct AnimParams
     int*            EffectInstSubset;
     uint            EffectInstCount;
 };
-typedef vector<AnimParams> AnimParamsVec;
+typedef std::vector<AnimParams> AnimParamsVec;
 
 struct MeshOptions
 {
@@ -60,7 +61,7 @@ struct MeshOptions
     Effect**  EffectSubsets;
     Effect**  DefaultEffectSubsets;
 };
-typedef vector<MeshOptions> MeshOptionsVec;
+typedef std::vector<MeshOptions> MeshOptionsVec;
 
 class Animation3d
 {
@@ -169,8 +170,8 @@ private:
     friend class Animation3dXFile;
     static Animation3dEntityVec allEntities;
 
-    string                      fileName;
-    string                      pathName;
+    std::string                 fileName;
+    std::string                 pathName;
     Animation3dXFile*           xFile;
     AnimController*             animController;
     uint                        numAnimationSets;
@@ -205,7 +206,7 @@ private:
     friend class Animation3dEntity;
     static Animation3dXFileVec xFiles;
 
-    string                     fileName;
+    std::string                fileName;
     Frame*                     frameRoot;
     FrameVec                   allFrames;
     FrameVec                   allDrawFrames;

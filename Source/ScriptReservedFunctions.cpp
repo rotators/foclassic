@@ -1,7 +1,5 @@
 #include "ScriptReservedFunctions.h"
 
-using namespace std;
-
 #if defined (FOCLASSIC_CLIENT) || defined (FOCLASSIC_SERVER)
 
 ClientScriptFunctions ClientFunctions;

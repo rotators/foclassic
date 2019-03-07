@@ -7,6 +7,8 @@
 #include "Thread.h"
 #include "Timer.h"
 
+using namespace std;
+
 #define MAX_BLOCKS       (25)
 #define MAX_ENTRY        (2000)
 #define MAX_PROCESS      (20)

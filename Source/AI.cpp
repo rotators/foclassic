@@ -8,6 +8,8 @@
 #include "IniParser.h"
 #include "Log.h"
 
+using namespace std;
+
 NpcAIMngr AIMngr;
 
 /************************************************************************/
@@ -91,6 +93,63 @@ label_ParseNext:
     items.push_back( i );
     return items;
 }
+
+AIDataPlane::AIDataPlane( uint type, uint priority ) : Type( type ), Priority( priority ), Identifier( 0 ), IdentifierExt( 0 ), ChildPlane( NULL ), IsMove( false ), Assigned( false ), RefCounter( 1 )
+{
+    memzero( &Buffer, sizeof(Buffer) );
+    memzero( &Move, sizeof(Move) );
+    MEMORY_PROCESS( MEMORY_NPC_PLANE, sizeof(AIDataPlane) );
+}
+
+AIDataPlane::~AIDataPlane()
+{
+    SAFEREL( ChildPlane );
+    MEMORY_PROCESS( MEMORY_NPC_PLANE, -(int)sizeof(AIDataPlane) );
+}
+
+AIDataPlane* AIDataPlane::GetCurPlane()
+{
+    return ChildPlane ? ChildPlane->GetCurPlane() : this;
+}
+
+bool AIDataPlane::IsSelfOrHas( int type )
+{
+    return Type == type || (ChildPlane ? ChildPlane->IsSelfOrHas( type ) : false);
+}
+
+void AIDataPlane::DeleteLast()
+{
+    if( ChildPlane )
+    {
+        if( ChildPlane->ChildPlane )
+            ChildPlane->DeleteLast();
+        else
+            SAFEREL( ChildPlane );
+    }
+}
+
+AIDataPlane* AIDataPlane::GetCopy()
+{
+    AIDataPlane* copy = new AIDataPlane( Type, Priority );
+    if( !copy )
+        return NULL;
+    memcpy( copy->Buffer.Buffer, Buffer.Buffer, sizeof(Buffer.Buffer) );
+    AIDataPlane* result = copy;
+    AIDataPlane* plane_child = ChildPlane;
+    while( plane_child )
+    {
+        copy->ChildPlane = new AIDataPlane( plane_child->Type, plane_child->Priority );
+        if( !copy->ChildPlane )
+            return NULL;
+        copy->ChildPlane->Assigned = true;
+        memcpy( copy->ChildPlane->Buffer.Buffer, plane_child->Buffer.Buffer, sizeof(plane_child->Buffer.Buffer) );
+        plane_child = plane_child->ChildPlane;
+        copy = copy->ChildPlane;
+    }
+    return result;
+}
+
+
 
 /************************************************************************/
 /* Init/Finish                                                          */

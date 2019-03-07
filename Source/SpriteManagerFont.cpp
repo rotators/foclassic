@@ -8,6 +8,8 @@
 #include "SpriteManager.h"
 #include "Types.h"
 
+using namespace std;
+
 #ifdef FO_D3D
 # define SURF_POINT( lr, x, y )    (*( (uint*)( (uint8*)lr.pBits + lr.Pitch * (y) + (x) * 4 ) ) )
 #endif

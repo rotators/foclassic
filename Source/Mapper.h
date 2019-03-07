@@ -25,7 +25,7 @@
 #define FONT_FAT                       (7)
 #define FONT_BIG                       (8)
 
-typedef vector<CritData*> CritDataVec;
+typedef std::vector<CritData*> CritDataVec;
 
 class FOMapper
 {
@@ -60,16 +60,16 @@ public:
     // Map text
     struct MapText
     {
-        uint16 HexX, HexY;
-        uint   StartTick, Tick;
-        string Text;
-        uint   Color;
-        bool   Fade;
-        Rect   Pos;
-        Rect   EndPos;
+        uint16      HexX, HexY;
+        uint        StartTick, Tick;
+        std::string Text;
+        uint        Color;
+        bool        Fade;
+        Rect        Pos;
+        Rect        EndPos;
         bool operator==( const MapText& r ) { return HexX == r.HexX && HexY == r.HexY; }
     };
-    typedef vector<MapText> MapTextVec;
+    typedef std::vector<MapText> MapTextVec;
     MapTextVec GameMapTexts;
 
     // Animations
@@ -83,7 +83,7 @@ public:
 
         IfaceAnim( AnyFrames* frm, int res_type );
     };
-    typedef vector<IfaceAnim*> IfaceAnimVec;
+    typedef std::vector<IfaceAnim*> IfaceAnimVec;
 
     #define ANIMRUN_TO_END             (0x0001)
     #define ANIMRUN_FROM_END           (0x0002)
@@ -192,7 +192,7 @@ public:
         int          Index, Scroll;
         SubTab() : Index( 0 ), Scroll( 0 ) {}
     };
-    typedef map<string, SubTab> SubTabMap;
+    typedef std::map<std::string, SubTab> SubTabMap;
 
     struct TileTab
     {
@@ -200,17 +200,17 @@ public:
         BoolVec TileSubDirs;
     };
 
-    SubTabMap  Tabs[TAB_COUNT];
-    SubTab*    TabsActive[TAB_COUNT];
-    TileTab    TabsTiles[TAB_COUNT];
-    string     TabsName[INT_MODE_COUNT];
-    int        TabsScroll[INT_MODE_COUNT];
+    SubTabMap   Tabs[TAB_COUNT];
+    SubTab*     TabsActive[TAB_COUNT];
+    TileTab     TabsTiles[TAB_COUNT];
+    std::string TabsName[INT_MODE_COUNT];
+    int         TabsScroll[INT_MODE_COUNT];
 
-    bool       SubTabsActive;
-    int        SubTabsActiveTab;
-    AnyFrames* SubTabsPic;
-    Rect       SubTabsRect;
-    int        SubTabsX, SubTabsY;
+    bool        SubTabsActive;
+    int         SubTabsActiveTab;
+    AnyFrames*  SubTabsPic;
+    Rect        SubTabsRect;
+    int         SubTabsX, SubTabsY;
 
     // Prototypes
     ProtoItemVec* CurItemProtos;
@@ -269,7 +269,7 @@ public:
         bool IsNpc()                          { return MapNpc != NULL; }
         bool IsContainer()                    { return IsNpc() || (IsItem() && MapItem->Proto->Type == ITEM_TYPE_CONTAINER); }
     };
-    typedef vector<SelMapObj> SelMapProtoItemVec;
+    typedef std::vector<SelMapObj> SelMapProtoItemVec;
     SelMapProtoItemVec SelectedObj;
 
     // Select Tile, Roof
@@ -286,7 +286,7 @@ public:
             return *this;
         }
     };
-    typedef vector<SelMapTile> SelMapTileVec;
+    typedef std::vector<SelMapTile> SelMapTileVec;
     SelMapTileVec SelectedTile;
 
     // Select methods
@@ -324,7 +324,7 @@ public:
         uint8  Layer;
         bool   IsRoof;
     };
-    typedef vector<TileBuf> TileBufVec;
+    typedef std::vector<TileBuf> TileBufVec;
 
     MapObjectPtrVec MapObjBuffer;
     TileBufVec      TilesBuffer;
@@ -349,21 +349,21 @@ public:
     void ObjKeyDownA( MapObject* o, uint8 dik, const char* dik_text );
 
     // Console
-    AnyFrames*     ConsolePic;
-    int            ConsolePicX, ConsolePicY, ConsoleTextX, ConsoleTextY;
-    bool           ConsoleEdit;
-    string         ConsoleStr;
-    uint           ConsoleCur;
+    AnyFrames*               ConsolePic;
+    int                      ConsolePicX, ConsolePicY, ConsoleTextX, ConsoleTextY;
+    bool                     ConsoleEdit;
+    std::string              ConsoleStr;
+    uint                     ConsoleCur;
 
-    vector<string> ConsoleHistory;
-    int            ConsoleHistoryCur;
+    std::vector<std::string> ConsoleHistory;
+    int                      ConsoleHistoryCur;
 
     #define CONSOLE_KEY_TICK          (500)
     #define CONSOLE_MAX_ACCELERATE    (460)
-    int    ConsoleLastKey;
-    string ConsoleLastKeyText;
-    uint   ConsoleKeyTick;
-    int    ConsoleAccelerate;
+    int         ConsoleLastKey;
+    std::string ConsoleLastKeyText;
+    uint        ConsoleKeyTick;
+    int         ConsoleAccelerate;
 
     void ConsoleDraw();
     void ConsoleKeyDown( uint8 dik, const char* dik_text );
@@ -374,9 +374,9 @@ public:
     // Mess box
     struct MessBoxMessage
     {
-        int    Type;
-        string Mess;
-        string Time;
+        int         Type;
+        std::string Mess;
+        std::string Time;
 
         MessBoxMessage( int type, const char* mess, const char* time ) : Type( type ), Mess( mess ), Time( time ) {}
         MessBoxMessage( const MessBoxMessage& r )
@@ -393,10 +393,10 @@ public:
             return *this;
         }
     };
-    typedef vector<MessBoxMessage> MessBoxMessageVec;
+    typedef std::vector<MessBoxMessage> MessBoxMessageVec;
 
     MessBoxMessageVec MessBox;
-    string            MessBoxCurText;
+    std::string       MessBoxCurText;
     int               MessBoxScroll;
 
     void MessBoxGenerate();
@@ -411,7 +411,7 @@ public:
         uint8 Index;
         char* SlotName;
     };
-    typedef map<int, SlotExt> SlotExtMap;
+    typedef std::map<int, SlotExt> SlotExtMap;
     SlotExtMap SlotsExt;
 
     // Scripts

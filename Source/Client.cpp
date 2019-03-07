@@ -36,6 +36,8 @@
 #include "Version.h"
 #include "Window.h"
 
+using namespace std;
+
 // Check buffer for error
 #define CHECK_IN_BUFF_ERROR                          \
     if( Bin.IsError() )                              \
@@ -9763,7 +9765,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     // Reinitialize engine
     Script::Finish();
-    if( !Script::Init( false, new ScriptPragmaCallback( APP_TYPE_CLIENT ), "CLIENT" ) )
+    if( !Script::Init( false, APP_TYPE_CLIENT ) )
     {
         WriteLog( "Unable to start script engine.\n" );
         AddMess( MSGBOX_GAME, MsgGame->GetStr( STR_NET_FAIL_RUN_START_SCRIPT ) );
@@ -9862,7 +9864,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
     // Copy partial scripts.cfg from FOINTERNAL.MSG into ConfigFile
     Ini* scripts_cfg = new Ini();
     scripts_cfg->KeepKeysOrder = true;
-    scripts_cfg->LoadStdString( string( msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG ) ) );
+    scripts_cfg->LoadStr( string( msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG ) ) );
     ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_MODULES );
     ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_BINDS );
     Script::LoadConfigFile( scripts_cfg, SECTION_CLIENT_SCRIPTS_MODULES, SECTION_CLIENT_SCRIPTS_BINDS );

@@ -7,10 +7,12 @@
 #include "CommandLine.h"
 #include "Text.h"
 
-#define FOCMD_VERSION    "0.1"
-
 // Commands
 #include "ShowWorld.h"
+
+using namespace std;
+
+#define FOCMD_VERSION    "0.1"
 static map<string, Command*> Commands;
 
 int Exit( int return_code )

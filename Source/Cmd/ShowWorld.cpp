@@ -1,11 +1,12 @@
 #include "Core.h"
-
 #include "App.h"
 
 #include "CommandLine.h"
 #include "FileSystem.h"
 #include "ShowWorld.h"
-#include "WorldSaveDump.h"
+#include "ShowWorld/WorldSaveDump.h"
+
+using namespace std;
 
 ShowWorld::ShowWorld()
 {}

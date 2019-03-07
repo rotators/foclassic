@@ -10,6 +10,8 @@
 #include "ResourceManager.h"
 #include "Script.h"
 
+using namespace std;
+
 ResourceManager ResMngr;
 
 void ResourceManager::Refresh()

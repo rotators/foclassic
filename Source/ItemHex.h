@@ -122,6 +122,6 @@ public: // Move some specific types to end
     UShortPairVec EffSteps;
 };
 
-typedef vector<ItemHex*> ItemHexVec;
+typedef std::vector<ItemHex*> ItemHexVec;
 
 #endif // __ITEM_HEX__

@@ -38,7 +38,7 @@ struct Surface
     Surface() : Type( 0 ), TextureOwner( NULL ), Width( 0 ), Height( 0 ), BusyH( 0 ), FreeX( 0 ), FreeY( 0 ) {}
     ~Surface() { SAFEDEL( TextureOwner ); }
 };
-typedef vector<Surface*> SurfaceVec;
+typedef std::vector<Surface*> SurfaceVec;
 
 struct Vertex
 {
@@ -58,7 +58,7 @@ struct Vertex
     Vertex() : x( 0 ), y( 0 ), diffuse( 0 ), tu( 0 ), tv( 0 ), tu2( 0 ), tv2( 0 ) {}
     #endif
 };
-typedef vector<Vertex> VertexVec;
+typedef std::vector<Vertex> VertexVec;
 
 struct MYVERTEX_PRIMITIVE
 {
@@ -81,7 +81,7 @@ struct SpriteInfo
     Animation3d* Anim3d;
     SpriteInfo() : Surf( NULL ), Width( 0 ), Height( 0 ), OffsX( 0 ), OffsY( 0 ), DrawEffect( NULL ), Anim3d( NULL ) {}
 };
-typedef vector<SpriteInfo*> SprInfoVec;
+typedef std::vector<SpriteInfo*> SprInfoVec;
 
 struct DipData
 {
@@ -93,7 +93,7 @@ struct DipData
     #endif
     DipData( Texture* tex, Effect* effect ) : SourceTexture( tex ), SourceEffect( effect ), SpritesCount( 1 ) {}
 };
-typedef vector<DipData> DipDataVec;
+typedef std::vector<DipData> DipDataVec;
 
 struct AnyFrames
 {
@@ -115,8 +115,8 @@ struct AnyFrames
     uint  GetCurSprId();
     uint  GetCurSprIndex();
 };
-typedef map<uint, AnyFrames*, less<uint>> AnimMap;
-typedef vector<AnyFrames*>                AnimVec;
+typedef std::map<uint, AnyFrames*, std::less<uint>> AnimMap;
+typedef std::vector<AnyFrames*>                     AnimVec;
 
 struct PrepPoint
 {
@@ -129,8 +129,8 @@ struct PrepPoint
     PrepPoint() : PointX( 0 ), PointY( 0 ), PointColor( 0 ), PointOffsX( NULL ), PointOffsY( NULL ) {}
     PrepPoint( short x, short y, uint color, short* ox = NULL, short* oy = NULL ) : PointX( x ), PointY( y ), PointColor( color ), PointOffsX( ox ), PointOffsY( oy ) {}
 };
-typedef vector<PrepPoint> PointVec;
-typedef vector<PointVec>  PointVecVec;
+typedef std::vector<PrepPoint> PointVec;
+typedef std::vector<PointVec>  PointVecVec;
 
 struct SpriteMngrParams
 {
@@ -153,7 +153,7 @@ struct RenderTarget
     HGLRC       PBufferGLC;
     # endif
 };
-typedef vector<RenderTarget*> RenderTargetVec;
+typedef std::vector<RenderTarget*> RenderTargetVec;
 #endif
 
 class SpriteManager

@@ -41,7 +41,7 @@ class Ini;
 
 extern Ini* ConfigFile;
 
-const char* GetConfigFileName();
+extern const char* GetConfigFileName();
 
 extern bool LoadConfigFile( const char* fname, const char* main = NULL, const char* detail = NULL, const char* unused = NULL );
 extern void UnloadConfigFile();

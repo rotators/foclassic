@@ -15,6 +15,8 @@
 #include "SinglePlayer.h"
 #include "Text.h"
 
+using namespace std;
+
 void FOServer::ProcessCritter( Critter* cr )
 {
     if( cr->IsNotValid )

@@ -53,7 +53,7 @@ extern void GetHexInterval( int from_hx, int from_hy, int to_hx, int to_hy, int&
 
 // preprocessor output formatting
 
-extern void FormatPreprocessorOutput( string& str );
+extern void FormatPreprocessorOutput( std::string& str );
 
 // misc
 

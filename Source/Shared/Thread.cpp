@@ -8,6 +8,8 @@
 #include "Text.h"
 #include "Thread.h"
 
+using namespace std;
+
 THREAD char Thread::threadName[64] = { 0 };
 UIntStrMap  Thread::threadNames;
 Mutex       Thread::threadNamesLocker;

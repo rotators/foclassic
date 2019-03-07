@@ -20,7 +20,7 @@ public:
 
     // Add String value in strData and Nums
     void AddStr( uint num, const char* str );
-    void AddStr( uint num, const string& str );
+    void AddStr( uint num, const std::string& str );
     void AddBinary( uint num, const uint8* binary, uint len );
 
     // Generate random number with interval from 10000000 to 99999999
@@ -71,7 +71,7 @@ private:
 public:
     static int GetMsgType( const char* type_name );
 };
-typedef vector<FOMsg*> FOMsgVec;
+typedef std::vector<FOMsg*> FOMsgVec;
 
 class LanguagePack
 {
@@ -91,6 +91,6 @@ public:
     LanguagePack() { memset( NameStr, 0, sizeof(NameStr) ); }
     bool operator==( const uint& r ) { return Name == r; }
 };
-typedef vector<LanguagePack> LangPackVec;
+typedef std::vector<LanguagePack> LangPackVec;
 
 #endif // ___MSG_FILES___

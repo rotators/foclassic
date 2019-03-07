@@ -8,6 +8,8 @@
 #include "ScriptPragmas.h"
 #include "Text.h"
 
+using namespace std;
+
 #ifdef FOCLASSIC_SCRIPT_COMPILER
 # pragma TODO("Move to Script")
 # include <stdio.h>
@@ -141,7 +143,7 @@ private:
 public:
     bool IsIgnored( const string& text )
     {
-        return std::find( ignoredPragmas.begin(), ignoredPragmas.end(), text ) != ignoredPragmas.end();
+        return find( ignoredPragmas.begin(), ignoredPragmas.end(), text ) != ignoredPragmas.end();
     }
 
     void Call( const string& text )

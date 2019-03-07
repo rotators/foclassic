@@ -43,12 +43,12 @@ public:
     char   ValuesCount;         // Script values count
 
     #ifdef FONLINE_NPCEDITOR
-    string ValueStr;            // Main value string
-    string ParamName;           // Parameter Name
-    string ValuesNames[5];      // Values names
+    std::string ValueStr;       // Main value string
+    std::string ParamName;      // Parameter Name
+    std::string ValuesNames[5]; // Values names
     #else
-    int    Value;               // Main value
-    int    ValueExt[5];         // Extra value
+    int         Value;          // Main value
+    int         ValueExt[5];    // Extra value
     #endif
 
     DemandResult();
@@ -57,7 +57,7 @@ public:
     ~DemandResult();
     #endif
 };
-typedef vector<DemandResult> DemandResultVec;
+typedef std::vector<DemandResult> DemandResultVec;
 
 class DialogAnswer
 {
@@ -73,7 +73,7 @@ public:
     ~DialogAnswer();
     #endif
 };
-typedef vector<DialogAnswer> AnswersVec;
+typedef std::vector<DialogAnswer> AnswersVec;
 
 class Dialog
 {
@@ -85,9 +85,9 @@ public:
     bool       RetVal;
 
     #ifdef FONLINE_NPCEDITOR
-    string DlgScript;
+    std::string DlgScript;
     #else
-    int    DlgScript;
+    int         DlgScript;
     #endif
 
     bool IsNoShuffle() { return Flags & DIALOG_FLAG_NO_SHUFFLE; }
@@ -110,43 +110,43 @@ public:
         #endif
         bool operator==( const uint& r ) { return Id == r; }
 };
-typedef vector<Dialog> DialogsVec;
+typedef std::vector<Dialog> DialogsVec;
 
 class DialogPack
 {
 public:
-    uint       PackId;
-    string     PackName;
-    DialogsVec Dialogs;
-    StrVec     TextsLang;
-    FOMsgVec   Texts;
-    string     Comment;
+    uint        PackId;
+    std::string PackName;
+    DialogsVec  Dialogs;
+    StrVec      TextsLang;
+    FOMsgVec    Texts;
+    std::string Comment;
 
-    DialogPack( uint id, string name ) : PackId( id ), PackName( name ) {}
+    DialogPack( uint id, std::string name ) : PackId( id ), PackName( name ) {}
 };
-typedef map<uint, DialogPack*> DialogPackMap;
+typedef std::map<uint, DialogPack*> DialogPackMap;
 
 struct Talking
 {
-    int    TalkType;
+    int         TalkType;
     #define TALK_NONE              (0)
     #define TALK_WITH_NPC          (1)
     #define TALK_WITH_HEX          (2)
-    uint   TalkNpc;
-    uint   TalkHexMap;
-    uint16 TalkHexX, TalkHexY;
+    uint        TalkNpc;
+    uint        TalkHexMap;
+    uint16      TalkHexX, TalkHexY;
 
-    uint   DialogPackId;
-    Dialog CurDialog;
-    uint   LastDialogId;
-    uint   StartTick;
-    uint   TalkTime;
-    bool   Barter;
-    bool   IgnoreDistance;
-    string Lexems;
-    bool   Locked;
+    uint        DialogPackId;
+    Dialog      CurDialog;
+    uint        LastDialogId;
+    uint        StartTick;
+    uint        TalkTime;
+    bool        Barter;
+    bool        IgnoreDistance;
+    std::string Lexems;
+    bool        Locked;
 
-    void   Clear()
+    void        Clear()
     {
         TalkType = TALK_NONE;
         TalkNpc = 0;
@@ -169,7 +169,7 @@ class DialogManager
 public:
     DialogPackMap DialogsPacks;
     StrUIntMap    DlgPacksNames;
-    string        LastErrors;
+    std::string   LastErrors;
 
     bool LoadDialogs( const char* list_name );
     // void SaveList( const char* path, const char* list_name );
@@ -181,13 +181,13 @@ public:
     DialogsVec* GetDialogs( uint num_pack );
 
     void EraseDialogs( uint num_pack );
-    void EraseDialogs( string name_pack );
+    void EraseDialogs( std::string name_pack );
 
     DialogPack* ParseDialog( const char* name, uint id, const char* data );
     uint16      GetTempVarId( const char* str );
 
 private:
-    DemandResult* LoadDemandResult( istrstream& input, bool is_demand );
+    DemandResult* LoadDemandResult( std::istrstream& input, bool is_demand );
     bool          CheckLockTime( int time );
     int           GetNotAnswerAction( const char* str, bool& ret_val );
     int           GetDRType( const char* str, bool& deprecated );

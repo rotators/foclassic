@@ -8,6 +8,8 @@
 #include "Random.h"
 #include "Text.h"
 
+using namespace std;
+
 const char* TextMsgFileName[TEXTMSG_MAX] =
 {
     "FOTEXT.MSG",

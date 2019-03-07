@@ -184,12 +184,12 @@ public:
     #endif
 
     #ifdef FONLINE_OBJECT_EDITOR
-    string ScriptModule;
-    string ScriptFunc;
-    string PicMapStr;
-    string PicInvStr;
-    string WeaponPicStr[MAX_USES];
-    string Weapon_Anim2[MAX_USES];
+    std::string ScriptModule;
+    std::string ScriptFunc;
+    std::string PicMapStr;
+    std::string PicInvStr;
+    std::string WeaponPicStr[MAX_USES];
+    std::string Weapon_Anim2[MAX_USES];
     #endif
 
     #ifdef FOCLASSIC_MAPPER
@@ -197,12 +197,12 @@ public:
     #endif
 };
 
-typedef vector<ProtoItem> ProtoItemVec;
+typedef std::vector<ProtoItem> ProtoItemVec;
 
 class Item;
-typedef map<uint, Item*>  ItemPtrMap;
-typedef vector<Item*>     ItemPtrVec;
-typedef vector<Item>      ItemVec;
+typedef std::map<uint, Item*>  ItemPtrMap;
+typedef std::vector<Item*>     ItemPtrVec;
+typedef std::vector<Item>      ItemVec;
 
 /************************************************************************/
 /* Item                                                                 */

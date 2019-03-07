@@ -39,7 +39,7 @@ public:
     ScriptString NameOnHead;
     ScriptString Lexems;
     ScriptString Avatar;
-    string       Pass;
+    std::string  Pass;
 
     ItemPtrVec   InvItems;
     Item*        DefItemSlotHand;
@@ -245,7 +245,7 @@ private:
         CritterAnim( AnyFrames* anim, uint tick, int beg_frm, int end_frm, bool move_text, int dir_offs, uint ind_crtype, uint ind_anim1, uint ind_anim2, Item* item ) : Anim( anim ), AnimTick( tick ), BeginFrm( beg_frm ), EndFrm( end_frm ), MoveText( move_text ), DirOffs( dir_offs ),
             IndCrType( ind_crtype ), IndAnim1( ind_anim1 ), IndAnim2( ind_anim2 ), ActiveItem( item ) {}
     };
-    typedef vector<CritterAnim> CritterAnimVec;
+    typedef std::vector<CritterAnim> CritterAnimVec;
 
     CritterAnimVec animSequence;
     CritterAnim    stayAnim;
@@ -316,12 +316,12 @@ public:
     void DrawTextOnHead();
 
 private:
-    Rect   textRect;
-    uint   tickFidget;
-    string strTextOnHead;
-    uint   tickStartText;
-    uint   tickTextDelay;
-    uint   textOnHeadColor;
+    Rect        textRect;
+    uint        tickFidget;
+    std::string strTextOnHead;
+    uint        tickStartText;
+    uint        tickTextDelay;
+    uint        textOnHeadColor;
 
     // Ap cost
 public:
@@ -345,8 +345,8 @@ public:
     }
 };
 
-typedef map<uint, CritterCl*, less<uint>> CritMap;
-typedef vector<CritterCl*>                CritVec;
-typedef CritterCl*                        CritterClPtr;
+typedef std::map<uint, CritterCl*, std::less<uint>> CritMap;
+typedef std::vector<CritterCl*>                     CritVec;
+typedef CritterCl*                                  CritterClPtr;
 
 #endif // __CRITTER_CL__ //

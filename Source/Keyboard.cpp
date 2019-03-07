@@ -6,6 +6,8 @@
 #include "SpriteManager.h"
 #include "Window.h"
 
+using namespace std;
+
 static uint8  KeysMap[0x10000] = { 0 };
 static uint16 KeysMapRevert[0x100] = { 0 };
 static uint8  KeysMapUser[0x100] = { 0 };

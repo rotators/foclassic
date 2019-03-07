@@ -4,6 +4,8 @@
 #include "IniParser.h"
 #include "Text.h"
 
+using namespace std;
+
 #define STR_PRIVATE_APP_BEGIN    '['
 #define STR_PRIVATE_APP_END      ']'
 #define STR_PRIVATE_KEY_CHAR     '='

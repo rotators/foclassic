@@ -48,7 +48,7 @@ public:
     void SetFlash( uint mask );
     void SetLight( uint8* light, int maxhx, int maxhy );
 };
-typedef vector<Sprite*> SpriteVec;
+typedef std::vector<Sprite*> SpriteVec;
 
 class Sprites
 {

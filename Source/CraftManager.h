@@ -20,38 +20,38 @@ struct CraftItem
 {
 public:
     // Number, name, info
-    uint      Num;
-    string    Name;
-    string    Info;
+    uint        Num;
+    std::string Name;
+    std::string Info;
 
     // Need parameters to show craft
-    UIntVec   ShowPNum;
-    IntVec    ShowPVal;
-    UInt8Vec  ShowPOr;
+    UIntVec     ShowPNum;
+    IntVec      ShowPVal;
+    UInt8Vec    ShowPOr;
 
     // Need parameters to craft
-    UIntVec   NeedPNum;
-    IntVec    NeedPVal;
-    UInt8Vec  NeedPOr;
+    UIntVec     NeedPNum;
+    IntVec      NeedPVal;
+    UInt8Vec    NeedPOr;
 
     // Need items to craft
-    UInt16Vec NeedItems;
-    UIntVec   NeedItemsVal;
-    UInt8Vec  NeedItemsOr;
+    UInt16Vec   NeedItems;
+    UIntVec     NeedItemsVal;
+    UInt8Vec    NeedItemsOr;
 
     // Need tools to craft
-    UInt16Vec NeedTools;
-    UIntVec   NeedToolsVal;
-    UInt8Vec  NeedToolsOr;
+    UInt16Vec   NeedTools;
+    UIntVec     NeedToolsVal;
+    UInt8Vec    NeedToolsOr;
 
     // New items
-    UInt16Vec OutItems;
-    UIntVec   OutItemsVal;
+    UInt16Vec   OutItems;
+    UIntVec     OutItemsVal;
 
     // Other
-    string    Script;
-    uint      ScriptBindId;  // In runtime
-    uint      Experience;
+    std::string Script;
+    uint        ScriptBindId; // In runtime
+    uint        Experience;
 
     // Operator =
     CraftItem();
@@ -78,8 +78,8 @@ private:
     #endif
 };
 
-typedef map<uint, CraftItem*, less<uint>> CraftItemMap;
-typedef vector<CraftItem*>                CraftItemVec;
+typedef std::map<uint, CraftItem*, std::less<uint>> CraftItemMap;
+typedef std::vector<CraftItem*>                     CraftItemVec;
 
 #ifdef FOCLASSIC_SERVER
 class Critter;

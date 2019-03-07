@@ -17,16 +17,18 @@
 #include "Timer.h"
 #include "Version.h"
 
+using namespace std;
+
 // Assimp functions
-const aiScene* (*Ptr_aiImportFileFromMemory)( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );
-void         ( * Ptr_aiReleaseImport )( const aiScene* pScene );
-const char*  ( * Ptr_aiGetErrorString )();
-void         ( * Ptr_aiEnableVerboseLogging )( aiBool d );
-aiLogStream  ( * Ptr_aiGetPredefinedLogStream )( aiDefaultLogStream pStreams, const char* file );
-void         ( * Ptr_aiAttachLogStream )( const aiLogStream* stream );
-unsigned int ( * Ptr_aiGetMaterialTextureCount )( const aiMaterial* pMat, aiTextureType type );
-aiReturn     ( * Ptr_aiGetMaterialTexture )( const aiMaterial* mat, aiTextureType type, unsigned int  index, aiString* path, aiTextureMapping* mapping, unsigned int* uvindex, float* blend, aiTextureOp* op, aiTextureMapMode* mapmode, unsigned int* flags );
-aiReturn     ( * Ptr_aiGetMaterialFloatArray )( const aiMaterial* pMat, const char* pKey, unsigned int type, unsigned int index, float* pOut, unsigned int* pMax );
+const aiScene* (* Ptr_aiImportFileFromMemory)( const char* pBuffer, unsigned int pLength, unsigned int pFlags, const char* pHint );
+void           ( * Ptr_aiReleaseImport )( const aiScene* pScene );
+const char*    ( * Ptr_aiGetErrorString )();
+void           ( * Ptr_aiEnableVerboseLogging )( aiBool d );
+aiLogStream    ( * Ptr_aiGetPredefinedLogStream )( aiDefaultLogStream pStreams, const char* file );
+void           ( * Ptr_aiAttachLogStream )( const aiLogStream* stream );
+unsigned int   ( * Ptr_aiGetMaterialTextureCount )( const aiMaterial* pMat, aiTextureType type );
+aiReturn       ( * Ptr_aiGetMaterialTexture )( const aiMaterial* mat, aiTextureType type, unsigned int  index, aiString* path, aiTextureMapping* mapping, unsigned int* uvindex, float* blend, aiTextureOp* op, aiTextureMapMode* mapmode, unsigned int* flags );
+aiReturn       ( * Ptr_aiGetMaterialFloatArray )( const aiMaterial* pMat, const char* pKey, unsigned int type, unsigned int index, float* pOut, unsigned int* pMax );
 
 /************************************************************************/
 /* Models                                                               */

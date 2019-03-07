@@ -7,6 +7,8 @@
 #include "Text.h"
 #include "Item.h"
 
+using namespace std;
+
 #if defined (FOCLASSIC_MAPPER) || defined (FOCLASSIC_SERVER)
 
 bool     ListsLoaded = false;

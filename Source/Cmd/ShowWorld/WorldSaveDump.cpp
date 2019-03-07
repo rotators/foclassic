@@ -8,6 +8,8 @@
 #include "WorldSave.h"
 #include "WorldSaveDump.h"
 
+using namespace std;
+
 #define DUMP_ARRAY_TO_STRING( name, str )                      \
     str = "[";                                                 \
     for( uint x = 0; x < sizeof(name) / sizeof(name[0]); x++ ) \

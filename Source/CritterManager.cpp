@@ -21,6 +21,8 @@
 # include "MapManager.h"
 #endif
 
+using namespace std;
+
 CritterManager CrMngr;
 
 #define CRPROTO_APP    "Critter proto"

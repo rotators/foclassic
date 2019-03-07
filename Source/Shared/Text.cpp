@@ -1,11 +1,12 @@
 #include "Core.h"
+#include "App.h"
 
 #include <FL/case.h>
 
-#include "App.h"
-
 #include "Crypt.h"
 #include "Text.h"
+
+using namespace std;
 
 void Str::Copy( char* to, uint size, const char* from )
 {

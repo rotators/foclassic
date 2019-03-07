@@ -14,10 +14,10 @@ target_sources( FOCmd
 		MainCmd.cpp
 		ShowWorld.cpp
 		ShowWorld.h
-		WorldSave.cpp
-		WorldSave.h
-		WorldSaveDump.cpp
-		WorldSaveDump.h
+		ShowWorld/WorldSave.cpp
+		ShowWorld/WorldSave.h
+		ShowWorld/WorldSaveDump.cpp
+		ShowWorld/WorldSaveDump.h
 )
 target_include_directories( FOCmd PRIVATE ${FOCLASSIC_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR} )
 target_link_libraries( FOCmd Platform Shared )
@@ -39,4 +39,7 @@ source_group( "Misc"
 	FILES
 		"${FOCLASSIC_ROOT_DIR}/Resources/VersionInfo.rc"
 )
+
+source_group( "ShowWorld"   REGULAR_EXPRESSION "^${CMAKE_CURRENT_LIST_DIR}/ShowWorld/" )
+
 message( STATUS "Configured FOCmd" )

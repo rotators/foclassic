@@ -28,6 +28,8 @@
 # include "ResourceMapper.h"
 #endif
 
+using namespace std;
+
 SpriteManager SprMngr;
 AnyFrames*    SpriteManager::DummyAnimation = NULL;
 

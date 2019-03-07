@@ -15,7 +15,7 @@ class ScriptPragmaCallback : public Preprocessor::Pragma::Callback
 {
 private:
     uint8            appType;
-    set<string>      alreadyProcessed;
+    StrSet           alreadyProcessed;
     IgnorePragma*    ignorePragma;
     GlobalVarPragma* globalVarPragma;
     CrDataPragma*    crDataPragma;
@@ -24,7 +24,7 @@ private:
 
 public:
     ScriptPragmaCallback( uint8 app );
-    void CallPragma( const string& name, const Preprocessor::Pragma::Instance& instance );
+    void CallPragma( const std::string& name, const Preprocessor::Pragma::Instance& instance );
 };
 
 #endif // __SCRIPT_PRAGMAS__

@@ -1,7 +1,4 @@
 #include "Core.h"
-
-#include <unzip.h>
-
 #include "App.h"
 
 #include "DataFile.h"
@@ -16,14 +13,14 @@ DataFile* DataFile::Open( const char* fname )
     if( !fname || !fname[0] )
     {
         App.WriteLogF( _FUNC_, " - Invalid file name, empty or nullptr.\n" );
-        return NULL;
+        return nullptr;
     }
 
     const char* ext = Str::Substring( fname, "." );
     if( !ext )
     {
         App.WriteLogF( _FUNC_, " - File<%s> extension not found.\n", fname );
-        return NULL;
+        return nullptr;
     }
 
     const char* ext_ = ext;
@@ -38,7 +35,7 @@ DataFile* DataFile::Open( const char* fname )
             App.WriteLogF( _FUNC_, " - Unable to open DAT file<%s>.\n", fname );
             if( dat )
                 delete dat;
-            return NULL;
+            return nullptr;
         }
 
         return dat;
@@ -51,7 +48,7 @@ DataFile* DataFile::Open( const char* fname )
             App.WriteLogF( _FUNC_, " - Unable to open ZIP file<%s>.\n", fname );
             if( zip )
                 delete zip;
-            return NULL;
+            return nullptr;
         }
 
         return zip;
@@ -61,5 +58,5 @@ DataFile* DataFile::Open( const char* fname )
         App.WriteLogF( _FUNC_, " - Invalid file<%s> format; only DAT, ZIP are supported.\n", fname );
     }
 
-    return NULL;
+    return nullptr;
 }

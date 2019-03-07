@@ -1,7 +1,7 @@
 #ifndef __APP__
 #define __APP__
 
-#include "Types.h"
+#include <string>
 
 #define APP_TYPE_CLIENT      (0)
 #define APP_TYPE_MAPPER      (1)
@@ -19,21 +19,21 @@
 
 struct AppData
 {
-    static string TypeToName( const uint8& type )
+    static std::string TypeToName( const unsigned char& type )
     {
         if( type == APP_TYPE_CLIENT )
-            return string( "CLIENT" );
+            return std::string( "CLIENT" );
         else if( type == APP_TYPE_MAPPER )
-            return string( "MAPPER" );
+            return std::string( "MAPPER" );
         else if( type == APP_TYPE_SERVER )
-            return string( "SERVER" );
+            return std::string( "SERVER" );
         else if( type == APP_TYPE_COMPILER )
-            return string( "COMPILER" );
+            return std::string( "COMPILER" );
 
-        return string( "UNKNOWN" );
+        return std::string( "UNKNOWN" );
     }
 
-    static uint8 NameToType( const string& name )
+    static unsigned char NameToType( const std::string& name )
     {
         if( name == "CLIENT" )
             return APP_TYPE_CLIENT;
@@ -47,14 +47,14 @@ struct AppData
         return APP_TYPE_UNKNOWN;
     }
 
-    const uint8 Type;
-    const uint8 Render;
-    const uint8 OS;
-    const uint8 Bits;
+    const unsigned char Type;
+    const unsigned char Render;
+    const unsigned char OS;
+    const unsigned char Bits;
 
-    void        (* WriteLog)( const char* frmt, ... );
-    void        (* WriteLogF)( const char* func, const char* frmt, ... );
-    void        (* WriteLogX)( const char* frmt, ... );
+    void                (* WriteLog)( const char* frmt, ... );
+    void                (* WriteLogF)( const char* func, const char* frmt, ... );
+    void                (* WriteLogX)( const char* frmt, ... );
 
 
     AppData();

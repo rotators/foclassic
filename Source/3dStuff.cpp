@@ -15,6 +15,8 @@
 #include "Text.h"
 #include "Timer.h"
 
+using namespace std;
+
 Device_   D3DDevice = 0;
 Caps_     D3DCaps;
 int       ModeWidth = 0, ModeHeight = 0;

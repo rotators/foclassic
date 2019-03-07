@@ -1,11 +1,12 @@
 #include "scriptstring.h"
 #include "scriptarray.h"
 
-
 #include "../../Debugger.h"
 #include "Text.h"
 
-#define assert( x )
+using namespace std;
+
+#define assert( x )    // wait what
 
 bool ScriptString::indexByteToUTF8( int& index, uint* length, uint offset )
 {

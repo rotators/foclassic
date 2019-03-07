@@ -9,7 +9,7 @@
 #define STREAMING_PORTION    (0x10000)
 
 class Sound;
-typedef vector<Sound*> SoundVec;
+typedef std::vector<Sound*> SoundVec;
 
 class SoundManager
 {

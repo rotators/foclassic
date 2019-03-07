@@ -39,7 +39,7 @@ public:
     void     Clear();
     GlobalMapGroup() { Clear(); }
 };
-typedef vector<GlobalMapGroup*> GMapGroupVec;
+typedef std::vector<GlobalMapGroup*> GMapGroupVec;
 
 struct TraceData
 {
@@ -117,7 +117,7 @@ struct PathStep
     uint   MoveParams;
     uint8  Dir;
 };
-typedef vector<PathStep> PathStepVec;
+typedef std::vector<PathStep> PathStepVec;
 
 class MapManager
 {
@@ -135,14 +135,14 @@ public:
     void Finish();
     void Clear();
 
-    bool   LoadLocationsProtos();
-    bool   LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, uint16 pid );
-    void   SaveAllLocationsAndMapsFile( void (*save_func)( void*, size_t ) );
-    bool   LoadAllLocationsAndMapsFile( void* f );
-    string GetLocationsMapsStatistics();
-    void   RunInitScriptMaps();
-    bool   GenerateWorld( const char* fname, int path_type );
-    void   GetLocationAndMapIds( UIntSet& loc_ids, UIntSet& map_ids );
+    bool        LoadLocationsProtos();
+    bool        LoadLocationProto( IniParser& city_txt, ProtoLocation& ploc, uint16 pid );
+    void        SaveAllLocationsAndMapsFile( void (*save_func)( void*, size_t ) );
+    bool        LoadAllLocationsAndMapsFile( void* f );
+    std::string GetLocationsMapsStatistics();
+    void        RunInitScriptMaps();
+    bool        GenerateWorld( const char* fname, int path_type );
+    void        GetLocationAndMapIds( UIntSet& loc_ids, UIntSet& map_ids );
 
     // Maps stuff
 public:

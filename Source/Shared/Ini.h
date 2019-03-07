@@ -9,7 +9,7 @@
    MIT License
 
    Copyright (c) 2017-2018 Matthias C. M. Troffaes
-   Copyright (c) 2018 Rotators
+   Copyright (c) 2018-2019 Rotators
 
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
@@ -54,8 +54,17 @@ protected:
     IniSectionsData SectionsOrder;
 
 public:
+    // Any comments present are not removed when parsing file/string
+    // Default: false
     bool KeepComments;
+
+    // Content of all sections is saved as-is, including lines which does not follow "key=value" format
+    // Default: false
     bool KeepSectionsRaw;
+
+    // If order of all sections should be stored, value should be set to true before LoadFile() call
+    // Otherwise, value should be set to true before calling SetStr()
+    // Default: false
     bool KeepKeysOrder;
 
     #if !defined (FOCLASSIC_EXTENSION)
@@ -64,7 +73,7 @@ public:
     #endif
 
     virtual bool LoadFile( const std::string& fname, bool unload = true );
-    virtual bool LoadStdString( const std::string& str, bool unload = true );
+    virtual bool LoadStr( const std::string& str, bool unload = true );
     virtual void Unload();
 
 protected:
@@ -81,8 +90,8 @@ public:
     virtual bool MergeSections( const std::string& to, const std::string& from, bool overwrite = false );
     virtual bool RemoveSection( const std::string& section );
 
-    // KeepSectionsRaw handling
 public:
+    // KeepSectionsRaw handling
     virtual bool                     IsSectionRaw( const std::string& section );
     virtual std::vector<std::string> GetSectionRaw( const std::string& section );
     virtual std::string              GetSectionRawString( const std::string& section, const std::string& separator );
@@ -90,8 +99,8 @@ protected:
     virtual void AddSectionRaw( const std::string& section, const std::string& line );
     virtual bool RemoveSectionRaw( const std::string& section );
 
-    // KeepKeysOrder handling
 protected:
+    // KeepKeysOrder handling
     virtual bool IsSectionOrder( const std::string& section );
     virtual void AddSectionOrder( const std::string& section, const std::string& key );
     virtual bool RemoveSectionOrder( const std::string& section );

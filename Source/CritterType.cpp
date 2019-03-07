@@ -8,6 +8,8 @@
 #include "MsgStr.h"
 #include "Text.h"
 
+using namespace std;
+
 CritTypeType CrTypes[MAX_CRIT_TYPES];
 int          MoveWalk[MAX_CRIT_TYPES][6] = { 0 };
 

@@ -50,8 +50,8 @@ namespace Debugger
     void        MemoryStr( const char* block, int value );
     const char* GetMemoryStatistics();
 
-    void   StartTraceMemory();
-    string GetTraceMemory();
+    void        StartTraceMemory();
+    std::string GetTraceMemory();
 };
 
 #endif // __DEBUGGER__

@@ -1,12 +1,13 @@
 #include "Core.h"
+#include "App.h"
 
 #include <unzip.h>
-
-#include "../App.h"
 
 #include "FileSystem.h"
 #include "Text.h"
 #include "Zip.h"
+
+using namespace std;
 
 bool DataFileZip::Init( const char* fname )
 {

@@ -79,11 +79,11 @@ struct FlexRect
     }
 };
 
-typedef FlexRect<int>   Rect;
-typedef FlexRect<float> RectF;
+typedef FlexRect<int>      Rect;
+typedef FlexRect<float>    RectF;
 
-typedef vector<Rect>    IntRectVec;
-typedef vector<RectF>   FltRectVec;
+typedef std::vector<Rect>  IntRectVec;
+typedef std::vector<RectF> FltRectVec;
 
 template<typename Ty>
 struct FlexPoint

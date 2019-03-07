@@ -29,13 +29,12 @@
 #define MESSAGE( msg )                        message( __FILE__ "(" ___TOD0( __LINE__ ) "): " # msg )
 
 // World dump versions
-#define WORLD_SAVE_V1                         (1)                                                    // unreleased
+#define WORLD_SAVE_V1                         (1)  // legacy
 #define WORLD_SAVE_LAST                       (WORLD_SAVE_V1)
-#define SINGLEPLAYER_SAVE_V1                  (1)                                                    // unreleased
+#define SINGLEPLAYER_SAVE_V1                  (1)  // legacy
 #define SINGLEPLAYER_SAVE_LAST                (SINGLEPLAYER_SAVE_V1)
-
 // Client save
-#define CLIENT_SAVE_V1                        (1)  // unreleased
+#define CLIENT_SAVE_V1                        (1)  // legacy
 #define CLIENT_SAVE_LAST                      (CLIENT_SAVE_V1)
 
 // Generic
@@ -159,9 +158,9 @@
 
 #define MAX_ANSWERS                           (100)
 #define PROCESS_TALK_TICK                     (1000)
-#define DIALOGS_LST_NAME                      "dialogs.cfg"
+#define FILENAME_DIALOGS_CONFIG               "dialogs.cfg"
 
-#define SCRIPTS_LST                           "scripts.cfg"
+#define FILENAME_SCRIPTS_CONFIG               "scripts.cfg"
 #define MAX_START_SPECIAL                     (40)
 #define TURN_BASED_TIMEOUT                    (1000)
 #define MIN_VISIBLE_CRIT                      (6)

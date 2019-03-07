@@ -18,6 +18,8 @@
 # include "ResourceManager.h"
 #endif
 
+using namespace std;
+
 #define F1_MAP_VERSION          (0x13000000)
 #define F2_MAP_VERSION          (0x14000000)
 #define FO_MAP_VERSION_V1       (0xF0000000)
