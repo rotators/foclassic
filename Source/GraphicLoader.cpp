@@ -451,7 +451,7 @@ Frame* GraphicLoader::FillNode( Device_ device, const aiNode* node, const aiScen
         mesh_container->InitMesh->AddRef();
 
         // Create material and texture arrays. Note that I always want to have at least one
-        mesh_container->NumMaterials = max( materials.size(), 1 );
+        mesh_container->NumMaterials = max<uint>( materials.size(), 1 );
         mesh_container->Materials = new Material_[mesh_container->NumMaterials];
         mesh_container->TextureNames = new char*[mesh_container->NumMaterials];
         mesh_container->Effects = new EffectInstance[mesh_container->NumMaterials];

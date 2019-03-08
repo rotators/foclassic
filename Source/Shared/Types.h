@@ -16,6 +16,7 @@
 #include "PlatformSpecific.h"
 
 #if defined (FO_WINDOWS)
+# define NOMINMAX
 # include <windows.h>
 #endif
 
