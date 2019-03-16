@@ -1,4 +1,5 @@
 #include "Core.h"
+#include "App.h"
 
 #if defined (FO_LINUX)
 # include <unistd.h>
@@ -12,11 +13,19 @@
 
 using namespace std;
 
+static void StaticAsserts()
+{
+    STATIC_ASSERT( APP_TYPE_CLIENT == 0 );
+    STATIC_ASSERT( APP_TYPE_MAPPER == APP_TYPE_CLIENT + 1 );
+    STATIC_ASSERT( APP_TYPE_SERVER == APP_TYPE_MAPPER + 1 );
+}
+
 /////
 //
 // Math stuff
 //
 /////
+
 
 int Procent( int full, int peace )
 {

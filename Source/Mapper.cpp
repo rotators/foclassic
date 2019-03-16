@@ -23,6 +23,7 @@
 #include "ScriptBind.h"
 #include "ScriptReservedFunctions.h"
 #include "ScriptPragmas.h"
+#include "ScriptUtils.h"
 #include "SinglePlayer.h"
 #include "Thread.h"
 #include "Timer.h"
@@ -5306,7 +5307,7 @@ void FOMapper::InitScriptSystem()
     scripts_cfg->KeepKeysOrder = true;
 
     if( scripts_cfg->LoadFile( FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) ) &&
-        Script::LoadConfigFile( scripts_cfg, SECTION_MAPPER_SCRIPTS_MODULES, SECTION_MAPPER_SCRIPTS_BINDS ) )
+        Script::LoadConfigFile( scripts_cfg, ConfigFile, SECTION_MAPPER_SCRIPTS_MODULES, SECTION_MAPPER_SCRIPTS_BINDS ) )
     {
         // Load script modules
         Script::Undef( NULL );

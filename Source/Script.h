@@ -15,8 +15,6 @@
 typedef void ( * EndExecutionCallback )();
 typedef std::vector<asIScriptModule*> ScriptModuleVec;
 
-class Ini;
-
 struct EngineData
 {
     ScriptModuleVec                                      Modules;
@@ -31,8 +29,6 @@ namespace Script
     void Finish();
     bool InitThread();
     void FinishThread();
-
-    bool LoadConfigFile( Ini* scripts_cfg, const std::string& section_modules, const std::string& section_binds );
 
     void* LoadDynamicLibrary( const char* dll_name );
     void  SetWrongGlobalObjects( StrVec& names );

@@ -1,7 +1,3 @@
-STATIC_ASSERT( APP_TYPE_CLIENT == 0 );
-STATIC_ASSERT( APP_TYPE_MAPPER == 1 );
-STATIC_ASSERT( APP_TYPE_SERVER == 2 );
-
 STATIC_ASSERT( sizeof(bool) == 1 );
 STATIC_ASSERT( sizeof(char) == 1 );
 STATIC_ASSERT( sizeof(int8) == 1 );

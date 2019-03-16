@@ -21,6 +21,7 @@
 #include "Scores.h"
 #include "Script.h"
 #include "ScriptBind.h"
+#include "ScriptUtils.h"
 #include "Server.h"
 #include "SinglePlayer.h"
 #include "Text.h"
@@ -2524,7 +2525,7 @@ void FOServer::Process_Command( BufferManager& buf, void (*logcb)( const char* )
             ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_MODULES );
             ConfigFile->RemoveSection( SECTION_SERVER_SCRIPTS_BINDS );
             if( scripts_cfg->LoadFile( FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) ) &&
-                Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
+                Script::LoadConfigFile( scripts_cfg, ConfigFile, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
             {
                 // Reload script modules
                 Script::Undef( NULL );

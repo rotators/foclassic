@@ -38,7 +38,31 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
     - allows to change directory containing game scripts
     - directory name cannot start with `.`, `/`, or `\\` characters
     - can be set from command line
-
+- ASCompiler improvements
+    - command line options consitent with other applications (double dash, first letter uppercased)
+    - command line options does not need to follow any specific order
+    - option `client` renamed to `Client`
+    - option `mapper` renamed to `Mapper`
+    - option `d` renamed to `Define`; needs to be set only once - to add more than one definition separate their names with comma
+    - option `gc` renamed to `GC`
+    - option `p` renamed to `Output`
+    - option `run` renamed to `Run`; needs to be set only once - to call more than one function separate their names with comma
+    - added option `Server`, required to compile server scripts
+    - single mode
+        - compiling single script requires target-specific option with script filename as argument; examples:  
+          `ASCompiler client_main.fos -client` (old) -> (current) `ASCompiler --Client client_main.fos`  
+          `ASCompiler main.fos` (old) -> (current) `ASCompiler --Server main.fos`
+    - introduced batch mode
+        - ASCompiler can now run in batch mode, processing all used scripts for given application
+        - added option `ScriptsCfg` which process scripts configuration in same way as Server during initialization
+        - option defining compilation target (`Client`/`Mapper`/`Server`) must be present; example:
+         `ASCompiler --ScriptsCfg --Client`
+        - if `Run` option is present, given function(s) will be executed for all scripts
+    - added option `Time` which enabled more detailed time statistics
+        - `Preprocess` reports time consumed by preprocessing script only
+        - `Build` reports time consumed by creating and building script module only
+        - `Compile` reports total time consumed to create module from source; that includes `Preprocess` and `Build` reports, as well as additional steps required to prepare/validate script; `Compile` report is used when `Time` option is not present (old bahavior)
+        - in batch mode, summary of reports mentioned above is displayed (plus some extra info) after all scripts has been processed
 
 Example of scripts configuration
 ```ini

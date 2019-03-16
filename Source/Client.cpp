@@ -9867,7 +9867,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
     scripts_cfg->LoadStr( string( msg_script.GetStr( STR_INTERNAL_SCRIPT_CONFIG ) ) );
     ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_MODULES );
     ConfigFile->RemoveSection( SECTION_CLIENT_SCRIPTS_BINDS );
-    Script::LoadConfigFile( scripts_cfg, SECTION_CLIENT_SCRIPTS_MODULES, SECTION_CLIENT_SCRIPTS_BINDS );
+    Script::LoadConfigFile( scripts_cfg, ConfigFile, SECTION_CLIENT_SCRIPTS_MODULES, SECTION_CLIENT_SCRIPTS_BINDS );
     delete scripts_cfg;
 
     // Bind reserved functions

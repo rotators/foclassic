@@ -158,7 +158,7 @@ bool FOServer::InitScriptSystem()
         success = false;
     }
 
-    if( success && !Script::LoadConfigFile( scripts_cfg, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
+    if( success && !Script::LoadConfigFile( scripts_cfg, ConfigFile, SECTION_SERVER_SCRIPTS_MODULES, SECTION_SERVER_SCRIPTS_BINDS ) )
     {
         WriteLog( "Script system initialization... failed\n" );
         success = false;
@@ -292,7 +292,7 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
         WriteLog( "Scripts config file<%s> cannot be loaded\n", FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) );
         success = false;
     }
-    if( success && !Script::LoadConfigFile( scripts_cfg, section_modules, section_binds ) )
+    if( success && !Script::LoadConfigFile( scripts_cfg, ConfigFile, section_modules, section_binds ) )
     {
         WriteLog( "Scripts config file<%s> invalid\n", FileManager::GetFullPath( FILENAME_SCRIPTS_CONFIG, PATH_SERVER_SCRIPTS ) );
         success = false;
