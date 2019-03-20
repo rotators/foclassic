@@ -58,6 +58,7 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
         - option defining compilation target (`Client`/`Mapper`/`Server`) must be present; example:
          `ASCompiler --ScriptsCfg --Client`
         - if `Run` option is present, given function(s) will be executed for all scripts
+        - any error spotted during script processing (reported by either AngelScript or ASCompiler itself) results with stopping ASCompiler
     - added option `Time` which enabled more detailed time statistics
         - `Preprocess` reports time consumed by preprocessing script only
         - `Build` reports time consumed by creating and building script module only

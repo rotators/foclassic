@@ -51,7 +51,7 @@ set( FOCLASSIC_BINARY_DIR                "${CMAKE_CURRENT_BINARY_DIR}" )
 
 # main directories
 set( SOURCE_DIR                          "${FOCLASSIC_ROOT_DIR}/Source" )
-set( EXTENSIONS_DIR                      "${FOCLASSIC_ROOT_DIR}/Extensions" )
+set( EXTENSIONS_DIR                      "${FOCLASSIC_ROOT_DIR}/Extensions.Dynamic" )
 set( DOCS_DIR                            "${FOCLASSIC_ROOT_DIR}/Docs" )
 
 # libraries directories
@@ -195,7 +195,7 @@ configure_file( "${SCRIPTS_HEADER_TEMPLATE}" "${RELEASE_HEADERS_DIR}/FOClassic.f
 add_subdirectory( Docs )
 add_subdirectory( Source )
 if( WIN32 )
-	add_subdirectory( Extensions )
+	add_subdirectory( Extensions.Dynamic )
 endif()
 
 ##
