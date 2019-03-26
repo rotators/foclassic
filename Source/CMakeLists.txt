@@ -178,6 +178,18 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 )
 
 ##
+## extensions
+##
+
+function( ProcessExtensions type target )
+	get_property( extensions GLOBAL PROPERTY FOCLASSIC_${type}_EXTENSIONS )
+
+	foreach( extension IN LISTS extensions )
+		target_link_libraries( ${target} ${extension} )
+	endforeach()
+endfunction()
+
+##
 ## ScriptBindDummy
 ##
 
@@ -228,6 +240,8 @@ if( WIN32 )
 	target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
 	target_include_directories( ClientDX PRIVATE ${FOCLASSIC_INCLUDES} )
 	target_link_libraries( ClientDX ${CLIENT_DX_LIBS} )
+
+	ProcessExtensions( CLIENT ClientDX )
 endif()
 
 ##
@@ -245,6 +259,8 @@ target_sources( ClientGL
 target_compile_definitions( ClientGL PRIVATE FOCLASSIC_CLIENT )
 target_include_directories( ClientGL PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ClientGL ${CLIENT_GL_LIBS} )
+
+ProcessExtensions( CLIENT ClientGL )
 
 ##
 ## Mapper
@@ -279,6 +295,8 @@ if( WIN32 )
 	target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
 	target_include_directories( MapperDX PRIVATE ${FOCLASSIC_INCLUDES} )
 	target_link_libraries( MapperDX ${MAPPER_DX_LIBS} )
+
+	ProcessExtensions( MAPPER MapperDX )
 endif()
 
 ##
@@ -296,6 +314,8 @@ target_sources( MapperGL
 target_compile_definitions( MapperGL PRIVATE FOCLASSIC_MAPPER )
 target_include_directories( MapperGL PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( MapperGL ${MAPPER_GL_LIBS} )
+
+ProcessExtensions( MAPPER MapperGL )
 
 ##
 ## Server
@@ -351,6 +371,8 @@ if( MSVC )
 	# see https://docs.microsoft.com/en-us/cpp/build/reference/largeaddressaware-handle-large-addresses
 	set_property( TARGET Server APPEND_STRING PROPERTY LINK_FLAGS "/LARGEADDRESSAWARE " )
 endif()
+
+ProcessExtensions( SERVER Server )
 
 ##
 ## ASCompiler
