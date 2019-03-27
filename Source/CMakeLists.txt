@@ -378,26 +378,6 @@ target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
 
 ##
-## extensions
-##
-
-function( DumpExtensions type )
-	get_property( tmp TARGET ExtensionList${type} PROPERTY INTERFACE_LINK_LIBRARIES )
-	foreach( extension IN LISTS tmp )
-		if( "${extension}" MATCHES "^(.*)::@" )
-			list( APPEND extensions "${CMAKE_MATCH_1}" )
-		else()
-			list( APPEND extension "${extension}" )
-		endif()
-	endforeach()
-	message( STATUS "ExtensionList${type} = ${extensions}" )
-endfunction()
-
-DumpExtensions( Client )
-DumpExtensions( Mapper )
-DumpExtensions( Server )
-
-##
 ## finalize configuration
 ##
 

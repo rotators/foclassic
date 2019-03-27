@@ -1,10 +1,3 @@
-/////
-//
-// FOClassic v@FOCLASSIC_VERSION@
-// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
-//
-/////
-
 /*
    MIT License
 

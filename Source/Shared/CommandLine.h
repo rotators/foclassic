@@ -1,10 +1,3 @@
-/////
-//
-// FOClassic v@FOCLASSIC_VERSION@
-// Timestamp @EXTENSIONS_CONTENT_TIMESTAMP@
-//
-/////
-
 #ifndef __COMMAND_LINE__
 #define __COMMAND_LINE__
 
@@ -35,8 +28,6 @@ public:
     virtual std::vector<std::string> GetStrVec( const std::string& option, char separator );
 };
 
-#if !defined (FOCLASSIC_EXTENSION)
 extern CmdLine* CommandLine;
-#endif
 
 #endif // __COMMAND_LINE__ //

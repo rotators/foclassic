@@ -179,6 +179,14 @@ endif( HAVE_STRUCT_TIMESPEC )
 if( NOT FOCLASSIC_VERSION_CUSTOM )
 	set( FOCLASSIC_VERSION_CUSTOM 0 )
 endif()
+
+foreach( type IN ITEMS Client Mapper Server )
+	get_property( extensions TARGET ExtensionList${type} PROPERTY INTERFACE_LINK_LIBRARIES )
+
+	string( TOUPPER ${type} type )
+	list( LENGTH extensions FOCLASSIC_EXTENSIONS_${type} )
+endforeach()
+
 configure_file( "${ENGINE_GLOBAL_HEADER_TEMPLATE}" "${ENGINE_GLOBAL_HEADER_FILE}" @ONLY NEWLINE_STYLE LF )
 
 # release changelog

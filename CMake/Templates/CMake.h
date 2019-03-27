@@ -7,7 +7,9 @@
 // Non-template version of this file is used for generating "global seed"; see Customization.md for details.
 //
 
-// Version //
+//
+// Version
+//
 
 // increased on major milestones
 #define FOCLASSIC_STAGE                    (@FOCLASSIC_STAGE@)
@@ -23,11 +25,18 @@
 #define FOCLASSIC_VERSION_STRING           "@FOCLASSIC_VERSION@"
 #define FOCLASSIC_VERSION_CUSTOM_STRING    "@FOCLASSIC_VERSION_CUSTOM@"
 
-// VersionInfo.rc //
-
+// VersionInfo.rc
 #define FOCLASSIC_FILEVERSION              1, @FOCLASSIC_STAGE@, @FOCLASSIC_VERSION@, @FOCLASSIC_VERSION_CUSTOM@
 #define FOCLASSIC_PRODUCTVERSION           1, @FOCLASSIC_STAGE@, 0, 0
 #define FOCLASSIC_FILEVERSION_STRING       "1.@FOCLASSIC_STAGE@.@FOCLASSIC_VERSION@.@FOCLASSIC_VERSION_CUSTOM@"
 #define FOCLASSIC_PRODUCTVERSION_STRING    "1.@FOCLASSIC_STAGE@ (@FOCLASSIC_CODENAME@)"
+
+//
+// Extensions
+//
+
+#define FOCLASSIC_EXTENSIONS_CLIENT        (@FOCLASSIC_EXTENSIONS_CLIENT@)
+#define FOCLASSIC_EXTENSIONS_MAPPER        (@FOCLASSIC_EXTENSIONS_MAPPER@)
+#define FOCLASSIC_EXTENSIONS_SERVER        (@FOCLASSIC_EXTENSIONS_SERVER@)
 
 #endif // __CMAKE__ //
