@@ -67,10 +67,8 @@ public:
     // Default: false
     bool KeepKeysOrder;
 
-    #if !defined (FOCLASSIC_EXTENSION)
     Ini();
     ~Ini();
-    #endif
 
     virtual bool LoadFile( const std::string& fname, bool unload = true );
     virtual bool LoadStr( const std::string& str, bool unload = true );

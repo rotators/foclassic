@@ -95,6 +95,8 @@ set( USER_FOCLASSIC_FILE                 "${FOCLASSIC_ROOT_DIR}/CMakeFOClassic.t
 
 message( STATUS "Customization setup..." )
 
+FOClassicExtensionInit( ${FOCLASSIC_ROOT_DIR} )
+
 if( "${USER_FOCLASSIC_FILE}" STREQUAL "${USER_TOP_FOCLASSIC_FILE}" )
 	# standalone build
 	if( EXISTS "${USER_FOCLASSIC_FILE}" )

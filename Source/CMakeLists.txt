@@ -178,18 +178,6 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 )
 
 ##
-## extensions
-##
-
-function( ProcessExtensions type target )
-	get_property( extensions GLOBAL PROPERTY FOCLASSIC_${type}_EXTENSIONS )
-
-	foreach( extension IN LISTS extensions )
-		target_link_libraries( ${target} ${extension} )
-	endforeach()
-endfunction()
-
-##
 ## ScriptBindDummy
 ##
 
@@ -240,8 +228,6 @@ if( WIN32 )
 	target_compile_definitions( ClientDX PRIVATE FO_D3D FOCLASSIC_CLIENT )
 	target_include_directories( ClientDX PRIVATE ${FOCLASSIC_INCLUDES} )
 	target_link_libraries( ClientDX ${CLIENT_DX_LIBS} )
-
-	ProcessExtensions( CLIENT ClientDX )
 endif()
 
 ##
@@ -259,8 +245,6 @@ target_sources( ClientGL
 target_compile_definitions( ClientGL PRIVATE FOCLASSIC_CLIENT )
 target_include_directories( ClientGL PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ClientGL ${CLIENT_GL_LIBS} )
-
-ProcessExtensions( CLIENT ClientGL )
 
 ##
 ## Mapper
@@ -295,8 +279,6 @@ if( WIN32 )
 	target_compile_definitions( MapperDX PRIVATE FO_D3D FOCLASSIC_MAPPER )
 	target_include_directories( MapperDX PRIVATE ${FOCLASSIC_INCLUDES} )
 	target_link_libraries( MapperDX ${MAPPER_DX_LIBS} )
-
-	ProcessExtensions( MAPPER MapperDX )
 endif()
 
 ##
@@ -314,8 +296,6 @@ target_sources( MapperGL
 target_compile_definitions( MapperGL PRIVATE FOCLASSIC_MAPPER )
 target_include_directories( MapperGL PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( MapperGL ${MAPPER_GL_LIBS} )
-
-ProcessExtensions( MAPPER MapperGL )
 
 ##
 ## Server
@@ -372,8 +352,6 @@ if( MSVC )
 	set_property( TARGET Server APPEND_STRING PROPERTY LINK_FLAGS "/LARGEADDRESSAWARE " )
 endif()
 
-ProcessExtensions( SERVER Server )
-
 ##
 ## ASCompiler
 ##
@@ -398,6 +376,26 @@ target_include_directories( ASCompiler PRIVATE ${FOCLASSIC_INCLUDES} )
 target_link_libraries( ASCompiler ${ASCOMPILER_LIBS} )
 
 set_property( TARGET ASCompiler PROPERTY RELEASE_SUBDIRECTORY "Tools" )
+
+##
+## extensions
+##
+
+function( DumpExtensions type )
+	get_property( tmp TARGET ExtensionList${type} PROPERTY INTERFACE_LINK_LIBRARIES )
+	foreach( extension IN LISTS tmp )
+		if( "${extension}" MATCHES "^(.*)::@" )
+			list( APPEND extensions "${CMAKE_MATCH_1}" )
+		else()
+			list( APPEND extension "${extension}" )
+		endif()
+	endforeach()
+	message( STATUS "ExtensionList${type} = ${extensions}" )
+endfunction()
+
+DumpExtensions( Client )
+DumpExtensions( Mapper )
+DumpExtensions( Server )
 
 ##
 ## finalize configuration
@@ -447,15 +445,18 @@ foreach( target IN LISTS FOCLASSIC_APPS )
 	endif()
 
 	##
-	## add platform libraries
+	## add extensions and platform libraries
 	##
 
 	target_link_libraries( ${target} Platform )
 	if( "${target}" MATCHES "^Client(DX|GL)$" )
+		target_link_libraries( ${target} ExtensionListClient )
 		target_link_libraries( ${target} PlatformClient )
 	elseif( "${target}" MATCHES "^Mapper(DX|GL)$" )
+		target_link_libraries( ${target} ExtensionListMapper )
 		target_link_libraries( ${target} PlatformMapper )
 	elseif( "${target}" STREQUAL "Server" )
+		target_link_libraries( ${target} ExtensionListServer )
 		target_link_libraries( ${target} PlatformServer )
 	endif()
 

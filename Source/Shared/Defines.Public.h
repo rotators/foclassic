@@ -45,21 +45,20 @@
 # if !defined (__DEFINES__)
 #  include "Defines.h"
 # endif
-# define FOCLASSIC_EXTENSION
 # define FOCLASSIC_BLEEDING_EDGE
 #endif  // FOCLASSIC_ENGINE
 
 // Detect bad setup
-#ifndef FOCLASSIC_EXTENSION
+#ifndef FOCLASSIC_ENGINE
 # ifndef FOCLASSIC_SCRIPT
-#  error "FOCLASSIC_EXTENSION or FOCLASSIC_SCRIPT must be defined"
+#  error "FOCLASSIC_ENGINE or FOCLASSIC_SCRIPT must be defined"
 # endif
 #endif
 
 // Detect bad setup
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # ifdef FOCLASSIC_SCRIPT
-#  error "FOCLASSIC_EXTENSION and FOCLASSIC_SCRIPT cannot be both defined at same time"
+#  error "FOCLASSIC_ENGINE and FOCLASSIC_SCRIPT cannot be both defined at same time"
 # endif
 #endif
 
@@ -71,7 +70,7 @@
 
 
 // macros for engine/extensions only
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 
 # define ___TOD1( x )                                     # x
 # define ___TOD0( x )                                     ___TOD1( x )
@@ -87,10 +86,10 @@
 # define OFFSETOF( type, member )                         ( (int)offsetof( type, member ) )
 # define PACKUINT64( u32hi, u32lo )                       ( ( (uint64)u32hi << 32 ) | ( (uint64)u32lo ) )
 
-#endif   // FOCLASSIC_EXTENSION
+#endif   // FOCLASSIC_ENGINE
 
 // macros for everyone
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 
 # define BIN__N( x )                                      (x) | x >> 3 | x >> 6 | x >> 9
 # define BIN__B( x )                                      (x) & 0xf | (x) >> 12 & 0xf0
@@ -124,7 +123,7 @@
 #  endif
 # endif // !FOCLASSIC_BLEEDING_EDGE
 
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 
@@ -319,11 +318,11 @@
 #define BI_BROKEN                                         (0x0F)
 
 // Binary files signatures
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define BINARY_SIGNATURE( name, type, ver )              const unsigned char name[6] = { 'F', 'O', type, ( (ver) >> 8 ) & 0xFF, ( (ver) ) & 0xFF, 0 }
 # define BINARY_SIGNATURE_VALID( sig1, sig2 )             (sig1[0] == sig2[0] && sig1[1] == sig2[1] && sig1[2] == sig2[2] && sig1[5] == sig2[5]) // skip version check
 # define BINARY_SIGNATURE_VERSION( sig )                  ( (sig[3] << 8) | sig[4] )
-#endif                                                                                                                                           // FOCLASSIC_EXTENSION
+#endif                                                                                                                                           // FOCLASSIC_ENGINE
 
 #define BINARY_TYPE_CLIENTSAVE                            'C'
 #define BINARY_TYPE_MAPSAVE                               'M'
@@ -394,11 +393,11 @@
 // not included (see SpriteManager.h):
 // COLOR_GAME_RGB(r,g,b), COLOR_IFACE, COLOR_IFACE_A(a), COLOR_IFACE_RED, COLOR_IFACE_GREEN
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define COLOR_ARGB( a, r, g, b )                         ( (uint)( ( ( (a) & 0xFF ) << 24 ) | ( ( (r) & 0xFF ) << 16 ) | ( ( (g) & 0xFF ) << 8 ) | ( (b) & 0xFF ) ) )
 # define COLOR_XRGB( r, g, b )                            COLOR_ARGB( 0xFF, r, g, b )
 # define COLOR_CHANGE_ALPHA( v, a )                       ( ( ( (v) | 0xFF000000 ) ^ 0xFF000000 ) | ( (uint)(a) & 0xFF ) << 24 )
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define COLOR_ARGB                                       # (a, r, g, b)(uint( ( ( (a) & 0xff ) << 24 ) | ( ( (r) & 0xff ) << 16 ) | ( ( (g) & 0xff ) << 8 ) | ( (b) & 0xff ) ) )
@@ -594,10 +593,10 @@
 #define CRITTER_ID_START_PLAYER                           (1)
 #define CRITTER_ID_START_NPC                              (5000001)
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define CRITTER_ID_IS_NPC( id )                          ( (id) >= CRITTER_ID_START_NPC )
 # define CRITTER_ID_IS_PLAYER( id )                       ( (id) >= CRITTER_ID_START_PLAYER && (id) < CRITTER_ID_START_NPC )
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define CRITTER_ID_IS_NPC                                # (id)( (id) >= CRITTER_ID_START_NPC )
@@ -824,10 +823,10 @@
 # define FONT_FLAG_CENTERXY                               (FONT_FLAG_CENTERX | FONT_FLAG_CENTERY)
 #endif   // !FOCLASSIC_ENGINE
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define FONT_FLAG_SKIPLINES( l )                         (0x0400 | ( (l) << 16 ) )
 # define FONT_FLAG_SKIPLINES_END( l )                     (0x0800 | ( (l) << 16 ) )
-#endif   // FOCLASSIC_EXTENSION
+#endif   // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define FONT_FLAG_SKIPLINES                              # (l)(0x0400 | ( (l) << 16 ) )
@@ -1109,9 +1108,9 @@
 #define RADIO_BROADCAST_LOCATION                          (40)
 #define RADIO_BROADCAST_FORCE_ALL                         (250)
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define RADIO_BROADCAST_ZONE( x )                        (100 + CLAMP( x, 1, 100 ) )      // 1..100
-#endif                                                                                     // FOCLASSIC_EXTENSION
+#endif                                                                                     // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define RADIO_BROADCAST_ZONE                             # (x)(100 + CLAMP( x, 1, 100 ) ) // 1..100
@@ -1171,9 +1170,9 @@
 
 // Max 20 buttons (0..19)
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define SAY_DIALOGBOX_BUTTON( b )                        (19 + (b) )
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define SAY_DIALOGBOX_BUTTON                             # (b)(19 + (b) )
@@ -1306,9 +1305,9 @@
 #define USE_NONE                                          (15)
 #define USE_MAX                                           (3) // array size
 
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define MAKE_ITEM_MODE( use, aim )                       ( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define MAKE_ITEM_MODE                                   # (use, aim)( ( ( (aim) << 4 ) | ( (use) & 0xF ) ) & 0xFF )
@@ -1319,9 +1318,9 @@
 #define PROTO_ITEM_USER_DATA_SIZE                         (500)
 
 // Vars calc
-#ifdef FOCLASSIC_EXTENSION
+#ifdef FOCLASSIC_ENGINE
 # define VAR_CALC_QUEST( tid, val )                       ( (tid) * 1000 + (val) )
-#endif    // FOCLASSIC_EXTENSION
+#endif    // FOCLASSIC_ENGINE
 
 #ifdef FOCLASSIC_SCRIPT
 # define VAR_CALC_QUEST                                   # (tid, val)( (tid) * 1000 + (val) )
@@ -1423,14 +1422,7 @@
 
 // Reputation
 #define REPUTATION_BEGIN                                  (GAME_OPTION( ReputationBegin ) )
-#define REPUTATION_END                                    (GAME_OPTION( ReputationEnd ) )
-
-#ifdef FOCLASSIC_EXTENSION
-# ifndef FOCLASSIC_ENGINE
-#  define SKILL_OFFSET( skill )                           ( (skill) + (GAME_OPTION( AbsoluteOffsets ) ? 0 : SKILL_BEGIN) ) // investigate
-#  define PERK_OFFSET( perk )                             ( (perk)  + (GAME_OPTION( AbsoluteOffsets ) ? 0 : PERK_BEGIN) )  // investigate
-# endif                                                                                                                    // !FOCLASSIC_ENGINE
-#endif                                                                                                                     // FOCLASSIC_EXTENSION
+#define REPUTATION_END                                    (GAME_OPTION( ReputationEnd ) )                                                                                                                // FOCLASSIC_EXTENSION
 
 #ifdef FOCLASSIC_SCRIPT
 # define SKILL_OFFSET                                     # (skill)( (skill) + (GAME_OPTION( AbsoluteOffsets ) ? 0 : SKILL_BEGIN) )
@@ -1563,7 +1555,6 @@
 // Cleanup
 
 #ifdef FOCLASSIC_ENGINE
-# undef FOCLASSIC_EXTENSION
 # undef FOCLASSIC_BLEEDING_EDGE
 #endif   // FOCLASSIC_ENGINE
 

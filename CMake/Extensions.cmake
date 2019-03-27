@@ -1,49 +1,152 @@
 #####
 #
+# FOClassicExtensionInit()
+# Prepares helper targets for extensions
+#
+# Creates following targets:
+#
+# - ExtensionClient, ExtensionMapper, ExtensionServer
+#   interface targets adding minimal required settings for extension targets (include directories, definitions, etc.)
+#
+# - ExtensionListClient, ExtensionListMapper, ExtensionListServer
+#   interface targets used for actual linking extensions to engine
+#
+# This function is called automagically by engine setup; projects which wants to use their own CMakeLists.txt only, can include this file
+# before adding any extension:
+#
+#    project( MyGame )
+#
+#    include( path/to/engine/CMake/Extensions.cmake )
+#    FOClassicExtensionInit( ${CMAKE_CURRENT_LIST_DIR}/path/to/engine )
+#
+#####
+#
+# Usage: FOClassicExtensionInit( engine_root_dir )
+#
+# engine_root_dir - path to root directory of engine repository (where README.md and LICENSE.md are)
+#
+#####
+
+function( FOClassicExtensionInit engine_root_dir )
+
+	foreach( type IN ITEMS Client Mapper Server )
+
+		if( NOT TARGET Extension${type} )
+			add_library( Extension${type} INTERFACE )
+
+			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source )
+			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Shared )
+			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript )
+			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript/Addons )
+
+			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_ENGINE )
+		endif()
+
+		if( NOT TARGET ExtensionList${type} )
+			add_library( ExtensionList${type} INTERFACE )
+		endif()
+
+	endforeach()
+
+endfunction()
+
+#####
+#
 # FOClassicExtension()
 # Helper function for attaching extension to executable
 #
 #####
 #
-# Usage: FOClassicExtension( name targets )
+# Usage: FOClassicExtension( type target )
 #
-# name     - CMake target name
-# targets  - CLIENT / MAPPER / SERVER
-#            more than one target can be specified
-#            case insensitive
+# type    - CLIENT / MAPPER / SERVER
+#           case insensitive
+# target  - CMake target name
 #
 #####
 
-function( FOClassicExtension name targets )
-	message( STATUS "Configuring extension '${name}'" )
+function( FOClassicExtension type target )
 
-	set( msg "Extension(${name}):" )
+	set( type_raw ${type} )
+	set( msg "Extension(${target}):" )
 
-	# check if name is existing cmake target
-	if( NOT TARGET ${name} )
+	# check for valid extension types
+	if( NOT "${type}" MATCHES "^([Cc][Ll][Ii][Ee][Nn][Tt]|[Mm][Aa][Pp][Pp][Ee][Rr]|[Ss][Ee][Rr][Vv][Ee][Rr])$" )
+		message( FATAL_ERROR "{$msg} Invalid extension type '${type}'" )
+	endif()
+
+	# check if target exists
+	if( NOT TARGET ${target} )
 		message( FATAL_ERROR "${msg} CMake target does not exists" )
 	endif()
 
-	# validate targets names
-	foreach( target IN LISTS targets )
-		if( NOT "${target}" MATCHES "^([Cc][Ll][Ii][Ee][Nn][Tt]|[Mm][Aa][Pp][Pp][Ee][Rr]|[Ss][Ee][Rr][Vv][Ee][Rr])$" )
-			message( FATAL_ERROR "{$msg} Invalid target '${target}'" )
-		endif()
-	endforeach()
+	# TyPe -> Type
+	string( TOUPPER ${type} type )
+	string( SUBSTRING ${type} 0 1 letter )
+	string( TOLOWER ${type} type )
+	string( REGEX REPLACE "^.(.+)" "${letter}\\1" type "${type}" )
 
-	# add extension to list
-	foreach( target IN LISTS targets )
-		string( TOUPPER "${target}" target )
+	# check if helper target exists
+	if( NOT TARGET Extension${type} )
+		message( FATAL_ERROR "${msg} CMake target 'Extension${type}' does not exists; remember to call FOClassicExtensionInit() before adding any extensions" )
+	endif()
 
-		get_property( extensions GLOBAL PROPERTY FOCLASSIC_${target}_EXTENSIONS )
-		list( FIND extensions ${name}  idx )
-		if( idx GREATER_EQUAL 0 )
-			string( TOLOWER "${target}" target )
-			message( WARNING "${msg} Already added to ${target} extensions list" )
-			string( TOUPPER "${target}" target )
-			continue()
-		else()
-			set_property( GLOBAL APPEND PROPERTY FOCLASSIC_${target}_EXTENSIONS ${name} )
-		endif()
-	endforeach()
+	# add helper library
+	target_link_libraries( ${target} PUBLIC Extension${type} )
+
+	# configure linking
+	FOClassicExtensionAdd( ${type_raw} ${target} )
+
+endfunction()
+
+#####
+#
+# FOClassicExtensionAdd()
+# Helper function for attaching extension to executable
+#
+# Unlike FOClassicExtension(), this function which does not alter target configuration, and does a minimum required to "connect" extension
+# with engine. It might be more fitting for projects using their own CMakeLists.txt instead of CMakeFOClassic.txt
+#
+#####
+#
+# Usage: FOClassicExtensionAdd( type target )
+#
+# type    - CLIENT / MAPPER / SERVER
+#           case insensitive
+# target  - CMake target name
+#
+#####
+
+function( FOClassicExtensionAdd type target )
+
+	set( msg "Extension(${target}):" )
+
+	# check for valid extension types
+	if( NOT "${type}" MATCHES "^([Cc][Ll][Ii][Ee][Nn][Tt]|[Mm][Aa][Pp][Pp][Ee][Rr]|[Ss][Ee][Rr][Vv][Ee][Rr])$" )
+		message( FATAL_ERROR "{$msg} Invalid extension type '${type}'" )
+	endif()
+
+	# check if target exists
+	if( NOT TARGET ${target} )
+		message( FATAL_ERROR "${msg} CMake target does not exists" )
+	endif()
+
+	# TyPe -> Type
+	string( TOUPPER ${type} type )
+	string( SUBSTRING ${type} 0 1 letter )
+	string( TOLOWER ${type} type )
+	string( REGEX REPLACE "^.(.+)" "${letter}\\1" type "${type}" )
+
+	# check if helper target exists
+	if( NOT TARGET ExtensionList${type} )
+		message( FATAL_ERROR "${msg} CMake target 'ExtensionList${type}' does not exists; remember to call FOClassicExtensionInit() before adding any extensions" )
+	endif()
+
+	# configure linking
+	# minimum required to "connect" extension and executable targets
+	cmake_policy( PUSH )
+	cmake_policy( SET CMP0079 NEW )
+	target_link_libraries( ExtensionList${type} INTERFACE ${target} )
+	cmake_policy( POP )
+
 endfunction()

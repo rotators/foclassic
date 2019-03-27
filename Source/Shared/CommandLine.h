@@ -20,10 +20,8 @@ public:
     // copy of argv[0]
     const std::string App;
 
-    #if !defined (FOCLASSIC_EXTENSION)
     CmdLine( int argc, char** argv );
     ~CmdLine();
-    #endif
 
     virtual std::string Get();
     virtual std::string GetArg( unsigned int arg );
