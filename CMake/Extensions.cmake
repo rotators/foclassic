@@ -14,10 +14,8 @@
 # This function is called automagically by engine setup; projects which wants to use their own CMakeLists.txt only, can include this file
 # before adding any extension:
 #
-#    project( MyGame )
-#
-#    include( path/to/engine/CMake/Extensions.cmake )
-#    FOClassicExtensionInit( ${CMAKE_CURRENT_LIST_DIR}/path/to/engine )
+#    include( path/to/engine/root/dir/CMake/Extensions.cmake )
+#    FOClassicExtensionInit( ${CMAKE_CURRENT_LIST_DIR}/path/to/engine/root/dir )
 #
 #####
 #
@@ -29,7 +27,13 @@
 
 function( FOClassicExtensionInit engine_root_dir )
 
+	if( "${engine_root_dir}" MATCHES "(.+)[/]+" )
+		set( engine_root_dir "${CMAKE_MATCH_1}" )
+	endif()
+
 	foreach( type IN ITEMS Client Mapper Server )
+
+		# add targets only if they wasn't created already
 
 		if( NOT TARGET Extension${type} )
 			add_library( Extension${type} INTERFACE )
@@ -39,7 +43,9 @@ function( FOClassicExtensionInit engine_root_dir )
 			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript )
 			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript/Addons )
 
+			string( TOUPPER ${type} uctype )
 			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_ENGINE )
+			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_${uctype} )
 		endif()
 
 		if( NOT TARGET ExtensionList${type} )
@@ -104,7 +110,7 @@ endfunction()
 # FOClassicExtensionAdd()
 # Helper function for attaching extension to executable
 #
-# Unlike FOClassicExtension(), this function which does not alter target configuration, and does a minimum required to "connect" extension
+# Unlike FOClassicExtension(), this function does not alter target configuration, and does a minimum required to "connect" extension
 # with engine. It might be more fitting for projects using their own CMakeLists.txt instead of CMakeFOClassic.txt
 #
 #####
