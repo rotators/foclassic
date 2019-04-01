@@ -27,7 +27,7 @@
 
 function( FOClassicExtensionInit engine_root_dir )
 
-	if( "${engine_root_dir}" MATCHES "(.+)[/]+" )
+	if( "${engine_root_dir}" MATCHES "(.+)[/]+$" )
 		set( engine_root_dir "${CMAKE_MATCH_1}" )
 	endif()
 
