@@ -4,6 +4,7 @@
 
 #include "App.h"
 #include "DynamicLibrary.h"
+#include "Extension.h"
 #include "Log.h"
 #include "ScriptPragmas.h"
 #include "Text.h"
@@ -345,19 +346,43 @@ public:
             return;
         }
 
-        void* dll = Script::LoadDynamicLibrary( dll_name.c_str() );
-        if( !dll )
-        {
-            WriteLog( "Error in 'bindfunc' pragma<%s>, dll not found, error<%s>.\n", text.c_str(), DLL_Error() );
-            return;
-        }
+        size_t func = 0;
 
-        // Find function
-        size_t* func = DLL_GetAddress( dll, func_dll_name.c_str() );
-        if( !func )
+        if( !Str::Substring( dll_name.c_str(), ".dll" ) )
         {
-            WriteLog( "Error in 'bindfunc' pragma<%s>, function not found, error<%s>.\n", text.c_str(), DLL_Error() );
-            return;
+            if( Str::Substring( dll_name.c_str(), ".extension" ) )
+                dll_name.resize( dll_name.size() - 10 );
+
+            auto extension = Extension::Map.find( dll_name );
+            if( extension == Extension::Map.end() )
+            {
+                WriteLog( "Error in 'bindfunc' pragma<%s>, extensions<%s> not found\n", text.c_str(), dll_name.c_str() );
+                return;
+            }
+
+            func = extension->second->GetFunctionAddress( func_dll_name );
+            if( !func )
+            {
+                WriteLog( "Error in 'bindfunc' pragma<%s>, function not found\n", text.c_str() );
+                return;
+            }
+        }
+        else
+        {
+            void* dll = Script::LoadDynamicLibrary( dll_name.c_str() );
+            if( !dll )
+            {
+                WriteLog( "Error in 'bindfunc' pragma<%s>, dll not found, error<%s>.\n", text.c_str(), DLL_Error() );
+                return;
+            }
+
+            // Find function
+            func = (size_t)DLL_GetAddress( dll, func_dll_name.c_str() );
+            if( !func )
+            {
+                WriteLog( "Error in 'bindfunc' pragma<%s>, function not found, error<%s>.\n", text.c_str(), DLL_Error() );
+                return;
+            }
         }
 
         int result = 0;

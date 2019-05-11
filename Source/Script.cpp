@@ -13,6 +13,7 @@
 #include "ConfigFile.h" // LogicMT
 #include "DynamicLibrary.h"
 #include "Exception.h"
+#include "Extension.h"
 #include "FileManager.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
@@ -2016,8 +2017,9 @@ int Script::Bind( const string& func_name, const ReservedFunction& bind_func, bo
     // wrapper
 
     string module_name = bind_func.Target;
+
     if( bind_func.Type == RESERVED_FUNCTION_EXTENSION )
-        module_name += ".dll";
+        module_name += ".extension";
 
     return Bind( module_name.c_str(), func_name.c_str(), bind_func.FuncDecl.c_str(), is_temp, disable_log );
 }
@@ -2028,8 +2030,8 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
     SCOPE_LOCK( BindedFunctionsLocker );
     #endif
 
-    // Detect native dll
-    if( !Str::Substring( module_name, ".dll" ) )
+    // Detect extension/native dll
+    if( !Str::Substring( module_name, ".extension" ) && !Str::Substring( module_name, ".dll" ) )
     {
         // Find module
         asIScriptModule* module = Engine->GetModule( module_name, asGM_ONLY_IF_EXISTS );
@@ -2076,22 +2078,50 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
     }
     else
     {
-        // Load dynamic library
-        void* dll = LoadDynamicLibrary( module_name );
-        if( !dll )
-        {
-            if( !disable_log )
-                WriteLogF( _FUNC_, " - Extensions<%s> not found in scripts folder, error<%s>.\n", module_name, DLL_Error() );
-            return 0;
-        }
+        size_t func = 0;
 
-        // Load function
-        size_t func = (size_t)DLL_GetAddress( dll, func_name );
-        if( !func )
+        if( Str::Substring( module_name, ".extension" ) )
         {
-            if( !disable_log )
-                WriteLogF( _FUNC_, " - Function<%s> in extension<%s> not found, error<%s>.\n", func_name, module_name, DLL_Error() );
-            return 0;
+            string extension_name = module_name;
+            extension_name.resize( extension_name.size() - 10 ); // ...
+
+            auto extension = Extension::Map.find( extension_name );
+            if( extension == Extension::Map.end() )
+            {
+                if( !disable_log )
+                    WriteLogF( _FUNC_, " - Extension<%s> not found\n", extension_name.c_str() );
+
+                return 0;
+            }
+
+            func = extension->second->GetFunctionAddress( string( func_name ) );
+            if( !func )
+            {
+                if( !disable_log )
+                    WriteLogF( _FUNC_, " - Function<%s> in extension<%s> not found\n", func_name, extension_name.c_str() );
+
+                return 0;
+            }
+        }
+        else
+        {
+            // Load dynamic library
+            void* dll = LoadDynamicLibrary( module_name );
+            if( !dll )
+            {
+                if( !disable_log )
+                    WriteLogF( _FUNC_, " - DynamicLibary<%s> not found in scripts folder, error<%s>.\n", module_name, DLL_Error() );
+                return 0;
+            }
+
+            // Load function
+            func = (size_t)DLL_GetAddress( dll, func_name );
+            if( !func )
+            {
+                if( !disable_log )
+                    WriteLogF( _FUNC_, " - Function<%s> in DynamicLibrary<%s> not found, error<%s>.\n", func_name, module_name, DLL_Error() );
+                return 0;
+            }
         }
 
         // Save to temporary bind
@@ -2556,7 +2586,7 @@ void Script::SetArgAddress( void* value )
     CurrentArg++;
 }
 
-// Taked from AS sources
+// Taken from AS sources
 #if defined (FO_MSVC)
 uint64 CallCDeclFunction32( const size_t* args, size_t paramSize, size_t func )
 #else

@@ -11,6 +11,7 @@
 #include "ConfigFile.h"
 #include "Client.h"
 #include "Exception.h"
+#include "Extension.h"
 #include "GameOptions.h"
 #include "Ini.h"
 #include "Keyboard.h"
@@ -67,6 +68,9 @@ int main( int argc, char** argv )
     #ifndef FO_WINDOWS
     signal( SIGPIPE, SIG_IGN );
     #endif
+
+    // Extensions
+    Extension::Init();
 
     // Singleplayer mode initialization
     #ifdef FO_WINDOWS
@@ -148,7 +152,6 @@ int main( int argc, char** argv )
     // Create window
     MainWindow = new FOWindow();
 
-
     // Create engine
     FOEngine = new FOClient();
     if( !FOEngine || !FOEngine->Init() )
@@ -168,6 +171,8 @@ int main( int argc, char** argv )
 
     if( Script::PrepareContext( ClientFunctions.Finish, _FUNC_, "Game" ) )
         Script::RunPrepared();
+
+    Extension::Finish();
 
     // Destroy engine
     FOEngine->Finish();

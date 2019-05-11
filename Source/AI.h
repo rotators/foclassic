@@ -2,6 +2,7 @@
 #define __AI__
 
 #include "Debugger.h"
+#include "Defines.h"
 #include "Types.h"
 
 #define BAGS_FILE_NAME           "Bags.cfg"

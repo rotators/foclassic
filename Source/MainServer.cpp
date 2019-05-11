@@ -7,6 +7,7 @@
 #include "CommandLine.h"
 #include "ConfigFile.h"
 #include "Exception.h"
+#include "Extension.h"
 #include "FlexRect.h"
 #include "Ini.h"
 #include "ItemManager.h"
@@ -230,6 +231,9 @@ int main( int argc, char** argv )
             WriteLog( "Command line<%s>.\n", cmdline.c_str() );
     }
 
+    // Extensions
+    Extension::Init();
+
     // Autostart
     if( Singleplayer || CommandLine->IsOption( "Start" ) )
     {
@@ -272,6 +276,7 @@ int main( int argc, char** argv )
     }
 
     // Finish
+    Extension::Finish();
     Timer::Finish();
     delete CommandLine;
     UnloadConfigFile();

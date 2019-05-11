@@ -43,9 +43,23 @@ function( FOClassicExtensionInit engine_root_dir )
 			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript )
 			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/AngelScript/Addons )
 
+			target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Libs/angelscript-preprocessor )
+
+			if( "${type}" MATCHES "^(Client|Mapper)$" )
+				target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Libs/assimp )
+				target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Libs/glew )
+			elseif( "${type}" MATCHES "^Server$")
+				target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Libs/zlib )
+			endif()
+
 			string( TOUPPER ${type} uctype )
 			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_ENGINE )
 			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_${uctype} )
+
+			if( MSVC )
+				target_compile_definitions( Extension${type} INTERFACE WIN32_LEAN_AND_MEAN )
+				target_compile_options( Extension${type} INTERFACE "/MT" )
+			endif()
 		endif()
 
 		if( NOT TARGET ExtensionList${type} )
@@ -156,3 +170,24 @@ function( FOClassicExtensionAdd type target )
 	cmake_policy( POP )
 
 endfunction()
+
+#[[
+
+function( Example_IterateAllExtensions )
+
+	foreach( type IN ITEMS Client Mapper Server )
+		get_property( extensions TARGET ExtensionList${type} PROPERTY INTERFACE_LINK_LIBRARIES )
+		foreach( extension IN LISTS extensions )
+			if( "${extension}" MATCHES "^(.+)::@<.+>$" )
+				set( extension "${CMAKE_MATCH_1}" )
+			endif()
+
+			# at this point, 'extension' variable holds a real name of extension target
+			Example_SomeFunction( ${extension} )
+
+		endforeach()
+	endforeach()
+
+endfunction()
+
+]]

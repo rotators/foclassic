@@ -151,6 +151,8 @@ set( CLIENT_MAPPER_SERVER_SOURCES
 	ConstantsManager.h
 	CritterType.cpp
 	CritterType.h
+	Extension.cpp
+	Extension.h
 	IniParser.cpp
 	IniParser.h
 	LineTracer.h
@@ -361,6 +363,8 @@ target_sources( ASCompiler
 	PRIVATE
 		App.cpp
 		ASCompiler.h
+		Extension.cpp
+		Extension.h
 		IniParser.cpp
 		IniParser.h
 		Log.cpp
