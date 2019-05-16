@@ -164,7 +164,8 @@ public:
 
     void        SyncLockItems();
     bool        SetDefaultItems( ProtoItem* proto_hand, ProtoItem* proto_armor );
-    Item*       GetDefaultItemSlotMain() { return defItemSlotHand; }
+    Item*       GetDefaultItemSlotMain()  { return defItemSlotHand; }
+    Item*       GetDefaultItemSlotArmor() { return defItemSlotArmor; }
     void        AddItem( Item*& item, bool send );
     void        SetItem( Item* item );
     void        EraseItem( Item* item, bool send );

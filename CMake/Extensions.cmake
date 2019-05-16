@@ -52,6 +52,10 @@ function( FOClassicExtensionInit engine_root_dir )
 				target_include_directories( Extension${type} INTERFACE ${engine_root_dir}/Source/Libs/zlib )
 			endif()
 
+			if( NOT "${FOCLASSIC_INCLUDE_DIR}" STREQUAL "" )
+				target_include_directories( Extension${type} INTERFACE "${FOCLASSIC_INCLUDE_DIR}" )
+			endif()
+
 			string( TOUPPER ${type} uctype )
 			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_ENGINE )
 			target_compile_definitions( Extension${type} INTERFACE FOCLASSIC_${uctype} )
