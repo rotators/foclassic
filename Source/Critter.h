@@ -392,8 +392,9 @@ public:
     void SendMessage( int num, int val, int to );
     int  GetLook();
     uint GetTalkDistance( Critter* talker );
-    uint GetAttackDist( Item* weap, int use );
+    uint GetAttackDist( Item* weap, uint8 use );
     uint GetUseDist();
+    uint GetUseApCost( Item* item, uint8 use );
     uint GetMultihex();
     bool IsLife()     { return Data.Cond == CRITTER_CONDITION_LIFE; }
     bool IsDead()     { return Data.Cond == CRITTER_CONDITION_DEAD; }

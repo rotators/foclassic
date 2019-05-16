@@ -316,8 +316,6 @@ GameOptions::GameOptions()
     SetLogCallback = &LogToFunc;
 
     // Callbacks
-    GetUseApCost = NULL;
-    GetAttackDistantion = NULL;
     GetRainOffset = NULL;
 }
 

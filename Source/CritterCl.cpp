@@ -541,7 +541,19 @@ uint CritterCl::GetAttackDist()
     Item* weap = GetSlotUse( SLOT_HAND1, use );
     if( !weap->IsWeapon() )
         return 0;
-    return GameOpt.GetAttackDistantion ? GameOpt.GetAttackDistantion( this, weap, use ) : 1;
+
+    #ifdef FOCLASSIC_CLIENT
+    if( Script::PrepareContext( ClientFunctions.CritterAttackDistance, _FUNC_, GetInfo() ) )
+    {
+        Script::SetArgObject( this );
+        Script::SetArgObject( weap );
+        Script::SetArgUChar( use );
+        if( Script::RunPrepared() )
+            return Script::GetReturnedUInt();
+    }
+    #endif
+
+    return 0;
 }
 
 uint CritterCl::GetUseDist()
@@ -860,7 +872,18 @@ void CritterCl::SetAim( uint8 hit_location )
 
 uint CritterCl::GetUseApCost( Item* item, uint8 rate )
 {
-    return GameOpt.GetUseApCost ? GameOpt.GetUseApCost( this, item, rate ) : 1;
+    #ifdef FOCLASSIC_CLIENT
+    if( Script::PrepareContext( ClientFunctions.CritterUseItemApCost, _FUNC_, GetInfo() ) )
+    {
+        Script::SetArgObject( this );
+        Script::SetArgObject( item );
+        Script::SetArgUChar( rate );
+        if( Script::RunPrepared() )
+            return Script::GetReturnedUInt();
+    }
+    #endif
+
+    return 1;
 }
 
 ProtoItem* CritterCl::GetUnarmedItem( uint8 tree, uint8 priority )

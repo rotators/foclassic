@@ -8,6 +8,7 @@ using namespace std;
 
 bool                              Extension::Initialized = false;
 unordered_map<string, Extension*> Extension::Map;
+bool                              Extension::RunEventDebug = false;
 
 #if defined (FOCLASSIC_CLIENT) && FOCLASSIC_EXTENSIONS_CLIENT > 0
 extern void InitExtensionsClient();
@@ -32,12 +33,16 @@ void Extension::Init()
     #elif defined (FOCLASSIC_SERVER) && FOCLASSIC_EXTENSIONS_SERVER > 0
     InitExtensionsServer();
     #endif
+
+    RunEvent( ExtensionEvent::INIT );
 }
 
 void Extension::Finish()
 {
     if( !Initialized )
         return;
+
+    RunEvent( ExtensionEvent::FINISH );
 
     #if defined (FOCLASSIC_CLIENT) && FOCLASSIC_EXTENSIONS_CLIENT > 0
     FinishExtensionsClient();
@@ -48,6 +53,17 @@ void Extension::Finish()
     #endif
 
     Map.clear();
+}
+
+void Extension::RunEvent( const uint& id )
+{
+    if( RunEventDebug )
+        WriteLogF( _FUNC_, "<%u>\n", id );
+
+    for( auto it = Extension::Map.begin(), end = Extension::Map.end(); it != end; ++it )
+    {
+        it->second->Event( id );
+    }
 }
 
 //
@@ -69,3 +85,6 @@ size_t Extension::GetFunctionAddress( const string& name )
 {
     return 0;
 }
+
+void Extension::Event( const uint& id )
+{}

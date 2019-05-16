@@ -64,6 +64,8 @@ struct ClientScriptFunctions
     int PerkCheck;
     int PlayerGeneration;
     int PlayerGenerationCheck;
+    int CritterAttackDistance;
+    int CritterUseItemApCost;
     int CritterAction;
     int Animation2dProcess;
     int Animation3dProcess;
@@ -118,10 +120,12 @@ struct ServerScriptFunctions
     int Loop;
     int GlobalProcess;
     int GlobalInvite;
+    int CritterAttackDistance;
     int CritterAttack;
     int CritterAttacked;
     int CritterStealing;
     int CritterUseItem;
+    int CritterUseItemApCost;
     int CritterUseSkill;
     int CritterReloadWeapon;
     int CritterInit;

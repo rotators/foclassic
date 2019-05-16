@@ -42,6 +42,8 @@ ReservedFunctionsMap GetClientFunctionsMap()
     client["check_perk"] = ReservedFunction( &ClientFunctions.PerkCheck, "bool %s( CritterCl& chosen, uint perk )" );
     client["player_data_generate"] = ReservedFunction( &ClientFunctions.PlayerGeneration, "void %s( int[]& data )" );
     client["player_data_check"] = ReservedFunction( &ClientFunctions.PlayerGenerationCheck, "bool %s( string& name, int[]& data )" );
+    client["critter_attack_distance"] = ReservedFunction( &ClientFunctions.CritterAttackDistance, "uint %s( CritterCl& cr, ItemCl& weapon, uint8 use )" );
+    client["critter_use_item_ap_cost"] = ReservedFunction( &ClientFunctions.CritterUseItemApCost, "uint %s( CritterCl& cr, ItemCl& item, uint8 use )" );
     client["critter_action"] = ReservedFunction( &ClientFunctions.CritterAction, "void %s( bool localCall, CritterCl& cr, int action, int actionExt, ItemCl@ item )" );
     client["animation2d_process"] = ReservedFunction( &ClientFunctions.Animation2dProcess, "void %s( bool animateStay, CritterCl& cr, uint anim1, uint anim2, ItemCl@ item )" );
     client["animation3d_process"] = ReservedFunction( &ClientFunctions.Animation3dProcess, "void %s( bool animateStay, CritterCl& cr, uint anim1, uint anim2, ItemCl@ item )" );
@@ -102,10 +104,12 @@ ReservedFunctionsMap GetServerFunctionsMap()
     server["loop"] = ReservedFunction( &ServerFunctions.Loop, "uint %s()" );
     server["global_process"] = ReservedFunction( &ServerFunctions.GlobalProcess, "void %s( int processType, Critter& cr, Item@ car, float& curX, float& curY, float& toX, float& toY, float& speed, uint& encounterDescriptor, bool& waitForAnswer )" );
     server["global_invite"] = ReservedFunction( &ServerFunctions.GlobalInvite, "void %s( Critter& crLeader, Item@ car, uint encounterDescriptor, int combatMode, uint& mapId, uint16& hexX, uint16& hexY, uint8& dir )" );
+    server["critter_attack_distance"] = ReservedFunction( &ServerFunctions.CritterAttackDistance, "uint %s( Critter& cr, Item& weapon, uint8 use )" );
     server["critter_attack"] = ReservedFunction( &ServerFunctions.CritterAttack, "void %s( Critter& cr, Critter& crTarget, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo )" );
     server["critter_attacked"] = ReservedFunction( &ServerFunctions.CritterAttacked, "void %s( Critter& cr, Critter& crAttacker )" );
     server["critter_stealing"] = ReservedFunction( &ServerFunctions.CritterStealing, "bool %s( Critter& cr, Critter& crThief, Item& item, uint count )" );
     server["critter_use_item"] = ReservedFunction( &ServerFunctions.CritterUseItem, "bool %s( Critter& cr, Item& item, Critter@ crTarget, Item@ itemTarget, Scenery@ scenTarget, uint param )" );
+    server["critter_use_item_ap_cost"] = ReservedFunction( &ServerFunctions.CritterUseItemApCost, "uint %s( Critter& cr, Item& item, uint8 use )" );
     server["critter_use_skill"] = ReservedFunction( &ServerFunctions.CritterUseSkill, "bool %s( Critter& cr, int skill, Critter@ crTarget, Item@ itemTarget, Scenery@ scenTarget ) " );
     server["critter_reload_weapon"] = ReservedFunction( &ServerFunctions.CritterReloadWeapon, "void %s( Critter& cr, Item& weapon, Item@ ammo )" );
     server["critter_init"] = ReservedFunction( &ServerFunctions.CritterInit, "void %s( Critter& cr, bool firstTime )" );

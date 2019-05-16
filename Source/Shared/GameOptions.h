@@ -306,9 +306,9 @@ struct GameOptions
     void         ( * SetLogCallback )( void (*)( const char* str ), bool );
 
     // Callbacks
-    uint         ( * GetUseApCost )( void*, void*, uint8 );
-    uint         ( * GetAttackDistantion )( void*, void*, uint8 );
-    void         ( * GetRainOffset )( short*, short* );
+    // uint         ( * GetUseApCost )( void*, void*, uint8 );
+    // uint         ( * GetAttackDistantion )( void*, void*, uint8 );
+    void ( * GetRainOffset )( short*, short* );
 
     GameOptions();
 };

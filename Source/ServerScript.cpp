@@ -10,6 +10,7 @@
 #include "Critter.h"
 #include "CritterType.h"
 #include "Debugger.h"
+#include "Extension.h"
 #include "FileSystem.h"
 #include "Ini.h"
 #include "ItemManager.h"
@@ -102,6 +103,8 @@ bool FOServer::InitScriptSystem()
 {
     bool success = true;
 
+    Extension::RunEvent( ExtensionEvent::SCRIPT_INIT );
+
     WriteLog( "Script system initialization...\n" );
 
     // Memory debugging
@@ -172,6 +175,8 @@ bool FOServer::InitScriptSystem()
     Script::DefineVersion();
     Script::Define( "__SERVER" );
 
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MODULES_START );
+
     // Load script modules
     if( !Script::ReloadScripts( SECTION_SERVER_SCRIPTS_MODULES, "server", false ) )
     {
@@ -198,6 +203,9 @@ bool FOServer::InitScriptSystem()
 
         return false;
     }
+
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MODULES_END );
+
     ASDbgMemoryCanWork = true;
     WriteLog( "Script system initialization... complete.\n" );
     return true;
