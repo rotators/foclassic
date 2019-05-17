@@ -64,6 +64,10 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
         - `Build` reports time consumed by creating and building script module only
         - `Compile` reports total time consumed to create module from source; that includes `Preprocess` and `Build` reports, as well as additional steps required to prepare/validate script; `Compile` report is used when `Time` option is not present (old bahavior)
         - in batch mode, summary of reports mentioned above is displayed (plus some extra info) after all scripts has been processed
+- reserved functions
+    - [Client, Server] added `uint critter_attack_distance( Critter& cr, Item& weapon, uint8 use );` as replacement for native callback
+    - [Client, Server] added `uint critter_use_item_ap_cost( CritterCl& cr, ItemCl& item, uint8 use );` as replacement for native callback
+
 
 Example of scripts configuration
 ```ini
@@ -86,7 +90,7 @@ start  = client/run
 finish = client/run
 ```
 
-Example of using reserved function with dynamic library (previously: `@ server bind check_look CheckLook.dll`)
+Example of using reserved function from extension (previously: `@ server bind check_look CheckLook.dll`)
 ```ini
 [Server binds]
 check_look = CheckLook extension
