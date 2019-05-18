@@ -51,7 +51,7 @@ install:
  - sh: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
  - sh: sudo apt-get update
  - sh: sudo apt-get install -y gcc-multilib g++-multilib
- - sh: sudo apt-get install -y libx11-dev:${arch} libxft-dev:${arch} libxi-dev:${arch} libxinerama-dev:${arch} libgl1-mesa-dri:${arch} libgl1-mesa-glx:${arch} libgl1-mesa-dev:${arch} libglu1-mesa:${arch} libglu1-mesa-dev:${arch} freeglut3:${arch} freeglut3-dev:${arch} libfreetype6-dev:${arch} libfontconfig-dev:${arch} libpng-dev:${arch}
+ - sh: sudo apt-get install -y -f libx11-dev:${arch} libxft-dev:${arch} libxi-dev:${arch} libxinerama-dev:${arch} libllvm6.0:${arch} libgl1-mesa-dri:${arch} libgl1-mesa-glx:${arch} libgl1-mesa-dev:${arch} libglu1-mesa:${arch} libglu1-mesa-dev:${arch} freeglut3:${arch} freeglut3-dev:${arch} libfreetype6-dev:${arch} libfontconfig-dev:${arch} libpng-dev:${arch}
  - sh: PATH=SDK.Cache/cmake/bin:$PATH
  - cmd: set PATH=SDK.Cache\cmake\bin;%PATH%
  - cmake -DO=Build.cmake -DOWNLOAD_DIR=SDK.Cache -P CMake/SelfUpdate/SelfUpdate.cmake
