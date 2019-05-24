@@ -659,9 +659,18 @@ bool Script::ReloadScripts( const string& section_modules, const char* app, bool
     return errors == 0;
 }
 
-bool Script::BindReservedFunctions( const string& section_binds, const char* app, ReservedFunctionsMap& bind_map, bool use_temp /* = false */ )
+bool Script::BindReservedFunctions( const string& section_binds, const uint8& app, ReservedFunctionsMap& bind_map, bool use_temp /* = false */ )
 {
-    WriteLog( "Bind reserved %s functions...\n", app );
+    if( (App.Type <= APP_TYPE_MAPPER && App.Type != app) || (App.Type == APP_TYPE_SERVER && app > APP_TYPE_SERVER) )
+    {
+        WriteLogF( _FUNC_, " INTERNAL ERROR: invalid application<%u>\n", app );
+        return false;
+    }
+
+    string appName = App.TypeToName( app );
+    transform( appName.begin(), appName.end(), appName.begin(), ::tolower );
+
+    WriteLog( "Bind reserved %s functions...\n", appName.c_str() );
 
     int errors = 0;
 
@@ -670,7 +679,7 @@ bool Script::BindReservedFunctions( const string& section_binds, const char* app
 
     if( bind_map.find( "all" ) != bind_map.end() )
     {
-        WriteLog( "Bind reserved %s functions... INTERNAL ERROR: bind_map[\"all\"] found\n", app );
+        WriteLog( "Bind reserved %s functions... INTERNAL ERROR: bind_map[\"all\"] found\n", appName.c_str() );
         return false;
     }
 
@@ -749,19 +758,19 @@ bool Script::BindReservedFunctions( const string& section_binds, const char* app
 
         if( bind_func.Target.empty() )
         {
-            WriteLog( "Bind %s function %s -> ERROR: missing entry\n", app, it->first.c_str() );
+            WriteLog( "Bind %s function %s -> ERROR: missing entry\n", appName.c_str(), it->first.c_str() );
             errors++;
         }
         else if( bind_func.Type == RESERVED_FUNCTION_UNKNOWN )
         {
-            WriteLog( "Bind %s function %s -> ERROR: unknown type<%u>\n", app, it->first.c_str(), bind_func.Type );
+            WriteLog( "Bind %s function %s -> ERROR: unknown type<%u>\n", appName.c_str(), it->first.c_str(), bind_func.Type );
             errors++;
         }
     }
 
     if( errors )
     {
-        WriteLog( "Bind reserved %s functions... failed\n", app );
+        WriteLog( "Bind reserved %s functions... failed\n", appName.c_str() );
         return false;
     }
 
@@ -774,18 +783,30 @@ bool Script::BindReservedFunctions( const string& section_binds, const char* app
         ReservedFunction& bind_func = it->second;
         int               bind_id = 0;
 
+        bool              skip = false;
+
         #if defined (FOCLASSIC_SERVER)
         if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-            WriteLog( "Bind %s function %s -> %s -> ", app, bind_name.c_str(), bind_func.Target.c_str() );
+            WriteLog( "Bind %s function %s -> %s -> ", appName.c_str(), bind_name.c_str(), bind_func.Target.c_str() );
+
+        // skip validation of reserved functions using extensions in external apps
+        if( app != APP_TYPE_SERVER && bind_func.Type == RESERVED_FUNCTION_EXTENSION )
+            skip = true;
         #endif
 
-        bind_id = Bind( bind_name, bind_func, use_temp );
+        if( !skip )
+            bind_id = Bind( bind_name, bind_func, use_temp );
 
-        if( bind_id > 0 )
+        if( skip || (!skip && bind_id > 0) )
         {
             #if defined (FOCLASSIC_SERVER)
             if( ConfigFile->GetBool( SECTION_SERVER, "VerboseInit", false ) )
-                WriteLogX( "OK [%d]\n", bind_id );
+            {
+                if( skip )
+                    WriteLogX( "SKIP\n" );
+                else
+                    WriteLogX( "OK [%d]\n", bind_id );
+            }
             #endif
 
             *(bind_func.BindId) = bind_id;
@@ -797,12 +818,12 @@ bool Script::BindReservedFunctions( const string& section_binds, const char* app
                 WriteLogX( "ERROR\n" );
             #endif
 
-            WriteLog( "Bind reserved %s function fail, name<%s>.\n", app, bind_name.c_str() );
+            WriteLog( "Bind reserved %s function fail, name<%s>.\n", appName.c_str(), bind_name.c_str() );
             errors++;
         }
     }
 
-    WriteLog( "Bind reserved %s functions... %s\n", app, errors == 0 ? "complete" : "failed" );
+    WriteLog( "Bind reserved %s functions... %s\n", appName.c_str(), errors == 0 ? "complete" : "failed" );
     return errors == 0;
 }
 

@@ -67,7 +67,9 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - reserved functions
     - [Client, Server] added `uint critter_attack_distance( Critter& cr, Item& weapon, uint8 use );` as replacement for native callback
     - [Client, Server] added `uint critter_use_item_ap_cost( CritterCl& cr, ItemCl& item, uint8 use );` as replacement for native callback
-
+    - during Server-side compilation of Client/Mapper scripts, reserved functions using extensions are not validated
+- scripts
+    - during Server-side compilation of Client/Mapper scripts, `#pragma bindfunc` entries are not validated
 
 Example of scripts configuration
 ```ini

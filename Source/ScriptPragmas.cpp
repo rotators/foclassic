@@ -324,7 +324,7 @@ public:
 class BindFuncPragma
 {
 public:
-    void Call( const string& text )
+    void Call( const uint8& app, const string& text )
     {
         asIScriptEngine* engine = Script::GetEngine();
         string           func_name, dll_name, func_dll_name;
@@ -353,18 +353,22 @@ public:
             if( Str::Substring( dll_name.c_str(), ".extension" ) )
                 dll_name.resize( dll_name.size() - 10 );
 
-            auto extension = Extension::Map.find( dll_name );
-            if( extension == Extension::Map.end() )
+            // skip validation when processing external scripts
+            if( app == App.Type )
             {
-                WriteLog( "Error in 'bindfunc' pragma<%s>, extensions<%s> not found\n", text.c_str(), dll_name.c_str() );
-                return;
-            }
+                auto extension = Extension::Map.find( dll_name );
+                if( extension == Extension::Map.end() )
+                {
+                    WriteLog( "Error in 'bindfunc' pragma<%s>, extensions<%s> not found\n", text.c_str(), dll_name.c_str() );
+                    return;
+                }
 
-            func = extension->second->GetFunctionAddress( func_dll_name );
-            if( !func )
-            {
-                WriteLog( "Error in 'bindfunc' pragma<%s>, function not found\n", text.c_str() );
-                return;
+                func = extension->second->GetFunctionAddress( func_dll_name );
+                if( !func )
+                {
+                    WriteLog( "Error in 'bindfunc' pragma<%s>, function not found\n", text.c_str() );
+                    return;
+                }
             }
         }
         else
@@ -587,7 +591,7 @@ void ScriptPragmaCallback::CallPragma( const string& name, const Preprocessor::P
     else if( name == "crdata" && crDataPragma )
         crDataPragma->Call( instance.Text );
     else if( name == "bindfunc" && bindFuncPragma )
-        bindFuncPragma->Call( instance.Text );
+        bindFuncPragma->Call( appType, instance.Text );
     else if( name == "bindfield" && bindFieldPragma )
         bindFieldPragma->Call( instance.Text );
     else

@@ -8,6 +8,7 @@
 #include "ConstantsManager.h"
 #include "CritterManager.h"
 #include "CritterType.h"
+#include "Extension.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h"
@@ -5313,11 +5314,16 @@ void FOMapper::InitScriptSystem()
         Script::Undef( NULL );
         Script::DefineVersion();
         Script::Define( "__MAPPER" );
+
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MAPPER_MODULES_START );
+
         Script::ReloadScripts( SECTION_MAPPER_SCRIPTS_MODULES, "mapper", false, "MAPPER_" );
 
         // Bind game functions
         ReservedFunctionsMap reserved_functions = GetMapperFunctionsMap();
-        Script::BindReservedFunctions( SECTION_MAPPER_SCRIPTS_BINDS, "mapper", reserved_functions );
+        Script::BindReservedFunctions( SECTION_MAPPER_SCRIPTS_BINDS, App.Type, reserved_functions );
+
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MAPPER_MODULES_END );
 
         WriteLog( "Script system initialization complete.\n" );
     }

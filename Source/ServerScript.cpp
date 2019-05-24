@@ -175,7 +175,7 @@ bool FOServer::InitScriptSystem()
     Script::DefineVersion();
     Script::Define( "__SERVER" );
 
-    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MODULES_START );
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_SERVER_MODULES_START );
 
     // Load script modules
     if( !Script::ReloadScripts( SECTION_SERVER_SCRIPTS_MODULES, "server", false ) )
@@ -187,7 +187,7 @@ bool FOServer::InitScriptSystem()
 
     // Bind game functions
     ReservedFunctionsMap reserved_functions = GetServerFunctionsMap();
-    if( !Script::BindReservedFunctions( SECTION_SERVER_SCRIPTS_BINDS, "server", reserved_functions ) )
+    if( !Script::BindReservedFunctions( SECTION_SERVER_SCRIPTS_BINDS, App.Type, reserved_functions ) )
     {
         Script::Finish();
         WriteLog( "Bind game functions fail.\n" );
@@ -204,7 +204,7 @@ bool FOServer::InitScriptSystem()
         return false;
     }
 
-    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MODULES_END );
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_SERVER_MODULES_END );
 
     ASDbgMemoryCanWork = true;
     WriteLog( "Script system initialization... complete.\n" );
@@ -268,9 +268,9 @@ int FOServer::DialogGetParam( Critter* master, Critter* slave, uint index )
 
 bool FOServer::ReloadExternalScripts( const uint8& app )
 {
-    if( app != APP_TYPE_CLIENT && app != APP_TYPE_MAPPER )
+    if( app > APP_TYPE_MAPPER )
     {
-        WriteLogF( _FUNC_, "Invalid application type<%u>\n", app );
+        WriteLogF( _FUNC_, " INTERNAL ERROR: Invalid application type<%u>\n", app );
         return false;
     }
 
@@ -346,6 +346,11 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
     StrVec empty;
     Script::SetWrongGlobalObjects( empty );
     Script::SetLoadLibraryCompiler( true );
+
+    if( app == APP_TYPE_CLIENT )
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_CLIENT_MODULES_START );
+    else if( app == APP_TYPE_MAPPER )
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MAPPER_MODULES_START );
 
     int    num = STR_INTERNAL_SCRIPT_MODULES;
     StrVec modules, pragmas;
@@ -489,7 +494,7 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
         }
     }
 
-    success = Script::BindReservedFunctions( section_binds, app_name_lower.c_str(), reserved_functions, true );
+    success = Script::BindReservedFunctions( section_binds, app, reserved_functions, true );
 
     // Finish
     ReloadExternalScriptsCleanup( server_engine, target_engine, app_define );
@@ -500,6 +505,11 @@ bool FOServer::ReloadExternalScripts( const uint8& app )
 
         return false;
     }
+
+    if( app == APP_TYPE_CLIENT )
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_CLIENT_MODULES_END );
+    else if( app == APP_TYPE_MAPPER )
+        Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_MAPPER_MODULES_END );
 
     if( app == APP_TYPE_CLIENT )
     {

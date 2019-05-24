@@ -14,6 +14,7 @@
 #include "Crypt.h"
 #include "Defence.h"
 #include "Exception.h"
+#include "Extension.h"
 #include "FileSystem.h"
 #include "GameOptions.h"
 #include "GraphicLoader.h" // CHECK_MULTIPLY_WINDOWS
@@ -9813,6 +9814,8 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
         }
     }
 
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_CLIENT_MODULES_START );
+
     // Pragmas
     StrVec pragmas;
     for( int i = STR_INTERNAL_SCRIPT_PRAGMAS; ; i += 2 )
@@ -9872,7 +9875,7 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     // Bind reserved functions
     ReservedFunctionsMap reserved_functions = GetClientFunctionsMap();
-    if( !Script::BindReservedFunctions( SECTION_CLIENT_SCRIPTS_BINDS, "client", reserved_functions ) )
+    if( !Script::BindReservedFunctions( SECTION_CLIENT_SCRIPTS_BINDS, App.Type, reserved_functions ) )
         errors++;
 
     if( errors )
@@ -9882,6 +9885,8 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
     }
 
     AnimFree( RES_SCRIPT );
+
+    Extension::RunEvent( ExtensionEvent::SCRIPT_LOAD_CLIENT_MODULES_END );
 
     if( !Script::PrepareContext( ClientFunctions.Start, _FUNC_, "Game" ) || !Script::RunPrepared() || Script::GetReturnedBool() == false )
     {

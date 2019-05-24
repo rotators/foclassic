@@ -38,7 +38,7 @@ namespace Script
     void UnloadScripts();
     bool ReloadScripts( const std::string& section_modules, const char* app, bool skip_binaries, const char* file_pefix = NULL );
 
-    bool BindReservedFunctions( const std::string& section_binds, const char* app, ReservedFunctionsMap& bind_map, bool use_temp = false );
+    bool BindReservedFunctions( const std::string& section_binds, const uint8& app, ReservedFunctionsMap& bind_map, bool use_temp = false );
 
     #ifdef FOCLASSIC_SERVER
     namespace Profiler

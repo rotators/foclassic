@@ -2,7 +2,6 @@
 
 #include "Extension.h"
 #include "Log.h"
-#include "Script.h"
 
 using namespace std;
 

@@ -19,16 +19,38 @@ namespace ExtensionEvent
         // before initializing script system
         SCRIPT_INIT = 10,
 
-        // before loading script modules
+        // before loading Client script modules
+        // - script engine has been initialized and configured
+        // - script preprocessor has been configured
+        SCRIPT_LOAD_CLIENT_MODULES_START,
+
+        // after loading Client script modules
+        // - scripts has been loaded
+        // - reserved functions has been binded
+        // - scripts config has been parsed and is available via ConfigFile*
+        SCRIPT_LOAD_CLIENT_MODULES_END,
+
+        // before loading Mapper script modules
         // - script engine has been initialized and configured
         // - scripts config has been parsed and is available via ConfigFile*
         // - script preprocessor has been configured
-        SCRIPT_LOAD_MODULES_START,
+        SCRIPT_LOAD_MAPPER_MODULES_START,
 
-        // after loading script modules
+        // after loading Mapper script modules
         // - scripts has been loaded
         // - reserved functions has been binded
-        SCRIPT_LOAD_MODULES_END,
+        SCRIPT_LOAD_MAPPER_MODULES_END,
+
+        // before loading Server script modules
+        // - script engine has been initialized and configured
+        // - scripts config has been parsed and is available via ConfigFile*
+        // - script preprocessor has been configured
+        SCRIPT_LOAD_SERVER_MODULES_START,
+
+        // after loading Server script modules
+        // - scripts has been loaded
+        // - reserved functions has been binded
+        SCRIPT_LOAD_SERVER_MODULES_END,
     };
 };
 
@@ -61,6 +83,5 @@ public:
     virtual size_t GetFunctionAddress( const std::string& name );
     virtual void   Event( const uint& id );
 };
-
 
 #endif // __EXTENSION__ //
