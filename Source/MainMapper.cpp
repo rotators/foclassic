@@ -7,6 +7,7 @@
 #include "CommandLine.h"
 #include "ConfigFile.h"
 #include "Exception.h"
+#include "Extension.h"
 #include "GameOptions.h"
 #include "Ini.h"
 #include "Log.h"
@@ -61,6 +62,9 @@ int main( int argc, char** argv )
     // Timer
     Timer::Init();
 
+    // Extensions
+    Extension::Init();
+
     // Create window
     MainWindow = new FOWindow();
 
@@ -80,6 +84,8 @@ int main( int argc, char** argv )
 
     if( Script::PrepareContext( MapperFunctions.Finish, _FUNC_, "Game" ) )
         Script::RunPrepared();
+
+    Extension::Finish();
 
     // Destroy engine
     Mapper->Finish();

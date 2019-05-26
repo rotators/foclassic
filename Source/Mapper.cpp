@@ -5287,6 +5287,8 @@ bool FOMapper::SaveLogFile()
 
 void FOMapper::InitScriptSystem()
 {
+    Extension::RunEvent( ExtensionEvent::SCRIPT_INIT );
+
     WriteLog( "Script system initialization...\n" );
 
     // Init

@@ -9766,6 +9766,9 @@ bool FOClient::ReloadScripts( bool from_init /* = false */ )
 
     // Reinitialize engine
     Script::Finish();
+
+    Extension::RunEvent( ExtensionEvent::SCRIPT_INIT );
+
     if( !Script::Init( false, APP_TYPE_CLIENT ) )
     {
         WriteLog( "Unable to start script engine.\n" );
