@@ -319,6 +319,8 @@ public:
     }
 };
 
+// #pragma bindfunc "int MyMethod(int, uint) -> my MyLibFunc"
+// #pragma bindfunc "int MyMethod(int, uint) -> my.extension MyLibFunc"
 // #pragma bindfunc "int MyMethod(int, uint) -> my.dll MyDllFunc"
 // #pragma bindfunc "int MyObject::MyMethod(int, uint) -> my.dll MyDllFunc"
 class BindFuncPragma

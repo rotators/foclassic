@@ -715,6 +715,8 @@ bool Script::BindReservedFunctions( const string& section_binds, const uint8& ap
                 bind_type = RESERVED_FUNCTION_SCRIPT;
             else if( tmp == "extension" )
                 bind_type = RESERVED_FUNCTION_EXTENSION;
+            else if( tmp == "dynamic" )
+                bind_type = RESERVED_FUNCTION_DYNAMIC;
         }
 
         // Configure "all" bind; set single target for all not yet configured entries
@@ -2041,6 +2043,8 @@ int Script::Bind( const string& func_name, const ReservedFunction& bind_func, bo
 
     if( bind_func.Type == RESERVED_FUNCTION_EXTENSION )
         module_name += ".extension";
+    else if( bind_func.Type == RESERVED_FUNCTION_DYNAMIC )
+        module_name += ".dll";
 
     return Bind( module_name.c_str(), func_name.c_str(), bind_func.FuncDecl.c_str(), is_temp, disable_log );
 }
@@ -2124,9 +2128,8 @@ int Script::Bind( const char* module_name, const char* func_name, const char* de
                 return 0;
             }
         }
-        else
+        else // Load dynamic library
         {
-            // Load dynamic library
             void* dll = LoadDynamicLibrary( module_name );
             if( !dll )
             {

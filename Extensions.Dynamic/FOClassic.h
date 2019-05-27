@@ -581,8 +581,6 @@ struct GameOptions
     void                 (* SetLogCallback )( void (*function)( const char* ), bool enable );
 
     // Callbacks
-    uint                 (* GetUseApCost)( CritterMutual& cr, Item& item, uint8 mode );
-    uint                 (* GetAttackDistantion )( CritterMutual& cr, Item& item, uint8 mode );
     void                 (* GetRainOffset )( int16* ox, int16* oy );
 };
 

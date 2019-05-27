@@ -24,7 +24,8 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
         - `target` : name of script/extension which will handle reserved function; cannot contain whitespace(s)
         - `type` : defines how given bind will be handled
             - `script` : reserved function is handled by script function; default if `<type>` is not set
-            - `extension` : reserved function is handled by extension
+            - `extension` : reserved function is handled by static library
+            - `dynamic` : reserved function is handled by dynamic library
     - all configuration sections mentioned ignores empty entries
     - see bottom of changelog for examples
 - _dialogs.lst_ renamed to _dialogs.cfg_
@@ -67,9 +68,12 @@ Complete list of changes in FOClassic since [FOnline SDK r412](https://github.co
 - reserved functions
     - [Client, Server] added `uint critter_attack_distance( Critter& cr, Item& weapon, uint8 use );` as replacement for native callback
     - [Client, Server] added `uint critter_use_item_ap_cost( CritterCl& cr, ItemCl& item, uint8 use );` as replacement for native callback
-    - during Server-side compilation of Client/Mapper scripts, reserved functions using extensions are not validated
-- scripts
-    - during Server-side compilation of Client/Mapper scripts, `#pragma bindfunc` entries are not validated
+- extensions rework
+- extensions (static libraries)
+    - during Server-side compilation of Client/Mapper scripts, reserved functions using extensions and `#pragma bindfunc` entries pointing to static extensions are not validated
+- extensions (dynamic libraries)
+    - removed `FOClassic::GetAttackDistantion` callback, use reserved function `critter_attack_distance` instead
+    - removed `FOClassic::GetUseApCost` callback, use reserved function `critter_use_item_ap_cost` instead
 
 Example of scripts configuration
 ```ini
@@ -92,10 +96,16 @@ start  = client/run
 finish = client/run
 ```
 
-Example of using reserved function from extension (previously: `@ server bind check_look CheckLook.dll`)
+Example of using reserved function from extension
 ```ini
 [Server binds]
 check_look = CheckLook extension
+```
+
+Example of using reserved function from dynamic library (previously: `@ server bind check_look CheckLook.dll`)
+```ini
+[Server binds]
+check_look = CheckLook dynamic
 ```
 
 

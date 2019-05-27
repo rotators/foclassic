@@ -9,7 +9,8 @@ enum ReservedFunctionType : unsigned char
     RESERVED_FUNCTION_UNKNOWN = 0,
 
     RESERVED_FUNCTION_SCRIPT,
-    RESERVED_FUNCTION_EXTENSION
+    RESERVED_FUNCTION_EXTENSION,
+    RESERVED_FUNCTION_DYNAMIC
 };
 
 struct ReservedFunction
