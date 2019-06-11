@@ -10,6 +10,7 @@ version: "{build}"
 # VS 2013 image = VS 2010 build
 image:
  - Ubuntu
+ - Ubuntu1804
  - Visual Studio 2013
  - Visual Studio 2017
 

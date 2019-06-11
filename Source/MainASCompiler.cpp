@@ -356,7 +356,7 @@ int main( int argc, char** argv )
         StrVec keys;
         if( !config->GetSectionKeys( section_modules[AppType], keys, true ) )
         {
-            printf( "ERROR: No modules found; scripts configuration<%s>, target<%s>\n", filename.c_str(), App.TypeToName( AppType ) );
+            printf( "ERROR: No modules found; scripts configuration<%s>, target<%s>\n", filename.c_str(), App.TypeToName( AppType ).c_str() );
             delete config;
 
             return Exit( -1 );

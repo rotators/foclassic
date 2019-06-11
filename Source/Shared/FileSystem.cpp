@@ -386,7 +386,7 @@ void FileFindClose( void* descriptor )
 
 bool MakeDirectory( const char* path )
 {
-    mkdir( path, ALLPERMS ) == 0;
+    return mkdir( path, ALLPERMS ) == 0;
 }
 
 char* FixPathSlashes( char* path )
