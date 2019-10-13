@@ -50,8 +50,8 @@ jobs:
 
            elif [ "$RUNNER_OS" == "Windows" ]; then
 
-                echo ::group::Install VS2010 SDK
-                choco install vs2010sdk
+                echo ::group::Install VS2010
+                choco install vcexpress2010
                 # kb2519277
                 echo ::endgroup
 
