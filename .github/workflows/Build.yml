@@ -52,12 +52,11 @@ jobs:
 
                 echo ::group::Install VS2010
                 choco install vcexpress2010
-                # kb2519277
                 echo ::endgroup
 
            fi
 
-           echo ::group::Install required CMake version
+           echo ::group::Check installed CMake version
            echo ::add-path::$CACHE_DIR/cmake/bin
            cmake -DO=Build.cmake -DOWNLOAD_DIR=$CACHE_DIR -P CMake/SelfUpdate/SelfUpdate.cmake
            echo ::endgroup::
@@ -67,16 +66,13 @@ jobs:
            fi
     shell: bash
     env:
-     RUNNER_OS:       ${{ runner.os }}
+     CI:              true
      MATRIX_PLATFORM: ${{ matrix.platform }}
      CACHE_DIR:       SDK.Cache
 
-  - run: type C:\ProgramData\chocolatey\logs\chocolatey.log
-    if:  failure()
-
-  - name: Configure MSBuild
-    uses: warrenbuckley/Setup-MSBuild@v1
-    if:   runner.os == 'Windows'
+# - name: Configure MSBuild
+#   uses: warrenbuckley/Setup-MSBuild@v1
+#   if:   runner.os == 'Windows'
 
   - name: Build
     run:  cmake -P Build.cmake
