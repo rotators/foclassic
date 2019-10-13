@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # adds a commented git diff output
 #
