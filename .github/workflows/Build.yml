@@ -51,12 +51,9 @@ jobs:
            elif [ "$RUNNER_OS" == "Windows" ]; then
 
                 echo ::group::Install Windows SDK
-                choco install windows-sdk-7.1
+                choco install windows-sdk-7.1 kb2519277
                 echo ::endgroup
 
-                echo ::group::Chocolatey log
-                cat /c/ProgramData/chocolatey/logs/chocolatey.log
-                echo ::endgroup::
            fi
 
            echo ::group::Install required CMake version
@@ -72,6 +69,9 @@ jobs:
      RUNNER_OS:       ${{ runner.os }}
      MATRIX_PLATFORM: ${{ matrix.platform }}
      CACHE_DIR:       SDK.Cache
+
+  - run: type C:\ProgramData\chocolatey\logs\chocolatey.log
+    if:  failure()
 
   - name: Configure MSBuild
     uses: warrenbuckley/Setup-MSBuild@v1
