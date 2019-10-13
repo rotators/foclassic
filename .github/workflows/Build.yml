@@ -5,6 +5,7 @@ on: push
 jobs:
 
  build:
+
   runs-on: ${{ matrix.os }}
   strategy:
    fail-fast: false
@@ -13,10 +14,17 @@ jobs:
     platform: [x32]
 
   steps:
+
+  - name: Clone repository
+    uses: actions/checkout@master
+    with:
+     fetch-depth: 1
+     submodules:  recursive
+
   - name:  Install additional software
     run:   |
            :
-           if [ "$MATRIX_OS" == "Linux" ]; then
+           if [ "$RUNNER_OS" == "Linux" ]; then
               if   [ "$MATRIX_PLATFORM" == "x32" ]; then
                    arch=i386
                    sudo apt install -y gcc-multilib g++-multilib
@@ -27,18 +35,19 @@ jobs:
                    exit 1
               fi
               apt install -y libx11-dev:${arch} libxft-dev:${arch} libxi-dev:${arch} libxinerama-dev:${arch} libllvm6.0:${arch} libgl1-mesa-dri:${arch} libgl1-mesa-glx:${arch} libgl1-mesa-dev:${arch} libglu1-mesa:${arch} libglu1-mesa-dev:${arch} freeglut3:${arch} freeglut3-dev:${arch} libfreetype6-dev:${arch} libfontconfig-dev:${arch} libpng-dev:${arch}
+           fi
+
+           echo ::add-path::$CACHE_DIR/cmake/bin
+           cmake -DO=Build.cmake -DOWNLOAD_DIR=$CACHE_DIR -P CMake/SelfUpdate/SelfUpdate.cmake
+
+           if [ "$RUNNER_OS" == "Linux" ]; then
               hash -r
            fi
     shell: bash
     env:
-     MATRIX_OS:       ${{ matrix.os }}
+     RUNNER_OS:       ${{ runner.os }}
      MATRIX_PLATFORM: ${{ matrix.platform }}
-
-  - name: Clone repository
-    uses: actions/checkout@master
-    with:
-     fetch-depth: 1
-     submodules:  recursive
+     CACHE_DIR:       SDK.Cache
 
   - name: Build
     run:  cmake -P Build.cmake
