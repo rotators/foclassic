@@ -1,6 +1,6 @@
 name: Build
 
-on: push
+on: [push, pull_request]
 
 jobs:
 
@@ -69,10 +69,6 @@ jobs:
      CI:              true
      MATRIX_PLATFORM: ${{ matrix.platform }}
      CACHE_DIR:       SDK.Cache
-
-# - name: Configure MSBuild
-#   uses: warrenbuckley/Setup-MSBuild@v1
-#   if:   runner.os == 'Windows'
 
   - name: Build
     run:  cmake -P Build.cmake
