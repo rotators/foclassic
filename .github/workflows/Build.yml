@@ -29,7 +29,8 @@ jobs:
                    arch=i386
 
                    echo ::group::Prepare apt repository
-                   sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+                   # sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+                   sudo dpkg --add-architecture i386
                    sudo apt update
                    echo ::endgroup::
 
