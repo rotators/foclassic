@@ -54,6 +54,9 @@ jobs:
                 choco install windows-sdk-7.1
                 echo ::endgroup
 
+                echo ::group::Chocolatey log
+                cat /c/ProgramData/chocolatey/logs/chocolatey.log
+                echo ::endgroup::
            fi
 
            echo ::group::Install required CMake version
