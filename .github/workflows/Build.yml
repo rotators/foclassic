@@ -50,8 +50,9 @@ jobs:
 
            elif [ "$RUNNER_OS" == "Windows" ]; then
 
-                echo ::group::Install Windows SDK
-                choco install windows-sdk-7.1 kb2519277
+                echo ::group::Install VS2010 SDK
+                choco install vs2010sdk
+                # kb2519277
                 echo ::endgroup
 
            fi
