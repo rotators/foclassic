@@ -4,14 +4,16 @@ on: [push, pull_request]
 
 jobs:
 
- Build:
+ build:
 
-  runs-on: ${{ matrix.os }}
+  runs-on: ${{ matrix.cfg.os }}
+  name:    ${{ matrix.cfg.name }}
   strategy:
    fail-fast: false
    matrix:
-    os:       [ubuntu-latest, windows-2016]
-    platform: [x32]
+    cfg:
+    - { os: ubuntu-latest, name: Linux,   platform: x32 }
+    - { os: windows-2016,  name: Windows, platform: x32 }
 
   steps:
 
@@ -52,7 +54,7 @@ jobs:
 
                 echo ::group::Install VS2010
                 choco install vcexpress2010
-                echo ::endgroup
+                echo ::endgroup::
 
            fi
 
@@ -67,12 +69,12 @@ jobs:
     shell: bash
     env:
      CI:              true
-     MATRIX_PLATFORM: ${{ matrix.platform }}
+     MATRIX_PLATFORM: ${{ matrix.cfg.platform }}
      CACHE_DIR:       SDK.Cache
 
   - name: Build
     run:  cmake -P Build.cmake
     env:
      CI:              true
-     MATRIX_OS:       ${{ matrix.os }}
-     MATRIX_PLATFORM: ${{ matrix.platform }}
+     MATRIX_OS:       ${{ matrix.cfg.os }}
+     MATRIX_PLATFORM: ${{ matrix.cfg.platform }}
