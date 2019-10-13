@@ -4,13 +4,13 @@ on: push
 
 jobs:
 
- build:
+ Build:
 
   runs-on: ${{ matrix.os }}
   strategy:
    fail-fast: false
    matrix:
-    os:       [ubuntu-latest]
+    os:       [ubuntu-latest, windows-2016]
     platform: [x32]
 
   steps:
