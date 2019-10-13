@@ -238,7 +238,6 @@ add_custom_target( Configuration
 		${ROOT_CMAKE_CMAKE_FILES}
 		.gitignore
 		.appveyor.yml
-		.travis.yml
 )
 source_group( TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${ROOT_CMAKE_FILES} ${ROOT_CMAKE_CMAKE_FILES} )
 set_property( TARGET Configuration PROPERTY FOLDER "${FOCLASSIC_FOLDER_PREFIX}/Configuration" )
